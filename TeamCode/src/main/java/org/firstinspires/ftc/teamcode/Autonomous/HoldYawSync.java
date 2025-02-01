@@ -1,42 +1,37 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.Systems.BotTelemetry;
+import org.firstinspires.ftc.teamcode.Systems.IMU;
 import org.firstinspires.ftc.teamcode.Systems.Input;
+import java.lang.Double;
 
-public class HoldYawSync implements Runnable {
-    int pos = 0;
+public class HoldYawSync {
+    IMU imu;
     Input input;
-    private boolean running;
-    private Thread thread;
+    public HoldYawSync(HardwareMap hardwareMap) {
+        imu = new IMU(hardwareMap);
+        input = new Input(hardwareMap, true);
 
-
-    public HoldYawSync(Input input) {
-        this.thread = new Thread(this);
-        this.input = input;
     }
 
     public void setPos(int pos) {
-        this.pos = pos;
-    }
+        Double angle = Double.valueOf(imu.getAngle());
+        Integer realAngle = angle.intValue();
+        boolean tolerance = false;
 
-    public synchronized void start() {
-        if (!running) {
-            running = true;
-            thread.start();
-        }
-    }
+        while (realAngle != pos && !tolerance) {
 
-    public void run() {
-        while (running) {
-            synchronized (this) {
-                setTargetYaw();
+            if (Math.abs(realAngle - pos) <= 1) {
+                tolerance = true;
             }
-        }
-    }
+            input.spinToPosition(pos);
+            angle = Double.valueOf(imu.getAngle());
+            realAngle = angle.intValue();
 
-    public synchronized void stop() {
-        running = false;
-    }
-    public void setTargetYaw() {
-        input.spinToPosition(pos);
+            BotTelemetry.addData("yaw", realAngle);
+            BotTelemetry.update();
+        }
     }
 }

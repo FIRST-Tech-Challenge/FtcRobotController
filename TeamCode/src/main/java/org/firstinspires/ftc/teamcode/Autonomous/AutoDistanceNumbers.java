@@ -22,7 +22,7 @@ public class AutoDistanceNumbers {
     }
 
     public enum HangSpecimen {
-        ARM_HANG_POSITION (1265),
+        ARM_HANG_POSITION (1165),
         UPARM_HANG_POSITION (-2550),
         ARM_SLIGHT_DOWN(1450),
         UPARM_SLIGHT_BACK (-900);
@@ -39,12 +39,12 @@ public class AutoDistanceNumbers {
 
     public enum DriveBehindSampleFromBar {
 
-        IMU_TURN_POS (90),
-        DISTANCE_AWAY_BAR (20),
+        IMU_TURN_POS (-90),
+        DISTANCE_AWAY_BAR (28),
         IMU_TURN_TO_SAMPLE (0),
-        DISTANCE_TO_SAMPLE_1(20),
-        DISTANCE_TO_SAMPLE_2(25),
-        DISTANCE_TO_SAMPLE_3(30);
+        DISTANCE_TO_SAMPLE_1(30),
+        DISTANCE_TO_SAMPLE_2(35),
+        DISTANCE_TO_SAMPLE_3(40);
 
         private final int value;
         DriveBehindSampleFromBar(int value) {
@@ -59,9 +59,9 @@ public class AutoDistanceNumbers {
     public enum DriveBehindSampleFromObserve {
 
         IMU_TURN_TO_SAMPLE (90),
-        DISTANCE_TO_SAMPLE_1(20),
-        DISTANCE_TO_SAMPLE_2(25),
-        DISTANCE_TO_SAMPLE_3(30);
+        DISTANCE_TO_SAMPLE_1(30),
+        DISTANCE_TO_SAMPLE_2(35),
+        DISTANCE_TO_SAMPLE_3(40);
 
         private final int value;
         DriveBehindSampleFromObserve(int value) {

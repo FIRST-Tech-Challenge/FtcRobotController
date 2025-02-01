@@ -13,11 +13,11 @@ import org.firstinspires.ftc.teamcode.Systems.Input;
 @TeleOp(name = "Proportional spin test")
 public class PSpinTest extends LinearOpMode {
 
-    public static double setPoint = 0;
+    public static int setPoint = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Input input = new Input(hardwareMap, false);
+        Input input = new Input(hardwareMap, true);
         input.resetIMU();
 
         Telemetry dashboardTelemetry = FtcDashboard.getInstance().getTelemetry();

@@ -42,7 +42,7 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
 
 
         ArmSynchronous a1 = new ArmSynchronous(input);
-        HoldYawSync yawSync = new HoldYawSync(input);
+        HoldYawSync yawSync = new HoldYawSync(hardwareMap);
 
         Actions.setupActions(input, a1, imu, yawSync);
 
@@ -51,29 +51,16 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-            
+
             while (!end) {
 
                 BotTelemetry.addData("Active", 0);
                 BotTelemetry.update();
 
+                BotTelemetry.addData("distance:", input.getTravelledDistance());
+                BotTelemetry.update();
 
                 Actions.opModeIsActive(opModeIsActive());
-
-//                a1.setPos(pos);
-
-
-//                Actions.hangAndReleaseSpecimen();
-//                a1.extendArm(-2550, 0);
-//
-//
-//                pos = 1639;
-//                a1.setPos(pos);
-//
-//                a1.retractArm(-1500, 1639);
-
-
-                //a1.stop();
 
                 /** Step 1 */
             Actions.driveToBarFromInitialPositionForSpecimen();
@@ -130,9 +117,7 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
                 end = true;
             }
             a1.stop();
-            yawSync.stop();
         }
         a1.stop();
-        yawSync.stop();
     }
 }

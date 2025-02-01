@@ -15,7 +15,7 @@ public class Constants {
     public static float ARM_KD = 0.005F;  // Derivative gain
 
     //Spinning P variable
-    public static float SPIN_KP = 1.0F;  // Proportional gain
+    public static float SPIN_KP = 1.7F;  // Proportional gain
     public static float SPIN_KI = 0.1F;  // Integral gain
     public static float SPIN_KD = 0.3F;  // Derivative gain
 

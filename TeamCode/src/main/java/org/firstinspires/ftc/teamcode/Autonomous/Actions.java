@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.Systems.BotTelemetry;
 import org.firstinspires.ftc.teamcode.Systems.IMU;
 import org.firstinspires.ftc.teamcode.Systems.Input;
 
@@ -29,7 +30,7 @@ public class Actions {
 
     public static void driveToBarFromInitialPositionForSpecimen() {
 
-   holdYaw.setPos(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_YAW.getValue());
+   //holdYaw.setPos(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_YAW.getValue());
 
      while ((input.getTravelledDistance() < AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_DISTANCE.getValue()) && opModeisActive)  { //inches
         input.move(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
@@ -59,7 +60,7 @@ public class Actions {
 
 
         try {
-            Thread.sleep(200);
+            Thread.sleep(300);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -85,12 +86,21 @@ public class Actions {
          */
         switch (location) {
             case "bar":
+                BotTelemetry.addData("location:", location);
+                BotTelemetry.addData("samplea:", sampleX);
+//                BotTelemetry.update();
                 switch (sampleX) {
                     case 1:
+                        BotTelemetry.addData("sampleb:", sampleX);
+//                        BotTelemetry.update();
                         holdYaw.setPos(AutoDistanceNumbers.DriveBehindSampleFromBar.IMU_TURN_POS.getValue());
+                        BotTelemetry.addData("distancea:", input.getTravelledDistance());
+//                        BotTelemetry.update();
                         while (input.getTravelledDistance() < AutoDistanceNumbers.DriveBehindSampleFromBar.DISTANCE_AWAY_BAR.getValue()) {
                             input.move(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
                         }
+                        BotTelemetry.addData("distanceb:", input.getTravelledDistance());
+                        BotTelemetry.update();
                         input.move(0);
                         input.resetDistance();
                         holdYaw.setPos(AutoDistanceNumbers.DriveBehindSampleFromBar.IMU_TURN_TO_SAMPLE.getValue());
@@ -143,6 +153,8 @@ public class Actions {
                     default:
                         break;
                 }
+                BotTelemetry.addData("before Break:", 0);
+                BotTelemetry.update();
             break;
 
             case "observation":
@@ -229,6 +241,13 @@ public class Actions {
          */
         switch (pushOrReverse) {
             case "push":
+                holdYaw.setPos(-90);
+
+                while ((input.getTravelledDistance() < 10) && opModeisActive)  { //inches
+                    input.move(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
+                }
+                input.move(0);
+                input.resetDistance();
                 holdYaw.setPos(AutoDistanceNumbers.PushAndReverse.IMU_TURN_TO_SAMPLE.getValue());
                 //Move backwards aka behind samples
                 while ((input.getTravelledDistance() < AutoDistanceNumbers.PushAndReverse.DISTANCE_TO_OBSERVATION.getValue()) && opModeisActive)  { //inches

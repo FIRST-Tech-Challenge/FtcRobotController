@@ -159,7 +159,7 @@ public class Input {
             if ((((motors.getArmPosition() < 1650) && (motors.getArmPosition() > 800)) || (motors.getArmPosition() > 2250)) || (power > 0))  {
                 realPower = power;
                 if (motors.getArmPosition() > 2250) {
-                    if ((motors.getUpArmPosition() <= -2400) && (power > 0)) {
+                    if ((motors.getUpArmPosition() <= -2400) && (power < 0)) {
                         realPower = 0;
                     }
                 }
@@ -287,10 +287,11 @@ public class Input {
     }
 
     //A simple proportional controller to spin the robot in a direction
-    public void spinToPosition(double setPoint) {
+    public void spinToPosition(int setPoint) {
 
-        double processValue = imu.getAngle();
-        double errorValue = processValue - setPoint;
+        int processValue = Double.valueOf(imu.getAngle()).intValue();
+//        processValue = Math.abs(processValue);
+        int errorValue = processValue - setPoint;
 
         // Get current time and arm position
         double time = elapsedTime.milliseconds();
@@ -320,7 +321,12 @@ public class Input {
         double controlSignal = proportional + integral + derivative;
 
         // Spin the robot based on the control signal
-        spin(controlSignal);
+        if (setPoint == 180 && processValue < 0) {
+           spin(-controlSignal);
+        }
+        else {
+            spin(controlSignal);
+        }
 
         // Update the previous error value for the next loop
 
@@ -329,6 +335,7 @@ public class Input {
         BotTelemetry.addData("Process Value", processValue);
         BotTelemetry.addData("Proportional", proportional);
         BotTelemetry.addData("Derivative", derivative);
+        BotTelemetry.addData("actual degrees", imu.getAngle());
 
         spinPrevError = errorValue;
         spinPrevTime = time;
@@ -339,7 +346,7 @@ public class Input {
     }
 
     public void automaticallyMoveWrist(boolean autoAlign) {
-        int position;
+        double position;
         boolean toggle = false;
 
         if (autoAlign && !toggle) {
@@ -349,23 +356,24 @@ public class Input {
         }
 
         if (getArmPos() < 1435 || toggle) { // if the arm is vertical
-                position = 60;
+            position = 115;
         } else {
-            int x = (int) ((double) getArmPos() * 9/143);
-            position = x - (4335/143); // a formula to make the servo always face towards the wall no matter arm position
-        }
-
+            int x = getArmPos() * 9/140;
+            position = x + 22.75; // a formula to make the servo always face towards the wall no matter arm position
+        }//115 @ 1435
+        //205 @ 2835t
+        position = (int) position;
         servos.setServoPosition(Servos.Type.Wrist, position);
 
-        BotTelemetry.addData("is Claw Open?", clawOpen);
+        //BotTelemetry.addData("is Claw Open?", clawOpen);
         //BotTelemetry.addData("Wanted Position", position);
-        BotTelemetry.addData("Wrist Position", servos.getServoPosition(Servos.Type.Wrist));
+        //BotTelemetry.addData("Wrist Position", servos.getServoPosition(Servos.Type.Wrist));
     }
 
     public void setArmPosition(int position){
         motors.setArmPos(position);
         motors.MoveMotor(Motors.Type.Arm, 100);
         motors.goTargetPosition();
-        BotTelemetry.addData("Arm Position", getArmPos());
+        //BotTelemetry.addData("Arm Position", getArmPos());
     }
 }

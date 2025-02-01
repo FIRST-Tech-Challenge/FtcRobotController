@@ -39,7 +39,7 @@ public class TeleMain extends LinearOpMode {
         while (opModeIsActive())
         {
 
-            double move = gamepad1.left_stick_y * 100;
+            double move = -gamepad1.left_stick_y * 100;
             double spin = gamepad1.right_stick_x * 100;
             double strafe = gamepad1.left_stick_x * 100;
 
