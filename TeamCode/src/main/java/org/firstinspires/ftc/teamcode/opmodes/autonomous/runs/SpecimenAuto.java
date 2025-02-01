@@ -20,8 +20,8 @@ public class SpecimenAuto extends CommandAutoOpMode {
         double intakeDistance = 60;
         double minIntake = 45;
 
-        int firstY = -750;
-        int secondY = -580 - 200;
+        int firstY = -780;
+        int secondY = -580 - 280;
 
         return new SequentialCommandGroup(
                 // FIRST specimen
@@ -44,7 +44,7 @@ public class SpecimenAuto extends CommandAutoOpMode {
                 //  Find first sample
                 new ParallelRaceGroup(
                         commandFactory.collapseSpecimenSlider(5000),
-                        commandFactory.driveToTarget(360, firstY, -25, .08, .7, 30, 2200)
+                        commandFactory.driveToTarget(350, firstY, -25, .18, .7, 30, 2200)
                 ),
 
                 new ParallelCommandGroup(
@@ -62,7 +62,7 @@ public class SpecimenAuto extends CommandAutoOpMode {
                 // Find next sample
                 new ParallelCommandGroup(
                         commandFactory.pivotToJustAboveSweep(),
-                        commandFactory.driveToTarget(520, secondY, -45, .09, .6, 30, 1000)
+                        commandFactory.driveToTarget(550, secondY, -45, .18, .6, 30, 1000)
                 ),
 
                 commandFactory.pivotToSweep(),
