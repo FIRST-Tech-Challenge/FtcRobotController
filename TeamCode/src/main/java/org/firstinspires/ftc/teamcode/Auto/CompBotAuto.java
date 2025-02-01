@@ -65,7 +65,7 @@ public class CompBotAuto extends LinearOpMode {
   }
 
   private void extend_arm_all_the_way_out() {
-    adjust_arm_extension(4250, 5000);
+    adjust_arm_extension(4250, 1000);
   }
 
   private void retract_arm_all_the_way_in() {
@@ -100,11 +100,14 @@ public class CompBotAuto extends LinearOpMode {
     // Put the specimine in the bucket.
     run_outtake(1000);
 
+    // Pivot arm up just enough to clear the basket
+    move_pivot_arm_up(500);
+
     // Retract arm.
     retract_arm_all_the_way_in();
 
     // Pivot the arm back down
-    move_pivot_arm_down(500);
+    move_pivot_arm_down(1000);
   }
 
 //  private void set_relative_speed(DcMotor motor) {
