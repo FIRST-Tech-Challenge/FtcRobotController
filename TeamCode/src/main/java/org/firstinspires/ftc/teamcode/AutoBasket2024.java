@@ -11,10 +11,13 @@ public class AutoBasket2024 extends DriveMethods {
     enum State {
         Finished,
         Unstarted,
-        RaiseArm,
+        TightenClaw,
         StrafeRight,
+        RaiseArm,
         ExtendSlider,
-        OpenClaw
+        MoveForward,
+        OpenClaw,
+        MoveBack
     }
     State currentState = State.Unstarted;
 
@@ -33,12 +36,16 @@ public class AutoBasket2024 extends DriveMethods {
         telemetry.addData("state", currentState);
         switch (currentState) {
             case Unstarted:
-                changeState(State.StrafeRight);
+                changeState(State.TightenClaw);
                 break;
+            case TightenClaw:
+                robot.clawServo.setPosition(1.20);
+              changeState(State.StrafeRight);
+              break;
             case StrafeRight:
                 omniDrive(0, 0.25, 0);
 
-                if (getStateTime() >= 1.5) {
+                if (getStateTime() >= 1.2) {
                     omniDrive(0, 0, 0);
 
                     changeState(State.RaiseArm);
@@ -47,30 +54,45 @@ public class AutoBasket2024 extends DriveMethods {
             case RaiseArm:
                 robot.wormGear.setPower(0.5);
 
-                if (robot.wormGearAngle() >= 68.91) {
+                if (robot.wormGearAngle() >= 70) {
                     robot.wormGear.setPower(0);
 
+                    changeState(State.MoveForward);
+                }
+                break;
+            case MoveForward:
+                omniDrive(0.15, 0, 0);
+
+                if (getStateTime() >= 1.1) {
+                    omniDrive(0, 0, 0 );
                     changeState(State.ExtendSlider);
                 }
                 break;
             case ExtendSlider:
-                robot.sliderMotor.setPower(1);
+                robot.sliderMotor.setPower(0.5);
                 robot.sliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 setSliderAndReturnConstraint(robot.MAX_HORIZONTAL_SLIDER_TICKS);
 
-                if (robot.sliderMotor.getCurrentPosition() >= 2200) {
+                if (robot.sliderMotor.getCurrentPosition() >= 1450) {
+                    robot.sliderMotor.setPower(0);
                     changeState(State.OpenClaw);
                 }
                 break;
             case OpenClaw:
                 robot.clawServo.setPosition(robot.CLAW_OPEN);
-                changeState(State.Finished);
+                changeState(State.MoveBack);
                 break;
+            case MoveBack:
+                omniDrive(-0.5, 0, 0);
+                if (getStateTime() >= 1) {
+                    omniDrive(0, 0, 0);
+                    changeState(State.Finished);
+                }
             case Finished:
                 omniDrive(0, 0, 0);
                 break;
         }
-
+//spider
     }
     void changeState(State nextState) {
         currentState = nextState;

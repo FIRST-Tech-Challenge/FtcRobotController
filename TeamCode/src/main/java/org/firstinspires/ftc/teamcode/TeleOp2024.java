@@ -18,13 +18,16 @@ public class TeleOp2024 extends DriveMethods {
         robot.sliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.clawServo.setPosition(robot.CLAW_CLOSED);
 
-
+if (robot.clawServo.getPosition() >= 1.05) {
+    isClawOpen = false;
+}
     }
 
     @Override
     public void loop() {
         Gamepad driver = gamepad1;
         Gamepad operator = gamepad2;
+
 
         boolean isClawTogglePressed = operator.b;
         if (isClawTogglePressed && !wasClawTogglePressed) {
@@ -57,7 +60,7 @@ public class TeleOp2024 extends DriveMethods {
         telemetry.addData("Worm Gear Angle", "%.1f", robot.wormGearAngle());
 
         // don't allow the worm gear to go up beyond the max limit
-        if (robot.wormGearAngle() > 95 && wormGearPower > 0) {
+        if (robot.wormGearAngle() >= 85 && wormGearPower > 0) {
             wormGearPower = 0;
         }
 
@@ -67,7 +70,20 @@ public class TeleOp2024 extends DriveMethods {
 
         robot.wormGear.setPower(wormGearPower);
 
-        sliderPosition = sliderPosition + 10.0 * opRightStickY;
+        // When the button "X" is held on the Operator's Controller, then set the slider to it's maximum length, and hold until this is released.
+        // Utilize this for faster access to top basket
+        // If a is clicked, then the slider is set to it's minimum.
+
+       if (!operator.x) {
+            sliderPosition = sliderPosition + 10.0 * opRightStickY;
+       } else if (operator.a) {
+           sliderPosition = robot.MIN_SLIDER_TICKS
+       } else {
+           sliderPosition = robot.MAX_SAFE_SLIDER_TICKS;
+        }
+       
+       // End "X" & "A" Button Code
+
         sliderPosition = setSliderAndReturnConstraint(sliderPosition);
 
         if (operator.right_bumper && operator.left_bumper && driver.right_bumper && driver.left_bumper) {
@@ -78,9 +94,9 @@ public class TeleOp2024 extends DriveMethods {
         }
 
         telemetry.addData("Lift","%.1f", opLeftStickY);
-//Lift means wormrote variable, which refers to the rotation of the worm gear
 
         // let the next frame know if the toggle was pressed
         wasClawTogglePressed = isClawTogglePressed;
     }
 }
+
