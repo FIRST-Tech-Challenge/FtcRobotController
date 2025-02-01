@@ -52,43 +52,39 @@ public class BlueBotTeleop extends LinearOpMode {
 
       // 2.0.1 offsets for swerve (done by holding button and then tapping up or down on the d-pad
       d_pad = gamepad1.dpad_down || gamepad1.dpad_up;
-      if(gamepad1.a && !lastPressed){
-        if(d_pad) {
-          if(gamepad1.dpad_up)
+      if (gamepad1.a && !lastPressed) {
+        if (d_pad) {
+          if (gamepad1.dpad_up)
             blOffset += .125;
           else
             blOffset -= .125;
           lastPressed = true;
         }
-      }
-      else if(gamepad1.b && !lastPressed) {
-        if(d_pad) {
-          if(gamepad1.dpad_up)
+      } else if (gamepad1.b && !lastPressed) {
+        if (d_pad) {
+          if (gamepad1.dpad_up)
             brOffset += .125;
           else
             brOffset -= .125;
           lastPressed = true;
         }
-      }
-      else if(gamepad1.x && !lastPressed) {
-        if(d_pad) {
-          if(gamepad1.dpad_up)
+      } else if (gamepad1.x && !lastPressed) {
+        if (d_pad) {
+          if (gamepad1.dpad_up)
             flOffset += .125;
           else
             flOffset -= .125;
           lastPressed = true;
         }
-      }
-      else if(gamepad1.y && !lastPressed) {
-        if(d_pad) {
-          if(gamepad1.dpad_up)
+      } else if (gamepad1.y && !lastPressed) {
+        if (d_pad) {
+          if (gamepad1.dpad_up)
             frOffset += .125;
           else
             frOffset -= .125;
           lastPressed = true;
         }
-      }
-      else
+      } else
         lastPressed = false;
 
       // 2. takes inputs and makes them work for swerve auto
@@ -109,23 +105,27 @@ public class BlueBotTeleop extends LinearOpMode {
 //      telemetry.addLine("Vector len:   " + vector_length);
 //      telemetry.addLine("Vector angle: " + vector_angle);
 //      telemetry.addLine("-------------------------");
-      telemetry.addData("fr offset: ",frOffset);
-      telemetry.addData("fl offset: ",flOffset);
-      telemetry.addData("br offset: ",brOffset);
-      telemetry.addData("bl offset: ",blOffset);
+      telemetry.addData("fr offset: ", frOffset);
+      telemetry.addData("fl offset: ", flOffset);
+      telemetry.addData("br offset: ", brOffset);
+      telemetry.addData("bl offset: ", blOffset);
 
       // 2.5 puts values through swerve auto
-      if(vector_angle == null || vector_angle == 0.0)
+      if (vector_angle == null || vector_angle == 0.0)
         vector_angle = 0.0;
-      if(vector_angle>.75 && vector_angle <1.0){
+      if (vector_angle > 1)
+        vector_angle -= 1;
+      if (vector_angle < 0)
+        vector_angle += 1;
+      if (vector_angle > .75 && vector_angle < 1.0) {
         vector_angle -= .5;
         vector_length *= -1;
       }
-      if(vector_angle>0 && vector_angle < 0.25){
+      if (vector_angle > 0 && vector_angle < 0.25) {
         vector_angle += .5;
         vector_length *= -1;
       }
-      if(strafe_joystick!=0. || drive_joystick!=0.) {
+      if (strafe_joystick != 0. || drive_joystick != 0.) {
         driveBase.set_wheels(
             vector_angle + frOffset, // Front Right
             vector_angle + blOffset, // Back Left
@@ -133,9 +133,8 @@ public class BlueBotTeleop extends LinearOpMode {
             vector_angle + flOffset // Front Left
         );
         driveBase.setMotors(vector_length * 0.5);
-      }
-      else {
-        driveBase.steer_wheels_to_central_pivot_position(frOffset,blOffset,brOffset,flOffset);
+      } else {
+        driveBase.steer_wheels_to_central_pivot_position(frOffset, blOffset, brOffset, flOffset);
         driveBase.setMotors(rotate_joystick * 0.5);
       }
 
@@ -178,6 +177,10 @@ public class BlueBotTeleop extends LinearOpMode {
       // 7. Updates the target position of the slide
       mek.setSlide((int) mek.slideTarget);
 
+      telemetry.addData("fr angle: ", vector_angle + frOffset);
+      telemetry.addData("fl angle: ", vector_angle + flOffset);
+      telemetry.addData("br angle: ", vector_angle + brOffset);
+      telemetry.addData("bl angle: ", vector_angle + blOffset);
       telemetry.addLine("----------------------------------------");
       telemetry.addData("X Pos: ", odometry.getPosX());
       telemetry.addData("Y Pos: ", odometry.getPosY());
