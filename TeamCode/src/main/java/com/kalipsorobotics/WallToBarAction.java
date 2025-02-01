@@ -23,10 +23,10 @@ public class WallToBarAction extends KActionSet {
 
     //ASSUME ROBOT AT WALL READY FOR SPECIMEN
     public WallToBarAction(DriveTrain driveTrain, WheelOdometry wheelOdometry, Position hangPosition) {
-        PurePursuitAction moveToBar1 = new PurePursuitAction(driveTrain, wheelOdometry, 1.0/100.0); // Chunking pure pursuit
+        PurePursuitAction moveToBar1 = new PurePursuitAction(driveTrain, wheelOdometry); // Chunking pure pursuit
         moveToBar1.setName("moveToBar1");
         moveToBar1.setMaxTimeOutMS(3500);
-        moveToBar1.addPoint(SPECIMEN_HANG_POS_X + 250, SPECIMEN_HANG_POS_Y - 250, -90);
+        moveToBar1.addPoint(SPECIMEN_HANG_POS_X + 250, SPECIMEN_HANG_POS_Y - 250, -90, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE);
 
         if (hangPosition == null) {
             moveToBar1.addPoint(SPECIMEN_HANG_POS_X + 150, SPECIMEN_HANG_POS_Y, 0);

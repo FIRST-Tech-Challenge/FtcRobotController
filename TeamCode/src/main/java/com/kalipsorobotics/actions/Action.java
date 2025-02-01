@@ -2,6 +2,8 @@ package com.kalipsorobotics.actions;
 
 import android.util.Log;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -13,6 +15,7 @@ public abstract class Action {
 
     protected String name;
 
+    protected Telemetry telemetry;
     public boolean getIsDone() {
         return isDone;
     }
@@ -51,6 +54,10 @@ public abstract class Action {
 
     //updates the action
     public boolean updateCheckDone() {
+        if (telemetry != null) {
+            int value = isDone ? 3 : (hasStarted ? 2:1);
+            telemetry.addData("action_"+this.name, value);
+        }
         if (isDone) {
             return true;
         } //if done never update
@@ -63,6 +70,7 @@ public abstract class Action {
         }
 
         update();
+
 
         return updateIsDone();
 
@@ -89,7 +97,7 @@ public abstract class Action {
 
     @Override
     public String toString() {
-        return "Action{" +
+        return "Action {" +
                 "name='" + name + '\'' + "status=" + isDone +
                 '}';
     }
@@ -101,6 +109,11 @@ public abstract class Action {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setTelemetry(Telemetry telemetry) {
+        this.telemetry = telemetry;
+        telemetry.addData("action_"+this.getName(), 0);
     }
 
     public void printWithDependentActions() {

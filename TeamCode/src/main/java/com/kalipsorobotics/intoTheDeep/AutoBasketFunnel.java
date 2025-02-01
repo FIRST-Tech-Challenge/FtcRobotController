@@ -89,7 +89,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         PurePursuitAction moveOutSpecimen = new PurePursuitAction(driveTrain, wheelOdometry);
         moveOutSpecimen.setName("moveOutSpecimen");
         moveOutSpecimen.setDependentActions(wallToBarHangAction);
-        moveOutSpecimen.addPoint(-585, -250, 45);
+        moveOutSpecimen.addPoint(-585, -250, 45, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
         redAutoBasket.addAction(moveOutSpecimen);
 
         IntakeFunnelReady intakeFunnelReady1 = new IntakeFunnelReady(intakeClaw, outtake, false);
@@ -206,10 +206,10 @@ public class AutoBasketFunnel extends LinearOpMode {
         lsTouchBar.setDependentActions(moveOutBasket3);
         redAutoBasket.addAction(lsTouchBar);
 
-        PurePursuitAction park = new PurePursuitAction(driveTrain, wheelOdometry,1.0/450.0);
+        PurePursuitAction park = new PurePursuitAction(driveTrain, wheelOdometry);
         park.setName("park");
         park.setDependentActions(moveOutBasket3);
-        park.addPoint(-1225, 610, 45);
+        park.addPoint(-1225, 610, 45, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE);
         park.addPoint(-1325, 210, 90);
         redAutoBasket.addAction(park);
 

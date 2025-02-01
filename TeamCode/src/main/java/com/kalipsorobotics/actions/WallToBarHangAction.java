@@ -18,7 +18,7 @@ public class WallToBarHangAction extends KActionSet {
         waitAtStart.setName("waitAtStart");
         this.addAction(waitAtStart);
 
-        PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry,1/200);
+        PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSpecimenBar.setName("moveToSpecimenBar");
         moveToSpecimenBar.addPoint(0, 0, 0);
         moveToSpecimenBar.addPoint(FloorToBarHangRoundTrip.SPECIMEN_HANG_POS_X, barY, 0);

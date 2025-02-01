@@ -19,7 +19,7 @@ public class WallPickupDistanceSensorAction extends Action {
 
     public WallPickupDistanceSensorAction(Outtake outtake, Rev2mDistanceSensor revDistance, PurePursuitAction purePursuitAction) {
         this.revDistance = revDistance;
-        closeWhenDetectAction = new CloseWhenDetectDistanceAction(revDistance, 75);
+        closeWhenDetectAction = new CloseWhenDetectDistanceAction(revDistance, 70);
         closeWhenDetectAction.setName("closeWhenDetectAction");
 
         this.purePursuitAction = purePursuitAction;
@@ -36,14 +36,16 @@ public class WallPickupDistanceSensorAction extends Action {
 
     @Override
     protected void update() {
+        if (isDone) {
+            return;
+        }
         if (purePursuitAction.getHasStarted()) {
-
             closeWhenDetectAction.updateCheckDone();
             closeClawAction.updateCheckDone();
             if (!closeWhenDetectAction.getIsDone()) {
                 purePursuitAction.updateCheckDone();
             } else {
-                purePursuitAction.setIsDone(true);
+                purePursuitAction.finishedMoving();
             }
 
         }

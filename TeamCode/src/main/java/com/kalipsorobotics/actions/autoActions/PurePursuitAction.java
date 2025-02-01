@@ -24,6 +24,8 @@ public class PurePursuitAction extends Action {
 
     public static final double P_XY = 1.0/600.0;
     public static final double P_ANGLE = 0.7 * 1.0 / Math.toRadians(90);
+    public static final double P_XY_FAST = 1.0/100.0;
+    public static final double P_ANGLE_FAST = 1.0/ Math.toRadians(30);
 
     List<Position> pathPoints = new ArrayList<Position>();
     DriveTrain driveTrain;
@@ -85,13 +87,13 @@ public class PurePursuitAction extends Action {
         this.dependentActions.add(new DoneStateAction());
     }
 
-    public PurePursuitAction(DriveTrain driveTrain/*, SparkfunOdometry sparkfunOdometry*/, WheelOdometry wheelOdometry, double pidXY) {
+    public PurePursuitAction(DriveTrain driveTrain/*, SparkfunOdometry sparkfunOdometry*/, WheelOdometry wheelOdometry, double pidXY, double pidAngle) {
         this.driveTrain = driveTrain;
         //this.sparkfunOdometry = sparkfunOdometry;
         this.wheelOdometry = wheelOdometry;
         this.pidX = new PidNav(pidXY, 0, 0);
         this.pidY = new PidNav(pidXY, 0, 0);
-        this.pidAngle = new PidNav(P_ANGLE, 0, 0);
+        this.pidAngle = new PidNav(pidAngle, 0, 0);
 
         this.timeoutTimer = new ElapsedTime();
 
