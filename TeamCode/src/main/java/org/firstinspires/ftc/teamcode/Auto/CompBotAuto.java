@@ -159,11 +159,13 @@ public class CompBotAuto extends LinearOpMode {
   private void rotate_wheels_forward(int rotateTimeInMs) {
     drive_Wheels(0.5, 0);
     sleep(rotateTimeInMs);
+    drive_Wheels(0.0, 0);
   }
 
   private void rotate_wheels_backward(int rotateTimeInMs) {
     drive_Wheels(-0.5, 0);
     sleep(rotateTimeInMs);
+    drive_Wheels(0.0, 0);
   }
 
   private void handle_place_second_specimine_in_bucket() {
@@ -215,7 +217,7 @@ public class CompBotAuto extends LinearOpMode {
   public void runOpMode() throws InterruptedException {
     initRobot(this);
     waitForStart();
-    //mek.homeArm();
+    mek.homeArm();
 
     // Start program assuming robot is ready to place the specimine
     // in the bucket.
