@@ -163,6 +163,7 @@ public class LowTaperFade extends LinearOpMode {
         baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, roadRunner.actionBuilder(initialPose), 0);
         TrajectoryActionBuilder sampleTrajectory = pushSamples(sp, placingTrajectory);
+        TrajectoryActionBuilder placingTrajectory2 = getPlacingTrajectory(sp, sampleTrajectory, 0);
         baseRobot.outtake.claw.close();
         baseRobot.outtake.verticalSlide.setPosition(Settings.Hardware.VerticalSlide.HIGH_RUNG_PREP_AUTO);
         baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
@@ -174,7 +175,7 @@ public class LowTaperFade extends LinearOpMode {
                         unhookChamber(),
                         sampleTrajectory.build(),
                         grabSpecimenFromHP(),
-                        placingTrajectory.build(),
+                        placingTrajectory2.build(),
                         hookChamber()));
 
         return sampleTrajectory;
@@ -457,18 +458,18 @@ public class LowTaperFade extends LinearOpMode {
                 speciTraj = previousTrajectory.endTrajectory().fresh()
                         // gets in front of the first on field sample and pushes it back
                         .strafeToConstantHeading(new Vector2d(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.x, Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y))
-                        .lineToY(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y - 50)
+                        .lineToY(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y + 50)
                         .strafeToConstantHeading(new Vector2d(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_1_VEC.x, Settings.Autonomous.FieldPositions.LEFT_SAMPLE_1_VEC.y))
-                        .lineToY(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_1_VEC.y + 50)
+                        .lineToY(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_1_VEC.y - 50)
                         .strafeToConstantHeading(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_1_VEC);
                 break;
             case 2:
                 speciTraj = previousTrajectory.endTrajectory().fresh()
                         // gets in front of the second on field sample and pushes it back
                         .strafeToConstantHeading(new Vector2d(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.x, Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y))
-                        .lineToY(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y - 50)
+                        .lineToY(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y + 50)
                         .strafeToConstantHeading(new Vector2d(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_2_VEC.x, Settings.Autonomous.FieldPositions.LEFT_SAMPLE_2_VEC.y))
-                        .lineToY(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_2_VEC.y + 50)
+                        .lineToY(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_2_VEC.y - 50)
                         .strafeToConstantHeading(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_2_VEC);
                 break;
             case 3:
@@ -476,9 +477,9 @@ public class LowTaperFade extends LinearOpMode {
                 speciTraj = previousTrajectory.endTrajectory().fresh()
                         // gets in front of the third on field sample and pushes it back
                         .strafeTo(new Vector2d(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.x, Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y))
-                        .lineToY(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y - 50)
+                        .lineToY(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y + 50)
                         .strafeTo(new Vector2d(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_3_VEC.x, Settings.Autonomous.FieldPositions.LEFT_SAMPLE_3_VEC.y))
-                        .lineToY(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_3_VEC.y + 50)
+                        .lineToY(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_3_VEC.y - 50)
                         .strafeTo(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_3_VEC);
                 break;
         }
