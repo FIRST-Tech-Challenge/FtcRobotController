@@ -18,6 +18,8 @@ public class AR_Arm
     // Currently, the arm's rest is at approx. 43 degree up pointing straight down. That mean gravity is
     // working the most against the arm (horizontal) at -47 from the rest. So to make the angle align
     // with more realistic angles. the rest should be at 43 degree instead of 0.
+
+
     public static int FIRST_JOINT_REST_ANGLE = -40; //degrees
 
     // These variables are used to customize joint angles for the AR_Arm. All of these
@@ -26,6 +28,10 @@ public class AR_Arm
     public static int FIRST_JOINT_ACTIVE = -70,      SECOND_JOINT_ACTIVE = -65;
     public static int FIRST_JOINT_DEPLOY = -170, SECOND_JOINT_DEPLOY = -200;
     public static int FIRST_JOINT_GRAB = -70,    SECOND_JOINT_GRAB = -145;
+
+    public static int start_X = 100,      start_Y = 15;
+    public static int active_X = -70,      active_Y = -65;
+    public static int grab_X = 32,    grab_Y = -15;
 
     public static double P1 = 0.003, I1 = 0.05, D1 = 0.0001;
     public static double F1 = 0.05;
@@ -37,6 +43,9 @@ public class AR_Arm
     public static int ACTIVE = 1;
     public static int GRAB = 2;
     public static int DEPLOY = 3;
+
+    private final double L1 = 22.0; // Length of first arm segment
+    private final double L2 = 16.0; // Length of second arm segment
 
     // Create a "AR_Joint" instance for each joint of the "AR_Arm".
     private AR_Joint jointFirst;
@@ -88,10 +97,10 @@ public class AR_Arm
      * @param firstJoint The position of the first joint in degrees.
      * @param secondJoint The position of the second joint in degrees.
      */
-    public void setArmCustomPos(int firstJoint, int secondJoint )
+    public void setArmCustomPos(double firstJoint, double secondJoint )
     {
-        this.targetFirst = firstJoint; //degrees
-        this.targetSecond = secondJoint; //degrees
+        this.targetFirst = (int)firstJoint; //degrees
+        this.targetSecond = (int)secondJoint; //degrees
     }
 
     /**
@@ -99,6 +108,7 @@ public class AR_Arm
      */
     public void setArmDeployPos( ) {
         // Todo: This needs to be carefully tested before we run the code to make sure the motor direction is correct, etc.
+        
         this.targetFirst = FIRST_JOINT_DEPLOY;
         this.targetSecond = SECOND_JOINT_DEPLOY;
 
@@ -114,8 +124,10 @@ public class AR_Arm
     public void setArmGrabPos( )
     {
         // Todo: This needs to be carefully tested before we run the code to make sure the motor direction is correct, etc.
-        this.targetFirst = FIRST_JOINT_GRAB;
-        this.targetSecond = SECOND_JOINT_GRAB;
+        double[] angles = calculateJointAngles(grab_X, grab_Y);
+
+        this.targetFirst = (int) angles[0];
+        this.targetSecond = (int) angles[1];
 
         if( currentState != AR_Arm.GRAB ) {
             lastState = currentState;
@@ -129,8 +141,10 @@ public class AR_Arm
     public void setArmActivePos( )
     {
         // Todo: This needs to be carefully tested before we run the code to make sure the motor direction is correct, etc.
-        this.targetFirst = FIRST_JOINT_ACTIVE;
-        this.targetSecond = SECOND_JOINT_ACTIVE;
+        double[] angles = calculateJointAngles(active_X, active_Y);
+
+        this.targetFirst = (int) angles[0];
+        this.targetSecond = (int) angles[1];
 
         if( currentState != AR_Arm.ACTIVE ) {
             lastState = currentState;
@@ -148,8 +162,10 @@ public class AR_Arm
     public void setArmStartPos( )
     {
         // Todo: This needs to be carefully tested before we run the code to make sure the motor direction is correct, etc.
-        this.targetFirst = FIRST_JOINT_START;
-        this.targetSecond = SECOND_JOINT_START;
+        double[] angles = calculateJointAngles(start_X, start_Y);
+
+        this.targetFirst = (int) angles[0];
+        this.targetSecond = (int) angles[1];
 
         if( currentState != AR_Arm.START ) {
             lastState = currentState;
@@ -174,5 +190,42 @@ public class AR_Arm
         // Todo: This needs to be carefully tested before we run the code to make sure the motor direction is correct, etc.
         leftGripper.setPower(0);
         rightGripper.setPower(0);
+    }
+
+    public double[] calculateJointAngles(double x, double y) {
+
+        double distance = Math.sqrt(x * x + y * y);
+        // Check if the target is reachable
+        if (distance > (L1 + L2) || distance < Math.abs(L1 - L2)){
+            return null; // Target is unreachable
+        }
+
+        // Law of cosines for elbow angle
+        double cosTheta2 = (x * x + y * y - L1 * L1 - L2 * L2) / (2 * L1 * L2);
+        if (cosTheta2 < -1 || cosTheta2 > 1) {
+            return null;
+        }
+
+        double theta2 = 0;
+        try {
+            theta2 = Math.acos(cosTheta2); // Elbow angle in radians
+        } catch(Exception e){
+            theta2 = 35.51;
+        }
+
+        // Law of cosines and trigonometry for shoulder angle
+
+        double theta1 = Math.atan2(y, x) - Math.atan2(L2 * Math.sin(theta2), L1 + L2 * Math.cos(theta2));
+
+
+
+        // Convert radians to degrees
+
+        double shoulderAngle = Math.toDegrees(theta1);
+
+        double elbowAngle = Math.toDegrees(theta2);
+
+        return new double[] { shoulderAngle, elbowAngle };
+
     }
 }
