@@ -8,11 +8,24 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 import org.firstinspires.ftc.teamcode.Swerve.Swerve;
 import org.firstinspires.ftc.teamcode.Utils;
+import org.firstinspires.ftc.teamcode.Auto.AutoSwerve;
+
+import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.EncoderDirection.FORWARD;
+import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD;
 
 @TeleOp(name = "Blue Bot Teleop")
 public class BlueBotTeleop extends LinearOpMode {
 
   double slideSpeed = 100;
+  GoBildaPinpointDriver odometry;
+  odometry = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+  odometry.recalibrateIMU();
+  odometry.resetPosAndIMU();
+  odometry.setOffsets(110, 30);
+  odometry.setEncoderResolution(goBILDA_4_BAR_POD);
+  odometry.setEncoderDirections(FORWARD, FORWARD);
+  odometry.resetHeading(Rotation2d.fromDegrees(120));
+  AutoSwerve driveBase = new AutoSwerve(this, odometry);
 
   @Override
   public void runOpMode() throws InterruptedException {
@@ -21,6 +34,7 @@ public class BlueBotTeleop extends LinearOpMode {
     // or add the movement to the Autonomous
     Swerve swerve = new Swerve(this);
     Mekanism mek = new Mekanism(this);
+
 
     boolean bPressed = false;
     waitForStart();
@@ -49,6 +63,13 @@ public class BlueBotTeleop extends LinearOpMode {
       telemetry.addLine("Vector angle: " + vector_angle);
 
       telemetry.update();
+
+      driveBase.set_wheels(
+        vector_angle, // Front Right
+        vector_angle, // Back Left
+        vector_angle, // Back Right
+        vector_angle  // Front Left
+      );
     }
   }
 }
