@@ -76,9 +76,9 @@ if (robot.clawServo.getPosition() >= 1.05) {
        if (!operator.x) {
             sliderPosition = sliderPosition + 10.0 * opRightStickY;
        } else if (operator.a) {
-           sliderPosition = robot.MIN_SLIDER_TICKS
+           sliderPosition = robot.MIN_SLIDER_TICKS;
        } else if (operator.right_bumper) {
-           sliderPosition = robot.sliderMotor.setPower(0);
+           robot.sliderMotor.setPower(0);
        } else {
            sliderPosition = robot.MAX_SAFE_SLIDER_TICKS;
         }
@@ -92,7 +92,7 @@ if (robot.clawServo.getPosition() >= 1.05) {
         if (operator.right_bumper && operator.left_bumper && driver.right_bumper && driver.left_bumper) {
             robot.wormGear.setPower(-1);
             if (robot.wormGearAngle() == -7) {
-                wormGearPower = 0;
+                robot.wormGear.setPower(0);
             }
         }
         telemetry.addData("Lift","%.1f", opLeftStickY);
