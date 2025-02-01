@@ -158,10 +158,10 @@ public class CompBotAuto extends LinearOpMode {
 
   private void steer_to_strafe_right() {
     steer_wheels(
-      0.25,  // Front Right
-      0.25,  // Back Left
-      0.25,  // Back Right
-      0.25   // Front Left
+      0.239,  // Front Right
+      0.24,  // Back Left
+      0.24,  // Back Right
+      0.259   // Front Left
     );
   }
 
@@ -179,7 +179,7 @@ public class CompBotAuto extends LinearOpMode {
 
   private void handle_place_second_specimine_in_bucket() {
     // Steer wheels so we can move away from the wall
-    steer_to_staife_right();
+    steer_to_strafe_right();
 
     // Move away from the wall
     rotate_wheels_forward(500);
