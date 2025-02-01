@@ -1,18 +1,18 @@
-package org.firstinspires.ftc.teamcode.BBcode;
+package org.firstinspires.ftc.teamcode.BBcode.UtilClasses;
 
-import android.os.SystemClock;
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class AutoUtils {
+public class UtilActions {
     public static Action Wait(double seconds) {
         return new Action() {
-            final ElapsedTime timer = new ElapsedTime();
+            ElapsedTime timer = null;
             @Override
-            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                return !(timer.seconds() >= seconds);
+            public boolean run (@NonNull TelemetryPacket telemetryPacket) {
+                if (timer == null) {timer = new ElapsedTime();}
+            return !(timer.seconds() >= seconds);
             }
         };
     }

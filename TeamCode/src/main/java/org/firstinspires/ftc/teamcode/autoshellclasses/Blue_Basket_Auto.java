@@ -10,7 +10,7 @@ import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.BlueBasket;
-import org.firstinspires.ftc.teamcode.BBcode.AutoUtils;
+import org.firstinspires.ftc.teamcode.BBcode.UtilClasses.UtilActions;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.ViperArmActions;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.WristClawActions;
 import org.firstinspires.ftc.teamcode.BBcode.PoseStorage;
@@ -34,6 +34,9 @@ public class Blue_Basket_Auto extends LinearOpMode {
     @Override
     public void runOpMode() {
     //Initialization steps
+        //Creates instance of UtilActions
+        UtilActions _UtilActions = new UtilActions();
+
         //Creates instance of MechanismActionBuilders
         WristClawActions _WristClawActions = new WristClawActions(this);
         ViperArmActions _ViperArmActions = new ViperArmActions(this);
@@ -207,19 +210,19 @@ public class Blue_Basket_Auto extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         driveToDropFromStart,
-                        AutoUtils.Wait(2),
+                        UtilActions.Wait(2),
                         samplePickupOuter,
-                        AutoUtils.Wait(2),
+                        UtilActions.Wait(2),
                         driveToDropFromOuterSample,
-                        AutoUtils.Wait(2),
+                        UtilActions.Wait(2),
                         samplePickupMiddle,
-                        AutoUtils.Wait(2),
+                        UtilActions.Wait(2),
                         driveToDropFromMiddleSample,
-                        AutoUtils.Wait(2),
+                        UtilActions.Wait(2),
                         samplePickupInner,
-                        AutoUtils.Wait(2),
+                        UtilActions.Wait(2),
                         driveToDropFromInnerSample,
-                        AutoUtils.Wait(2),
+                        UtilActions.Wait(2),
                         driveToPark
 
 //                        _ViperArmActions.MoveArmToHighBasket(),
