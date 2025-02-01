@@ -169,14 +169,14 @@ public class CompBotAuto extends LinearOpMode {
     drive_Wheels(0.5, 0);
     sleep(rotateTimeInMs);
     drive_Wheels(0.0, 0);
-    sleep(250);
+    sleep(1000);
   }
 
   private void rotate_wheels_backward(int rotateTimeInMs) {
     drive_Wheels(-0.5, 0);
     sleep(rotateTimeInMs);
     drive_Wheels(0.0, 0);
-    sleep(250);
+    sleep(1000);
   }
 
   private void handle_place_second_specimine_in_bucket() {
@@ -184,7 +184,7 @@ public class CompBotAuto extends LinearOpMode {
     steer_to_strafe_right();
 
     // Move away from the wall
-    rotate_wheels_forward(500);
+    rotate_wheels_forward(200);
 
     // Rotate wheels to turn robot toward the next specimine
     steer_wheels_to_central_pivot_position();
