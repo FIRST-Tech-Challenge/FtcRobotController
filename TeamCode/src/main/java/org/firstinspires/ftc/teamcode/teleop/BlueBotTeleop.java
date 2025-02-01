@@ -24,7 +24,7 @@ public class BlueBotTeleop extends LinearOpMode {
 
     boolean bPressed = false;
     waitForStart();
-    mek.homeArm();
+    //mek.homeArm();
     double lastTime = Utils.getTimeSeconds();
     while (opModeIsActive()) {
 
@@ -80,6 +80,8 @@ public class BlueBotTeleop extends LinearOpMode {
       telemetry.addLine("----------------------------------------");
       telemetry.addData("X Pos: ",swerve.odometry.getPosX());
       telemetry.addData("Y Pos: ",swerve.odometry.getPosY());
+      telemetry.addData("pivot input: ",-gamepad2.right_stick_y);
+      telemetry.addData("pivot pos: ",mek.pivot.getPower());
       telemetry.update();
       lastTime = currentTime;
     }

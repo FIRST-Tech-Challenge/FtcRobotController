@@ -180,6 +180,7 @@ public class AutoSwerve {
       }
     }// end while traveling
   }
+
     public double getX(){
       odo.update();
       return odo.getPosX();

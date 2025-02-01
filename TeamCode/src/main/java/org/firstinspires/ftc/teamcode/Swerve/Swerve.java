@@ -248,31 +248,31 @@ public class Swerve {
         case 0: {
           pos = "FL";
           kp = 1.4;
-          ki = 0;
+          ki = 1;
           kd = 0.14;
           ks = 0.1;
           break;
         }
         case 1: {
           pos = "FR";
-          kp = 4;
-          ki = 0;
-          kd = 0.15;
+          kp = 2;
+          ki = 1;
+          kd = 0.05;
           ks = 0.03;
           break;
         }
         case 2: {
           pos = "BL";
           kp = 1.29;
-          ki = 0;
-          kd = 0.13;
+          ki = 1.1;
+          kd = 0.1;
           ks = 0.08;
           break;
         }
         case 3: {
           pos = "BR";
           kp = 4;
-          ki = 0;
+          ki = 1;
           kd = 0.15;
           ks = 0.04;
           break;
