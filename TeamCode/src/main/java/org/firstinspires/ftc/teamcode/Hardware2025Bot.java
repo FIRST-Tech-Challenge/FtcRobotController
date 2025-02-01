@@ -147,6 +147,7 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_VERTICAL_DEG    = 54.50; // Straight up vertical (safe to start retracting viper)
     public final static double TILT_ANGLE_ZERO_DEG        =  4.00; // Arm for parking fully reset in auto
     public final static double TILT_ANGLE_DRIVE_DEG       =  4.00; // Arm for parking in auto or driving around
+    public final static double TILT_ANGLE_TELEOP_COLLECT_DEG =  3.80; // Arm for collecting in TeleOp
     public final static double TILT_ANGLE_SPECIMEN0_DEG   = 60.00; // (NEW) Angle for grabbing specimens off field wall
     public final static double TILT_ANGLE_SPECIMEN1_DEG   = 65.00; // AUTO: Angle for scoring specimens (above bar)
     public final static double TILT_ANGLE_SPECIMEN2_DEG   = 59.40; // AUTO: Angle for scoring specimens (clipped)

@@ -709,7 +709,7 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_circle_now && !gamepad2_circle_last )
         {   // toggle between arm positions when in submersible
             if(submersibleCollectState == 2) {
-                robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_DRIVE_DEG);
+                robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_TELEOP_COLLECT_DEG);
                 submersibleCollectState = 1;
             } else {
                 robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_SUBMERSIBLE_DEG);

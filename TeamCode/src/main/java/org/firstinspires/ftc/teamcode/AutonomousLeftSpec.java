@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 /**
  */
-@Autonomous(name="Autonomous Left 1+3", group="7592", preselectTeleOp = "Teleop")
+@Autonomous(name="Left1: clip + 3 yellow (71 pts)", group="7592", preselectTeleOp = "Teleop")
 //@Disabled
 public class AutonomousLeftSpec extends AutonomousBase {
 
