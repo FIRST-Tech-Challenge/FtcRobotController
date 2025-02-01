@@ -78,7 +78,7 @@ public class Mekanism {
 
 
     limitSwitch = opMode.hardwareMap.get(DigitalChannel.class, "limit switch");
-
+    limitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
     // Servos for intake
     intakeServo = opMode.hardwareMap.get(Servo.class, "intake");
@@ -150,6 +150,7 @@ public class Mekanism {
     }
     telemetry.addData("Pivot current pos", pivot.getCurrentPosition());
     telemetry.addData("Limit switch: ",limitSwitch.getState());
+    telemetry.addData("limit connection: ",limitSwitch.getConnectionInfo());
 
     x *= .5;
     pivot.setPower(x);
