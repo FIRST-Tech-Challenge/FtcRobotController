@@ -170,7 +170,7 @@ public class Mekanism {
 
     while (limitSwitch.getState() && myOp.opModeIsActive()) {
       telemetry.addData("limit switch: ",limitSwitch.getState());
-      pivot.setPower(-.1);
+      pivot.setPower(-.5);
       slide.setPower(-0.5);
       slide2.setPower(-0.5);
 
@@ -210,7 +210,7 @@ public class Mekanism {
   public void runIntake(boolean intake, boolean outtake) {
     if (outtake) {
       intakeServo.setPosition(1);
-      intakeServo2.setPosition(.75);
+      intakeServo2.setPosition(.625);
     } else if (intake) {
       intakeServo.setPosition(0);
       intakeServo2.setPosition(0);
