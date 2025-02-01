@@ -13,7 +13,7 @@ public class Settings {
      * Time in milliseconds needed to ensure safe parking -
      * if there is more time than this, the robot will try to score more points.
      */
-    public static double ms_needed_to_park = 5000; // TODO: TIME THIS SO WE DON'T WASTE TIME
+    public static double ms_needed_to_park = 2000; // TODO: TIME THIS SO WE DON'T WASTE TIME
 
     // Movement settings
     @Config
@@ -192,7 +192,7 @@ public class Settings {
             public static Pose2d LEFT_PARK_POSE = new Pose2d(-23, 13, Math.toRadians(180));
             public static Pose2d RIGHT_PARK_POSE = new Pose2d(60, -60, Math.toRadians(180));
             public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(43.5, -5, Math.toRadians(90));
-            public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(50, -5, Math.toRadians(90));
+            public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(50, -10, Math.toRadians(90));
             public static Vector2d SAMPLE_MIDDLEMAN = new Vector2d(22, -38);
 
             // I am adding this to push samples into human player zone
