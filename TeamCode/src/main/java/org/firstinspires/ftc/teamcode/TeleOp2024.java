@@ -77,11 +77,11 @@ if (robot.clawServo.getPosition() >= 1.05) {
        if (!operator.x) {
             sliderPosition = sliderPosition + 10.0 * opRightStickY;
        } else if (operator.a) {
-           sliderPosition = robot.MIN_SLIDER_TICKS
+           sliderPosition = robot.MIN_SLIDER_TICKS;
        } else {
            sliderPosition = robot.MAX_SAFE_SLIDER_TICKS;
         }
-       
+       //BAD SEMICOLON ;;;;;;;;;;;;;
        // End "X" & "A" Button Code
 
         sliderPosition = setSliderAndReturnConstraint(sliderPosition);
