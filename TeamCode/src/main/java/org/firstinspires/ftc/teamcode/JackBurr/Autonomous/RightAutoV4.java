@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.JackBurr.Drive.RobotConstantsV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Motors.DeliverySlidesV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryAxonV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryGrippersV1;
-import org.firstinspires.ftc.teamcode.drive.MecanumDrive;
+import org.firstinspires.ftc.teamcode.JackBurr.Odometry.PinpointDrive;
 
 @Autonomous
 public class RightAutoV4 extends LinearOpMode {
@@ -36,11 +36,12 @@ public class RightAutoV4 extends LinearOpMode {
     public ElapsedTime timerStep03 = new ElapsedTime();
     public int leftSlideTarget = 0;
     public int rightSlideTarget = 0;
+    public PinpointDrive drive;
     @Override
     public void runOpMode() throws InterruptedException {
         //Pick SampleMecanumDrive for dashboard and RRMecanumDrive for no dashboard
         Pose2d startPose = new Pose2d(60, 0, Math.toRadians(0));
-        MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
+        drive = new PinpointDrive(hardwareMap, startPose);
         deliveryAxon.init(hardwareMap);
         deliverySlides.init(hardwareMap);
         deliveryGrippers.init(hardwareMap, telemetry);
@@ -102,7 +103,7 @@ public class RightAutoV4 extends LinearOpMode {
             }
             else if(step == 3) {
                 if(timerStep03.seconds() > 4) {
-                    //drive.followTrajectory(traj2);
+                    traj2Action.run(new TelemetryPacket());
                     step = 4;
                 }
             }
