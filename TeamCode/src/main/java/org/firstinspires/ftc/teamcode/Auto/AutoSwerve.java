@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.Utils;
@@ -76,14 +77,28 @@ public class AutoSwerve {
 
   public double set_wheels(double fr, double bl, double br, double fl, double heading) {
     double delta_sum = 0.0;
-    if(fr>1)
+    fr -= heading;
+    bl -= heading;
+    br -= heading;
+    fl -= heading;
+    
+    if (fr > 1)
       fr -= 1;
-    if(bl>1)
+    if (bl > 1)
       bl -= 1;
-    if(br>1)
+    if (br > 1)
       br -= 1;
-    if(fl>1)
+    if (fl > 1)
       fl -= 1;
+
+    if(fr < 0)
+      fr+= 1;
+    if(br < 0)
+      bl -=1;
+    if(fl < 0)
+      fl += 1;
+    if(br < 0)
+      br += 1;
     for (int i = 0; i < 4; i++) {
       if (i == 1) {
         delta_sum += Math.abs(set_Servo_Angle(servoInputFR, servoFR, fr));
@@ -91,8 +106,7 @@ public class AutoSwerve {
         delta_sum += Math.abs(set_Servo_Angle(servoInputBL, servoBL, bl));
       } else if (i == 3) {
         delta_sum += Math.abs(set_Servo_Angle(servoInputBR, servoBR, br));
-      }
-      else {
+      } else {
         delta_sum += Math.abs(set_Servo_Angle(servoInputFL, servoFL, fl));
       }
     }
@@ -100,7 +114,7 @@ public class AutoSwerve {
     return delta_sum;
   }
 
-  public void steer_wheels_to_central_pivot_position(double fr,double bl,double br,double fl,double heading) {
+  public void steer_wheels_to_central_pivot_position(double fr, double bl, double br, double fl, double heading) {
     set_wheels(
         1.000 - fr,  // Front Right
         1.250 - bl,  // Back Left
@@ -149,10 +163,12 @@ public class AutoSwerve {
     double normalized_voltage = analogInput.getVoltage() / max_voltage;
     double delta_to_reference = desired_normalized_angle - normalized_voltage;
     double servo_speed = 0.09;
-    if(delta_to_reference > 0.05)
+    if (delta_to_reference > 0.09)
       servo_speed = delta_to_reference;
-    if(servo_speed > .25)
+    if (delta_to_reference > .18)
       servo_speed = .25;
+    if (delta_to_reference > .25)
+      servo_speed = .3;
 
     double tolerance = 0.01;
 
@@ -167,7 +183,7 @@ public class AutoSwerve {
     return Math.abs(delta_to_reference);
   }
 
-  public void odoDrive(double x, double  y, double h, double mSpd) {
+  public void odoDrive(double x, double y, double h, double mSpd) {
     if (mSpd > 1.0) {
       mSpd = 1.0;
     }
@@ -186,7 +202,7 @@ public class AutoSwerve {
       double sHc = sH - getDeg() / 360; // normalize degree
       if (sHc > .5) {
         // FR BL BR FL
-        set_wheels(sHc, .5, .5, sHc,odo.getHeading().getDegrees()/360);
+        set_wheels(sHc, .5, .5, sHc, odo.getHeading().getDegrees() / 360);
       }
       if ((getX() - sX) < .2 || (getY() - sY) < .2) {
         setMotors(.4);
@@ -198,20 +214,20 @@ public class AutoSwerve {
     }// end while traveling
   }
 
-    public double getX(){
-      odo.update();
-      return odo.getPosX();
-    }
+  public double getX() {
+    odo.update();
+    return odo.getPosX();
+  }
 
-    public double getY(){
-      odo.update();
-      return odo.getPosY();
-    }
+  public double getY() {
+    odo.update();
+    return odo.getPosY();
+  }
 
-    public double getDeg(){
-      odo.update();
-      return odo.getHeading().getDegrees();
-    }
+  public double getDeg() {
+    odo.update();
+    return odo.getHeading().getDegrees();
+  }
 
   // align wheels has a angle always set where alignWheels is
   // constantly checking for the turn error and eventually compensating
