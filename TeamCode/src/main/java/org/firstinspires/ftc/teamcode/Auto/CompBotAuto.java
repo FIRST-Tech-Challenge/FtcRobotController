@@ -156,6 +156,15 @@ public class CompBotAuto extends LinearOpMode {
     );
   }
 
+  private void steer_to_staife_right() {
+    steer_wheels(
+      0.25,  // Front Right
+      0.25,  // Back Left
+      0.25,  // Back Right
+      0.25   // Front Left
+    );
+  }
+
   private void rotate_wheels_forward(int rotateTimeInMs) {
     drive_Wheels(0.5, 0);
     sleep(rotateTimeInMs);
@@ -169,6 +178,12 @@ public class CompBotAuto extends LinearOpMode {
   }
 
   private void handle_place_second_specimine_in_bucket() {
+    // Steer wheels so we can move away from the wall
+    steer_to_staife_right();
+
+    // Move away from the wall
+    rotate_wheels_forward(500);
+
     // Rotate wheels to turn robot toward the next specimine
     steer_wheels_to_central_pivot_position();
 
