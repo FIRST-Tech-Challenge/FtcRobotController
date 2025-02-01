@@ -39,6 +39,9 @@ public class DeliverySlider extends SonicSubsystemBase {
     private DriverFeedback feedback;
 
     public static int BasketDeliveryPosition = 870;
+
+    public static int MaxExtension = 890;
+
     public static int CollapsedPosition = -10;
 
     public static int StartPosition = 125;
@@ -142,6 +145,16 @@ public class DeliverySlider extends SonicSubsystemBase {
     public void MoveToDeliverySamplePosition() {
         SetAuto();
         currentTarget = BasketDeliveryPosition - 50;
+    }
+
+    public void MoveToMaxExtension() {
+
+        double position = motor.encoder.getPosition();
+
+        if(position > 700) {
+            SetAuto();
+            currentTarget = MaxExtension;
+        }
     }
 
     public void MoveToCollapsedPosition() {

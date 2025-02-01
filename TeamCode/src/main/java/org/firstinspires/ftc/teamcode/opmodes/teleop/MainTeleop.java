@@ -103,6 +103,9 @@ public class MainTeleop extends OpModeTemplate {
         driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                 .whenPressed(new InstantCommand(rollingIntake::ToggleElbowAcrossAll, rollingIntake));
 
+        driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(new InstantCommand(deliverySlider::MoveToMaxExtension, deliverySlider));
+
         //driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
         //        .whenPressed(new AlignToSampleUsingLimelight(driveTrain, limeLight, telemetry, 3000));
 
