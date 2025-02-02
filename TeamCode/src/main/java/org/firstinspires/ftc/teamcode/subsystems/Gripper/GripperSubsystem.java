@@ -25,11 +25,10 @@ public class GripperSubsystem extends SubsystemBase {
         register();
         rotServo.getController().pwmEnable();
         servoClaw.getController().pwmEnable();
-        servoClaw.setPosition(isOpen?openClaw:closeClaw);
-        rotServo2.setPosition(score);
 
 
-        isOpen = false;
+
+
     }
     public void periodic() {
         servoClaw.setPosition(isOpen?openClaw:closeClaw);

@@ -12,7 +12,7 @@ import java.util.function.DoubleSupplier;
 public class BTController {
 
     static double threshold = 0.1;
-    protected BooleanSupplier[] m_buttonsSuppliers;
+    public BooleanSupplier[] m_buttonsSuppliers;
     protected DoubleSupplier[] m_axesSuppliers;
 
 
