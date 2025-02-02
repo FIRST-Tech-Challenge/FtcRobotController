@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -34,8 +35,8 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final double SLIDE_OUTWARD_TIME = 0.45; // seconds
     public static final double SLIDE_OVERSHOOT = 0.28;
     public static final double FLIP_DOWN = 0.00;
-    public static final double FRONT_OPEN = 0.36;
-    public static final double FRONT_CLOSE = 0.05;
+    public static final double FRONT_OPEN = 0.66;
+    public static final double FRONT_CLOSE = 0.35;
     public static final double FLIP_UP = 0.95;
     public static final double FLIP_ONE_THIRD = 0.33;
     public static final double CLAW_CLOSE = 0.28;
@@ -108,8 +109,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
 
     @HardwareName("verticalSlides")
     @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
-    @Deprecated
-    public DcMotor verticalSlide;
+    private DcMotor verticalSlide;
 
     @HardwareName("verticalSlide2")
     @Reversed
@@ -174,6 +174,17 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     @HardwareName("clawColor")
     public ColorSensor clawColor;
 
+    @HardwareName("leftAscent")
+    public CRServo leftAscent;
+
+    @EncoderFor("verticalSlide2")
+    public Encoder rightAscentEnc;
+
+    @HardwareName("rightAscent")
+    public CRServo rightAscent;
+
+    @EncoderFor("backLeft")
+    public Encoder leftAscentEnc;
 
     @Override
     public Encoder getLeftEncoder() {
@@ -213,6 +224,30 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     }
 
     public MotorSet driveMotors;
+
+    public void sharedHardwareInit() {
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        clawFlip.setPosition(Hardware.FLIP_UP);
+        clawFront.setPosition(Hardware.FRONT_OPEN);
+        clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
+
+        arm.setTargetPosition(0);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(0.3);
+        wrist.setPosition(0.28);
+        claw.setPosition(Hardware.CLAW_CLOSE);
+
+        // we don't have the proxy object to handle this for us
+        // so manually implement the inversion
+        horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
+        horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_IN);
+
+        lightLeft.setPosition(Hardware.LAMP_PURPLE);
+        lightRight.setPosition(Hardware.LAMP_PURPLE);
+    }
 
     public Hardware(HardwareMap hwMap) {
         super(hwMap);
