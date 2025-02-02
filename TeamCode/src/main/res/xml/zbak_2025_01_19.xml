@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <EthernetDevice name="limelight" serialNumber="EthernetOverUsb:eth0:172.29.0.30" port="0" ipAddress="172.29.0.1" />
+    <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+        <LynxModule name="Expansion Hub 2" port="2">
+            <goBILDA5202SeriesMotor name="frontLeft" port="0" />
+            <goBILDA5202SeriesMotor name="backLeft" port="1" />
+            <goBILDA5202SeriesMotor name="arm" port="2" />
+            <Servo name="lightLeft" port="0" />
+            <Servo name="leftAscent" port="1" />
+            <Servo name="horizontalLeft" port="2" />
+            <Servo name="limelightlight" port="3" />
+            <Servo name="claw" port="4" />
+            <Servo name="wrist" port="5" />
+            <REV_VL53L0X_RANGE_SENSOR name="distancebackLeft" port="0" bus="0" />
+            <REV_VL53L0X_RANGE_SENSOR name="distanceBackRight" port="0" bus="1" />
+        </LynxModule>
+        <LynxModule name="Control Hub" port="173">
+            <goBILDA5202SeriesMotor name="frontRight" port="0" />
+            <goBILDA5202SeriesMotor name="backRight" port="1" />
+            <goBILDA5202SeriesMotor name="verticalSlides" port="2" />
+            <goBILDA5202SeriesMotor name="verticalSlide2" port="3" />
+            <Servo name="lightRight" port="0" />
+            <Servo name="rightAscent" port="1" />
+            <Servo name="horizontalSlide" port="2" />
+            <Servo name="clawTwist" port="3" />
+            <Servo name="clawFront" port="4" />
+            <Servo name="clawFlip" port="5" />
+            <KauaiLabsNavxMicro name="gyro" port="0" bus="0" />
+            <REV_VL53L0X_RANGE_SENSOR name="distanceFrontLeft" port="0" bus="1" />
+            <RevColorSensorV3 name="clawColor" port="0" bus="3" />
+            <REV_VL53L0X_RANGE_SENSOR name="distanceFrontRight" port="0" bus="2" />
+        </LynxModule>
+    </LynxUsbDevice>
+    <Webcam name="Webcam 1" serialNumber="01.00.00" />
+</Robot>
