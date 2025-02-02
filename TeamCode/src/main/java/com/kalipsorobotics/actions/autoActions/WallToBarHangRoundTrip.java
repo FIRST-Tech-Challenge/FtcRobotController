@@ -3,8 +3,10 @@ package com.kalipsorobotics.actions.autoActions;
 import static com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip.SPECIMEN_HANG_POS_X;
 
 import com.kalipsorobotics.actions.KActionSet;
+import com.kalipsorobotics.actions.MoveToDistanceThreshold;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.outtake.BarHangDistanceSensorAction;
+import com.kalipsorobotics.actions.outtake.DistanceDetectionAction;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenHang;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
@@ -102,6 +104,11 @@ public class WallToBarHangRoundTrip extends KActionSet {
         wallPickupDistanceSensorAction2.setName("wallPickupDistanceSensorAction");
         wallPickupDistanceSensorAction2.setDependentActions(specimenWallReady);
         this.addAction(wallPickupDistanceSensorAction2);
+
+        DistanceDetectionAction distanceDetectionAction = new DistanceDetectionAction(outtake.revDistanceClaw, 48);
+
+        MoveToDistanceThreshold moveToDistanceThreshold = new MoveToDistanceThreshold(driveTrain,
+                distanceDetectionAction, -0.2);
 
     }
 
