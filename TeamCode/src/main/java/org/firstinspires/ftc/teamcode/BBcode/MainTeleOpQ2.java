@@ -132,8 +132,8 @@ public class MainTeleOpQ2 extends LinearOpMode{
         waitForStart();
         arm.MoveToHome();
         //Use the following line for measuring auto locations
-//      odo.setPosition(BlueBasket.pose_basket_init_old);
-        odo.setPosition(PoseStorage.currentPose);
+      odo.setPosition(BlueBasket.pose_basket_init_old);
+//        odo.setPosition(PoseStorage.currentPose);
         telemetry.addData("PositionRR", ()-> getPinpoint(odo.getPositionRR()));
         telemetry.addData("Position", ()-> getPinpoint(odo.getPosition()));
         while(opModeIsActive()){ //while loop for when program is active

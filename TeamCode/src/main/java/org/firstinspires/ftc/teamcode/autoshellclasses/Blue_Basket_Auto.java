@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.autoshellclasses;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -48,182 +50,77 @@ public class Blue_Basket_Auto extends LinearOpMode {
         //Initializes Pinpoint
         PinpointDrive drive = new PinpointDrive(hardwareMap, pose_init);
 
-        //closes claw on init
-        Actions.runBlocking(_WristClawActions.CloseClaw());
-
         telemetry.update();
         waitForStart();
     //----------------------------------------------------------------------------------------------
 
         if (isStopRequested()) return;
 
-        Vector2d outer_sample_pickup_position = new Vector2d(46, 43.25);
-        Vector2d middle_sample_pickup_position = new Vector2d(56, 43);
-        double sample_pickup_heading = Math.toRadians(-90);
-        Vector2d inner_sample_pickup_position = new Vector2d(57, 37.5);//57, 38.5
-        double inner_sample_pickup_heading = Math.toRadians(-50);
-        double rotation_speed = Math.toRadians(0.5);
+//        Vector2d outer_sample_pickup_position = new Vector2d(46, 43.25);
+//        Vector2d middle_sample_pickup_position = new Vector2d(56, 43);
+//        double sample_pickup_heading = Math.toRadians(-90);
+//        Vector2d inner_sample_pickup_position = new Vector2d(57, 37.5);//57, 38.5
+//        double inner_sample_pickup_heading = Math.toRadians(-50);
+//        double rotation_speed = Math.toRadians(0.5);
 
-        GoBildaPinpointDriverRR odo; // Declare OpMode member for the Odometry Computer
-        Action driveToDropFromOgStart, driveToDropFromStart, driveToDropFromInnerSample, driveToDropFromMiddleSample, driveToDropFromOuterSample, samplePickupInner, samplePickupMiddle, samplePickupOuter, driveToPark, armUpWait2, armUpWait3, armUpWait4, armDownWait1, armDownWait2, armDownWait3, armDownWait4, viperUpWait1, viperUpWait2, viperUpWait3, viperUpWait4, viperDownWait1, viperDownWait2, viperDownWait3, viperDownWait4, wristUpWait1, wristUpWait2, wristUpWait3, wristDownWait1, wristDownWait2, wristDownWait3, wristDownWait4, clawOpenWait1, clawOpenWait2, clawOpenWait3, clawOpenWait4, clawCloseWait1, clawCloseWait2, clawCloseWait3, clawCloseWait4;
+        // Declare OpMode member for the Odometry Computer
+        GoBildaPinpointDriverRR odo;
+
         //drive to drop
-        driveToDropFromOgStart = drive.actionBuilder(BlueBasket.pose_basket_init_old)
+        Action driveToDropFromOgStart = drive.actionBuilder(BlueBasket.pose_basket_init_old)
                 .setTangent(-45)
                 .splineToLinearHeading(pose_drop, 0)
                 .build();
-        driveToDropFromStart = drive.actionBuilder(pose_init)
+        Action driveToDropFromStart = drive.actionBuilder(pose_init)
                 .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
                 .build();
 
-        driveToDropFromInnerSample = drive.actionBuilder(BlueBasket.pose_inner_sample)
+        Action driveToDropFromInnerSample = drive.actionBuilder(BlueBasket.pose_inner_sample)
                 .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
                 .build();
 
-        driveToDropFromMiddleSample = drive.actionBuilder(BlueBasket.pose_middle_sample)
+        Action driveToDropFromMiddleSample = drive.actionBuilder(BlueBasket.pose_middle_sample)
                 .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
                 .build();
 
-        driveToDropFromOuterSample = drive.actionBuilder(BlueBasket.pose_outer_sample)
+        Action driveToDropFromOuterSample = drive.actionBuilder(BlueBasket.pose_outer_sample)
                 .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
                 .build();
 
         //sample pickup
-        samplePickupInner = drive.actionBuilder(pose_drop)
+        Action samplePickupInner = drive.actionBuilder(pose_drop)
                 .strafeToLinearHeading(BlueBasket.pose_inner_sample.position, BlueBasket.pose_inner_sample.heading)
                 .build();
-        samplePickupMiddle = drive.actionBuilder(pose_drop)
+        Action samplePickupMiddle = drive.actionBuilder(pose_drop)
                 .strafeToLinearHeading(BlueBasket.pose_middle_sample.position, BlueBasket.pose_middle_sample.heading)
                 .build();
-        samplePickupOuter = drive.actionBuilder(pose_drop)
+        Action samplePickupOuter = drive.actionBuilder(pose_drop)
                 .strafeToLinearHeading(BlueBasket.pose_outer_sample.position, BlueBasket.pose_outer_sample.heading)
                 .build();
 
         //drive to park
-        driveToPark = drive.actionBuilder(pose_drop)
+        Action driveToPark = drive.actionBuilder(pose_drop)
                 .strafeToLinearHeading(BlueBasket.pose_park.position, BlueBasket.pose_park.heading)
                 .build();
 
-//        armUpWait1 = drive.actionBuilder(drive.pose)
-//                .waitSeconds(0.75)
-//                .build();
-        armUpWait2 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.75)
-                .build();
-        armUpWait3 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.75)
-                .build();
-        armUpWait4 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.75)
-                .build();
-
-        armDownWait1 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        armDownWait2 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        armDownWait3 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        armDownWait4 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-
-        viperUpWait1 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        viperUpWait2 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        viperUpWait3 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        viperUpWait4 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-
-        viperDownWait1 = drive.actionBuilder(drive.pose)
-                .waitSeconds(5)
-                .build();
-        viperDownWait2 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        viperDownWait3 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        viperDownWait4 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-
-        wristUpWait1 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        wristUpWait2 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        wristUpWait3 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-
-        wristDownWait1 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        wristDownWait2 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        wristDownWait3 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        wristDownWait4 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-
-        clawCloseWait1 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        clawCloseWait2 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        clawCloseWait3 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        clawCloseWait4 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-
-        clawOpenWait1 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        clawOpenWait2 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        clawOpenWait3 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-        clawOpenWait4 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
-                .build();
-//        Action test = drive.actionBuilder(drive.pose)
-//                        .turnTo(Math.toRadians(225))
-//                        .build();
-
+    //----------------------------------------------------------------------------------------------
         Actions.runBlocking(
-                new SequentialAction(
-                        driveToDropFromStart,
-                        UtilActions.Wait(2),
-                        samplePickupOuter,
-                        UtilActions.Wait(2),
-                        driveToDropFromOuterSample,
-                        UtilActions.Wait(2),
-                        samplePickupMiddle,
-                        UtilActions.Wait(2),
-                        driveToDropFromMiddleSample,
-                        UtilActions.Wait(2),
-                        samplePickupInner,
-                        UtilActions.Wait(2),
-                        driveToDropFromInnerSample,
-                        UtilActions.Wait(2),
-                        driveToPark
+            new SequentialAction(
+                _WristClawActions.CloseClaw(),
+                _WristClawActions.WristUp(),
+                UtilActions.Wait(0.25),
+                driveToDropFromStart,
+                _ViperArmActions.DumpInHighBasket(),
+                samplePickupOuter,
+                _ViperArmActions.MoveViperToSamplePickUp(),
+                UtilActions.Wait(2)
+
+//                driveToDropFromOuterSample,
+//                samplePickupMiddle,
+//                driveToDropFromMiddleSample,
+//                samplePickupInner,
+//                driveToDropFromInnerSample,
+//                driveToPark
 
 //                        _ViperArmActions.MoveArmToHighBasket(),
 //                        armUpWait1,
