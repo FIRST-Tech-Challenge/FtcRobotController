@@ -242,7 +242,7 @@ public class Swerve {
 
     Module(OpMode opMode, int id) {
       double kp, ki, kd, ks;
-      // TODO: Fine tune these values to stop servo hunting (needs to be redone: add in a frickin ki)
+      // TODO: Fine tune these values to stop servo hunting (needs to be redone)
       switch (id) {
         case 0: {
           pos = "FL";
@@ -259,6 +259,7 @@ public class Swerve {
           ki = 1;
           kd = 0.05;
           ks = 0.03;
+          conversionFactor = 537.8;
           //conversionFactor += .01;
           break;
         }
@@ -268,6 +269,7 @@ public class Swerve {
           ki = 1.1;
           kd = 0.1;
           ks = 0.04;
+          conversionFactor = 537.8;
           //conversionFactor += .01;
           break;
         }
@@ -277,6 +279,7 @@ public class Swerve {
           ki = 1;
           kd = 0.15;
           ks = 0.04;
+          conversionFactor = 537.6;
           //conversionFactor -= .01;
           break;
         }

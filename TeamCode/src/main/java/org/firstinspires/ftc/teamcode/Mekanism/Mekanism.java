@@ -28,7 +28,7 @@ public class Mekanism {
   private final DigitalChannel limitSwitch;
 
   private final Servo intakeServo, intakeServo2;
-  private final Servo wrist;
+  public final Servo wrist;
 
   private final Servo ramp1, ramp2;
 
@@ -143,8 +143,6 @@ public class Mekanism {
 
   public void setPivot(double x, boolean raiseLimit) {
     double current_pos = pivot.getCurrentPosition();
-    if(raiseLimit)
-      current_pos+=500;
     if (current_pos >= limitPivot && x > 0 ) {
       x = 0;
       telemetry.addLine("Current pos over limit");
