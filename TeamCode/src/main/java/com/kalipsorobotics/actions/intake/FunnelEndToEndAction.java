@@ -21,7 +21,7 @@ public class FunnelEndToEndAction extends KActionSet {
         intakeFunnelAction.setDependentActions(intakeFunnelReady);
         this.addAction(intakeFunnelAction);
 
-        IntakeTransferReady intakeTransferReady = new IntakeTransferReady(intake);
+        IntakeTransferReady intakeTransferReady = new IntakeTransferReady(intake, true);
         intakeTransferReady.setName("intakeTransferReady");
         intakeTransferReady.setDependentActions(intakeFunnelAction);
         this.addAction(intakeTransferReady);

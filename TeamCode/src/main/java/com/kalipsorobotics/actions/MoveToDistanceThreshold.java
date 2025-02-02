@@ -35,6 +35,7 @@ public class MoveToDistanceThreshold extends Action {
 
         if (distanceDetectionAction.checkDistance()) {
             driveTrain.setPower(0);
+            isDone = true;
         }
 
     }

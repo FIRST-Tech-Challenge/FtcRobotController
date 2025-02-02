@@ -84,6 +84,8 @@ public class MoveLSAction extends Action {
             return lowestPower;
         }
 
+
+
         if (targetTicks < mmToTicksLS(30)) {
             lowestPower = 0.2;
         }
@@ -93,36 +95,42 @@ public class MoveLSAction extends Action {
         }
 
         if (targetTicks > mmToTicksLS(100)) {
-            lowestPower = 0.16;
+            lowestPower = 0.16 + ((targetTicks / 200)*0.01); // for each 200mm it should add 0.04 power more
         }
-
-        if (targetTicks > mmToTicksLS(400)) {
-            lowestPower = 0.20;
-        }
-
-        if (targetTicks > mmToTicksLS(650)) {
-            lowestPower = 0.33;
-        }
-
-        if (targetTicks > mmToTicksLS(690)) {
-            lowestPower = 0.4;
-        }
-
-        if (targetTicks > mmToTicksLS(700)) {
-            lowestPower = 0.5;
-        }
-
-        if (targetTicks > mmToTicksLS(710)) {
-            lowestPower = 0.55;
-        }
-
-        if (targetTicks > mmToTicksLS(730)) {
-            lowestPower = 0.7;
-        }
-
-        if (targetTicks > mmToTicksLS(780)) {
-            lowestPower = 0.8;
-        }
+//
+//        if (targetTicks > mmToTicksLS(100)) {
+//            lowestPower = 0.16;
+//        }
+//
+//        if (targetTicks > mmToTicksLS(400)) {
+//            lowestPower = 0.2;
+//        }
+//
+//        if (targetTicks > mmToTicksLS(650)) {
+//            lowestPower = 0.2;
+//        }
+//
+//        if (targetTicks > mmToTicksLS(690)) {
+//            lowestPower = 0.22;
+//        }
+//
+//        if (targetTicks > mmToTicksLS(700)) {
+//            lowestPower = 0.24;
+//        }
+//
+//        if (targetTicks > mmToTicksLS(710)) {
+//            lowestPower = 0.26;
+//        }
+//
+//        if (targetTicks > mmToTicksLS(730)) {
+//            lowestPower = 0.28;
+//        }
+//
+//        if (targetTicks > mmToTicksLS(780)) {
+//            lowestPower = 0.3;
+//        }
+//
+//
 
         //action timeout =raiseSlidesBasket, targetErrorTicks=105.623, errorTolerance=25.659, targetTicks=3643.623, currentTicks=3538.000,
 

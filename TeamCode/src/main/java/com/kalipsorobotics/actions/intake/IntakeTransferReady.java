@@ -12,19 +12,29 @@ import org.checkerframework.checker.units.qual.K;
 public class IntakeTransferReady extends KActionSet {
 
     public IntakeTransferReady(IntakeClaw intake) {
+        this(intake, false);
+    }
 
-        KServoAutoAction unlockRatchet = new KServoAutoAction(intake.getIntakeRatchetServo(),
-                IntakeClaw.INTAKE_RATCHET_UNLOCK_POS);
-        unlockRatchet.setName("unlockRatchet");
-        this.addAction(unlockRatchet);
+
+    public IntakeTransferReady(IntakeClaw intake, boolean isExtendLinkageToMid) {
+
+        KServoAutoAction unlockRatchet = null;
+        KServoAutoAction linkageToMid = null;
+
+        if (isExtendLinkageToMid) {
+            unlockRatchet = new KServoAutoAction(intake.getIntakeRatchetServo(),
+                    IntakeClaw.INTAKE_RATCHET_UNLOCK_POS);
+            unlockRatchet.setName("unlockRatchet");
+            this.addAction(unlockRatchet);
 
 //        KServoAutoAction closeClaw = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_CLOSE);
 //        closeClaw.setName("closeClaw");
 //        this.addAction(closeClaw);
 
-        KServoAutoAction linkageToMid = new KServoAutoAction(intake.getIntakeLinkageServo(), IntakeClaw.INTAKE_LINKAGE_MID_POS);
-        linkageToMid.setName("linkageToMid");
-        this.addAction(linkageToMid);
+            linkageToMid = new KServoAutoAction(intake.getIntakeLinkageServo(), IntakeClaw.INTAKE_LINKAGE_MID_POS);
+            linkageToMid.setName("linkageToMid");
+            this.addAction(linkageToMid);
+        }
 
         KServoAutoAction lockRatchet = new KServoAutoAction(intake.getIntakeRatchetServo(), IntakeClaw.INTAKE_RATCHET_LOCK_POS);
         lockRatchet.setName("lockRatchet");

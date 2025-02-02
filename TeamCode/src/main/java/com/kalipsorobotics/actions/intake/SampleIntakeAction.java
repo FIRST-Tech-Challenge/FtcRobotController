@@ -5,6 +5,7 @@ import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
+import com.qualcomm.hardware.ams.AMSColorSensor;
 
 public class SampleIntakeAction extends KActionSet {
 

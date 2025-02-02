@@ -171,7 +171,7 @@ public class AutoSpecimen extends LinearOpMode {
 //        redAutoSpecimen.addAction(moveToDepot);
         //==============end of pushing================//
 
-        WallPickupDistanceSensorAction wallPickupDistanceSensorAction = new WallPickupDistanceSensorAction(outtake, moveFloorSamples);
+        WallPickupDistanceSensorAction wallPickupDistanceSensorAction = new WallPickupDistanceSensorAction(outtake, moveFloorSamples, driveTrain);
         wallPickupDistanceSensorAction.setName("wallPickupDistanceSensor");
         wallPickupDistanceSensorAction.setTelemetry(telemetry);
         wallPickupDistanceSensorAction.setDependentActions(specimenWallReady);

@@ -153,7 +153,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         sampleIntakeAction3.setDependentActions(sampleIntakeReady3, moveToSample3, sampleIntakeReady3, waitAction3);
         redAutoBasket.addAction(sampleIntakeAction3);
 
-        IntakeTransferReady intakeTransferReady3 = new IntakeTransferReady(intakeClaw);
+        IntakeTransferReady intakeTransferReady3 = new IntakeTransferReady(intakeClaw, true);
         intakeTransferReady3.setName("intakeTransferReady3");
         intakeTransferReady3.setDependentActions(sampleIntakeAction3);
         redAutoBasket.addAction(intakeTransferReady3);

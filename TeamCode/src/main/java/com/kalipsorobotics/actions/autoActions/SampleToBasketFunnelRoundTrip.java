@@ -53,7 +53,7 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
         intakeFunnelAction1.setDependentActions(checkReachedSample);
         this.addAction(intakeFunnelAction1);
 
-        IntakeTransferReady intakeTransferReady1 = new IntakeTransferReady(intakeClaw);
+        IntakeTransferReady intakeTransferReady1 = new IntakeTransferReady(intakeClaw, true);
         intakeTransferReady1.setName("intakeTransferReady1");
         intakeTransferReady1.setDependentActions(intakeFunnelAction1, outtakeTransferReady);
         this.addAction(intakeTransferReady1);

@@ -24,10 +24,10 @@ public class IntakeClaw {
     //INTAKE ACTION
     public  static final double INTAKE_SMALL_SWEEP_VERTICAL_POS = 0.77; //increase to move more horizontal, decrease to move more vertical
 
-    public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_POS = 0.728; //0.85    //increase to go down, decrease to
+    public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_POS = 0.7; //0.85    //increase to go down, decrease to
     // go up
 
-    public static final double INTAKE_SMALL_PIVOT_GRAB_SAMPLE_POS = 0.79;   // 0.73 //decrease to move forward, increase
+    public static final double INTAKE_SMALL_PIVOT_GRAB_SAMPLE_POS = 0.82;   // 0.73 //decrease to move forward, increase
     // to move back
 
 

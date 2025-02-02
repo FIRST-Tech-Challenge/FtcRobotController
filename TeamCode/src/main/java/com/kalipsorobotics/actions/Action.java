@@ -63,7 +63,7 @@ public abstract class Action {
         } //if done never update
 
         for (Action action : dependentActions) {
-            if (!action.getIsDone()) {
+            if (action != null && !action.getIsDone()) {
                 return false;
             } //if dependent action is not done never update
             //dont start if dependant action not finished
@@ -78,7 +78,7 @@ public abstract class Action {
 
     public boolean dependentActionsDone() {
         for (Action a : dependentActions) {
-            if (!a.getIsDone()) {
+            if (a != null && !a.getIsDone()) {
                 return false;
             }
         }
@@ -121,7 +121,11 @@ public abstract class Action {
         stringBuilder.append(this.name);
         stringBuilder.append("--->");
         for (Action a : dependentActions) {
-            stringBuilder.append(a);
+            if (a == null) {
+                stringBuilder.append("null");
+            } else {
+                stringBuilder.append(a);
+            }
         }
         Log.d("action dependencies",  stringBuilder.toString());
     }

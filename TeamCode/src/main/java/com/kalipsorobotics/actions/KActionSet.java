@@ -16,7 +16,7 @@ public class KActionSet extends Action {
     @Override
     public void update() {
         for (Action a : actions) {
-            if (a.dependentActionsDone()) {
+            if (a != null && a.dependentActionsDone()) {
                 Log.d("action set log", "executing " + a);
                 a.updateCheckDone();
             }
@@ -26,7 +26,7 @@ public class KActionSet extends Action {
     @Override
     public boolean checkDoneCondition() {
         for (Action a : actions) {
-            if (!a.getIsDone()) {
+            if (a != null && !a.getIsDone()) {
                 return false;
             }
         }
@@ -62,7 +62,9 @@ public class KActionSet extends Action {
         super.printWithDependentActions();
 
         for (Action a : actions) {
-            a.printWithDependentActions();
+            if (a != null) {
+                a.printWithDependentActions();
+            }
         }
         Log.d("action dependencies", "End Action Set");
 

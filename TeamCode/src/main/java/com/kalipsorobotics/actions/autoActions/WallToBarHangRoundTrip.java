@@ -100,15 +100,10 @@ public class WallToBarHangRoundTrip extends KActionSet {
         moveBarToWall.addPoint(WALL_PICKUP_X+25, WALL_PICKUP_Y, -180);
         this.addAction(moveBarToWall);
 
-        WallPickupDistanceSensorAction wallPickupDistanceSensorAction2 = new WallPickupDistanceSensorAction(outtake, moveBarToWall);
+        WallPickupDistanceSensorAction wallPickupDistanceSensorAction2 = new WallPickupDistanceSensorAction(outtake, moveBarToWall, driveTrain);
         wallPickupDistanceSensorAction2.setName("wallPickupDistanceSensorAction");
         wallPickupDistanceSensorAction2.setDependentActions(specimenWallReady);
         this.addAction(wallPickupDistanceSensorAction2);
-
-        DistanceDetectionAction distanceDetectionAction = new DistanceDetectionAction(outtake.revDistanceClaw, 48);
-
-        MoveToDistanceThreshold moveToDistanceThreshold = new MoveToDistanceThreshold(driveTrain,
-                distanceDetectionAction, -0.2);
 
     }
 
