@@ -221,8 +221,6 @@ public class AutoSpecimen extends LinearOpMode {
         while (opModeIsActive()) {
 
 
-
-
             maintainLS.setIsDone(false);
             maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
             maintainLS.updateCheckDone();

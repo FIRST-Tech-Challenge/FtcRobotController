@@ -2,12 +2,11 @@ package com.kalipsorobotics.actions;
 
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
-import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 
-public class SpecimenEndToEndSequence extends KActionSet{
-    public SpecimenEndToEndSequence (IntakeClaw intakeClaw, Outtake outtake){
+public class TrussSpecimenEndToEndSequence extends KActionSet{
+    public TrussSpecimenEndToEndSequence(IntakeClaw intakeClaw, Outtake outtake){
         KServoAutoAction ratchetLock = new KServoAutoAction(intakeClaw.getIntakeRatchetServo(), IntakeClaw.INTAKE_RATCHET_LOCK_POS);
         ratchetLock.setName("ratchetLock");
         this.addAction(ratchetLock);

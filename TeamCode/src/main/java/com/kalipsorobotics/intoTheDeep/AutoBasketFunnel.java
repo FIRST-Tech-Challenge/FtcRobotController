@@ -262,7 +262,7 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            wheelOdometry.updatePosition();
+            //wheelOdometry.updatePosition();
 
             maintainLS.setIsDone(false);
             maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());

@@ -24,7 +24,7 @@ public class MoveWallTeleOp extends KActionSet {
         moveBarToWall.setName("moveBarToWall");
         moveBarToWall.setMaxTimeOutMS(3500);
         if (wallPosition == null) {
-            moveBarToWall.addPoint(-367.5, WALL_PICKUP_Y, -180);
+            moveBarToWall.addPoint(-367.5, WALL_PICKUP_Y, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
             moveBarToWall.addPoint(WALL_PICKUP_X, WALL_PICKUP_Y, -180); //-205, 700
 
         } else {

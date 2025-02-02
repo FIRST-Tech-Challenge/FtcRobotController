@@ -9,7 +9,7 @@ import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.AutoRobotHangAction;
 import com.kalipsorobotics.actions.Init;
 import com.kalipsorobotics.actions.SampleEndToEndSequence;
-import com.kalipsorobotics.actions.SpecimenEndToEndSequence;
+import com.kalipsorobotics.actions.TrussSpecimenEndToEndSequence;
 import com.kalipsorobotics.actions.TransferAction;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
@@ -96,7 +96,8 @@ public class Teleop extends LinearOpMode {
         BasketReadyAction basketReadyAction = null;
         OuttakeTransferReady outtakeTransferReady = null;
         SampleEndToEndSequence sampleEndToEndSequence = null;
-        SpecimenEndToEndSequence specimenEndToEndSequence = null;
+        TrussSpecimenEndToEndSequence trussSpecimenEndToEndSequence = null;
+        SampleEndToEndSequence specimenEndToEndSequence = null;
         SpecimenHang specimenHang = null;
         FunnelEndToEndAction intakeFunnelEndToEndAction = null;
         KServoAutoAction hangHook1Move = null;
@@ -151,6 +152,7 @@ public class Teleop extends LinearOpMode {
         boolean specimenHangPressed;
         boolean specimenReadyPressed;
         boolean sampleEndToEndSequencePressed;
+        boolean trussSpecimenEndToEndSequencePressed;
         boolean specimenEndToEndSequencePressed;
 
         //double hangPosX = SPECIMEN_HANG_POS_X+50;
@@ -212,13 +214,14 @@ public class Teleop extends LinearOpMode {
             specimenHangPressed = kGamePad2.isToggleButtonA();
             specimenReadyPressed = kGamePad2.isToggleButtonB();
             sampleEndToEndSequencePressed = kGamePad2.isBackButtonPressed();
+            trussSpecimenEndToEndSequencePressed = kGamePad2.isLeftTriggerPressed() && kGamePad2.isStartButtonPressed();
             specimenEndToEndSequencePressed = kGamePad2.isStartButtonPressed();
 
             if(kGamePad2.isLeftBumperPressed()){
                 Log.d ("backButton", " Gamepad" + gamepad2.left_bumper);
                 Log.d ("backButton ", " isLeftBumperPressed" + kGamePad2.isLeftBumperPressed());
                 Log.d ("backButton ", " isBackButtonPressed" + kGamePad2.isBackButtonPressed());
-                Log.d ("backButton ", " sampleEndToEndSequence " + specimenEndToEndSequencePressed);
+                Log.d ("backButton ", " sampleEndToEndSequence " + trussSpecimenEndToEndSequencePressed);
             }
 
             //RESET POSITIONS TO CURRENT
@@ -258,35 +261,30 @@ public class Teleop extends LinearOpMode {
 //                }
 //            }
 
-//            if(moveWallTeleopPressed) {
-//                if (moveWallTeleOp == null || moveWallTeleOp.getIsDone()){
-//                    moveWallTeleOp = new MoveWallTeleOp(driveTrain, wheelOdometry, null);
-//                    moveWallTeleOp.setName("moveWallTeleop");
-//
-//                    setLastMoveAction(moveWallTeleOp);
-//                }
-//
-//            }
+            if(moveWallTeleopPressed) {
+                if (moveWallTeleOp == null || moveWallTeleOp.getIsDone()){
+                    moveWallTeleOp = new MoveWallTeleOp(driveTrain, wheelOdometry, null);
+                    moveWallTeleOp.setName("moveWallTeleop");
 
-//            if(wallToBarPressed) {
-//                if (wallToBarAction == null || wallToBarAction.getIsDone()){
-//                    hangPosY += hangIncrement;
-//                    wallToBarAction = new WallToBarAction(driveTrain, wheelOdometry, null);
-//                    wallToBarAction.setName("wallToBarHangRoundTrip");
-//
-//                    setLastMoveAction(wallToBarAction);
-//                }
-//            }
+                    setLastMoveAction(moveWallTeleOp);
+                }
+
+            }
+
+            if(wallToBarPressed) {
+                if (wallToBarAction == null || wallToBarAction.getIsDone()){
+                    hangPosY += hangIncrement;
+                    wallToBarAction = new WallToBarAction(driveTrain, wheelOdometry, null);
+                    wallToBarAction.setName("wallToBarHangRoundTrip");
+
+                    setLastMoveAction(wallToBarAction);
+                }
+            }
 
 
-//            if (!isGamePadDriveJoystickZero()) {  //cacel action b/c of Manual control override
-//                if (angleLockTeleOp != null) {
-//                    angleLockTeleOp.setIsDone(true);
-//                }
-//                if (moveWallTeleOp != null) {
-//                    moveWallTeleOp.setIsDone(true);
-//                }
-//            }
+            if (!isGamePadDriveJoystickZero()) {  //cacel action b/c of Manual control override
+                setLastMoveAction(null);
+            }
 
             //HANG
 
@@ -642,15 +640,26 @@ public class Teleop extends LinearOpMode {
                 }
             }
 
-            if(specimenEndToEndSequencePressed) {
-                Log.d("backButton", " " + specimenEndToEndSequencePressed);
-                if(specimenEndToEndSequence == null || specimenEndToEndSequence.getIsDone()){
-                    specimenEndToEndSequence = new SpecimenEndToEndSequence(intakeClaw, outtake);
-                    specimenEndToEndSequence.setName("specimenEndToEndSequence");
-                    Log.d("backButton", "Creating sequence " + specimenEndToEndSequence);
+            if(trussSpecimenEndToEndSequencePressed) {
+                Log.d("backButton", " " + trussSpecimenEndToEndSequencePressed);
+                if(trussSpecimenEndToEndSequence == null || trussSpecimenEndToEndSequence.getIsDone()){
+                    trussSpecimenEndToEndSequence = new TrussSpecimenEndToEndSequence(intakeClaw, outtake);
+                    trussSpecimenEndToEndSequence.setName("trussSpecimenEndToEndSequence");
+                    Log.d("backButton", "Creating sequence " + trussSpecimenEndToEndSequence);
 
-                    setLastOuttakeAction(specimenEndToEndSequence);
+                    setLastOuttakeAction(trussSpecimenEndToEndSequence);
+                    setLastIntakeAction(trussSpecimenEndToEndSequence);
+                }
+            }
+
+            if (specimenEndToEndSequencePressed) {
+                if (specimenEndToEndSequence == null || specimenEndToEndSequence.getIsDone()) {
+                    specimenEndToEndSequence = new SampleEndToEndSequence(intakeClaw, outtake, Outtake.LS_DOWN_POS);
+                    specimenEndToEndSequence.setName("specimenEndToEndSequence");
+
+
                     setLastIntakeAction(specimenEndToEndSequence);
+                    setLastOuttakeAction(specimenEndToEndSequence);
                 }
             }
 
@@ -666,7 +675,7 @@ public class Teleop extends LinearOpMode {
 //                maintainLS.update();
 //            }
 
-            wheelOdometry.updatePosition();
+            //wheelOdometry.updatePosition();
 
             if(lastOuttakeAction != null) {
                 lastOuttakeAction.updateCheckDone();
