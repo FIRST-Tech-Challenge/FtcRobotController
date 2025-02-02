@@ -82,16 +82,16 @@ public class WristClawActions {
     }
 
 
-    //Generates Action for WristCenter
-    public class WristCenterAction implements Action {
+    //Generates Action for WristMid
+    public class WristMidAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            _WristClaw.WristCenter();
+            _WristClaw.WristMid();
             return false;
         }
     }
-    public Action WristCenter() {
-        return new WristCenterAction();
+    public Action WristMid() {
+        return new WristMidAction();
     }
 
 

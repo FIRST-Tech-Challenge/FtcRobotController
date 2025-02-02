@@ -25,7 +25,7 @@ public class Arm {
     final int homePosition = 0;
     final int clearancePosition = 24;
     final int hangPosition = 65;
-    final int highBasketPosition = 100;
+    final int highBasketPosition = 95;
     final int specimenPosition = 45;
     //-----------------------
 

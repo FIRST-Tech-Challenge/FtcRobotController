@@ -3,6 +3,7 @@ package org.bluebananas.ftc.roadrunneractions;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 
 import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.BlueBasket;
@@ -93,22 +94,45 @@ public class ActionBuilder {
     //Path for RedSpecimen
     public static Action RedSpecimen(Function<Pose2d, TrajectoryActionBuilder> builderFunction)
     {
-        Pose2d startPose = new Pose2d(15, -63, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(9, -64, Math.toRadians(90));
         TrajectoryActionBuilder builder = builderFunction.apply(startPose);
         return builder
-                .splineTo(new Vector2d(9,-42), Math.toRadians(90))
-                .waitSeconds(1)//hook preloaded specimen
-                .strafeTo(new Vector2d(12,-42))
-                .splineToSplineHeading(new Pose2d(36,-24, Math.toRadians(180)), Math.toRadians(90))
-                .splineTo(new Vector2d(42,-12), Math.toRadians(0))
-                .strafeTo(new Vector2d(45,-12))
-                .strafeTo(new Vector2d(45,-48))
-                .strafeTo(new Vector2d(45,-24))
-                .splineTo(new Vector2d(57,-12), Math.toRadians(0))
-                .strafeTo(new Vector2d(57,-48))
-                .strafeTo(new Vector2d(57,-42))
-                .waitSeconds(1)//wait for human player
-                .strafeTo(new Vector2d(63,-63))
+                .strafeToLinearHeading(new Vector2d(0,-48), Math.toRadians(90))
+                .waitSeconds(1.5)//raise mechanisms to clip
+
+                .strafeToLinearHeading(new Vector2d(0,-36),Math.toRadians(90), new TranslationalVelConstraint(10))
+                .waitSeconds(1.5)//lower mechanisms from clipping
+
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(36,-26), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(46,-12), Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(46,-50),Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(46,-24),Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(52,-15),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(58, -24),Math.toRadians(-90))
+                .strafeToConstantHeading(new Vector2d(58,-60))
+                .strafeToLinearHeading(new Vector2d(51,-57),Math.toRadians(-135))
+
+
+
+//                .strafeToLinearHeading(new Vector2d(12,-45), Math.toRadians(90))
+//                .strafeToLinearHeading(new Vector2d(36,-45), Math.toRadians(90))
+//                .strafeToLinearHeading(new Vector2d(40,-12), Math.toRadians(90))
+//                .strafeToLinearHeading(new Vector2d(46,-12), Math.toRadians(90))
+//                .build();
+//                .splineTo(new Vector2d(9,-42), Math.toRadians(90))
+//                .waitSeconds(1)//hook preloaded specimen
+//                .strafeTo(new Vector2d(12,-42))
+//                .splineToSplineHeading(new Pose2d(36,-24, Math.toRadians(180)), Math.toRadians(90))
+//                .splineTo(new Vector2d(42,-12), Math.toRadians(0))
+//                .strafeTo(new Vector2d(45,-12))
+//                .strafeTo(new Vector2d(45,-48))
+//                .strafeTo(new Vector2d(45,-24))
+//                .splineTo(new Vector2d(57,-12), Math.toRadians(0))
+//                .strafeTo(new Vector2d(57,-48))
+//                .strafeTo(new Vector2d(57,-42))
+//                .waitSeconds(1)//wait for human player
+//                .strafeTo(new Vector2d(63,-63))
                 .build();
 
     }

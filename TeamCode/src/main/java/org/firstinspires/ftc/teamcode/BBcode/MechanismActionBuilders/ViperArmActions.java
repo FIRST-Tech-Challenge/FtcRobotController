@@ -46,6 +46,30 @@ public class ViperArmActions {
     public Action MoveViperToHighBasket() {
         return new MoveViperToHighBasketAction();
     }
+
+    //Moves Arm to the Specimen
+    public class MoveArmToSpecimenAction implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet){
+            _Arm.MoveToSpecimen();
+            return false;
+        }
+    }
+    public Action MoveArmToSpecimen() {
+        return new MoveArmToSpecimenAction();
+    }
+    //Moves Viper to the Specimen
+    public class MoveViperToSpecimenAction implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            _Viper.ExtendSpecimenhang(1);
+            return false;
+        }
+    }
+    public Action MoveViperToSpecimen() {
+        return new MoveViperToSpecimenAction();
+    }
+
     //Moves Arm to Home
     public class MoveArmToHomeAction implements Action {
         @Override
@@ -96,6 +120,26 @@ public class ViperArmActions {
             UtilActions.Wait(1),
             MoveArmToHome(),
             UtilActions.Wait(1)
+        );
+    }
+    public Action RaiseToClip() {
+        return new SequentialAction(
+            _WristClawActions.WristMid(),
+            UtilActions.Wait(0.2),
+            MoveArmToSpecimen(),
+            UtilActions.Wait(0.75),
+            MoveViperToSpecimen(),
+            UtilActions.Wait(0.75)
+        );
+    }
+    public Action LowerFromClip() {
+        return new SequentialAction(
+                _WristClawActions.WristMid(),
+                UtilActions.Wait(0.2),
+                MoveViperToHome(),
+                UtilActions.Wait(0.75),
+                MoveArmToHome(),
+                UtilActions.Wait(0.75)
         );
     }
 }
