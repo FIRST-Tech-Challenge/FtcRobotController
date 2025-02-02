@@ -23,7 +23,6 @@ public class Outtake {
     public KServo outtakePigeonServo;
     public KServo hangHook1;
     public KServo hangHook2;
-
     public Rev2mDistanceSensor revDistanceClaw;
 
     public Rev2mDistanceSensor revDistanceBottom;
@@ -130,9 +129,23 @@ public class Outtake {
         return CalculateTickPer.ticksToMmLS(getLinearSlide1().getCurrentPosition());
     }
 
+
+
     public DcMotor getLinearSlide1() {
         return linearSlide1;
     }
+    public Rev2mDistanceSensor getRevDistanceBottom() {
+        return revDistanceBottom;
+    }
+
+    public Rev2mDistanceSensor getRevDistanceClaw() {
+        return revDistanceClaw;
+    }
+
+    public KServo getOuttakeClawServo() {
+        return outtakeClawServo;
+    }
+
     public DcMotor getLinearSlide2() {
         return linearSlide2;
     }

@@ -1,15 +1,41 @@
 package com.kalipsorobotics.actions;
 
 import com.kalipsorobotics.actions.outtake.DistanceDetectionAction;
+import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.Outtake;
-import com.kalipsorobotics.utilities.OpModeUtilities;
 
-public class MoveToDistanceThreshold extends KActionSet {
+public class MoveToDistanceThreshold extends Action {
 
-    public MoveToDistanceThreshold(Outtake outtake) {
+    private final DriveTrain driveTrain;
 
-        DistanceDetectionAction distanceDetectionAction = new DistanceDetectionAction(outtake.)
+    private final DistanceDetectionAction distanceDetectionAction;
+    private final double power;
+
+    public MoveToDistanceThreshold(DriveTrain driveTrain, DistanceDetectionAction distanceDetectionAction,
+                                   double power) {
+
+        this.driveTrain = driveTrain;
+        this.distanceDetectionAction = distanceDetectionAction;
+        this.power = power;
 
     }
 
+    @Override
+    protected boolean checkDoneCondition() {
+        return isDone;
+    }
+
+    @Override
+    protected void update() {
+        if (isDone) {
+            return;
+        }
+
+        driveTrain.setPower(power);
+
+        if (distanceDetectionAction.checkDistance()) {
+            driveTrain.setPower(0);
+        }
+
+    }
 }
