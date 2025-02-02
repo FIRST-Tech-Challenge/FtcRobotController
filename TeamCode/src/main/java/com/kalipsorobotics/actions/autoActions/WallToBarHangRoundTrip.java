@@ -2,12 +2,9 @@ package com.kalipsorobotics.actions.autoActions;
 
 import static com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip.SPECIMEN_HANG_POS_X;
 
-import android.util.Log;
-
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.outtake.BarHangDistanceSensorAction;
-import com.kalipsorobotics.actions.outtake.CloseWhenDetectDistanceAction;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenHang;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
@@ -16,20 +13,16 @@ import com.kalipsorobotics.actions.outtake.WallPickupDistanceSensorAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.Outtake;
-import com.kalipsorobotics.modules.RevDistance;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
-
-import org.checkerframework.checker.units.qual.K;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class WallToBarHangRoundTrip extends KActionSet {
 
-    public static final double WALL_PICKUP_X = -125; //150-155 normal (overshoot val)
+    public static final double WALL_PICKUP_X = -125; //150-155 normal (overshoot val) //
     public static final double WALL_PICKUP_Y = -790;
     public static final double WALL_PICKUP_PID_VALUE = 1.0/2000.0;
 
     //ASSUME ROBOT AT WALL READY FOR SPECIMEN
-    public WallToBarHangRoundTrip(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, Rev2mDistanceSensor revDistance, Rev2mDistanceSensor revDistance2, int hangPosY) {
+    public WallToBarHangRoundTrip(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, Rev2mDistanceSensor revDistanceClaw, Rev2mDistanceSensor revDistanceBottom, int hangPosY) {
 
 //        WaitAction waitAtWall = new WaitAction(100);
 //        waitAtWall.setName("waitAtWall");
@@ -52,7 +45,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         wait.setDependentActions(liftSpecimenOffWall);
         this.addAction(wait);
 
-        SpecimenHangReady specimenHangReady = new SpecimenHangReady(outtake, 30);
+        SpecimenHangReady specimenHangReady = new SpecimenHangReady(outtake); // extra hang = 30
         specimenHangReady.setName("hangSpecimenReady");
         specimenHangReady.setDependentActions(wait);
         this.addAction(specimenHangReady);
@@ -61,7 +54,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         moveToBar1.setName("moveToBar1");
         moveToBar1.setMaxTimeOutMS(3500);
         moveToBar1.setDependentActions(liftSpecimenOffWall);
-        moveToBar1.addPoint(SPECIMEN_HANG_POS_X+150, hangPosY, 0, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
+        moveToBar1.addPoint(SPECIMEN_HANG_POS_X+250, hangPosY, 0, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
         moveToBar1.addPoint(SPECIMEN_HANG_POS_X, hangPosY, 0);
         this.addAction(moveToBar1);
 
@@ -80,11 +73,11 @@ public class WallToBarHangRoundTrip extends KActionSet {
 //        moveToBar2.addPoint(SPECIMEN_HANG_POS_X, hangPosY, 0);
 //        this.addAction(moveToBar2);
 
-        WaitAction wait2 = new WaitAction(1000);
+        WaitAction wait2 = new WaitAction(1500);
         wait2.setDependentActions(closeClaw);
         this.addAction(wait2);
 
-        BarHangDistanceSensorAction barHangDistanceSensorAction = new BarHangDistanceSensorAction(outtake, revDistance2, moveToBar1);
+        BarHangDistanceSensorAction barHangDistanceSensorAction = new BarHangDistanceSensorAction(outtake, revDistanceBottom, moveToBar1);
         barHangDistanceSensorAction.setDependentActions(wait2);
         this.addAction(barHangDistanceSensorAction);
 
@@ -102,18 +95,10 @@ public class WallToBarHangRoundTrip extends KActionSet {
         moveBarToWall.setMaxTimeOutMS(3500);
         moveBarToWall.setDependentActions(specimenHang);
         moveBarToWall.addPoint(-367.5, WALL_PICKUP_Y, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //-205, 700
-        moveBarToWall.addPoint(WALL_PICKUP_X, WALL_PICKUP_Y, -180);
+        moveBarToWall.addPoint(WALL_PICKUP_X+25, WALL_PICKUP_Y, -180);
         this.addAction(moveBarToWall);
 
-//        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry, WALL_PICKUP_PID_VALUE, 1.0 / Math.toRadians(80));
-//        moveToDepot.setName("moveToDepot");
-//        moveToDepot.setDependentActions(moveBarToWall, specimenWallReady);
-//        //to depot for specimen
-//        moveToDepot.setMaxTimeOutMS(3000);
-//        moveToDepot.addPoint(WALL_PICKUP_X, WALL_PICKUP_Y, -180); //-130, -615
-//        this.addAction(moveToDepot);
-
-        WallPickupDistanceSensorAction wallPickupDistanceSensorAction2 = new WallPickupDistanceSensorAction(outtake, revDistance, moveBarToWall);
+        WallPickupDistanceSensorAction wallPickupDistanceSensorAction2 = new WallPickupDistanceSensorAction(outtake, revDistanceClaw, moveBarToWall);
         wallPickupDistanceSensorAction2.setName("wallPickupDistanceSensorAction");
         wallPickupDistanceSensorAction2.setDependentActions(specimenWallReady);
         this.addAction(wallPickupDistanceSensorAction2);

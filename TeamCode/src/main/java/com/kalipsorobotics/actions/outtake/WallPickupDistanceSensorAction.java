@@ -5,6 +5,7 @@ import android.util.Log;
 import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
+import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.Outtake;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
@@ -13,25 +14,25 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class WallPickupDistanceSensorAction extends Action {
 
     Rev2mDistanceSensor revDistance;
-    CloseWhenDetectDistanceAction closeWhenDetectAction;
+    DistanceDetectionAction detectDistanceAction;
     PurePursuitAction purePursuitAction;
-    KServoAutoAction closeClawAction;
+    KServoAutoAction outtakeClawClose;
 
     public WallPickupDistanceSensorAction(Outtake outtake, Rev2mDistanceSensor revDistance, PurePursuitAction purePursuitAction) {
         this.revDistance = revDistance;
-        closeWhenDetectAction = new CloseWhenDetectDistanceAction(revDistance, 70);
-        closeWhenDetectAction.setName("closeWhenDetectAction");
+        detectDistanceAction = new DistanceDetectionAction(revDistance, 48);
+        detectDistanceAction.setName("closeWhenDetectAction");
 
         this.purePursuitAction = purePursuitAction;
 
-        closeClawAction = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_CLOSE);
-        closeClawAction.setName("closeClawAction");
-        closeClawAction.setDependentActions(closeWhenDetectAction);
+        outtakeClawClose = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_CLOSE);
+        outtakeClawClose.setName("closeClawAction");
+        outtakeClawClose.setDependentActions(detectDistanceAction);
     }
 
     @Override
     protected boolean checkDoneCondition() {
-        return closeClawAction.getIsDone();
+        return outtakeClawClose.getIsDone();
     }
 
     @Override
@@ -40,12 +41,17 @@ public class WallPickupDistanceSensorAction extends Action {
             return;
         }
         if (purePursuitAction.getHasStarted()) {
-            closeWhenDetectAction.updateCheckDone();
-            closeClawAction.updateCheckDone();
-            if (!closeWhenDetectAction.getIsDone()) {
+            detectDistanceAction.updateCheckDone();
+            outtakeClawClose.updateCheckDone();
+            if (!detectDistanceAction.getIsDone()) {
                 purePursuitAction.updateCheckDone();
+                if (purePursuitAction.getIsDone()) {
+                    detectDistanceAction.setIsDone(isDone);
+                    Log.d("distanceForceStop", "Wall Distance:" + revDistance.getDistance(DistanceUnit.MM) + "Pos: " + purePursuitAction.getOdometry().getCurrentPosition().toString());
+                }
             } else {
                 purePursuitAction.finishedMoving();
+                Log.d("cancelPurePursuit", "Wall " + revDistance.getDistance(DistanceUnit.MM));
             }
 
         }

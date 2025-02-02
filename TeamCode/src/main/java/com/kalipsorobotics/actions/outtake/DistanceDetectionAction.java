@@ -1,20 +1,15 @@
 package com.kalipsorobotics.actions.outtake;
 
-import com.kalipsorobotics.actions.Action;
+import android.util.Log;
+
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
-import com.kalipsorobotics.actions.autoActions.SampleToBasketFunnelRoundTrip;
-import com.kalipsorobotics.localization.WheelOdometry;
-import com.kalipsorobotics.modules.IntakeClaw;
-import com.kalipsorobotics.modules.Outtake;
-import com.kalipsorobotics.modules.RevDistance;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
-public class CloseWhenDetectDistanceAction extends KActionSet {
+public class DistanceDetectionAction extends KActionSet {
 
     PurePursuitAction purePursuitAction;
     Rev2mDistanceSensor revDistance;
@@ -25,13 +20,16 @@ public class CloseWhenDetectDistanceAction extends KActionSet {
 //
 //    }
 
-    public CloseWhenDetectDistanceAction(Rev2mDistanceSensor revDistance, double targetDistance) {
+    public DistanceDetectionAction(Rev2mDistanceSensor revDistance, double targetDistance) {
        this.revDistance = revDistance;
        this.targetDistance = targetDistance;
     }
 
     public boolean checkDistance() {
-        return (revDistance.getDistance(DistanceUnit.MM) < targetDistance);
+        long timestamp = System.currentTimeMillis();
+        double distance_mm = revDistance.getDistance(DistanceUnit.MM);
+        Log.d("DistanceDetectAction", "getDistance elapse ms " + (System.currentTimeMillis() - timestamp));
+        return (distance_mm < targetDistance);
     }
 
     @Override

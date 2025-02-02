@@ -3,21 +3,12 @@ package com.kalipsorobotics.test;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.kalipsorobotics.actions.KActionSet;
-import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
-import com.kalipsorobotics.actions.outtake.CloseWhenDetectDistanceAction;
-import com.kalipsorobotics.actions.outtake.MoveLSAction;
-import com.kalipsorobotics.actions.outtake.SpecimenHang;
-import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
-import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
-import com.kalipsorobotics.modules.RevDistance;
-import com.kalipsorobotics.utilities.KServo;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.checkerframework.checker.units.qual.K;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
@@ -27,8 +18,8 @@ public class RevDistanceSensorTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
-        Rev2mDistanceSensor revDistance = hardwareMap.get(Rev2mDistanceSensor.class, "revDistance");
-        Rev2mDistanceSensor revDistance2 = hardwareMap.get(Rev2mDistanceSensor.class, "revDistance2");
+        Rev2mDistanceSensor revDistance = hardwareMap.get(Rev2mDistanceSensor.class, "revDistanceClaw");
+        Rev2mDistanceSensor revDistance2 = hardwareMap.get(Rev2mDistanceSensor.class, "revDistanceBottom");
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         Outtake outtake = Outtake.getInstance(opModeUtilities);
 
