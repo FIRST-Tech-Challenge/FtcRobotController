@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.systems;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
+
 import org.firstinspires.ftc.teamcode.Settings;
 
 public class DynamicInput {
@@ -12,7 +13,8 @@ public class DynamicInput {
     public Settings.ControllerProfile subProfile;
 
     // Track previous button states for justPressed functionality
-    private boolean prevExtendHorizontal, prevRetractHorizontal, prevExtendVertical, prevRetractVertical, prevWrist, prevInwardClaw, prevOutwardClaw, prevToggleClaw, prevShoulderUp, prevShoulderDown, prevFlipMovement;
+    private boolean prevExtendHorizontal, prevRetractHorizontal, prevExtendVertical, prevRetractVertical, prevWrist,
+            prevInwardClaw, prevOutwardClaw, prevToggleClaw, prevShoulderUp, prevShoulderDown, prevFlipMovement;
 
     public DynamicInput(Gamepad gamepad1, Gamepad gamepad2, Settings.ControllerProfile mainProfile,
             Settings.ControllerProfile subProfile) {
@@ -102,7 +104,6 @@ public class DynamicInput {
         public final boolean shoulderUp, shoulderDown;
         public boolean flipMovement;
 
-
         public Actions(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
                 Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings) {
             this.extendHorizontal = getButtonState(subCtrl, subSettings.buttonMapping.extendHorizontal);
@@ -139,11 +140,15 @@ public class DynamicInput {
     }
 
     public static class ContextualActions extends Actions {
-        public final boolean justExtendHorizontal, justRetractHorizontal, justRetractVertical, justExtendVertical, justWristUp, justInwardClaw, justOutwardClaw, justToggleClaw, justShoulderUp, justShoulderDown, justFlipMovement;
+        public final boolean justExtendHorizontal, justRetractHorizontal, justRetractVertical, justExtendVertical,
+                justWristUp, justInwardClaw, justOutwardClaw, justToggleClaw, justShoulderUp, justShoulderDown,
+                justFlipMovement;
 
         public ContextualActions(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
                 Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings,
-                boolean prevExtendHorizontal, boolean prevRetractHorizontal, boolean prevExtendVertical, boolean prevRetractVertical, boolean prevWrist, boolean prevInwardClaw, boolean prevOutwardClaw, boolean prevToggleClaw, boolean prevShoulderUp, boolean prevShoulderDown, boolean prevFlipMovement) {
+                                 boolean prevExtendHorizontal, boolean prevRetractHorizontal, boolean prevExtendVertical,
+                                 boolean prevRetractVertical, boolean prevWrist, boolean prevInwardClaw, boolean prevOutwardClaw,
+                                 boolean prevToggleClaw, boolean prevShoulderUp, boolean prevShoulderDown, boolean prevFlipMovement) {
             super(mainCtrl, mainSettings, subCtrl, subSettings);
 
             this.justExtendHorizontal = extendHorizontal && !prevExtendHorizontal;
@@ -170,7 +175,8 @@ public class DynamicInput {
 
     public ContextualActions getContextualActions() {
         ContextualActions actions = new ContextualActions(mainCtrl, mainSettings, subCtrl, subSettings,
-                prevExtendHorizontal, prevRetractHorizontal, prevExtendVertical, prevRetractVertical, prevWrist, prevInwardClaw, prevOutwardClaw, prevToggleClaw, prevShoulderUp, prevShoulderDown, prevFlipMovement);
+                prevExtendHorizontal, prevRetractHorizontal, prevExtendVertical, prevRetractVertical, prevWrist,
+                prevInwardClaw, prevOutwardClaw, prevToggleClaw, prevShoulderUp, prevShoulderDown, prevFlipMovement);
 
         // Update previous states
         prevExtendHorizontal = actions.extendHorizontal;

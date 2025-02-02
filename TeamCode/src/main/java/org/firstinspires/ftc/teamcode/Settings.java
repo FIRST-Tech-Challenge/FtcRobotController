@@ -13,7 +13,7 @@ public class Settings {
      * Time in milliseconds needed to ensure safe parking -
      * if there is more time than this, the robot will try to score more points.
      */
-    public static double ms_needed_to_park = 5000; // TODO: TIME THIS SO WE DON'T WASTE TIME
+    public static double ms_needed_to_park = 2000; // TODO: TIME THIS SO WE DON'T WASTE TIME
 
     // Movement settings
     @Config
@@ -29,7 +29,10 @@ public class Settings {
         public static double default_autonomous_speed = 0.6;
         /** Flips movement to make movement easier while the robot is backwards **/
         public static int flip_movement = 1;
-        /** Determines if the gecko wheels outtake a little when closing the claw to ease transfer **/
+        /**
+         * Determines if the gecko wheels outtake a little when closing the claw to ease
+         * transfer
+         **/
         public static boolean easeTransfer = true;
     }
 
@@ -69,6 +72,7 @@ public class Settings {
                 public static double[] CHAMBER_POSITION = {0.3, 0.0};
                 public static double[] VERTICAL_POSITION = {0.85, 0.0};
             }
+
             @Config
             public static class Linkage {
                 // TODO: TUNE WHEN NEW SERVO GOES IN
@@ -101,7 +105,6 @@ public class Settings {
             public static final String LINKAGE = "shoulder";
             public static final String CLAW = "claw";
         }
-
 
         @Config
         public static class Extensor {
@@ -178,7 +181,7 @@ public class Settings {
             // place positions for each starting position
             public static Pose2d LEFT_CHAMBER_POSE = new Pose2d(0, -29.5, Math.toRadians(90));
             public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(0, -32.5, Math.toRadians(90));
-            public static Pose2d BASKET_POSE = new Pose2d(-55, -55, Math.toRadians(45));
+            public static Pose2d BASKET_POSE = new Pose2d(-58.2, -58.6, Math.toRadians(45));
 
             public static Pose2d HP_POSE = new Pose2d(55, -54, Math.toRadians(90));
 
@@ -188,12 +191,15 @@ public class Settings {
             public static Pose2d RIGHT_BEFORE_PARK_POSE = new Pose2d(-45, -9.5, Math.toRadians(90));
             public static Pose2d LEFT_PARK_POSE = new Pose2d(-23, 13, Math.toRadians(180));
             public static Pose2d RIGHT_PARK_POSE = new Pose2d(60, -60, Math.toRadians(180));
-            public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(45, -5, Math.toRadians(90)); // TODO: TUNE
-            public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(55, -5, Math.toRadians(90)); // TODO: TUNE
-            public static Vector2d SAMPLE_MIDDLEMAN = new Vector2d(22,-38);
+            public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(43.5, -5, Math.toRadians(90));
+            public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(50, -10, Math.toRadians(90));
+            public static Vector2d SAMPLE_MIDDLEMAN = new Vector2d(22, -38);
+            public static Vector2d BASKET_MIDDLEMAN = new Vector2d(-36.3, -60.0);
 
-            // I am adding this to push samples into human player zone
-            // ^ thanks for the comment deepak have you tried USING YOUR EYES
+            public static Vector2d LEFT_SAMPLE_1_VEC = new Vector2d(-47.9, -11.7);
+            public static Vector2d LEFT_SAMPLE_2_VEC = new Vector2d(-55.9, -11.7);
+            public static Vector2d LEFT_SAMPLE_3_VEC = new Vector2d(-60.9, -11.7);
+
         }
 
         @Config
@@ -341,8 +347,6 @@ public class Settings {
         LEFT_STICK_X, LEFT_STICK_Y,
         RIGHT_STICK_X, RIGHT_STICK_Y
     }
-
-
 
     // Deploy flags
     @Config

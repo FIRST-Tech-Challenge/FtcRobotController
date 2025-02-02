@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.utils.MenuHelper;
 
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 /** @noinspection unused */
@@ -23,7 +23,7 @@ public class TestingSuite extends LinearOpMode {
             Settings.Hardware.IDs.FRONT_RIGHT_MOTOR,
             Settings.Hardware.IDs.REAR_LEFT_MOTOR,
             Settings.Hardware.IDs.REAR_RIGHT_MOTOR,
-//            Settings.Hardware.IDs.LINEAR_ACTUATOR,
+            // Settings.Hardware.IDs.LINEAR_ACTUATOR,
             Settings.Hardware.IDs.SLIDE_VERTICAL,
             Settings.Hardware.IDs.SLIDE_HORIZONTAL,
     };
@@ -134,12 +134,8 @@ public class TestingSuite extends LinearOpMode {
                             testServo.setPosition(position);
                         }
 
-                        if (selectedServo[0].equals(Settings.Hardware.IDs.GECKO_LEFT) ||
-                                selectedServo[0].equals(Settings.Hardware.IDs.GECKO_RIGHT)) {
-                            continuousMode.set(true);
-                        } else {
-                            continuousMode.set(false);
-                        }
+                        continuousMode.set(selectedServo[0].equals(Settings.Hardware.IDs.GECKO_LEFT) ||
+                                selectedServo[0].equals(Settings.Hardware.IDs.GECKO_RIGHT));
 
                         double step = fineControl ? 0.05 : 0.2;
 
