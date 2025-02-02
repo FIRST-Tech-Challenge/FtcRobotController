@@ -73,16 +73,16 @@ public class WallToBarHangRoundTrip extends KActionSet {
 //        moveToBar2.addPoint(SPECIMEN_HANG_POS_X, hangPosY, 0);
 //        this.addAction(moveToBar2);
 
-        WaitAction wait2 = new WaitAction(1500);
-        wait2.setDependentActions(closeClaw);
-        this.addAction(wait2);
+//        WaitAction wait2 = new WaitAction(1500);
+//        wait2.setDependentActions(closeClaw);
+//        this.addAction(wait2);
 
-        BarHangDistanceSensorAction barHangDistanceSensorAction = new BarHangDistanceSensorAction(outtake, revDistanceBottom, moveToBar1);
-        barHangDistanceSensorAction.setDependentActions(wait2);
-        this.addAction(barHangDistanceSensorAction);
+//        BarHangDistanceSensorAction barHangDistanceSensorAction = new BarHangDistanceSensorAction(outtake, revDistanceBottom, moveToBar1);
+//        barHangDistanceSensorAction.setDependentActions(wait2);
+//        this.addAction(barHangDistanceSensorAction);
 
         SpecimenHang specimenHang = new SpecimenHang(outtake);
-        specimenHang.setDependentActions(barHangDistanceSensorAction);
+        specimenHang.setDependentActions(moveToBar1, specimenHangReady);
         this.addAction(specimenHang);
 
         SpecimenWallReady specimenWallReady = new SpecimenWallReady(outtake);

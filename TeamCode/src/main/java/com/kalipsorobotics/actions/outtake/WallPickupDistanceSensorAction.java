@@ -2,10 +2,10 @@ package com.kalipsorobotics.actions.outtake;
 
 import android.util.Log;
 
+import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
-import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.Outtake;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
@@ -47,7 +47,7 @@ public class WallPickupDistanceSensorAction extends Action {
                 purePursuitAction.updateCheckDone();
                 if (purePursuitAction.getIsDone()) {
                     detectDistanceAction.setIsDone(isDone);
-                    Log.d("distanceForceStop", "Wall Distance:" + revDistance.getDistance(DistanceUnit.MM) + "Pos: " + purePursuitAction.getOdometry().getCurrentPosition().toString());
+                    Log.d("distanceForceStop", "Wall Distance:" + revDistance.getDistance(DistanceUnit.MM) + "Pos: " + SharedData.getOdometryPosition().toString());
                 }
             } else {
                 purePursuitAction.finishedMoving();

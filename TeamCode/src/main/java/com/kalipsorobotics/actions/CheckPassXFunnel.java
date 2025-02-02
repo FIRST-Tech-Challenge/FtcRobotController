@@ -1,5 +1,6 @@
 package com.kalipsorobotics.actions;
 
+import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.actions.autoActions.SampleToBasketFunnelRoundTrip;
 import com.kalipsorobotics.localization.WheelOdometry;
@@ -18,7 +19,7 @@ public class CheckPassXFunnel extends Action {
     }
 
     public boolean checkIfPastX() {
-        return (wheelOdometry.getCurrentPosition().getX() < passingX);
+        return (SharedData.getOdometryPosition().getX() < passingX);
     }
 
     @Override

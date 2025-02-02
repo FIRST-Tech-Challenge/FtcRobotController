@@ -2,6 +2,7 @@ package com.kalipsorobotics.test.autoMovement;
 
 import android.util.Log;
 
+import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.localization.WheelOdometry;
@@ -10,7 +11,6 @@ import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @Disabled
 public class TestPurePursuitAction extends LinearOpMode {
@@ -40,7 +40,7 @@ public class TestPurePursuitAction extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             wheelOdometry.updatePosition();
-            Log.d("purepursaction_debug_odo_wheel global", wheelOdometry.getCurrentPosition().toString());
+            Log.d("purepursaction_debug_odo_wheel global", SharedData.getOdometryPosition().toString());
 
 //            purePursuitAction.update();
 //

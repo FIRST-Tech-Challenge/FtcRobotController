@@ -1,7 +1,9 @@
 package com.kalipsorobotics.intoTheDeep;
 
+import android.os.Process;
 import android.util.Log;
 
+import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.WallToBarAction;
 import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.AutoRobotHangAction;
@@ -37,6 +39,9 @@ import com.kalipsorobotics.utilities.KGamePad;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @TeleOp
 public class Teleop extends LinearOpMode {
@@ -159,7 +164,20 @@ public class Teleop extends LinearOpMode {
 //        outtake.init();
 //        intakeClaw.init();
 
+
+
+
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+
         waitForStart();
+
+        executorService.submit(() -> {
+            android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_FOREGROUND);
+            while (true) {
+                wheelOdometry.updatePosition();
+            }
+
+        });
 
         while (opModeIsActive()) {
             while(!init.getIsDone()) {
@@ -550,8 +568,8 @@ public class Teleop extends LinearOpMode {
                    specimenHang = new SpecimenHang(outtake);
                    specimenHang.setName("specimenHang");
 
-                    savedHangPosition = new Position(wheelOdometry.getCurrentPosition().getX(),
-                            wheelOdometry.getCurrentPosition().getY(), wheelOdometry.getCurrentPosition().getTheta());
+                    savedHangPosition = new Position(SharedData.getOdometryPosition().getX(),
+                            SharedData.getOdometryPosition().getY(), SharedData.getOdometryPosition().getTheta());
                     Log.d("savedPositions", "hang position  " + savedHangPosition.toString());
                    //wheelOdometry.setCurrentPosition(WallToBarAction.HANG_POS, wheelOdometry.getCurrentPosition()
                     // .getY(), wheelOdometry.getCurrentPosition().getTheta());
@@ -584,9 +602,9 @@ public class Teleop extends LinearOpMode {
                     } else if (outtakeClawPos == Outtake.OUTTAKE_CLAW_OPEN){
                         outtakeClawPos = Outtake.OUTTAKE_CLAW_CLOSE;
 
-                        savedWallPosition = new Position(wheelOdometry.getCurrentPosition().getX(),
-                                wheelOdometry.getCurrentPosition().getY(),
-                                wheelOdometry.getCurrentPosition().getTheta());
+                        savedWallPosition = new Position(SharedData.getOdometryPosition().getX(),
+                                SharedData.getOdometryPosition().getY(),
+                                SharedData.getOdometryPosition().getTheta());
 
                         Log.d("savedPositions", "wall position  " + savedWallPosition.toString());
 
@@ -672,11 +690,11 @@ public class Teleop extends LinearOpMode {
 
             Log.d("outtakepivot", "outtake pivotPos  " + outtake.getOuttakePivotServo().getServo().getPosition());
 
-            telemetry.addData("odometry: ", wheelOdometry.getCurrentPosition().toString());
+            telemetry.addData("odometry: ", SharedData.getOdometryPosition().toString());
             telemetry.addData("big sweep pos: ", intakeBigSweepPos);
             telemetry.addData("small sweep pos: ", intakeSmallSweepPos);
             telemetry.update();
-            Log.d("teleopforauto", "odometry " + wheelOdometry.getCurrentPosition().toString());
+            Log.d("teleopforauto", "odometry " + SharedData.getOdometryPosition().toString());
             Log.d("teleopforauto", "big sweep " + intakeClaw.getIntakeBigSweepServo().getPosition());
             Log.d("teleopforauto", "small sweep " + intakeClaw.getIntakeSmallSweepServo().getPosition());
 
