@@ -39,21 +39,25 @@ public class ArmExtendTuningTest extends LinearOpMode {
             runningActions = newActions;
             if (doOne){
                 runningActions.add(arm.moveAngle());
+                runningActions.add(arm.setExtend(0));
                 runningActions.add(arm.setAngle(90));
                 doOne = false;
             }
             if (gamepadEx1.justPressedButton(GamepadKeys.Button.CROSS)) {
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());
-                runningActions.add(arm.moveExtend(0));
+                runningActions.add(arm.moveExtend());
+                runningActions.add(arm.setExtend(0));
             } else if (gamepadEx1.justPressedButton(GamepadKeys.Button.CIRCLE)) {
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());
-                runningActions.add(arm.moveExtend((1/2) * arm.getMaxExtend()));
+                runningActions.add(arm.moveExtend());
+                runningActions.add(arm.setExtend((1/2) * arm.getMaxExtend()));
             }else if (gamepadEx1.justPressedButton(GamepadKeys.Button.TRIANGLE)) {
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());
-                runningActions.add(arm.moveExtend(arm.getMaxExtend()));
+                runningActions.add(arm.moveExtend());
+                runningActions.add(arm.setExtend(arm.getMaxExtend()));
             }
 
 

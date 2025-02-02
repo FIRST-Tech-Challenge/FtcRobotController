@@ -72,7 +72,7 @@ public class ActionTeleOp extends LinearOpMode {
                 drive.resetIMU();
             }
             drive.fieldDrive(new Pose2d(-gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x));
-            extend = extend+ gamepadEx2.getStick(GamepadKeys.Stick.LEFT_STICK_Y);
+            extend = extend + gamepadEx2.getStick(GamepadKeys.Stick.LEFT_STICK_Y);
             if (gamepadEx2.justPressedButton(GamepadKeys.Button.START)){
                 specimen = !specimen;
             }
@@ -81,15 +81,11 @@ public class ActionTeleOp extends LinearOpMode {
                 lastExtend = extend;
             }
 
-            if (gamepadEx2.justPressedButton(GamepadKeys.Button.LEFT_BUMPER)){
-                intake.outtake();
-            }
-
             if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_UP)){
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());
                 runningActions.add(arm.moveExtend());
-                runningActions.add(new SequentialAction(new ParallelAction(arm.setAngle(conts.angleScoreSample),new InstantAction(()-> extend = conts.extendScoreSampleHigh), new InstantAction(wrist::scoreSample), new SleepAction(1), intake.outtake(), new SleepAction(0.5), intake.stop(), new InstantAction(wrist::straight), new SleepAction(1), new ParallelAction(arm.setExtend(0), new InstantAction(()-> extend =  conts.angleDrive)))));
+                runningActions.add(new SequentialAction(new ParallelAction(arm.setAngle(conts.angleScoreSample),new InstantAction(()-> extend = conts.extendScoreSampleHigh), new InstantAction(wrist::scoreSample), new SleepAction(1), intake.outtake(), new SleepAction(0.5), intake.stop(), new InstantAction(wrist::straight), new SleepAction(1), new ParallelAction(arm.setExtend(0), arm.setAngle(conts.angleDrive)))));
             }
             else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_RIGHT) && !dPadRightToggle){
                 intaking = true;
@@ -107,25 +103,6 @@ public class ActionTeleOp extends LinearOpMode {
                 runningActions.add(arm.moveAngle());
                 runningActions.add(arm.moveExtend());
                 runningActions.add(new SequentialAction(arm.setExtend(0), arm.setAngle(conts.angleDrive),intake.stop(), new InstantAction(wrist::scoreSample)));
-            }
-            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_LEFT) && !dPadLeftToggle){
-                intaking = true;
-                extend = 5;
-                dPadLeftToggle = true;
-                runningActions.clear();
-                runningActions.add(arm.moveAngle());
-                runningActions.add(arm.moveExtend());
-                runningActions.add(new SequentialAction(new InstantAction(wrist::straight), intake.intakeByColor(specimen)));
-            }
-            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_LEFT) && dPadLeftToggle){
-                intaking = true;
-                extend = 5;
-                dPadLeftToggle = true;
-                runningActions.clear();
-                runningActions.add(arm.moveAngle());
-                runningActions.add(arm.moveExtend());
-                runningActions.add(new SequentialAction(new InstantAction(wrist::scoreSample), intake.intakeByColor(specimen)));
-
             }
 
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
