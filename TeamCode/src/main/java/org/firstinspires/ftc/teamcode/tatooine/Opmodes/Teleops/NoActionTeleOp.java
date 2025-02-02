@@ -59,13 +59,13 @@ public class NoActionTeleOp extends LinearOpMode {
 
             // Wrist position presets based on button presses
             if (gamepadEx2.justPressedButton(GamepadKeys.Button.CROSS)) {
-                wrist.home();
+                wrist.back();
             } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.CIRCLE)) {
                 wrist.intakeFlat();
             } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.TRIANGLE)) {
-                wrist.straight();
+                wrist.intakeUp();
             } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.SQUARE)) {
-                wrist.scoreSample();
+                wrist.doc();
             }
 
             // Toggle specimen detection mode in camera
@@ -74,18 +74,6 @@ public class NoActionTeleOp extends LinearOpMode {
             }
 
             // Set wrist angle based on camera detection
-            if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_UP)) {
-                wrist.setAngleWristAngle(camera.getAngle());
-            }
-
-            // Adjust wrist position incrementally
-            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.RIGHT_BUMPER)) {
-                position = MathUtil.wrap(position + WRIST_SENSITIVITY, 0, 1);
-                wrist.setPositionWristAngle(position);
-            } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.LEFT_BUMPER)) {
-                position = MathUtil.wrap(position - WRIST_SENSITIVITY, 0, 1);
-                wrist.setPositionWristAngle(position);
-            }
 
             // Update gamepad states
             gamepadEx1.update(gamepad1);

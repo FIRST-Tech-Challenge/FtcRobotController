@@ -58,7 +58,7 @@ public class Arm {
 
     private final double LIMIT_TOLERANCE = 0; // Tolerance for limit switch reading
 
-    private final double SPOOL_DIM = 0; // Spool dimensions for extension calculation
+    private final double SPOOL_DIM = 40; // Spool dimensions for extension calculation
 
     private double lastAngle = 0; // Last recorded angle for force calculation
     private double lastF = 0; // Last recorded force value

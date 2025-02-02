@@ -32,6 +32,8 @@ public class ActionTeleOp extends LinearOpMode {
 
     private boolean dPadLeftToggle = false;
 
+    private boolean dPadDownToggle = false;
+
     private double extend = 0;
 
     private double lastExtend = 0;
@@ -41,6 +43,10 @@ public class ActionTeleOp extends LinearOpMode {
     private boolean intaking = false;
 
     private boolean specimen = false;
+
+    private boolean circleToggle = false;
+
+    private boolean triangleToggle = false;
 
     private Conts conts;
     @Override
@@ -54,7 +60,7 @@ public class ActionTeleOp extends LinearOpMode {
         EasyGamepad gamepadEx1 = new EasyGamepad(gamepad1);
         EasyGamepad gamepadEx2 = new EasyGamepad(gamepad2);
 
-
+        waitForStart();
         while (opModeIsActive()){
             TelemetryPacket packet = new TelemetryPacket();
 
@@ -80,13 +86,14 @@ public class ActionTeleOp extends LinearOpMode {
                 runningActions.add(arm.intaking(extend));
                 lastExtend = extend;
             }
-
+             //score sample button
             if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_UP)){
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());
                 runningActions.add(arm.moveExtend());
-                runningActions.add(new SequentialAction(new ParallelAction(arm.setAngle(conts.angleScoreSample),new InstantAction(()-> extend = conts.extendScoreSampleHigh), new InstantAction(wrist::scoreSample), new SleepAction(1), intake.outtake(), new SleepAction(0.5), intake.stop(), new InstantAction(wrist::straight), new SleepAction(1), new ParallelAction(arm.setExtend(0), arm.setAngle(conts.angleDrive)))));
-            }
+                runningActions.add(new SequentialAction(new ParallelAction(arm.setAngle(conts.angleScoreSample),new InstantAction(()-> extend = conts.extendScoreSampleHigh), new InstantAction(wrist::doc), new SleepAction(1), intake.outtake(), new SleepAction(0.5), intake.stop(), new InstantAction(wrist::intakeFlat), new SleepAction(1), new ParallelAction(arm.setExtend(0), arm.setAngle(conts.angleDrive)))));
+                }
+            //intakes buttons
             else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_RIGHT) && !dPadRightToggle){
                 intaking = true;
                 extend = 5;
@@ -98,12 +105,58 @@ public class ActionTeleOp extends LinearOpMode {
             }
             else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_RIGHT) && dPadRightToggle){
                 intaking = false;
-                runningActions.clear();
                 dPadRightToggle = false;
+                runningActions.clear();
                 runningActions.add(arm.moveAngle());
                 runningActions.add(arm.moveExtend());
-                runningActions.add(new SequentialAction(arm.setExtend(0), arm.setAngle(conts.angleDrive),intake.stop(), new InstantAction(wrist::scoreSample)));
+                runningActions.add(new SequentialAction(arm.setExtend(0), arm.setAngle(conts.angleDrive),intake.stop(), new InstantAction(wrist::doc)));
             }
+            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_LEFT) && !dPadLeftToggle){
+                dPadLeftToggle = true;
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
+                runningActions.add(arm.moveExtend());
+                runningActions.add(new SequentialAction(arm.setAngle(conts.angleDrive), arm.setExtend(5), new InstantAction(wrist::intakeUp), arm.setAngle(conts.intakeAngleMinUp), intake.intake(), new SleepAction(1), intake.stop()));
+            }
+            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_LEFT) && dPadLeftToggle){
+                dPadLeftToggle = false;
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
+                runningActions.add(arm.moveExtend());
+                runningActions.add(new SequentialAction(new InstantAction(wrist::doc), arm.setAngle(conts.angleDrive), arm.setExtend(0)));
+            }
+
+            //specimen buttons
+            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.CIRCLE) && !circleToggle ){
+                circleToggle = true;
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
+                runningActions.add(arm.moveExtend());
+                runningActions.add(new SequentialAction(arm.setAngle(conts.angleDrive), arm.setExtend(Arm.getMaxExtend()), intake.outtake(), new SleepAction(1), intake.stop()));
+            }
+            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.CIRCLE) && circleToggle ){
+                circleToggle = false;
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
+                runningActions.add(arm.moveExtend());
+                runningActions.add(new SequentialAction(arm.setAngle(conts.angleDrive), arm.setExtend((0)),new InstantAction(wrist::doc)));
+            }
+            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.TRIANGLE) && !triangleToggle){
+                triangleToggle = true;
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
+                runningActions.add(arm.moveExtend());
+                runningActions.add(new SequentialAction(new InstantAction(wrist::intakeFlat) ,new ParallelAction(arm.setAngle(conts.angleScoreSpecimenHigh), arm.setExtend((conts.extendScoreSpecimenHigh)))));
+            }
+            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.TRIANGLE) && triangleToggle){
+                triangleToggle = false;
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
+                runningActions.add(arm.moveExtend());
+                runningActions.add(new SequentialAction(new InstantAction(wrist::doc) ,arm.setAngle(conts.angleDrive), arm.setExtend((0))));
+            }
+
+
 
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
             gamepadEx1.update(gamepad1);
