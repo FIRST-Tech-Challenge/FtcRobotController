@@ -32,8 +32,8 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
         moveToSample1.setName("moveToSample1");
         //bar to sample 1
         moveToSample1.addPoint(INTAKE_SAMPLE_X_FUNNEL +415, sampleY, 180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE);
-        moveToSample1.addPoint(INTAKE_SAMPLE_X_FUNNEL +75, sampleY, 180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE);
-        moveToSample1.addPoint(INTAKE_SAMPLE_X_FUNNEL -250 +overshootX, sampleY, 180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE);
+        moveToSample1.addPoint(INTAKE_SAMPLE_X_FUNNEL +75, sampleY, 180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE);
+        moveToSample1.addPoint(INTAKE_SAMPLE_X_FUNNEL -250 +overshootX, sampleY, 180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE);
         this.addAction(moveToSample1);
 
         OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
@@ -83,7 +83,7 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
         PurePursuitAction moveOutBasket1 = new PurePursuitAction(driveTrain,wheelOdometry);
         moveOutBasket1.setName("moveOutBasket1");
         moveOutBasket1.setDependentActions(openClaw1);
-        moveOutBasket1.addPoint(outtakeXPos - 100, outtakeYPos - 100, -135, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE);
+        moveOutBasket1.addPoint(outtakeXPos - 100, outtakeYPos - 100, -135);
         this.addAction(moveOutBasket1);
     }
 }

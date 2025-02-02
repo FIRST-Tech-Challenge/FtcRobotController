@@ -19,14 +19,15 @@ public class TrussSpecimenEndToEndSequence extends KActionSet{
         moveSmallSweep.setName("moveSmallSweep");
         this.addAction(moveSmallSweep);
 
-        WaitAction waitMoveSmallPivotHeadStart = new WaitAction(200);
-        waitMoveSmallPivotHeadStart.setName("waitMoveSmallPivotHeadStart");
-        this.addAction(waitMoveSmallPivotHeadStart);
+//        WaitAction waitMoveSmallPivotHeadStart = new WaitAction(200);
+//        waitMoveSmallPivotHeadStart.setName("waitMoveSmallPivotHeadStart");
+//        this.addAction(waitMoveSmallPivotHeadStart);
 
         KServoAutoAction moveSmallPivot1 = new KServoAutoAction(intakeClaw.getIntakeSmallPivotServo(),
-                IntakeClaw.INTAKE_SMALL_PIVOT_TRANSFER_UNDER_RUNG_MIDDLE_POS);
+                IntakeClaw.INTAKE_SMALL_PIVOT_TRANSFER_UNDER_RUNG_MIDDLE_MIDDLE_POS);
         moveSmallPivot1.setName("moveSmallPivot1");
         this.addAction(moveSmallPivot1);
+
         //moveSmallPivot1.setDependentActions(waitMoveSmallPivotHeadStart);
 //        moveSmallPivot1.setDependentActions(moveBigPivot1);
 
@@ -34,14 +35,20 @@ public class TrussSpecimenEndToEndSequence extends KActionSet{
                 IntakeClaw.INTAKE_BIG_PIVOT_TRANSFER_UNDER_RUNG_MIDDLE_POS);
         moveBigPivot1.setName("moveBigPivot1");
         this.addAction(moveBigPivot1);
-        moveBigPivot1.setDependentActions(waitMoveSmallPivotHeadStart);
+        moveBigPivot1.setDependentActions(moveSmallPivot1);
 
+
+        KServoAutoAction moveSmallPivot2 = new KServoAutoAction(intakeClaw.getIntakeSmallPivotServo(),
+                IntakeClaw.INTAKE_SMALL_PIVOT_TRANSFER_UNDER_RUNG_MIDDLE_POS);
+        moveSmallPivot2.setName("moveSmallPivot2");
+        this.addAction(moveSmallPivot2);
+        moveSmallPivot2.setDependentActions(moveSmallPivot1);
 
         KServoAutoAction moveBigPivot2 = new KServoAutoAction(intakeClaw.getIntakeBigPivotServo(),
                 IntakeClaw.INTAKE_BIG_PIVOT_TRANSFER_READY_POS);
         moveBigPivot2.setName("moveBigPivot2");
         this.addAction(moveBigPivot2);
-        moveBigPivot2.setDependentActions(moveSmallPivot1, moveBigPivot1);
+        moveBigPivot2.setDependentActions(moveSmallPivot2, moveBigPivot1);
 
         KServoAutoAction linkageRetractHalf1 = new KServoAutoAction(intakeClaw.getIntakeLinkageServo(),
                 IntakeClaw.INTAKE_LINKAGE_SAMPLE_TRANSFER_READY_HALF_POS);
@@ -49,17 +56,17 @@ public class TrussSpecimenEndToEndSequence extends KActionSet{
         this.addAction(linkageRetractHalf1);
         linkageRetractHalf1.setDependentActions(moveBigPivot1);
 
-        KServoAutoAction moveSmallPivot2 = new KServoAutoAction(intakeClaw.getIntakeSmallPivotServo(),
+        KServoAutoAction moveSmallPivot3 = new KServoAutoAction(intakeClaw.getIntakeSmallPivotServo(),
                 IntakeClaw.INTAKE_SMALL_PIVOT_TRANSFER_READY_POS);
-        moveSmallPivot2.setName("moveSmallPivot2");
-        this.addAction(moveSmallPivot2);
-        moveSmallPivot2.setDependentActions(linkageRetractHalf1);
+        moveSmallPivot3.setName("moveSmallPivot3");
+        this.addAction(moveSmallPivot3);
+        moveSmallPivot3.setDependentActions(linkageRetractHalf1);
 
         KServoAutoAction linkageRetractFull1 = new KServoAutoAction(intakeClaw.getIntakeLinkageServo(),
                 IntakeClaw.INTAKE_LINKAGE_IN_POS);
         linkageRetractFull1.setName("linkageRetractFull1");
         this.addAction(linkageRetractFull1);
-        linkageRetractFull1.setDependentActions(moveSmallPivot2);
+        linkageRetractFull1.setDependentActions(moveSmallPivot3);
 
         MoveLSAction moveLSDown = new MoveLSAction(outtake, Outtake.LS_DOWN_POS);
         moveLSDown.setName("moveLSDown");

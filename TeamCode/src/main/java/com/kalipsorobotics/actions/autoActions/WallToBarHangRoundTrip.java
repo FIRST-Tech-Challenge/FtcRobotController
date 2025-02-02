@@ -22,7 +22,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
     public static final double WALL_PICKUP_PID_VALUE = 1.0/2000.0;
 
     //ASSUME ROBOT AT WALL READY FOR SPECIMEN
-    public WallToBarHangRoundTrip(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, Rev2mDistanceSensor revDistanceClaw, Rev2mDistanceSensor revDistanceBottom, int hangPosY) {
+    public WallToBarHangRoundTrip(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, int hangPosY) {
 
 //        WaitAction waitAtWall = new WaitAction(100);
 //        waitAtWall.setName("waitAtWall");
@@ -98,7 +98,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         moveBarToWall.addPoint(WALL_PICKUP_X+25, WALL_PICKUP_Y, -180);
         this.addAction(moveBarToWall);
 
-        WallPickupDistanceSensorAction wallPickupDistanceSensorAction2 = new WallPickupDistanceSensorAction(outtake, revDistanceClaw, moveBarToWall);
+        WallPickupDistanceSensorAction wallPickupDistanceSensorAction2 = new WallPickupDistanceSensorAction(outtake, moveBarToWall);
         wallPickupDistanceSensorAction2.setName("wallPickupDistanceSensorAction");
         wallPickupDistanceSensorAction2.setDependentActions(specimenWallReady);
         this.addAction(wallPickupDistanceSensorAction2);

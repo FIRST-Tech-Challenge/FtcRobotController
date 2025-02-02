@@ -12,7 +12,7 @@ import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
 public class WallToBarHangAction extends KActionSet {
 
-    public WallToBarHangAction(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, Rev2mDistanceSensor revdistance, int barY) {
+    public WallToBarHangAction(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, int barY) {
 
         WaitAction waitAtStart = new WaitAction(50);
         waitAtStart.setName("waitAtStart");
@@ -21,7 +21,7 @@ public class WallToBarHangAction extends KActionSet {
         PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSpecimenBar.setName("moveToSpecimenBar");
         moveToSpecimenBar.addPoint(0, 0, 0);
-        moveToSpecimenBar.addPoint(FloorToBarHangRoundTrip.SPECIMEN_HANG_POS_X, barY, 0, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE);
+        moveToSpecimenBar.addPoint(FloorToBarHangRoundTrip.SPECIMEN_HANG_POS_X, barY, 0);
         moveToSpecimenBar.setDependentActions(waitAtStart);
         this.addAction(moveToSpecimenBar);
 

@@ -18,13 +18,12 @@ public class IntakeTransferReady extends KActionSet {
         unlockRatchet.setName("unlockRatchet");
         this.addAction(unlockRatchet);
 
-        KServoAutoAction closeClaw = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_CLOSE);
-        closeClaw.setName("closeClaw");
-        this.addAction(closeClaw);
+//        KServoAutoAction closeClaw = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_CLOSE);
+//        closeClaw.setName("closeClaw");
+//        this.addAction(closeClaw);
 
         KServoAutoAction linkageToMid = new KServoAutoAction(intake.getIntakeLinkageServo(), IntakeClaw.INTAKE_LINKAGE_MID_POS);
         linkageToMid.setName("linkageToMid");
-        linkageToMid.setDependentActions(closeClaw);
         this.addAction(linkageToMid);
 
         KServoAutoAction lockRatchet = new KServoAutoAction(intake.getIntakeRatchetServo(), IntakeClaw.INTAKE_RATCHET_LOCK_POS);
@@ -39,22 +38,18 @@ public class IntakeTransferReady extends KActionSet {
 
         KServoAutoAction moveBigSweep = new KServoAutoAction(intake.getIntakeBigSweepServo(), IntakeClaw.INTAKE_BIG_SWEEP_TRANSFER_READY_POS);
         moveBigSweep.setName("moveBigSweep");
-        moveBigSweep.setDependentActions(closeClaw);
         this.addAction(moveBigSweep);
 
         KServoAutoAction moveSmallSweep = new KServoAutoAction(intake.getIntakeSmallSweepServo(), IntakeClaw.INTAKE_SMALL_SWEEP_TRANSFER_READY_POS);
         moveSmallSweep.setName("moveSmallSweep");
-        moveSmallSweep.setDependentActions(closeClaw);
         this.addAction(moveSmallSweep);
 
         KServoAutoAction moveBigPivot = new KServoAutoAction(intake.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_TRANSFER_READY_POS);
         moveBigPivot.setName("moveBigPivot");
-        //moveBigPivot.setDependentActions(moveSmallPivot);
         this.addAction(moveBigPivot);
 
         KServoAutoAction moveSmallPivot = new KServoAutoAction(intake.getIntakeSmallPivotServo(), IntakeClaw.INTAKE_SMALL_PIVOT_TRANSFER_READY_POS);
         moveSmallPivot.setName("moveSmallPivot");
-        moveSmallPivot.setDependentActions(closeClaw, moveBigPivot);
         this.addAction(moveSmallPivot);
 
         WaitAction wait = new WaitAction(100);

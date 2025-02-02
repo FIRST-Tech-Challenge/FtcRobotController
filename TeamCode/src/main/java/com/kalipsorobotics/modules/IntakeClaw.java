@@ -59,6 +59,8 @@ public class IntakeClaw {
 
     public static final double INTAKE_BIG_PIVOT_TRANSFER_UNDER_RUNG_MIDDLE_POS = 0.867;
 
+    public static final double INTAKE_SMALL_PIVOT_TRANSFER_UNDER_RUNG_MIDDLE_MIDDLE_POS = 0.35;
+
     public static final double INTAKE_SMALL_PIVOT_TRANSFER_UNDER_RUNG_MIDDLE_POS = 0.021;
     //big 0.867
     //small 0.021

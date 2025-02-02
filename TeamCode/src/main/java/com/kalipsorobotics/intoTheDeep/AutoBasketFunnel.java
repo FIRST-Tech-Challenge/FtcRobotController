@@ -56,8 +56,6 @@ public class AutoBasketFunnel extends LinearOpMode {
         IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
         sleep(1000);
 
-        Rev2mDistanceSensor revDistance2 = hardwareMap.get(Rev2mDistanceSensor.class, "revDistance2");
-
         WheelOdometry.setInstanceNull();
         WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
         // Target can always be 0 because Hung said so
@@ -84,7 +82,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         redAutoBasket.addAction(delayBeforeStart);
 
         //================begin of first specimen====================
-        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, revDistance2,-190);
+        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake,-190);
         wallToBarHangAction.setName("wallToBarHangAction");
         wallToBarHangAction.setDependentActions(delayBeforeStart);
         redAutoBasket.addAction(wallToBarHangAction);
@@ -92,7 +90,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         PurePursuitAction moveOutSpecimen = new PurePursuitAction(driveTrain, wheelOdometry);
         moveOutSpecimen.setName("moveOutSpecimen");
         moveOutSpecimen.setDependentActions(wallToBarHangAction);
-        moveOutSpecimen.addPoint(-585, -250, 45, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
+        moveOutSpecimen.addPoint(-500, -250, 90, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
         redAutoBasket.addAction(moveOutSpecimen);
 
         IntakeFunnelReady intakeFunnelReady1 = new IntakeFunnelReady(intakeClaw, outtake, false);
@@ -130,7 +128,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveToSample3.setDependentActions(sampleToBasketFunnelRoundTrip2);
         //move basket to sample 3
 //        moveToSample3.addPoint(-440, 1030, 180-29.6);
-        moveToSample3.addPoint(INTAKE_SAMPLE_X-80, 760, 90);
+        moveToSample3.addPoint(INTAKE_SAMPLE_X-80, 760, 90, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
         moveToSample3.setMaxCheckDoneCounter(15);
         redAutoBasket.addAction(moveToSample3);
 

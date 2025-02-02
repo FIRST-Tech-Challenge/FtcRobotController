@@ -18,8 +18,8 @@ public class BarHangDistanceSensorAction extends Action {
     PurePursuitAction purePursuitAction;
     KServoAutoAction closeClaw;
 
-    public BarHangDistanceSensorAction(Outtake outtake, Rev2mDistanceSensor revDistance, PurePursuitAction purePursuitAction) {
-        this.revDistance = revDistance;
+    public BarHangDistanceSensorAction(Outtake outtake, PurePursuitAction purePursuitAction) {
+        this.revDistance = outtake.revDistanceBottom;
         detectDistanceAction = new DistanceDetectionAction(revDistance, 155); //145
         detectDistanceAction.setName("closeWhenDetectAction");
 

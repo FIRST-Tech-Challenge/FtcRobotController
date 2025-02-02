@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.kalipsorobotics.math.CalculateTickPer;
 import com.kalipsorobotics.utilities.KServo;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -22,6 +23,10 @@ public class Outtake {
     public KServo outtakePigeonServo;
     public KServo hangHook1;
     public KServo hangHook2;
+
+    public Rev2mDistanceSensor revDistanceClaw;
+
+    public Rev2mDistanceSensor revDistanceBottom;
 
     public static final double HOOK1_HANG_POS = 0.8;
     public static final double HOOK2_HANG_POS = 0.18;
@@ -48,7 +53,7 @@ public class Outtake {
     //decrease to go towards robot, increase to do away from robot
 //    public static final double OUTTAKE_PIVOT_SPECIMAN_HANG_POS = 0.8;   //decrease to go towards robot, increase to do away from robot
 
-    public static final double LS_SPECIMEN_HANG_READY_MM = 380; //391 // 406
+    public static final double LS_SPECIMEN_HANG_READY_MM = 385; //391 // 406
     public static final double LS_SPECIMEN_PARK_MM = 156;
     public static final double LS_DOWN_POS = -3;
     public static final double LS_SPECIMEN_HANG_DONE_MM = 30;
@@ -84,6 +89,9 @@ public class Outtake {
     private static void resetHardwareMap(HardwareMap hardwareMap, Outtake outtake) {
         outtake.linearSlide1 = hardwareMap.dcMotor.get("linearSlide1");
         outtake.linearSlide2 = hardwareMap.dcMotor.get("linearSlide2");
+        outtake.revDistanceClaw = hardwareMap.get(Rev2mDistanceSensor.class, "revDistanceClaw");
+        outtake.revDistanceBottom = hardwareMap.get(Rev2mDistanceSensor.class, "revDistanceBottom");
+
         outtake.outtakePivotServo = new KServo(hardwareMap.servo.get("outtakePivot"), 60/0.11, 255,
                 0, false);
         outtake.outtakeClawServo = new KServo(hardwareMap.servo.get("outtakeClaw"), 60/0.11, 255, //mini axon
@@ -111,6 +119,7 @@ public class Outtake {
 
     public void init() {
         getOuttakeClaw().setPosition(OUTTAKE_CLAW_CLOSE);
+        opModeUtilities.getOpMode().sleep(200);
         getOuttakePivotServo().setPosition(OUTTAKE_PIVOT_TRANSFER_READY_POS);
         getHangHook1().setPosition(HOOK1_DOWN_POS);
         getHangHook2().setPosition(HOOK2_DOWN_POS);
