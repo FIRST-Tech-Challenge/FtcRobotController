@@ -129,13 +129,15 @@ public class LowTaperFade extends LinearOpMode {
             default:
                 switch (startingPosition) {
                     case RIGHT:
-                        TrajectoryActionBuilder previousChamberTrajectory = gameLoopSetup(sp, PlacementHeight.CHAMBER_HIGH);
+                        TrajectoryActionBuilder previousChamberTrajectory = gameLoopSetup(sp,
+                                PlacementHeight.CHAMBER_HIGH);
                         int phase = 0;
                         while (phase < 2) {
                             phase++;
                             adaptiveCalibration.calibrateRuntime(new AdaptiveCalibration.RuntimeCalibrationPayload(),
                                     roadRunner);
-                            previousChamberTrajectory = placeLoop(sp, previousChamberTrajectory, PlacementHeight.CHAMBER_HIGH,
+                            previousChamberTrajectory = placeLoop(sp, previousChamberTrajectory,
+                                    PlacementHeight.CHAMBER_HIGH,
                                     phase);
                         }
                         baseRobot.logger.update("Autonomous phase", "Parking");
@@ -148,7 +150,8 @@ public class LowTaperFade extends LinearOpMode {
                         while (basketPhase < 4) {
                             adaptiveCalibration.calibrateRuntime(new AdaptiveCalibration.RuntimeCalibrationPayload(),
                                     roadRunner);
-                            previousBasketTrajectory = placeLoop(sp, previousBasketTrajectory, PlacementHeight.BASKET_HIGH,
+                            previousBasketTrajectory = placeLoop(sp, previousBasketTrajectory,
+                                    PlacementHeight.BASKET_HIGH,
                                     basketPhase);
                             basketPhase++;
                         }
@@ -191,9 +194,7 @@ public class LowTaperFade extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         basketTrajectory.build(),
-                        placeBasket()
-                )
-        );
+                        placeBasket()));
 
         return basketTrajectory;
     }
@@ -326,8 +327,7 @@ public class LowTaperFade extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         placingTrajectory.build(),
-                        hookChamber()
-                ));
+                        hookChamber()));
         return placingTrajectory;
     }
 
@@ -393,11 +393,11 @@ public class LowTaperFade extends LinearOpMode {
         switch (sp) {
             case LEFT:
                 return previousTrajectory.endTrajectory().fresh()
-//                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.PARK_MIDDLEMAN,
-//                                Math.toRadians(90))
-//                        .strafeTo(Settings.Autonomous.FieldPositions.LEFT_BEFORE_PARK_POSE.position)
-//                        .turn(Math.toRadians(90))
-//                        .strafeTo(Settings.Autonomous.FieldPositions.LEFT_PARK_POSE.position)
+                        // .strafeToLinearHeading(Settings.Autonomous.FieldPositions.PARK_MIDDLEMAN,
+                        // Math.toRadians(90))
+                        // .strafeTo(Settings.Autonomous.FieldPositions.LEFT_BEFORE_PARK_POSE.position)
+                        // .turn(Math.toRadians(90))
+                        // .strafeTo(Settings.Autonomous.FieldPositions.LEFT_PARK_POSE.position)
                         ; // TODO fix
             case RIGHT:
                 return previousTrajectory.endTrajectory().fresh()
@@ -455,18 +455,22 @@ public class LowTaperFade extends LinearOpMode {
             case 1:
                 speciTraj = previousTrajectory.endTrajectory().fresh()
                         // gets in front of the first on field sample and pushes it back
-                        .strafeToConstantHeading(new Vector2d(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.x, Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y))
+                        .strafeToConstantHeading(new Vector2d(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.x,
+                                Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y))
                         .lineToY(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y + 50)
-                        .strafeToConstantHeading(new Vector2d(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_1_VEC.x, Settings.Autonomous.FieldPositions.LEFT_SAMPLE_1_VEC.y))
+                        .strafeToConstantHeading(new Vector2d(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_1_VEC.x,
+                                Settings.Autonomous.FieldPositions.LEFT_SAMPLE_1_VEC.y))
                         .lineToY(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_1_VEC.y - 50)
                         .strafeToConstantHeading(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_1_VEC);
                 break;
             case 2:
                 speciTraj = previousTrajectory.endTrajectory().fresh()
                         // gets in front of the second on field sample and pushes it back
-                        .strafeToConstantHeading(new Vector2d(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.x, Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y))
+                        .strafeToConstantHeading(new Vector2d(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.x,
+                                Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y))
                         .lineToY(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y + 50)
-                        .strafeToConstantHeading(new Vector2d(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_2_VEC.x, Settings.Autonomous.FieldPositions.LEFT_SAMPLE_2_VEC.y))
+                        .strafeToConstantHeading(new Vector2d(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_2_VEC.x,
+                                Settings.Autonomous.FieldPositions.LEFT_SAMPLE_2_VEC.y))
                         .lineToY(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_2_VEC.y - 50)
                         .strafeToConstantHeading(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_2_VEC);
                 break;
@@ -474,9 +478,11 @@ public class LowTaperFade extends LinearOpMode {
             default:
                 speciTraj = previousTrajectory.endTrajectory().fresh()
                         // gets in front of the third on field sample and pushes it back
-                        .strafeTo(new Vector2d(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.x, Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y))
+                        .strafeTo(new Vector2d(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.x,
+                                Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y))
                         .lineToY(Settings.Autonomous.FieldPositions.BASKET_MIDDLEMAN.y + 50)
-                        .strafeTo(new Vector2d(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_3_VEC.x, Settings.Autonomous.FieldPositions.LEFT_SAMPLE_3_VEC.y))
+                        .strafeTo(new Vector2d(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_3_VEC.x,
+                                Settings.Autonomous.FieldPositions.LEFT_SAMPLE_3_VEC.y))
                         .lineToY(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_3_VEC.y - 50)
                         .strafeTo(Settings.Autonomous.FieldPositions.LEFT_SAMPLE_3_VEC);
                 break;
@@ -492,7 +498,8 @@ public class LowTaperFade extends LinearOpMode {
     private TrajectoryActionBuilder getBasketTrajectory(StartingPosition sp,
                                                         TrajectoryActionBuilder previousTrajectory, int basketPhase) {
         return previousTrajectory.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(BASKET_POSE.position.x, BASKET_POSE.position.y), BASKET_POSE.heading);
+                .strafeToLinearHeading(new Vector2d(BASKET_POSE.position.x, BASKET_POSE.position.y),
+                        BASKET_POSE.heading);
     }
 
     private TrajectoryActionBuilder pushSamples(StartingPosition sp, TrajectoryActionBuilder previousTrajectory) {
