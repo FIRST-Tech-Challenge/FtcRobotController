@@ -67,7 +67,8 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
         moveToBasket1.setName("moveToBasket1");
         moveToBasket1.setDependentActions(moveToSample1, transferAction1); // Depends on transfer so intake slides dont move while moving
         //move sample 1 to basket
-        moveToBasket1.addPoint(outtakeXPos, outtakeYPos, -135);
+//        moveToBasket1.addPoint(outtakeXPos-250, outtakeYPos-250, -135);
+        moveToBasket1.addPoint(outtakeXPos, outtakeYPos, -135, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
         this.addAction(moveToBasket1);
 
         BasketReadyAction basketReady1 = new BasketReadyAction(outtake);
@@ -77,16 +78,18 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
 
         KServoAutoAction openClaw1 = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_OPEN);
         openClaw1.setName("openClaw1");
-        openClaw1.setDependentActions(basketReady1);
+        openClaw1.setDependentActions(basketReady1, moveToBasket1);
         this.addAction(openClaw1);
 
         PurePursuitAction moveOutBasket1 = new PurePursuitAction(driveTrain,wheelOdometry);
         moveOutBasket1.setName("moveOutBasket1");
         moveOutBasket1.setDependentActions(openClaw1);
-        moveOutBasket1.addPoint(outtakeXPos - 100, outtakeYPos - 100, -135);
+        moveOutBasket1.setFinalSearchRadius(50);
+        moveOutBasket1.addPoint(outtakeXPos - 150, outtakeYPos - 150, -135);
         this.addAction(moveOutBasket1);
     }
 }
+
 //move robot to samples
 //grab sample
 //move to basket

@@ -90,7 +90,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         PurePursuitAction moveOutSpecimen = new PurePursuitAction(driveTrain, wheelOdometry);
         moveOutSpecimen.setName("moveOutSpecimen");
         moveOutSpecimen.setDependentActions(wallToBarHangAction);
-        moveOutSpecimen.addPoint(-500, -250, 90, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
+        moveOutSpecimen.addPoint(-500, -775, 180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); // y = -250 (midpt)
         redAutoBasket.addAction(moveOutSpecimen);
 
         IntakeFunnelReady intakeFunnelReady1 = new IntakeFunnelReady(intakeClaw, outtake, false);
@@ -128,7 +128,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveToSample3.setDependentActions(sampleToBasketFunnelRoundTrip2);
         //move basket to sample 3
 //        moveToSample3.addPoint(-440, 1030, 180-29.6);
-        moveToSample3.addPoint(INTAKE_SAMPLE_X-80, 760, 90, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
+        moveToSample3.addPoint(INTAKE_SAMPLE_X-60, 775, 90, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW); //x = INtAKE_SAMPLE_X - 80, y = 760
         moveToSample3.setMaxCheckDoneCounter(15);
         redAutoBasket.addAction(moveToSample3);
 
@@ -210,7 +210,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         PurePursuitAction park = new PurePursuitAction(driveTrain, wheelOdometry);
         park.setName("park");
         park.setDependentActions(moveOutBasket3);
-        park.addPoint(-1225, 610, 45, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE);
+        park.addPoint(-1225, 700, 45, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); // 610
         park.addPoint(-1325, 210, 90);
         redAutoBasket.addAction(park);
 

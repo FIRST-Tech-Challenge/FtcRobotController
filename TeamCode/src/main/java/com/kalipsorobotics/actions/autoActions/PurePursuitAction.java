@@ -29,6 +29,7 @@ public class PurePursuitAction extends Action {
     public static final double P_XY_SLOW = 1.0/800.0;
     public static final double P_ANGLE_SLOW = 1.0/ Math.toRadians(130);
 
+    private double lastSearchRadius = LAST_RADIUS_MM;
 
     List<Position> pathPoints = new ArrayList<Position>();
     DriveTrain driveTrain;
@@ -135,6 +136,9 @@ public class PurePursuitAction extends Action {
         return new double[]{adaptiveXY, adaptiveTheta};
     }
 
+    public void setFinalSearchRadius(double searchRadiusMM){
+        this.lastSearchRadius = searchRadiusMM;
+    }
     public void setPAngle(double p) {
         this.pidAngle = new PidNav(p, 0,0);
     }
@@ -214,7 +218,7 @@ public class PurePursuitAction extends Action {
         Position lastPoint = path.getLastPoint();
 
         if (prevFollow.isPresent() && (path.findIndex(prevFollow.get()) > (path.numPoints() - 2))) {
-            currentLookAheadRadius = LAST_RADIUS_MM;
+            currentLookAheadRadius = lastSearchRadius;
         }
         follow = path.lookAhead(currentPosition, currentLookAheadRadius);
 
