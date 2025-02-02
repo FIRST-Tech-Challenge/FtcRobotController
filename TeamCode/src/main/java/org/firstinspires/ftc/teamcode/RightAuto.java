@@ -154,19 +154,25 @@ public class RightAuto extends LinearOpMode {
                         .then(run(() -> {
                             hClawProxy.setClaw(Hardware.FRONT_CLOSE);
                             hardware.claw.setPosition(Hardware.CLAW_OPEN);
-                        }))
-                        .then(await(250))
-                        .then(run(() -> {
+                            hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
                             hardware.wrist.setPosition(0);
-                            hardware.arm.setTargetPosition(-28);
+                            hardware.arm.setTargetPosition(Hardware.ARM_TRANSFER_POS);
                         }))
-                        .then(await(500))
+//                        .then(await(250))
+//                        .then(run(() -> {
+//
+//                        }))
+                        .then(await(400))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
-                        .then(await(250))
-                        .then(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
-                        .then(await(250))
+                        .then(await(150))
                         .then(run(() -> {
                             hardware.arm.setTargetPosition(0);
+                            hClawProxy.setClaw(Hardware.FRONT_OPEN);
+                        }))
+                        .then(await(100))
+                        .then(run(() -> hardware.clawFront.setPosition(0.6)))
+                        .then(await(250))
+                        .then(run(() -> {
                             hardware.wrist.setPosition(Hardware.WRIST_BACK);
                         }))
         );

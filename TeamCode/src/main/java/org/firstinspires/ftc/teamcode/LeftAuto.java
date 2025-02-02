@@ -82,15 +82,17 @@ public class LeftAuto extends LinearOpMode {
                         .then(run(() -> {
                             hClawProxy.setClaw(Hardware.FRONT_CLOSE);
                             hardware.claw.setPosition(Hardware.CLAW_OPEN);
-                        }))
-                        .then(await(250))
-                        .then(run(() -> {
+                            hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
                             hardware.wrist.setPosition(0);
                             hardware.arm.setTargetPosition(Hardware.ARM_TRANSFER_POS);
                         }))
-                        .then(await(500))
+//                        .then(await(250))
+//                        .then(run(() -> {
+//
+//                        }))
+                        .then(await(400))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
-                        .then(await(250))
+                        .then(await(150))
                         .then(run(() -> {
                             hardware.arm.setTargetPosition(0);
                             hClawProxy.setClaw(Hardware.FRONT_OPEN);
@@ -104,9 +106,8 @@ public class LeftAuto extends LinearOpMode {
 
     private ITask pickUpYellow() {
         final double flipThird = 0.66;
-        ITask result = groupOf(inner -> inner.add(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
-                .then(hSlideProxy.moveOut())
-                .then(hClawProxy.aSetFlip(Hardware.FLIP_DOWN))
+        ITask result = groupOf(inner -> inner
+                .add(hClawProxy.aSetFlip(Hardware.FLIP_DOWN))
                 .then(await(500))
                 .then(hClawProxy.aSetClaw(Hardware.FRONT_CLOSE))
                 .then(await(250))
@@ -189,11 +190,19 @@ public class LeftAuto extends LinearOpMode {
         scheduler
                 .add(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
-                .then(moveTo(new Pose(16.5, 13.5, Math.toRadians(0))))
+                .then(groupOf(a -> {
+                    a.add(moveTo(new Pose(16.5, 13.5, Math.toRadians(0))));
+                    a.add(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
+                        .then(hSlideProxy.moveOut());
+                }))
                 .then(pickUpYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
-                .then(moveTo(new Pose(16.5, 23.75, Math.toRadians(0))))
+                .then(groupOf(a -> {
+                    a.add(moveTo(new Pose(16.5, 23.75, Math.toRadians(0))));
+                    a.add(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
+                            .then(hSlideProxy.moveOut());
+                }))
                 .then(pickUpYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
