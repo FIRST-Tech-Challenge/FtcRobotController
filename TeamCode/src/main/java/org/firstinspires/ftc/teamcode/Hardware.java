@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.hardware.Ascent;
 import org.firstinspires.ftc.teamcode.hardware.AutoClearEncoder;
 import org.firstinspires.ftc.teamcode.hardware.Encoder;
 import org.firstinspires.ftc.teamcode.hardware.EncoderFor;
@@ -56,7 +57,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final int VLIFT_POWEROFF_HEIGHT = 30;
     public static final int ASCENT_INIT_POS = -420;
     public static final int ASCENT_UP_POS = -1742;
-    public static final int ASCENT_PREPARE_POS = -2795;
+    public static final int ASCENT_PREPARE_POS = -2995;
     public static final int ASCENT_FINISH_POS = -50;
 
     public static int deg2arm(double degrees) {
@@ -82,6 +83,8 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
         public static final SharedResource HorizontalSlide = new SharedResource("HorizontalSlide");
 
         public static final SharedResource HSlideClaw = new SharedResource("HSlideClaw");
+
+        public static final SharedResource Ascent = new SharedResource("Ascent");
     }
 
     public static final double TRACK_WIDTH = 11.375;
@@ -184,7 +187,6 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public Encoder leftAscentEnc;
 
     @HardwareName("leftAscent")
-    @Reversed
     public CRServo leftAscent;
 
     @EncoderFor("verticalSlide2")
@@ -192,7 +194,10 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public Encoder rightAscentEnc;
 
     @HardwareName("rightAscent")
+    @Reversed
     public CRServo rightAscent;
+
+    public Ascent ascent;
 
     @Override
     public Encoder getLeftEncoder() {
@@ -266,6 +271,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
                 backRight
         );
         verticalLift = new Lift(verticalSlide, verticalSlide2);
+        ascent = new Ascent(leftAscent, leftAscentEnc, rightAscent, rightAscentEnc);
     }
 
 }
