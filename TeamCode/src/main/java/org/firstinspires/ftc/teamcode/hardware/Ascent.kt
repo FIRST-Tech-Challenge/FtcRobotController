@@ -27,7 +27,7 @@ class Ascent(
         const val MAXIMUM = 0
         const val MINIMUM = -3400
 
-        const val MAXPOW = 0.5
+        const val MAXPOW = 1.0
         const val CLOSE = 500.0
 
         const val KP = 1.0 / CLOSE
