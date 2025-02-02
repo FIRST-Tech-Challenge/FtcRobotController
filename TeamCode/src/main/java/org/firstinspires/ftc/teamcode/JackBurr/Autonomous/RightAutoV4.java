@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.Trajectory;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -56,7 +57,6 @@ public class RightAutoV4 extends LinearOpMode {
 
         TrajectoryActionBuilder traj1 = drive.actionBuilder(startPose)
             .splineToConstantHeading(new Vector2d(0, -50), startPose.heading);
-
         TrajectoryActionBuilder traj2 = traj1.endTrajectory()
                  .strafeTo(new Vector2d(40, 14));
 
@@ -88,7 +88,7 @@ public class RightAutoV4 extends LinearOpMode {
             else if(step == 2){
                 if(!traj1Followed){
                     deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_CLOSE);
-                    traj1Action.run(new TelemetryPacket());
+                    Actions.runBlocking(traj1Action);
                     traj1Followed = true;
                 }
                 else if(traj1Followed){
@@ -103,7 +103,7 @@ public class RightAutoV4 extends LinearOpMode {
             }
             else if(step == 3) {
                 if(timerStep03.seconds() > 4) {
-                    traj2Action.run(new TelemetryPacket());
+                    Actions.runBlocking(traj2Action);
                     step = 4;
                 }
             }
