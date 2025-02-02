@@ -2,6 +2,7 @@ package com.kalipsorobotics.actions.outtake;
 
 import android.util.Log;
 
+import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
@@ -13,25 +14,25 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class BarHangDistanceSensorAction extends Action {
 
     Rev2mDistanceSensor revDistance;
-    DistanceDetectionAction closeWhenDetectAction;
+    DistanceDetectionAction detectDistanceAction;
     PurePursuitAction purePursuitAction;
-    KServoAutoAction detectDistanceAction;
+    KServoAutoAction closeClaw;
 
     public BarHangDistanceSensorAction(Outtake outtake, Rev2mDistanceSensor revDistance, PurePursuitAction purePursuitAction) {
         this.revDistance = revDistance;
-        closeWhenDetectAction = new DistanceDetectionAction(revDistance, 155); //145
-        closeWhenDetectAction.setName("closeWhenDetectAction");
+        detectDistanceAction = new DistanceDetectionAction(revDistance, 155); //145
+        detectDistanceAction.setName("closeWhenDetectAction");
 
         this.purePursuitAction = purePursuitAction;
 
-        detectDistanceAction = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_CLOSE);
-        detectDistanceAction.setName("closeClawAction");
-        detectDistanceAction.setDependentActions(closeWhenDetectAction);
+        closeClaw = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_CLOSE);
+        closeClaw.setName("closeClawAction");
+        closeClaw.setDependentActions(detectDistanceAction);
     }
 
     @Override
     protected boolean checkDoneCondition() {
-        return detectDistanceAction.getIsDone();
+        return closeClaw.getIsDone();
     }
 
     @Override
@@ -40,10 +41,15 @@ public class BarHangDistanceSensorAction extends Action {
             return;
         }
         if (purePursuitAction.getHasStarted()) {
-            closeWhenDetectAction.updateCheckDone();
             detectDistanceAction.updateCheckDone();
-            if (!closeWhenDetectAction.getIsDone()) {
+            closeClaw.updateCheckDone();
+            if (!detectDistanceAction.getIsDone()) {
                 purePursuitAction.updateCheckDone();
+                if (purePursuitAction.getIsDone()) {
+                    closeClaw.setIsDone(isDone);
+                    Log.d("distanceForceStop", "Wall Distance:" + revDistance.getDistance(DistanceUnit.MM) +
+                            "Pos: " + SharedData.getOdometryPosition().toString());
+                }
             } else {
                 purePursuitAction.finishedMoving();
                 Log.d("cancelPurePursuit", "Bar " + revDistance.getDistance(DistanceUnit.MM));

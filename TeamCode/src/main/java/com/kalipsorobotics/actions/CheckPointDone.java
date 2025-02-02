@@ -1,7 +1,7 @@
 package com.kalipsorobotics.actions;
 
+import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
-import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.math.Position;
 
@@ -19,7 +19,7 @@ public class CheckPointDone extends Action {
     }
 
     public double calculateError() {
-        return wheelOdometry.getCurrentPosition().distanceTo(point);
+        return SharedData.getOdometryPosition().distanceTo(point);
     }
 
     @Override

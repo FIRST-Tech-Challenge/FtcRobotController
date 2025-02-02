@@ -3,15 +3,10 @@ package com.kalipsorobotics.math;
 import com.kalipsorobotics.PID.PidNav;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 
-import org.checkerframework.dataflow.qual.Pure;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Position {
-    final private double x;
-    final private double y;
-    final private double theta;
+    private double x;
+    private double y;
+    private double theta;
 
     private PidNav pidX = new PidNav(PurePursuitAction.P_XY, 0, 0);
     private PidNav pidY = new PidNav(PurePursuitAction.P_XY, 0, 0);
@@ -21,6 +16,10 @@ public class Position {
         this.x = x;
         this.y = y;
         this.theta = theta;
+    }
+
+    public Position (Position position) {
+        this(position.x, position.y, position.theta);
     }
 
     public Position (double x, double y, double theta, double pXY, double pAngle) {
@@ -104,5 +103,14 @@ public class Position {
 
     public PidNav getPidAngle() {
         return pidAngle;
+    }
+
+    public void reset(Position position) {
+        this.x = position.getX();
+        this.y = position.getY();
+        this.theta = position.getTheta();
+        this.pidX = position.pidX;
+        this.pidY = position.pidY;
+        this.pidAngle = position.pidAngle;
     }
 }

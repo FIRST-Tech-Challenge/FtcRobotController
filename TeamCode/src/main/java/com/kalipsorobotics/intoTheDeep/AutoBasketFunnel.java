@@ -2,6 +2,7 @@ package com.kalipsorobotics.intoTheDeep;
 
 
 import android.graphics.Path;
+import android.os.Process;
 
 import com.kalipsorobotics.actions.Init;
 import com.kalipsorobotics.actions.KActionSet;
@@ -31,6 +32,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Autonomous
 public class AutoBasketFunnel extends LinearOpMode {
@@ -243,7 +246,20 @@ public class AutoBasketFunnel extends LinearOpMode {
         telemetry.addLine("init finished");
         telemetry.update();
 
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+
         waitForStart();
+
+        executorService.submit(() -> {
+
+            android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_FOREGROUND);
+            while (true) {
+                wheelOdometry.updatePosition();
+            }
+
+        });
+
         while (opModeIsActive()) {
 
             wheelOdometry.updatePosition();

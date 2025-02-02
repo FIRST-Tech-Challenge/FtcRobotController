@@ -1,20 +1,17 @@
 package com.kalipsorobotics.intoTheDeep;
 
-import android.util.Log;
+import android.os.Process;
 
+import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.actions.SetAutoDelayAction;
 import com.kalipsorobotics.actions.WallToBarHangAction;
-import com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip;
 import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.KActionSet;
-import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.autoActions.WallToBarHangRoundTrip;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
-import com.kalipsorobotics.actions.outtake.SpecimenHang;
-import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.actions.outtake.WallPickupDistanceSensorAction;
 import com.kalipsorobotics.localization.WheelOdometry;
@@ -22,17 +19,17 @@ import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
-import com.kalipsorobotics.utilities.KServo;
 import com.kalipsorobotics.utilities.OpModeUtilities;
-import com.qualcomm.hardware.ams.AMSColorSensor;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.kalipsorobotics.modules.RevDistance;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Autonomous
 public class AutoSpecimen extends LinearOpMode {
@@ -95,9 +92,9 @@ public class AutoSpecimen extends LinearOpMode {
             telemetry.addData("claw", revDistanceClaw.getDistance(DistanceUnit.MM));
             telemetry.addLine("revDistance getDistance elapse "+(System.currentTimeMillis() - timestamp) + " ms");
             telemetry.addData("bottom", revDistanceBottom.getDistance(DistanceUnit.MM));
-            telemetry.addData("X",wheelOdometry.getCurrentPosition().getX());
-            telemetry.addData("Y",wheelOdometry.getCurrentPosition().getY());
-            telemetry.addData("Theta",wheelOdometry.getCurrentPosition().getTheta());
+            telemetry.addData("X", SharedData.getOdometryPosition().getX());
+            telemetry.addData("Y",SharedData.getOdometryPosition().getY());
+            telemetry.addData("Theta",SharedData.getOdometryPosition().getTheta());
             telemetry.addData("ls", MoveLSAction.getGlobalLinearSlideMaintainTicks());
             telemetry.update();
             setAutoDelayAction.updateCheckDone();
@@ -207,12 +204,24 @@ public class AutoSpecimen extends LinearOpMode {
         redAutoSpecimen.addAction(wallToBarHangRoundTrip4);
         //================end of specimen 4================
 
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
 
         redAutoSpecimen.printWithDependentActions();
+
         waitForStart();
+
+        executorService.submit(() -> {
+            android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_FOREGROUND);
+            while (true) {
+                wheelOdometry.updatePosition();
+            }
+
+        });
+
         while (opModeIsActive()) {
 
-            wheelOdometry.updatePosition();
+
+
 
             maintainLS.setIsDone(false);
             maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
@@ -225,9 +234,9 @@ public class AutoSpecimen extends LinearOpMode {
 
 //            telemetry.addData("claw", revDistanceClaw.getDistance(DistanceUnit.MM));
 //            telemetry.addData("bottom", revDistanceBottom.getDistance(DistanceUnit.MM));
-            telemetry.addData("X", wheelOdometry.getCurrentPosition().getX());
-            telemetry.addData("Y", wheelOdometry.getCurrentPosition().getY());
-            telemetry.addData("Theta", wheelOdometry.getCurrentPosition().getTheta());
+            telemetry.addData("X", SharedData.getOdometryPosition().getX());
+            telemetry.addData("Y", SharedData.getOdometryPosition().getY());
+            telemetry.addData("Theta", SharedData.getOdometryPosition().getTheta());
             telemetry.addData("ls", MoveLSAction.getGlobalLinearSlideMaintainTicks());
 
             telemetry.addData("moveFloorSamples",moveFloorSamples.toString());
@@ -236,10 +245,8 @@ public class AutoSpecimen extends LinearOpMode {
 
             telemetry.update();
 
-
-
-
         }
+        executorService.shutdown();
 
     }
 }

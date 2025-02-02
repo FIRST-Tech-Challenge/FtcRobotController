@@ -1,9 +1,9 @@
 package com.kalipsorobotics.actions.autoActions;
 
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.kalipsorobotics.PID.PidNav;
+import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.DoneStateAction;
 import com.kalipsorobotics.localization.WheelOdometry;
@@ -57,6 +57,7 @@ public class PurePursuitAction extends Action {
 
     private double startTimeMS = System.currentTimeMillis();
 
+    private Position currentPosition = new Position(SharedData.getOdometryPosition());
     private Position lastPosition;
     private double lastMilli = 0;
     ElapsedTime timeoutTimer;
@@ -138,8 +139,8 @@ public class PurePursuitAction extends Action {
         this.pidAngle = new PidNav(p, 0,0);
     }
 
-    private void targetPosition(Position target) {
-        Position currentPos = wheelOdometry.getCurrentPosition();
+    private void targetPosition(Position target, Position currentPos) {
+        //Position currentPos = wheelOdometry.getCurrentPosition();
         Vector currentToTarget = Vector.between(currentPos, target);
 
         double distanceToTarget = currentToTarget.getLength();
@@ -192,10 +193,12 @@ public class PurePursuitAction extends Action {
             path = new Path(pathPoints);
             startTimeMS = System.currentTimeMillis();
             hasStarted = true;
-            lastPosition = wheelOdometry.getCurrentPosition();
+            //lastPosition = wheelOdometry.getCurrentPosition();
+            lastPosition = new Position(SharedData.getOdometryPosition());
             timeoutTimer.reset();
         }
 
+        currentPosition = new Position(SharedData.getOdometryPosition());
 
         double elapsedTime = System.currentTimeMillis() - startTimeMS;
 
@@ -213,28 +216,28 @@ public class PurePursuitAction extends Action {
         if (prevFollow.isPresent() && (path.findIndex(prevFollow.get()) > (path.numPoints() - 2))) {
             currentLookAheadRadius = LAST_RADIUS_MM;
         }
-        follow = path.lookAhead(wheelOdometry.getCurrentPosition(), currentLookAheadRadius);
+        follow = path.lookAhead(currentPosition, currentLookAheadRadius);
 
         if (follow.isPresent()) {
             Log.d("purepursaction_debug_follow",
                     "follow point:  " + follow.get());
-            Log.d("purepursaction_debug_follow", "current pos:    " + wheelOdometry.getCurrentPosition().toString());
-            targetPosition(follow.get());
+            Log.d("purepursaction_debug_follow", "current pos:    " + currentPosition.toString());
+            targetPosition(follow.get(), currentPosition);
 
         } else {
-            if (Math.abs(lastPoint.getTheta() - wheelOdometry.getCurrentPosition().getTheta()) <= Math.toRadians(1.5) ) {
+            if (Math.abs(lastPoint.getTheta() - currentPosition.getTheta()) <= Math.toRadians(1.5) ) {
                 finishedMoving();
             } else {
                 Log.d("purepursaction_debug_follow",
                         "locking final angle:  " + lastPoint);
-                Log.d("purepursaction_debug_follow", "current pos:    " + wheelOdometry.getCurrentPosition().toString());
-                targetPosition(lastPoint);
+                Log.d("purepursaction_debug_follow", "current pos:    " + currentPosition.toString());
+                targetPosition(lastPoint, currentPosition);
             }
         }
 
-        xVelocity = (Math.abs(lastPosition.getX() - wheelOdometry.getCurrentPosition().getX())) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
-        yVelocity = (Math.abs(lastPosition.getY() - wheelOdometry.getCurrentPosition().getY())) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
-        thetaVelocity = (Math.abs(lastPosition.getTheta() - wheelOdometry.getCurrentPosition().getTheta())) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
+        xVelocity = (Math.abs(lastPosition.getX() - currentPosition.getX())) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
+        yVelocity = (Math.abs(lastPosition.getY() - currentPosition.getY())) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
+        thetaVelocity = (Math.abs(lastPosition.getTheta() - currentPosition.getTheta())) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
 
         if(xVelocity < 0.01 && yVelocity < 0.01 && thetaVelocity < 0.01) {
             if(timeoutTimer.milliseconds() > 1000) {
@@ -245,7 +248,7 @@ public class PurePursuitAction extends Action {
         }
 
         lastMilli = timeoutTimer.milliseconds();
-        lastPosition = wheelOdometry.getCurrentPosition();
+        lastPosition = currentPosition;
 
     }
 
@@ -257,13 +260,13 @@ public class PurePursuitAction extends Action {
     public void finishedMoving() {
         driveTrain.setPower(0);
         Log.d("purepursaction_debug_follow", "timeout");
-        Log.d("purepursaction_debug_follow", "current pos:    " + wheelOdometry.getCurrentPosition().toString());
+        Log.d("purepursaction_debug_follow", "current pos:    " + currentPosition.toString());
         checkDoneCounter++;
 
         Log.d("purepursaction_debug_checkDone", "checkDoneCounter: " + checkDoneCounter + "name:" +  name);
 
         if (checkDoneCounter >= maxCheckDoneCounter) {
-            Log.d("purepursaction_debug_checkDone", "Done" + checkDoneCounter + "name:" +  name + "Pos: " + wheelOdometry.getCurrentPosition());
+            Log.d("purepursaction_debug_checkDone", "Done" + checkDoneCounter + "name:" +  name + "Pos: " + currentPosition);
             isDone = true;
         }
 

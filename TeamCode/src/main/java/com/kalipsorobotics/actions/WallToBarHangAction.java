@@ -29,12 +29,12 @@ public class WallToBarHangAction extends KActionSet {
         specimenHangReady1.setName("hangSpecimenReady1");
         this.addAction(specimenHangReady1);
 
-        BarHangDistanceSensorAction barHangDistanceSensorAction = new BarHangDistanceSensorAction(outtake, revdistance, moveToSpecimenBar);
-        barHangDistanceSensorAction.setDependentActions(waitAtStart);
-        this.addAction(barHangDistanceSensorAction);
+//        BarHangDistanceSensorAction barHangDistanceSensorAction = new BarHangDistanceSensorAction(outtake, revdistance, moveToSpecimenBar);
+//        barHangDistanceSensorAction.setDependentActions(waitAtStart);
+//        this.addAction(barHangDistanceSensorAction);
 
         SpecimenHang specimenHang = new SpecimenHang(outtake);
-        specimenHang.setDependentActions(barHangDistanceSensorAction);
+        specimenHang.setDependentActions(moveToSpecimenBar, specimenHangReady1);
         this.addAction(specimenHang);
 
     }

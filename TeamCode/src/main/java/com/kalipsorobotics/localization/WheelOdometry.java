@@ -3,6 +3,7 @@ package com.kalipsorobotics.localization;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.math.MathFunctions;
 import com.kalipsorobotics.modules.IMUModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -224,6 +225,7 @@ public class WheelOdometry {
 
         prevImuHeading = currentImuHeading;
 
+        SharedData.setOdometryPosition(currentPosition);
 
         return currentPosition;
     }
@@ -248,7 +250,7 @@ public class WheelOdometry {
         return currentVelocity;
     }
 
-    public Position getCurrentPosition() {
+    private Position getCurrentPosition() {
         return currentPosition;
     }
 
