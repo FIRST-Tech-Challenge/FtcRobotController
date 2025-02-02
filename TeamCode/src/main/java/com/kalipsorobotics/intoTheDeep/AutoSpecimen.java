@@ -57,8 +57,8 @@ public class AutoSpecimen extends LinearOpMode {
         IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
         sleep(1000);
 
-        Rev2mDistanceSensor revDistance = hardwareMap.get(Rev2mDistanceSensor.class, "revDistance");
-        Rev2mDistanceSensor revDistance2 = hardwareMap.get(Rev2mDistanceSensor.class, "revDistance2");
+        Rev2mDistanceSensor revDistanceClaw = hardwareMap.get(Rev2mDistanceSensor.class, "revDistanceClaw");
+        Rev2mDistanceSensor revDistanceBottom = hardwareMap.get(Rev2mDistanceSensor.class, "revDistanceBottom");
 
         WheelOdometry.setInstanceNull();
         WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
@@ -69,7 +69,7 @@ public class AutoSpecimen extends LinearOpMode {
 
         InitAuto initAuto = new InitAuto(intakeClaw, outtake);
         initAuto.setName("initAuto");
-        initAuto.update();
+//        initAuto.update();
 
         telemetry.addLine("init finished");
 
@@ -91,8 +91,10 @@ public class AutoSpecimen extends LinearOpMode {
         telemetry.update();
 
         while(!setAutoDelayAction.getIsDone() && opModeInInit()) {
-            telemetry.addData("claw", revDistance.getDistance(DistanceUnit.MM));
-            telemetry.addData("bottom", revDistance2.getDistance(DistanceUnit.MM));
+            long timestamp = System.currentTimeMillis();
+            telemetry.addData("claw", revDistanceClaw.getDistance(DistanceUnit.MM));
+            telemetry.addLine("revDistance getDistance elapse "+(System.currentTimeMillis() - timestamp) + " ms");
+            telemetry.addData("bottom", revDistanceBottom.getDistance(DistanceUnit.MM));
             telemetry.addData("X",wheelOdometry.getCurrentPosition().getX());
             telemetry.addData("Y",wheelOdometry.getCurrentPosition().getY());
             telemetry.addData("Theta",wheelOdometry.getCurrentPosition().getTheta());
@@ -106,7 +108,7 @@ public class AutoSpecimen extends LinearOpMode {
         redAutoSpecimen.addAction(delayBeforeStart);
 
         //================begin of first specimen====================
-        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, revDistance2,230);
+        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, revDistanceBottom,230);
         wallToBarHangAction.setName("wallToBarHangAction");
         wallToBarHangAction.setTelemetry(telemetry);
         wallToBarHangAction.setDependentActions(delayBeforeStart);
@@ -141,7 +143,7 @@ public class AutoSpecimen extends LinearOpMode {
         //moveFloorSamples.addPoint(-175, -1065, -180);
 
         // 3rd sample push depot
-        double THRID_SAMPLE_PUSHING_Y = -1150;
+        double THRID_SAMPLE_PUSHING_Y = -1155;
 //        moveFloorSamples.addPoint(-1300, -1050, -180);
         moveFloorSamples.addPoint(-1300, THRID_SAMPLE_PUSHING_Y, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE);//before push //-1300, -1175 // -1175 BEFORE DARREN CHANGED
         moveFloorSamples.addPoint(-600, THRID_SAMPLE_PUSHING_Y, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE);
@@ -172,7 +174,7 @@ public class AutoSpecimen extends LinearOpMode {
 //        redAutoSpecimen.addAction(moveToDepot);
         //==============end of pushing================//
 
-        WallPickupDistanceSensorAction wallPickupDistanceSensorAction = new WallPickupDistanceSensorAction(outtake, revDistance, moveFloorSamples);
+        WallPickupDistanceSensorAction wallPickupDistanceSensorAction = new WallPickupDistanceSensorAction(outtake, revDistanceClaw, moveFloorSamples);
         wallPickupDistanceSensorAction.setName("wallPickupDistanceSensor");
         wallPickupDistanceSensorAction.setTelemetry(telemetry);
         wallPickupDistanceSensorAction.setDependentActions(specimenWallReady);
@@ -180,7 +182,7 @@ public class AutoSpecimen extends LinearOpMode {
 
         //=============begin of second specimen=================
         WallToBarHangRoundTrip wallToBarHangRoundTrip2 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, revDistance, revDistance2, 290); //400 //375
+                outtake, revDistanceClaw, revDistanceBottom, 290); //400 //375
         wallToBarHangRoundTrip2.setName("wallToBarHangRoundTrip2");
         wallToBarHangRoundTrip2.setTelemetry(telemetry);
         wallToBarHangRoundTrip2.setDependentActions(wallPickupDistanceSensorAction);
@@ -189,7 +191,7 @@ public class AutoSpecimen extends LinearOpMode {
 
         //============begin of third================
         WallToBarHangRoundTrip wallToBarHangRoundTrip3 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, revDistance,revDistance2,390); //500 //450
+                outtake, revDistanceClaw,revDistanceBottom,390); //500 //450
         wallToBarHangRoundTrip3.setName("wallToBarHangRoundTrip3");
         wallToBarHangRoundTrip3.setTelemetry(telemetry);
         wallToBarHangRoundTrip3.setDependentActions(wallToBarHangRoundTrip2);
@@ -198,7 +200,7 @@ public class AutoSpecimen extends LinearOpMode {
 
         //===============start of fourth specimen==============
         WallToBarHangRoundTrip wallToBarHangRoundTrip4 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, revDistance,revDistance2,525);
+                outtake, revDistanceClaw,revDistanceBottom,525);
         wallToBarHangRoundTrip4.setName("wallToBarHangRoundTrip4");
         wallToBarHangRoundTrip4.setTelemetry(telemetry);
         wallToBarHangRoundTrip4.setDependentActions(wallToBarHangRoundTrip3);
@@ -217,12 +219,12 @@ public class AutoSpecimen extends LinearOpMode {
             maintainLS.updateCheckDone();
 
 
-//            Log.d("WallDistance:", String.valueOf(revDistance.getDistance(DistanceUnit.MM)));
-//            Log.d("BarDistance:", String.valueOf(revDistance2.getDistance(DistanceUnit.MM)));
+//            Log.d("WallDistance:", String.valueOf(revDistanceClaw.getDistance(DistanceUnit.MM)));
+//            Log.d("BarDistance:", String.valueOf(revDistanceBottom.getDistance(DistanceUnit.MM)));
             redAutoSpecimen.updateCheckDone();
 
-            telemetry.addData("claw", revDistance.getDistance(DistanceUnit.MM));
-            telemetry.addData("bottom", revDistance2.getDistance(DistanceUnit.MM));
+//            telemetry.addData("claw", revDistanceClaw.getDistance(DistanceUnit.MM));
+//            telemetry.addData("bottom", revDistanceBottom.getDistance(DistanceUnit.MM));
             telemetry.addData("X", wheelOdometry.getCurrentPosition().getX());
             telemetry.addData("Y", wheelOdometry.getCurrentPosition().getY());
             telemetry.addData("Theta", wheelOdometry.getCurrentPosition().getTheta());

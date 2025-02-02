@@ -1,5 +1,6 @@
 package com.kalipsorobotics.modules;
 
+import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.utilities.KServo;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -153,16 +154,32 @@ public class IntakeClaw {
                 180, 0, false);
     }
 
+
+    // NEW FUNNEL + SPECIMEN INNIT
     public void init() {
         getIntakeLinkageServo().setPosition(IntakeClaw.INTAKE_LINKAGE_IN_POS);
         getIntakeBigSweepServo().setPosition(0.5);
-        getIntakeBigPivotServo().setPosition(IntakeClaw.INTAKE_BIG_PIVOT_RETRACT_POS);
-        getIntakeSmallPivotServo().setPosition(IntakeClaw.INTAKE_SMALL_PIVOT_RETRACT_POS);
-        getIntakeSmallSweepServo().setPosition(IntakeClaw.INTAKE_SMALL_SWEEP_RETRACT_POS);
+        getIntakeBigPivotServo().setPosition(IntakeClaw.INTAKE_BIG_PIVOT_FUNNEL_READY_POS);
+        getIntakeSmallPivotServo().setPosition(IntakeClaw.INTAKE_SMALL_PIVOT_FUNNEL_READY_POS);
+        getIntakeSmallSweepServo().setPosition(IntakeClaw.INTAKE_SMALL_SWEEP_TRANSFER_READY_POS);
         getIntakeClawServo().setPosition(IntakeClaw.INTAKE_CLAW_OPEN);
         getIntakeRatchetServo().setPosition(IntakeClaw.INTAKE_RATCHET_LOCK_POS);
 
     }
+
+
+    // OLD SPECIMEN INNIT
+//    public void init() {
+//        getIntakeLinkageServo().setPosition(IntakeClaw.INTAKE_LINKAGE_IN_POS);
+//        getIntakeBigSweepServo().setPosition(0.5);
+//        getIntakeBigPivotServo().setPosition(IntakeClaw.INTAKE_BIG_PIVOT_RETRACT_POS);
+//        getIntakeSmallPivotServo().setPosition(IntakeClaw.INTAKE_SMALL_PIVOT_RETRACT_POS);
+//        getIntakeSmallSweepServo().setPosition(IntakeClaw.INTAKE_SMALL_SWEEP_RETRACT_POS);
+//        getIntakeClawServo().setPosition(IntakeClaw.INTAKE_CLAW_OPEN);
+//        getIntakeRatchetServo().setPosition(IntakeClaw.INTAKE_RATCHET_LOCK_POS);
+//
+//    }
+
 
 
     public OpModeUtilities getOpModeUtilities() {

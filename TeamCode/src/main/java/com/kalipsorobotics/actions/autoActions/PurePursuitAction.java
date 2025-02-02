@@ -287,4 +287,8 @@ public class PurePursuitAction extends Action {
     public void setMaxTimeOutMS(double maxTimeOutMS) {
         this.maxTimeOutMS = maxTimeOutMS;
     }
+
+    public WheelOdometry getOdometry() {
+        return wheelOdometry;
+    }
 }
