@@ -54,6 +54,10 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final int VLIFT_SCORE_SPECIMEN = 283;
     public static final double VLIFT_CLOSENESS = 50.0;
     public static final int VLIFT_POWEROFF_HEIGHT = 30;
+    public static final int ASCENT_INIT_POS = -420;
+    public static final int ASCENT_UP_POS = -1742;
+    public static final int ASCENT_PREPARE_POS = -2795;
+    public static final int ASCENT_FINISH_POS = -50;
 
     public static int deg2arm(double degrees) {
         return (int) (degrees / 360.0 * spinTickPerRev);
@@ -174,17 +178,21 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     @HardwareName("clawColor")
     public ColorSensor clawColor;
 
+    @EncoderFor("backLeft")
+    @Reversed
+    @AutoClearEncoder
+    public Encoder leftAscentEnc;
+
     @HardwareName("leftAscent")
+    @Reversed
     public CRServo leftAscent;
 
     @EncoderFor("verticalSlide2")
+    @AutoClearEncoder
     public Encoder rightAscentEnc;
 
     @HardwareName("rightAscent")
     public CRServo rightAscent;
-
-    @EncoderFor("backLeft")
-    public Encoder leftAscentEnc;
 
     @Override
     public Encoder getLeftEncoder() {
