@@ -54,10 +54,6 @@ public abstract class Action {
 
     //updates the action
     public boolean updateCheckDone() {
-        if (telemetry != null) {
-            int value = isDone ? 3 : (hasStarted ? 2:1);
-            telemetry.addData("action_"+this.name, value);
-        }
         if (isDone) {
             return true;
         } //if done never update

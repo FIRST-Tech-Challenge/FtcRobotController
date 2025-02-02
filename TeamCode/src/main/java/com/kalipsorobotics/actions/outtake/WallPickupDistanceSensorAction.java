@@ -57,6 +57,7 @@ public class WallPickupDistanceSensorAction extends Action {
             if (detectDistanceAction.getIsDone()) {
                 purePursuitAction.finishedMoving();
                 Log.d("cancelPurePursuit", "Wall " + revDistance.getDistance(DistanceUnit.MM));
+                moveToDistanceThreshold.finishedMoving();
             }
 
 

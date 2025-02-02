@@ -23,8 +23,6 @@ import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -37,8 +35,8 @@ public class AutoSpecimen extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+//        FtcDashboard dashboard = FtcDashboard.getInstance();
+//        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         KActionSet redAutoSpecimen = new KActionSet();
         DriveTrain.setInstanceNull();
@@ -74,28 +72,12 @@ public class AutoSpecimen extends LinearOpMode {
         setAutoDelayAction.setName("setAutoDelayAction");
         setAutoDelayAction.setTelemetry(telemetry);
 
-        // Send a dummy data for all action telemetry so that they are defined before start
-        // If the setAutoDelayAction can be moved after all actions creates, we don't need this
-        telemetry.addData("action_moveFloorSamples", -1);
-        telemetry.addData("action_specimenWallReady", -1);
-        telemetry.addData("action_waitBeforeSpecimenReady", -1);
-        telemetry.addData("action_wallPickupDistanceSensor", -1);
-        telemetry.addData("action_wallToBarHangAction", -1);
-        telemetry.addData("action_wallToBarHangRoundTrip2", -1);
-        telemetry.addData("action_wallToBarHangRoundTrip3", -1);
-        telemetry.addData("action_wallToBarHangRoundTrip4", -1);
-
-        telemetry.update();
-
         while(!setAutoDelayAction.getIsDone() && opModeInInit()) {
             long timestamp = System.currentTimeMillis();
-            telemetry.addData("claw", revDistanceClaw.getDistance(DistanceUnit.MM));
-            telemetry.addLine("revDistance getDistance elapse "+(System.currentTimeMillis() - timestamp) + " ms");
-            telemetry.addData("bottom", revDistanceBottom.getDistance(DistanceUnit.MM));
             telemetry.addData("X", SharedData.getOdometryPosition().getX());
             telemetry.addData("Y",SharedData.getOdometryPosition().getY());
             telemetry.addData("Theta",SharedData.getOdometryPosition().getTheta());
-            telemetry.addData("ls", MoveLSAction.getGlobalLinearSlideMaintainTicks());
+            telemetry.addData("LinearSlide", MoveLSAction.getGlobalLinearSlideMaintainTicks());
             telemetry.update();
             setAutoDelayAction.updateCheckDone();
         }

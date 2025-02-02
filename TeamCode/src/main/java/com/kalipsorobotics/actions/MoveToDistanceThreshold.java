@@ -25,6 +25,11 @@ public class MoveToDistanceThreshold extends Action {
         return isDone;
     }
 
+    public void finishedMoving() {
+        driveTrain.setPower(0);
+        isDone = true;
+    }
+
     @Override
     protected void update() {
         if (isDone) {
@@ -34,8 +39,7 @@ public class MoveToDistanceThreshold extends Action {
         driveTrain.setPower(power);
 
         if (distanceDetectionAction.checkDistance()) {
-            driveTrain.setPower(0);
-            isDone = true;
+            finishedMoving();
         }
 
     }

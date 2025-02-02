@@ -6,6 +6,7 @@ import static com.kalipsorobotics.math.CalculateTickPer.mmToTicksLS;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.kalipsorobotics.PID.PidNav;
 import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.DoneStateAction;
@@ -14,6 +15,11 @@ import com.kalipsorobotics.modules.Outtake;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+//@Config
+//class LsConfig {
+//
+//};
+//
 public class MoveLSAction extends Action {
 
     Outtake outtake;
@@ -84,8 +90,6 @@ public class MoveLSAction extends Action {
             return lowestPower;
         }
 
-
-
         if (targetTicks < mmToTicksLS(30)) {
             lowestPower = 0.2;
         }
@@ -95,7 +99,7 @@ public class MoveLSAction extends Action {
         }
 
         if (targetTicks > mmToTicksLS(100)) {
-            lowestPower = 0.16 + ((targetTicks / 200)*0.01); // for each 200mm it should add 0.04 power more
+            lowestPower = 0.16 + ((CalculateTickPer.ticksToMmLS(targetTicks) / 200)*0.01); // for each 200mm it should add 0.04 power more
         }
 //
 //        if (targetTicks > mmToTicksLS(100)) {

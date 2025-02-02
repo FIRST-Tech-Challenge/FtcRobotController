@@ -35,10 +35,6 @@ public class KActionSet extends Action {
 
     @Override
     public boolean updateCheckDone(){
-        if (telemetry != null) {
-            int value = isDone ? 3 : (hasStarted ? 2:1);
-            telemetry.addData("action_"+this.name, value);
-        }
         if (isDone) {
             Log.d("action set log", "done for " + name);
             return true;
