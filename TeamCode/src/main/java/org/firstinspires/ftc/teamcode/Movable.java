@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -17,11 +16,13 @@ abstract class Movable extends LinearOpMode {
     static protected Servo SlideL;
     static protected Servo rotatingServoR;
     static protected Servo rotatingServoL;
-    static protected Servo outtakeR;
-    static protected Servo outtakeL;
+    static protected Servo outtake;
     static protected Servo intake;
-    static protected boolean inverse = false;
-    static protected boolean stop = false;
+
+    static protected Delay outtakeDelay = new Delay();
+    static protected Delay inttakeDelay = new Delay();
+    static protected Delay rollingDelay = new Delay();
+    static protected Delay slideDelay = new Delay();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -35,11 +36,10 @@ abstract class Movable extends LinearOpMode {
         BLScissorLift = hardwareMap.get(DcMotor.class, "BLScissorLift");
         SlideR = hardwareMap.get(Servo.class, "SlideR");
         SlideL = hardwareMap.get(Servo.class, "SlideL");
-//        rotatingServoR = hardwareMap.get(Servo.class, "rotatingServoR"); // change if needed
-//        rotatingServoL = hardwareMap.get(Servo.class, "rotatingServoL");
-//        outtakeR = hardwareMap.get(Servo.class, "outtakeR"); // change if needed
-//        outtakeL  `= hardwareMap.get(Servo.class, "outtakeL");
-//        intake = hardwareMap.get(Servo.class, "intake"); // change if needed
+        rotatingServoR = hardwareMap.get(Servo.class, "rotatingServoR"); // change if needed
+        rotatingServoL = hardwareMap.get(Servo.class, "rotatingServoL");
+        outtake = hardwareMap.get(Servo.class, "outtakeClaw"); // change if needed
+        intake = hardwareMap.get(Servo.class, "intakeClaw"); // change if needed
         telemetry.addData("Status", "Initialized");
         telemetry.update();
     }
@@ -117,7 +117,7 @@ abstract class Movable extends LinearOpMode {
     }
 
     public void powerScissorLift(int miliseconds, String direction) {
-        final double LPOWER = .98;
+        final double LPOWER = .96;
         final double RPOWER = 1;
 
         switch (direction) {
@@ -144,29 +144,22 @@ abstract class Movable extends LinearOpMode {
     public void outtakeGrab(String toggle) {
         switch (toggle) {
             case "constriction":
-                outtakeR.setPosition(1);
-                outtakeL.setPosition(1);
+                outtake.setPosition(.3);
                 break;
             case "liberation":
-                outtakeR.setPosition(0);
-                outtakeL.setPosition(0);
+                outtake.setPosition(0);
                 break;
-        }
-        try {
-            wait(500);
-        } catch (Exception e) {
-
         }
     }
 
     // change values if needed
-    public void inttakeGrab(String toggle) {
+    public void intakeGrab(String toggle) {
         switch (toggle) {
             case "constriction":
-                intake.setPosition(1);
+                intake.setPosition(.7);
                 break;
             case "liberation":
-                intake.setPosition(0);
+                intake.setPosition(.4);
                 break;
         }
         try {
@@ -195,26 +188,17 @@ abstract class Movable extends LinearOpMode {
         }
     }
 
-    public void inverseControls() {
-        try {
-            inverse = !inverse;
-            wait(50);
-        } catch (Exception e) {
-
-        }
-    }
-
     // change values if needed
     public void turnRotatingServos(String toggle) {
         rotatingServoL.setDirection(Servo.Direction.REVERSE);
         switch (toggle) {
             case "rollUp":
-                rotatingServoR.setPosition(1);
-                rotatingServoL.setPosition(1);
+                rotatingServoR.setPosition(.62);
+                rotatingServoL.setPosition(.62);
                 break;
             case "rollDown":
-                rotatingServoR.setPosition(0);
-                rotatingServoL.setPosition(0);
+                rotatingServoR.setPosition(.08);
+                rotatingServoL.setPosition(.08);
                 break;
         }
         try {

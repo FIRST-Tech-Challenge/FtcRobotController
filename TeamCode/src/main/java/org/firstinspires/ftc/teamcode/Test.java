@@ -2,14 +2,26 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@Autonomous
+@TeleOp
 public class Test extends Movable {
     @Override
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
         waitForStart();
-        turn180();
-        disablePower();
+
+        while (opModeIsActive()) {
+
+
+//            if (gamepad1.b) {
+//                turnRotatingServos("rollUp");
+//            } else if (gamepad1.a) {
+//                turnRotatingServos("rollDown");
+//            } else if (gamepad1.x) {
+//                intakeGrab("constriction");
+//            } else if (gamepad1.y) {
+//                 intakeGrab("liberation");
+//            }
+        }
 
     }
 

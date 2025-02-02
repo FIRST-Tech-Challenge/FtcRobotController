@@ -44,17 +44,10 @@ public class AnimosityAndMortification extends Movable {
                 BRW.setPower(0.6);
             } else if (gamepad1.left_trigger > .5) {
                 // strafing, controls can be switched through inverse boolean
-                if (!inverse) {
-                    powerWheels(0, "left");
-                } else {
-                    powerWheels(0, "right");
-                }
+                powerWheels(0, "left");
+
             } else if (gamepad1.right_trigger > .5) {
-                if (!inverse) {
-                    powerWheels(0, "right");
-                } else {
-                    powerWheels(0, "left");
-                }
+                powerWheels(0, "right");
             } else {
                 disablePower();
             }
@@ -69,34 +62,49 @@ public class AnimosityAndMortification extends Movable {
             }
 
             // slides/arms
-            if (gamepad1.b) {
-                moveSlides("thrust");
-            } else if (gamepad1.a) {
-                moveSlides("retract");
-            }else if (gamepad1.x) {
-                // inverses control
-                inverseControls();
+
+            if (gamepad1.a && outtakeDelay.delay()) {
+                if (outtakeDelay.open) {
+                    outtakeGrab("constriction");
+                } else {
+                    outtakeGrab("liberation");
+                }
+                outtakeDelay.open = !outtakeDelay.open;
+            } else if (gamepad1.b && slideDelay.delay()) {
+                if (slideDelay.open) {
+                    moveSlides("thrust");
+                } else {
+                    moveSlides("retract");
+                }
+                slideDelay.open = !slideDelay.open;
+            } else if (gamepad1.x && rollingDelay.delay()) {
+                if (rollingDelay.open) {
+                    turnRotatingServos("rollUp");
+                } else {
+                    turnRotatingServos("rollDown");
+                }
+                rollingDelay.open = !rollingDelay.open;
+            } else if (gamepad1.y && inttakeDelay.delay()) {
+                if (inttakeDelay.open) {
+                    intakeGrab("constriction");
+                } else {
+                    intakeGrab("liberation");
+                }
+                inttakeDelay.open = !inttakeDelay.open;
             }
 
+
             if (gamepad1.dpad_left) {
-                if (!inverse) {
-                    turn90("left");
-                } else {
-                    turn90("right");
-                }
+                turn90("left");
             } else if (gamepad1.dpad_right) {
-                if (!inverse) {
-                    turn90("right");
-                } else {
-                    turn90("left");
-                }            }
+                turn90("right");
+            }
             updatePhoneConsole();
         }
     }
 
     public void updatePhoneConsole() {
         telemetry.addData("Status","Running");
-        telemetry.addData("Inverse", inverse);
         telemetry.addData("Target Power:", tgtPower);
         telemetry.addData("FLW Power:", FLW.getPower());
         telemetry.addData("BLW Power:", BLW.getPower());
