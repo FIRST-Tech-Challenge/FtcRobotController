@@ -47,7 +47,6 @@ import org.firstinspires.ftc.teamcode.RoadRunner.messages.PoseMessage;
 import org.firstinspires.ftc.teamcode.tatooine.utils.mathUtil.MathUtil;
 import org.firstinspires.ftc.teamcode.tatooine.utils.unit.UnitConverter;
 import org.firstinspires.ftc.teamcode.tatooine.utils.unit.unit;
-import org.opencv.android.Utils;
 
 import java.lang.Math;
 import java.util.Arrays;
@@ -218,8 +217,6 @@ public final class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
 
         // drive model parameters
-        //public double inPerTick = 0.0029493101;
-        // public double inPerTick = UnitConverter.convert(319.3, unit.CM,unit.INCHES);
 
         public double inPerTick = UnitConverter.convert(315, unit.CM, unit.INCHES) / 233353;
 //        public double lateralInPerTick = 0.0002968932740733096;
@@ -238,13 +235,13 @@ public final class MecanumDrive {
 
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 60;
-        public double minProfileAccel = -40;
-        public double maxProfileAccel = 60;
+        public double maxWheelVel = (60.0/100.0) * 130.0;
+        public double minProfileAccel = (-40.0/100.0) * 130.0;
+        public double maxProfileAccel = (60.0/100.0) * 130.0;
 
         // turn profile parameters (in radians)
-        public double maxAngVel = Math.PI; // shared with path
-        public double maxAngAccel = Math.PI;
+        public double maxAngVel = (Math.PI/100.0) * 130.0; // shared with path
+        public double maxAngAccel = (Math.PI/100.0) * 130.0;
 
         // path controller gains
         public double axialGain = 5;
