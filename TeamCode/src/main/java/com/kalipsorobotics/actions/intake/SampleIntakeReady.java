@@ -1,7 +1,6 @@
 package com.kalipsorobotics.actions.intake;
 
 import com.kalipsorobotics.actions.KActionSet;
-import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.modules.IntakeClaw;
 
@@ -12,7 +11,7 @@ public class SampleIntakeReady extends KActionSet{
         }
 
         public SampleIntakeReady(double intakeLinkageServoPos, IntakeClaw intake, double intakeSmallSweepServoPos) {
-            this(intakeLinkageServoPos, intake, intakeSmallSweepServoPos, IntakeClaw.INTAKE_CLAW_OPEN);
+            this(intakeLinkageServoPos, intake, intakeSmallSweepServoPos, IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN);
         }
 
         public SampleIntakeReady(double intakeLinkageServoPos, IntakeClaw intake, double intakeSmallSweepServoPos,

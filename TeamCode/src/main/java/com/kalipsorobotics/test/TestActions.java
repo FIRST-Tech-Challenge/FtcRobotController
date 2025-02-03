@@ -235,7 +235,6 @@ import com.kalipsorobotics.tensorflow.CameraCapture;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Disabled
@@ -452,11 +451,11 @@ public class TestActions extends LinearOpMode {
             //INTAKE
 
             if(intakeClawOpenClose) {
-                if((intakeClawPos - IntakeClaw.INTAKE_CLAW_CLOSE) < 0.1) {
-                    intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
+                if((intakeClawPos - IntakeClaw.IntakeClawConfig.INTAKE_CLAW_CLOSE) < 0.1) {
+                    intakeClawPos = IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN;
                     intakeClaw.getIntakeClawServo().setPosition(intakeClawPos);
-                } else if (intakeClawPos == IntakeClaw.INTAKE_CLAW_OPEN){
-                    intakeClawPos = IntakeClaw.INTAKE_CLAW_CLOSE;
+                } else if (intakeClawPos == IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN){
+                    intakeClawPos = IntakeClaw.IntakeClawConfig.INTAKE_CLAW_CLOSE;
                     intakeClaw.getIntakeClawServo().setPosition(intakeClawPos);
                 }
             }

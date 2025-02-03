@@ -4,14 +4,12 @@ import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.modules.IntakeClaw;
-import com.kalipsorobotics.modules.Outtake;
-import com.qualcomm.hardware.ams.AMSColorSensor;
 
 public class SampleIntakeAction extends KActionSet {
 
     public SampleIntakeAction(IntakeClaw intake){
 
-        KServoAutoAction intakeClawOpen = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);
+        KServoAutoAction intakeClawOpen = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN);
         intakeClawOpen.setName("intakeClawOpen");
         this.addAction(intakeClawOpen);
 
@@ -30,7 +28,7 @@ public class SampleIntakeAction extends KActionSet {
         wait.setDependentActions(moveBigPivotDown, moveSmallPivotDown);
         this.addAction(wait);
 
-        KServoAutoAction clawClose = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_CLOSE);
+        KServoAutoAction clawClose = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.IntakeClawConfig.INTAKE_CLAW_CLOSE);
         clawClose.setName("clawClose");
         clawClose.setDependentActions(wait);
         this.addAction(clawClose);

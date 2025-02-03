@@ -2,8 +2,6 @@ package com.kalipsorobotics.actions;
 
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
-import com.kalipsorobotics.actions.outtake.OuttakePivotAction;
-import com.kalipsorobotics.math.CalculateTickPer;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 
@@ -22,7 +20,7 @@ public class Init extends KActionSet{
         KServoAutoAction smallSweep = new KServoAutoAction(intakeClaw.getIntakeSmallSweepServo(), IntakeClaw.INTAKE_SMALL_SWEEP_RETRACT_POS);
         this.addAction(smallSweep);
 
-        KServoAutoAction clawIntake = new KServoAutoAction(intakeClaw.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);
+        KServoAutoAction clawIntake = new KServoAutoAction(intakeClaw.getIntakeClawServo(), IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN);
         this.addAction(clawIntake);
 
         KServoAutoAction clawOuttake = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_CLOSE);

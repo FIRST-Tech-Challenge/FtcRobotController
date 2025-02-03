@@ -45,7 +45,7 @@ public class SpecimenSweepingRoundTrip extends KActionSet {
         this.addAction(sweepToDepot);
 
 
-        KServoAutoAction openClaw = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);
+        KServoAutoAction openClaw = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN);
         openClaw.setName("openClaw");
         openClaw.setDependentActions(sweepToDepot);
         this.addAction(openClaw);

@@ -2,7 +2,6 @@ package com.kalipsorobotics.actions;
 
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
-import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 
@@ -52,7 +51,7 @@ public class SampleEndToEndSequence extends KActionSet{
         closeOuttakeClaw.setDependentActions(moveBigPivot1, moveSmallPivot, moveSmallSweep, openOuttakeClaw, linkageRetract);
         this.addAction(closeOuttakeClaw);
 
-        KServoAutoAction openIntakeClaw = new KServoAutoAction(intakeClaw.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);
+        KServoAutoAction openIntakeClaw = new KServoAutoAction(intakeClaw.getIntakeClawServo(), IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN);
         openIntakeClaw.setName("openIntakeClaw");
         openIntakeClaw.setDependentActions(closeOuttakeClaw);
         this.addAction(openIntakeClaw);

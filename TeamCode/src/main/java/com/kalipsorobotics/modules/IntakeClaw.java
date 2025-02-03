@@ -1,16 +1,24 @@
 package com.kalipsorobotics.modules;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.utilities.KServo;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class IntakeClaw {
+    @Config
+    static public class IntakeClawConfig {
+            public static double INTAKE_CLAW_CLOSE = 0.35;
+            public static double INTAKE_CLAW_OPEN = 0.07; //increase to close claw more
+    }
+
     private static IntakeClaw single_instance = null;
 //0.0018
     //INTAKE READY
 
-    public static final double INTAKE_BIG_SWEEP_PARALLEL_TO_ROBOT = 0.48; //decrease to go right, increase to go left
+
+    public static final double INTAKE_BIG_SWEEP_PARALLEL_TO_ROBOT = 0.48;
 
     public static final double INTAKE_BIG_PIVOT_INTAKE_READY_POS = 0.597; //0.65   //increase to go down, decrease to
     // go up
@@ -65,11 +73,6 @@ public class IntakeClaw {
     //big 0.867
     //small 0.021
 
-
-
-
-    public static final double INTAKE_CLAW_CLOSE = 0.35;
-    public static final double INTAKE_CLAW_OPEN = 0.07; //increase to close claw more
 
     //================INIT===================
     public static final double INTAKE_SMALL_SWEEP_RETRACT_POS = 0.43; // Horizontal from Crossbar (parallel)
@@ -164,7 +167,7 @@ public class IntakeClaw {
         getIntakeBigPivotServo().setPosition(IntakeClaw.INTAKE_BIG_PIVOT_FUNNEL_READY_POS);
         getIntakeSmallPivotServo().setPosition(IntakeClaw.INTAKE_SMALL_PIVOT_FUNNEL_READY_POS);
         getIntakeSmallSweepServo().setPosition(IntakeClaw.INTAKE_SMALL_SWEEP_TRANSFER_READY_POS);
-        getIntakeClawServo().setPosition(IntakeClaw.INTAKE_CLAW_OPEN);
+        getIntakeClawServo().setPosition(IntakeClawConfig.INTAKE_CLAW_OPEN);
         getIntakeRatchetServo().setPosition(IntakeClaw.INTAKE_RATCHET_LOCK_POS);
 
     }

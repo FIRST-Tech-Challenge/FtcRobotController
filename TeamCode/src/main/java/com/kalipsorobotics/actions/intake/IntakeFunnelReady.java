@@ -27,7 +27,7 @@ public class IntakeFunnelReady extends KActionSet {
         moveSmallSweep.setDependentActions(moveOuttakePivot);
         this.addAction(moveSmallSweep);
 
-        KServoAutoAction openClaw = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);
+        KServoAutoAction openClaw = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN);
         openClaw.setName("openClaw");
         this.addAction(openClaw);
 
@@ -50,7 +50,7 @@ public class IntakeFunnelReady extends KActionSet {
         moveSmallSweep.setName("moveSmallSweep");
         this.addAction(moveSmallSweep);
 
-        KServoAutoAction openClaw = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);
+        KServoAutoAction openClaw = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN);
         openClaw.setName("openClaw");
         this.addAction(openClaw);
 

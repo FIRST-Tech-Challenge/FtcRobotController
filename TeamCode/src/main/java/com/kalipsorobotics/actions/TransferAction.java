@@ -1,7 +1,6 @@
 package com.kalipsorobotics.actions;
 
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
-import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 
@@ -22,7 +21,7 @@ public class TransferAction extends KActionSet{
         wait.setDependentActions(closeOuttakeClaw);
         this.addAction(wait);
 
-        KServoAutoAction openIntakeClaw = new KServoAutoAction(intakeClaw.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);
+        KServoAutoAction openIntakeClaw = new KServoAutoAction(intakeClaw.getIntakeClawServo(), IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN);
         openIntakeClaw.setName("openIntakeClaw");
         openIntakeClaw.setDependentActions(wait);
         this.addAction(openIntakeClaw);

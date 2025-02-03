@@ -86,7 +86,7 @@ public class TrussSpecimenEndToEndSequence extends KActionSet{
                 linkageRetractFull1);
         this.addAction(closeOuttakeClaw);
 
-        KServoAutoAction openIntakeClaw = new KServoAutoAction(intakeClaw.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);
+        KServoAutoAction openIntakeClaw = new KServoAutoAction(intakeClaw.getIntakeClawServo(), IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN);
         openIntakeClaw.setName("openIntakeClaw");
         openIntakeClaw.setDependentActions(closeOuttakeClaw);
         this.addAction(openIntakeClaw);

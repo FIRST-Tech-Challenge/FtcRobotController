@@ -116,7 +116,7 @@ public class Teleop extends LinearOpMode {
         double intakeBigPivotPos = IntakeClaw.INTAKE_BIG_PIVOT_RETRACT_POS;
         double intakeSmallPivotPos = IntakeClaw.INTAKE_SMALL_PIVOT_RETRACT_POS;
         double intakeSmallSweepPos = IntakeClaw.INTAKE_SMALL_SWEEP_RETRACT_POS;
-        double intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
+        double intakeClawPos = IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN;
 
         double outtakeClawPos = Outtake.OUTTAKE_CLAW_OPEN;
         double outtakePivotPos = 0;
@@ -366,11 +366,11 @@ public class Teleop extends LinearOpMode {
 
                     setLastIntakeAction(null);
 
-                    if(intakeClawPos == IntakeClaw.INTAKE_CLAW_CLOSE) {
-                        intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
+                    if(intakeClawPos == IntakeClaw.IntakeClawConfig.INTAKE_CLAW_CLOSE) {
+                        intakeClawPos = IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN;
                         intakeClaw.getIntakeClawServo().setPosition(intakeClawPos);
-                    } else if (intakeClawPos == IntakeClaw.INTAKE_CLAW_OPEN){
-                        intakeClawPos = IntakeClaw.INTAKE_CLAW_CLOSE;
+                    } else if (intakeClawPos == IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN){
+                        intakeClawPos = IntakeClaw.IntakeClawConfig.INTAKE_CLAW_CLOSE;
                         intakeClaw.getIntakeClawServo().setPosition(intakeClawPos);
                     }
                 }
@@ -448,11 +448,11 @@ public class Teleop extends LinearOpMode {
                 if (sampleIntakeReady == null || sampleIntakeReady.getIsDone()){
 
                     //intakeClawPos default to open
-                    intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
+                    intakeClawPos = IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN;
 
 
                     if (lastIntakeAction instanceof SampleIntakeAction) {
-                        intakeClawPos = IntakeClaw.INTAKE_CLAW_CLOSE;
+                        intakeClawPos = IntakeClaw.IntakeClawConfig.INTAKE_CLAW_CLOSE;
                     }
 
                     sampleIntakeReady = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw,

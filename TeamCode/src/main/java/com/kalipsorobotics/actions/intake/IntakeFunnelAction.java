@@ -22,7 +22,7 @@ public class IntakeFunnelAction extends KActionSet {
         wait.setName("wait");
         this.addAction(wait);
 
-        KServoAutoAction closeClaw = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_CLOSE);
+        KServoAutoAction closeClaw = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.IntakeClawConfig.INTAKE_CLAW_CLOSE);
         closeClaw.setName("closeClaw");
         closeClaw.setDependentActions(funnelMoveBigPivot, funnelMoveSmallPivot, wait);
         this.addAction(closeClaw);
