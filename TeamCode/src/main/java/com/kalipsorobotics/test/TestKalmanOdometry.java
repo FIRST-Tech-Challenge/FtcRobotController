@@ -20,16 +20,16 @@ import org.opencv.core.Point;
 public class TestKalmanOdometry extends LinearOpMode {
     @Override
     public void runOpMode() {
-        SparkFunOTOS otos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
-        KalmanFilter kalmanFilter = new KalmanFilter(0.8, 4);
-        OdometrySpark odometrySpark = new OdometrySpark(otos);
+        //SparkFunOTOS otos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
+        KalmanFilter kalmanFilter = new KalmanFilter(0.5, 5); //accuate wheel odometry                                   ``); //0.2 and 8 for wheel odometry
+        //OdometrySpark odometrySpark = new OdometrySpark(otos);
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         DriveTrain driveTrain = DriveTrain.getInstance(opModeUtilities);
         IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
         WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
         kalmanFilter.reset();
         waitForStart();
-
+//
         while (opModeIsActive()) {
             //Point noisyMeasurement = new Point(odometrySpark.sparkUpdateData().getX(),odometrySpark.sparkUpdateData().getY());
             Point noisyMeasurement =  new Point(wheelOdometry.updatePosition().getX(), wheelOdometry.updatePosition().getY());
