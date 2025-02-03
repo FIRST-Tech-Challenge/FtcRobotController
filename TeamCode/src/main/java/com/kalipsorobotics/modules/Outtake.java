@@ -24,9 +24,7 @@ public class Outtake {
     public KServo hangHook1;
     public KServo hangHook2;
     public Rev2mDistanceSensor revDistanceClaw;
-
     public Rev2mDistanceSensor revDistanceBottom;
-
     public static final double HOOK1_HANG_POS = 0.8;
     public static final double HOOK2_HANG_POS = 0.18;
 
@@ -35,23 +33,19 @@ public class Outtake {
 
     public static final double HOOK1_DOWN_POS = 0.5;
     public static final double HOOK2_DOWN_POS = 0.5;
-
-    public static final double OUTTAKE_PIVOT_TOUCH_BAR_POS = 0.88;
-    public static final double OUTTAKE_PIVOT_BASKET_POS = 0.93;
-    public static final double OUTTAKE_PIVOT_HALFWAY_BASKET_POS = 0.65;
-    public static final double OUTTAKE_PIVOT_PARKING_READY_POS = 0.8;
-    public static final double OUTTAKE_PIVOT_DOWN_POS = 0.16;
-
-    public static final double OUTTAKE_PIVOT_TRANSFER_READY_POS = 0.4; //0.4         //increase to go pivot up,
+    public static final double OUTTAKE_PIVOT_TOUCH_BAR_POS = 0.88-0.02;
+    public static final double OUTTAKE_PIVOT_BASKET_POS = 0.93-0.02;
+    public static final double OUTTAKE_PIVOT_HALFWAY_BASKET_POS = 0.65-0.02;
+    public static final double OUTTAKE_PIVOT_PARKING_READY_POS = 0.8-0.02;
+    public static final double OUTTAKE_PIVOT_DOWN_POS = 0.16-0.02;
+    public static final double OUTTAKE_PIVOT_TRANSFER_READY_POS = 0.4-0.02; //0.4         //increase to go pivot up,
     // decrease
     // to pivot down
+    public static final double OUTTAKE_PIVOT_SPECIMEN_HANG_READY_POS = 1-0.02;
 
-    public static final double OUTTAKE_PIVOT_SPECIMEN_HANG_READY_POS = 1;
-
-    public static final double OUTTAKE_PIVOT_WALL_READY_POS = 0.98;
+    public static final double OUTTAKE_PIVOT_WALL_READY_POS = 0.98-0.03;
     //decrease to go towards robot, increase to do away from robot
 //    public static final double OUTTAKE_PIVOT_SPECIMAN_HANG_POS = 0.8;   //decrease to go towards robot, increase to do away from robot
-
     public static final double LS_SPECIMEN_HANG_READY_MM = 385; //391 // 406
     public static final double LS_SPECIMEN_PARK_MM = 156;
     public static final double LS_DOWN_POS = -3;
@@ -60,6 +54,7 @@ public class Outtake {
     public static final double LS_SAMPLE_BASKET_READY_POS = 781;
 
     public static final double OUTTAKE_CLAW_CLOSE = 0.616; // 0.996
+
     public static final double OUTTAKE_CLAW_OPEN = 0.4; //0.78     //increase to make claw close more, decrease to open more
 
 

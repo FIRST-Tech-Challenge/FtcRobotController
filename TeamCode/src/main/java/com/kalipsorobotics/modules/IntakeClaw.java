@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class IntakeClaw {
     @Config
     static public class IntakeClawConfig {
-            public static double INTAKE_CLAW_CLOSE = 0.35;
-            public static double INTAKE_CLAW_OPEN = 0.07; //increase to close claw more
+            public final static double INTAKE_CLAW_CLOSE = 0.35;
+            public final static double INTAKE_CLAW_OPEN = 0.07; //increase to close claw more
     }
 
     private static IntakeClaw single_instance = null;
@@ -20,10 +20,9 @@ public class IntakeClaw {
 
     public static final double INTAKE_BIG_SWEEP_PARALLEL_TO_ROBOT = 0.48;
 
-    public static final double INTAKE_BIG_PIVOT_INTAKE_READY_POS = 0.597; //0.65   //increase to go down, decrease to
-    // go up
+    public static final double INTAKE_BIG_PIVOT_INTAKE_READY_POS = 0.605; //0.65 //0.597  //increase to go UP, decrease to go DOWN
 
-    public static final double INTAKE_SMALL_PIVOT_INTAKE_READY_POS = 0.882;
+    public static final double INTAKE_SMALL_PIVOT_INTAKE_READY_POS = 0.84; //0.882
 
     public static final double INTAKE_SMALL_SWEEP_INTAKE_READY_POS = 0.46; //decrease to move more horizontal, increase to move more vertical
 
