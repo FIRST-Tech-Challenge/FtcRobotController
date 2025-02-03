@@ -157,7 +157,7 @@ public class Teleop extends LinearOpMode {
 
         //double hangPosX = SPECIMEN_HANG_POS_X+50;
         int hangPosY = 100;
-        int hangIncrement = 60;
+        int hangIncrement = 0;
         Position savedHangPosition = null;
 
         Position savedWallPosition = null;
@@ -273,9 +273,10 @@ public class Teleop extends LinearOpMode {
 
             if(wallToBarPressed) {
                 if (wallToBarAction == null || wallToBarAction.getIsDone()){
-                    hangPosY += hangIncrement;
-                    wallToBarAction = new WallToBarAction(driveTrain, wheelOdometry, null);
+                    wallToBarAction = new WallToBarAction(driveTrain, wheelOdometry, null, hangIncrement);
                     wallToBarAction.setName("wallToBarHangRoundTrip");
+
+                    hangIncrement += 75;
 
                     setLastMoveAction(wallToBarAction);
                 }

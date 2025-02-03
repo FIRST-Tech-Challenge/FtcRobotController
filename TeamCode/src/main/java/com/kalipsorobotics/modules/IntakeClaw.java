@@ -10,7 +10,7 @@ public class IntakeClaw {
 //0.0018
     //INTAKE READY
 
-    public static final double INTAKE_BIG_SWEEP_PARALLEL_TO_ROBOT = 0.5;
+    public static final double INTAKE_BIG_SWEEP_PARALLEL_TO_ROBOT = 0.48; //decrease to go right, increase to go left
 
     public static final double INTAKE_BIG_PIVOT_INTAKE_READY_POS = 0.597; //0.65   //increase to go down, decrease to
     // go up
@@ -27,7 +27,7 @@ public class IntakeClaw {
     public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_POS = 0.7; //0.85    //increase to go down, decrease to
     // go up
 
-    public static final double INTAKE_SMALL_PIVOT_GRAB_SAMPLE_POS = 0.82;   // 0.73 //decrease to move forward, increase
+    public static final double INTAKE_SMALL_PIVOT_GRAB_SAMPLE_POS = 0.77;   // 0.73 //decrease to move forward, increase
     // to move back
 
 
