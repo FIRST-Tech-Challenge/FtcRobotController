@@ -122,14 +122,31 @@ public class PurePursuitAction extends Action {
     }
 
     public double[] calcAdaptiveP(double x, double y, double theta) {
-        // basically what I'm trying to do here is add to P_XY and P_ANGLE for the specific point depending on how far we move & turn,
-        // so it doesn't yet correct for overshooting small distances
-        // (if something broke auto it was probably this)
+        final double SLOW = 1./600;
+        final double FAST = 1./120;
+        final double MAX = 1./70;
+        final double ANGLE_THRESHOLD = Math.toRadians(45);
+        final double MAX_ANGLE_THRESHOLD = Math.toRadians(180);
+
         Position pos = pathPoints.isEmpty() ? new Position(0, 0, 0) : pathPoints.get(pathPoints.size() - 1);
         double actionDistance = pos.distanceTo(new Position(x, y, theta));
         double headingDelta = Math.abs(pos.getTheta() - theta);
-        double adaptiveXY = P_XY + actionDistance / 1e6;
-        double adaptiveTheta = P_ANGLE * (1 + headingDelta / 10);
+
+        double adaptiveXY;
+        if (actionDistance < 100) {
+            adaptiveXY = SLOW;
+        } else if (actionDistance < 300) {
+            adaptiveXY = SLOW + (actionDistance - 100) * (FAST - SLOW) / 200;
+        } else if (actionDistance < 1000) {
+            adaptiveXY = FAST + (actionDistance - 300) * (MAX - FAST) / 700;
+        } else {
+            adaptiveXY = FAST;
+        }
+
+        double adaptiveTheta = P_ANGLE;
+        if (headingDelta > ANGLE_THRESHOLD) {
+            adaptiveTheta += (headingDelta - ANGLE_THRESHOLD) / (MAX_ANGLE_THRESHOLD - ANGLE_THRESHOLD) * (1 - P_ANGLE);
+        }
 
         Log.d("purepursaction_adaptiveP", String.format("action distance %f, P increased from %f to %f", actionDistance, P_XY, adaptiveXY));
         Log.d("purepursaction_adaptiveP", String.format("heading delta %f, P increased from %f to %f", headingDelta, P_ANGLE, adaptiveTheta));

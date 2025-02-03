@@ -19,12 +19,14 @@ public class NewTestPurePursuit extends LinearOpMode {
         IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
         sleep(1000);
         WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
-        PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, wheelOdometry);
-        purePursuitAction.addPoint(0, 0, 0);
-        purePursuitAction.addPoint(50, 0, 0);
-        purePursuitAction.addPoint(800, 0, 0);
-        purePursuitAction.addPoint(400, 300, 0);
-        purePursuitAction.addPoint(800, 300, 90);
+        PurePursuitAction test = new PurePursuitAction(driveTrain, wheelOdometry);
+        test.addPoint(0, 0, 0);
+        test.addPoint(50, 0, 0);
+        test.addPoint(1200, 0, 0);
+        test.addPoint(800, 300, 0);
+        test.addPoint(500, 300, 90);
+        test.addPoint(200, 300, 0);
+        test.addPoint(0, 0, 0);
 
 
 
@@ -33,9 +35,9 @@ public class NewTestPurePursuit extends LinearOpMode {
 
             wheelOdometry.updatePosition();
 
-            purePursuitAction.update();
+            test.update();
 
-            if (purePursuitAction.checkDoneCondition()) {
+            if (test.checkDoneCondition()) {
                 break;
             }
         }
