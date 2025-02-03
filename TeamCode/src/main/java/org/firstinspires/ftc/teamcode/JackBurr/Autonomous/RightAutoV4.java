@@ -187,8 +187,6 @@ public class RightAutoV4 extends LinearOpMode {
             builder = drive.actionBuilder(previousCoordinates)
                     .strafeTo(newCoordinates, new TranslationalVelConstraint(slowSpeed));
         }
-        Action action = builder.build();
-        Actions.runBlocking(action);
         return builder;
 
     }
