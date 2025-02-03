@@ -55,13 +55,22 @@ public class RightAutoV4 extends LinearOpMode {
 
         //drive.setPoseEstimate(startPose);
 
-        TrajectoryActionBuilder traj1 = drive.actionBuilder(startPose)
+        TrajectoryActionBuilder traj1Builder = drive.actionBuilder(startPose)
             .splineToConstantHeading(new Vector2d(0, -50), startPose.heading);
-        TrajectoryActionBuilder traj2 = traj1.endTrajectory()
-                 .strafeTo(new Vector2d(40, 14));
+        TrajectoryActionBuilder traj2Builder = traj1Builder.fresh()
+                 .strafeTo(new Vector2d(15, -50));
+        TrajectoryActionBuilder traj3Builder = traj2Builder.fresh()
+                .strafeTo(new Vector2d(40, 14));
+        TrajectoryActionBuilder traj4Builder = traj3Builder.fresh()
+                .splineToConstantHeading(new Vector2d(0, -20), startPose.heading);
+        TrajectoryActionBuilder traj5Builder = traj4Builder.fresh()
+                .turn(90);
 
-        Action traj1Action = traj1.build();
-        Action traj2Action = traj2.build();
+        Action traj1 = traj1Builder.build();
+        Action traj2 = traj2Builder.build();
+        Action traj3 = traj3Builder.build();
+        Action traj4 = traj4Builder.build();
+        Action traj5 = traj5Builder.build();
 
 
 
@@ -88,7 +97,7 @@ public class RightAutoV4 extends LinearOpMode {
             else if(step == 2){
                 if(!traj1Followed){
                     deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_CLOSE);
-                    Actions.runBlocking(traj1Action);
+                    Actions.runBlocking(traj1);
                     traj1Followed = true;
                 }
                 else if(traj1Followed){
@@ -103,20 +112,20 @@ public class RightAutoV4 extends LinearOpMode {
             }
             else if(step == 3) {
                 if(timerStep03.seconds() > 4) {
-                    Actions.runBlocking(traj2Action);
+                    Actions.runBlocking(traj2);
                     step = 4;
                 }
             }
             else if(step == 4) {
-                //drive.followTrajectory(traj3);
+                Actions.runBlocking(traj3);
                 step = 5;
             }
             else if(step == 5){
-                //drive.followTrajectory(traj4);
+                Actions.runBlocking(traj4);
                 step = 6;
             }
             else if(step == 6){
-                //drive.turn(90);
+                Actions.runBlocking(traj5);
                 step = 7;
             }
         }
