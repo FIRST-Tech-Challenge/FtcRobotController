@@ -5,12 +5,15 @@ package org.firstinspires.ftc.teamcode.JackBurr.Autonomous;
 //import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.PathBuilder;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Trajectory;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TrajectoryBuilder;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -19,9 +22,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.JackBurr.Drive.RobotConstantsV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Motors.DeliverySlidesV1;
+import org.firstinspires.ftc.teamcode.JackBurr.Odometry.MecanumDrive;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryAxonV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryGrippersV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Odometry.PinpointDrive;
+
+import java.util.Arrays;
 
 @Autonomous
 public class RightAutoV4 extends LinearOpMode {
@@ -38,6 +44,7 @@ public class RightAutoV4 extends LinearOpMode {
     public int leftSlideTarget = 0;
     public int rightSlideTarget = 0;
     public PinpointDrive drive;
+    public MecanumDrive.Params params = new MecanumDrive.Params();
     @Override
     public void runOpMode() throws InterruptedException {
         //Pick SampleMecanumDrive for dashboard and RRMecanumDrive for no dashboard
@@ -52,11 +59,9 @@ public class RightAutoV4 extends LinearOpMode {
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
-
-        //drive.setPoseEstimate(startPose);
-
+        VelConstraint slow = new TranslationalVelConstraint(20);
         TrajectoryActionBuilder traj1Builder = drive.actionBuilder(startPose)
-            .splineToConstantHeading(new Vector2d(0, -50), startPose.heading);
+            .splineToConstantHeading(new Vector2d(0, -50), startPose.heading, slow);
         TrajectoryActionBuilder traj2Builder = traj1Builder.fresh()
                  .strafeTo(new Vector2d(15, -50));
         TrajectoryActionBuilder traj3Builder = traj2Builder.fresh()
