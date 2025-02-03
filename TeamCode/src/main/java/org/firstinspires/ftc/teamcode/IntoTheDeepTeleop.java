@@ -203,8 +203,8 @@ public class IntoTheDeepTeleop extends OpMode {
 
     public void intake() {
 
-        // intake is full, stop running servos and retract to deposit in basket
-        if (intakeTouchSensor.isPressed() && !intakeFull) {
+        // intake is full or override button (a) has been pressed, stop running servos and retract to deposit in basket
+        if ((intakeTouchSensor.isPressed() || gamepad.a) && !intakeFull) {
             intakeFull = true;
 
             runIntakeMotors(IntakeMode.STOP);
