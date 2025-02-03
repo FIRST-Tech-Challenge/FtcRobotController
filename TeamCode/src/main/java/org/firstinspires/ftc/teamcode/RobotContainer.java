@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.command.RepeatCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
+import com.arcrobotics.ftclib.command.button.Trigger;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
@@ -31,6 +32,8 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     ChassisSubsystem m_chassis;
     BTController m_controller;
     BTController m_controller2;
+    Trigger Intake;
+    Trigger Score;
     Intake intakeCommand;
     Score scoreCommand;
 
