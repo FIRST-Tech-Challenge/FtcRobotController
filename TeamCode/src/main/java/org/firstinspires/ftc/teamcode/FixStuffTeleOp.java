@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Hardware.Locks;
 import org.firstinspires.ftc.teamcode.hardware.HClawProxy;
@@ -130,6 +131,7 @@ public class FixStuffTeleOp extends LinearOpMode {
             if (gamepad1.left_bumper){
                 FourthSample2();
             }
+            DriveToDistance(6);
 
             telemetry.addData("slidePos", hardware.horizontalLeft.getPosition());
             telemetry.addData("slidePos2", hardware.horizontalSlide.getPosition());
@@ -247,5 +249,24 @@ public class FixStuffTeleOp extends LinearOpMode {
         hardware.horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_IN);
         sleep(500);
         hardware.clawFlip.setPosition(Hardware.FLIP_UP);
+    }
+
+    public void DriveToDistance (double target) {
+        double error = 100;
+        while (error > 0.5){
+            double kp = 0.15;
+            double LeftDistance = hardware.distanceFrontLeft.getDistance(DistanceUnit.INCH);
+            double RightDistance = hardware.distanceFrontRight.getDistance(DistanceUnit.INCH);
+            double ADistance = (RightDistance+LeftDistance)/2;
+            error = ADistance - target;
+            double power = Math.min(0.3, error * kp);
+            hardware.frontRight.setPower(power);
+            hardware.frontLeft.setPower(power);
+            hardware.backRight.setPower(power);
+            hardware.backLeft.setPower(power);
+            telemetry.addData("distance", ADistance);
+            telemetry.addData("error", error);
+            telemetry.update();
+        }
     }
 }
