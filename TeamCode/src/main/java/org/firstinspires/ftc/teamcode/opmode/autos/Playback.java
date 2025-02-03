@@ -17,6 +17,7 @@ import java.io.IOException;
 
 public abstract class Playback extends PeriodicOpMode {
     BTRecordedController controller;
+    BTRecordedController controller2;
     BufferedReader bufferedReader;
     //allow override by child classes
     protected abstract int maxIterations();// default should be 20*30 //Hz * Sec
@@ -32,7 +33,8 @@ public abstract class Playback extends PeriodicOpMode {
         try {
             File log = AppUtil.getInstance().getSettingsFile(file_name);
             controller=new BTRecordedController(gamepad1,log,maxIterations);
-            m_robot=new RobotContainer(hardwareMap,controller);
+            controller2 = new BTRecordedController(gamepad2,log,maxIterations);
+            m_robot=new RobotContainer(hardwareMap,controller,controller2);
             m_robot.m_gripper.rotServo2.setPosition(score);
             m_robot.m_gripper.servoClaw.setPosition(closeClaw);
         } catch (IOException e) {

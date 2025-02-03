@@ -1,0 +1,36 @@
+package org.firstinspires.ftc.teamcode.stateMachines.states;
+
+import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.eStates.extended;
+import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.pStates.score;
+import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.pStates.scoreMidpoint;
+import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.BUMPER_LEFT;
+import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.BUMPER_RIGHT;
+import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.BUTTON_DOWN;
+
+import com.arcrobotics.ftclib.command.CommandBase;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
+
+import org.firstinspires.ftc.teamcode.subsystems.Arm.ExtensionSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.Arm.PivotSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.Drivetrain.ChassisSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperSubsystem;
+import org.firstinspires.ftc.teamcode.utils.BT.BTController;
+
+public class Score extends SequentialCommandGroup{
+    public Score(ExtensionSubsystem extension, PivotSubsystem pivot, ChassisSubsystem chassis, GripperSubsystem gripper, BTController controller){
+        super(
+                chassis.slowDriving(0.4),
+                pivot.setWithProfile(scoreMidpoint,80,300),
+                new WaitUntilCommand(()->pivot.m_pivotPID.atGoal()).withTimeout(500),
+                new ParallelCommandGroup(
+                    extension.setExtension(extended),
+                    pivot.setWithProfile(score,40,200), gripper.setScore()),
+                new WaitUntilCommand(controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()]),
+                gripper.openClaw(),
+                new WaitUntilCommand(controller.m_buttonsSuppliers[BUMPER_LEFT.ordinal()]),
+                new IdleFromScore(extension,pivot,chassis,gripper)
+        );
+    }
+}

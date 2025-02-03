@@ -15,7 +15,7 @@ public class myOp extends CommandOpMode {
 
     @Override
     public void initialize() {
-        m_robot= new RobotContainer(hardwareMap, new BTController(gamepad1));
+        m_robot= new RobotContainer(hardwareMap, new BTController(gamepad1), new BTController(gamepad2));
         m_robot.m_gripper.servoClaw.setPosition(closeClaw);
         m_robot.m_gripper.rotServo2.setPosition(score);
         enable();
@@ -29,7 +29,6 @@ public class myOp extends CommandOpMode {
 
         // run the scheduler
         while (!isStopRequested() && opModeIsActive()) {
-            m_robot.period();
             run();
         }
         reset();

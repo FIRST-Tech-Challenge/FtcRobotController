@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commands.states;
+package org.firstinspires.ftc.teamcode.stateMachines.states;
 
 import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.eStates.closed;
 import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.pStates.idle;
@@ -20,15 +20,14 @@ import org.firstinspires.ftc.teamcode.utils.BT.BTController;
 public class Pickup extends SequentialCommandGroup{
     public Pickup(ExtensionSubsystem extension, PivotSubsystem pivot, ChassisSubsystem chassis, GripperSubsystem gripper, BTController controller){
         super(
-                new WaitUntilCommand(controller.m_buttonsSuppliers[BUMPER_RIGHT.ordinal()]),
                 gripper.openClaw(),
-                new WaitCommand(200),
-                pivot.set(pickup),
-                new WaitUntilCommand(controller.m_buttonsSuppliers[BUMPER_RIGHT.ordinal()]),
+                new WaitUntilCommand(controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()]),
+                pivot.setWithProfile(pickup,80,200),
+                new WaitUntilCommand(controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()]),
                 gripper.closeClaw(),
-                new WaitUntilCommand(controller.m_buttonsSuppliers[BUMPER_RIGHT.ordinal()]),
-                pivot.set(up),
-                new WaitUntilCommand(controller.m_buttonsSuppliers[BUMPER_RIGHT.ordinal()])
+                new WaitUntilCommand(controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()]),
+                pivot.setWithProfile(up,80,200),
+                new WaitUntilCommand(controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()])
         );
 
     }

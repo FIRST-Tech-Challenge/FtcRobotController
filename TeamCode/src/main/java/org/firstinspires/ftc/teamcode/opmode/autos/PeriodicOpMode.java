@@ -13,7 +13,7 @@ public class PeriodicOpMode extends CommandOpMode {
 
     @Override
     public void initialize() {
-        m_robot = new RobotContainer(hardwareMap, new BTController(gamepad1));
+        m_robot = new RobotContainer(hardwareMap, new BTController(gamepad1),new BTController(gamepad2));
         enable();
 
     }
@@ -41,7 +41,6 @@ public class PeriodicOpMode extends CommandOpMode {
             }
             nextPeriodTimeUs+=periodUs;
             period();//used for recording controllers
-            m_robot.period();//used for telemetry
             run();//runs all commands and subsystems' periodic
         }
         endFunction();

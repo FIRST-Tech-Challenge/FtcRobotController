@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.*;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
@@ -33,9 +34,10 @@ public class PivotSubsystem extends SubsystemBase {
     private Telemetry dashboardTelemetry = dashboard.getTelemetry();
     public ProfiledPIDController m_pivotPID;
     public boolean isPickup = true;
+    public DoubleSupplier robotAcc;
 
 
-    public PivotSubsystem(HardwareMap map, DoubleSupplier armLength){
+    public PivotSubsystem(HardwareMap map, DoubleSupplier armLength, DoubleSupplier robotAcc){
         this.map = map;
         pivotLeft = new MotorEx(map,"pivotLeft");//tbd
         pivotLeft.setInverted(true);
@@ -44,6 +46,7 @@ public class PivotSubsystem extends SubsystemBase {
         pivotRight.setInverted(false);
         pivotRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         this.armLength = armLength;
+        this.robotAcc = robotAcc;
         m_pivotPID = new ProfiledPIDController(pKP,pKI,pKD,new TrapezoidProfile.Constraints(vConstraint,aConstraint));
         m_pivotPID.m_controller.setMaximumAbsOutput(pMaxOutput);
         leftEncoder = pivotLeft.encoder;
@@ -68,7 +71,6 @@ public class PivotSubsystem extends SubsystemBase {
     private void updateValues() {
         calcArmAngle();
         m_pivotPID.setPID(pKP,pKI,pKD);
-        m_pivotPID.setConstraints(new TrapezoidProfile.Constraints(vConstraint,aConstraint));
         m_pivotPID.setTolerance(pGoalTolerance);
         m_pivotPID.setGoalTolerance(pGoalTolerance, pGoalVelocityTolerance);
         m_pivotPID.m_controller.setAccumilatorResetTolerance(pGoalTolerance);//TODO:look at this
@@ -81,6 +83,7 @@ public class PivotSubsystem extends SubsystemBase {
 
     private void updateTelemetry() {
         dashboardTelemetry.addData("armAngle", currentArmAngle);
+        dashboardTelemetry.addData("accel",robotAcc);
 //        dashboardTelemetry.addData("COMAngle", aCOMAngle());
 //        dashboardTelemetry.addData("_pid+ff value", m_pivotPID.calculate(currentArmAngle)+calculateFeedForward());
         dashboardTelemetry.addData("_pid value", -m_pivotPID.calculate(currentArmAngle));
@@ -133,8 +136,11 @@ public class PivotSubsystem extends SubsystemBase {
             pivotLeft.set(0);
         }
     }
-    public Command set(double setpoint){
+    private Command set(double setpoint){
         return new InstantCommand(()->m_pivotPID.setGoal(setpoint));
+    }
+    public Command setWithProfile(double setpoint, double maxA, double maxV){
+        return new ParallelCommandGroup(new InstantCommand(()->m_pivotPID.setConstraints(new TrapezoidProfile.Constraints(maxV,maxA))),set(setpoint));
     }
     public Command disablePID(){
         return new InstantCommand(()->m_pivotPID.disable());

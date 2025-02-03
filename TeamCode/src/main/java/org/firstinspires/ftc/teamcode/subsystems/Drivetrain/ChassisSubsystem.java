@@ -91,6 +91,9 @@ public class ChassisSubsystem extends SubsystemBase {
         updateTelemetry();
 
     }
+    public double getAcc(){
+        return gyro.getRevIMU().getAcceleration().xAccel;
+    }
 
     public void setMotors(double FL, double FR, double BL, double BR) {
         double compensation = 12.0 / voltageSensor.getVoltage();
@@ -149,6 +152,7 @@ public class ChassisSubsystem extends SubsystemBase {
 
     private void updateTelemetry() {
         dashboardTelemetry.addData("gyro", gyro.getAbsoluteHeading());
+        dashboardTelemetry.addData("_acc", gyro.getRevIMU().getAcceleration().xAccel);
     }
 
     private void updateValues() {

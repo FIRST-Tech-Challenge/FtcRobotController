@@ -18,8 +18,8 @@ public class ArmConstants {
         public static double pMaxOutput=0.5;
         public static double pGoalTolerance = 1;
         public static double pGoalVelocityTolerance = 0.5;
-        public static double vConstraint = 30;
-        public static double aConstraint = 30;
+        public static double vConstraint = 300;
+        public static double aConstraint = 80;
     }
 
     @Config
@@ -28,7 +28,7 @@ public class ArmConstants {
         public static double eKI = 0;
         public static double eKD = 0;
         public static double eIzone = 0;
-        public static double eMaxV = 40;
+        public static double eMaxV = 30;
         public static double eMaxA = 10;
         public static double eSetpoint = 0;
         public static double eTolerance = 0.2;

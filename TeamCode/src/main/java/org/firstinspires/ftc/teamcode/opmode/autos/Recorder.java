@@ -14,6 +14,7 @@ import java.io.IOException;
 
 public abstract class Recorder extends PeriodicOpMode {
     BTRecordingController controller;
+    BTRecordingController controller2;
     protected abstract int maxIterations();// default should be 20*30 //Hz * Sec
     protected abstract String file_name();
     FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -26,7 +27,7 @@ public abstract class Recorder extends PeriodicOpMode {
         try {
             File log = AppUtil.getInstance().getSettingsFile(file_name);
             controller=new BTRecordingController(gamepad1,log,maxIterations);
-            m_robot=new RobotContainer(hardwareMap,controller);
+            m_robot=new RobotContainer(hardwareMap,controller,controller2);
             m_robot.m_gripper.rotServo2.setPosition(score);
             enable();
 
