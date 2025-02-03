@@ -52,7 +52,7 @@ public class Red_Specimen_Auto extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(4,-48),Math.toRadians(90))
                 .build();
 
-        clippingSpecimen1 = drive.actionBuilder(new Pose2d(0,-48,90))
+        clippingSpecimen1 = drive.actionBuilder(new Pose2d(0,-48,Math.toRadians(90)))
                 .strafeToLinearHeading(new Vector2d(0,-36),Math.toRadians(90), new TranslationalVelConstraint(10))
                 .build();
         clippingSpecimen2 = drive.actionBuilder(new Pose2d(2,-48,90))
@@ -62,9 +62,10 @@ public class Red_Specimen_Auto extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(4,-36),Math.toRadians(90), new TranslationalVelConstraint(10))
                 .build();
 
-        driveForSamplePush = drive.actionBuilder(new Pose2d(0,-36,90))
+        driveForSamplePush = drive.actionBuilder(new Pose2d(0,-36,Math.toRadians(90)))
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(36,-26), Math.toRadians(90))
+                //.splineToConstantHeading(new Vector2d(36,-26), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(36,-26, Math.toRadians(90) ), Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(46,-12), Math.toRadians(0))
                 .strafeToLinearHeading(new Vector2d(46,-50),Math.toRadians(90))
                 .strafeToLinearHeading(new Vector2d(46,-24),Math.toRadians(90))

@@ -104,7 +104,7 @@ public class ActionBuilder {
                 .waitSeconds(1.5)//lower mechanisms from clipping
 
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(36,-26), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(36,-26, Math.toRadians(90) ), Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(46,-12), Math.toRadians(0))
                 .strafeToLinearHeading(new Vector2d(46,-50),Math.toRadians(90))
                 .strafeToLinearHeading(new Vector2d(46,-24),Math.toRadians(90))
