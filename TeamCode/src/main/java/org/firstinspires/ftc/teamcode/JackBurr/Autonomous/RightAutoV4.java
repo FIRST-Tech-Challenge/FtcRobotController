@@ -28,6 +28,7 @@ import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryGrippersV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Odometry.PinpointDrive;
 
 import java.util.Arrays;
+import java.util.Vector;
 
 @Autonomous
 public class RightAutoV4 extends LinearOpMode {
@@ -44,7 +45,7 @@ public class RightAutoV4 extends LinearOpMode {
     public int leftSlideTarget = 0;
     public int rightSlideTarget = 0;
     public PinpointDrive drive;
-    public MecanumDrive.Params params = new MecanumDrive.Params();
+    public int slowSpeed = 20;
     @Override
     public void runOpMode() throws InterruptedException {
         //Pick SampleMecanumDrive for dashboard and RRMecanumDrive for no dashboard
@@ -59,7 +60,7 @@ public class RightAutoV4 extends LinearOpMode {
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
-        VelConstraint slow = new TranslationalVelConstraint(20);
+        VelConstraint slow = new TranslationalVelConstraint(slowSpeed);
         TrajectoryActionBuilder traj1Builder = drive.actionBuilder(startPose)
             .splineToConstantHeading(new Vector2d(0, -50), startPose.heading, slow);
         TrajectoryActionBuilder traj2Builder = traj1Builder.fresh()
@@ -174,4 +175,22 @@ public class RightAutoV4 extends LinearOpMode {
             return false;
         }
     }
+
+    public TrajectoryActionBuilder moveForward(Pose2d previousCoordinates, int distance, boolean slow){
+        Vector2d newCoordinates = new Vector2d((previousCoordinates.position.x - distance), previousCoordinates.position.y);
+        TrajectoryActionBuilder builder;
+        if(slow) {
+            builder = drive.actionBuilder(previousCoordinates)
+                    .strafeTo(newCoordinates);
+        }
+        else {
+            builder = drive.actionBuilder(previousCoordinates)
+                    .strafeTo(newCoordinates, new TranslationalVelConstraint(slowSpeed));
+        }
+        Action action = builder.build();
+        Actions.runBlocking(action);
+        return builder;
+
+    }
+
 }
