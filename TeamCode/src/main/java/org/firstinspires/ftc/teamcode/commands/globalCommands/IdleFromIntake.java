@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.stateMachines.states;
+package org.firstinspires.ftc.teamcode.commands.globalCommands;
 
 import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.eStates.closed;
 import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.pStates.idle;
@@ -11,11 +11,12 @@ import org.firstinspires.ftc.teamcode.subsystems.Arm.PivotSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperSubsystem;
 
-public class IdleFromScore extends SequentialCommandGroup{
-    public IdleFromScore(ExtensionSubsystem extension, PivotSubsystem pivot, ChassisSubsystem chassis, GripperSubsystem gripper){
+public class IdleFromIntake extends SequentialCommandGroup{
+    public IdleFromIntake(ExtensionSubsystem extension, PivotSubsystem pivot, ChassisSubsystem chassis, GripperSubsystem gripper){
         super(
-                pivot.setWithProfile(idle,30,80),
+                pivot.setWithProfile(idle,80,300),
                 gripper.setScore(),
+                new WaitCommand(600),
                 extension.setExtension(closed),
                 chassis.stopSlowDriving()
         );
