@@ -41,6 +41,9 @@ public class GripperSubsystem extends SubsystemBase {
     public Command setScore(){
         return new InstantCommand(()->rotServo2.setPosition(score));
     }
+    public Command setMid(){
+        return new InstantCommand(()->rotServo2.setPosition(0));
+    }
 
     public Command toggleClaw() {
         return new InstantCommand(()-> isOpen = !isOpen);

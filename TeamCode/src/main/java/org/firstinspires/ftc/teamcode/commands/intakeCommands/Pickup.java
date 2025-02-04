@@ -1,14 +1,10 @@
-package org.firstinspires.ftc.teamcode.stateMachines.states;
+package org.firstinspires.ftc.teamcode.commands.intakeCommands;
 
-import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.eStates.closed;
-import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.pStates.idle;
 import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.pStates.pickup;
 import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.pStates.up;
-import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.BUMPER_RIGHT;
 import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.BUTTON_DOWN;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.subsystems.Arm.ExtensionSubsystem;
