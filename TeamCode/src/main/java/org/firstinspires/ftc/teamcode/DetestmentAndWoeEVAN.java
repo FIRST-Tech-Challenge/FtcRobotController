@@ -12,18 +12,20 @@ public class DetestmentAndWoeEVAN extends Movable{
         // second one would be pushed forward but not all the way, needed to be successfully scored through tele-op
         // if needed for right side of the alliance, change all "left" arguments to "right"
 
-        powerWheels(600, "left");
-        powerWheels(600, "right");
-        powerWheels(3200, "forthcoming");
-        turn180();
+        // first sample
+        powerWheels(2800, "forward");
         powerWheels(425, "right");
-        powerWheels(2750, "forward");
-        powerWheels(2750, "backward");
+        powerWheels(2700, "backward");
+
+        // second sample
+        powerWheels(2700, "forward");
         powerWheels(400, "right");
-        powerWheels(2750, "forward");
-        powerWheels(2750, "backward");
+        powerWheels(2700, "backward");
+
+        // third sample (hits the wall though)
+        powerWheels(2700, "forward");
         powerWheels(300, "right");
-        powerWheels(3000, "forward");
+        powerWheels(3000, "backward");
 
         disablePower();
         telemetry.addData("Status", "Completed");

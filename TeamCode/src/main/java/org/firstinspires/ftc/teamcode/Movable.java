@@ -121,19 +121,19 @@ abstract class Movable extends LinearOpMode {
         final double RPOWER = 1;
 
         switch (direction) {
-            case "ascend":
-                FRScissorLift.setPower(RPOWER);
-                FLScissorLift.setPower(LPOWER);
-                BRScissorLift.setPower(-RPOWER);
-                BLScissorLift.setPower(-LPOWER);
-                sleep(miliseconds);
-                disableScissorPower();
-                break;
-            case "descend":
+            case "erect":
                 FRScissorLift.setPower(-RPOWER);
                 FLScissorLift.setPower(-LPOWER);
                 BRScissorLift.setPower(RPOWER);
                 BLScissorLift.setPower(LPOWER);
+                sleep(miliseconds);
+                disableScissorPower();
+                break;
+            case "descend":
+                FRScissorLift.setPower(RPOWER);
+                FLScissorLift.setPower(LPOWER);
+                BRScissorLift.setPower(-RPOWER);
+                BLScissorLift.setPower(-LPOWER);
                 sleep(miliseconds);
                 disableScissorPower();
                 break;
@@ -143,10 +143,10 @@ abstract class Movable extends LinearOpMode {
     // change values if needed
     public void outtakeGrab(String toggle) {
         switch (toggle) {
-            case "constriction":
+            case "liberation":
                 outtake.setPosition(.3);
                 break;
-            case "liberation":
+            case "constriction":
                 outtake.setPosition(0);
                 break;
         }
@@ -209,11 +209,11 @@ abstract class Movable extends LinearOpMode {
     }
 
     public void turn180() {
-        turnRobot(2940,"right");
+        turnRobot(2990,"right");
     }
 
     public void turn90(String direction) {
-        turnRobot(2940/2, direction);
+        turnRobot(2990/2, direction);
     }
 
     abstract void updatePhoneConsole();
