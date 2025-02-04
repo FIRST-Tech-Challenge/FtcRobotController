@@ -15,6 +15,7 @@ public class Viper {
         TelemetryHelper telemetryHelper = new TelemetryHelper(opMode);
         _opMode = opMode;
         _viperMotor = _opMode.hardwareMap.tryGet(DcMotorEx.class, "viperMotor");
+        _viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         telemetryHelper.initMotorTelemetry( _viperMotor, "VM");
         _armMotor = _opMode.hardwareMap.tryGet(DcMotorEx.class, "armMotor");
         telemetryHelper.initMotorTelemetry( _viperMotor, "VM");

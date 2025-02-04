@@ -21,12 +21,10 @@ public class WristClaw {
     double closePosition = 0.36;
     double upPosition = 0.31;
     double midPosition = 0.49;
-    double specimenClipPosition = 0.49;
     double specimenPickupPosition = 0.7;
     double downPosition = 0.8;
     double dumpPosition = 0.36;
     double autodumpPosition = 0.26;
-    double centerPosition = 0.5;
     double wristInit = 0.755;
     //-----------------------------------------
 
@@ -39,12 +37,10 @@ public class WristClaw {
         _light.green();}
     public void WristUp() {WristCustom(upPosition);}
     public void WristMid() {WristCustom(midPosition);}
-    public void WristSpecimenClip() {WristCustom(specimenClipPosition);}
     public void WristSpecimenPickup() {WristCustom(specimenPickupPosition);}
     public void WristDown() {WristCustom(downPosition);}
     public void WristDump() {WristCustom(dumpPosition);}
     public void WristAutoDump() {WristCustom(autodumpPosition);}
-    public void WristCenter() {WristCustom(centerPosition);}
     public void WristInit() {WristCustom(wristInit);}
     public void WristCustom(double position)
     {

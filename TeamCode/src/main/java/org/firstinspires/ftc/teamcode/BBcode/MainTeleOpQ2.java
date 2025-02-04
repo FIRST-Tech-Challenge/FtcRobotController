@@ -100,12 +100,10 @@ public class MainTeleOpQ2 extends LinearOpMode{
     GoBildaPinpointDriverRR odo; // Declare OpMode member for the Odometry Computer
     public double xOffset = -7.002384767061902; //RRTune, -6.5; measured
     public double yOffset = -1.2229245167313665;
-
     @Override
     public void runOpMode() throws InterruptedException{
-        PoseStorage.previousOpMode = OpModeType.TELEOP;
         // Initialization Code Goes Here
-        ChristmasLight _christmasLight = new ChristmasLight(this);
+
         odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
         GoBildaPinpointDriver.EncoderDirection xDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
         GoBildaPinpointDriver.EncoderDirection yDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
@@ -145,7 +143,10 @@ public class MainTeleOpQ2 extends LinearOpMode{
         waitForStart();
 
         arm.MoveToHome();
-        odo.setPosition(PoseStorage.currentPose);
+        //odo.setPosition(PoseStorage.currentPose);
+        //Use the following line for measuring auto locations
+        odo.setPosition(BlueBasket.pose_basket_init_old);
+//        odo.setPosition(PoseStorage.currentPose);
         telemetry.addData("PositionRR", ()-> getPinpoint(odo.getPositionRR()));
         telemetry.addData("Position", ()-> getPinpoint(odo.getPosition()));
         while(opModeIsActive()){ //while loop for when program is active

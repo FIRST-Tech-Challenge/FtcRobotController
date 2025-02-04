@@ -19,7 +19,7 @@ public class MeepMeepVisualizer {
                 .addEntity(BlueLeft(meepMeep))
 //                .addEntity(RedRightOption2(meepMeep))
 //                .addEntity(RedBasket(meepMeep))
-//                .addEntity(RedSpecimen(meepMeep))
+                .addEntity(RedSpecimen(meepMeep))
                 .start();
     }
 
