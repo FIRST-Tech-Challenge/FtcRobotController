@@ -21,8 +21,10 @@ public class SpecimenDelivery extends SequentialCommandGroup{
     public SpecimenDelivery(ExtensionSubsystem extension, PivotSubsystem pivot, ChassisSubsystem chassis, GripperSubsystem gripper, BTController controller){
         super(
                 chassis.slowDriving(0.4),
-                extension.setExtension(extended),
-                pivot.setWithProfile(180,80,300), gripper.setScore(),
+                new ParallelCommandGroup(
+                    extension.setExtension(extended),
+                    pivot.setWithProfile(180,80,300), gripper.setScore()
+                ),
                 new WaitUntilCommand(controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()]),
                 gripper.openClaw(),
                 new WaitUntilCommand(controller.m_buttonsSuppliers[BUMPER_LEFT.ordinal()]),
