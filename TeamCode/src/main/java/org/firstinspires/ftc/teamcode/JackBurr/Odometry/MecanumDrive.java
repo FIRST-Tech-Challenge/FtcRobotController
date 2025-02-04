@@ -115,6 +115,7 @@ public class MecanumDrive {
 
     public final Localizer localizer;
     public Pose2d pose;
+    public Pose2dDual<Time> txWorldTarget;
 
     public final LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
@@ -392,7 +393,7 @@ public class MecanumDrive {
                 return false;
             }
 
-            Pose2dDual<Time> txWorldTarget = turn.get(t);
+            txWorldTarget = turn.get(t);
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
             PoseVelocity2d robotVelRobot = updatePoseEstimate();
@@ -457,7 +458,7 @@ public class MecanumDrive {
         return twist.velocity().value();
     }
 
-    private void drawPoseHistory(Canvas c) {
+    public void drawPoseHistory(Canvas c) {
         double[] xPoints = new double[poseHistory.size()];
         double[] yPoints = new double[poseHistory.size()];
 
