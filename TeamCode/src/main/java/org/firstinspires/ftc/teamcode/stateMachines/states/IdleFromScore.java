@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperSubsystem;
 public class IdleFromScore extends SequentialCommandGroup{
     public IdleFromScore(ExtensionSubsystem extension, PivotSubsystem pivot, ChassisSubsystem chassis, GripperSubsystem gripper){
         super(
-                pivot.setWithProfile(idle,80,150),
+                pivot.setWithProfile(idle,30,80),
                 gripper.setScore(),
                 extension.setExtension(closed),
                 chassis.stopSlowDriving()

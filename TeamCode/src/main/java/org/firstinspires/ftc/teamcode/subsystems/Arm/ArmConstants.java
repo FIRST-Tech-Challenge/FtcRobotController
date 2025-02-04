@@ -40,14 +40,18 @@ public class ArmConstants {
     public static class eStates{
         public static double extended = -2.5;
         public static double half =-1.75;
+        public static double quarter =-1;
         public static double closed = 0;
     }
     public static class pStates{
+        public static double wingPlace = 180;
         public static double midpoint = 6;
         public static double scoreMidpoint = 80;
         public static double up = 8;
         public static double pickup = -1;
         public static double score = 93;
+        public static double specimenScore = 60;
+        public static double specimenIntake = 140;
         public static double idle = 23;
     }
 }

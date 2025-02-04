@@ -60,11 +60,11 @@ public class PivotSubsystem extends SubsystemBase {
     public void periodic() {
         updateValues();
         updateTelemetry();
-        if (m_pivotPID.atGoal()) {
+//        if (m_pivotPID.atGoal()) {
         setMotors(calculateFeedForward());
-        } else {
-            setMotors(-m_pivotPID.calculate(currentArmAngle) + calculateFeedForward());
-        }
+//        } else {
+//            setMotors(-m_pivotPID.calculate(currentArmAngle) + calculateFeedForward());
+//        }
     }
 
     

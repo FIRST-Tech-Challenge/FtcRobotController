@@ -53,4 +53,10 @@ public class GripperSubsystem extends SubsystemBase {
     }
 
 
+    public Command setSpecimenScore() {
+        return new InstantCommand(()->rotServo2.setPosition(0));
+    }
+    public Command setSpecimenPlace() {
+        return new InstantCommand(()->rotServo2.setPosition(0.8));
+    }
 }

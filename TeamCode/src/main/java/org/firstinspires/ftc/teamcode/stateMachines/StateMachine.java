@@ -24,17 +24,7 @@
 //public class StateMachine extends SequentialCommandGroup{
 //    public StateMachine(ExtensionSubsystem extension, PivotSubsystem pivot, ChassisSubsystem chassis, GripperSubsystem gripper, BTController controller){
 //        super(
-//                new Idle(extension,pivot,chassis,gripper),
-//                new WaitUntilCommand(controller.m_buttonsSuppliers[BUMPER_RIGHT.ordinal()]),
-//                new Intake(extension,pivot,chassis,gripper),
-//                new RepeatCommand(new Pickup(extension,pivot,chassis,gripper,controller))
-//                        .interruptOn(controller.m_buttonsSuppliers[BUMPER_RIGHT.ordinal()]),
-//                new Idle(extension,pivot,chassis,gripper),
-//                new WaitUntilCommand(controller.m_buttonsSuppliers[BUMPER_RIGHT.ordinal()]),
-//                new Score(extension,pivot,chassis,gripper),
-//                new WaitUntilCommand(controller.m_buttonsSuppliers[BUMPER_RIGHT.ordinal()]),
-//                gripper.openClaw(),
-//                new WaitUntilCommand(controller.m_buttonsSuppliers[BUMPER_RIGHT.ordinal()])
+//                
 //        );
 //    }
 //}

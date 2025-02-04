@@ -16,6 +16,8 @@ import com.arcrobotics.ftclib.command.button.Trigger;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
+import org.firstinspires.ftc.teamcode.stateMachines.specimenStates.Place;
+import org.firstinspires.ftc.teamcode.stateMachines.specimenStates.Supply;
 import org.firstinspires.ftc.teamcode.stateMachines.states.Intake;
 import org.firstinspires.ftc.teamcode.stateMachines.states.Score;
 import org.firstinspires.ftc.teamcode.subsystems.Arm.ExtensionSubsystem;
@@ -34,8 +36,12 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     BTController m_controller2;
     Trigger Intake;
     Trigger Score;
+    Trigger specimenState;
+    Trigger sampleState;
     Intake intakeCommand;
     Score scoreCommand;
+    Supply supplyCommand;
+    Place placeCommand;
 
 
     public RobotContainer(HardwareMap map, BTController gamepad1, BTController gamepad2){
@@ -50,6 +56,12 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         m_controller2 = gamepad2;
         scoreCommand = new Score(m_extension,m_pivot,m_chassis,m_gripper,m_controller);
         intakeCommand = new Intake(m_extension,m_pivot,m_chassis,m_gripper,m_controller);
+        supplyCommand = new Supply(m_extension,m_pivot,m_chassis,m_gripper,m_controller);
+        placeCommand = new Place(m_extension,m_pivot,m_chassis,m_gripper,m_controller);
+        sampleState = new Trigger(m_controller.m_buttonsSuppliers[DPAD_LEFT.ordinal()]);
+        specimenState = new Trigger(m_controller.m_buttonsSuppliers[DPAD_RIGHT.ordinal()]);
+        Score = new Trigger(m_controller.m_buttonsSuppliers[BUMPER_LEFT.ordinal()]);
+        Intake = new Trigger(m_controller.m_buttonsSuppliers[BUMPER_RIGHT.ordinal()]);
         resetGyro();
         configureBinds();
     }
@@ -57,17 +69,31 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         return Math.signum(input)*Math.pow(input,2);
     }
     private void configureBinds() {
-        m_controller.assignCommand(new ConditionalCommand(scoreCommand,new WaitUntilCommand(()->intakeCommand.isFinished()).andThen(scoreCommand),()->!intakeCommand.isScheduled()),false,BUMPER_LEFT);
-        m_controller.assignCommand(new ConditionalCommand(intakeCommand,new WaitUntilCommand(()->scoreCommand.isFinished()).andThen(intakeCommand),()->!scoreCommand.isScheduled()),false,BUMPER_RIGHT);
+//        m_controller.assignCommand(new ConditionalCommand(scoreCommand,new WaitUntilCommand(()->intakeCommand.isFinished()).andThen(scoreCommand),()->!intakeCommand.isScheduled()),false,BUMPER_LEFT);
+//        m_controller.assignCommand(new ConditionalCommand(intakeCommand,new WaitUntilCommand(()->scoreCommand.isFinished()).andThen(intakeCommand),()->!scoreCommand.isScheduled()),false,BUMPER_RIGHT);
 //        m_controller.assignCommand(new RepeatCommand(new StateMachine(m_extension,m_pivot,m_chassis,m_gripper,m_controller)),false,DPAD_UP);
+        specimenState.whenActive(()->setSpecimenIntake().alongWith(setSpecimenScore()));
+        sampleState.whenActive(()->setSampleIntake().alongWith(setSampleScore()));
         m_controller.assignCommand(m_chassis.fieldRelativeDrive(
                         () -> squareInput(-m_controller.getAxisValue(BTController.Axes.LEFT_Y_axis)),
                         () -> squareInput(m_controller.getAxisValue(BTController.Axes.LEFT_X_axis)),
                         () -> squareInput(m_controller.getAxisValue(BTController.Axes.RIGHT_TRIGGER_axis) - m_controller.getAxisValue(BTController.Axes.LEFT_TRIGGER_axis))),
                 true, LEFT_Y, LEFT_X, RIGHT_TRIGGER,LEFT_TRIGGER).whenInactive(m_chassis.stopMotor());
+
     }
 
-
+    private Command setSpecimenIntake(){
+        return new InstantCommand(()->Intake.whenActive(supplyCommand));
+    }
+    private Command setSpecimenScore(){
+        return new InstantCommand(()->Intake.whenActive(placeCommand));
+    }
+    private Command setSampleIntake(){
+        return new InstantCommand(()->Intake.whenActive(intakeCommand));
+    }
+    private Command setSampleScore(){
+        return new InstantCommand(()->Intake.whenActive(scoreCommand));
+    }
     private Command resetGyro() {
         return new InstantCommand(()->m_chassis.gyro.reset());
     }
