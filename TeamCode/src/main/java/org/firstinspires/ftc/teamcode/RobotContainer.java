@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.RepeatCommand;
+import com.arcrobotics.ftclib.command.SelectCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
@@ -26,6 +27,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Drivetrain.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperSubsystem;
 import org.firstinspires.ftc.teamcode.utils.BT.BTController;
 
+import java.util.Map;
+
 public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
 
     public GripperSubsystem m_gripper;
@@ -42,7 +45,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     Score scoreCommand;
     Supply supplyCommand;
     Place placeCommand;
-
+    private Constants.States currentState;
 
     public RobotContainer(HardwareMap map, BTController gamepad1, BTController gamepad2){
         m_extension = new ExtensionSubsystem(map);
@@ -83,8 +86,23 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     }
 
     private Command setSpecimenIntake(){
-        return new InstantCommand(()->Intake.whenActive(supplyCommand));
+        new SelectCommand(
+                Map.of(
+                        Constants.States.SPECIMEN_DELIVER, new SpecimenDeliverIntake(),
+                        Constants.States.SPECIMEN_PLACE, new SpecimenPlaceIntake()
+                ),
+                ()->currentState
+        );
+        new SelectCommand(
+                Map.of(
+                        Constants.States.SPECIMEN_DELIVER, new SpecimenDeliverPlace(),
+                        Constants.States.SPECIMEN_PLACE, new SpecimenPlacePlace()
+                ),
+                ()->currentState
+        );
+        return new InstantCommand(()->currentState = Constants.States.SPECIMEN_DELIVER);
     }
+
     private Command setSpecimenScore(){
         return new InstantCommand(()->Intake.whenActive(placeCommand));
     }
@@ -96,5 +114,13 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     }
     private Command resetGyro() {
         return new InstantCommand(()->m_chassis.gyro.reset());
+    }
+
+    private static class Constants{
+        public enum States{
+            SPECIMEN_DELIVER,
+            SPECIMEN_PLACE,
+            SAMPLE
+        }
     }
 }
