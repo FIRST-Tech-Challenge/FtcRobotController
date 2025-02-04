@@ -10,7 +10,7 @@ public class ChristmasLight{
 
     public ChristmasLight (OpMode opMode) {
         _opMode = opMode;
-        _light = _opMode.hardwareMap.tryGet(Servo.class, "ChristmasLights");
+        _light = _opMode.hardwareMap.get(Servo.class, "ChristmasLights");
     }
 
     public void SetColor(double color){

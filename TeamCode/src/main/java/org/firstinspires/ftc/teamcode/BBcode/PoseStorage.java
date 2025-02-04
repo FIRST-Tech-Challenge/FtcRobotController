@@ -12,5 +12,9 @@ public class PoseStorage {
                 pose1.position.y == pose2.position.y &&
                 pose1.heading.toDouble() == pose2.heading.toDouble();
         }
+        public static boolean hasRolloverPose() {
+                return !arePosesEqual(currentPose, center) && previousOpMode == OpModeType.AUTONOMOUS;
+        }
+        public static OpModeType previousOpMode = OpModeType.UNKNOWN;
 
 }

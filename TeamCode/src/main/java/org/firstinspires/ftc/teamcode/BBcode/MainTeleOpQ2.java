@@ -100,11 +100,12 @@ public class MainTeleOpQ2 extends LinearOpMode{
     GoBildaPinpointDriverRR odo; // Declare OpMode member for the Odometry Computer
     public double xOffset = -7.002384767061902; //RRTune, -6.5; measured
     public double yOffset = -1.2229245167313665;
-    private ChristmasLight _christmasLight = new ChristmasLight(this);
+
     @Override
     public void runOpMode() throws InterruptedException{
+        PoseStorage.previousOpMode = OpModeType.TELEOP;
         // Initialization Code Goes Here
-
+        ChristmasLight _christmasLight = new ChristmasLight(this);
         odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
         GoBildaPinpointDriver.EncoderDirection xDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
         GoBildaPinpointDriver.EncoderDirection yDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
@@ -131,24 +132,18 @@ public class MainTeleOpQ2 extends LinearOpMode{
         telemetryHelper.initGamepadTelemetry(gamepad1);
         telemetryHelper.initGamepadTelemetry(gamepad2);
         //Not sure if this can be before or after waitForStart
-        if (PoseStorage.arePosesEqual(PoseStorage.currentPose, PoseStorage.center)) {
-            _christmasLight.red();
-        }
-        else {
+        if (PoseStorage.hasRolloverPose()) {
             _christmasLight.off();
             odo.setPosition(PoseStorage.currentPose);
+        }
+        else {
+            _christmasLight.red();
+            //TODO setPose to a some other likely position??
         }
         //Where the start button is clicked, put some starting commands after
 
         waitForStart();
-        //Not sure if this can be before or after waitForStart
-        if (PoseStorage.arePosesEqual(PoseStorage.currentPose, PoseStorage.center)) {
-            _christmasLight.red();
-        }
-        else {
-            _christmasLight.off();
-            odo.setPosition(PoseStorage.currentPose);
-        }
+
         arm.MoveToHome();
         odo.setPosition(PoseStorage.currentPose);
         telemetry.addData("PositionRR", ()-> getPinpoint(odo.getPositionRR()));
