@@ -26,26 +26,6 @@ public class MeepMeepTesting {
                 .build();
 
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(6+(18.0/2.0) -30, -(72-(18.0/2.0)), Math.toRadians(90)))
-                //start Wrist
-                //go score specimen
-                .splineToLinearHeading(new Pose2d(-10, -32, Math.toRadians(90)), Math.toRadians(90))
-                .waitSeconds(1)
-                //close extention
-                //go back
-                .strafeTo(new Vector2d(-10,-40))
-                //
-                .splineToLinearHeading(new Pose2d(-55,-61, Math.toRadians(90)), Math.toRadians(-90))
-                //
-                //go for score sample
-                .splineToLinearHeading(new Pose2d(-63,-61, Math.toRadians(45)), Math.toRadians(-90))
-//                //score sample
-//                //go for intake pos1.5
-                .turnTo(Math.toRadians(105))
-                .turnTo(Math.toRadians(45))
-//                //score sample
-                .splineToLinearHeading(new Pose2d(-50, -40 , Math.toRadians(170)), Math.toRadians(90))
-                .splineToLinearHeading(new Pose2d(-63,-61, Math.toRadians(45)), Math.toRadians(-90))
-//
                              .build());
         myBot2.runAction(myBot.getDrive().actionBuilder(new Pose2d(6+(18.0/2.0), -(72-(18.0/2.0)), Math.toRadians(90)))
                         .splineToLinearHeading(new Pose2d(0, -20-9, Math.toRadians(90)), Math.toRadians(90))
