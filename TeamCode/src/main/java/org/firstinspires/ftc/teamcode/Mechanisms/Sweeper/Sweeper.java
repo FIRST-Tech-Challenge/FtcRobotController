@@ -35,7 +35,7 @@ public class Sweeper {
         BACKWARD
     }
     ElapsedTime sweeperTimer = new ElapsedTime();
-    public Action servoArmSpec(){
+    public Action sweep(){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {

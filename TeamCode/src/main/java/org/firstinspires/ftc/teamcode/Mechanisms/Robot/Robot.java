@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Extension.Extension;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
 import org.firstinspires.ftc.teamcode.Mechanisms.Pivot.Pivot;
+import org.firstinspires.ftc.teamcode.Mechanisms.Sweeper.Sweeper;
 
 public class Robot {
     public Drivetrain drivetrain;
@@ -24,6 +25,7 @@ public class Robot {
     public Arm arm;
     public Claw claw;
     public Lift lift;
+    public Sweeper sweeper;
     public Robot(HardwareMap hardwareMap){
         this.battery = new Battery(hardwareMap);
         this.drivetrain = new Drivetrain(hardwareMap, battery);
@@ -33,6 +35,7 @@ public class Robot {
         this.claw = new Claw(hardwareMap);
         this.lift = new Lift(hardwareMap, battery);
         this.extension = new Extension(hardwareMap);
+        this.sweeper = new Sweeper(hardwareMap);
 
     }
     public Action intakeMove(Intake.intakeState intakeMechState){

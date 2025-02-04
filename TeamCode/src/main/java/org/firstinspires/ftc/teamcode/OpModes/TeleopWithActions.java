@@ -15,6 +15,8 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Extension.Extension;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
 import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
+import org.firstinspires.ftc.teamcode.Mechanisms.Sweeper.Sweeper;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +36,7 @@ public class TeleopWithActions extends OpMode {
     Extension extension;
     Lift lift;
     Battery battery;
+    Sweeper sweeper;
     boolean firstRun = true;
     public static double slowMultiplier = 0.25;
     @Override
@@ -46,6 +49,7 @@ public class TeleopWithActions extends OpMode {
         claw = robot.claw;
         extension = robot.extension;
         lift = robot.lift;
+        sweeper = robot.sweeper;
     }
 
     @Override
@@ -82,6 +86,9 @@ public class TeleopWithActions extends OpMode {
             }
             if (gamepad2.triangle) {
                 runningActions.put("arm", arm.servoArm());
+            }
+            if (gamepad1.triangle) {
+                runningActions.put("sweep", sweeper.sweep());
             }
             if (!runningActions.containsKey("extension")) {
                 if (Math.abs(gamepad2.left_stick_y) > 0.2) {
