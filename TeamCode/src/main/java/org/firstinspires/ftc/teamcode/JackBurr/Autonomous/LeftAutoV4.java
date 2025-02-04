@@ -46,21 +46,21 @@ public class LeftAutoV4 extends LinearOpMode {
     public boolean traj4Followed = false;
     public boolean traj5Followed = false;
     //----------------------------------------------------------------------------------------
-    public static Pose2d startPose = new Pose2d(60, 0, Math.toRadians(180));
+    public static Pose2d startPose = new Pose2d(36, 62, Math.toRadians(-90)); // (60,0), 180
 
-    public static Vector2d position1 = new Vector2d(40, -15);
-    public static double position1HeadingDegrees = 150;
+    public static Vector2d position1 = new Vector2d(16, 47); // (40,-15)
+    public static double position1HeadingDegrees = -120; // 150
 
-    public static Vector2d position2 = new Vector2d(46, -5);
-    public static double position2HeadingDegrees = 150;
+    public static Vector2d position2 = new Vector2d(22, 57); // (46, -5)
+    public static double position2HeadingDegrees = -120; //150
 
-    public static double position3Degrees = 180;
+    public static double position3Degrees = -90; // 180
 
-    public static double position4Degrees = 180;
+    public static double position4Degrees = -90; // 180
 
-    public static Vector2d position5 = new Vector2d(41.75, -7.65);
-    public static Vector2d position6 = new Vector2d(54, -10);
-    public static double position6HeadingDegrees = 130;
+    public static Vector2d position5 = new Vector2d(17.75, 54.35); // (41.75, -7.65)
+    public static Vector2d position6 = new Vector2d(30, 52); // (54, -10)
+    public static double position6HeadingDegrees = -140; // 130
 
 
 

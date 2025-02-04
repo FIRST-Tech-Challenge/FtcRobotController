@@ -534,7 +534,7 @@ public class TeleOpV2 extends OpMode {
             case READY_FOR_LEVEL_TWO_ASCENT:
                 deliverySlides.runLeftSlideToPosition(constants.LEFT_SLIDE_LEVEL_TWO_ASCENT, 0.8);
                 deliverySlides.runRightSlideToPosition(constants.RIGHT_SLIDE_LEVEL_TWO_ASCENT, 0.8);
-                deliveryAxon.setPosition(constants.DELIVERY_GRAB);
+                deliveryAxon.setPosition(constants.DELIVERY_LEVEL_TWO_ASCENT);
                 break;
             case LEVEL_TWO_ASCENT:
                 if(deliverySlides.getLeftSlidePosition() != leftSlideDown || deliverySlides.getRightSlidePosition() != leftSlideDown) {
