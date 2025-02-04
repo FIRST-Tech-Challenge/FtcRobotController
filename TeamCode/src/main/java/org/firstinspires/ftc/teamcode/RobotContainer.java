@@ -81,6 +81,9 @@ private States currentState = States.SAMPLE;
 //        m_controller.assignCommand(new ConditionalCommand(scoreCommand,new WaitUntilCommand(()->intakeCommand.isFinished()).andThen(scoreCommand),()->!intakeCommand.isScheduled()),false,BUMPER_LEFT);
 //        m_controller.assignCommand(new ConditionalCommand(intakeCommand,new WaitUntilCommand(()->scoreCommand.isFinished()).andThen(intakeCommand),()->!scoreCommand.isScheduled()),false,BUMPER_RIGHT);
 //        m_controller.assignCommand(new RepeatCommand(new StateMachine(m_extension,m_pivot,m_chassis,m_gripper,m_controller)),false,DPAD_UP);
+        Sample.whenActive(()->currentState = States.SAMPLE);
+        SpecimenDelivery.whenActive(()->currentState = States.SPECIMEN_DELIVERY);
+        SpecimenScore.whenActive(()->currentState = States.SPECIMEN_SCORE);
         Score.whenActive(setPlace());
         Intake.whenActive(setIntake());
         m_controller.assignCommand(m_chassis.fieldRelativeDrive(
@@ -112,6 +115,7 @@ private States currentState = States.SAMPLE;
                 () -> currentState
         );
     }
+
 
     private Command resetGyro() {
         return new InstantCommand(()->m_chassis.gyro.reset());
