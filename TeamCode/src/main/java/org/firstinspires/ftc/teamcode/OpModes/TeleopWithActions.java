@@ -83,10 +83,12 @@ public class TeleopWithActions extends OpMode {
             if (gamepad2.triangle) {
                 runningActions.put("arm", arm.servoArm());
             }
-            if (Math.abs(gamepad2.left_stick_y) > 0.2) {
-                runningActions.put("manualLift", lift.manualControl(-gamepad2.left_stick_y));
-            } else {
-                runningActions.put("manualLift", lift.manualControl(0));
+            if (!runningActions.containsKey("extension")) {
+                if (Math.abs(gamepad2.left_stick_y) > 0.2) {
+                    runningActions.put("manualLift", lift.manualControl(-gamepad2.left_stick_y));
+                } else {
+                    runningActions.put("manualLift", lift.manualControl(0));
+                }
             }
         }
         if (gamepad1.cross){
