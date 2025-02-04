@@ -30,7 +30,7 @@ public class WallPickupDistanceSensorAction extends Action {
     public WallPickupDistanceSensorAction(Outtake outtake, PurePursuitAction purePursuitAction, DriveTrain driveTrain) {
 
         this.revDistance = outtake.revDistanceClaw;
-        detectDistanceAction = new DistanceDetectionAction(revDistance, 48);
+        detectDistanceAction = new DistanceDetectionAction(revDistance, 45);
         detectDistanceAction.setName("detectDistanceAction");
 
         this.purePursuitAction = purePursuitAction;
