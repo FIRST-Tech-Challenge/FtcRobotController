@@ -49,6 +49,7 @@ public class NoActionTeleOp extends LinearOpMode {
                     gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
 
             // Arm angle and extension control
+
             arm.setPowerAngleWithF(gamepadEx2.getStick(GamepadKeys.Stick.LEFT_STICK_Y));
             arm.setPowerExtend(gamepadEx2.getStick(GamepadKeys.Stick.RIGHT_STICK_Y));
 
