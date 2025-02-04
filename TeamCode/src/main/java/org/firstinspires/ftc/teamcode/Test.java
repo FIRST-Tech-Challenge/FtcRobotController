@@ -12,8 +12,9 @@ public class Test extends Movable {
         // ~3500 milliseconds to go to high rung, +200 to put it on
 
         // moves to high rung
-        Thread.sleep(500);
         outtake.setPosition(0);
+        Thread.sleep(250);
+
     }
 
     @Override

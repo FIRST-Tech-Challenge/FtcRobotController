@@ -209,11 +209,11 @@ abstract class Movable extends LinearOpMode {
     }
 
     public void turn180() {
-        turnRobot(2990,"right");
+        turnRobot(2920,"right");
     }
 
     public void turn90(String direction) {
-        turnRobot(2990/2, direction);
+        turnRobot(2920/2, direction);
     }
 
     abstract void updatePhoneConsole();
