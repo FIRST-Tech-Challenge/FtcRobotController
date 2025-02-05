@@ -29,6 +29,7 @@ public class RobotConstantsV1 {
     public double DELIVERY_DOWN = 1;
     public double DELIVERY_GRAB = 0.16; // 0.20
     public double DELIVERY_LEVEL_ONE_ASCENT = 0.51;
+    public double DELIVERY_LEVEL_TWO_ASCENT = 0.61;
     public double DELIVERY_UP = 0.61;
     public double DELIVERY_DROP = 0.64;
     public double DELIVERY_HIGH_BAR = 0.63;
@@ -46,7 +47,9 @@ public class RobotConstantsV1 {
     public int RIGHT_SLIDE_HIGH_BAR = 430;
     public int LEFT_SLIDE_HIGH_BAR_AUTO = -419;
     public int RIGHT_SLIDE_HIGH_BAR_AUTO = 430;
-    public int LEFT_SLIDE_LEVEL_TWO_ASCENT = -1343;
-    public int RIGHT_SLIDE_LEVEL_TWO_ASCENT = 1366;
+    public int LEFT_SLIDE_LEVEL_TWO_ASCENT = -2709;
+    public int RIGHT_SLIDE_LEVEL_TWO_ASCENT = 2720;
+    public int LEFT_SLIDE_LEVEL_TWO_ASCENT_HOOK = -629;
+    public int RIGHT_SLIDE_LEVEL_TWO_ASCENT_HOOK = 629;
 
 }

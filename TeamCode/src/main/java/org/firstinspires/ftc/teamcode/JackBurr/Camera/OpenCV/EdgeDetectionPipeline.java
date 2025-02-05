@@ -24,10 +24,10 @@ public class EdgeDetectionPipeline extends OpenCvPipeline {
     public Mat grayMat = new Mat();
     public Mat edges = new Mat();
     public Mat input_ = new Mat();
-    public static int CANNY_THRESHOLD_1 = 50;
+    public static int CANNY_THRESHOLD_1 = 120;
     public static int CANNY_THRESHOLD_2 = 150;
     public List<SampleDetection> detections = new ArrayList<>();
-    public static int MIN_AREA = 0;
+    public static int MIN_AREA = 12000;
     public static int FRAME_TO_RETURN = 0;
     public static BigInteger MAX_AREA = new BigInteger("10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
     public boolean convert = false;
@@ -53,6 +53,7 @@ public class EdgeDetectionPipeline extends OpenCvPipeline {
         else {
             input.copyTo(grayMat);
         }
+        Imgproc.adaptiveThreshold(grayMat, grayMat, 255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY, 11, 2);
         Imgproc.GaussianBlur(grayMat, blurred, new Size(5, 5), 0);
         Imgproc.Canny(blurred, edges, CANNY_THRESHOLD_1, CANNY_THRESHOLD_2);
 // Find contours
@@ -66,7 +67,7 @@ public class EdgeDetectionPipeline extends OpenCvPipeline {
             SampleDetection detection = new SampleDetection(currentId, ColorRange.RED, rect, true);
             area = rect.size.height * rect.size.width;
             // Filter by size and aspect ratio
-            if (area > MIN_AREA && area < MAX_AREA.intValue()) {
+            if (area > MIN_AREA) {
                 detections.add(detection);
                 detectedAngle = getAngle(rect);
                 currentId = currentId + 1;
@@ -77,11 +78,14 @@ public class EdgeDetectionPipeline extends OpenCvPipeline {
                     Imgproc.line(input_, vertices[i], vertices[(i + 1) % 4], new Scalar(0, 255, 0), 2); // Green lines
                 }
                 telemetry.addLine("Detected Sample:");
+                telemetry.addLine("\t X: " + closest.x);
+                telemetry.addLine("\t Y: " + closest.y);
                 telemetry.addLine("\t Width: " + closest.boxFit.size.width);
                 telemetry.addLine("\t Height: " + closest.boxFit.size.height);
                 telemetry.addLine("\t Angle: " + detectedAngle);
                 if(FRAME_TO_RETURN == 0) {
                     blurred.empty();
+                    grayMat.empty();
                     edges.empty();
                 }
                 else {
@@ -96,6 +100,9 @@ public class EdgeDetectionPipeline extends OpenCvPipeline {
         }
         else if(FRAME_TO_RETURN == 1) {
             return edges;
+        }
+        else if(FRAME_TO_RETURN == 3) {
+            return grayMat;
         }
         else {
             return blurred;
