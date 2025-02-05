@@ -1,10 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.AccelConstraint;
+import com.acmerobotics.roadrunner.AngularVelConstraint;
+import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.VelConstraint;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 @Config
 /** @noinspection unused */
@@ -168,11 +175,22 @@ public class Settings {
     // Autonomous settings
     @Config
     public static class Autonomous {
+        public static VelConstraint speedyVel = new MinVelConstraint(Arrays.asList(
+                new TranslationalVelConstraint(80),
+                new AngularVelConstraint(Math.PI)
+        ));
+        public static AccelConstraint speedyAccel = new ProfileAccelConstraint(-70, 75);
+
+        public static VelConstraint cautiousVel = new MinVelConstraint(Arrays.asList(
+                new TranslationalVelConstraint(10),
+                new AngularVelConstraint(Math.PI)
+        ));
+        public static AccelConstraint cautiousAccel = new ProfileAccelConstraint(-10, 10);
         @Config
         public static class FieldPositions {
             // Updated poses for initial robot positions based on IdealLoop
-            public static Pose2d LEFT_INITIAL_POSE = new Pose2d(-11.5, -62.5, Math.toRadians(90));
-            public static Pose2d RIGHT_INITIAL_POSE = new Pose2d(11.5, -62.5, Math.toRadians(90));
+            public static Pose2d LEFT_INITIAL_POSE = new Pose2d(-11.5, -63.5, Math.toRadians(90));
+            public static Pose2d RIGHT_INITIAL_POSE = new Pose2d(11.5, -63.5, Math.toRadians(90));
 
             // Updated parked positions for each starting position
             public static Vector2d LEFT_JUST_PARK_VEC = new Vector2d(45, -58);
@@ -181,6 +199,7 @@ public class Settings {
             // place positions for each starting position
             public static Pose2d LEFT_CHAMBER_POSE = new Pose2d(0, -29.5, Math.toRadians(90));
             public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(0, -32.5, Math.toRadians(90));
+            public static Vector2d SAFE_CHAMBER_VEC = new Vector2d(0, -50);
             public static Pose2d BASKET_POSE = new Pose2d(-58.2, -58.6, Math.toRadians(45));
 
             public static Pose2d HP_POSE = new Pose2d(55, -54, Math.toRadians(90));

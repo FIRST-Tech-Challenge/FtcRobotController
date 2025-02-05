@@ -1,21 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.Settings.Autonomous.FieldPositions.SAFE_CHAMBER_VEC;
+import static org.firstinspires.ftc.teamcode.Settings.Autonomous.cautiousAccel;
+import static org.firstinspires.ftc.teamcode.Settings.Autonomous.cautiousVel;
+import static org.firstinspires.ftc.teamcode.Settings.Autonomous.speedyAccel;
+import static org.firstinspires.ftc.teamcode.Settings.Autonomous.speedyVel;
 
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.AngularVelConstraint;
-import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -26,20 +24,13 @@ import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.systems.DynamicInput;
 
-import java.util.Arrays;
-
-@Autonomous(name = "Low Taper Fade Right", group = "Autonomous")
-public class LowTaperFadeRight extends LinearOpMode {
+@Autonomous(name = "Right State Auto", group = "Autonomous")
+public class RightStateAuto extends LinearOpMode {
     private BaseRobot baseRobot;
     private MecanumDrive roadRunner;
     private Pose2d initialPose;
     public AdaptiveCalibration adaptiveCalibration;
 
-    public static VelConstraint speedyVel = new MinVelConstraint(Arrays.asList(
-            new TranslationalVelConstraint(70),
-            new AngularVelConstraint(Math.PI)
-    ));
-    public static AccelConstraint speedyAccel = new ProfileAccelConstraint(-70, 60);
 
     @Override
     public void runOpMode() {
@@ -147,13 +138,13 @@ public class LowTaperFadeRight extends LinearOpMode {
         return previousTrajectory.endTrajectory().fresh()
                 .strafeTo(new Vector2d(Settings.Autonomous.FieldPositions.HP_POSE.position.x, Settings.Autonomous.FieldPositions.HP_POSE.position.y), speedyVel, speedyAccel)
                 .waitSeconds(.1)
-                .lineToY(Settings.Autonomous.FieldPositions.HP_POSE.position.y - 10, speedyVel, speedyAccel)
+                .lineToY(Settings.Autonomous.FieldPositions.HP_POSE.position.y - 10, cautiousVel, cautiousAccel)
                 .waitSeconds(0.5);
     }
 
     private TrajectoryActionBuilder getPlacingTrajectory(TrajectoryActionBuilder previousTrajectory, int specimensScored) {
         return previousTrajectory.endTrajectory().fresh()
-                .strafeTo(SAFE_CHAMBER_VEC)
+                .strafeTo(SAFE_CHAMBER_VEC, speedyVel, speedyAccel)
                 .strafeTo(new Vector2d(Settings.Autonomous.FieldPositions.RIGHT_CHAMBER_POSE.position.x, Settings.Autonomous.FieldPositions.RIGHT_CHAMBER_POSE.position.y),
                         speedyVel, speedyAccel);
     }
@@ -161,14 +152,15 @@ public class LowTaperFadeRight extends LinearOpMode {
     private TrajectoryActionBuilder pushSamples(TrajectoryActionBuilder previousTrajectory) {
         return previousTrajectory.endTrajectory().fresh()
                 .setTangent(Math.toRadians(90))
-                .strafeTo(Settings.Autonomous.FieldPositions.SAMPLE_MIDDLEMAN)
+                .strafeTo(Settings.Autonomous.FieldPositions.SAMPLE_MIDDLEMAN, speedyVel, speedyAccel)
                 .splineToLinearHeading(new Pose2d(Settings.Autonomous.FieldPositions.FIRST_PRESET_SAMPLE_POSE.position,
                         Settings.Autonomous.FieldPositions.FIRST_PRESET_SAMPLE_POSE.heading), Math.toRadians(270))
-                .lineToY(Settings.Autonomous.FieldPositions.FIRST_PRESET_SAMPLE_POSE.position.y - 50)
+                .lineToY(Settings.Autonomous.FieldPositions.FIRST_PRESET_SAMPLE_POSE.position.y - 50, speedyVel, speedyAccel)
                 .setTangent(90)
                 .splineToLinearHeading(new Pose2d(Settings.Autonomous.FieldPositions.SECOND_PRESET_SAMPLE_POSE.position,
-                        Settings.Autonomous.FieldPositions.SECOND_PRESET_SAMPLE_POSE.heading), Math.toRadians(270))
-                .lineToY(Settings.Autonomous.FieldPositions.SECOND_PRESET_SAMPLE_POSE.position.y - 58, speedyVel, speedyAccel);
+                        Settings.Autonomous.FieldPositions.SECOND_PRESET_SAMPLE_POSE.heading), Math.toRadians(270), speedyVel, speedyAccel)
+                .lineToY(Settings.Autonomous.FieldPositions.SECOND_PRESET_SAMPLE_POSE.position.y - 40, speedyVel, speedyAccel)
+                .lineToY(Settings.Autonomous.FieldPositions.SECOND_PRESET_SAMPLE_POSE.position.y - 58, cautiousVel, cautiousAccel);
     }
 
     public Action hookChamber() {
