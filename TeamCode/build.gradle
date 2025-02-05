@@ -22,7 +22,20 @@ android {
         jniLibs.useLegacyPackaging true
     }
 }
-
+repositories {
+    maven {
+        url = 'https://maven.brott.dev/'
+    }
+}
 dependencies {
     implementation project(':FtcRobotController')
+    implementation 'org.ftclib.ftclib:core:2.1.1'  // core
+    implementation 'org.ftclib.ftclib:vision:2.1.0' // vision
+    // arc robotics found in libs
+    //implementation 'com.qualcomm.hardware:revrobotics:1.0.0' //Rev Change, edit this as needed
+    implementation "com.acmerobotics.roadrunner:ftc:0.1.14"
+    implementation "com.acmerobotics.roadrunner:core:1.0.0"
+    implementation "com.acmerobotics.roadrunner:actions:1.0.0"
+    implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
+
 }

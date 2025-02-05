@@ -1,2 +1,4 @@
+include ':ftc-dashboard-0.4.16'
 include ':FtcRobotController'
+include ':MeepMeepTesting10'
 include ':TeamCode'
