@@ -248,10 +248,10 @@ public class FirstRealTeleop extends LinearOpMode {
             //extenders
             double rightTrig = gamepad2.right_trigger;
             double leftTrig = gamepad2.left_trigger;
-            if (armPos - rightTrig * 75 > -7936.177) {
+            if (armPos - rightTrig * 75 > -5833) {
                 armPos -= rightTrig * 75;
             }
-            if (armPos + leftTrig * 75 < 0) {
+            if (armPos + leftTrig * 75 < 2000) {
                 armPos += leftTrig * 75;
             }
 //            armLifterLeft.setPower(gamepad2.right_stick_y);
