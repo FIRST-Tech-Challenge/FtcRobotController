@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@Autonomous(name="Auto Drive", group="Robot")
+@Autonomous(name="24 Auto Drive", group="Robot")
 @Disabled
 public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     // Initialize all variables for the program

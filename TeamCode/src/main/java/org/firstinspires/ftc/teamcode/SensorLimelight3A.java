@@ -44,7 +44,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.List;
-@TeleOp(name = "Lime Camera", group = "Sensor")
+@TeleOp(name = "24 Lime Camera", group = "Sensor")
 @Disabled
 public class SensorLimelight3A extends LinearOpMode {
 

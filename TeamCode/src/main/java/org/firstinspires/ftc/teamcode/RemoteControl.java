@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 // All the things that we use and borrow
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,7 +13,8 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
-@TeleOp(name="Remote Control", group="Linear OpMode")
+@TeleOp(name="24 Remote Control", group="Linear OpMode")
+@Disabled
 public class RemoteControl extends LinearOpMode {
     // Initialize all variables for the program below:
     // This chunk controls our wheels
@@ -52,7 +54,7 @@ public class RemoteControl extends LinearOpMode {
     // This chunk controls our claw
     //Callie
     Servo claw = null;
-    final double CLAW_MIN = 0.18;        // Claw is closed
+    final double CLAW_MIN = 0.4;        // Claw is closed
     final double CLAW_MAX = 0.93;        // Claw is open
     double claw_position = CLAW_MIN;
 

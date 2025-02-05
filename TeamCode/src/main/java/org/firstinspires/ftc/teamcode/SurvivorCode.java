@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 // All the things that we use and borrow
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,6 +14,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 @TeleOp(name="SurvivorCode", group="Linear OpMode")
+@Disabled
 public class SurvivorCode extends LinearOpMode {
     // Initialize all variables for the program below:
     // This chunk controls our wheels
