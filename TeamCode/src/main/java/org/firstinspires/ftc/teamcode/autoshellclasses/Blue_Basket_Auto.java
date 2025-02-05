@@ -12,8 +12,6 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.BlueBasket;
 import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.BlueBasketPose;
 import org.firstinspires.ftc.teamcode.BBcode.OpModeType;
 import org.firstinspires.ftc.teamcode.BBcode.UtilClasses.UtilActions;
@@ -72,7 +70,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
         GoBildaPinpointDriverRR odo;
 
         //drive to drop
-        Action driveToDropFromOgStart = drive.actionBuilder(BlueBasket.pose_basket_init_old)
+        Action driveToDropFromOgStart = drive.actionBuilder(BlueBasketPose.basket_init_old)
                 .setTangent(-45)
                 .splineToLinearHeading(pose_drop, 0)
                 .build();
@@ -80,32 +78,32 @@ public class Blue_Basket_Auto extends LinearOpMode {
                 .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
                 .build();
 
-        Action driveToDropFromInnerSample = drive.actionBuilder(BlueBasket.pose_inner_sample)
+        Action driveToDropFromInnerSample = drive.actionBuilder(BlueBasketPose.inner_sample)
                 .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
                 .build();
 
-        Action driveToDropFromMiddleSample = drive.actionBuilder(BlueBasket.pose_middle_sample)
+        Action driveToDropFromMiddleSample = drive.actionBuilder(BlueBasketPose.middle_sample)
                 .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
                 .build();
 
-        Action driveToDropFromOuterSample = drive.actionBuilder(BlueBasket.pose_outer_sample)
+        Action driveToDropFromOuterSample = drive.actionBuilder(BlueBasketPose.outer_sample)
                 .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
                 .build();
 
         //sample pickup
         Action samplePickupInner = drive.actionBuilder(pose_drop)
-                .strafeToLinearHeading(BlueBasket.pose_inner_sample.position, BlueBasket.pose_inner_sample.heading)
+                .strafeToLinearHeading(BlueBasketPose.inner_sample.position, BlueBasketPose.inner_sample.heading)
                 .build();
         Action samplePickupMiddle = drive.actionBuilder(pose_drop)
-                .strafeToLinearHeading(BlueBasket.pose_middle_sample.position, BlueBasket.pose_middle_sample.heading)
+                .strafeToLinearHeading(BlueBasketPose.middle_sample.position, BlueBasketPose.middle_sample.heading)
                 .build();
         Action samplePickupOuter = drive.actionBuilder(pose_drop)
-                .strafeToLinearHeading(BlueBasket.pose_outer_sample.position, BlueBasket.pose_outer_sample.heading)
+                .strafeToLinearHeading(BlueBasketPose.outer_sample.position, BlueBasketPose.outer_sample.heading)
                 .build();
 
         //drive to park
         Action driveToPark = drive.actionBuilder(pose_drop)
-                .strafeToLinearHeading(BlueBasket.pose_park.position, BlueBasket.pose_park.heading)
+                .strafeToLinearHeading(BlueBasketPose.park.position, BlueBasketPose.park.heading)
                 .build();
 
     //----------------------------------------------------------------------------------------------
