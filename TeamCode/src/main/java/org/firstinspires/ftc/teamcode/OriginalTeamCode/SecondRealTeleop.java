@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.OriginalTeamCode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PwmControl.PwmRange;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.PwmControl.*;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-@TeleOp(name="Bot-Centric Teleop To Use :))))",group = "Teleops to use :))))))")
-public class FirstRealTeleop extends LinearOpMode {
+@TeleOp(name="Field-Centric Teleop To Use :))))",group = "Teleops to use :))))))")
+public class SecondRealTeleop extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
 
@@ -67,6 +67,7 @@ public class FirstRealTeleop extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
         StandardTrackingWheelLocalizer localizer = new StandardTrackingWheelLocalizer(hardwareMap, new ArrayList<>(),new ArrayList<>());
         localizer.setPoseEstimate(new Pose2d());
 
@@ -154,66 +155,57 @@ public class FirstRealTeleop extends LinearOpMode {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral = gamepad1.left_stick_x;
-            double yaw = gamepad1.right_stick_x;
-            // Combine the joystick requests for each axis-motion to determine each wheel's power.
-            // Set up a variable for each drive wheel to save the power level for telemetry.
+            // Declare our motors
+            // Make sure your ID's match your configuration
+            DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
+            DcMotor backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
+            DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
+            DcMotor backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
 
-            double leftFrontPower = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower = axial - lateral + yaw;
-            double rightBackPower = axial + lateral - yaw;
+            // Reverse the right side motors. This may be wrong for your setup.
+            // If your robot moves backwards when commanded to go forwards,
+            // reverse the left side instead.
+            // See the note about this earlier on this page.
+            frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-            // Normalize the values so no wheel power exceeds 100%
-            // This ensures that the robot maintains the desired motion.
-            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-            max = Math.max(max, Math.abs(leftBackPower));
-            max = Math.max(max, Math.abs(rightBackPower));
+            waitForStart();
 
-            if (max > 1.0) {
-                leftFrontPower /= max;
-                rightFrontPower /= max;
-                leftBackPower /= max;
-                rightBackPower /= max;
-            }
+            if (isStopRequested()) return;
 
-            // This is test code:
-            //
-            // Uncomment the following code to test your motor directions.
-            // Each button should make the corresponding motor run FORWARD.
-            //   1) First get all the motors to take to correct positions on the robot
-            //      by adjusting your Robot Configuration if necessary.
-            //   2) Then make sure they run in the correct direction by modifying the
-            //      the setDirection() calls above.
-            // Once the correct motors move in the correct direction re-comment this code.
+            while (opModeIsActive()) {
+                double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+                double x = gamepad1.left_stick_x;
+                double rx = gamepad1.right_stick_x;
 
-            /*
-            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
 
-            // Send calculated power to wheels
-            if (slowMode > 0.2) {
+                double botHeading = drive.getPoseEstimate().getHeading();
 
-                leftFrontDrive.setPower(leftFrontPower * slowCoeff);
-                rightFrontDrive.setPower(rightFrontPower * slowCoeff);
-                leftBackDrive.setPower(leftBackPower * slowCoeff);
-                rightBackDrive.setPower(rightBackPower * slowCoeff);
+                // Rotate the movement direction counter to the bot's rotation
+                double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+                double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-            } else if (fastMode > 0.2) {
-                leftFrontDrive.setPower(leftFrontPower);
-                rightFrontDrive.setPower(rightFrontPower);
-                leftBackDrive.setPower(leftBackPower);
-                rightBackDrive.setPower(rightBackPower);
-            } else {
-                leftFrontDrive.setPower(leftFrontPower * 0.7);
-                rightFrontDrive.setPower(rightFrontPower * 0.7);
-                leftBackDrive.setPower(leftBackPower * 0.7);
-                rightBackDrive.setPower(rightBackPower * 0.7);
+                rotX = rotX * 1.1;  // Counteract imperfect strafing
 
+                // Denominator is the largest motor power (absolute value) or 1
+                // This ensures all the powers maintain the same ratio,
+                // but only if at least one is out of the range [-1, 1]
+                double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+                double frontLeftPower = (rotY + rotX + rx) / denominator;
+                double backLeftPower = (rotY - rotX + rx) / denominator;
+                double frontRightPower = (rotY - rotX - rx) / denominator;
+                double backRightPower = (rotY + rotX - rx) / denominator;
+
+                frontLeftMotor.setPower(frontLeftPower);
+                backLeftMotor.setPower(backLeftPower);
+                frontRightMotor.setPower(frontRightPower);
+                backRightMotor.setPower(backRightPower);
+                if(slowMode > 0.2){
+                    frontLeftMotor.setPower(frontLeftPower*slowCoeff);
+                    frontRightMotor.setPower(frontLeftPower*slowCoeff);
+                    backLeftMotor.setPower(frontLeftPower*slowCoeff);
+                    frontRightMotor.setPower(frontLeftPower*slowCoeff);
+                }
             }
 
             //arm rotate
