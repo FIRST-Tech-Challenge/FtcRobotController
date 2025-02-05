@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.BlueBasket;
 import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.BlueBasketPose;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -130,14 +131,14 @@ public class MainTeleOpQ2 extends LinearOpMode{
         telemetryHelper.initGamepadTelemetry(gamepad1);
         telemetryHelper.initGamepadTelemetry(gamepad2);
         //Not sure if this can be before or after waitForStart
-        if (PoseStorage.hasRolloverPose()) {
-            _christmasLight.off();
-            odo.setPosition(PoseStorage.currentPose);
-        }
-        else {
-            _christmasLight.red();
-            //TODO setPose to a some other likely position??
-        }
+//        if (PoseStorage.hasRolloverPose()) {
+//            _christmasLight.off();
+//            odo.setPosition(PoseStorage.currentPose);
+//        }
+//        else {
+//            _christmasLight.red();
+//            //TODO setPose to a some other likely position??
+//        }
         //Where the start button is clicked, put some starting commands after
 
         waitForStart();

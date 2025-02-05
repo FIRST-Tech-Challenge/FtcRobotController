@@ -104,14 +104,29 @@ public class ActionBuilder {
                 .waitSeconds(1.5)//lower mechanisms from clipping
 
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(36,-26, Math.toRadians(90) ), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(46,-12), Math.toRadians(0))
-                .strafeToLinearHeading(new Vector2d(46,-50),Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(38,-26, Math.toRadians(90) ), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(46,-12), Math.toRadians(0))//apex of inner sample
+                .strafeToLinearHeading(new Vector2d(46,-55),Math.toRadians(90))//inner sample to observation
                 .strafeToLinearHeading(new Vector2d(46,-24),Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(52,-15),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(58, -24),Math.toRadians(-90))
-                .strafeToConstantHeading(new Vector2d(58,-60))
-                .strafeToLinearHeading(new Vector2d(51,-57),Math.toRadians(-135))
+//                .splineToConstantHeading(new Vector2d(54,-12),Math.toRadians(0))//apex of middle sample
+                .splineToLinearHeading(new Pose2d(54,-12,Math.toRadians(90)),Math.toRadians(0))//apex of middle sample
+                .splineToLinearHeading(new Pose2d(58, -16,Math.toRadians(90)),Math.toRadians(-90))
+//                .strafeToConstantHeading(new Vector2d(58,-55))//middle sample to observation
+                .strafeToLinearHeading(new Vector2d(58,-55),Math.toRadians(90))//middle sample to observation
+                .strafeToLinearHeading(new Vector2d(48,-58),Math.toRadians(-138))
+                .waitSeconds(0.2)
+                .strafeToLinearHeading(new Vector2d(2, -48), Math.toRadians(90))
+                .waitSeconds(1.5)
+                .strafeToLinearHeading(new Vector2d(2,-36),Math.toRadians(90), new TranslationalVelConstraint(10))
+                .waitSeconds(1.5)
+                .strafeToLinearHeading(new Vector2d(38,-58), Math.toRadians(0))
+                .waitSeconds(0.2)
+                .strafeToLinearHeading(new Vector2d(4,-48),Math.toRadians(90))
+                .waitSeconds(1.5)
+                .strafeToLinearHeading(new Vector2d(4,-36),Math.toRadians(90), new TranslationalVelConstraint(10))
+                .waitSeconds(1.5)
+                .strafeToLinearHeading(new Vector2d(60,-60),Math.toRadians(90))
+
 
 
 
