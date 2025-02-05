@@ -27,13 +27,13 @@ public class RobotConstantsV1 {
     public double FRONT_LEFT_OVER_LOW_BAR = 0.25;
     public double FRONT_RIGHT_OVER_LOW_BAR = 0.25;
     public double DELIVERY_DOWN = 1;
-    public double DELIVERY_GRAB = 0.16; // 0.20
-    public double DELIVERY_LEVEL_ONE_ASCENT = 0.51;
-    public double DELIVERY_LEVEL_TWO_ASCENT = 0.61;
-    public double DELIVERY_UP = 0.61;
-    public double DELIVERY_DROP = 0.64;
-    public double DELIVERY_HIGH_BAR = 0.63;
-    public double DELIVERY_WALL_PICKUP = 0.81;
+    public double DELIVERY_GRAB = 0.105; // 0.16
+    public double DELIVERY_LEVEL_ONE_ASCENT = 0.455; //0.51
+    public double DELIVERY_LEVEL_TWO_ASCENT = 0.555; //0.61
+    public double DELIVERY_UP = 0.555; //0.61
+    public double DELIVERY_DROP = 0.585; //0.64
+    public double DELIVERY_HIGH_BAR = 0.575; //0.63
+    public double DELIVERY_WALL_PICKUP = 0.755; //0.81
     public double WRIST_CENTER = 0.48;
     //MOTORS=========================================================================================================
     public int INTAKE_MOTOR_IN = 3;
