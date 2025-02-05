@@ -12,4 +12,5 @@ class NotRealEncoder: Encoder {
         set(value) {isFlippedBacking = value}
 
     override fun getCurrentPosition(): Int = 0
+    override fun reset() {}
 }

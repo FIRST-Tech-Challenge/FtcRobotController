@@ -131,27 +131,7 @@ public class RightAuto extends LinearOpMode {
                 Ramps.LimitMode.SCALE
         );
 
-        hardware.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.clawFlip.setPosition(Hardware.FLIP_UP);
-        hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
-        hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
-
-        hardware.arm.setTargetPosition(0);
-        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.arm.setPower(0.3);
-        hardware.wrist.setPosition(0.28);
-        hardware.claw.setPosition(Hardware.CLAW_CLOSE);
-
-        // we don't have the proxy object to handle this for us
-        // so manually implement the inversion
-        hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
-        hardware.horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_IN);
-
-        hardware.lightLeft.setPosition(Hardware.LAMP_PURPLE);
-        hardware.lightRight.setPosition(Hardware.LAMP_PURPLE);
+        hardware.sharedHardwareInit();
     }
 
     private ITask grab() {
@@ -174,19 +154,25 @@ public class RightAuto extends LinearOpMode {
                         .then(run(() -> {
                             hClawProxy.setClaw(Hardware.FRONT_CLOSE);
                             hardware.claw.setPosition(Hardware.CLAW_OPEN);
-                        }))
-                        .then(await(250))
-                        .then(run(() -> {
+                            hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
                             hardware.wrist.setPosition(0);
-                            hardware.arm.setTargetPosition(-28);
+                            hardware.arm.setTargetPosition(Hardware.ARM_TRANSFER_POS);
                         }))
-                        .then(await(500))
+//                        .then(await(250))
+//                        .then(run(() -> {
+//
+//                        }))
+                        .then(await(400))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
-                        .then(await(250))
-                        .then(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
-                        .then(await(250))
+                        .then(await(150))
                         .then(run(() -> {
                             hardware.arm.setTargetPosition(0);
+                            hClawProxy.setClaw(Hardware.FRONT_OPEN);
+                        }))
+                        .then(await(100))
+                        .then(run(() -> hardware.clawFront.setPosition(0.6)))
+                        .then(await(250))
+                        .then(run(() -> {
                             hardware.wrist.setPosition(Hardware.WRIST_BACK);
                         }))
         );

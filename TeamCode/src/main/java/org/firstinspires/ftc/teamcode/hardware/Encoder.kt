@@ -8,6 +8,7 @@ interface Encoder {
         get() = if (isFlipped) -1 else 1
 
     fun getCurrentPosition(): Int
+    fun reset()
 }
 
 class MotorEncoder(val motor: DcMotor): Encoder {
@@ -18,4 +19,9 @@ class MotorEncoder(val motor: DcMotor): Encoder {
         set(value) { isFlippedBacking = value }
 
     override fun getCurrentPosition(): Int = motor.currentPosition * flippedFactor
+    override fun reset() {
+        val modeBefore = motor.mode
+        motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        motor.mode = modeBefore
+    }
 }
