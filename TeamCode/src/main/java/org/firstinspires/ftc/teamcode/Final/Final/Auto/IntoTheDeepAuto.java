@@ -40,8 +40,10 @@ public class IntoTheDeepAuto extends LinearOpMode implements AutoInterface {
 
 
         waitForStart();
-        while (opModeIsActive() && calculations.totalGameTime.seconds() <= 28) {
-            locateBlock(calculations.startDistanceToBlock);
+        while (opModeIsActive() && calculations.totalGameTime.seconds() <= 30) {
+            scoreFirstBlock();
+
+
             break;
         }
     }
@@ -223,64 +225,33 @@ public class IntoTheDeepAuto extends LinearOpMode implements AutoInterface {
 
     public void startingPosition(double distanceToBackWall) {
         final double tolerance = 0.1;
-        final double robotWidthInches = 16.75;
-        final double fieldWidthInInches = 72;
-        final double goalDistanceFromSideWall = (fieldWidthInInches - robotWidthInches) / 2;
-        final double maxExecutionTimeSeconds = 30; // Timeout to avoid infinite loops
-
-        // Move to target distance from the back wall
-        long startTime = System.currentTimeMillis();
-        while (true) {
-            double currentDistance = hardware.distanceSensorBack.getDistance(DistanceUnit.INCH);
-
-            // Break if within tolerance or timeout
-            if (Math.abs(currentDistance - distanceToBackWall) <= tolerance ||
-                    System.currentTimeMillis() - startTime > maxExecutionTimeSeconds * 1000) {
-                setWheelSpeed(mainEnum.STOP, 0);
+        while(true){
+            double distanceToBack = hardware.distanceSensorBack.getDistance(DistanceUnit.INCH);
+            if(Math.abs(distanceToBack - distanceToBackWall) >= tolerance){
                 break;
             }
-
-            // Move forward or backward
-            if (currentDistance < distanceToBackWall) {
-                setWheelSpeed(mainEnum.FORWARD, 0.3);
-            } else if (currentDistance > distanceToBackWall) {
-                setWheelSpeed(mainEnum.BACKWARD, 0.3);
-            }
+            setWheelSpeed(mainEnum.FORWARD, calculations.driveSpeed);
         }
 
-        // Align to the middle of the field
-        startTime = System.currentTimeMillis();
-        while (true) {
-            double leftDistance = hardware.distanceSensorLeft.getDistance(DistanceUnit.INCH);
-            double rightDistance = hardware.distanceSensorRight.getDistance(DistanceUnit.INCH);
 
-            // Break if within tolerance or timeout
-            if (Math.abs(leftDistance - rightDistance - robotWidthInches) <= tolerance ||
-                    System.currentTimeMillis() - startTime > maxExecutionTimeSeconds * 1000) {
-                setWheelSpeed(mainEnum.STOP, 0);
-                break;
-            }
-
-            // Adjust position
-            if (leftDistance > rightDistance) {
-                setWheelSpeed(mainEnum.STRAFE_LEFT, 0.3);
-            } else if (rightDistance > leftDistance) {
-                setWheelSpeed(mainEnum.STRAFE_RIGHT, 0.3);
-            }
-        }
     }
 
 
-    public void locateBlock(double distanceFromBlock) {
-        while (hardware.distanceSensorLeft.getDistance(DistanceUnit.INCH) >= distanceFromBlock) {
-            setWheelSpeed(mainEnum.FORWARD, calculations.driveSpeed);
-        }
-//        calculations.timer.reset();
-//        while (calculations.timer.seconds() <= calculations.timeToRotate360/4) {
-//            setWheelSpeed(mainEnum.TURN_LEFT, calculations.turnSpeed);
-//        }
+    public void locateBlockLeft(double distanceFromBlock) {
+        while(true){
+            double distanceSensorLeft = hardware.distanceSensorLeft.getDistance(DistanceUnit.INCH);
+            double distanceSensorRight = hardware.distanceSensorRight.getDistance(DistanceUnit.INCH);
+            double distanceSensorFront = hardware.distanceSensorFront.getDistance(DistanceUnit.INCH);
+            double distanceSensorBack = hardware.distanceSensorBack.getDistance(DistanceUnit.INCH);
 
-        setWheelSpeed(mainEnum.STOP, 0);
+            while(distanceSensorLeft > distanceFromBlock){
+                setWheelSpeed(mainEnum.BACKWARD, calculations.driveSpeed);
+            }
+            calculations.timer.reset();
+            while(calculations.timer.seconds() <= calculations.timeToRotate360/4){
+                setWheelSpeed(mainEnum.TURN_LEFT, calculations.turnSpeed);
+            }
+        }
     }
 
     public void executeTask(String action, double target, double speed) {
@@ -290,7 +261,7 @@ public class IntoTheDeepAuto extends LinearOpMode implements AutoInterface {
                 startingPosition(target);
                 break;
             case "LOCATE_BLOCK":
-                locateBlock(target);
+                locateBlockLeft(target);
             case "FORWARD":
                 while (hardware.distanceSensorFront.getDistance(DistanceUnit.INCH) > target) {
                     setWheelSpeed(mainEnum.FORWARD, speed);
@@ -359,7 +330,7 @@ public class IntoTheDeepAuto extends LinearOpMode implements AutoInterface {
         // Add the action, target, and speed for each step
         String[][] taskSequence = {
                 //Move 12 inches from the wall
-                {"BACKWARD", Double.toString(startingDistanceFromBackWall), Double.toString(calculations.driveSpeed)},
+                {"B", Double.toString(startingDistanceFromBackWall), Double.toString(calculations.driveSpeed)},
                 //Move thr robot forward until the left sensor detects a block
                 //{"LOCATE_BLOCK", Double.toString(calculations.startDistanceToBlock), null},
                 //If it is # inches away from the submersable, go backwards
@@ -381,5 +352,21 @@ public class IntoTheDeepAuto extends LinearOpMode implements AutoInterface {
     private void test(){
         executeTask("TURN_RIGHT", calculations.timeToRotate360, calculations.turnSpeed);
     }
+
+    private void stopRobot(){
+        while (calculations.timer.seconds() <= 0.5){
+            setWheelSpeed(mainEnum.STOP, 0);
+        }
+    }
+    //Izzy's code, it'll set the first block
+    private void scoreFirstBlock(){
+        int initInchesBWall = 5;
+        while (hardware.distanceSensorBack.getDistance(DistanceUnit.INCH) >= initInchesBWall){
+            setWheelSpeed(mainEnum.BACKWARD, calculations.driveSpeed);
+        }
+        stopRobot();
+
+    }
 }
+
 

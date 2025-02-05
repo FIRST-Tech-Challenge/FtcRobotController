@@ -19,7 +19,7 @@ public class calculations {
     double timeToLowerAndLiftHopper = 3;
 
     //DRIVING
-    double driveSpeed = 0.7;
+    double driveSpeed = 0.6;
     double turnSpeed = 0.5;
 
     //MANTIS
