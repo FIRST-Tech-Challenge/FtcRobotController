@@ -72,12 +72,13 @@ public class BlueBotTeleop extends LinearOpMode {
       double strafe_joystick = gamepad1.left_stick_x;
       double drive_joystick = -1 * gamepad1.left_stick_y;
       double rotate_joystick = gamepad1.right_stick_x;
-      double robot_direction = driveBase.odo.getHeading().getRadians();
+      double robot_direction = odometry.getHeading().getRadians() - Math.PI/2;
 
       double odo_x = Math.cos(robot_direction);
       double odo_y = Math.sin(robot_direction);
 
-      drive_joystick += odo_y;
+      drive_joystick += odo_y + 1;
+      drive_joystick *= -1;
       strafe_joystick += odo_x;
       
       drive_joystick = Math.sqrt(Math.pow(strafe_joystick, 2.0) + Math.pow(drive_joystick, 2.0));
@@ -151,6 +152,9 @@ public class BlueBotTeleop extends LinearOpMode {
         previous_steer_direction = steer_direction;
         steer_wheels(steer_direction);
       }
+      telemetry.addData("telemtry heading: ",robot_direction);
+      telemetry.addData("steer direction: ",steer_direction);
+      telemetry.update();
     }
   }
 
@@ -176,6 +180,7 @@ public class BlueBotTeleop extends LinearOpMode {
   public void Init() {
     odometry = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
     odometry.recalibrateIMU();
+    odometry.resetPosAndIMU();
     odometry.setOffsets(110, 30);
     odometry.setEncoderResolution(goBILDA_4_BAR_POD);
     odometry.setEncoderDirections(FORWARD, FORWARD);
