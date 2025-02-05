@@ -3,8 +3,13 @@ package org.firstinspires.ftc.masters.components;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -24,6 +29,10 @@ public class Intake {
     Servo intakeRight;
     DcMotor intakeMotor;
     DcMotor extendo;
+    RevColorSensorV3 colorSensor;
+    RevTouchSensor touchSensor;
+    DigitalChannel breakBeam;
+    Servo led;
 
     public static double RETRACT_POWER = -0.6;
     public static double EXTEND_POWER = 0.6;
@@ -39,6 +48,10 @@ public class Intake {
         intakeRight= init.getIntakeRight();
         intakeMotor = init.getIntake();
         extendo = init.getIntakeExtendo();
+        colorSensor = init.getColor();
+        touchSensor = init.getTouch();;
+        breakBeam = init.getBreakBeam();
+        led = init.getLed();
         initializeHardware();
 
     }
@@ -60,6 +73,8 @@ public class Intake {
     public void reverseIntake(){
         intakeMotor.setPower(-INTAKE_POWER);
     }
+
+    public void ejectIntake(){intakeMotor.setPower(INTAKE_POWER/2);}
 
     public void stopIntake(){
         intakeMotor.setPower(0);
@@ -127,7 +142,25 @@ public class Intake {
 
             extendo.setPower(pid);
 
+            if (!breakBeam.getState() || touchSensor.isPressed()){
+                //read color
+                checkColor();
+
+            }
+
+    }
+
+    public void checkColor(){
+        if (colorSensor.getRawLightDetected()>ITDCons.blueMin && colorSensor.getRawLightDetected()<ITDCons.blueMAx){
+            led.setPosition(ITDCons.blue);
+        } else if (colorSensor.getRawLightDetected()>ITDCons.redMin && colorSensor.getRawLightDetected()<ITDCons.redMax){
+            led.setPosition(ITDCons.red);
+        } else if (colorSensor.getRawLightDetected()>ITDCons.yellow && colorSensor.getRawLightDetected()<ITDCons.yellowMax){
+            led.setPosition(ITDCons.yellow);
+        } else {
+            led.setPosition(ITDCons.off);
         }
+    }
 
 
 }

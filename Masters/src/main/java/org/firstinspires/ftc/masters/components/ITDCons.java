@@ -53,6 +53,20 @@ public class ITDCons {
 
     public static int MaxExtension = 10000;
 
+    //color threshold
+    public static int blueMin =0;
+    public static int blueMAx =100;
+    public static int redMin = 0;
+    public static int redMax =100;
+    public static int yellowMin =0;
+    public static int yellowMax =100;
+
+    //led values
+    public static double yellow = 0.388;
+    public static double blue = 0.611;
+    public static double red = 0.279;
+    public static double off =0;
+
 
 }
 

@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.masters.components;
 
+import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -23,7 +28,11 @@ public class Init {
 
     private final Servo led, claw;
     private final Servo wrist, angleLeft, angleRight, position;
+    private final Servo gateServo;
 //    private final Servo ptoRight, ptoLeft, hangLeft, hangRight;
+    private final RevTouchSensor touch;
+    private final RevColorSensorV3 color;
+    private final DigitalChannel breakBeam;
     private IMU imu;
 
     public Telemetry telemetry;
@@ -81,6 +90,11 @@ public class Init {
 
         outtakeSlideLeft = hardwareMap.dcMotor.get("vertSlideLeft");
         outtakeSlideLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        color = hardwareMap.get(RevColorSensorV3.class, "color");
+        touch = hardwareMap.get(RevTouchSensor.class, "touch");
+        breakBeam = hardwareMap.digitalChannel.get("breakBeam");
+        gateServo = hardwareMap.servo.get("gateServo");
 
 //        ptoRight = hardwareMap.servo.get("ptoRight");
 //        ptoLeft = hardwareMap.servo.get("ptoLeft");
@@ -154,4 +168,19 @@ public class Init {
         return telemetry;
     }
 
+    public Servo getGateServo() {
+        return gateServo;
+    }
+
+    public RevTouchSensor getTouch() {
+        return touch;
+    }
+
+    public RevColorSensorV3 getColor() {
+        return color;
+    }
+
+    public DigitalChannel getBreakBeam() {
+        return breakBeam;
+    }
 }
