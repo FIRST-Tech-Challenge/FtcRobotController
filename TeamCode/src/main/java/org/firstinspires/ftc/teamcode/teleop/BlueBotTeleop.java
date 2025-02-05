@@ -8,9 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
-import org.firstinspires.ftc.teamcode.Swerve.Swerve;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
-import org.firstinspires.ftc.teamcode.Utils;
 import org.firstinspires.ftc.teamcode.Auto.AutoSwerve;
 
 import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.EncoderDirection.FORWARD;
@@ -38,8 +36,7 @@ public class BlueBotTeleop extends LinearOpMode {
   @Override
   public void runOpMode() throws InterruptedException {
 
-    // Does this move the robot? because if so we need it to move after the waitForStart()
-    // or add the movement to the Autonomous
+    // Does this move the robot? not anymore but you need to init the wrist or press b to get it to go to the right position
     Mekanism mek = new Mekanism(this);
 
     double slideSpeed = 100;
@@ -47,6 +44,7 @@ public class BlueBotTeleop extends LinearOpMode {
     
     Init();
     waitForStart();
+    mek.initWrist();
     mek.homeArm();
     
     double previous_steer_direction = 0.5;
@@ -119,5 +117,12 @@ public class BlueBotTeleop extends LinearOpMode {
     odometry.setEncoderDirections(FORWARD, FORWARD);
     odometry.resetHeading(Rotation2d.fromDegrees(120));
     driveBase = new AutoSwerve(this, odometry);
+  }
+
+  public static double getAngle(double x, double y){
+    double ret = 90 - Math.toDegrees(Math.atan2(x,y));
+    if(ret<0)
+      ret+=360;
+    return ret;
   }
 }

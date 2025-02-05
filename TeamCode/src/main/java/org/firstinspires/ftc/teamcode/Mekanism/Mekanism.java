@@ -91,8 +91,6 @@ public class Mekanism {
 
     intakeServo.setPosition(0.5);
     intakeServo2.setPosition(0.5);
-    wrist.setPosition(0.65);
-
 
     // Servos for clipper
     ramp1 = opMode.hardwareMap.get(Servo.class, "ramp 1");
@@ -111,6 +109,9 @@ public class Mekanism {
     myOp = opMode;
   }
 
+  public void initWrist(){
+    wrist.setPosition(0.65);
+  }
 
   // To extend arm, input from game pad 2 straight in
   public void setSlide(int x) {
