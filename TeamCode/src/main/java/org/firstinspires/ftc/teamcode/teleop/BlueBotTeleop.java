@@ -72,6 +72,13 @@ public class BlueBotTeleop extends LinearOpMode {
       double strafe_joystick = gamepad1.left_stick_x;
       double drive_joystick = -1 * gamepad1.left_stick_y;
       double rotate_joystick = gamepad1.right_stick_x;
+      double robot_direction = driveBase.odo.getHeading().getRadians();
+
+      double odo_x = Math.cos(robot_direction);
+      double odo_y = Math.sin(robot_direction);
+
+      drive_joystick += odo_y;
+      strafe_joystick += odo_x;
       
       drive_joystick = Math.sqrt(Math.pow(strafe_joystick, 2.0) + Math.pow(drive_joystick, 2.0));
       if (gamepad1.left_stick_y < 0) {
