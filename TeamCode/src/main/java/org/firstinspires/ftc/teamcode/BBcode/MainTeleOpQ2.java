@@ -103,7 +103,7 @@ public class MainTeleOpQ2 extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException{
         // Initialization Code Goes Here
-
+        ChristmasLight _christmasLight = new ChristmasLight(this);
         odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
         GoBildaPinpointDriver.EncoderDirection xDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
         GoBildaPinpointDriver.EncoderDirection yDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
@@ -145,7 +145,7 @@ public class MainTeleOpQ2 extends LinearOpMode{
         arm.MoveToHome();
         //odo.setPosition(PoseStorage.currentPose);
         //Use the following line for measuring auto locations
-        odo.setPosition(BlueBasket.pose_basket_init_old);
+        odo.setPosition(BlueBasketPose.basket_init_old);
 //        odo.setPosition(PoseStorage.currentPose);
         telemetry.addData("PositionRR", ()-> getPinpoint(odo.getPositionRR()));
         telemetry.addData("Position", ()-> getPinpoint(odo.getPosition()));
