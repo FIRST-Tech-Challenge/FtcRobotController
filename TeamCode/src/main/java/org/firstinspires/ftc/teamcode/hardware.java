@@ -25,17 +25,12 @@ public class hardware {
     public DcMotor backLeft; //CTRL PRT 2
     public DcMotor backRight; //CTRL PRT 3
 
-    public ColorSensor colorSensor;
 
     public DistanceSensor distanceSensorLeft;
     public DistanceSensor distanceSensorRight;
     public DistanceSensor distanceSensorBack;
     public DistanceSensor distanceSensorFront;
     public newAuto_interface mantis1;
-
-    public void checkMotorInit(){
-
-    }
 
     public final String[] puns = {
             "A robot didn’t want to have his photo taken. When he was asked why, he replied: Because I’m a photo-resistor!",

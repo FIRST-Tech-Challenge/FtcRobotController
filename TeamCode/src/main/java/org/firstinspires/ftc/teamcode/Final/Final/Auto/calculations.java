@@ -50,15 +50,4 @@ public class calculations {
     double open = 0;     // Open door position
     double close = 0.6;// Close door position
 
-    //COLOR
-//    double red = hardware.colorSensor.red();
-//    double blue = hardware.colorSensor.blue();
-//    double green = hardware.colorSensor.green();
-//    boolean yellow = (red > (blue + 100)) && (green > (blue + 100));
-
-    //DISTANCE
-    double cageDistance = 13;
-    double clearCage = 8;
-    double smidge = 5;
-    double startDistanceToBlock = 8;
 }
