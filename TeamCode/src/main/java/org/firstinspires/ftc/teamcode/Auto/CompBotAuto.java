@@ -243,39 +243,42 @@ public class CompBotAuto extends LinearOpMode {
   public void runOpMode() throws InterruptedException {
     initRobot(this);
     waitForStart();
-    mek.homeArm();
+    // mek.homeArm();
 
     // Start program assuming robot is ready to place the specimen
     // in the bucket.
     AutoState state = AutoState.place_first_specimine_in_bucket;
-
     // State machine loop
+
+    driveBase.servoBL.setPosition(0.5);
+
     while (opModeIsActive()) {
-//        if (state == AutoState.place_first_specimine_in_bucket) {
-//          handle_place_first_specimine_in_bucket();
-//
-//          // Advance to next state
-//          // state = AutoState.place_second_specimine_in_bucket;
-//
-//          // Skip placing the second block, there are errors in the code.
-//          state = AutoState.complete;
-//        }
-//        else if (state == AutoState.place_second_specimine_in_bucket) {
-//          handle_place_second_specimine_in_bucket();
-//
-//          // Advance to next state
-//          state = AutoState.complete;
-//        }
-//        else {
-//          break;
-//        }
-      if (state == AutoState.place_first_specimine_in_bucket) {
-        handle_place_first_specimine_in_bucket();
-//          state = AutoState.place_second_specimine_in_bucket;
-        setIMUOffset();
-        break;
-      }
-      telemetry.addLine("out of Loop");
+       if (state == AutoState.place_first_specimine_in_bucket) {
+         handle_place_first_specimine_in_bucket();
+
+         // Advance to next state
+         // state = AutoState.place_second_specimine_in_bucket;
+
+         // Skip placing the second block, there are errors in the code.
+         state = AutoState.complete;
+       }
+       else if (state == AutoState.place_second_specimine_in_bucket) {
+         handle_place_second_specimine_in_bucket();
+
+         // Advance to next state
+         state = AutoState.complete;
+       }
+       else {
+         break;
+       }
+
+//       if (state == AutoState.place_first_specimine_in_bucket) {
+//         handle_place_first_specimine_in_bucket();
+// //          state = AutoState.place_second_specimine_in_bucket;
+//         setIMUOffset();
+//         break;
+//       }
+//       telemetry.addLine("out of Loop");
     }
 
     telem();

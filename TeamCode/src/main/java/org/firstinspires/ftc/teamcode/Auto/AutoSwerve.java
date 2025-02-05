@@ -18,7 +18,7 @@ public class AutoSwerve {
 
   public AnalogInput servoInputFL, servoInputFR, servoInputBR, servoInputBL;
   public Servo servoFL, servoFR, servoBR, servoBL;
-  DcMotor motorFL, motorFR, motorBR, motorBL;
+  public DcMotor motorFL, motorFR, motorBR, motorBL;
   LinearOpMode opMode;
   static double countsPerRevolution = 537.7;
   static double gearRatio = 1.1;
@@ -39,7 +39,7 @@ public class AutoSwerve {
     maxSteerSpeedRadPerSec = (2 * Math.PI) / (maxSpeedSecondsPer60Degrees * 6);
   }
 
-  GoBildaPinpointDriver odo;
+  public GoBildaPinpointDriver odo;
 
   public AutoSwerve(LinearOpMode opMode, GoBildaPinpointDriver odo) {
     this.opMode = opMode;
