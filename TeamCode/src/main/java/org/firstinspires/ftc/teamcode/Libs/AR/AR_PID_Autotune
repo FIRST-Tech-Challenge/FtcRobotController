@@ -1,0 +1,55 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+@Autonomous(name = "AutoPIDTuningArm", group = "Linear Opmode")
+public class AutoPIDTuningArm extends LinearOpMode {
+
+    private DcMotor shoulderMotor;
+    private DcMotor elbowMotor;
+
+    @Override
+    public void runOpMode() {
+        // Initialize motors
+        shoulderMotor = hardwareMap.get(DcMotor.class, "shoulderMotor");
+        elbowMotor = hardwareMap.get(DcMotor.class, "elbowMotor");
+
+        PIDController shoulderPID = new PIDController(0.1, 0, 0);
+        PIDController elbowPID = new PIDController(0.1, 0, 0);
+
+        PIDTuner shoulderTuner = new PIDTuner(shoulderMotor);
+        PIDTuner elbowTuner = new PIDTuner(elbowMotor);
+
+        telemetry.addData("Status", "Waiting for start...");
+        telemetry.update();
+        waitForStart();
+
+        if (opModeIsActive()) {
+            // Auto-tune PID for both joints
+            double[] shoulderPIDValues = shoulderTuner.autoTune(1000, shoulderPID);
+            double[] elbowPIDValues = elbowTuner.autoTune(500, elbowPID);
+
+            telemetry.addData("Shoulder PID", "P: %.3f, I: %.3f, D: %.3f", shoulderPIDValues[0], shoulderPIDValues[1], shoulderPIDValues[2]);
+            telemetry.addData("Elbow PID", "P: %.3f, I: %.3f, D: %.3f", elbowPIDValues[0], elbowPIDValues[1], elbowPIDValues[2]);
+            telemetry.update();
+            moveJoint(shoulderMotor, 1000, shoulderPID);
+            moveJoint(elbowMotor, 500, elbowPID);
+
+            sleep(5000);
+        }
+    }
+
+    private void moveJoint(DcMotor motor, double targetPosition, PIDController pid) {
+        while (opModeIsActive() && Math.abs(motor.getCurrentPosition() - targetPosition) > 5) {
+            double output = pid.calculate(targetPosition, motor.getCurrentPosition());
+            motor.setPower(output);
+            telemetry.addData("Motor", motor.getDeviceName());
+            telemetry.addData("Current Pos", motor.getCurrentPosition());
+            telemetry.addData("Target Pos", targetPosition);
+            telemetry.update();
+        }
+      
+    }
+}
