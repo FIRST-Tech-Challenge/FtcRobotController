@@ -41,12 +41,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.Servos;
-import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.SlideMotors;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Config
 @Autonomous(name = "push all of them", group = "Autonomous")
-public class ClipNoPush extends LinearOpMode {
+public class PushAllOfThem extends LinearOpMode {
 
     private Servos servos;
 
@@ -62,7 +61,7 @@ public class ClipNoPush extends LinearOpMode {
         TrajectoryActionBuilder initToCLips = drive.actionBuilder(initialPose)
                 .setTangent(Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(40,-23),Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(42,35),0)
+                .splineToConstantHeading(new Vector2d(42,-35),0)
                 .setTangent(Math.toRadians(270))
                 .splineToConstantHeading(new Vector2d(47,-52),Math.toRadians(270))
                 .setTangent(Math.toRadians(90))

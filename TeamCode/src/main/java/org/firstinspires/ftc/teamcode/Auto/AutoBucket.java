@@ -47,7 +47,7 @@ import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.SlideServos;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Config
-@Autonomous(name = "bucket", group = "Autonomous")
+@Autonomous(name = "AutoBucket", group = "Autonomous")
 public class AutoBucket extends LinearOpMode {
 
     private Servos intakeThings;
