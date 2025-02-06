@@ -16,9 +16,6 @@ public class IntoTheDeepTeleop extends OpMode {
     private Servo basketServo, intakePivotServo;
     private CRServo intakeServoLeft, intakeServoRight;
     private TouchSensor intakeTouchSensor;
-
-    private static final double BACK_WHEEL_RATIO = 2.0 / 3.0; // 3:2 sprocket ratio
-
     boolean liftHoldingTrigger = false; // flag to determine if lift trigger is being held
     boolean posUpdated = true; // flag to determine if lift position has been updated
     int liftPosTier = 0; // 0 = bottom, 1 = middle, 2 = top
@@ -94,8 +91,8 @@ public class IntoTheDeepTeleop extends OpMode {
         // Mecanum drive calculations
         double frontLeftPower = (y + x + rotation);
         double frontRightPower = (y - x - rotation);
-        double backLeftPower = (y - x + rotation) * BACK_WHEEL_RATIO;
-        double backRightPower = (y + x - rotation) * BACK_WHEEL_RATIO;
+        double backLeftPower = (y - x + rotation);
+        double backRightPower = (y + x - rotation);
 
         // Normalize the power values to be within -1 and 1
         double maxPower = Math.max(1.0, Math.abs(frontLeftPower));
