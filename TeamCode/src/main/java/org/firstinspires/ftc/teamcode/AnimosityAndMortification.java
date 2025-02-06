@@ -116,6 +116,7 @@ public class AnimosityAndMortification extends Movable {
         telemetry.addData("BLScissorLift Power:", BLScissorLift.getPower());
         telemetry.addData("Left Stick X:", tgtPower2);
         telemetry.addData("Left Stick Y:", tgtPower);
+        
         telemetry.update();
     }
 }
