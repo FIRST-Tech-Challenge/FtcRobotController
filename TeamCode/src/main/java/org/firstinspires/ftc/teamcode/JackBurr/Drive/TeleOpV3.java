@@ -105,6 +105,8 @@ public class TeleOpV3 extends OpMode {
     public boolean slowmode = false;
     public boolean waitForSlides = true;
     public boolean sampleTransferred = false;
+    public boolean areGrippersAligned = false;
+    public boolean limelightActivated = false;
     //VARIABLES=================================================================================================================
     public double timeNeeded = 0;
     public int leftSlideHighBar = constants.LEFT_SLIDE_HIGH_BAR;
@@ -125,7 +127,7 @@ public class TeleOpV3 extends OpMode {
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         state = SystemStatesV1.START;
-        limelightV1.init(hardwareMap);
+        limelightV1.init(hardwareMap, telemetry);
         differentialV2.init(hardwareMap, telemetry);
         intakeSlides.init(hardwareMap);
         grippers.init(hardwareMap, telemetry);
@@ -151,9 +153,6 @@ public class TeleOpV3 extends OpMode {
 
     @Override
     public void loop() {
-        telemetry.addLine("Limelight 3a");
-        telemetry.addLine("\t FPS: " + limelightV1.getFps());
-        telemetry.addLine("\t Sample angle: " + limelightV1.getAngle());
 
         //MECANUM_DRIVE====================================================================================================
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
@@ -166,6 +165,15 @@ public class TeleOpV3 extends OpMode {
             driveSlowMode(y,x,rx);
         }
         //SYSTEM_STATES====================================================================================================
+        if(limelightActivated) {
+            telemetry.addLine("Limelight 3a");
+            telemetry.addLine("\t FPS: " + limelightV1.getFps());
+            telemetry.addLine("\t Sample angle: " + limelightV1.getAngle());
+        }
+        if(gamepad1.right_trigger != 0 && buttonTimer.seconds() > 0.25){
+            toggleLimelight();
+        }
+
         if(state == SystemStatesV1.ARM_UP){
             timeNeeded = 2;
         }
@@ -191,7 +199,17 @@ public class TeleOpV3 extends OpMode {
 
         if(gamepad1.x && buttonTimer.seconds() > 0.3) {
             if(thisStateTimer.seconds() > timeNeeded) {
-                state = nextStateHighBasket();
+                if(limelightActivated) {
+                    if (state == SystemStatesV1.HOVER_OVER_SAMPLE && rotateGrippersToSample()) {
+                        state = nextStateHighBasket();
+                    }
+                    else if(state != SystemStatesV1.HOVER_OVER_SAMPLE){
+                        state = nextStateHighBasket();
+                    }
+                }
+                else {
+                    state = nextStateHighBasket();
+                }
                 if (state == SystemStatesV1.ARM_UP) {
                     grippersTimer.reset();
                 }
@@ -324,16 +342,21 @@ public class TeleOpV3 extends OpMode {
                 slowmode = true;
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.HOVER_LOW;
+                    areGrippersAligned = false;
                     buttonTimer.reset();
                 }
-                if (gamepad1.left_bumper && buttonTimer.seconds() > 0.35){
-                    wrist.moveLeft(0.2);
-                    buttonTimer.reset();
+                if(!limelightActivated) {
+                    if (gamepad1.left_bumper && buttonTimer.seconds() > 0.35) {
+                        wrist.moveLeft(0.2);
+                        buttonTimer.reset();
 
+                    } else if (gamepad1.right_bumper && buttonTimer.seconds() > 0.35) {
+                        wrist.moveRight(0.2);
+                        buttonTimer.reset();
+                    }
                 }
-                else if (gamepad1.right_bumper && buttonTimer.seconds() > 0.35){
-                    wrist.moveRight(0.2);
-                    buttonTimer.reset();
+                else {
+                    rotateGrippersToSample();
                 }
                 grippers.setPosition(constants.GRIPPERS_OPEN);
                 grippersClosed = false;
@@ -770,6 +793,32 @@ public class TeleOpV3 extends OpMode {
     public void setDiffPosition(double position){
         differentialV2.setTopRightServoPosition(position);
         differentialV2.setTopLeftServoPosition(position);
+    }
+
+    public boolean rotateGrippersToSample(){
+        if(limelightActivated) {
+            if(limelightV1.getAngle() == -1){
+                return false;
+            }
+            if (limelightV1.getAngle() > constants.sampleAngle) {
+                wrist.moveLeft(0.03);
+            } else if (limelightV1.getAngle() < constants.sampleAngle) {
+                wrist.moveRight(0.03);
+            }
+            else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void toggleLimelight(){
+        if(limelightActivated){
+            limelightActivated = false;
+        }
+        else {
+            limelightActivated = true;
+        }
     }
 
 }

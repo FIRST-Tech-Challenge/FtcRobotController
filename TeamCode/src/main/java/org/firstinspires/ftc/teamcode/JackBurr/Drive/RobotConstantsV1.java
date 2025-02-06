@@ -51,5 +51,7 @@ public class RobotConstantsV1 {
     public int RIGHT_SLIDE_LEVEL_TWO_ASCENT = 2720;
     public int LEFT_SLIDE_LEVEL_TWO_ASCENT_HOOK = -629;
     public int RIGHT_SLIDE_LEVEL_TWO_ASCENT_HOOK = 629;
-
+    //CAMERA========================================================================================================
+    public double sampleAngle = -90;
+    //==============================================================================================================
 }

@@ -19,6 +19,14 @@ public class WristAxonV1 {
         this.position_ = position;
     }
 
+    public double getServoPosition(){
+        return axon.getPosition();
+    }
+
+    public double getPosition(){
+        return position_;
+    }
+
     public void moveLeft(double distance){
         distance = Math.abs(distance);
         if((position_ + distance) >= 1){

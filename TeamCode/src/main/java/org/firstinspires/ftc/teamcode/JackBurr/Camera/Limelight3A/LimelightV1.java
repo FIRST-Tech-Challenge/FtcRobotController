@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.JackBurr.Camera.Limelight3A;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
@@ -16,10 +19,12 @@ import java.util.List;
 
 public class LimelightV1 {
     public HardwareMap hardwareMap;
+    public MultipleTelemetry telemetry;
     public Limelight3A limelight;
 
-    public void init(HardwareMap hardwareMap){
+    public void init(HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap = hardwareMap;
+        this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         this.limelight = this.hardwareMap.get(Limelight3A.class, "limelight");
     }
 
@@ -84,7 +89,7 @@ public class LimelightV1 {
             if(!points.isEmpty()){
                 for (List<Double> pointSet : points) {
                     if (pointSet.size() % 2 != 0) {
-                        System.out.println("Invalid point list size.");
+                        telemetry.addLine("LIMELIGHT 3A: Invalid list size.");
                         continue;
                     }
 
@@ -95,7 +100,6 @@ public class LimelightV1 {
 
                     MatOfPoint2f contourMat = new MatOfPoint2f(contourArray);
                     RotatedRect rect = Imgproc.minAreaRect(contourMat);
-                    angle = rect.angle;
                     if (rect.size.width < rect.size.height) {
                         angle = rect.angle - 90;
                     }
@@ -103,9 +107,8 @@ public class LimelightV1 {
                         angle = rect.angle;
                     }
                     // Example: Printing or using the rectangle properties
-                    System.out.println("Rect Center: " + rect.center);
-                    System.out.println("Rect Angle: " + rect.angle);
-                    return rect.angle;
+                    telemetry.addLine("Rect Center: " + rect.center);
+                    telemetry.addLine("Rect Angle: " + rect.angle);
                 }
             }
         }
