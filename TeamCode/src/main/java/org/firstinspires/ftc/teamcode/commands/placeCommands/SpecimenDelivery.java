@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.commands.placeCommands;
 import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.eStates.extended;
 import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.pStates.score;
 import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.pStates.scoreMidpoint;
+import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.pStates.wingPlace;
 import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.BUMPER_LEFT;
 import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.BUTTON_DOWN;
 
@@ -21,13 +22,15 @@ public class SpecimenDelivery extends SequentialCommandGroup{
     public SpecimenDelivery(ExtensionSubsystem extension, PivotSubsystem pivot, ChassisSubsystem chassis, GripperSubsystem gripper, BTController controller){
         super(
                 chassis.slowDriving(0.4),
-                new ParallelCommandGroup(
-                    extension.setExtension(extended),
-                    pivot.setWithProfile(180,80,300), gripper.setScore()
-                ),
+                pivot.setWithProfile(wingPlace, 40,200),
                 new WaitUntilCommand(controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()]),
+                new WaitUntilCommand(()->!controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()].getAsBoolean()),
+                extension.setExtension(extended),
+                new WaitUntilCommand(controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()]),
+                new WaitUntilCommand(()->!controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()].getAsBoolean()),
                 gripper.openClaw(),
                 new WaitUntilCommand(controller.m_buttonsSuppliers[BUMPER_LEFT.ordinal()]),
+                new WaitUntilCommand(()->!controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()].getAsBoolean()),
                 new IdleFromScore(extension,pivot,chassis,gripper)
         );
     }

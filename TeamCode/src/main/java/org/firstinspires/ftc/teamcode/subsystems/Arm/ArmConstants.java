@@ -40,7 +40,7 @@ public class ArmConstants {
     public static class eStates{
         public static double extended = -2.5;
         public static double half =-1.75;
-        public static double quarter =-1;
+        public static double quarter =-0.5;
         public static double closed = 0;
     }
     public static class pStates{
@@ -50,8 +50,8 @@ public class ArmConstants {
         public static double up = 8;
         public static double pickup = -1;
         public static double score = 93;
-        public static double specimenScore = 55;
-        public static double specimenPlace = 65;
+        public static double specimenPlace = 120;
+        public static double specimenPickup = 30;
         public static double idle = 23;
     }
 }

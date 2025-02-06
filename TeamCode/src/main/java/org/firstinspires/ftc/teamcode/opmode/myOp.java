@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperConstants
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.utils.BT.BTController;
@@ -24,7 +25,6 @@ public class myOp extends CommandOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
-
         waitForStart();
 
         // run the scheduler

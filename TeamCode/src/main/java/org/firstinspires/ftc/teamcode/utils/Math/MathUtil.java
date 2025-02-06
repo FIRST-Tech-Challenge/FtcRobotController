@@ -33,6 +33,7 @@ public final class MathUtil {
     return Math.max(low, Math.min(value, high));
   }
 
+
   /**
    * Returns 0.0 if the given value is within the specified range around zero. The remaining range
    * between the deadband and the maximum magnitude is scaled from 0.0 to the maximum magnitude.

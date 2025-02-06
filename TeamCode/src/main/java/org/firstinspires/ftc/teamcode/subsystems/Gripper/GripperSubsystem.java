@@ -38,6 +38,9 @@ public class GripperSubsystem extends SubsystemBase {
     public Command setPickup(){
         return new InstantCommand(()->rotServo2.setPosition(pickup));
     }
+    public Command setPickupFromWall(){
+        return new InstantCommand(()->rotServo2.setPosition(pickupFromWall));
+    }
     public Command setScore(){
         return new InstantCommand(()->rotServo2.setPosition(score));
     }
