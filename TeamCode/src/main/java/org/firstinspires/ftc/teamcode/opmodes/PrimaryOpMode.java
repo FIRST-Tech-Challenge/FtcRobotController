@@ -231,7 +231,7 @@ public class PrimaryOpMode extends LinearOpMode {
             /* ##################################################
                                   Front Arm
             ################################################## */
-            
+
             double frontArmMult = 0;
             if (gamepad1.right_trigger > 0 && gamepad1.left_trigger == 0) {
                 frontArmMult = gamepad1.right_trigger;
@@ -253,7 +253,7 @@ public class PrimaryOpMode extends LinearOpMode {
                 spinner.setPower(0.5);
                 isSpinnerSpinning = true;
             }
-            
+
             /* ##################################################
                                     Claw
             ################################################## */
@@ -336,7 +336,7 @@ public class PrimaryOpMode extends LinearOpMode {
         left.setPower(power);
         right.setPower(power);
     }
-    
+
     public void setFrontArmPower(DcMotor arm, double power) {
         arm.setPower(power);
     }
