@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+
+
 @TeleOp(name = "IntoTheDeepTeleop", group = "Drive")
 public class IntoTheDeepTeleop extends OpMode {
     // Declare motors
@@ -83,16 +85,20 @@ public class IntoTheDeepTeleop extends OpMode {
 
     @Override
     public void loop() {
-        // Get joystick values (replace gamepad with your controller source)
-        double y = -gamepad1.left_stick_y; // Forward/backward
-        double x = gamepad1.left_stick_x * 1.1; // Strafe
+        // Get joystick values
+        double boost = gamepad1.right_trigger / 2; // Boost
+        double y = -gamepad1.left_stick_y / 2; // Forward/backward
+        double x = gamepad1.left_stick_x / 2; // Strafe
         double rotation = gamepad1.right_stick_x; // Rotate
+        double Y = y + boost;
+        double X = x + boost;
+
 
         // Mecanum drive calculations
-        double frontLeftPower = (y + x + rotation);
-        double frontRightPower = (y - x - rotation);
-        double backLeftPower = (y - x + rotation);
-        double backRightPower = (y + x - rotation);
+        double frontLeftPower = (Y + X + rotation);
+        double frontRightPower = (Y - X - rotation);
+        double backLeftPower = (Y - X + rotation);
+        double backRightPower = (Y + X - rotation);
 
         // Normalize the power values to be within -1 and 1
         double maxPower = Math.max(1.0, Math.abs(frontLeftPower));
@@ -100,6 +106,9 @@ public class IntoTheDeepTeleop extends OpMode {
         frontRightPower /= maxPower;
         backLeftPower /= maxPower;
         backRightPower /= maxPower;
+
+
+
 
         // Set motor power
         setMotorPower(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
@@ -204,7 +213,7 @@ public class IntoTheDeepTeleop extends OpMode {
     public void intake() {
 
         // intake is full or override button (a) has been pressed, stop running servos and retract to deposit in basket
-        if ((intakeTouchSensor.isPressed() || gamepad.a) && !intakeFull) {
+        if ((intakeTouchSensor.isPressed() || gamepad2.a) && !intakeFull) {
             intakeFull = true;
 
             runIntakeMotors(IntakeMode.STOP);
