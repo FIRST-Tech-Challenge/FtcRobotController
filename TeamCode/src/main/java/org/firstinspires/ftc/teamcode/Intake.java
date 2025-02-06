@@ -51,55 +51,68 @@ public class Intake {
         intakeServo.setPosition(SERVO_UP_POSITION);
     }
 
-    // Coordinated out sequence: motor forward -> lower intake -> start flywheel
-    // @param flywheelForward true for forward direction, false for backward direction
-    public void out(boolean flywheelForward) {
-        // Only move motor and servo if not already out
-        if (!isOut) {
-            // Start motor forward
-            forward();
-            
-            // Run motor for 1 second
-            timer.reset();
-            while (timer.milliseconds() < MOTOR_RUN_TIME_MS) {
-                // Wait for motor to run
-            }
-            stop();
-            
-            // Lower intake mechanism
-            lowerIntake();
-            
-            isOut = true;
-        }
-        
-        // Always control flywheel regardless of state
-        flywheel.start(flywheelForward);
+    // Get current state of intake
+    public boolean isIntakeOut() {
+        return isOut;
     }
 
-    // Coordinated in sequence: stop flywheel -> raise intake -> motor backward
-    public void in() {
-        // Always stop flywheel regardless of state
+    // Raise the intake mechanism
+    public void up() {
+        // Stop flywheel
         flywheel.stop();
         
-        // Only move motor and servo if not already in
+        // Only move servo if not already up
         if (isOut) {
             // Raise intake mechanism
             raiseIntake();
-            
-            // Run motor backward for 1 second
-            backward();
-            timer.reset();
-            while (timer.milliseconds() < MOTOR_RUN_TIME_MS) {
-                // Wait for motor to run
-            }
-            stop();
-            
             isOut = false;
         }
     }
 
-    // Get current state of intake
-    public boolean isIntakeOut() {
-        return isOut;
+    // Lower the intake mechanism
+    public void down() {
+        // Only move servo if not already down
+        if (!isOut) {
+            // Lower intake mechanism
+            lowerIntake();
+            isOut = true;
+            
+            // Run motor outward for 250ms
+            forward();
+            timer.reset();
+            while (timer.milliseconds() < 250) {
+                // Wait for timer
+            }
+            stop();
+        }
+        
+        // Start flywheel
+        flywheel.start(true);
+    }
+
+    // Retract intake until it stops moving
+    public void in() {
+        // First raise the intake mechanism
+        up();
+        
+        // Start moving the motor inward
+        backward();
+        
+        // Initialize position tracking
+        int lastPosition = intakeMotor.getCurrentPosition();
+        timer.reset();
+        
+        // Keep running until no movement is detected for a short period
+        while (timer.milliseconds() < 100) {  // Check for 100ms of no movement
+            int currentPosition = intakeMotor.getCurrentPosition();
+            if (currentPosition != lastPosition) {
+                // Movement detected, reset timer
+                timer.reset();
+                lastPosition = currentPosition;
+            }
+        }
+        
+        // Stop the motor once no movement is detected
+        stop();
     }
 } 
