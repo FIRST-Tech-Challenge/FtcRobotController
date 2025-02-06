@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 @Autonomous(name = "twoFeetAutoBasketProgram")
 public class twoFeetAutoBasketProgram extends LinearOpMode {
@@ -20,10 +22,12 @@ public class twoFeetAutoBasketProgram extends LinearOpMode {
     private int i = 0;
     private boolean basket1stPos = false;
     private boolean basket2ndPos = false;
+    private BNO055IMU imu;
+    private DistanceSensor distanceSensor;
 
     private static final double wheelDiameter = 75;
     private static final double ticksPerRev = 100;
-    private static final int targetRotation = 1550;
+    private static final int targetRotation = 2000;
     private static final int forwardMovement = 400;
     private static final int backwardMovement = 400;
     private static final int leftwardMovement = 3100;
@@ -167,6 +171,13 @@ public class twoFeetAutoBasketProgram extends LinearOpMode {
         // Initialize lift motors
         leftLiftMotor = hardwareMap.get(DcMotorEx.class, "leftLiftMotor");
         rightLiftMotor = hardwareMap.get(DcMotorEx.class, "rightLiftMotor");
+
+        // Distance Sensor
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+
+        // Gyroscope
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
 
         // Wait for the start signal
         waitForStart();
