@@ -148,6 +148,8 @@ public class TeleOpV3 extends OpMode {
         deliveryGrippersTimer.reset();
         diffTimer.reset();
         wrist.setPosition(constants.WRIST_CENTER);
+        limelightV1.setPipeline(0);
+        limelightV1.startStreaming();
         //TODO: Try telemetry.setAutoClear(false);
     }
 

@@ -36,6 +36,10 @@ public class LimelightV1 {
         return limelight.getVersion();
     }
 
+    public void startStreaming(){
+        limelight.start();
+    }
+
     public void close(){
         limelight.close();
     }
