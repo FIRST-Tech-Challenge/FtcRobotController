@@ -23,14 +23,14 @@ public class SpecimenDelivery extends SequentialCommandGroup{
         super(
                 chassis.slowDriving(0.4),
                 pivot.setWithProfile(wingPlace, 40,200),
-                new WaitUntilCommand(controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()]),
-                new WaitUntilCommand(()->!controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()].getAsBoolean()),
+                new WaitUntilCommand(controller.m_buttonsSuppliers[BUMPER_LEFT.ordinal()]),
+                new WaitUntilCommand(()->!controller.m_buttonsSuppliers[BUMPER_LEFT.ordinal()].getAsBoolean()),
                 extension.setExtension(extended),
-                new WaitUntilCommand(controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()]),
-                new WaitUntilCommand(()->!controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()].getAsBoolean()),
+                new WaitUntilCommand(controller.m_buttonsSuppliers[BUMPER_LEFT.ordinal()]),
+                new WaitUntilCommand(()->!controller.m_buttonsSuppliers[BUMPER_LEFT.ordinal()].getAsBoolean()),
                 gripper.openClaw(),
                 new WaitUntilCommand(controller.m_buttonsSuppliers[BUMPER_LEFT.ordinal()]),
-                new WaitUntilCommand(()->!controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()].getAsBoolean()),
+                new WaitUntilCommand(()->!controller.m_buttonsSuppliers[BUMPER_LEFT.ordinal()].getAsBoolean()),
                 new IdleFromScore(extension,pivot,chassis,gripper)
         );
     }

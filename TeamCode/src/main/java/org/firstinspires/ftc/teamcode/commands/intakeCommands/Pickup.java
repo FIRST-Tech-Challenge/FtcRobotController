@@ -18,11 +18,15 @@ public class Pickup extends SequentialCommandGroup{
         super(
                 gripper.openClaw(),
                 new WaitUntilCommand(controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()]),
+                new WaitUntilCommand(()->!controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()].getAsBoolean()),
                 pivot.setWithProfile(pickup,80,200),
                 new WaitUntilCommand(controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()]),
+                new WaitUntilCommand(()->!controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()].getAsBoolean()),
                 gripper.closeClaw(),
                 new WaitUntilCommand(controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()]),
+                new WaitUntilCommand(()->!controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()].getAsBoolean()),
                 pivot.setWithProfile(up,80,200),
+                new WaitUntilCommand(()->!controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()].getAsBoolean()),
                 new WaitUntilCommand(controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()])
         );
 

@@ -50,8 +50,8 @@ public class ArmConstants {
         public static double up = 8;
         public static double pickup = -1;
         public static double score = 93;
-        public static double specimenPlace = 120;
-        public static double specimenPickup = 30;
+        public static double specimenPlace = 110;
+        public static double specimenPickup = 20;
         public static double idle = 23;
     }
 }

@@ -23,6 +23,7 @@ public class SampleIntake extends SequentialCommandGroup{
                 (extension.setExtension(half)),
                 (chassis.slowDriving(0.4)),
                 new RepeatCommand(new Pickup(extension,pivot,chassis,gripper,controller)).interruptOn(controller.m_buttonsSuppliers[BUMPER_RIGHT.ordinal()]),
+                gripper.closeClaw(),
                 new IdleFromIntake(extension,pivot,chassis,gripper)
 
         );

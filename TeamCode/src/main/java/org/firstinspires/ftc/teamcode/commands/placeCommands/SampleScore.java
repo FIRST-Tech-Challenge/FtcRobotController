@@ -25,10 +25,12 @@ public class SampleScore extends SequentialCommandGroup{
                 new WaitUntilCommand(()->pivot.m_pivotPID.atGoal()).withTimeout(500),
                 new ParallelCommandGroup(
                     extension.setExtension(extended),
-                    pivot.setWithProfile(score,40,200), gripper.setScore()),
-                new WaitUntilCommand(controller.m_buttonsSuppliers[BUTTON_DOWN.ordinal()]),
+                    pivot.setWithProfile(score,40,200),
+                    gripper.setScore()),
+                new WaitUntilCommand(controller.m_buttonsSuppliers[BUMPER_LEFT.ordinal()]),
                 gripper.openClaw(),
                 new WaitUntilCommand(controller.m_buttonsSuppliers[BUMPER_LEFT.ordinal()]),
+                pivot.setWithProfile(score-20,40,150),
                 new IdleFromScore(extension,pivot,chassis,gripper)
         );
     }
