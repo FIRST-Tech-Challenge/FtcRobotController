@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 @TeleOp(name = "IntoTheDeepTeleop", group = "Drive")
 public class IntoTheDeepTeleop extends OpMode {
-    // Declare motors
+    // Declare thingies
     private DcMotorEx frontLeft, frontRight, backLeft, backRight;
     private DcMotorEx leftLiftMotor, rightLiftMotor;
     private DcMotorEx intakeSlidesMotor;
@@ -90,15 +90,15 @@ public class IntoTheDeepTeleop extends OpMode {
         double y = -gamepad1.left_stick_y / 2; // Forward/backward
         double x = gamepad1.left_stick_x / 2; // Strafe
         double rotation = gamepad1.right_stick_x; // Rotate
-        double Y = y + boost;
-        double X = x + boost;
+        y += y * boost;
+        x += x * boost;
 
 
         // Mecanum drive calculations
-        double frontLeftPower = (Y + X + rotation);
-        double frontRightPower = (Y - X - rotation);
-        double backLeftPower = (Y - X + rotation);
-        double backRightPower = (Y + X - rotation);
+        double frontLeftPower = (y + x + rotation);
+        double frontRightPower = (y - x - rotation);
+        double backLeftPower = (y - x + rotation);
+        double backRightPower = (y + x - rotation);
 
         // Normalize the power values to be within -1 and 1
         double maxPower = Math.max(1.0, Math.abs(frontLeftPower));
