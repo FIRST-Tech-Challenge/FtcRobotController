@@ -48,21 +48,21 @@ public class LeftAutoV4 extends LinearOpMode {
     //----------------------------------------------------------------------------------------
     public static Pose2d startPose = new Pose2d(36, 62, Math.toRadians(-90)); // (60,0), 180
 
-    public static Vector2d position1 = new Vector2d(16, 47); // (40,-15)
-    public static double position1HeadingDegrees = -120; // 150
+    public static Vector2d position1 = new Vector2d(21, 42); // (40,-15) (x-20, y-15)
+    public static double position1HeadingDegrees = -120; // 150 (heading -30)
 
-    public static Vector2d position2 = new Vector2d(22, 57); // (46, -5)
-    public static double position2HeadingDegrees = -120; //150
+    public static Vector2d position2 = new Vector2d(22, 57); // (46, -5) (x+6, y+10)
+    public static double position2HeadingDegrees = -120; //150 (heading +0)
 
-    public static double position3Degrees = -90; // 180
+    public static double position3Degrees = -90; // 180 (heading +30)
 
-    public static double position4Degrees = -90; // 180
+    public static double position4Degrees = -90; // 180 (heading +0)
 
-    public static Vector2d position5 = new Vector2d(17.75, 54.35); // (41.75, -7.65)
-    public static Vector2d position6 = new Vector2d(30, 52); // (54, -10)
-    public static double position6HeadingDegrees = -140; // 130
+    public static Vector2d position5 = new Vector2d(17.75, 54.35); // (41.75, -7.65) (x - 4.25, y - 2.65)
+    public static Vector2d position6 = new Vector2d(30, 52); // (54, -10) (x + 12.25, y + 2.35)
+    public static double position6HeadingDegrees = -140; // 130 (heading - 50)
 
-
+    //+X is left, +Y is backwards
 
 
     //----------------------------------------------------------------------------------------
