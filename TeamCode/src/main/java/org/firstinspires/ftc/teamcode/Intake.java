@@ -14,7 +14,7 @@ public class Intake {
     private static final double INTAKE_POWER = 0.5;  // Adjust this value for desired speed
     private static final double SERVO_UP_POSITION = 0.3;    // Servo position for intake up
     private static final double SERVO_DOWN_POSITION = 1.0;  // Servo position for intake down (180 degrees)
-    private static final double MOTOR_RUN_TIME_MS = 1000;  // Time to run motor in milliseconds
+    private static final double MOTOR_RUN_TIME_MS = 500;  // Time to run motor in milliseconds
     
     public Intake(HardwareMap hardwareMap, String motorName) {
         intakeMotor = hardwareMap.get(DcMotor.class, motorName);
@@ -70,24 +70,24 @@ public class Intake {
     }
 
     // Lower the intake mechanism
-    public void down() {
+    public void down(boolean flywheelForward) {
         // Only move servo if not already down
         if (!isOut) {
             // Lower intake mechanism
             lowerIntake();
             isOut = true;
             
-            // Run motor outward for 250ms
+            // Run motor outward
             forward();
             timer.reset();
-            while (timer.milliseconds() < 250) {
+            while (timer.milliseconds() < MOTOR_RUN_TIME_MS) {
                 // Wait for timer
             }
             stop();
         }
         
         // Start flywheel
-        flywheel.start(true);
+        flywheel.start(flywheelForward);
     }
 
     // Retract intake until it stops moving

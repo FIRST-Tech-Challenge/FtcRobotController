@@ -28,7 +28,7 @@ public class Claw {
     private static final int SLIDE_HIGH = 3000;
     
     // Slide movement parameters
-    private static final double SLIDE_POWER = 0.5;
+    private static final double SLIDE_POWER = 0.8;
     private static final double HOLDING_POWER = 0.1;  // Power to hold against gravity
     private static final int POSITION_TOLERANCE = 10;
     
@@ -112,19 +112,8 @@ public class Claw {
     }
     
     public void moveToGround() {
-        // Switch to manual control mode
-        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        
-        // If limit switch is pressed, stop and reset
-        if (isLimitSwitchPressed()) {
-            slideMotor.setPower(0);
-            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            slideMotor.setPower(HOLDING_POWER);
-        } else {
-            // Move down slowly until limit switch is hit
-            slideMotor.setPower(-SLIDE_POWER * 0.5);  // Negative power to move down
-        }
+        // Simply move to encoder position 0
+        moveToPosition(SLIDE_GROUND);
     }
     
     public void moveToLow() {
