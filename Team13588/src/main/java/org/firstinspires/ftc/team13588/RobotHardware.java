@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.team13588;
 
+import androidx.annotation.NonNull;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
@@ -28,18 +31,11 @@ public class RobotHardware {
     These variables are declared here (as class members) so they can be updated in various methods, but still be
     displayed by sendTelemetry()
      */
-    private double targetHeading;
-    private double driveSpeed;
-    private double strafeSpeed;
-    private double turnSpeed;
+
     public double leftFrontPower;
     public double leftBackPower;
     public double rightFrontPower;
     public double rightBackPower;
-    public int leftFrontTarget;
-    public int leftBackTarget;
-    public int rightFrontTarget;
-    public int rightBackTarget;
 
     public double DRIVE_SPEED;
     public double TURN_SPEED;
@@ -57,16 +53,25 @@ public class RobotHardware {
     public double SHOULDER_TICKS_PER_DEGREE;
     public double ARM_TICKS_PER_REV;
     public double TOLERANCE_TICKS;
+
     public double SHOULDER_COLLAPSED_INTO_ROBOT;
-    public double SHOULDER_LOW_RUNG;
+    public double SHOULDER_SAMPLE_RETRACTED;
+    public double SHOULDER_SAMPLE_EXTENDED;
+    public double SHOULDER_LOW_CHAMBER;
     public double SHOULDER_LOW_BUCKET;
-    public double SHOULDER_HIGH_RUNG;
+    public double SHOULDER_HIGH_CHAMBER;
     public double SHOULDER_HIGH_BUCKET;
     public double SHOULDER_ATTACH_HANGING_HOOK;
     public double SHOULDER_WINCH_ROBOT;
+
     public double ARM_RETRACTED;
+    public double ARM_HIGH_CHAMBER;
+    public double ARM_EXTENDED;
+
     public double WRIST_STRAIGHT;
     public double WRIST_ROTATE;
+    public double WRIST_FLIP;
+
     public double CLAW_OPEN;
     public double CLAW_CLOSE;
 
@@ -123,7 +128,7 @@ public class RobotHardware {
          */
         COUNTS_PER_MOTOR_REV = 537.7; // goBILDA
         DRIVE_GEAR_REDUCTION =  1.0; // No external gearing
-        WHEEL_DIAMETER_INCHES = 3.77953; // goBILDA 3601 Series Rhino Wheel (96mm Diameter)
+        WHEEL_DIAMETER_INCHES = 3.77953; // goBILDA (96mm Diameter)
         COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
         /*
@@ -132,7 +137,7 @@ public class RobotHardware {
         100.0/20/0: This is the external gear reduction, a 20T pinion gear that drives a 100T hub-mount gear
         1.0 / 360.0 (ticks per degree, not per rotation)
         */
-        SHOULDER_TICKS_PER_DEGREE = 28 * 50.9 * 100.0/20.0 * 1.0 / 360.0;
+        SHOULDER_TICKS_PER_DEGREE = 28 * 50.9 * 100.0 / 20.0 / 360.0;
         ARM_TICKS_PER_REV = 28 * 19.2 * 1.0;
         TOLERANCE_TICKS = 10.0;
 
@@ -143,17 +148,22 @@ public class RobotHardware {
         set position of the arm.
         */
         SHOULDER_COLLAPSED_INTO_ROBOT = 0 * SHOULDER_TICKS_PER_DEGREE;
-        SHOULDER_LOW_RUNG = 55 * SHOULDER_TICKS_PER_DEGREE;
+        SHOULDER_SAMPLE_RETRACTED = 12 * SHOULDER_TICKS_PER_DEGREE;
+        SHOULDER_SAMPLE_EXTENDED = 23 * SHOULDER_TICKS_PER_DEGREE;
+        SHOULDER_LOW_CHAMBER = 55 * SHOULDER_TICKS_PER_DEGREE;
         SHOULDER_LOW_BUCKET = 83  * SHOULDER_TICKS_PER_DEGREE;
-        SHOULDER_HIGH_RUNG = 95 * SHOULDER_TICKS_PER_DEGREE;
+        SHOULDER_HIGH_CHAMBER = 95 * SHOULDER_TICKS_PER_DEGREE;
         SHOULDER_HIGH_BUCKET = 102 * SHOULDER_TICKS_PER_DEGREE;
         SHOULDER_ATTACH_HANGING_HOOK =  130 * SHOULDER_TICKS_PER_DEGREE;
         SHOULDER_WINCH_ROBOT =  15 * SHOULDER_TICKS_PER_DEGREE;
 
         ARM_RETRACTED = 0 * ARM_TICKS_PER_REV;
+        ARM_HIGH_CHAMBER = 1.5 * ARM_TICKS_PER_REV;
+        ARM_EXTENDED = 4 * ARM_TICKS_PER_REV;
 
-        WRIST_STRAIGHT = 0.5;
-        WRIST_ROTATE = 1.0;
+        WRIST_STRAIGHT = 0.05;
+        WRIST_ROTATE = 0.5;
+        WRIST_FLIP = 1.0;
 
         CLAW_CLOSE = 0.99;
         CLAW_OPEN = 0.5;
@@ -244,10 +254,6 @@ public class RobotHardware {
      */
     public void driveRobotCentric(double drive, double strafe, double turn) {
 
-        driveSpeed = drive;
-        strafeSpeed = strafe;
-        turnSpeed = turn;
-
         double max;
 
         /*
@@ -288,10 +294,6 @@ public class RobotHardware {
      * @param turn      Right/Left turning power (-1.0 to 1.0) +ve is clockwise
      */
     public void driveFieldCentric(double drive, double strafe, double turn) {
-
-        driveSpeed = drive;
-        strafeSpeed = strafe;
-        turnSpeed = turn;
 
         double max;
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -361,7 +363,7 @@ public class RobotHardware {
      * velocity (speed) the motor runs at, and use setMode to run it.
      */
     public void setArmPosition(double position) {
-        armDrive.setTargetPosition((int) (4 * position * ARM_TICKS_PER_REV));
+        armDrive.setTargetPosition((int) (position));
         ((DcMotorEx) armDrive).setVelocity(2100);
         armDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
@@ -382,5 +384,79 @@ public class RobotHardware {
      */
     public void setClawPosition(double position) {
         clawDrive.setPosition(position);
+    }
+
+    // ******************** RoadRunner control functions ********************
+
+    public class MoveShoulder implements Action {
+        private final double position;
+
+        public MoveShoulder(double position) {
+            this.position = position;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            setShoulderPosition(position);
+            return Math.abs(shoulderDrive.getCurrentPosition() - position) > TOLERANCE_TICKS;
+        }
+    }
+
+    public Action moveShoulder(double position) {
+        return new MoveShoulder(position);
+    }
+
+    public class MoveArm implements Action {
+        private final double position;
+
+        public MoveArm(double position) {
+            this.position = position;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            setArmPosition(position);
+            return Math.abs(armDrive.getCurrentPosition() - position) > TOLERANCE_TICKS;
+        }
+    }
+
+    public Action moveArm(double position) {
+        return new MoveArm(position);
+    }
+
+    public class MoveWrist implements Action {
+        private final double position;
+
+        public MoveWrist(double position) {
+            this.position = position;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            setWristPosition(position);
+            return false;  // Servo movements are instantaneous, so return false
+        }
+    }
+
+    public Action moveWrist(double position) {
+        return new MoveWrist(position);
+    }
+
+    public class MoveClaw implements Action {
+        private final double position;
+
+        public MoveClaw(double position) {
+            this.position = position;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            setClawPosition(position);
+            return false;  // Servo movements are instantaneous, so return false
+        }
+    }
+
+    public Action moveClaw(double position) {
+        return new MoveClaw(position);
     }
 }
