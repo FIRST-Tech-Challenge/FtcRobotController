@@ -80,7 +80,7 @@ public class Init {
         intakeExtendo = hardwareMap.dcMotor.get("intakeExtendo");
         intakeExtendo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeExtendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intakeExtendo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeExtendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         intakeLeft = hardwareMap.servo.get("intakeLeft");
         intakeRight = hardwareMap.servo.get("intakeRight");

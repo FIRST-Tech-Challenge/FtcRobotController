@@ -104,11 +104,11 @@ public class Intake {
         extendo.setPower(0);
     }
 
-    public void extendSlide(int position){
-            extendo.setTargetPosition(position);
-            extendo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            extendo.setPower(EXTEND_POWER);
-    }
+//    public void extendSlide(int position){
+//            extendo.setTargetPosition(position);
+//            extendo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            extendo.setPower(EXTEND_POWER);
+//    }
 
     public boolean extendoSlideIsBusy(){
         return extendo.isBusy();
