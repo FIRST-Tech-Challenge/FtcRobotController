@@ -30,11 +30,11 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /**
  * This file illustrates the concept of driving a path based on time.
@@ -55,31 +55,34 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 @Disabled
-@Autonomous(name="Default Auto", group="Robot")
-public class DefaultAuto extends LinearOpMode {
+@Autonomous(name="Rosies Auto Drive By Time", group="Robot")
+public class ArmAuto extends LinearOpMode {
 
    /* Declare OpMode members. */
    private DcMotor leftFrontDrive  = null; //motor 3
    private DcMotor leftBackDrive = null; //motor 2
    private DcMotor rightFrontDrive  = null; //motor 1
    private DcMotor rightBackDrive = null; //motor 0
-
+   private DcMotor motorexpansionsidem1 = null; //motor 0
+   private DcMotor motorexpansionsidem2 = null; //motor 1
    private ElapsedTime runtime = new ElapsedTime();
 
 
    static final double FORWARD_SPEED = 0.6;
    static final double TURN_SPEED = 0.5;
+   static final double ARM_SPEED=0.1;
 
 
    @Override
    public void runOpMode() {
 
       // Initialize the drive system variables.
-      leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
+      leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
       leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
-      rightFrontDrive  = hardwareMap.get(DcMotor.class, "right_front_drive");
+      rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
       rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-
+      motorexpansionsidem1 = hardwareMap.get(DcMotor.class, "lift");
+      motorexpansionsidem2 = hardwareMap.get(DcMotor.class, "lift2");
       // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
       // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
       // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
@@ -87,7 +90,14 @@ public class DefaultAuto extends LinearOpMode {
       leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
       rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
       rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-
+      motorexpansionsidem1.setDirection(DcMotor.Direction.FORWARD);
+      motorexpansionsidem2.setDirection(DcMotor.Direction.REVERSE);
+      leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      motorexpansionsidem1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      motorexpansionsidem2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       // Send telemetry message to signify robot waiting;
       telemetry.addData("Status", "Ready to run");
       telemetry.update();
@@ -107,37 +117,23 @@ public class DefaultAuto extends LinearOpMode {
          telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
          telemetry.update();
       }
-
-      // Step 2:  Spin right for 0.6 seconds
-      //leftFrontDrive.setPower(TURN_SPEED);
-      //leftBackDrive.setPower(TURN_SPEED);
-      //rightFrontDrive.setPower(-TURN_SPEED);
-      //rightBackDrive.setPower(-TURN_SPEED);
-      //runtime.reset();
-      //while (opModeIsActive() && (runtime.seconds() < 0.6)) {
-      //telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
-      //telemetry.update();
-      //}
-
-      // Step 3:  Drive Forward for 0.7 Second
-      leftFrontDrive.setPower(FORWARD_SPEED);
-      leftBackDrive.setPower(FORWARD_SPEED);
-      rightFrontDrive.setPower(FORWARD_SPEED);
-      rightBackDrive.setPower(FORWARD_SPEED);
+      //Step 2: Move Arm
+      motorexpansionsidem1.setPower(ARM_SPEED);
+      motorexpansionsidem2.setPower(ARM_SPEED);
       runtime.reset();
-      while (opModeIsActive() && (runtime.seconds() < 2.1)) {
-         telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
+      while (opModeIsActive() && (runtime.seconds() < 0.5)) {
+         telemetry.addData("Arm Moved", "Leg 3: %4.1f S Elapsed", runtime.seconds());
          telemetry.update();
-      }
 
-      // Step 4:  Stop
-      leftFrontDrive.setPower(0);
-      leftBackDrive.setPower(0);
-      rightFrontDrive.setPower(0);
-      rightBackDrive.setPower(0);
+         // Step 3:  Stop
+         leftFrontDrive.setPower(0);
+         leftBackDrive.setPower(0);
+         rightFrontDrive.setPower(0);
+         rightBackDrive.setPower(0);
 
-      telemetry.addData("Path", "Complete");
-      telemetry.update();
-      sleep(1000);
+         telemetry.addData("Path", "Complete");
+         telemetry.update();
+         sleep(1000);
       }
+   }
 }

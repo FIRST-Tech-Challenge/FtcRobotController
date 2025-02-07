@@ -29,13 +29,12 @@
 
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+//import org.firstinspires.ftc.teamcode.HardwareMechanum;
 
 
 /**
@@ -65,10 +64,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
-@Disabled
-@TeleOp(name="Copied Cookie Code", group="Linear Opmode")
-public class CopiedCookieCode extends LinearOpMode {
-    //HardwarePushbot robot = new HardwarePushbot();
+
+@TeleOp(name="TwoControllers", group="Linear Opmode")
+public class TwoControllers extends LinearOpMode {
+    //HardwareMechanum robot = new HardwareMechanum();
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -76,17 +75,17 @@ public class CopiedCookieCode extends LinearOpMode {
     private DcMotor leftBackDrive = null; //motor 2
     private DcMotor rightBackDrive = null; //motor 1
     private DcMotor rightFrontDrive = null; //motor 0
-    //private DcMotor lift = null;
-    //private DcMotor lift2 = null;
-    //private Servo wrist = null;
-    //private Servo leftFinger = null;
-    //private Servo rightFinger = null;
+    private DcMotor shoulderLeft = null;
+    private DcMotor shoulderRight = null;
+    private DcMotor forearm = null;
+    private Servo servo = null;
+
 
     //Wrist stuff
-    //final double WRIST_INCREMENT = 0.001;
-    //final double WRIST_MAX = 1.0;
-    //final double WRIST_MIN = -1.0;
-    //double wristPosition = 0.0;
+    final double WRIST_INCREMENT = 0.001;
+    final double WRIST_MAX = 1.0;
+    final double WRIST_MIN = 0.25;
+    double servoPosition = 0.0;
 
     //Finger stuff
     //bro i didn't know that's what he was saying to me as i was
@@ -108,6 +107,7 @@ public class CopiedCookieCode extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        //robot.init(hardwareMap);
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
@@ -115,11 +115,10 @@ public class CopiedCookieCode extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive"); //motor 2
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive"); //motor 1
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive"); //motor 0
-        //lift = hardwareMap.get(DcMotor.class, "lift"); //motor 0 expansion hub
-        //lift2 = hardwareMap.get(DcMotor.class, "lift2"); //motor 1 expansion hub
-        //wrist = hardwareMap.get(Servo.class, "wrist"); //servo 1 on control hub
-        //leftFinger = hardwareMap.get(Servo.class, "left_finger"); //servo 0 expansion hub
-        //rightFinger = hardwareMap.get(Servo.class, "right_finger"); //servo 0 control hub
+        shoulderLeft = hardwareMap.get(DcMotor.class, "shoulder_left"); //motor 0 expansion hub
+        shoulderRight = hardwareMap.get(DcMotor.class, "shoulder_right"); //motor 1 expansion hub
+        forearm = hardwareMap.get(DcMotor.class, "hang"); //motor 2 expansion hub
+        servo = hardwareMap.get(Servo.class, "servo"); //servo 1 on control hub
 
 /** ########################################################################################
  * !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -138,10 +137,12 @@ public class CopiedCookieCode extends LinearOpMode {
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         //lift init stuff
-        //lift.setDirection(DcMotor.Direction.FORWARD);
-        //lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //lift2.setDirection(DcMotor.Direction.FORWARD);
-        //lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shoulderLeft.setDirection(DcMotor.Direction.FORWARD);
+        shoulderLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shoulderRight.setDirection(DcMotor.Direction.FORWARD);
+        shoulderRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        forearm.setDirection(DcMotor.Direction.FORWARD);
+        forearm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -181,55 +182,59 @@ public class CopiedCookieCode extends LinearOpMode {
             }
 
             //up
-            //if(gamepad1.right_trigger > 0.1){
-                //lift.setPower(gamepad1.right_trigger*0.75);
-                //lift2.setPower(-gamepad1.right_trigger*0.75);
-            //}if (gamepad1.right_trigger < 0.1){
-                //lift.setPower(0);
-                //lift2.setPower(0);
-            //}
+            if(gamepad2.right_trigger > 0.1){
+                shoulderLeft.setPower(gamepad2.right_trigger*0.6);
+                shoulderRight.setPower(-gamepad2.right_trigger*0.6);
+            }if (gamepad2.right_trigger < 0.1){
+                shoulderLeft.setPower(0);
+                shoulderRight.setPower(0);
+            }
 
             //down
-            //if(gamepad1.left_trigger > 0.1){
-                //lift.setPower(-gamepad1.left_trigger*0.75);
-                //lift2.setPower(gamepad1.left_trigger*0.75);
-            //}if (gamepad1.left_trigger < 0.1){
-                //lift.setPower(0);
-                //lift2.setPower(0);
-            //}
+            if(gamepad2.left_trigger > 0.1){
+                shoulderLeft.setPower(-gamepad2.left_trigger*0.6);
+                shoulderRight.setPower(gamepad2.left_trigger*0.6);
+            }if (gamepad2.left_trigger < 0.1){
+                shoulderLeft.setPower(0);
+                shoulderRight.setPower(0);
+            }
+
+            //lift
+            if(gamepad2.left_stick_y > 0.1){
+                forearm.setPower(gamepad2.left_stick_y*1.0);
+            }if (gamepad2.left_stick_y < 0.1){
+                forearm.setPower(0);
+            }
 
             //Code for the wrist
-            //if (gamepad1.right_bumper) {
-                //if (Double.compare(WRIST_MAX, wristPosition) >= 0){
-                    //wristPosition += WRIST_INCREMENT;
-                    //wrist.setPosition(wristPosition);
-                //}
-            //}
-            //if (gamepad1.left_bumper) {
-                //if (Double.compare(WRIST_MIN, wristPosition) <= 0){
-                    //wristPosition -= WRIST_INCREMENT;
-                    //wrist.setPosition(wristPosition);
-                //}
-            //}
+            if (gamepad2.right_bumper) {
+                if (Double.compare(WRIST_MAX, servoPosition) >= 0){
+                    servoPosition += WRIST_INCREMENT;
+                    servo.setPosition(servoPosition);
+                }
+            }
+            if (gamepad2.left_bumper) {
+                if (Double.compare(WRIST_MIN, servoPosition) <= 0){
+                    servoPosition -= WRIST_INCREMENT;
+                    servo.setPosition(servoPosition);
+                }
+            }
+
 
             //Code for the claw
-            //if(gamepad1.b) {
-                //leftFinger.setPosition(1);
-            //}
-            //if(gamepad1.a){
-                //leftFinger.setPosition(-0.7);
-            //}
+            if(gamepad2.b) {
+            }
+            if(gamepad2.a){
+            }
 
             //Code for the claw
-            //if(gamepad1.x) {
-                //rightFinger.setPosition(1);
-            //}
-            //if(gamepad1.y){
-                //rightFinger.setPosition(-0.7);
-            //}
+            if(gamepad2.x) {
+            }
+            if(gamepad2.y){
+            }
 
             // //Code for the fingers
-            // if(gamepad1.y) {
+            // if(gamepad2.y) {
             //     //yeah yeah yeah don't copy-paste code
             //     //but you should also not stay up until 5 am on a school night working on code
             //     //and yet here we are
@@ -242,7 +247,7 @@ public class CopiedCookieCode extends LinearOpMode {
             //     }
             // }
 
-            // if(gamepad1.x){
+            // if(gamepad2.x){
             //     if (Double.compare(FINGER_MIN, leftFingerPosition) <= 0){
             //         leftFingerPosition -= FINGER_INCREMENT;
             //         leftFinger.setPosition(leftFingerPosition);
@@ -255,7 +260,7 @@ public class CopiedCookieCode extends LinearOpMode {
             //         rightFinger.setPosition(rightFingerPosition);
             //     }
             // }
-            // if(gamepad1.a){
+            // if(gamepad2.a){
             //     if (Double.compare(FINGER_MIN, rightFingerPosition) <= 0){
             //         rightFingerPosition -= FINGER_INCREMENT;
             //         rightFinger.setPosition(rightFingerPosition);
@@ -274,7 +279,7 @@ public class CopiedCookieCode extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            //telemetry.addData("Wrist position", "%4.2f", wristPosition);
+            telemetry.addData("Wrist position", "%4.2f", servoPosition);
             // telemetry.addData("Left finger position", "%4.2f", leftFingerPosition);
             // telemetry.addData("Right finger position", "%4.2f", rightFingerPosition);
             telemetry.update();
@@ -283,5 +288,4 @@ public class CopiedCookieCode extends LinearOpMode {
         }
 
 
-    }
-}
+    }}
