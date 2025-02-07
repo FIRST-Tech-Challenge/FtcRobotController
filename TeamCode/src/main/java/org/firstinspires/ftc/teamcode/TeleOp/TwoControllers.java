@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 //import org.firstinspires.ftc.teamcode.HardwareMechanum;
@@ -117,7 +118,7 @@ public class TwoControllers extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive"); //motor 0
         shoulderLeft = hardwareMap.get(DcMotor.class, "shoulder_left"); //motor 0 expansion hub
         shoulderRight = hardwareMap.get(DcMotor.class, "shoulder_right"); //motor 1 expansion hub
-        forearm = hardwareMap.get(DcMotor.class, "hang"); //motor 2 expansion hub
+        forearm = hardwareMap.get(DcMotor.class, "forearm"); //motor 2 expansion hub
         servo = hardwareMap.get(Servo.class, "servo"); //servo 1 on control hub
 
 /** ########################################################################################
@@ -131,18 +132,19 @@ public class TwoControllers extends LinearOpMode {
  * Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
  * Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
  **/
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
         //lift init stuff
         shoulderLeft.setDirection(DcMotor.Direction.FORWARD);
         shoulderLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        shoulderRight.setDirection(DcMotor.Direction.FORWARD);
+        shoulderRight.setDirection(DcMotor.Direction.REVERSE);
         shoulderRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         forearm.setDirection(DcMotor.Direction.FORWARD);
         forearm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        servo = hardwareMap.get(Servo.class, "servo");
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -157,16 +159,22 @@ public class TwoControllers extends LinearOpMode {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  -gamepad1.left_stick_x;
+            double axial   = -gamepad1.left_stick_y*-1;  // Note: pushing stick forward gives negative value
+            double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
+            double Shoulder_Forward = gamepad2.right_trigger;
+            double Shoulder_Backward = gamepad2.left_trigger;
+            double Forearm_Movement = gamepad2.right_stick_y*-1;
+            double  Claw_Position = gamepad2.left_stick_x;
+
+
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
             double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
+            double rightFrontPower = axial + lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
+            double rightBackPower  = axial - lateral - yaw;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -175,19 +183,19 @@ public class TwoControllers extends LinearOpMode {
             max = Math.max(max, Math.abs(rightBackPower));
 
             if (max > 1.0) {
-                leftFrontPower  /= max;
-                rightFrontPower /= max;
-                leftBackPower   /= max;
-                rightBackPower  /= max;
+                leftFrontPower  = leftFrontPower/max;
+                rightFrontPower = rightFrontPower/max;
+                leftBackPower   = leftBackPower/max;
+                rightBackPower  = rightBackPower/max;
             }
 
             //up
-            if(gamepad2.right_trigger > 0.1){
+            if(gamepad2.right_trigger > 0){
                 shoulderLeft.setPower(gamepad2.right_trigger*0.6);
-                shoulderRight.setPower(-gamepad2.right_trigger*0.6);
-            }if (gamepad2.right_trigger < 0.1){
-                shoulderLeft.setPower(0);
-                shoulderRight.setPower(0);
+                shoulderRight.setPower(gamepad2.right_trigger*0.6);
+            }if (gamepad2.left_trigger > 0){
+                shoulderLeft.setPower(-gamepad2.left_trigger*0.6);
+                shoulderRight.setPower(-gamepad2.left_trigger*0.6);
             }
 
             //down
