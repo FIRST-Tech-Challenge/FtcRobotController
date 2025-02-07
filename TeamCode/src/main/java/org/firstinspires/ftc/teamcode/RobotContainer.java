@@ -3,12 +3,15 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.pStates.*;
 import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.*;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.StateMachine.Intaking;
 import org.firstinspires.ftc.teamcode.StateMachine.Placing;
 import org.firstinspires.ftc.teamcode.StateMachine.RobotState;
@@ -19,13 +22,16 @@ import org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperSubsystem;
 import org.firstinspires.ftc.teamcode.utils.BT.BTController;
 
 public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
-
+    FtcDashboard dashboard = FtcDashboard.getInstance();
+    private Telemetry dashboardTelemetry = dashboard.getTelemetry();
     public GripperSubsystem m_gripper;
     ExtensionSubsystem m_extension;
     PivotSubsystem m_pivot;
     ChassisSubsystem m_chassis;
     BTController m_controller;
     BTController m_controller2;
+    Intaking intakeCommand;
+    Placing placeCommand;
     Trigger Intake;
     Trigger Score;
     Trigger SpecimenDelivery;
@@ -60,8 +66,8 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         SpecimenDelivery.whenActive(()->state.setState(Constants.States.SPECIMEN_DELIVERY));
         SpecimenScore.whenActive(()->state.setState(Constants.States.SPECIMEN_SCORE));
 
-        Intake.whenActive(new Intaking(m_extension,m_pivot,m_chassis,m_gripper,m_controller),false);
-        Score.whenActive(new Placing(m_extension,m_pivot,m_chassis,m_gripper,m_controller),false);
+        Intake.whenActive(new ConditionalCommand(intakeCommand,new InstantCommand(),placeCommand::isFinished),false);
+        Score.whenActive(new ConditionalCommand(placeCommand,new InstantCommand(),intakeCommand::isFinished),false);
 
         m_controller.assignCommand(m_chassis.fieldRelativeDrive(
                         () -> squareInput(-m_controller.getAxisValue(BTController.Axes.LEFT_Y_axis)),
@@ -79,5 +85,9 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
 
     public double squareInput(double input){
         return Math.signum(input)*Math.pow(input,2);
+    }
+
+    public void period(){
+        dashboardTelemetry.addData("intakeIsFinished: ",intakeCommand::isFinished);
     }
 }
