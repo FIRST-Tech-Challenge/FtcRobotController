@@ -115,19 +115,19 @@ public class Blue_Basket_Auto extends LinearOpMode {
                 driveToDropFromStart,
                 _ViperArmActions.DumpInHighBasket(),
                 samplePickupOuter,
-                _ViperArmActions.MoveViperToSamplePickUp(),
-                UtilActions.Wait(1.4),
-                _WristClawActions.CloseClaw(),
-                UtilActions.Wait(.25),
-                _WristClawActions.WristDump(),
-                UtilActions.Wait(.25),
-                _ViperArmActions.MoveViperToHome(),
+                _ViperArmActions.PickUpSample(),
+                driveToDropFromOuterSample,
+                _ViperArmActions.DumpInHighBasket(),
+                samplePickupMiddle,
+                _ViperArmActions.PickUpSample(),
+                driveToDropFromMiddleSample,
+                _ViperArmActions.DumpInHighBasket(),
+                samplePickupInner,
+                _ViperArmActions.PickUpSample(),
+                driveToDropFromInnerSample,
+                _ViperArmActions.DumpInHighBasket(),
+                UtilActions.Wait(5)
 
-                driveToDropFromOuterSample
-//                samplePickupMiddle,
-//                driveToDropFromMiddleSample,
-//                samplePickupInner,
-//                driveToDropFromInnerSample,
 //                driveToPark
 
 //                        _ViperArmActions.MoveArmToHighBasket(),

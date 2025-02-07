@@ -122,6 +122,20 @@ public class ViperArmActions {
             UtilActions.Wait(1)
         );
     }
+
+    // pick up sample
+    public Action PickUpSample() {
+        return new SequentialAction(
+            MoveViperToSamplePickUp(),
+            UtilActions.Wait(1.4),
+            _WristClawActions.CloseClaw(),
+            UtilActions.Wait(.25),
+            _WristClawActions.WristDump(),
+            UtilActions.Wait(.25),
+            MoveViperToHome()
+        );
+    }
+
     public Action RaiseToClip() {
         return new SequentialAction(
             _WristClawActions.WristMid(),
