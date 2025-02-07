@@ -57,9 +57,9 @@ public class RobotCentric extends LinearOpMode {
             } else if (gamepad1.b) {
                 robot.setShoulderPosition(robot.SHOULDER_HIGH_BUCKET);
             } else if (gamepad1.dpad_left) {
-                robot.setShoulderPosition(robot.SHOULDER_LOW_RUNG);
+                robot.setShoulderPosition(robot.SHOULDER_LOW_CHAMBER);
             } else if (gamepad1.dpad_right) {
-                robot.setShoulderPosition(robot.SHOULDER_HIGH_RUNG);
+                robot.setShoulderPosition(robot.SHOULDER_HIGH_CHAMBER);
             } else if (gamepad1.dpad_up) {
                 robot.setShoulderPosition(robot.SHOULDER_ATTACH_HANGING_HOOK);
             } else if(gamepad1.dpad_down) {
