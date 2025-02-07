@@ -66,8 +66,8 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         SpecimenDelivery.whenActive(()->state.setState(Constants.States.SPECIMEN_DELIVERY));
         SpecimenScore.whenActive(()->state.setState(Constants.States.SPECIMEN_SCORE));
 
-        Intake.whenActive(new ConditionalCommand(intakeCommand,new InstantCommand(),placeCommand::isFinished),false);
-        Score.whenActive(new ConditionalCommand(placeCommand,new InstantCommand(),intakeCommand::isFinished),false);
+        Intake.whenActive(new Intaking(m_extension,m_pivot,m_chassis,m_gripper,m_controller),false);
+        Score.whenActive(new Placing(m_extension,m_pivot,m_chassis,m_gripper,m_controller) ,false);
 
         m_controller.assignCommand(m_chassis.fieldRelativeDrive(
                         () -> squareInput(-m_controller.getAxisValue(BTController.Axes.LEFT_Y_axis)),
@@ -88,6 +88,5 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     }
 
     public void period(){
-        dashboardTelemetry.addData("intakeIsFinished: ",intakeCommand::isFinished);
     }
 }

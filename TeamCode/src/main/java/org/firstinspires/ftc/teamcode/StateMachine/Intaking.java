@@ -25,5 +25,7 @@ public class Intaking extends SelectCommand {
                 ),
                 RobotState.getInstance()::getState
         );
+        addRequirements(pivot);
     }
+
 }
