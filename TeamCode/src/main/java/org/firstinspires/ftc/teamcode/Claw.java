@@ -13,8 +13,8 @@ public class Claw {
     private TouchSensor limitSwitch;
     
     // Servo positions
-    private static final double CLAW_OPEN = 0.5;
-    private static final double CLAW_CLOSED = 0.9;
+    private static final double CLAW_OPEN = 0.1;
+    private static final double CLAW_CLOSED = 0.5;
     private static final double WRIST_UP = 0.25;
     private static final double WRIST_DOWN = 0.55;
     private static final double ELBOW_UP = 0.65;      // Fully raised position

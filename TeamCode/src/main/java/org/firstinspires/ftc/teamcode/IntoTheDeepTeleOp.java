@@ -43,8 +43,8 @@ public class IntoTheDeepTeleOp extends OpMode {
     private static final int POSITION_TOLERANCE = 10; // Acceptable error in encoder ticks
     
     // Servo position constants
-    private static final double CLAW_OPEN = 0.5;    // Claw servo open position
-    private static final double CLAW_CLOSED = 0.9;  // Claw servo closed position
+    private static final double CLAW_OPEN = 0.0;    // Claw servo open position
+    private static final double CLAW_CLOSED = 1.0;  // Claw servo closed position
     private static final double WRIST_UP = 0.25;    // Wrist servo raised position
     private static final double WRIST_DOWN = 0.55;  // Wrist servo lowered position
     private static final double ELBOW_UP = 0.65;    // Elbow servo fully raised position
@@ -133,7 +133,7 @@ public class IntoTheDeepTeleOp extends OpMode {
             isMovingToLow = true;
             telemetry.addData("Status", "Starting movement to low position...");
         }
-        
+
         // Monitor and complete low position sequence
         if (isMovingToLow) {
             if (claw.isAtTargetPosition()) {
@@ -172,6 +172,7 @@ public class IntoTheDeepTeleOp extends OpMode {
                 claw.moveToLow();
                 claw.elbowDown();
                 claw.wristDown();
+                claw.openClaw();
                 intake.in();
             }
         }
