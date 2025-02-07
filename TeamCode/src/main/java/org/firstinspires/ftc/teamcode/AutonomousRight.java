@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 /**
  */
-@Autonomous(name="Autonomous Right", group="7592", preselectTeleOp = "Teleop")
+@Autonomous(name="Right: clip 3 (63 pts)", group="7592", preselectTeleOp = "Teleop")
 //@Disabled
 public class AutonomousRight extends AutonomousBase {
 
