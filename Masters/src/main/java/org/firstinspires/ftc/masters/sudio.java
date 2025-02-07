@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.masters;
 
 import com.qualcomm.ftccommon.SoundPlayer;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -36,7 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  *     You can copy and paste the entire 'raw' folder using Android Studio.
  *
  */
-
+@Disabled
 @TeleOp(name="Concept: Sound Resources", group="Concept")
 
 public class sudio extends LinearOpMode {
