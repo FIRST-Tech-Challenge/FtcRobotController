@@ -46,22 +46,25 @@ public class RollerIntakeBot extends FourWheelDriveBot {
     protected void onEvent(int event, int data) {
         super.onEvent(event, data);
         if (event == EVENT_SAMPLE_ROLLED_IN) {
-            updateColorIndicator();
-        }
+            NormalizedRGBA colors = colorSensor.getNormalizedColors();
+            @ColorInt int color = colors.toColor();
+            int curColor = getColor(Color.red(color), Color.green(color), Color.blue(color));
 
+            updateColorIndicator(curColor);
+        }
     }
 
     protected void onTick() {
         super.onTick();
-
+        int obj = getObjectInPlace();
         if (rollerMode == ROLLER_MODE_INTAKE) {
-            if (isObjectInPlace()) {
+            if (obj != 0) {
                 stopRoller();
                 int color = 25555493;
                 triggerEvent(EVENT_SAMPLE_ROLLED_IN, color);
             }
         } else if (rollerMode == ROLLER_MODE_OUTAKE) {
-            if (!isObjectInPlace()) {
+            if (obj == 0) {
                 stopRoller();
             }
         }
@@ -105,35 +108,41 @@ public class RollerIntakeBot extends FourWheelDriveBot {
         rollerMode = ROLLER_MODE_OFF;
         setRollerPower(0.0); // Stop the roller
     }
-    public void updateColorIndicator() {
-        NormalizedRGBA colors = colorSensor.getNormalizedColors();
 
-        // convert the colors from getNormalizedColors into RGB int values from the toColor function
-        @ColorInt int color = colors.toColor();
-        // make the values from color variable into separate red, green, and blue values
-        int red = Color.red(color);
-        int green = Color.green(color);
-        int blue = Color.blue(color);
-        if (red > 200 && green < 70 && blue < 50) { // red
-            colorIndicator.setPosition(-1.0); // arbitrary value for red block
-        } else if (red < 50 && green < 70 && blue > 200) { // blue
-            colorIndicator.setPosition(0.0); // arbitrary value for blue block
-        } else if (red > 180 && green > 180 && blue < 50) { // yellow
-            colorIndicator.setPosition(1.0); // arbitrary value for yellow block
+    int getColor(int red, int green, int blue) {
+        // 0 = nothing, 1 = yellow, 2 = blue, 3 = red
+
+        int thres = 120; // Adjust as needed based on lighting conditions
+
+        if (red > thres && green > thres) {
+            return 1; // Yellow (high red + green, low blue)
+        } else if (blue > thres) {
+            return 2; // Blue (high blue, low red + green)
+        } else if (red > thres) {
+            return 3; // Red (high red, low green + blue)
         } else {
-            colorIndicator.setPosition(0.5); // arbitrary value for nothing
+            return 0; // No object detected
         }
     }
-    public boolean isObjectInPlace() {
-        // TODO : add the real condition to detect the object
+    public void updateColorIndicator(int curColor) {
+        if (curColor == 3) { // red
+            colorIndicator.setPosition(0.279);
+        } else if (curColor == 2) { // blue
+            colorIndicator.setPosition(0.611);
+        } else if (curColor == 1) { // yellow
+            colorIndicator.setPosition(0.388);
+        } else {
+            colorIndicator.setPosition(0.5); // arbitrary value for nothing (green)
+        }
+    }
+    public int getObjectInPlace() {
+        // 0 = nothing, 1 = yellow, 2 = blue, 3 = red
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
         @ColorInt int color = colors.toColor();
-        // Normalize colors, taking into consideration gain
-        int red = Color.red(color);
-        int green = Color.green(color);
-        int blue = Color.blue(color);
 
-        return (red > 180 || green > 180 || blue > 200) && ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM) < 6.0;
-    } // Arbitrary values for ratio conditions, and distance sensor value
-
+        if (((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM) > 6.0) {
+            return 0;
+        }
+        return getColor(Color.red(color), Color.green(color), Color.blue(color));
+    }
 }
