@@ -173,7 +173,7 @@ public class AutoSpecimen extends LinearOpMode {
 
         //============begin of third================
         WallToBarHangRoundTrip wallToBarHangRoundTrip3 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake,390); //500 //450
+                outtake,350); //500 //450
         wallToBarHangRoundTrip3.setName("wallToBarHangRoundTrip3");
         wallToBarHangRoundTrip3.setTelemetry(telemetry);
         wallToBarHangRoundTrip3.setDependentActions(wallToBarHangRoundTrip2);
@@ -182,7 +182,7 @@ public class AutoSpecimen extends LinearOpMode {
 
         //===============start of fourth specimen==============
         WallToBarHangRoundTrip wallToBarHangRoundTrip4 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake,525);
+                outtake,410);
         wallToBarHangRoundTrip4.setName("wallToBarHangRoundTrip4");
         wallToBarHangRoundTrip4.setTelemetry(telemetry);
         wallToBarHangRoundTrip4.setDependentActions(wallToBarHangRoundTrip3);

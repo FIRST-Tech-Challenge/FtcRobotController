@@ -30,7 +30,7 @@ public class AutoRobotHangAction extends KActionSet {
         moveOuttakePivotBack.setDependentActions(moveLsUp, moveOuttakePivotHalf);
         this.addAction(moveOuttakePivotBack);
 
-        WaitAction waitForLs = new WaitAction(400);
+        WaitAction waitForLs = new WaitAction(11);
         waitForLs.setName("waitForLs");
         waitForLs.setDependentActions(moveOuttakePivotBack);
         this.addAction(waitForLs);
