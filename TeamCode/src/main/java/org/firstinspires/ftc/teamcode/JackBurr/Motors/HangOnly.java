@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.JackBurr.Motors;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.JackBurr.Drive.RobotConstantsV1;
+import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryAxonV1;
 
 public class HangOnly extends OpMode {
     public DeliverySlidesV1 slides = new DeliverySlidesV1();
@@ -16,9 +16,11 @@ public class HangOnly extends OpMode {
     public SlidesState state;
     public ElapsedTime buttonTimer = new ElapsedTime();
     public RobotConstantsV1 constants = new RobotConstantsV1();
+    public DeliveryAxonV1 axon = new DeliveryAxonV1();
     @Override
     public void init() {
         slides.init(hardwareMap);
+        axon.init(hardwareMap);
     }
 
     @Override
@@ -35,6 +37,7 @@ public class HangOnly extends OpMode {
                 state = SlidesState.UP;
                 buttonTimer.reset();
             }
+            axon.setPosition(constants.DELIVERY_LEVEL_TWO_ASCENT);
         }
         else if(state == SlidesState.UP){
             slides.runLeftSlideToPosition(constants.LEFT_SLIDE_LEVEL_TWO_ASCENT_HOOK, 0.9);
@@ -44,8 +47,9 @@ public class HangOnly extends OpMode {
                 buttonTimer.reset();
             }
         }
-        else if(state == SlidesState.HANG);
+        else if(state == SlidesState.HANG) {
             slides.runLeftSlideToPosition(0, 1);
             slides.runRightSlideToPosition(0, 1);
+        }
     }
 }
