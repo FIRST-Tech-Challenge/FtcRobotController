@@ -47,6 +47,7 @@ public class OneFishSampleDelivery {
 
     public final double TRANSFER_PITCH = 0.83+0.1;
     public final double DELIVER_PITCH = 0.36;
+    public final double AUTO_DELIVER_PITCH = 0.3;
     public final double AWAY_PITCH = 0.35;
     public final double SHAKE_PITCH = 0.15;
     public final double TICK_LOW_POWER_DISTANCE = 75;
@@ -139,6 +140,10 @@ public class OneFishSampleDelivery {
 
     public void pitchToDeliver(){
         setPitch(DELIVER_PITCH);
+    }
+
+    public void pitchToAutoDeliver(){
+        setPitch(AUTO_DELIVER_PITCH);
     }
 
     public void pitchToAway(){
