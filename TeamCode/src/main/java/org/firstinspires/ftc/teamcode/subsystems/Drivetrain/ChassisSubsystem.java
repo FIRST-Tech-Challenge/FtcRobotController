@@ -59,10 +59,10 @@ public class ChassisSubsystem extends SubsystemBase {
 
 
     public ChassisSubsystem(HardwareMap map){
-        motor_FL = new MotorEx(map, "motor_FL");//tbd
-        motor_FR = new MotorEx(map, "motor_FR");//tbd
-        motor_BL = new MotorEx(map, "motor_BL");//tbd
-        motor_BR = new MotorEx(map, "motor_BR");//tbd
+        motor_FL = new MotorEx(map, "motor_FL");
+        motor_FR = new MotorEx(map, "motor_FR");
+        motor_BL = new MotorEx(map, "motor_BL");
+        motor_BR = new MotorEx(map, "motor_BR");
         gyro = new RevIMU(map,"imu");
         voltageSensor = map.voltageSensor.iterator().next();
 
