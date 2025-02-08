@@ -155,30 +155,30 @@ public class FourWheelDriveBot extends BotBot{
 
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
-
-        leftFront = hwMap.get(DcMotorEx.class, "leftFront");
-        rightFront = hwMap.get(DcMotorEx.class, "rightFront");
-        leftRear = hwMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hwMap.get(DcMotorEx.class, "rightRear");
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftRear.setDirection(DcMotor.Direction.REVERSE);
-
-        leftFront.setPower(0);
-        rightFront.setPower(0);
-        leftRear.setPower(0);
-        rightRear.setPower(0);
-
-        print("Resetting Encoders");
-
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        leftFront.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        rightFront.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        leftRear.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        rightRear.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//
+//        leftFront = hwMap.get(DcMotorEx.class, "leftFront");
+//        rightFront = hwMap.get(DcMotorEx.class, "rightFront");
+//        leftRear = hwMap.get(DcMotorEx.class, "leftRear");
+//        rightRear = hwMap.get(DcMotorEx.class, "rightRear");
+//        leftFront.setDirection(DcMotor.Direction.REVERSE);
+//        leftRear.setDirection(DcMotor.Direction.REVERSE);
+//
+//        leftFront.setPower(0);
+//        rightFront.setPower(0);
+//        leftRear.setPower(0);
+//        rightRear.setPower(0);
+//
+//        print("Resetting Encoders");
+//
+//        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//        leftFront.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//        rightFront.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//        leftRear.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//        rightRear.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
 //        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

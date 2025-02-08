@@ -35,6 +35,16 @@ public class IntakeTest extends LinearOpMode {
                 rollerIntakeBot.adjustGain(false, telemetry); // Decrease gain
             }
 
+            if (gamepad1.right_bumper) {
+//                gamepad1.
+//                gamepad1.rumble(5000);
+                rollerIntakeBot.setColorIndicator(telemetry, 0.3);
+            }
+            if(gamepad1.left_bumper){
+                boolean a = rollerIntakeBot.isObjectInPlace();
+                telemetry.addData("condition", a);
+            }
+//            gamepad1.rumble
             telemetry.update();
         }
     }
