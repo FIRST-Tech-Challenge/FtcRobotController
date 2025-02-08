@@ -15,14 +15,15 @@ public class Pivot {
     ServoAdvanced pivotLeft;
     ServoAdvanced pivotRight;
 
-    public static double pivotDown = 0.1;
-    public static double pivotUp = 0.55;
+    public static double pivotDown = 0.48;
+    public static double pivotUp = 0.7;
     public Pivot(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
         this.pivotLeft = new ServoAdvanced(hardwareMap.get(Servo.class, "pivotLeft"));
         this.pivotRight = new ServoAdvanced(hardwareMap.get(Servo.class, "pivotRight"));
-
     }
+
+
 
     public ElapsedTime timer = new ElapsedTime();
     public Action setPosition(Intake.intakeState intakePos){
@@ -31,14 +32,14 @@ public class Pivot {
             public boolean run(@NonNull TelemetryPacket Packet) {
                     if (intakePos== Intake.intakeState.INTAKE) {
                         pivotLeft.setPosition(pivotDown);
-                        pivotRight.setPosition(pivotDown);
+                        pivotRight.setPosition(pivotUp);
                     }
                     else if (intakePos == Intake.intakeState.OUTTAKE) {
                         pivotLeft.setPosition(pivotDown);
-                        pivotRight.setPosition(pivotDown);
+                        pivotRight.setPosition(pivotUp);
                     } else if (intakePos == Intake.intakeState.STOP){
                         pivotLeft.setPosition(pivotUp);
-                        pivotRight.setPosition(pivotUp);
+                        pivotRight.setPosition(pivotDown);
                     }
                 return false;
             }

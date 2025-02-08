@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class ServoAdvanced {
     private double lastPos = 0;
-    Servo servo;
+    private Servo servo;
     private double servoTolerance = 0.001;
 
     public ServoAdvanced(Servo servo) {

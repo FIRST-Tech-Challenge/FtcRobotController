@@ -19,10 +19,10 @@ public class TuneClaw extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            if (gamepad2.y){
+            if (gamepad2.triangle){
                 Actions.runBlocking(claw.servoClaw(CLOSE));
             }
-            if(gamepad2.circle){
+            if(gamepad2.cross){
                 Actions.runBlocking(claw.servoClaw(OPEN));
             }
         }

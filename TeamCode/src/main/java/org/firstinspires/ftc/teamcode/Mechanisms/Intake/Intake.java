@@ -12,7 +12,8 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Planners.MotionProfile;
 public class Intake {
     DcMotorEx motor;
     HardwareMap hardwareMap;
-    public Intake(HardwareMap hardwareMap){
+
+    public Intake(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
         motor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
     }
@@ -20,7 +21,9 @@ public class Intake {
     public enum intakeState {
         INTAKE, STOP, OUTTAKE
     }
+
     public ElapsedTime timer = new ElapsedTime();
+
     public Action motorIntake(intakeState intakePos) {
         return new Action() {
             @Override
@@ -40,16 +43,7 @@ public class Intake {
             }
         };
     }
-        public Action disableIntake(){
-            return new Action() {
-                @Override
-                public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                    motor.setPower(0);
-                    return false;
-                }
-            };
-        }
-    }
+}
 
 //    public void intakeIn(){
 //        motor.setPower(0.5);
