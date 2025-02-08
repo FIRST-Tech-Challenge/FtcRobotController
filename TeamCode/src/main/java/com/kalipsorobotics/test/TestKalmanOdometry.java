@@ -27,7 +27,6 @@ public class TestKalmanOdometry extends LinearOpMode {
         KalmanFilter kalmanFilter = new KalmanFilter(0.7, 9);
         //accurate wheel odometry noise: 0.5, 5
         //accurate sparkfun optical sensor noise: 0.7 9
-        //TODO find a way to test the accuracy while running
         OdometrySpark odometrySpark = new OdometrySpark(otos);
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         DriveTrain driveTrain = DriveTrain.getInstance(opModeUtilities);
@@ -49,8 +48,8 @@ public class TestKalmanOdometry extends LinearOpMode {
             telemetry.addLine("x: " + filteredPoint1.x + " y: " + filteredPoint1.y);
             Log.d("kalmanFilter", noisyMeasurement1.x + noisyMeasurement1.y + "  " + filteredPoint1.x + filteredPoint1.y);
             if (gamepad1.a) {
+                odometrySpark.sparkResetData(true, odometrySpark.headingUpdateData("right", 0, 0));
                 kalmanFilter.reset();
-                //TODO make a function in OdometrySpark to reset sparkfun x and y values
                 telemetry.addLine("odometry values reset");
             }
             telemetry.update();

@@ -101,11 +101,11 @@ public class OdometrySpark {
 //        if ((sparkPoint.getX() - wheelPoint.getX() < diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < diffenceDebug) && (sparkPoint.getX() - wheelPoint.getX() > -diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < -diffenceDebug)) { return(wheelUpdateData()); }
 //        else { return(sparkUpdateData()); }
 //    }
-//    public void sparkResetData(Boolean reCalibrate, double heading) {
-//        myOtos.resetTracking();
-//        if (reCalibrate) { myOtos.calibrateImu(); }
-//        myOtos.setOffset(new SparkFunOTOS.Pose2D(wheelUpdateData().getX(), wheelUpdateData().getY(), heading));
-//    }
+    public void sparkResetData(Boolean reCalibrate, double heading) {
+        myOtos.resetTracking();
+        if (reCalibrate) { myOtos.calibrateImu(); }
+        myOtos.setOffset(new SparkFunOTOS.Pose2D(0, 0 ,heading));
+    }
 
 //    public void wheelResetData() {
 //        backEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
