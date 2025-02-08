@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.sample.Sample;
 
@@ -38,12 +37,12 @@ public class LimelightBot extends PinchBot {
         super(opMode);
     }
 
-    public void alignWithSampleJulian(boolean isBlueAlliance, boolean includeSharedSample, boolean isSpecimen, Telemetry telemetry, ElapsedTime scanTimer) {
+    public void alignWithSampleJulian(boolean isBlueAlliance, boolean includeSharedSample, boolean isSpecimen, ElapsedTime scanTimer) {
         if (inAutoPickup){
             // already in auto pickup mode
             return;
         }
-        Sample sample = detectOne(isBlueAlliance, includeSharedSample, telemetry);
+        Sample sample = detectOne(isBlueAlliance, includeSharedSample);
         if (sample == null) {
             return;
         }
@@ -55,11 +54,11 @@ public class LimelightBot extends PinchBot {
         boolean isYCloseEnough = Math.abs(sample.getDeltaY() ) < yThreshold;
 
         int delta = (int)Math.round(sample.getDeltaY() * 7);
-        if (telemetry != null) telemetry.addData("extendSlide-------->", delta);
+        telemetry.addData("extendSlide-------->", delta);
         moveSlideByDelta(delta);
 
         double distance = sample.getDeltaX() * 2.2;
-        if (telemetry != null) telemetry.addData("DRIVE --------------> distance :", distance);
+        telemetry.addData("DRIVE --------------> distance :", distance);
         strafing(distance);
         // sample is close enough, pick it up
         inAutoPickup = true;
@@ -103,7 +102,7 @@ public class LimelightBot extends PinchBot {
             if (!isYCloseEnough && scanTimer.time() > 0.25) {
                 // extend/retract the slide based on delta Y
                 int delta = (int)Math.round(sample.getDeltaY() * 5);
-                if (telemetry != null) telemetry.addData("extendSlide-------->", delta);
+                telemetry.addData("extendSlide-------->", delta);
                 moveSlideByDelta(delta);
                 scanTimer.reset();
             }
@@ -111,7 +110,7 @@ public class LimelightBot extends PinchBot {
                 strafing(0);
                 // move the robot sideways based on delta X * 0.26875
                 double distance = sample.getDeltaX() * -3;
-                if (telemetry != null) telemetry.addData("DRIVE --------------> distance :", distance);
+                telemetry.addData("DRIVE --------------> distance :", distance);
                 strafing(distance);
                 scanTimer.reset();
             }
@@ -125,14 +124,13 @@ public class LimelightBot extends PinchBot {
      * @param isBlueAlliance
      * @param includeSharedSample
      * @param isSpecimen
-     * @param telemetry
      */
-    public void alignWithSample(boolean isBlueAlliance, boolean includeSharedSample, boolean isSpecimen, Telemetry telemetry) {
+    public void alignWithSample(boolean isBlueAlliance, boolean includeSharedSample, boolean isSpecimen) {
         if (inAutoPickup){
             // already in auto pickup mode
             return;
         }
-        Sample sample = detectOne(isBlueAlliance, includeSharedSample, telemetry);
+        Sample sample = detectOne(isBlueAlliance, includeSharedSample);
         if (sample == null || sample.isLLResultValid() < 0) {
             // no sample found, do nothing
             telemetry.addData("Sample not found : ", sample);
@@ -152,7 +150,7 @@ public class LimelightBot extends PinchBot {
         }
 
     }
-    public void pickup(boolean isSpecimen, Telemetry telemetry){
+    public void pickup(boolean isSpecimen){
 
         openPinch();
         // lower the pivot
@@ -168,7 +166,7 @@ public class LimelightBot extends PinchBot {
         schedule(this::pivotToPickupUpPos, 1000);
 
     }
-    public Sample detectOne(boolean isBlueAlliance, boolean includeSharedSample, Telemetry telemetry) {
+    public Sample detectOne(boolean isBlueAlliance, boolean includeSharedSample) {
         List<Integer> pipelines = new ArrayList<>();
         if (includeSharedSample) {
             // TODO : disable Shared detection for now
@@ -190,30 +188,30 @@ public class LimelightBot extends PinchBot {
             } catch (InterruptedException e) {
                 // ignore
             }
-            if (telemetry != null) telemetry.addData("pipeline==============", pipeline);
+            telemetry.addData("pipeline==============", pipeline);
             for (int i = 0; i <3; i++) {
                 // try 3 times for each pipeline
                 LLResult result = limelight.getLatestResult();
                 if (result == null){
-                    if (telemetry != null) telemetry.addData("LL Result is null : ", i);
+                    telemetry.addData("LL Result is null : ", i);
                     continue;
                 }
                 Sample sample = new Sample(result, targetTx, targetTy);
-                if (telemetry != null) telemetry.addData("result<<<<<<<<<<<<<<<<<.ta", result.getTa());
-                if (telemetry != null) telemetry.addData("result >>>>>>>>>>>>>>>>> ", sample.toString());
+                telemetry.addData("result<<<<<<<<<<<<<<<<<.ta", result.getTa());
+                telemetry.addData("result >>>>>>>>>>>>>>>>> ", sample.toString());
                 if (sample.isLLResultValid() > 0) {
                     results.add(sample);
                     break;
                 }
             }
         }
-        //if (telemetry != null) telemetry.addData("pipeline.results", results.size());
+        //telemetry.addData("pipeline.results", results.size());
         // find the sample closest to the target on XY plane
         Sample closest = null;
         double minDistance = Double.MAX_VALUE;
         for (Sample sample : results) {
             double distance = sample.distanceXY();
-            if (telemetry != null) telemetry.addData("pipeline::distance", distance);
+            telemetry.addData("pipeline::distance", distance);
             if (distance < minDistance) {
                 minDistance = distance;
                 closest = sample;
