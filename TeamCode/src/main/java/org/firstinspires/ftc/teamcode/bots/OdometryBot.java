@@ -89,8 +89,8 @@ public class OdometryBot extends GyroBot {
         super.init(ahwMap);
         initDriveHardwareMap(ahwMap);
         context = hwMap.appContext;
-        opMode.telemetry.addData("Status", "Init Complete");
-        opMode.telemetry.update();
+        telemetry.addData("Status", "Init Complete");
+        telemetry.update();
         robotLogTimer.reset();
     }
 
@@ -106,8 +106,8 @@ public class OdometryBot extends GyroBot {
 //        verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        verticalRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        opMode.telemetry.addData("Status", "Hardware Map Init Complete");
-        opMode.telemetry.update();
+        telemetry.addData("Status", "Hardware Map Init Complete");
+        telemetry.update();
     }
 
     Context context;
@@ -202,14 +202,14 @@ public class OdometryBot extends GyroBot {
     protected void onTick(){
         RobotLog.d(String.format("Position, heading: %.2f, %.2f, %.2f", xBlue, yBlue, thetaDEG));
 //
-        opMode.telemetry.addData("X:", xBlue);
-        opMode.telemetry.addData("Y:", yBlue);
-        opMode.telemetry.addData("Theta:", thetaDEG);
-        opMode.telemetry.addData("vL", leftFront.getCurrentPosition());
-        opMode.telemetry.addData("vR", rightRear.getCurrentPosition());
-        opMode.telemetry.addData("h", rightFront.getCurrentPosition());
-//        opMode.telemetry.addData("h diameter", (int)((thetaDEG*360)/(horizontal.getCurrentPosition() * Math.PI)));
-        opMode.telemetry.update();
+        telemetry.addData("X:", xBlue);
+        telemetry.addData("Y:", yBlue);
+        telemetry.addData("Theta:", thetaDEG);
+        telemetry.addData("vL", leftFront.getCurrentPosition());
+        telemetry.addData("vR", rightRear.getCurrentPosition());
+        telemetry.addData("h", rightFront.getCurrentPosition());
+//        telemetry.addData("h diameter", (int)((thetaDEG*360)/(horizontal.getCurrentPosition() * Math.PI)));
+        telemetry.update();
 
         //outputEncoders();
         super.onTick();
@@ -362,7 +362,7 @@ public class OdometryBot extends GyroBot {
 //            outputStreamWriter.close();
 //        }
 //        catch (IOException e) {
-//            opMode.telemetry.addData("Exception", "Configuration file write failed: " + e.toString());
+//            telemetry.addData("Exception", "Configuration file write failed: " + e.toString());
 //        }
 //
 //    }
@@ -375,10 +375,10 @@ public class OdometryBot extends GyroBot {
 //                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 //
 //                xBlue = Double.parseDouble(bufferedReader.readLine());
-//                opMode.telemetry.addData("X:", xBlue);
+//                telemetry.addData("X:", xBlue);
 //                yBlue = Double.parseDouble(bufferedReader.readLine());
-//                opMode.telemetry.addData("Y:", yBlue);
-//                opMode.telemetry.update();
+//                telemetry.addData("Y:", yBlue);
+//                telemetry.update();
 //                RobotLog.d(String.format("odometry bodoo: %.2f, %.2f", xBlue, yBlue));
 //                thetaDEG = Double.parseDouble(bufferedReader.readLine());
 //                savedStartAngle = Double.parseDouble(bufferedReader.readLine());

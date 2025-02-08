@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -20,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class BotBot {
 
     public HardwareMap hwMap = null;
+    protected Telemetry telemetry;
     public LinearOpMode opMode;
 
     OutputStreamWriter onLoopWriter;
@@ -31,6 +34,8 @@ public class BotBot {
 
     public BotBot(LinearOpMode opMode) {
         this.opMode = opMode;
+        this.telemetry = opMode.telemetry;
+
         try {
             onLoopWriter = new FileWriter("/sdcard/FIRST/onlooplog_" + java.text.DateFormat.getDateTimeInstance().format(new Date()) + ".csv", true);
         } catch (IOException e) {
@@ -86,6 +91,8 @@ public class BotBot {
     // define event type sample rolled in
     public static final int EVENT_SAMPLE_ROLLED_IN = 1;
     public static final int EVENT_SAMPLE_ROLLED_OUT = 2;
+    public static final int EVENT_PRELOAD_POSITION_ARRIVED = 1;
+    public static final int EVENT_PRELOAD_SCORED = 2;
 
     protected void triggerEvent(int type, int data){
         onEvent(type, data);

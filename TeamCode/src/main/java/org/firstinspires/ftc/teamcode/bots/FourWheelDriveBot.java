@@ -83,25 +83,25 @@ public class FourWheelDriveBot extends BotBot{
 //            if (isSlow) {
 //                driveMultiplier = 0.85;
 //                isSlow = false;
-//                opMode.telemetry.addData("SLOW", driveMultiplier);
+//                telemetry.addData("SLOW", driveMultiplier);
 //                lastToggleDone5 = System.currentTimeMillis();
 //                //RobotLog.d("robot not slow");
 //            } else if (!isSlow) {
 //                driveMultiplier = 0.95;
 //                isSlow = true;
-//                opMode.telemetry.addData("FAST", driveMultiplier);
+//                telemetry.addData("FAST", driveMultiplier);
 //                lastToggleDone5 = System.currentTimeMillis();
 //                //RobotLog.d("robot slow");
 //            }
-//            opMode.telemetry.update();
+//            telemetry.update();
             //RobotLog.d("stick button pressed");
             driveMultiplier = 0.50;
-            opMode.telemetry.addData("FAST", driveMultiplier);
+            telemetry.addData("FAST", driveMultiplier);
         } else {
             driveMultiplier = 0.05;
-            opMode.telemetry.addData("SLOW", driveMultiplier);
+            telemetry.addData("SLOW", driveMultiplier);
         }
-        opMode.telemetry.update();
+        telemetry.update();
         driveByVector(drive, strafe, twist, driveMultiplier);
     }
 
@@ -141,16 +141,16 @@ public class FourWheelDriveBot extends BotBot{
     }
 
     public void readControllerValues(double left_stick_x, double left_stick_y, double right_stick_x) {
-        opMode.telemetry.addData("Left Stick X", left_stick_x);
-        opMode.telemetry.addData("Left Stick Y", left_stick_y);
-        opMode.telemetry.addData("Right Stick X", right_stick_x);
-        opMode.telemetry.update();
+        telemetry.addData("Left Stick X", left_stick_x);
+        telemetry.addData("Left Stick Y", left_stick_y);
+        telemetry.addData("Right Stick X", right_stick_x);
+        telemetry.update();
     }
 
     public void print(String message){
         String caption = "4WD";
-        opMode.telemetry.addData(caption, message);
-        opMode.telemetry.update();
+        telemetry.addData(caption, message);
+        telemetry.update();
     }
 
     public void init(HardwareMap ahwMap) {
