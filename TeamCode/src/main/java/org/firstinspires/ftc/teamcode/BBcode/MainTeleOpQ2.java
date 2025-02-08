@@ -39,6 +39,8 @@ public class MainTeleOpQ2 extends LinearOpMode{
         Hang,
         ViperDown,
         ArmDown,
+        EmergencyExitViperDown,
+        EmergencyExitArmDown
     }
 
     enum SpecimenClipState {
@@ -261,7 +263,7 @@ public class MainTeleOpQ2 extends LinearOpMode{
 
                 case ViperExtendHang:
                     if (viper.getIsViperExtendFull()) {
-                        wristClaw.WristDump();
+                        wristClaw.WristDown();
                         hangState = HangState.WristDown;
                         wristTimer.reset();
                     }
@@ -275,21 +277,51 @@ public class MainTeleOpQ2 extends LinearOpMode{
 
                 case Hang:
                     if (gamepad1.left_trigger > 0 && gamepad1.dpad_down) {
-                        wristClaw.WristUp();
+                        viper.ExtendHang(0.5);
                         hangState = HangState.ViperDown;
+                    }
+                    else if (gamepad1.right_trigger > 0 && gamepad1.dpad_down) {
+                        viper.ExtendClosed(0.75);
+                        hangState = HangState.EmergencyExitViperDown;
                     }
                     break;
 
-//                case ViperDown:
-//                    if (viper.)
+                case ViperDown:
+                    if (viper.getIsViperExtendHang()) {
+                        arm.MoveToSpecimen();
+                        hangState = HangState.ArmDown;
+                    }
+                    break;
 
+                case ArmDown:
+                    if (arm.getIsArmSpecimenPosition()) {
+                        hangState = HangState.Home;
+                    }
+                    else if (gamepad1.right_trigger > 0 && gamepad1.dpad_down) {
+                        viper.ExtendClosed(1);
+                        hangState = HangState.EmergencyExitViperDown;
+                    }
+                    break;
+
+                case EmergencyExitViperDown:
+                    if (viper.getIsViperExtendClosed()) {
+                        arm.MoveToHome();
+                        hangState = HangState.Home;
+                    }
+                    break;
+
+                case EmergencyExitArmDown:
+                    if (arm.getIsArmHomePosition()) {
+                        hangState = HangState.Home;
+                    }
+                    break;
 
             }
 
             switch (specimenClipState) {
                 case Home:
                     if (gamepad2.right_trigger > 0 && gamepad2.dpad_up) {
-                        wristClaw.WristMid();
+                        wristClaw.WristClip();
                         specimenClipState = SpecimenClipState.WristUp;
                         wristTimer.reset();
                     }
@@ -346,8 +378,7 @@ public class MainTeleOpQ2 extends LinearOpMode{
                     if (arm.getIsArmHomePosition()) {
                         specimenClipState = SpecimenClipState.Home;
                     }
-
-
+                    break;
 
             }
 

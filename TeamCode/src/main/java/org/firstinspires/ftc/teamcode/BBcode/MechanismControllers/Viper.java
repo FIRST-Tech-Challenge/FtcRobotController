@@ -24,6 +24,7 @@ public class Viper {
     //Variable Storage:
     //RPM 312 = 537.7 Ticks per Revolution
     int fullExtend = 24;
+    int hangExtend = 15;
     int halfExtend = 8;
     int specimenhangExtend = 9;
     int submersibleExtend = 16;
@@ -47,11 +48,13 @@ public class Viper {
     public boolean getIsViperRetractedShort() {return _viperMotor.getCurrentPosition() < InchConverterToTicks(shortExtend + 0.5);}
     public boolean getIsViperExtendClosed() {return _viperMotor.getCurrentPosition() < InchConverterToTicks(closedExtend + 0.5);}
     public boolean getIsViperExtendSub() {return _viperMotor.getCurrentPosition() > InchConverterToTicks(submersibleExtend);}
+    public boolean getIsViperExtendHang() {return _viperMotor.getCurrentPosition() < InchConverterToTicks(hangExtend + 5);}
     public boolean getIsViperExtendSpecimenHang() {return _viperMotor.getCurrentPosition() > InchConverterToTicks(specimenhangExtend);}
 
     public void StopAndResetEncoder() {_viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);}
     public void ExtendFull(double power) {ViperMotorCustom(fullExtend, power);}
     public void Extendsubmersible(double power) {ViperMotorCustom(submersibleExtend, power);}
+    public void ExtendHang(double power) {ViperMotorCustom(hangExtend, power);}
     public void ExtendShort(double power) {ViperMotorCustom(shortExtend, power);}
     public void ExtendHalf(double power) {ViperMotorCustom(halfExtend, power);}
     public void ExtendClosed(double power) {ViperMotorCustom(closedExtend, power);}

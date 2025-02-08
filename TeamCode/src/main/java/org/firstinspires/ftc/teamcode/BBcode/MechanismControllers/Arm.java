@@ -24,7 +24,7 @@ public class Arm {
     //variables are in degrees
     final int homePosition = 0;
     final int clearancePosition = 24;
-    final int hangPosition = 65;
+    final int hangPosition = 55;
     final int highBasketPosition = 95;
     final double specimenPosition = 45.5;
     //-----------------------
@@ -46,6 +46,7 @@ public class Arm {
     public boolean getIsArmHighBasketPosition() {return _armMotor.getCurrentPosition() > DegreeConverterToTicks(highBasketPosition);}
     public boolean getIsArmHomePosition() {return _armMotor.getCurrentPosition() < DegreeConverterToTicks(homePosition + 5);}
     public boolean getIsArmSpecimenPosition() {return _armMotor.getCurrentPosition() > DegreeConverterToTicks(specimenPosition);}
+    public boolean getIsArmHangPosition() {return _armMotor.getCurrentPosition() < DegreeConverterToTicks(hangPosition);}
 
     public DcMotorEx get_armMotor() {
         return _armMotor;
@@ -75,8 +76,6 @@ public class Arm {
     }
     public void MoveToHang()
     {
-        //target height is 21 inches
-        //(entire front claw needs to be that height and clear robot front)
         ArmMotorCustom(hangPosition, 0.5);
     }
     public void MoveToHighBasket()
