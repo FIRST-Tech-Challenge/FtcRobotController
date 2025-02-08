@@ -94,6 +94,17 @@ public class ViperArmActions {
         return new MoveViperToHomeAction();
     }
 
+    public class MoveViperHalfExtendAction implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            _Viper.ExtendHalf(1);
+            return false;
+        }
+    }
+    public Action MoveViperHalfExtend() {
+        return new MoveViperHalfExtendAction();
+    }
+
     //Moves Viper to pickup sample
     public class MoveViperToSamplePickUpAction implements Action {
         @Override
@@ -120,6 +131,38 @@ public class ViperArmActions {
             UtilActions.Wait(1),
             MoveArmToHome(),
             UtilActions.Wait(1)
+        );
+    }
+
+    public Action DumpInHighBasketTest() {
+        return new SequentialAction(MoveArmToHighBasket(),
+                MoveArmToHighBasket(),
+                UtilActions.Wait(1),
+                MoveViperToHighBasket(),
+                UtilActions.Wait(1.5),
+                _WristClawActions.OpenClaw(),
+                _WristClawActions.WristDown(),
+                UtilActions.Wait(0.25),
+                MoveViperToHome(),
+                UtilActions.Wait(0.75),
+                MoveArmToHome(),
+                UtilActions.Wait(1)
+        );
+    }
+
+    public Action DumpInHighBasketHalfExtend() {
+        return new SequentialAction(MoveArmToHighBasket(),
+                MoveArmToHighBasket(),
+                UtilActions.Wait(1),
+                MoveViperToHighBasket(),
+                UtilActions.Wait(1.5),
+                _WristClawActions.OpenClaw(),
+                _WristClawActions.WristDown(),
+                UtilActions.Wait(0.25),
+                MoveViperHalfExtend(),
+                UtilActions.Wait(0.75),
+                MoveArmToHome(),
+                UtilActions.Wait(1)
         );
     }
 

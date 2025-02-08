@@ -24,7 +24,7 @@ public class Viper {
     //Variable Storage:
     //RPM 312 = 537.7 Ticks per Revolution
     int fullExtend = 24;
-    int halfExtend = 9;
+    int halfExtend = 8;
     int specimenhangExtend = 9;
     int submersibleExtend = 16;
     int shortExtend = 3;

@@ -58,7 +58,17 @@ public class ActionBuilder {
 
 //                .setTangent(-45)
 //                .splineToLinearHeading(BlueBasketPose.pose_drop, 0)
-                .strafeToLinearHeading(BlueBasketPose.drop.position, BlueBasketPose.drop.heading)
+                .strafeToLinearHeading(new Vector2d(-56.5, -55.875), Math.toRadians(45))
+                .splineToLinearHeading(new Pose2d(-44.60, -43.09, Math.toRadians(102.8)), Math.toRadians(45))
+                .setReversed(true)
+                .splineToLinearHeading(new Pose2d(-56.5, -55.875,Math.toRadians(45)), Math.toRadians(-135))
+                .strafeToLinearHeading(new Vector2d(-52.70, -42.05), Math.toRadians(113.59))
+                .setReversed(true)
+                .strafeToLinearHeading(new Vector2d(-56.5, -55.875), Math.toRadians(45))
+                .strafeToLinearHeading(new Vector2d(-58.15, -39.40), Math.toRadians(127.75))
+                .setReversed(true)
+                .strafeToLinearHeading(new Vector2d(-56.5, -55.875), Math.toRadians(45))
+                .strafeToLinearHeading(new Vector2d(38, -60), Math.toRadians(90))
 
                 //.waitSeconds(3)//bring up arm
 
