@@ -125,6 +125,10 @@ public class BlueBotTeleop extends LinearOpMode {
       swerve.teleopDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, dt);
       swerve.periodic();
 
+      double strafe_joystick = gamepad1.left_stick_x;
+      double drive_joystick = -1 * gamepad1.left_stick_y;
+      double rotate_joystick = gamepad1.right_stick_x;
+      double robot_direction = odometry.getHeading().getRadians() - Math.PI/2;
 
       // 1. Sets the target position of the slide, limits set in Mekansim class
       if (-gamepad2.left_stick_y != 0)
@@ -132,12 +136,21 @@ public class BlueBotTeleop extends LinearOpMode {
       if (mek.slideTarget < 0) mek.slideTarget = 0;
       if (mek.slideTarget > mek.limitSlide) mek.slideTarget = mek.limitSlide;
       telemetry.addData("Slide target position: ", mek.slideTarget);
+      double odo_x = Math.cos(robot_direction);
+      double odo_y = Math.sin(robot_direction);
 
       // 1.5 Moves the slide all the way down if right bumper is pressed
       if (gamepad2.right_bumper) {
         mek.setSlide(0);
         mek.slideTarget = 0;
         sleep(1000);
+      drive_joystick += odo_y + 1;
+      drive_joystick *= -1;
+      strafe_joystick += odo_x;
+      
+      drive_joystick = Math.sqrt(Math.pow(strafe_joystick, 2.0) + Math.pow(drive_joystick, 2.0));
+      if (gamepad1.left_stick_y < 0) {
+        drive_joystick *= -1.0;
       }
 
       double steer_direction = (strafe_joystick + 1.0) / 2.0;
