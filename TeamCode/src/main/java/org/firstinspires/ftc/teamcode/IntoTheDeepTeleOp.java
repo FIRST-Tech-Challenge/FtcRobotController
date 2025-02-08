@@ -54,8 +54,12 @@ public class IntoTheDeepTeleOp extends OpMode {
     // State tracking variables
     private boolean isInScoringSequence = false;    // Tracks if scoring sequence is active
     private double scoringSequenceStartTime = 0;    // Time when scoring sequence started
-    private static final double FLYWHEEL_RUN_TIME = 1; // Duration to run flywheel in seconds
+    private static final double FLYWHEEL_RUN_TIME = 0.75; // Duration to run flywheel in seconds
     private boolean isMovingToLow = false;          // Tracks if slide is moving to low position
+    private boolean isWaitingToMoveHigh = false;   // Tracks if we're waiting to move to high position
+    private boolean isWaitingToMoveMedium = false; // Tracks if we're waiting to move to medium position
+    private double clawCloseTime = 0;              // Time when claw was closed
+    private static final double CLAW_CLOSE_WAIT_TIME = 0.5; // Time to wait after closing claw
     
     // Hardware devices for manual control
     private DcMotorEx slideMotor;      // Vertical slide motor
@@ -150,6 +154,7 @@ public class IntoTheDeepTeleOp extends OpMode {
             if (gamepad1.y) {
                 claw.moveToGround();
                 claw.elbowForward();
+                claw.wristUp();
                 claw.openClaw();
             }
             
@@ -161,7 +166,14 @@ public class IntoTheDeepTeleOp extends OpMode {
             
             // Claw grip control
             if (gamepad1.right_trigger > 0.1) {
-                claw.closeClaw();
+                if (!isWaitingToMoveMedium) {
+                    claw.closeClaw();
+                    clawCloseTime = timer.seconds();
+                    isWaitingToMoveMedium = true;
+                } else if (timer.seconds() - clawCloseTime >= CLAW_CLOSE_WAIT_TIME) {
+                    claw.moveToMedium();
+                    isWaitingToMoveMedium = false;
+                }
             }
             
             // Scoring sequence
@@ -187,10 +199,16 @@ public class IntoTheDeepTeleOp extends OpMode {
                 if (elapsedTime >= FLYWHEEL_RUN_TIME) {
                     // Complete scoring sequence
                     flywheel.stop();
-                    claw.closeClaw();
-                    claw.moveToHigh();
-                    claw.elbowForward();
-                    isInScoringSequence = false;
+                    if (!isWaitingToMoveHigh) {
+                        claw.closeClaw();
+                        clawCloseTime = timer.seconds();
+                        isWaitingToMoveHigh = true;
+                    } else if (timer.seconds() - clawCloseTime >= CLAW_CLOSE_WAIT_TIME) {
+                        claw.moveToHigh();
+                        claw.elbowForward();
+                        isInScoringSequence = false;
+                        isWaitingToMoveHigh = false;
+                    }
                 }
             }
         }

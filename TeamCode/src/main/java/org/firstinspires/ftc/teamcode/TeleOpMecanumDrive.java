@@ -24,12 +24,22 @@ public class TeleOpMecanumDrive extends OpMode {
 
         // Initialize the complete robot
         robot = new Robot(mecanumDrive, joystickController);
+        
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
     }
 
     @Override
     public void loop() {
         // Update joystick control to drive the robot
         robot.updateJoystickControl();
+        
+        // Display motor powers
+        telemetry.addData("Front Left Power", "%.2f", mecanumDrive.getFrontLeftPower());
+        telemetry.addData("Front Right Power", "%.2f", mecanumDrive.getFrontRightPower());
+        telemetry.addData("Back Left Power", "%.2f", mecanumDrive.getBackLeftPower());
+        telemetry.addData("Back Right Power", "%.2f", mecanumDrive.getBackRightPower());
+        telemetry.update();
     }
 }
 

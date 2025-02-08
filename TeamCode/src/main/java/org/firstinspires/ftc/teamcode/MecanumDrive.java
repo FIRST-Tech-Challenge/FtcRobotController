@@ -19,6 +19,24 @@ class MecanumDrive {
     public int getBackRightPosition() {
         return backRight.getCurrentPosition();
     }
+
+    // Getter methods to access motor powers
+    public double getFrontLeftPower() {
+        return frontLeft.getPower();
+    }
+
+    public double getFrontRightPower() {
+        return frontRight.getPower();
+    }
+
+    public double getBackLeftPower() {
+        return backLeft.getPower();
+    }
+
+    public double getBackRightPower() {
+        return backRight.getPower();
+    }
+
     private DcMotor frontLeft, frontRight, backLeft, backRight;
 
     // Constructor to initialize all four drive motors
