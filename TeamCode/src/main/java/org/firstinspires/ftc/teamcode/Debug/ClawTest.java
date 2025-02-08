@@ -5,12 +5,8 @@ package org.firstinspires.ftc.teamcode.Debug;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.teamcode.Mekanism.Clip;
 import org.firstinspires.ftc.teamcode.Mekanism.Grabber;
-import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
-
-import java.nio.file.attribute.AclEntryFlag;
 
 @TeleOp
 public class ClawTest extends LinearOpMode {
@@ -22,54 +18,46 @@ public class ClawTest extends LinearOpMode {
     Grabber grabber = new Grabber(this);
 
     boolean
-        isA = false,
-        isB = false,
-        game1A = false,
-        game1B = false,
-        isX = false,
-        isY = false,
-        game1X = false,
-        game1Y = false;
+        is2A = false,
+        is2B = false,
+        is2X = false,
+        is2Y = false,
+        game2A = false,
+        game2B = false,
+        game2X = false,
+        game2Y = false;
 
     waitForStart();
     while (opModeIsActive()) {
 
-      if (gamepad1.a && !isA) {
-        game1A = !game1A;
-        isA = true;
-      } else if (!gamepad1.a) {
-        isA = false;
-      }
-
-      if (game1A)
+      if (gamepad2.a && !is2A) {
+        game2A = !game2A;
+        is2A = true;
+      } else if (!gamepad2.a) is2A = false;
+      if (game2A)
         clip.setFunnel(1.0);
       else clip.setFunnel(0);
 
 
-      if (gamepad1.b && !isB) {
-        game1B = !game1B;
-        isB = true;
-      } else if (!gamepad1.b) {
-        isB = false;
-      }
-
-      if (game1B)
+      if (gamepad2.b && !is2B) {
+        game2B = !game2B;
+        is2B = true;
+      } else if (!gamepad2.b) is2B = false;
+      if (game2B)
         clip.clamp();
       else clip.unclamp();
 
 
-      grabber.setPower(-gamepad1.left_stick_y);
-
-      if (gamepad1.x && !isX) {
-        game1X = !game1X;
-        isX = true;
-      } else if (!gamepad1.x) {
-        isX = false;
-      }
-
-      if (game1X)
+      if (gamepad2.x && !is2X) {
+        game2X = !game2X;
+        is2X = true;
+      } else if (!gamepad2.x) is2X = false;
+      if (game2X)
         grabber.wristUp();
       else grabber.wristDown();
+
+
+      grabber.setPower(-gamepad2.left_stick_y);
 
 
       clip.update();
