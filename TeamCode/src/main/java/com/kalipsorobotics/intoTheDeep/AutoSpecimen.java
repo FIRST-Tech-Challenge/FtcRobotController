@@ -231,7 +231,7 @@ public class AutoSpecimen extends LinearOpMode {
             telemetry.update();
 
         }
-        executorService.shutdown();
+        executorService.shutdownNow();
 
     }
 }

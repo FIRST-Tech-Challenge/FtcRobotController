@@ -89,8 +89,9 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         PurePursuitAction moveOutSpecimen = new PurePursuitAction(driveTrain, wheelOdometry);
         moveOutSpecimen.setName("moveOutSpecimen");
+        moveOutSpecimen.setFinalSearchRadius(50);
         moveOutSpecimen.setDependentActions(wallToBarHangAction);
-        moveOutSpecimen.addPoint(-500, 775, 180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); // y = -250 (midpt)
+        moveOutSpecimen.addPoint(-500, 775, 180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE); // y = -250 (midpt)
         redAutoBasket.addAction(moveOutSpecimen);
 
         IntakeFunnelReady intakeFunnelReady1 = new IntakeFunnelReady(intakeClaw, outtake, false);
@@ -273,7 +274,7 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         }
 
-        executorService.shutdown();
+        executorService.shutdownNow();
 
     }
 }

@@ -44,9 +44,9 @@ public class IntakeClaw {
 
     public static final double INTAKE_BIG_PIVOT_FUNNEL_READY_POS = 0.3; //decrease to pivot back to the robot more
 
-    public static final double INTAKE_SMALL_PIVOT_FUNNEL_GRAB_POS = 0.173;
+    public static final double INTAKE_SMALL_PIVOT_FUNNEL_GRAB_POS = 0.18;//increase to go towards the back
 
-    public static final double INTAKE_BIG_PIVOT_FUNNEL_GRAB_POS = 0.229;
+    public static final double INTAKE_BIG_PIVOT_FUNNEL_GRAB_POS = 0.22; //decrease to go down
 
     public static final double INTAKE_LINKAGE_EXTEND_POS = 0.62; //increase to retract more
 

@@ -710,7 +710,7 @@ public class Teleop extends LinearOpMode {
 
         }
 
-        executorService.shutdown();
+        executorService.shutdownNow();
 
 
     }
