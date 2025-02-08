@@ -141,19 +141,22 @@ public class ViperArmActions {
             _WristClawActions.WristMid(),
             UtilActions.Wait(0.2),
             MoveArmToSpecimen(),
-            UtilActions.Wait(0.75),
+//            UtilActions.Wait(0.75),
             MoveViperToSpecimen(),
             UtilActions.Wait(0.75)
         );
     }
     public Action LowerFromClip() {
         return new SequentialAction(
-                _WristClawActions.WristMid(),
+                _WristClawActions.OpenClaw(),
+                UtilActions.Wait(0.2),
+                _WristClawActions.WristDown(),
                 UtilActions.Wait(0.2),
                 MoveViperToHome(),
                 UtilActions.Wait(0.75),
                 MoveArmToHome(),
-                UtilActions.Wait(0.75)
+                UtilActions.Wait(0.75),
+                _WristClawActions.WristSpecimenPickup()
         );
     }
 }

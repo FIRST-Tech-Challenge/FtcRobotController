@@ -34,6 +34,8 @@ public class Red_Specimen_Auto extends LinearOpMode {
 
         //closes claw on init
         Actions.runBlocking(_WristClawActions.CloseClaw());
+        //raises wrist on init
+        Actions.runBlocking(_WristClawActions.WristUp());
 
         telemetry.update();
         waitForStart();
@@ -46,7 +48,7 @@ public class Red_Specimen_Auto extends LinearOpMode {
         driveToClip1 = drive.actionBuilder(drive.pose)
                 .strafeToLinearHeading(new Vector2d(0,-48), Math.toRadians(90))
                 .build();
-        driveToClip2 = drive.actionBuilder(new Pose2d(51,-57, Math.toRadians(-135)))
+        driveToClip2 = drive.actionBuilder(new Pose2d(46,-60, Math.toRadians(0)))
                 .strafeToLinearHeading(new Vector2d(2, -48), Math.toRadians(90))
                 .build();
         driveToClip3 = drive.actionBuilder(new Pose2d(38,-58,Math.toRadians(0)))
@@ -66,13 +68,14 @@ public class Red_Specimen_Auto extends LinearOpMode {
         driveForSamplePush = drive.actionBuilder(new Pose2d(0,-36,Math.toRadians(90)))
                 .setReversed(true)
                 .splineToLinearHeading(new Pose2d(38,-26, Math.toRadians(90) ), Math.toRadians(90))
-                .splineToConstantHeading(SpecimenPose.apex_inner.position, Math.toRadians(0))
-                .strafeToLinearHeading(new Vector2d(46,-55),Math.toRadians(90))//inner sample to observation
-                .strafeToLinearHeading(new Vector2d(46,-24),Math.toRadians(90))
-                .splineToLinearHeading(new Pose2d(54,-12,Math.toRadians(90)),Math.toRadians(0))//apex of middle sample
-                .splineToLinearHeading(new Pose2d(58, -16,Math.toRadians(90)),Math.toRadians(-90))
-                .strafeToLinearHeading(new Vector2d(58,-55),Math.toRadians(90))//middle sample to observation
-                .strafeToLinearHeading(new Vector2d(48,-58),Math.toRadians(-140))
+                .splineToLinearHeading(new Pose2d(46,-12,Math.toRadians(0)), Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(46,-60),Math.toRadians(0))//inner sample to observation
+//                .strafeToLinearHeading(new Vector2d(46,-24),Math.toRadians(90))
+//                .splineToLinearHeading(new Pose2d(54,-12,Math.toRadians(90)),Math.toRadians(0))//apex of middle sample
+//                .splineToLinearHeading(new Pose2d(58, -16,Math.toRadians(90)),Math.toRadians(-90))
+//                .strafeToLinearHeading(new Vector2d(58,-55),Math.toRadians(90))//middle sample to observation
+//                .strafeToLinearHeading(new Vector2d(48,-58),Math.toRadians(-148))
+//                .turnTo(Math.toRadians(-135))
                 .build();
 
         grabSpecimen3 = drive.actionBuilder(new Pose2d(2,-36,Math.toRadians(90)))
@@ -84,32 +87,34 @@ public class Red_Specimen_Auto extends LinearOpMode {
                 .build();
 
         clawCloseWait1 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.2)
+                .waitSeconds(0.3)
                 .build();
         clawCloseWait2 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.2)
+                .waitSeconds(0.3)
                 .build();
 
         Actions.runBlocking(
                 new SequentialAction(
                         driveToClip1,
-//                        _ViperArmActions.RaiseToClip(),
+                        _ViperArmActions.RaiseToClip(),
                         clippingSpecimen1,
-////                        _ViperArmActions.LowerFromClip(),
+                        _ViperArmActions.LowerFromClip(),
                         driveForSamplePush,
-//                        _WristClawActions.CloseClaw(),
-//                        clawCloseWait1,
+                        _WristClawActions.CloseClaw(),
+                        clawCloseWait1,
+                        _WristClawActions.WristUp(),
                         driveToClip2,
-////                        _ViperArmActions.RaiseToClip(),
+                        _ViperArmActions.RaiseToClip(),
                         clippingSpecimen2,
-////                        _ViperArmActions.LowerFromClip(),
+                        _ViperArmActions.LowerFromClip(),
                         grabSpecimen3,
-//                        _WristClawActions.CloseClaw(),
-////                        clawCloseWait2,
+                        _WristClawActions.CloseClaw(),
+                        clawCloseWait2,
+                        _WristClawActions.WristUp(),
                         driveToClip3,
-////                        _ViperArmActions.RaiseToClip(),
+                        _ViperArmActions.RaiseToClip(),
                         clippingSpecimen3,
-////                        _ViperArmActions.LowerFromClip(),
+                        _ViperArmActions.LowerFromClip(),
                         driveToPark
                 )
         );
