@@ -46,26 +46,26 @@ public class RollerIntakeBot extends FourWheelDriveBot {
     protected void onEvent(int event, int data) {
         super.onEvent(event, data);
         if (event == EVENT_SAMPLE_ROLLED_IN) {
-            NormalizedRGBA colors = colorSensor.getNormalizedColors();
-            @ColorInt int color = colors.toColor();
-            int curColor = getColor(Color.red(color), Color.green(color), Color.blue(color));
-
-            updateColorIndicator(curColor);
+            updateColorIndicator(data);
+        }
+        else if (event == EVENT_SAMPLE_ROLLED_OUT) {
+            updateColorIndicator(0);
         }
     }
 
     protected void onTick() {
         super.onTick();
-        int obj = getObjectInPlace();
         if (rollerMode == ROLLER_MODE_INTAKE) {
+            int obj = getObjectInPlace();
             if (obj != 0) {
                 stopRoller();
-                int color = 25555493;
-                triggerEvent(EVENT_SAMPLE_ROLLED_IN, color);
+                triggerEvent(EVENT_SAMPLE_ROLLED_IN, obj);
             }
         } else if (rollerMode == ROLLER_MODE_OUTAKE) {
+            int obj = getObjectInPlace();
             if (obj == 0) {
                 stopRoller();
+                triggerEvent(EVENT_SAMPLE_ROLLED_OUT, obj);
             }
         }
     }
