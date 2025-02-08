@@ -120,22 +120,6 @@ public class ViperArmActions {
     //dump in high basket
     public Action DumpInHighBasket() {
         return new SequentialAction(MoveArmToHighBasket(),
-            MoveArmToHighBasket(),
-            UtilActions.Wait(0.75),
-            MoveViperToHighBasket(),
-            UtilActions.Wait(2),
-            _WristClawActions.OpenClaw(),
-            _WristClawActions.WristDown(),
-            UtilActions.Wait(0.25),
-            MoveViperToHome(),
-            UtilActions.Wait(1),
-            MoveArmToHome(),
-            UtilActions.Wait(1)
-        );
-    }
-
-    public Action DumpInHighBasketTest() {
-        return new SequentialAction(MoveArmToHighBasket(),
                 MoveArmToHighBasket(),
                 UtilActions.Wait(1),
                 MoveViperToHighBasket(),
@@ -163,19 +147,6 @@ public class ViperArmActions {
                 UtilActions.Wait(0.75),
                 MoveArmToHome(),
                 UtilActions.Wait(1)
-        );
-    }
-
-    // pick up sample
-    public Action PickUpSample() {
-        return new SequentialAction(
-            MoveViperToSamplePickUp(),
-            UtilActions.Wait(1.4),
-            _WristClawActions.CloseClaw(),
-            UtilActions.Wait(.25),
-            _WristClawActions.WristDump(),
-            UtilActions.Wait(.25),
-            MoveViperToHome()
         );
     }
 
