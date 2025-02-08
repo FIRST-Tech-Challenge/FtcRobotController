@@ -26,17 +26,17 @@ public class Arm {
     final int clearancePosition = 24;
     final int hangPosition = 65;
     final int highBasketPosition = 95;
-    final int specimenPosition = 44;
+    final double specimenPosition = 45.5;
     //-----------------------
 
-    private int DegreeConverterToTicks(int degrees) {
+    private int DegreeConverterToTicks(double degrees) {
         //Total ticks for armMotor drivetrain revolution: 7125
         //90 degree rotation for armMotor drivetrain revolution: 1781.25
         //int currentPosit = armMotor.getCurrentPosition();
         //targetArmDegrees = degrees;
 
         double ticksPerDegree = 7125.0/360.0;
-        return (int) (degrees*ticksPerDegree);
+        return (int)(degrees*ticksPerDegree);
     }
     public boolean getIsHome()
     {
@@ -90,7 +90,7 @@ public class Arm {
         ArmMotorCustom(specimenPosition, 1);
         //extension of viper slide to place specimens
     }
-    public void ArmMotorCustom(int degrees, double power)
+    public void ArmMotorCustom(double degrees, double power)
     {
         if (_armMotor == null)
         {
