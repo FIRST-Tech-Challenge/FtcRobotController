@@ -22,7 +22,7 @@ public class PedroAuto {
     private Timer pathTimer, actionTimer, opmodeTimer;
 
     private final Pose startPose = new Pose(7.698663426488457, 53.890643985419196, 0);// starting position of robot
-    private final Pose scoreSpecimen = new Pose(40, 66, Math.toRadians(180));// position where specimen is scored on submersible, robot is aligned to submerisble with back facing it
+    private final Pose scoreSpecimenPose = new Pose(40, 66, Math.toRadians(180));// position where specimen is scored on submersible, robot is aligned to submerisble with back facing it
 
 //    private final Pose sample1 = new Pose(35, 23,0); //these three poses are just behind the samples
     private final Pose samplePivot = new Pose(35, 12.7,0); //pivot from one point to grab all 3 samples
@@ -39,8 +39,8 @@ public class PedroAuto {
     private PathChain pickup1, pickup2, pickup3, score1, score2, score3;
 
     public void buildPaths(){
-        scorePreload = new Path(new BezierLine(new Point(startPose), new Point(scoreSpecimen)));
-        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scoreSpecimen.getHeading());
+        scorePreload = new Path(new BezierLine(new Point(startPose), new Point(scoreSpecimenPose)));
+        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scoreSpecimenPose.getHeading());
 
         pickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(new));
