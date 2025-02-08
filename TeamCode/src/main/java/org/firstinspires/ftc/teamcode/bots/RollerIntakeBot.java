@@ -24,6 +24,10 @@ public class RollerIntakeBot extends FourWheelDriveBot {
     final int ROLLER_MODE_OFF = 0;
     final int ROLLER_MODE_INTAKE = 1;
     final int ROLLER_MODE_OUTAKE = -1;
+    final int NOTHING = 0;
+    final int YELLOW = 1;
+    final int BLUE = 2;
+    final int RED = 3;
     int rollerMode = ROLLER_MODE_OFF;
 
 
@@ -49,7 +53,7 @@ public class RollerIntakeBot extends FourWheelDriveBot {
             updateColorIndicator(data);
         }
         else if (event == EVENT_SAMPLE_ROLLED_OUT) {
-            updateColorIndicator(0);
+            updateColorIndicator(NOTHING);
         }
     }
 
@@ -57,13 +61,13 @@ public class RollerIntakeBot extends FourWheelDriveBot {
         super.onTick();
         if (rollerMode == ROLLER_MODE_INTAKE) {
             int obj = getObjectInPlace();
-            if (obj != 0) {
+            if (obj != NOTHING) {
                 stopRoller();
                 triggerEvent(EVENT_SAMPLE_ROLLED_IN, obj);
             }
         } else if (rollerMode == ROLLER_MODE_OUTAKE) {
             int obj = getObjectInPlace();
-            if (obj == 0) {
+            if (obj == NOTHING) {
                 stopRoller();
                 triggerEvent(EVENT_SAMPLE_ROLLED_OUT, obj);
             }
@@ -115,21 +119,21 @@ public class RollerIntakeBot extends FourWheelDriveBot {
         int thres = 120; // Adjust as needed based on lighting conditions
 
         if (red > thres && green > thres) {
-            return 1; // Yellow (high red + green, low blue)
+            return YELLOW; // Yellow (high red + green, low blue)
         } else if (blue > thres) {
-            return 2; // Blue (high blue, low red + green)
+            return BLUE; // Blue (high blue, low red + green)
         } else if (red > thres) {
-            return 3; // Red (high red, low green + blue)
+            return RED; // Red (high red, low green + blue)
         } else {
-            return 0; // No object detected
+            return NOTHING; // No object detected
         }
     }
     public void updateColorIndicator(int curColor) {
-        if (curColor == 3) { // red
+        if (curColor == RED) { // red
             colorIndicator.setPosition(0.279);
-        } else if (curColor == 2) { // blue
+        } else if (curColor == BLUE) { // blue
             colorIndicator.setPosition(0.611);
-        } else if (curColor == 1) { // yellow
+        } else if (curColor == YELLOW) { // yellow
             colorIndicator.setPosition(0.388);
         } else {
             colorIndicator.setPosition(0.5); // arbitrary value for nothing (green)
