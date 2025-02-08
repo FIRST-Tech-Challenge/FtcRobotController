@@ -92,6 +92,7 @@ public class Red_Basket_Auto extends LinearOpMode {
         //----------------------------------------------------------------------------------------------
         Actions.runBlocking(
                 new SequentialAction(
+                        _ViperArmActions.MoveViperHalfExtend(),
                         driveToDropFromStart,
                         _ViperArmActions.DumpInHighBasketHalfExtend(),
                         samplePickupInner,

@@ -122,7 +122,7 @@ public class WristClawActions {
     public Action PickUpSample() {
         return new SequentialAction(
             CloseClaw(),
-            UtilActions.Wait(0.3),
+            UtilActions.Wait(0.2),
             WristUp()
         );
     }
