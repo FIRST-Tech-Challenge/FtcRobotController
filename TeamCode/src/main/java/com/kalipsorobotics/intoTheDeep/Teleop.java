@@ -276,7 +276,7 @@ public class Teleop extends LinearOpMode {
                     wallToBarAction = new WallToBarAction(driveTrain, wheelOdometry, null, hangIncrement);
                     wallToBarAction.setName("wallToBarHangRoundTrip");
 
-                    hangIncrement += 75;
+                    hangIncrement += 40;
 
                     setLastMoveAction(wallToBarAction);
                 }

@@ -7,6 +7,7 @@ import static com.kalipsorobotics.actions.autoActions.WallToBarHangRoundTrip.WAL
 
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.WaitAction;
+import com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenHang;
@@ -27,7 +28,8 @@ public class WallToBarAction extends KActionSet {
     }
 
     //ASSUME ROBOT AT WALL READY FOR SPECIMEN
-    public WallToBarAction(DriveTrain driveTrain, WheelOdometry wheelOdometry, Position hangPosition, int hangIncrement) {
+    public WallToBarAction(DriveTrain driveTrain, WheelOdometry wheelOdometry, Position hangPosition,
+                           int hangIncrement) {
         PurePursuitAction moveToBar1 = new PurePursuitAction(driveTrain, wheelOdometry); // Chunking pure pursuit
         moveToBar1.setName("moveToBar1");
         moveToBar1.setMaxTimeOutMS(3500);
@@ -35,7 +37,11 @@ public class WallToBarAction extends KActionSet {
                 PurePursuitAction.P_ANGLE_FAST);
 
         if (hangPosition == null) {
-            moveToBar1.addPoint(SPECIMEN_HANG_POS_X + 150, SPECIMEN_HANG_POS_Y + hangIncrement, 0);
+            moveToBar1.addPoint(-450, (225 + hangIncrement)/2.0, 0, PurePursuitAction.P_XY_FAST,
+                    PurePursuitAction.P_ANGLE);
+            moveToBar1.addPoint(FloorToBarHangRoundTrip.SPECIMEN_HANG_POS_X, 225 + hangIncrement, 0,
+                    PurePursuitAction.P_XY_SLOW,
+                    PurePursuitAction.P_ANGLE);
         } else {
             moveToBar1.addPoint(hangPosition.getX(), hangPosition.getY() + 75, hangPosition.getTheta());
         }
