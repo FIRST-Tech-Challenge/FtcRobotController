@@ -32,7 +32,6 @@ public class NoActionTeleOp extends LinearOpMode {
         Wrist wrist = new Wrist(this, false);
         Intake intake = new Intake(this, false);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-        Camera camera = new Camera(this, false, isRed);
 
         // Create enhanced gamepad handlers
         EasyGamepad gamepadEx1 = new EasyGamepad(gamepad1);
@@ -68,10 +67,6 @@ public class NoActionTeleOp extends LinearOpMode {
             if (gamepadEx1.justPressedButton(GamepadKeys.Button.START)) {
                 drive.resetIMU();
             }
-            telemetry.addData("angle", arm.getAngle());
-            telemetry.addData("extend", arm.getExtend());
-            telemetry.addData("exAmp", arm.getCurrentExtend());
-            telemetry.update(); // Refresh telemetry output
         }
     }
 }

@@ -19,7 +19,7 @@ public class Wrist {
     // Predefined positions for the wrist
     public final static double FRONT = 1;         // Position for front
     public final static double BACK = 0;          // Position for back
-    public  static double DOC = 0.8;           // Position for document handling (?)
+    public  static double DOC = 0.75;           // Position for document handling (?)
     public  static double INTAKE_UP = 0.275;     // Position for intake up
     public  static double INTAKE_FLAT = 0.475;   // Position for intake flat
 

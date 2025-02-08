@@ -51,10 +51,10 @@ public class Arm {
     private final double EXTEND_CPR = 537.7; // Counts per revolution for extension motors
 
     private final double ANGLE_TIMEOUT = 3.0; // Timeout for angle movement
-    private final double EXTEND_TIMEOUT = 4.5; // Timeout for extension movement
+    private final double EXTEND_TIMEOUT = 4; // Timeout for extension movement
 
     private final double ANGLE_TOLERANCE = 0.5; // Tolerance for angle movement
-    private final double EXTEND_TOLERANCE = 1.0; // Tolerance for extension movement
+    private final double EXTEND_TOLERANCE = 2.5; // Tolerance for extension movement
 
     private final double LIMIT_TOLERANCE = 0.0; // Tolerance for limit switch reading
 
@@ -326,16 +326,22 @@ public class Arm {
     public class SetAngle implements Action {
         private double goal = getAngle(); // Goal for the angle
 
+        private boolean doOne = false;
+
         public SetAngle(double goal) {
             this.goal = goal; // Set goal for the angle
+            doOne = true;
             anglePID.reset();
-            anglePID.setSetPoint(goal); // Update PID setpoint
         }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            // Return true if angle is not yet at the setpoint
+            if (doOne){
+                anglePID.setSetPoint(goal);
+                doOne = false;
+            }
             DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "setPointAngle", anglePID.getSetPoint());
+            // Return true if angle is not yet at the setpoint
             return !anglePID.atSetPoint();
         }
     }
@@ -351,11 +357,6 @@ public class Arm {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if (IS_DEBUG_MODE){
-                extendPID.setP(KP);
-                extendPID.setI(KI);
-                extendPID.setD(KD);
-            }
             // Calculate power using PID and apply with limits
             if (Math.abs(Math.cos(Math.toRadians(getAngle())) * getExtend()) >= LIMIT){
                 extendPID.setSetPoint(LIMIT);
@@ -370,15 +371,23 @@ public class Arm {
 
     public class SetExtend implements Action{
 
+        private boolean doOne = false;
+
+        private double goal = getAngle();
+
         public SetExtend(double goal){
-            extendPID.setTimeout(10000);
+            this.goal = goal;
+            doOne = true;
             extendPID.reset();
 //            goal = MathUtil.wrap(goal, 0, getMaxExtend());
-            extendPID.setSetPoint(goal);
 
         }
 
         public boolean run(@NonNull TelemetryPacket telemetryPacket){
+            if (doOne){
+                extendPID.setSetPoint(goal);
+                doOne = false;
+            }
             DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "setPointExtend", extendPID.getSetPoint());
             return !extendPID.atSetPoint();
         }

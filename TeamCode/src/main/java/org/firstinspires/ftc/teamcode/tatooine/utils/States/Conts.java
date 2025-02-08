@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.tatooine.utils.States;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
-
+@Config
 public class Conts {
 
     public enum States{
@@ -11,41 +12,41 @@ public class Conts {
 
 
 
-            public double angleScoreSample = 90;
+            public static double angleScoreSample = 90.0;
 
-            public double extendScoreSampleHigh = 0;
+            public static double extendScoreSampleHigh = 62.0;
 
-            public double extendScoreSampleLow = 0;
+            public static double extendScoreSampleLow = 0;
 
-            public double angleScoreSpecimenLow = 0;
+            public static double angleScoreSpecimenLow = 0;
 
-            public double angleScoreSpecimenHigh = 0;
-            public double extendScoreSpecimenLow = 0;
+            public static double angleScoreSpecimenHigh = 0;
+            public static double extendScoreSpecimenLow = 0;
 
-            public double extendScoreSpecimenHigh = 0;
-            public double YScoreSpecimen = 0;
+            public static double extendScoreSpecimenHigh = 0;
+            public static double YScoreSpecimen = 0;
 
-            public double intakeAngleMinFlat = 0 ;
-            public double intakeAngleMaxFlat = 0 ;
-            public double intakeAngleMinUp = 0 ;
-            public double intakeAngleMaxUp = 0 ;
+            public static double intakeAngleMinFlat = 0 ;
+            public static double intakeAngleMaxFlat = 0 ;
+            public static double intakeAngleMinUp = 0 ;
+            public static double intakeAngleMaxUp = 0 ;
 
-            public double specimenAngle = 0;
+            public static double specimenAngle = 0;
 
-            public double specimenUp = 0;
-            public double parkAngle = 0;
+            public static double specimenUp = 0;
+            public static double parkAngle = 0;
 
-            public double parkExtend = 0;
+            public static double parkExtend = 0;
 
-            public double obsAngle = 0;
+            public static double obsAngle = 0;
 
-            public double obsExtend = 0;
+            public static double obsExtend = 0;
 
-            public Pose2d parkObs = new Pose2d(0,0, Math.toRadians(0));
+            public static Pose2d parkObs = new Pose2d(0,0, Math.toRadians(0));
 
-            public Pose2d parkSub = new Pose2d(0,0, Math.toRadians(0));
+            public static Pose2d parkSub = new Pose2d(0,0, Math.toRadians(0));
 
-            public double angleDrive = 60;
+            public static double angleDrive = -5;
 
 
     }

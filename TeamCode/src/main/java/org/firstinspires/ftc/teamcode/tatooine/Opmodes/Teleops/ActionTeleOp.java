@@ -48,12 +48,14 @@ public class ActionTeleOp extends LinearOpMode {
 
     private boolean triangleToggle = false;
 
-    private Conts conts;
+    private boolean dPadUpToggle = false;
+
+    private Conts conts = new Conts();
     @Override
     public void runOpMode(){
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        Arm arm = new Arm(this, false);
+        Arm arm = new Arm(this, true);
         Wrist wrist = new Wrist(this, false);
         Intake intake = new Intake(this, false);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0,0, Math.toRadians(0)));
@@ -77,84 +79,28 @@ public class ActionTeleOp extends LinearOpMode {
             if (gamepadEx1.getButton(GamepadKeys.Button.START)){
                 drive.resetIMU();
             }
+            if (intaking){
+
+            }
             drive.fieldDrive(new Pose2d(-gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x));
-            extend = extend + gamepadEx2.getStick(GamepadKeys.Stick.LEFT_STICK_Y);
-            if (gamepadEx2.justPressedButton(GamepadKeys.Button.START)){
-                specimen = !specimen;
-            }
-            if (intaking && !MathUtil.inTolerance(extend, lastExtend, EXTEND_TOLERANCE)){
-                runningActions.add(arm.intaking(extend));
-                lastExtend = extend;
-            }
              //score sample button
-            if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_UP)){
+            if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_UP) && !dPadUpToggle){
+                dPadUpToggle = true;
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());
                 runningActions.add(arm.moveExtend());
-                runningActions.add(new SequentialAction(new ParallelAction(arm.setAngle(conts.angleScoreSample),new InstantAction(()-> extend = conts.extendScoreSampleHigh), new InstantAction(wrist::doc), new SleepAction(1), intake.outtake(), new SleepAction(0.5), intake.stop(), new InstantAction(wrist::intakeFlat), new SleepAction(1), new ParallelAction(arm.setExtend(0), arm.setAngle(conts.angleDrive)))));
+                runningActions.add(new SequentialAction(
+                        new ParallelAction(arm.setAngle(Conts.angleScoreSample), arm.setExtend(Conts.extendScoreSampleHigh))
+                        , new InstantAction(wrist::doc),new SleepAction(0.2),new InstantAction(()-> intake.setPower(-1))));
                 }
-            //intakes buttons
-            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_RIGHT) && !dPadRightToggle){
-                intaking = true;
-                extend = 5;
-                dPadRightToggle = true;
+            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_UP) && dPadUpToggle){
+                dPadUpToggle = false;
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());
                 runningActions.add(arm.moveExtend());
-                runningActions.add(new SequentialAction(new InstantAction(wrist::intakeFlat), intake.intakeByColor(specimen)));
-            }
-            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_RIGHT) && dPadRightToggle){
-                intaking = false;
-                dPadRightToggle = false;
-                runningActions.clear();
-                runningActions.add(arm.moveAngle());
-                runningActions.add(arm.moveExtend());
-                runningActions.add(new SequentialAction(arm.setExtend(0), arm.setAngle(conts.angleDrive),intake.stop(), new InstantAction(wrist::doc)));
-            }
-            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_LEFT) && !dPadLeftToggle){
-                dPadLeftToggle = true;
-                runningActions.clear();
-                runningActions.add(arm.moveAngle());
-                runningActions.add(arm.moveExtend());
-                runningActions.add(new SequentialAction(arm.setAngle(conts.angleDrive), arm.setExtend(5), new InstantAction(wrist::intakeUp), arm.setAngle(conts.intakeAngleMinUp), intake.intake(), new SleepAction(1), intake.stop()));
-            }
-            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_LEFT) && dPadLeftToggle){
-                dPadLeftToggle = false;
-                runningActions.clear();
-                runningActions.add(arm.moveAngle());
-                runningActions.add(arm.moveExtend());
-                runningActions.add(new SequentialAction(new InstantAction(wrist::doc), arm.setAngle(conts.angleDrive), arm.setExtend(0)));
+                runningActions.add(new SequentialAction(intake.stop(),new InstantAction(()-> wrist.intakeFlat()), arm.setExtend(0), arm.setAngle(0)));
             }
 
-            //specimen buttons
-            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.CIRCLE) && !circleToggle ){
-                circleToggle = true;
-                runningActions.clear();
-                runningActions.add(arm.moveAngle());
-                runningActions.add(arm.moveExtend());
-                runningActions.add(new SequentialAction(arm.setAngle(conts.angleDrive), arm.setExtend(Arm.getMaxExtend()), intake.outtake(), new SleepAction(1), intake.stop()));
-            }
-            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.CIRCLE) && circleToggle ){
-                circleToggle = false;
-                runningActions.clear();
-                runningActions.add(arm.moveAngle());
-                runningActions.add(arm.moveExtend());
-                runningActions.add(new SequentialAction(arm.setAngle(conts.angleDrive), arm.setExtend((0)),new InstantAction(wrist::doc)));
-            }
-            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.TRIANGLE) && !triangleToggle){
-                triangleToggle = true;
-                runningActions.clear();
-                runningActions.add(arm.moveAngle());
-                runningActions.add(arm.moveExtend());
-                runningActions.add(new SequentialAction(new InstantAction(wrist::intakeFlat) ,new ParallelAction(arm.setAngle(conts.angleScoreSpecimenHigh), arm.setExtend((conts.extendScoreSpecimenHigh)))));
-            }
-            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.TRIANGLE) && triangleToggle){
-                triangleToggle = false;
-                runningActions.clear();
-                runningActions.add(arm.moveAngle());
-                runningActions.add(arm.moveExtend());
-                runningActions.add(new SequentialAction(new InstantAction(wrist::doc) ,arm.setAngle(conts.angleDrive), arm.setExtend((0))));
-            }
 
 
 
