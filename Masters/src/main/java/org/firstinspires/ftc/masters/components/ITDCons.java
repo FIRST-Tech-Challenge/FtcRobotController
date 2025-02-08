@@ -57,12 +57,12 @@ public class ITDCons {
     public static int intermediateTarget = 20000;
     public static int WallTarget = 6000;
 
-    public static int MaxExtension = 2000;
+    public static int MaxExtension = 1500;
     public static int MinExtension = 500;
 
     //color threshold
     public static int blueMin =0;
-    public static int blueMAx =100;
+    public static int blueMax =100;
     public static int redMin = 0;
     public static int redMax =100;
     public static int yellowMin =0;

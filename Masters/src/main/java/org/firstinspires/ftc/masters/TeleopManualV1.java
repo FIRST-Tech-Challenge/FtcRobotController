@@ -41,9 +41,9 @@ public class TeleopManualV1 extends LinearOpMode {
 
         boolean relased = true;
 
-        telemetry.addData("Before", outtake.outtakeSlideEncoder.getCurrentPosition());
-
-        telemetry.update();
+//        telemetry.addData("Before", outtake.outtakeSlideEncoder.getCurrentPosition());
+//
+//        telemetry.update();
 
         waitForStart();
 
@@ -137,14 +137,14 @@ public class TeleopManualV1 extends LinearOpMode {
             intake.update();
 
 
-            telemetry.addData("Slide Target", outtake.getTarget());
-            telemetry.addData("Before", outtake.outtakeSlideEncoder.getCurrentPosition());
-
-            telemetry.addData("Slide Position", outtake.getExtensionPos());
-            telemetry.addData("Slide Servo Pos", intake.getExtensionPosition());
-            telemetry.addData("Diffy Servo1 Pos", servo1pos);
-            telemetry.addData("Diffy Servo2 Pos", servo2pos);
-            telemetry.update();
+//            telemetry.addData("Slide Target", outtake.getTarget());
+//            telemetry.addData("Before", outtake.outtakeSlideEncoder.getCurrentPosition());
+//
+//            telemetry.addData("Slide Position", outtake.getExtensionPos());
+//            telemetry.addData("Slide Servo Pos", intake.getExtensionPosition());
+//            telemetry.addData("Diffy Servo1 Pos", servo1pos);
+//            telemetry.addData("Diffy Servo2 Pos", servo2pos);
+//            telemetry.update();
 
         }
     }

@@ -208,11 +208,11 @@ public class Intake {
 
 
     public void checkColor(){
-        if (colorSensor.getRawLightDetected()>ITDCons.blueMin && colorSensor.getRawLightDetected()<ITDCons.blueMAx){
+        if (colorSensor.getRawLightDetected()>ITDCons.blueMin && colorSensor.getRawLightDetected()<ITDCons.blueMax){
             led.setPosition(ITDCons.blue);
         } else if (colorSensor.getRawLightDetected()>ITDCons.redMin && colorSensor.getRawLightDetected()<ITDCons.redMax){
             led.setPosition(ITDCons.red);
-        } else if (colorSensor.getRawLightDetected()>ITDCons.yellow && colorSensor.getRawLightDetected()<ITDCons.yellowMax){
+        } else if (colorSensor.getRawLightDetected()>ITDCons.yellowMin && colorSensor.getRawLightDetected()<ITDCons.yellowMax){
             led.setPosition(ITDCons.yellow);
         } else {
             led.setPosition(ITDCons.off);
