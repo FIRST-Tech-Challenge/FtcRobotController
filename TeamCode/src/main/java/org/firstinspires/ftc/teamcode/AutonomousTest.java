@@ -29,5 +29,4 @@ public class AutonomousTest extends LinearOpMode {
 
 
 //        robot.scoreBucket(true);
-    }
-}
+    }}
