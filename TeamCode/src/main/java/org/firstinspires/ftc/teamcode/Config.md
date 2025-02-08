@@ -36,6 +36,7 @@
 2. intake
 3. wrist
 4. intake2
+5. funnel
 
 ### Analog:
 0. BLEncoder

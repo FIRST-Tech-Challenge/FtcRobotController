@@ -53,6 +53,9 @@ public class BlueBotTeleop extends LinearOpMode {
     steer_wheels(previous_steer_direction);
 
     while (opModeIsActive()) {
+
+
+
       double strafe_joystick = gamepad1.left_stick_x;
       double drive_joystick = -1 * gamepad1.left_stick_y;
       double rotate_joystick = gamepad1.right_stick_x;
