@@ -34,6 +34,7 @@ public class BlueBotTeleop extends LinearOpMode {
   public double brRotationOffset = -0.125;
   public double blRotationOffset = -0.25;
   public double flRotationOffset = -0.25;
+  public final double change_In_Offset = .025;
 
   @Override
   public void runOpMode() throws InterruptedException {
@@ -59,33 +60,33 @@ public class BlueBotTeleop extends LinearOpMode {
       if (gamepad1.a && !lastPressed) {
         if (d_pad) {
           if (gamepad1.dpad_up)
-            blOffset += .125;
+            blOffset += change_In_Offset;
           else
-            blOffset -= .125;
+            blOffset -= change_In_Offset;
           lastPressed = true;
         }
       } else if (gamepad1.b && !lastPressed) {
         if (d_pad) {
           if (gamepad1.dpad_up)
-            brOffset += .125;
+            brOffset += change_In_Offset;
           else
-            brOffset -= .125;
+            brOffset -= change_In_Offset;
           lastPressed = true;
         }
       } else if (gamepad1.x && !lastPressed) {
         if (d_pad) {
           if (gamepad1.dpad_up)
-            flOffset += .125;
+            flOffset += change_In_Offset;
           else
-            flOffset -= .125;
+            flOffset -= change_In_Offset;
           lastPressed = true;
         }
       } else if (gamepad1.y && !lastPressed) {
         if (d_pad) {
           if (gamepad1.dpad_up)
-            frOffset += .125;
+            frOffset += change_In_Offset;
           else
-            frOffset -= .125;
+            frOffset -= change_In_Offset;
           lastPressed = true;
         }
       } else
