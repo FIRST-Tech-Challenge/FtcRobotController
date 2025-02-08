@@ -86,8 +86,12 @@ public class Devices {
         return 475.1 / Math.cos((0.5 * Math.PI) + wormGearRadians());
     }
 
-    final double WHEEL_CIRCUMFERENCE_MM = 326.7;
-    final double TICKS_PER_MOTOR_REV = 537.7;
-    final double TICKS_PER_MM = TICKS_PER_MOTOR_REV / WHEEL_CIRCUMFERENCE_MM; //1.64585246403;
+//    final double WHEEL_CIRCUMFERENCE_MM = 326.7;
+//    final double TICKS_PER_MOTOR_REV = 537.7;
+//    final double TICKS_PER_MM = TICKS_PER_MOTOR_REV / WHEEL_CIRCUMFERENCE_MM; //1.64585246403;
+
+    // did an experiment to see how far it moved
+    final double TICKS_PER_MM = 1646. / 924.;
+
 //Robot Height is approx 1341.3 in ticks
 }

@@ -34,9 +34,27 @@ public class AutoEncoderTest extends DriveMethods {
                 changeState(State.MoveForward);
                 break;
             case MoveForward:
-                omniDrive(0.5, 0, 0);
+                double MM_PER_METER = 1000;
+                double distanceTravelled = robot.leftFrontDrive.getCurrentPosition() / robot.TICKS_PER_MM / MM_PER_METER;
+                double targetDistance = 1;
+                double remainingDistance = targetDistance - distanceTravelled;
+                double MAX_POWER = .5;
 
-                if (robot.leftFrontDrive.getCurrentPosition() >= 1000 * robot.TICKS_PER_MM || getStateTime() >= 10) {
+                telemetry.addData("remainingDistance", "%.2f", remainingDistance);
+
+                double power = 3 * remainingDistance;
+
+                if (power < -MAX_POWER) {
+                    power = -MAX_POWER;
+                }
+                if (power > MAX_POWER) {
+                    power = MAX_POWER;
+                }
+
+                omniDrive(power, 0, 0);
+
+//                robot.leftFrontDrive.getCurrentPosition() >= 1000 * robot.TICKS_PER_MM ||
+                if (getStateTime() >= 20) {
                     // getStateTime is a failsafe
                     omniDrive(0, 0, 0);
                     changeState(State.Finished);
