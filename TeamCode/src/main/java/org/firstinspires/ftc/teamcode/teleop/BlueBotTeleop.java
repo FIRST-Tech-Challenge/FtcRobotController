@@ -21,7 +21,6 @@ public class BlueBotTeleop extends LinearOpMode {
 
   AutoSwerve driveBase;
   boolean d_pad = false;
-  //to save
   boolean lastPressed = false;
 
   public double frOffset = -0.125;
