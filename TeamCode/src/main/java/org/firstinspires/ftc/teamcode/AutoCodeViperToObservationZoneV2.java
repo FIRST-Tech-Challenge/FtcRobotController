@@ -36,9 +36,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name="Auto Viper ObsZone (1)", group="")
 public class AutoCodeViperToObservationZoneV2 extends LinearOpMode {
 
-    static final double     DRIVE_SPEED             = 0.5;
+    static final double     DRIVE_SPEED             = 0.7;
     static final double     DRIVE_INCREASED_SPEED             = 0.8;
-    static final double     TURN_SPEED              = 0.2;
+    static final double     TURN_SPEED              = 0.4;
 
     private HornetRobo hornetRobo;
 
@@ -86,6 +86,7 @@ public class AutoCodeViperToObservationZoneV2 extends LinearOpMode {
                 }
 
                 if (parkInObservationZone) {
+
                     // Go reverse to be away from submersible to move to park in obs zone
                     int reverseDistance = 7; //TODO: Adjust during testing
                     driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, reverseDistance);
@@ -110,7 +111,7 @@ public class AutoCodeViperToObservationZoneV2 extends LinearOpMode {
                     telemetry.addData("Reached Submersible", "");
                     telemetry.update();
 
-                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD,DRIVE_SPEED, 9);
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD,DRIVE_SPEED, 7);
                     telemetry.addData("Reached Submersible", "");
                     telemetry.update();
 
@@ -119,76 +120,27 @@ public class AutoCodeViperToObservationZoneV2 extends LinearOpMode {
                     telemetry.addData("rotate to point to front and turn to plough the sample", "");
                     telemetry.update();
 
-                    armManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
-                    armPosition = 0.4; //TODO: Correct during testing
-                    armManager.MoveArmToPosition(armPosition);
-                    telemetry.addData("Set Arm Pos: ", armPosition);
-                    telemetry.update();
-                    sleep(2000);
+                    pickupSecondSample();
 
-                    grabberManager.OpenOrCloseGrabber(true);
-                    telemetry.addData("Open Grabber", "");
-                    telemetry.update();
-                    sleep(2000);
+                    driveToSubmersible();
 
-                    armPosition = 0.19; //TODO: Correct during testing
-                    armManager.MoveArmToPosition(armPosition);
-                    telemetry.addData("Set Arm Pos: ", armPosition);
-                    telemetry.update();
-                    sleep(2000);
+                    liftUpAndHangSample();
 
-                    grabberManager.OpenOrCloseGrabber(false);
-                    telemetry.addData("Open Grabber", "");
-                    telemetry.update();
-                    sleep(2000);
-
-                    armPosition = 0.4; //TODO: Correct during testing
-                    armManager.MoveArmToPosition(armPosition);
-                    telemetry.addData("Set Arm Pos: ", armPosition);
-                    telemetry.update();
-                    sleep(2000);
-
-                    driveManager.TurnUsingEncoders(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED, 48);
-                    telemetry.addData("rotate to point to front and turn to plough the sample", "");
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD,DRIVE_SPEED, -3);
+                    telemetry.addData("Reached Submersible", "");
                     telemetry.update();
 
-                    driveManager.StrafeToPosition(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED, 40);
-                    telemetry.addData("strafe to go pass submersible edges to avoid hitting when moving forward to pick samples", strafeDistance);
+                    driveManager.StrafeToPosition(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED, -45);
+                    telemetry.addData("strafe to go pass submersible edges to avoid hitting when moving forward to pick samples", 40);
                     telemetry.update();
 
-                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD,DRIVE_SPEED, 10);
+                    final double     DRIVE_SPEED             = 1;
+
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD,DRIVE_SPEED, -25);
                     telemetry.addData("Reached Submersible", "");
                     telemetry.update();
 
 
-                    armManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
-                    viperSlideManager.ResetAndSetToEncoder();
-                    armManager.MoveArmToPosition(0.3);
-                    grabberManager.OpenOrCloseGrabber(false);
-
-                    //moving vs up
-                    viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
-                    viperSlideManager.SetPower(0.3);
-                    sleep(800);
-
-                    //stopping vs and moving arm to drop specimen
-                    viperSlideManager.SetPower(0.0);
-                    armManager.MoveArmToPosition(0.6);
-                    sleep(3000);
-
-                    //vs coming down for short time
-                    viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
-                    viperSlideManager.SetPower(0.95);
-                    sleep(800);
-
-                    //vs stopping for arm to go back
-                    viperSlideManager.SetPower(0.0);
-                    armManager.MoveArmToPosition(0.3);
-                    sleep(200);
-
-                    //vs moving down again
-                    viperSlideManager.SetPower(0.0);
-                    sleep(200);
                 }
                 //done
                 driveManager.StopRobo();
@@ -199,6 +151,92 @@ public class AutoCodeViperToObservationZoneV2 extends LinearOpMode {
 
             }
         }
+    }
+
+    private void pickupSecondSample(){
+        double armPosition = 0.0;
+        long delay = 250;
+
+        armManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
+
+        armPosition = 0.4; //TODO: Correct during testing
+        armManager.MoveArmToPosition(armPosition);
+        telemetry.addData("Set Arm Pos: ", armPosition);
+        telemetry.update();
+        sleep(delay);
+
+        grabberManager.OpenOrCloseGrabber(true);
+        telemetry.addData("Open Grabber", "");
+        telemetry.update();
+        sleep(delay);
+
+        armPosition = 0.25; //TODO: Correct during testing
+        armManager.MoveArmToPosition(armPosition);
+        telemetry.addData("Set Arm Pos: ", armPosition);
+        telemetry.update();
+        sleep(delay);
+
+        armManager.MoveArmToPosition(0.1);
+        telemetry.addData("Set Arm Pos: ", 0.1);
+        telemetry.update();
+        sleep(delay);
+
+        grabberManager.OpenOrCloseGrabber(false);
+        telemetry.addData("Open Grabber", "");
+        telemetry.update();
+        sleep(delay);
+
+        armPosition = 0.4; //TODO: Correct during testing
+        armManager.MoveArmToPosition(armPosition);
+        telemetry.addData("Set Arm Pos: ", armPosition);
+        telemetry.update();
+        sleep(delay);
+    }
+
+    private void driveToSubmersible(){
+        driveManager.TurnUsingEncoders(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED, 48);
+        telemetry.addData("rotate to point to front and turn to plough the sample", "");
+        telemetry.update();
+
+        driveManager.StrafeToPosition(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED, 40);
+        telemetry.addData("strafe to go pass submersible edges to avoid hitting when moving forward to pick samples", 40);
+        telemetry.update();
+
+        driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD,DRIVE_SPEED, 10);
+        telemetry.addData("Reached Submersible", "");
+        telemetry.update();
+    }
+
+    private void liftUpAndHangSample(){
+
+        armManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
+        viperSlideManager.ResetAndSetToEncoder();
+        armManager.MoveArmToPosition(0.3);
+        grabberManager.OpenOrCloseGrabber(false);
+
+        //moving vs up
+        viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
+        viperSlideManager.SetPower(0.3);
+        sleep(700);
+
+        //stopping vs and moving arm to drop specimen
+        viperSlideManager.SetPower(0.0);
+        armManager.MoveArmToPosition(0.6);
+        sleep(800);
+
+        //vs coming down for short time
+        viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
+        viperSlideManager.SetPower(0.95);
+        sleep(800);
+
+        //vs stopping for arm to go back
+        viperSlideManager.SetPower(0.0);
+        armManager.MoveArmToPosition(0.3);
+        sleep(200);
+
+        //vs moving down again
+        viperSlideManager.SetPower(0.0);
+        sleep(200);
     }
 
     private void dropSpecimenInBottomRail()
@@ -267,12 +305,12 @@ public class AutoCodeViperToObservationZoneV2 extends LinearOpMode {
         //moving vs up
         viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
         viperSlideManager.SetPower(0.3);
-        sleep(800);
+        sleep(700); //800
 
         //stopping vs and moving arm to drop specimen
         viperSlideManager.SetPower(0.0);
         armManager.MoveArmToPosition(0.6);
-        sleep(3000);
+        sleep(500 );
 
         //vs coming down for short time
         viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
