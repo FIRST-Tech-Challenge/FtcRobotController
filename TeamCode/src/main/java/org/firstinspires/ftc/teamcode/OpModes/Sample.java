@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Pivot.Pivot;
 import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 
 @Config
-@Autonomous(name = "Sample", group = "Autonomous")
+@Autonomous(name = "Rohan and Elliot's Sample Auton", group = "AAAAAAAA")
 public class Sample extends LinearOpMode {
     // Use FTCDashboard
     FtcDashboard dashboard;
@@ -65,13 +65,13 @@ public class Sample extends LinearOpMode {
                         drivetrain.goToPose(Utils.makePoseVector(-57, -31,0)),
                         drivetrain.goToPose(Utils.makePoseVector(-57, -17,-43)),
                         new ParallelAction(
-                                lift.moveToHeight(28),
+                                lift.moveToHeight(24),
                                 new SequentialAction(
                                         new SleepAction(.75),
                                 arm.armExtend()
                                 )
                         ),
-                        //new SleepAction(.5),
+                        new SleepAction(.5),
                         claw.servoClaw(Claw.clawState.OPEN),
                         new SleepAction(0.3),
                         arm.armNeutral(),
@@ -84,20 +84,20 @@ public class Sample extends LinearOpMode {
                         new SleepAction(1),
                         pivot.setPosition(Intake.intakeState.STOP),
                         extension.servoExtension(Extension.extensionState.RETRACT),
-                        new SleepAction(0.5),
+                        new SleepAction(0.75),
                         intake.motorIntake(Intake.intakeState.STOP),
                         arm.armRetract(),
                         new SleepAction(0.7),
                         claw.servoClaw(Claw.clawState.CLOSE),
                         drivetrain.goToPose(Utils.makePoseVector(-57, -17,-43)),
                         new ParallelAction(
-                        lift.moveToHeight(28),
+                        lift.moveToHeight(24),
                                 new SequentialAction(
                                         new SleepAction(.75),
                                         arm.armExtend()
                                 )
                                 ),
-                        //new SleepAction(.5),
+                        new SleepAction(.5),
                         claw.servoClaw(Claw.clawState.OPEN),
                         new SleepAction(0.3),
                         arm.armNeutral(),
@@ -116,9 +116,8 @@ public class Sample extends LinearOpMode {
                         new SleepAction(0.7),
                         claw.servoClaw(Claw.clawState.CLOSE),
                         drivetrain.goToPose(Utils.makePoseVector(-57, -17,-43)),
-                        lift.moveToHeight(28),
                         new ParallelAction(
-                                lift.moveToHeight(28),
+                                lift.moveToHeight(24),
                                 new SequentialAction(
                                         new SleepAction(.75),
                                         arm.armExtend()
@@ -142,9 +141,8 @@ public class Sample extends LinearOpMode {
                         new SleepAction(0.7),
                         claw.servoClaw(Claw.clawState.CLOSE),
                         drivetrain.goToPose(Utils.makePoseVector(-57, -17,-43)),
-                        lift.moveToHeight(28),
                         new ParallelAction(
-                                lift.moveToHeight(28),
+                                lift.moveToHeight(24),
                                 new SequentialAction(
                                         new SleepAction(.75),
                                         arm.armExtend()

@@ -16,7 +16,7 @@ public class Sweeper {
     HardwareMap hardwareMap;
     ServoAdvanced sweeper;
     public static double sweeperBackwards = 0;
-    public static double sweeperForwards = 1;
+    public static double sweeperForwards = 0.5;
     sweepState status = sweepState.BACKWARD;
     private boolean runSweeper = false;
     public void startSweeper(){
@@ -46,8 +46,9 @@ public class Sweeper {
                     }
                     else if (status==sweepState.BACKWARD) {
                         sweeper.setPosition(sweeperForwards);
-                        status=sweepState.BACKWARD;
+                        status=sweepState.FORWARD;
                     }
+                    sweeperTimer.reset();
                 }
                 return false;
             }
