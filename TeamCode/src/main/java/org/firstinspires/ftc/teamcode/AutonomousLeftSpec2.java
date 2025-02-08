@@ -327,7 +327,7 @@ public class AutonomousLeftSpec2 extends AutonomousBase {
         switch(samplesScored) {
             case 1:
                 // Drive forward toward the wall
-                driveToPosition( 20.9, -32.7, 0.0, DRIVE_SPEED_100, TURN_SPEED_20, DRIVE_TO );
+                driveToPosition( 20.9, -31.7, 0.0, DRIVE_SPEED_100, TURN_SPEED_20, DRIVE_TO );
                 do {
                     if( !opModeIsActive() ) break;
                     // wait for lift/tilt to finish...
@@ -340,7 +340,7 @@ public class AutonomousLeftSpec2 extends AutonomousBase {
                 } while( autoViperMotorMoving() || autoTiltMotorMoving() ); // viper should already be in position
                 break;
             case 2:
-                driveToPosition( 20.9, -43.1, 0.0, DRIVE_SPEED_100, TURN_SPEED_20, DRIVE_TO );
+                driveToPosition( 20.9, -42.6, 0.0, DRIVE_SPEED_100, TURN_SPEED_20, DRIVE_TO );
                 do {
                     if( !opModeIsActive() ) break;
                     // wait for lift/tilt to finish...

@@ -151,6 +151,7 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_SPECIMEN0_DEG   = 60.00; // (NEW) Angle for grabbing specimens off field wall
     public final static double TILT_ANGLE_SPECIMEN1_DEG   = 65.00; // AUTO: Angle for scoring specimens (above bar)
     public final static double TILT_ANGLE_SPECIMEN2_DEG   = 59.40; // AUTO: Angle for scoring specimens (clipped)
+    public final static double TILT_ANGLE_SPECIMEN3_DEG   = 90.00; // AUTO: Angle for backward specimen scoring
     public final static double TILT_ANGLE_CLIP_DEG        = 45.00; // AUTO: clip specimen on bar by just driving forward
     public final static double TILT_ANGLE_HW_MIN_DEG      =  0.00; // Arm at maximum rotation DOWN/FWD
     public final static double TILT_ANGLE_COLLECT_DEG     =  4.00; // Arm to collect samples at ground level
@@ -201,6 +202,7 @@ public class Hardware2025Bot
     public final static int    VIPER_EXTEND_SAFE  = 1100;   // Intake is far enough out to safely rotate down and rotate up
     public final static int    VIPER_EXTEND_AUTO1 = 1980;   // NEW raised to where the specimen hook is above the high bar
     public final static int    VIPER_EXTEND_AUTO2 = 1200;   // NEW retract to clip the specimen to the bar
+    public final static int    VIPER_EXTEND_AUTO3 = 1410;   // NEW raised to where the specimen hook is above the high bar
     public final static int    VIPER_EXTEND_CLIP  = 1580;   // AUTO: clip specimen on bar by just driving forward
     public final static int    VIPER_EXTEND_BASKET= 4200;   // raised to basket-scoring height
     public final static int    VIPER_EXTEND_42    = 3400;   // max forward extension for 42" limit
@@ -243,10 +245,13 @@ public class Hardware2025Bot
     public final static double ELBOW_SERVO_WALL2 = 0.500;       // Grab specimen off wall in autonomous
     public final static double ELBOW_SERVO_WALL2_ANGLE = 180.0; // Grab specimen off wall in autonomous
     public final static double ELBOW_SERVO_CLIP = 0.510;        // AUTO: clip specimen on bar by just driving forward
-    public final static double ELBOW_SERVO_GRABR1 = 0.580;       // TELE: grab at right 45deg angle
-    public final static double ELBOW_SERVO_GRABR2 = 0.650;       // TELE: grab at right 45deg angle
+    //public final static double ELBOW_SERVO_GRABR1 = 0.580;       // TELE: grab at right 45deg angle
+    //public final static double ELBOW_SERVO_GRABR2 = 0.650;       // TELE: grab at right 45deg angle
+    public final static double ELBOW_SERVO_GRABR1 = 0.650;       // TELE: grab at right 45deg angle
+    public final static double ELBOW_SERVO_GRABR2 = 0.790;
     public final static double ELBOW_SERVO_GRABL1 = 0.440;       // TELE: grab at left  22deg angle
     public final static double ELBOW_SERVO_GRABL2 = 0.370;       // TELE: grab at left  22deg angle
+    public final static double ELBOW_SERVO_BAR3   = 1.000;       // For backward arm scoring
 
     public AnalogInput wristServoPos = null;
     public Servo  wristServo = null;
@@ -267,6 +272,7 @@ public class Hardware2025Bot
     public final static double WRIST_SERVO_BAR1_ANGLE = 173.0;
     public final static double WRIST_SERVO_BAR2 = 0.640;         // AUTO: specimen bar (when clipped)
     public final static double WRIST_SERVO_BAR2_ANGLE = 173.0;
+    public final static double WRIST_SERVO_BAR3 = 0.170;
     public final static double WRIST_SERVO_WALL0 = 0.500;        // AUTO: grab specimen off wall (on approach)
     public final static double WRIST_SERVO_WALL0_ANGLE = 180.0;
     public final static double WRIST_SERVO_WALL1 = 0.519;        // AUTO: grab specimen off wall (lift off)
