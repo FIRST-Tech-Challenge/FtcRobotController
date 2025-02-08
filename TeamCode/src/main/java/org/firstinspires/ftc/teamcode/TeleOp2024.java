@@ -67,15 +67,6 @@ if (robot.clawServo.getPosition() >= 1.05) {
 //            wormGearPower = 0;
 //        }
 
-        boolean slowMode2 = gamepad2.left_bumper;
-        double SLOW_2_MODE_SPEED = .25;
-        if (slowMode2) {
-            robot.wormGear.setPower(SLOW_2_MODE_SPEED * wormGearPower);
-
-        } else {
-            robot.wormGear.setPower(wormGearPower);
-        }
-
         // When the button "X" is held on the Operator's Controller, then set the slider to it's maximum length, and hold until this is released.
         // Utilize this for faster access to top basket
         // If a is clicked, then the slider is set to it's minimum.
