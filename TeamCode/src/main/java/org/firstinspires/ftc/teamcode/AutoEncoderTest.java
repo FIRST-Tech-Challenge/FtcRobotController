@@ -7,10 +7,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class AutoEncoderTest extends DriveMethods {
 
     double stateStartTime = -1;
+    double stateStartPos = 0;
 
     enum State {
         Unstarted,
         MoveForward,
+        Wait,
+        Move2,
         Finished
     }
 
@@ -34,46 +37,66 @@ public class AutoEncoderTest extends DriveMethods {
                 changeState(State.MoveForward);
                 break;
             case MoveForward:
-                double MM_PER_METER = 1000;
-                double distanceTravelled = robot.leftFrontDrive.getCurrentPosition() / robot.TICKS_PER_MM / MM_PER_METER;
-                double targetDistance = 1;
-                double remainingDistance = targetDistance - distanceTravelled;
-                double MAX_POWER = .5;
+                double remainingDistance = moveStraightTo(1);
 
-                telemetry.addData("remainingDistance", "%.2f", remainingDistance);
-
-                double power = 3 * remainingDistance;
-
-                if (power < -MAX_POWER) {
-                    power = -MAX_POWER;
+                if (Math.abs(remainingDistance) <= .01) {
+                    changeState(State.Wait);
                 }
-                if (power > MAX_POWER) {
-                    power = MAX_POWER;
-                }
-
-                omniDrive(power, 0, 0);
-
-//                robot.leftFrontDrive.getCurrentPosition() >= 1000 * robot.TICKS_PER_MM ||
-                if (getStateTime() >= 20) {
-                    // getStateTime is a failsafe
-                    omniDrive(0, 0, 0);
+                break;
+                case Wait:
+                    moveStraightTo(0);
+                    if (getStateTime() >= 2) {
+                        changeState(State.Move2);
+                    }
+                    break;
+                case Move2:
+                    remainingDistance = moveStraightTo(-1);
+                if (Math.abs(remainingDistance) <= .01) {
                     changeState(State.Finished);
                 }
                 break;
             case Finished:
-                omniDrive(0, 0, 0);
+
+                moveStraightTo(0);
                 break;
         }
-//spider
     }
 
     void changeState(State nextState) {
         currentState = nextState;
         stateStartTime = getRuntime();
+        stateStartPos = position();
     }
 
     double getStateTime() {
         return getRuntime() - stateStartTime;
+    }
+
+    double position() {
+        double MM_PER_METER = 1000;
+        return robot.leftFrontDrive.getCurrentPosition() / robot.TICKS_PER_MM / MM_PER_METER;
+    }
+
+    double moveStraightTo(double targetDistance) {
+        double distanceTravelled = position();
+        double targetPos = stateStartPos + targetDistance;
+        double remainingDistance = targetPos - distanceTravelled;
+        double MAX_POWER = .5;
+
+        telemetry.addData("remainingDistance", "%.2f", remainingDistance);
+
+        double power = 3 * remainingDistance;
+
+        if (power < -MAX_POWER) {
+            power = -MAX_POWER;
+        }
+        if (power > MAX_POWER) {
+            power = MAX_POWER;
+        }
+
+        omniDrive(power, 0, 0);
+
+        return remainingDistance;
     }
 
 
