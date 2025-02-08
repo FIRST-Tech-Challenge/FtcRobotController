@@ -51,20 +51,40 @@ public class BlueBotTeleop extends LinearOpMode {
     double previous_steer_direction = 0.5;
     double previous_driving_speed = 0.0;
 
+    odometry.resetHeading();
+    odometry.resetPosAndIMU();
     steer_wheels(previous_steer_direction);
-
+    
     while (opModeIsActive()) {
       double strafe_joystick = gamepad1.left_stick_x;
       double drive_joystick = -1 * gamepad1.left_stick_y;
       double rotate_joystick = gamepad1.right_stick_x;
+<<<<<<< HEAD
       double robot_direction = odometry.getHeading().getRadians() - Math.PI / 2;
+=======
+      double robot_direction = odometry.getHeading().getRadians() + (Math.PI / 2.0);
+      boolean oriented_right;
+
+      if (robot_direction < 0.0) {
+        robot_direction += 2 * Math.PI;
+      }
+>>>>>>> dc06a1f (Odo readings are reporting as proper x,y vectors.)
 
       double odo_x = Math.cos(robot_direction);
       double odo_y = Math.sin(robot_direction);
 
+<<<<<<< HEAD
       drive_joystick += odo_y + 1;
       drive_joystick *= -1;
       strafe_joystick += odo_x;
+=======
+      telemetry.addLine("Dir:   " + robot_direction);
+      telemetry.addLine("odo x: " + odo_x);
+      telemetry.addLine("odo y: " + odo_y);
+      telemetry.update();
+
+      odometry.update();
+>>>>>>> dc06a1f (Odo readings are reporting as proper x,y vectors.)
 
       drive_joystick = Math.sqrt(Math.pow(strafe_joystick, 2.0) + Math.pow(drive_joystick, 2.0));
       if (gamepad1.left_stick_y < 0) {
@@ -138,6 +158,15 @@ public class BlueBotTeleop extends LinearOpMode {
         telemetry.addData("steer direction: ", steer_direction);
         telemetry.update();
       }
+<<<<<<< HEAD
+=======
+      
+      // Adjust steering direction if needed
+      if (steer_direction != previous_steer_direction) {
+        previous_steer_direction = steer_direction;
+        steer_wheels(steer_direction);
+      }
+>>>>>>> dc06a1f (Odo readings are reporting as proper x,y vectors.)
     }
   }
 
