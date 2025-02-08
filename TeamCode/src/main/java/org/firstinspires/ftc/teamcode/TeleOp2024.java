@@ -89,10 +89,12 @@ if (robot.clawServo.getPosition() >= 1.05) {
 
         if (operator.right_bumper && operator.left_bumper && driver.right_bumper && driver.left_bumper) {
             robot.wormGear.setPower(-1);
-            if (robot.wormGearAngle() == -7) {
+            if (robot.wormGearAngle() == 20) {
                 robot.wormGear.setPower(0);
             }
         }
+
+
         telemetry.addData("Lift","%.1f", opLeftStickY);
 
         // let the next frame know if the toggle was pressed
