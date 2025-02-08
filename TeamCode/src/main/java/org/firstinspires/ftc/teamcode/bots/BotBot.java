@@ -91,7 +91,8 @@ public class BotBot {
     // define event type sample rolled in
     public static final int EVENT_SAMPLE_ROLLED_IN = 1;
     public static final int EVENT_SAMPLE_ROLLED_OUT = 2;
-    public static final int EVENT_SAMPLE_PICKED_UP = 10;
+    public static final int EVENT_PRELOAD_POSITION_ARRIVED = 1;
+    public static final int EVENT_PRELOAD_SCORED = 2;
 
     protected void triggerEvent(int type, int data){
         onEvent(type, data);
