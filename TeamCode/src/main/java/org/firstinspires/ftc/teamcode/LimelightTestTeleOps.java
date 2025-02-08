@@ -81,7 +81,7 @@ public class LimelightTestTeleOps extends LinearOpMode {
                     isBlueAlliance = true;
                     includeSharedSample = true;
                 }
-                Sample s = robot.detectOne(isBlueAlliance, includeSharedSample, telemetry);
+                Sample s = robot.detectOne(isBlueAlliance, includeSharedSample);
                 lastSample = s;
             }
             if (gamepad2.a){

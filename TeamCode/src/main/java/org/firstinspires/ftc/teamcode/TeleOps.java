@@ -84,7 +84,7 @@ public class TeleOps extends LinearOpMode {
 
             if (gamepad1.left_bumper && scanTimer.time() > 1){
                 //robot.pickup(blueAlliance, true, false, telemetry, scanTimer);
-                robot.alignWithSample(blueAlliance, true, false, telemetry);
+                robot.alignWithSample(blueAlliance, true, false);
             } else {
                 robot.driveByHandFieldCentric(gamepad1.left_stick_x, gamepad1.left_stick_y,
                         gamepad1.right_stick_x*-0.7, gamepad1.left_stick_button, gamepad2.left_stick_x,
@@ -101,7 +101,7 @@ public class TeleOps extends LinearOpMode {
 //            }
 
             if (gamepad1.right_bumper){
-                robot.pickup(false, telemetry);
+                robot.pickup(false);
             }
 //            if (gamepad2.y){
 //                robot.limelight.captureSnapshot("Pickup test");

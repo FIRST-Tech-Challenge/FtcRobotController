@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class RollerIntakeBot extends FourWheelDriveBot {
@@ -24,6 +23,10 @@ public class RollerIntakeBot extends FourWheelDriveBot {
     final int ROLLER_MODE_OFF = 0;
     final int ROLLER_MODE_INTAKE = 1;
     final int ROLLER_MODE_OUTAKE = -1;
+    final int NOTHING = 0;
+    final int YELLOW = 1;
+    final int BLUE = 2;
+    final int RED = 3;
     int rollerMode = ROLLER_MODE_OFF;
 
 
@@ -46,31 +49,31 @@ public class RollerIntakeBot extends FourWheelDriveBot {
     protected void onEvent(int event, int data) {
         super.onEvent(event, data);
         if (event == EVENT_SAMPLE_ROLLED_IN) {
-            NormalizedRGBA colors = colorSensor.getNormalizedColors();
-            @ColorInt int color = colors.toColor();
-            int curColor = getColor(Color.red(color), Color.green(color), Color.blue(color));
-
-            updateColorIndicator(curColor);
+            updateColorIndicator(data);
+        }
+        else if (event == EVENT_SAMPLE_ROLLED_OUT) {
+            updateColorIndicator(NOTHING);
         }
     }
 
     protected void onTick() {
         super.onTick();
-        int obj = getObjectInPlace();
         if (rollerMode == ROLLER_MODE_INTAKE) {
-            if (obj != 0) {
+            int obj = getObjectInPlace();
+            if (obj != NOTHING) {
                 stopRoller();
-                int color = 25555493;
-                triggerEvent(EVENT_SAMPLE_ROLLED_IN, color);
+                triggerEvent(EVENT_SAMPLE_ROLLED_IN, obj);
             }
         } else if (rollerMode == ROLLER_MODE_OUTAKE) {
-            if (obj == 0) {
+            int obj = getObjectInPlace();
+            if (obj == NOTHING) {
                 stopRoller();
+                triggerEvent(EVENT_SAMPLE_ROLLED_OUT, obj);
             }
         }
     }
 
-    public void adjustGain(boolean increase, Telemetry telemetry) {
+    public void adjustGain(boolean increase) {
         if (increase) {
             gain += 0.003f;
         } else {
@@ -81,7 +84,7 @@ public class RollerIntakeBot extends FourWheelDriveBot {
                 .addData("ColorSensor Gain", gain);
     }
 
-    public void logColorSensor(Telemetry telemetry) {
+    public void logColorSensor() {
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
 
         telemetry.addLine()
@@ -115,21 +118,21 @@ public class RollerIntakeBot extends FourWheelDriveBot {
         int thres = 120; // Adjust as needed based on lighting conditions
 
         if (red > thres && green > thres) {
-            return 1; // Yellow (high red + green, low blue)
+            return YELLOW; // Yellow (high red + green, low blue)
         } else if (blue > thres) {
-            return 2; // Blue (high blue, low red + green)
+            return BLUE; // Blue (high blue, low red + green)
         } else if (red > thres) {
-            return 3; // Red (high red, low green + blue)
+            return RED; // Red (high red, low green + blue)
         } else {
-            return 0; // No object detected
+            return NOTHING; // No object detected
         }
     }
     public void updateColorIndicator(int curColor) {
-        if (curColor == 3) { // red
+        if (curColor == RED) { // red
             colorIndicator.setPosition(0.279);
-        } else if (curColor == 2) { // blue
+        } else if (curColor == BLUE) { // blue
             colorIndicator.setPosition(0.611);
-        } else if (curColor == 1) { // yellow
+        } else if (curColor == YELLOW) { // yellow
             colorIndicator.setPosition(0.388);
         } else {
             colorIndicator.setPosition(0.5); // arbitrary value for nothing (green)
