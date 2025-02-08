@@ -31,6 +31,16 @@ public class MainTeleOpQ2 extends LinearOpMode{
         LoweringArm,
     }
 
+    enum HangState {
+        Home,
+        RaiseArmHang,
+        ViperExtendHang,
+        WristDown,
+        Hang,
+        ViperDown,
+        ArmDown,
+    }
+
     enum SpecimenClipState {
         Home,
         WristUp,
@@ -54,6 +64,7 @@ public class MainTeleOpQ2 extends LinearOpMode{
 
 
     HighBasketState highBasketState = HighBasketState.Home;
+    HangState hangState = HangState.Home;
     SpecimenClipState specimenClipState = SpecimenClipState.Home;
     SubmersiblePickupState submersiblePickupState = SubmersiblePickupState.Home;
 
@@ -232,6 +243,47 @@ public class MainTeleOpQ2 extends LinearOpMode{
                         highBasketState = HighBasketState.Home;
                     }
                     break;
+            }
+
+            switch (hangState) {
+                case Home:
+                    if (gamepad1.left_trigger > 0 && gamepad1.dpad_up) {
+                        arm.MoveToHighBasket();
+                        hangState = HangState.RaiseArmHang;
+                    }
+                    break;
+                case RaiseArmHang:
+                    if (arm.getIsArmHighBasketPosition()) {
+                        viper.ExtendFull(1);
+                        hangState = HangState.ViperExtendHang;
+                    }
+                    break;
+
+                case ViperExtendHang:
+                    if (viper.getIsViperExtendFull()) {
+                        wristClaw.WristDump();
+                        hangState = HangState.WristDown;
+                        wristTimer.reset();
+                    }
+                    break;
+
+                case WristDown:
+                    if (wristTimer.seconds() >= wristFlipTime){
+                        hangState = HangState.Hang;
+                    }
+                    break;
+
+                case Hang:
+                    if (gamepad1.left_trigger > 0 && gamepad1.dpad_down) {
+                        wristClaw.WristUp();
+                        hangState = HangState.ViperDown;
+                    }
+                    break;
+
+//                case ViperDown:
+//                    if (viper.)
+
+
             }
 
             switch (specimenClipState) {

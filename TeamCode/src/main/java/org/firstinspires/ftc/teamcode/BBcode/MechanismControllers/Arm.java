@@ -26,7 +26,7 @@ public class Arm {
     final int clearancePosition = 24;
     final int hangPosition = 65;
     final int highBasketPosition = 95;
-    final int specimenPosition = 45;
+    final int specimenPosition = 44;
     //-----------------------
 
     private int DegreeConverterToTicks(int degrees) {
