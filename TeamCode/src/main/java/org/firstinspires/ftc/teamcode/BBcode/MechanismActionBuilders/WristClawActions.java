@@ -2,7 +2,10 @@ package org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders;
 
 import androidx.annotation.NonNull;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.WristClaw;
+import org.firstinspires.ftc.teamcode.BBcode.UtilClasses.UtilActions;
+
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.acmerobotics.roadrunner.Action;
 
@@ -113,5 +116,14 @@ public class WristClawActions {
     }
     public Action WristInit() {
         return new WristInitAction();
+    }
+
+    //Generates Action for Pickup sample
+    public Action PickUpSample() {
+        return new SequentialAction(
+            CloseClaw(),
+            UtilActions.Wait(0.3),
+            WristUp()
+        );
     }
 }

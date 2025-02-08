@@ -119,7 +119,7 @@ public class ViperArmActions {
 
     //dump in high basket
     public Action DumpInHighBasket() {
-        return new SequentialAction(MoveArmToHighBasket(),
+        return new SequentialAction(
                 MoveArmToHighBasket(),
                 UtilActions.Wait(1),
                 MoveViperToHighBasket(),
@@ -135,7 +135,7 @@ public class ViperArmActions {
     }
 
     public Action DumpInHighBasketHalfExtend() {
-        return new SequentialAction(MoveArmToHighBasket(),
+        return new SequentialAction(
                 MoveArmToHighBasket(),
                 UtilActions.Wait(1),
                 MoveViperToHighBasket(),

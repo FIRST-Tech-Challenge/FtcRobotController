@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.BBcode.OpModeType;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.ViperArmActions;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.WristClawActions;
 import org.firstinspires.ftc.teamcode.BBcode.PoseStorage;
+import org.firstinspires.ftc.teamcode.BBcode.UtilClasses.UtilActions;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import java.util.Locale;
 
@@ -87,36 +88,24 @@ public class Red_Basket_Auto extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(38, -60), Math.toRadians(90))
                 .build();
 
-        Action clawCloseWait1 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.3)
-                .build();
-        Action clawCloseWait2 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.3)
-                .build();
-        Action clawCloseWait3 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.3)
-                .build();
-
         //----------------------------------------------------------------------------------------------
         Actions.runBlocking(
                 new SequentialAction(
                         driveToDropFromStart,
                         _ViperArmActions.DumpInHighBasketHalfExtend(),
                         samplePickupInner,
-                        _WristClawActions.CloseClaw(),
-                        clawCloseWait1,
-                        _WristClawActions.WristUp(),
+                        _WristClawActions.PickUpSample(),
                         driveToDropFromOuterSample,
                         _ViperArmActions.DumpInHighBasketHalfExtend(),
                         samplePickupMiddle,
                         _WristClawActions.CloseClaw(),
-                        clawCloseWait2,
+                        _WristClawActions.PickUpSample(),
                         _WristClawActions.WristUp(),
                         driveToDropFromMiddleSample,
                         _ViperArmActions.DumpInHighBasketHalfExtend(),
                         samplePickupOuter,
                         _WristClawActions.CloseClaw(),
-                        clawCloseWait3,
+                        _WristClawActions.PickUpSample(),
                         _WristClawActions.WristUp(),
                         driveToDropFromInnerSample,
                         _ViperArmActions.DumpInHighBasket(),
