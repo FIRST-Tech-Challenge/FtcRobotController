@@ -6,14 +6,14 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.tatooine.utils.DebugUtils;
 
 public class Intake {
 
-    private CRServo intakeRight = null; // Right intake servo
-    private CRServo intakeLeft = null;  // Left intake servo
+    private CRServo intake = null; // Right intake servo
     private boolean IS_DEBUG_MODE = false;      // Debug flag
 
     // Intake speeds
@@ -31,25 +31,22 @@ public class Intake {
         this.IS_DEBUG_MODE = isDebugMode;
 
         // Initialize hardware
-        intakeLeft = opMode.hardwareMap.get(CRServo.class, "IL");
-        intakeRight = opMode.hardwareMap.get(CRServo.class, "IR");
-        colorSensor = new ColorSensorOur(opMode, isDebugMode);
+        intake = opMode.hardwareMap.get(CRServo.class, "IT");
+       // colorSensor = new ColorSensorOur(opMode, isDebugMode);
 
         init();
     }
 
     // Initialize servo directions
     public void init() {
-        intakeLeft.setDirection(CRServo.Direction.REVERSE);
-        intakeRight.setDirection(CRServo.Direction.FORWARD);
+        intake.setDirection(CRServo.Direction.REVERSE);
 
         DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, "Intake", "Initialized: Left REVERSE, Right FORWARD");
     }
 
     // Set power to both servos
     public void setPower(double power) {
-        intakeLeft.setPower(power);
-        intakeRight.setPower(power);
+        intake.setPower(power);
 
         DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, "Intake", "Power Set", power);
     }

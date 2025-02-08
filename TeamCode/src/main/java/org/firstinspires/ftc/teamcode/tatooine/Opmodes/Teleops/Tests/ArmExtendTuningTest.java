@@ -52,7 +52,7 @@ public class ArmExtendTuningTest extends LinearOpMode {
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());
                 runningActions.add(arm.moveExtend());
-                runningActions.add(arm.setExtend((1/2) * arm.getMaxExtend()));
+                runningActions.add(arm.setExtend((1.0/2.0) * arm.getMaxExtend()));
             }else if (gamepadEx1.justPressedButton(GamepadKeys.Button.TRIANGLE)) {
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());

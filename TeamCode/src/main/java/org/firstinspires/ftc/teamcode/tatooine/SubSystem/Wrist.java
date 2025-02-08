@@ -19,9 +19,9 @@ public class Wrist {
     // Predefined positions for the wrist
     public final static double FRONT = 1;         // Position for front
     public final static double BACK = 0;          // Position for back
-    public final static double DOC = 0;           // Position for document handling (?)
-    public final static double INTAKE_UP = 0;     // Position for intake up
-    public final static double INTAKE_FLAT = 0;   // Position for intake flat
+    public  static double DOC = 0.8;           // Position for document handling (?)
+    public  static double INTAKE_UP = 0.275;     // Position for intake up
+    public  static double INTAKE_FLAT = 0.475;   // Position for intake flat
 
     // Debugging flag
     private boolean IS_DEBUG = false;
@@ -37,6 +37,7 @@ public class Wrist {
      * @param isDebug Enables or disables debug logging.
      */
     public Wrist(OpMode opMode, boolean isDebug) {
+        this.opMode = opMode;
         this.IS_DEBUG = isDebug;
 
         // Retrieve servos from the hardware map

@@ -41,45 +41,36 @@ public class NoActionTeleOp extends LinearOpMode {
         waitForStart(); // Wait for start signal
 
         while (opModeIsActive()) {
+            // Update gamepad states
+            gamepadEx1.update(gamepad1);
+            gamepadEx2.update(gamepad2);
             // Drive system - field-oriented control
-            drive.fieldDrive(new Pose2d(-gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x));
+            drive.fieldDrive(new Pose2d( - MathUtil.applyDeadzone(gamepadEx1.getStick(GamepadKeys.Stick.LEFT_STICK_X),0.1), MathUtil.applyDeadzone(gamepadEx1.getStick(GamepadKeys.Stick.LEFT_STICK_Y), 0.1), MathUtil.applyDeadzone(gamepadEx1.getStick(GamepadKeys.Stick.RIGHT_STICK_X),0.1)));
 
             // Intake control - right trigger for intake, left trigger for outtake
-            intake.setPower(gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) -
-                    gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
+            intake.setPower(gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
 
             // Arm angle and extension control
 
-            arm.setPowerAngleWithF(gamepadEx2.getStick(GamepadKeys.Stick.LEFT_STICK_Y));
-            arm.setPowerExtend(gamepadEx2.getStick(GamepadKeys.Stick.RIGHT_STICK_Y));
+            arm.setPowerAngleWithF(MathUtil.applyDeadzone(gamepadEx2.getStick(GamepadKeys.Stick.LEFT_STICK_Y),0.1));
+            arm.setPowerExtend(MathUtil.applyDeadzone(gamepadEx2.getStick(GamepadKeys.Stick.RIGHT_STICK_Y), 0.1));
+
+            // Wrist position presets based on button presses
+            if (gamepadEx2.justPressedButton(GamepadKeys.Button.CIRCLE)) {
+                wrist.intakeUp();
+            } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.TRIANGLE)) {
+                wrist.intakeFlat();
+            } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.SQUARE)) {
+                wrist.doc();
+            }
 
             // Reset IMU when Start button is pressed on gamepad1
             if (gamepadEx1.justPressedButton(GamepadKeys.Button.START)) {
                 drive.resetIMU();
             }
-
-            // Wrist position presets based on button presses
-            if (gamepadEx2.justPressedButton(GamepadKeys.Button.CROSS)) {
-                wrist.back();
-            } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.CIRCLE)) {
-                wrist.intakeFlat();
-            } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.TRIANGLE)) {
-                wrist.intakeUp();
-            } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.SQUARE)) {
-                wrist.doc();
-            }
-
-            // Toggle specimen detection mode in camera
-            if (gamepadEx2.justPressedButton(GamepadKeys.Button.START)) {
-                camera.setSpecimen(!camera.isSpecimen());
-            }
-
-            // Set wrist angle based on camera detection
-
-            // Update gamepad states
-            gamepadEx1.update(gamepad1);
-            gamepadEx2.update(gamepad2);
-
+            telemetry.addData("angle", arm.getAngle());
+            telemetry.addData("extend", arm.getExtend());
+            telemetry.addData("exAmp", arm.getCurrentExtend());
             telemetry.update(); // Refresh telemetry output
         }
     }

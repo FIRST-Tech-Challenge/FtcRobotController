@@ -22,6 +22,7 @@ public class ArmAngleTuningTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         Arm arm = new Arm(this, true);
+        arm.setStartAngle(-5);
         EasyGamepad gamepadEx1 = new EasyGamepad(gamepad1);
         waitForStart();
 
@@ -49,7 +50,7 @@ public class ArmAngleTuningTest extends LinearOpMode {
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());
                 runningActions.add(arm.setAngle(90));
-            }else if (gamepadEx1.justPressedButton(GamepadKeys.Button.CIRCLE)) {
+            }else if (gamepadEx1.justPressedButton(GamepadKeys.Button.SQUARE)) {
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());
                 runningActions.add(arm.setAngle(60));
