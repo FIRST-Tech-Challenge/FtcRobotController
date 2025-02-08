@@ -55,6 +55,7 @@ if (robot.clawServo.getPosition() >= 1.05) {
         telemetry.addData("Lateral","%.1f", driveLeftStickX);
         telemetry.addData("Yaw","%.1f", driveRightStickX);
 
+
         double wormGearPower = opLeftStickY;
         telemetry.addData("Worm Gear Angle", "%.1f", robot.wormGearAngle());
 
@@ -87,12 +88,12 @@ if (robot.clawServo.getPosition() >= 1.05) {
 
        //Set the worm gear tol -7 degrees
 
-        if (operator.right_bumper && operator.left_bumper && driver.right_bumper && driver.left_bumper) {
-            robot.wormGear.setPower(-1);
-            if (robot.wormGearAngle() <= 20) {
-                robot.wormGear.setPower(0);
-            }
-        }
+//        if (operator.right_bumper && operator.left_bumper && driver.right_bumper && driver.left_bumper) {
+//            robot.wormGear.setPower(-1);
+//            if (robot.wormGearAngle() <= 20) {
+//                robot.wormGear.setPower(0);
+//            }
+//        }
 
 
         telemetry.addData("Lift","%.1f", opLeftStickY);

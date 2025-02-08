@@ -48,13 +48,13 @@ public abstract class DriveMethods extends OpMode {
             robot.leftBackDrive.setPower(leftBackPower);
             robot.rightBackDrive.setPower(rightBackPower);
         }
-        boolean slowMode2 = gamepad2.right_bumper;
-        double SLOW_2_MODE_SPEED = .15;
+        boolean slowMode2 = gamepad2.left_bumper;
+        double SLOW_2_MODE_SPEED = .25;
         if (slowMode2) {
-            robot.wormGear.setPower(SLOW_2_MODE_SPEED * robot.wormGear.getPower());
+            robot.wormGear.setPower(SLOW_2_MODE_SPEED * wormGearPower);
 
         } else {
-            robot.wormGear.setPower(robot.wormGear.getPower());
+            robot.wormGear.setPower(wormGearPower);
         }
 }
 
