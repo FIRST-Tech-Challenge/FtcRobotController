@@ -24,7 +24,7 @@ public class TestKalmanOdometry extends LinearOpMode {
     @Override
     public void runOpMode() {
         SparkFunOTOS otos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
-        KalmanFilter kalmanFilter = new KalmanFilter(0.7, 9);
+        KalmanFilter kalmanFilter = new KalmanFilter(0.7, 9, 5);
         //accurate wheel odometry noise: 0.5, 5
         //accurate sparkfun optical sensor noise: 0.7 9
         OdometrySpark odometrySpark = new OdometrySpark(otos);
@@ -38,10 +38,12 @@ public class TestKalmanOdometry extends LinearOpMode {
 //
         while (opModeIsActive()) {
             driveAction.move(gamepad1);
-            Point noisyMeasurement1 = new Point(odometrySpark.sparkUpdateData().getX(),odometrySpark.sparkUpdateData().getY());
-            Point noisyMeasurement2 =  new Point(wheelOdometry.updatePosition().getX(), wheelOdometry.updatePosition().getY());
+            Point noisyMeasurement1 = new Point((odometrySpark.sparkUpdateData().getX() + wheelOdometry.updatePosition().getX())/2,(odometrySpark.sparkUpdateData().getY() + wheelOdometry.updatePosition().getY())/2);
+            //Point noisyMeasurement2 =  new Point(, );
             Point filteredPoint1 = kalmanFilter.update(noisyMeasurement1);
-            Point filteredPoint2 = kalmanFilter.update(noisyMeasurement2);
+            //Point filteredPoint2 = kalmanFilter.update(noisyMeasurement2);
+            //TODO fuse with wheel odo
+            //TODO add kalman filter with heading
             telemetry.addLine("Noisy data");
             telemetry.addLine("x: " + noisyMeasurement1.x + " y: " + noisyMeasurement1.y);
             telemetry.addLine("filtered data");
@@ -50,7 +52,7 @@ public class TestKalmanOdometry extends LinearOpMode {
             if (gamepad1.a) {
                 odometrySpark.sparkResetData(true, odometrySpark.headingUpdateData("right", 0, 0));
                 kalmanFilter.reset();
-                telemetry.addLine("odometry values reset");
+                Log.d("kalmanFilter", "odometry values reset");
             }
             telemetry.update();
         }

@@ -16,7 +16,7 @@ import com.kalipsorobotics.modules.DriveTrain;
 
 public class WheelOdometry {
     private static WheelOdometry single_instance = null;
-
+    KalmanFilter kalmanFilter = new KalmanFilter(0.5, 5, 5);
     OpModeUtilities opModeUtilities;
     IMUModule imuModule;
 
@@ -109,20 +109,18 @@ public class WheelOdometry {
 
         double encoderDeltaTheta = -(deltaRightDistance - deltaLeftDistance) / (TRACK_WIDTH_MM);
         double imuDeltaTheta = currentImuHeading - prevImuHeading;
-
-        double arcTanDeltaTheta = Math.atan2(deltaLeftDistance - deltaRightDistance, TRACK_WIDTH_MM);
-
         //wrapping to normalize theta -pi to pi
         imuDeltaTheta = MathFunctions.angleWrapRad(imuDeltaTheta);
+        double arcTanDeltaTheta = Math.atan2(deltaLeftDistance - deltaRightDistance, TRACK_WIDTH_MM);
 
 
-
+        Position newPosition = kalmanFilter.update(new Position(encoderDeltaTheta, imuDeltaTheta, arcTanDeltaTheta));
         Log.d("purepursaction_debug_odo_wheel_deltaTheta",
                 String.format("encoder = %.4f, imu = %.4f, arcTan = %.4f", encoderDeltaTheta, imuDeltaTheta,
                         arcTanDeltaTheta));
-
-        double blendedDeltaTheta =
-                (wheelHeadingWeight * encoderDeltaTheta) + (imuHeadingWeight * imuDeltaTheta) + (wheelHeadingWeight * arcTanDeltaTheta);
+        double blendedDeltaTheta = (newPosition.getX() + newPosition.getY() + newPosition.getTheta());
+        //double blendedDeltaTheta =
+        //        (wheelHeadingWeight * encoderDeltaTheta) + (imuHeadingWeight * imuDeltaTheta) + (wheelHeadingWeight * arcTanDeltaTheta);
         double deltaTheta = blendedDeltaTheta; //blended compliment eachother — to reduce drift of imu in big movement and to detect small change
 
         double deltaX = (deltaLeftDistance + deltaRightDistance) / 2;
