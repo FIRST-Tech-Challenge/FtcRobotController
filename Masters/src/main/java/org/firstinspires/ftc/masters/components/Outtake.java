@@ -16,7 +16,7 @@ public class Outtake implements Component{
     private PIDController controller;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    public static double p = 0.0045, i = 0.0, d = 0.00001;
+    public static double p = 0.003, i = 0.0, d = 0.00000;
     public static double f = 0.09;
 
     public int target = 0;
