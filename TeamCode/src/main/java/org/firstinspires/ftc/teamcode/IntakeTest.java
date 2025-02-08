@@ -27,12 +27,12 @@ public class IntakeTest extends LinearOpMode {
                 rollerIntakeBot.stopRoller();
             }
             if (gamepad1.a) {
-                rollerIntakeBot.logColorSensor(telemetry); // Get colour values
+                rollerIntakeBot.logColorSensor(); // Get colour values
             }
             if (gamepad1.x) {
-                rollerIntakeBot.adjustGain(true, telemetry); // Increase gain
+                rollerIntakeBot.adjustGain(true); // Increase gain
             } else if (gamepad1.y) {
-                rollerIntakeBot.adjustGain(false, telemetry); // Decrease gain
+                rollerIntakeBot.adjustGain(false); // Decrease gain
             }
 
             telemetry.update();

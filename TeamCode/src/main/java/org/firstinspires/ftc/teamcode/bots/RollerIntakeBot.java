@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class RollerIntakeBot extends FourWheelDriveBot {
@@ -74,7 +73,7 @@ public class RollerIntakeBot extends FourWheelDriveBot {
         }
     }
 
-    public void adjustGain(boolean increase, Telemetry telemetry) {
+    public void adjustGain(boolean increase) {
         if (increase) {
             gain += 0.003f;
         } else {
@@ -85,7 +84,7 @@ public class RollerIntakeBot extends FourWheelDriveBot {
                 .addData("ColorSensor Gain", gain);
     }
 
-    public void logColorSensor(Telemetry telemetry) {
+    public void logColorSensor() {
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
 
         telemetry.addLine()

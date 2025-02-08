@@ -59,33 +59,33 @@ public class GyroBot extends FourWheelDriveBot {
 //            if (isSlow) {
 //                driveMultiplier = 0.85;
 //                isSlow = false;
-//                opMode.telemetry.addData("SLOW", driveMultiplier);
+//                telemetry.addData("SLOW", driveMultiplier);
 //                lastToggleDone5 = System.currentTimeMillis();
 //                //RobotLog.d("robot not slow");
 //            } else if (!isSlow) {
 //                driveMultiplier = 0.95;
 //                isSlow = true;
-//                opMode.telemetry.addData("FAST", driveMultiplier);
+//                telemetry.addData("FAST", driveMultiplier);
 //                lastToggleDone5 = System.currentTimeMillis();
 //                //RobotLog.d("robot slow");
 //            }
-//            opMode.telemetry.update();
+//            telemetry.update();
             //RobotLog.d("stick button pressed");
             driveMultiplier = -0.55;
-            //opMode.telemetry.addData("FAST", driveMultiplier);
+            //telemetry.addData("FAST", driveMultiplier);
         } else {
             driveMultiplier = -0.85;
-            //opMode.telemetry.addData("SLOW", driveMultiplier);
+            //telemetry.addData("SLOW", driveMultiplier);
         }
 
         double angle = -getDeltaAngle() + 180;
-//        opMode.telemetry.addData("raw angle: ", getAngle());
-//        opMode.telemetry.addData("math: ", angle);
+//        telemetry.addData("raw angle: ", getAngle());
+//        telemetry.addData("math: ", angle);
 
         double drive2 = Math.min(1.0, strafe*Math.sin(Math.toRadians(angle)) + drive*Math.cos(Math.toRadians(angle)));
         double strafe2 = Math.min(1.0, strafe*Math.cos(Math.toRadians(angle)) - drive*Math.sin(Math.toRadians(angle)));
 
-        opMode.telemetry.update();
+        telemetry.update();
         driveByVector(drive2, strafe2, twist, driveMultiplier);
     }
 
@@ -99,10 +99,10 @@ public class GyroBot extends FourWheelDriveBot {
 
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-//        opMode.telemetry.addData("Angle", angles.firstAngle - startAngle);
-//        opMode.telemetry.addData("Raw angle", angles.firstAngle);
-//        opMode.telemetry.addData("Start angle", startAngle);
-//        opMode.telemetry.update();
+//        telemetry.addData("Angle", angles.firstAngle - startAngle);
+//        telemetry.addData("Raw angle", angles.firstAngle);
+//        telemetry.addData("Start angle", startAngle);
+//        telemetry.update();
 
         return angles.firstAngle + headingOffset;
     }
@@ -498,9 +498,9 @@ public class GyroBot extends FourWheelDriveBot {
 //    }
 
     protected void onTick() {
-//        opMode.telemetry.addData("saved angle:", headingOffset);
-//        opMode.telemetry.addData("angle:", getAngle());
-//        opMode.telemetry.addData("delta angle:", getDeltaAngle());
+//        telemetry.addData("saved angle:", headingOffset);
+//        telemetry.addData("angle:", getAngle());
+//        telemetry.addData("delta angle:", getDeltaAngle());
         super.onTick();
     }
 }
