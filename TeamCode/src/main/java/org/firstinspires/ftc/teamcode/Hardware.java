@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.hardware.Ascent;
 import org.firstinspires.ftc.teamcode.hardware.AutoClearEncoder;
 import org.firstinspires.ftc.teamcode.hardware.Encoder;
 import org.firstinspires.ftc.teamcode.hardware.EncoderFor;
@@ -34,8 +36,8 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final double SLIDE_OUTWARD_TIME = 0.45; // seconds
     public static final double SLIDE_OVERSHOOT = 0.28;
     public static final double FLIP_DOWN = 0.00;
-    public static final double FRONT_OPEN = 0.36;
-    public static final double FRONT_CLOSE = 0.05;
+    public static final double FRONT_OPEN = 0.66;
+    public static final double FRONT_CLOSE = 0.35;
     public static final double FLIP_UP = 0.95;
     public static final double FLIP_ONE_THIRD = 0.33;
     public static final double CLAW_CLOSE = 0.28;
@@ -53,6 +55,10 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final int VLIFT_SCORE_SPECIMEN = 283;
     public static final double VLIFT_CLOSENESS = 50.0;
     public static final int VLIFT_POWEROFF_HEIGHT = 30;
+    public static final int ASCENT_INIT_POS = -420;
+    public static final int ASCENT_UP_POS = -1742;
+    public static final int ASCENT_PREPARE_POS = -2995;
+    public static final int ASCENT_FINISH_POS = -50;
 
     public static int deg2arm(double degrees) {
         return (int) (degrees / 360.0 * spinTickPerRev);
@@ -77,6 +83,8 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
         public static final SharedResource HorizontalSlide = new SharedResource("HorizontalSlide");
 
         public static final SharedResource HSlideClaw = new SharedResource("HSlideClaw");
+
+        public static final SharedResource Ascent = new SharedResource("Ascent");
     }
 
     public static final double TRACK_WIDTH = 11.375;
@@ -108,8 +116,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
 
     @HardwareName("verticalSlides")
     @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
-    @Deprecated
-    public DcMotor verticalSlide;
+    private DcMotor verticalSlide;
 
     @HardwareName("verticalSlide2")
     @Reversed
@@ -174,6 +181,23 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     @HardwareName("clawColor")
     public ColorSensor clawColor;
 
+    @EncoderFor("backLeft")
+    @Reversed
+    @AutoClearEncoder
+    public Encoder leftAscentEnc;
+
+    @HardwareName("leftAscent")
+    public CRServo leftAscent;
+
+    @EncoderFor("verticalSlide2")
+    @AutoClearEncoder
+    public Encoder rightAscentEnc;
+
+    @HardwareName("rightAscent")
+    @Reversed
+    public CRServo rightAscent;
+
+    public Ascent ascent;
 
     @Override
     public Encoder getLeftEncoder() {
@@ -214,6 +238,30 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
 
     public MotorSet driveMotors;
 
+    public void sharedHardwareInit() {
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        clawFlip.setPosition(Hardware.FLIP_UP);
+        clawFront.setPosition(Hardware.FRONT_OPEN);
+        clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
+
+        arm.setTargetPosition(0);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(0.3);
+        wrist.setPosition(0.28);
+        claw.setPosition(Hardware.CLAW_CLOSE);
+
+        // we don't have the proxy object to handle this for us
+        // so manually implement the inversion
+        horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
+        horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_IN);
+
+        lightLeft.setPosition(Hardware.LAMP_PURPLE);
+        lightRight.setPosition(Hardware.LAMP_PURPLE);
+    }
+
     public Hardware(HardwareMap hwMap) {
         super(hwMap);
         driveMotors = new MotorSet(
@@ -223,6 +271,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
                 backRight
         );
         verticalLift = new Lift(verticalSlide, verticalSlide2);
+        ascent = new Ascent(leftAscent, leftAscentEnc, rightAscent, rightAscentEnc);
     }
 
 }
