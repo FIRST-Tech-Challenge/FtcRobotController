@@ -1,10 +1,9 @@
 package com.kalipsorobotics.intoTheDeep;
 
 
-import android.graphics.Path;
 import android.os.Process;
 
-import com.kalipsorobotics.actions.Init;
+import com.kalipsorobotics.actions.intake.IntakeTransferThirdSampleReady;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.SetAutoDelayAction;
 import com.kalipsorobotics.actions.TransferAction;
@@ -15,7 +14,6 @@ import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.actions.autoActions.SampleToBasketFunnelRoundTrip;
 import com.kalipsorobotics.actions.intake.IntakeFunnelReady;
-import com.kalipsorobotics.actions.intake.IntakeTransferReady;
 import com.kalipsorobotics.actions.intake.SampleIntakeAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeReady;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
@@ -27,11 +25,10 @@ import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.kalipsorobotics.utilities.SharedData;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -58,6 +55,9 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         WheelOdometry.setInstanceNull();
         WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
+        SharedData.resetOdometryPosition();
+
+
         // Target can always be 0 because Hung said so
         MoveLSAction maintainLS = new MoveLSAction(outtake, 0);
         MoveLSAction.setGlobalLinearSlideMaintainTicks(0);
@@ -109,7 +109,8 @@ public class AutoBasketFunnel extends LinearOpMode {
 
 
         //===============start of second basket===============
-        SampleToBasketFunnelRoundTrip sampleToBasketFunnelRoundTrip2 = new SampleToBasketFunnelRoundTrip(driveTrain, wheelOdometry, outtake, intakeClaw, 1100, -75);
+        SampleToBasketFunnelRoundTrip sampleToBasketFunnelRoundTrip2 = new SampleToBasketFunnelRoundTrip(driveTrain,
+                wheelOdometry, outtake, intakeClaw, 1150, -75);
         sampleToBasketFunnelRoundTrip2.setName("sampleToBasketFunnelRoundTrip2");
         sampleToBasketFunnelRoundTrip2.setDependentActions(sampleToBasketFunnelRoundTrip1);
         redAutoBasket.addAction(sampleToBasketFunnelRoundTrip2);
@@ -153,7 +154,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         sampleIntakeAction3.setDependentActions(sampleIntakeReady3, moveToSample3, sampleIntakeReady3, waitAction3);
         redAutoBasket.addAction(sampleIntakeAction3);
 
-        IntakeTransferReady intakeTransferReady3 = new IntakeTransferReady(intakeClaw, true);
+        IntakeTransferThirdSampleReady intakeTransferReady3 = new IntakeTransferThirdSampleReady(intakeClaw);
         intakeTransferReady3.setName("intakeTransferReady3");
         intakeTransferReady3.setDependentActions(sampleIntakeAction3);
         redAutoBasket.addAction(intakeTransferReady3);
@@ -193,7 +194,8 @@ public class AutoBasketFunnel extends LinearOpMode {
         PurePursuitAction moveOutBasket3 = new PurePursuitAction(driveTrain,wheelOdometry);
         moveOutBasket3.setName("moveOutBasket3");
         moveOutBasket3.setDependentActions(openClaw3);
-        moveOutBasket3.addPoint(outtakeXPos - 100, outtakeYPos - 100, -135);
+        moveOutBasket3.setFinalSearchRadius(50);
+        moveOutBasket3.addPoint(outtakeXPos - 150, outtakeYPos - 150, -135, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
         redAutoBasket.addAction(moveOutBasket3);
 
         KServoAutoAction pivotOuttakeHalfwayToBar = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_PARKING_READY_POS);
@@ -209,8 +211,8 @@ public class AutoBasketFunnel extends LinearOpMode {
         PurePursuitAction park = new PurePursuitAction(driveTrain, wheelOdometry);
         park.setName("park");
         park.setDependentActions(moveOutBasket3);
-        park.addPoint(-1225, 700, 45, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); // 610
-        park.addPoint(-1325, 210, 90);
+        park.addPoint(-1225, 700, 45, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE); // 610
+        park.addPoint(-1325, 210, 90, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE);
         redAutoBasket.addAction(park);
 
         KServoAutoAction pivotOuttakeToBar = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_TOUCH_BAR_POS);

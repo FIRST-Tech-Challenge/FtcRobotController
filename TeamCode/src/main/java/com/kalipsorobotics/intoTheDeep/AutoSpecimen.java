@@ -57,6 +57,8 @@ public class AutoSpecimen extends LinearOpMode {
 
         WheelOdometry.setInstanceNull();
         WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
+        SharedData.resetOdometryPosition();
+
         // Target can always be 0 because Hung said so
         MoveLSAction maintainLS = new MoveLSAction(outtake, 0);
         MoveLSAction.setGlobalLinearSlideMaintainTicks(0);

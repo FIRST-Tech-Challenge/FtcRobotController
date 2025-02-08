@@ -12,6 +12,10 @@ public class SharedData {
         odometryPosition.reset(position);
     }
 
+    public static void resetOdometryPosition() {
+        odometryPosition.reset(new Position(0, 0, 0));
+    }
+
     private static final Position odometryPosition = new Position(0, 0, 0);
 
 
