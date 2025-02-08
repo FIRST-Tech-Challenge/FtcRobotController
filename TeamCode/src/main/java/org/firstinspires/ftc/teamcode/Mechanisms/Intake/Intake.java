@@ -12,38 +12,43 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Planners.MotionProfile;
 public class Intake {
     DcMotorEx motor;
     HardwareMap hardwareMap;
-    CRServo intakeServo;
     public Intake(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
         motor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
-        intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
     }
 
     public enum intakeState {
         INTAKE, STOP, OUTTAKE
     }
     public ElapsedTime timer = new ElapsedTime();
-    public Action motorIntake(intakeState intakePos){
-        return new Action(){
+    public Action motorIntake(intakeState intakePos) {
+        return new Action() {
             @Override
-            public boolean run(@NonNull TelemetryPacket packet){
+            public boolean run(@NonNull TelemetryPacket packet) {
                 double timeLastUpdate = timer.seconds();
-                    if(intakePos == intakeState.INTAKE){
-                        motor.setPower(0.75);
-                        intakeServo.setPower(-1);
-                    }
-                    if(intakePos == intakeState.OUTTAKE){
-                        motor.setPower(-0.75);
-                        intakeServo.setPower(1);
-                    }
-                    if (intakePos == intakeState.STOP){
-                        motor.setPower(0);
-                        intakeServo.setPower(0);
-                    }
+                if (intakePos == intakeState.INTAKE) {
+                    motor.setPower(0.75);
+                }
+                if (intakePos == intakeState.OUTTAKE) {
+                    motor.setPower(-0.75);
+                }
+                if (intakePos == intakeState.STOP) {
+                    motor.setPower(0);
+                }
 
                 return false;
             }
         };
+    }
+        public Action disableIntake(){
+            return new Action() {
+                @Override
+                public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                    motor.setPower(0);
+                    return false;
+                }
+            };
+        }
     }
 
 //    public void intakeIn(){
@@ -62,4 +67,4 @@ public class Intake {
 //            }
 //        };
 //    }
-}
+
