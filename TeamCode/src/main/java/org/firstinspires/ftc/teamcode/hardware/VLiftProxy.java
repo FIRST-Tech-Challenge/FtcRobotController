@@ -25,13 +25,11 @@ public class VLiftProxy extends TaskTemplate {
     public final SharedResource CONTROL = new SharedResource("LiftBackgroundTask" + (++INSTANCE_COUNT));
     private final Lift lift;
     private final Set<SharedResource> provides = Set.of(CONTROL);
-    private final Scheduler scheduler;
     private int targetPosition = 0;
 
     public VLiftProxy(@NotNull Scheduler scheduler, Lift lift) {
         super(scheduler);
         this.lift = lift;
-        this.scheduler = scheduler;
     }
 
     @Override
@@ -62,7 +60,7 @@ public class VLiftProxy extends TaskTemplate {
     }
 
     public ITask target(int target) {
-        return new TaskTemplate(scheduler) {
+        return new TaskTemplate(getScheduler()) {
             @Override
             public void invokeOnStart() {
                 targetPosition = target;
@@ -78,7 +76,7 @@ public class VLiftProxy extends TaskTemplate {
     public ITaskWithResult<Boolean> moveTo(int target, int range, double maxDuration) {
         ITaskWithResult<Boolean> result;
         // This version has a timer
-        if (maxDuration >= 0) result = new TaskWithResultTemplate<Boolean>(scheduler) {
+        if (maxDuration >= 0) result = new TaskWithResultTemplate<Boolean>(getScheduler()) {
             private final ElapsedTime t = new ElapsedTime();
 
             @Override
@@ -114,7 +112,7 @@ public class VLiftProxy extends TaskTemplate {
             }
         };
             // This version doesn't
-        else result = new TaskWithResultTemplate<Boolean>(scheduler) {
+        else result = new TaskWithResultTemplate<Boolean>(getScheduler()) {
             @Override
             @NotNull
             public Set<SharedResource> requirements() {

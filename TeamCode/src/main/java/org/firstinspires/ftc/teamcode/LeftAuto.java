@@ -82,15 +82,17 @@ public class LeftAuto extends LinearOpMode {
                         .then(run(() -> {
                             hClawProxy.setClaw(Hardware.FRONT_CLOSE);
                             hardware.claw.setPosition(Hardware.CLAW_OPEN);
-                        }))
-                        .then(await(250))
-                        .then(run(() -> {
+                            hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
                             hardware.wrist.setPosition(0);
                             hardware.arm.setTargetPosition(Hardware.ARM_TRANSFER_POS);
                         }))
-                        .then(await(500))
+//                        .then(await(250))
+//                        .then(run(() -> {
+//
+//                        }))
+                        .then(await(400))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
-                        .then(await(250))
+                        .then(await(150))
                         .then(run(() -> {
                             hardware.arm.setTargetPosition(0);
                             hClawProxy.setClaw(Hardware.FRONT_OPEN);
@@ -104,9 +106,8 @@ public class LeftAuto extends LinearOpMode {
 
     private ITask pickUpYellow() {
         final double flipThird = 0.66;
-        ITask result = groupOf(inner -> inner.add(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
-                .then(hSlideProxy.moveOut())
-                .then(hClawProxy.aSetFlip(Hardware.FLIP_DOWN))
+        ITask result = groupOf(inner -> inner
+                .add(hClawProxy.aSetFlip(Hardware.FLIP_DOWN))
                 .then(await(500))
                 .then(hClawProxy.aSetClaw(Hardware.FRONT_CLOSE))
                 .then(await(250))
@@ -166,27 +167,7 @@ public class LeftAuto extends LinearOpMode {
                 Ramps.LimitMode.SCALE
         );
 
-        hardware.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.clawFlip.setPosition(Hardware.FLIP_UP);
-        hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
-        hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
-
-        hardware.arm.setTargetPosition(0);
-        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.arm.setPower(0.3);
-        hardware.wrist.setPosition(0.28);
-        hardware.claw.setPosition(Hardware.CLAW_CLOSE);
-
-        // we don't have the proxy object to handle this for us
-        // so manually implement the inversion
-        hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
-        hardware.horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_IN);
-
-        hardware.lightLeft.setPosition(Hardware.LAMP_PURPLE);
-        hardware.lightRight.setPosition(Hardware.LAMP_PURPLE);
+        hardware.sharedHardwareInit();
     }
 
     @Override
@@ -209,11 +190,19 @@ public class LeftAuto extends LinearOpMode {
         scheduler
                 .add(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
-                .then(moveTo(new Pose(16.5, 13.5, Math.toRadians(0))))
+                .then(groupOf(a -> {
+                    a.add(moveTo(new Pose(16.5, 13.5, Math.toRadians(0))));
+                    a.add(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
+                        .then(hSlideProxy.moveOut());
+                }))
                 .then(pickUpYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
-                .then(moveTo(new Pose(16.5, 23.75, Math.toRadians(0))))
+                .then(groupOf(a -> {
+                    a.add(moveTo(new Pose(16.5, 23.75, Math.toRadians(0))));
+                    a.add(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
+                            .then(hSlideProxy.moveOut());
+                }))
                 .then(pickUpYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())

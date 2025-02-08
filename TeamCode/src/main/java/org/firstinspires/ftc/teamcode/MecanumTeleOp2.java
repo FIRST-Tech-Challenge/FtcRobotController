@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Hardware.Locks;
+import org.firstinspires.ftc.teamcode.hardware.AscentProxy;
 import org.firstinspires.ftc.teamcode.hardware.HClawProxy;
 import org.firstinspires.ftc.teamcode.hardware.HSlideProxy;
 import org.firstinspires.ftc.teamcode.hardware.VLiftProxy;
@@ -53,6 +54,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
     private NavxMicroNavigationSensor navxMicro;
     private HSlideProxy hSlideProxy;
     private HClawProxy hClawProxy;
+    private AscentProxy ascentProxy;
     private EncoderTracking tracker;
     private Ramps ramps;
     private LoopStopwatch loopTimer;
@@ -103,27 +105,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
                 Ramps.LimitMode.SCALE
         );
 
-        hardware.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.clawFlip.setPosition(Hardware.FLIP_UP);
-        hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
-        hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
-
-        hardware.arm.setTargetPosition(0);
-        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.arm.setPower(0.3);
-        hardware.wrist.setPosition(0.28);
-        hardware.claw.setPosition(Hardware.CLAW_CLOSE);
-
-        // we don't have the proxy object to handle this for us
-        // so manually implement the inversion
-        hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
-        hardware.horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_IN);
-
-        hardware.lightLeft.setPosition(Hardware.LAMP_PURPLE);
-        hardware.lightRight.setPosition(Hardware.LAMP_PURPLE);
+        hardware.sharedHardwareInit();
 
         navxMicro = hardware.gyro;
     }
@@ -158,6 +140,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         vLiftProxy = scheduler.add(new VLiftProxy(scheduler, hardware.verticalLift));
         hSlideProxy = scheduler.add(new HSlideProxy(scheduler, hardware));
         hClawProxy = scheduler.add(new HClawProxy(scheduler, hardware));
+        ascentProxy = scheduler.add(new AscentProxy(scheduler, hardware.ascent, Hardware.ASCENT_UP_POS));
 
         telemetry.log().clear();
         telemetry.log().add("Set and ready to roll!");
@@ -275,6 +258,13 @@ public class MecanumTeleOp2 extends LinearOpMode {
                 if (untwist90) hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
             }
 
+            if (gamepad1.b) {
+                hardware.ascent.setTargetPosition(Hardware.ASCENT_PREPARE_POS);
+            }
+            if (gamepad1.right_bumper) {
+                hardware.ascent.setTargetPosition(Hardware.ASCENT_FINISH_POS);
+            }
+
             boolean shouldFlipIn = gamepad1.right_trigger > 0.5;
             if (shouldFlipIn && !isFlipIn) Flipin();
             boolean shouldFlipOut = gamepad1.left_trigger > 0.5;
@@ -303,6 +293,9 @@ public class MecanumTeleOp2 extends LinearOpMode {
             telemetry.addData("Claw Position", hardware.claw.getPosition());
             telemetry.addData("Vertical position", verticalPosition);
             telemetry.addData("Est pose", tracker.getPose());
+            telemetry.addData("ascLeft calib", hardware.ascent.getLeftPosition());
+            telemetry.addData("ascRight calib", hardware.ascent.getRightPosition());
+            telemetry.addData("asc target", hardware.ascent.getTargetPosition());
             scheduler.displayStatus(false, true, (str) -> {
                 telemetry.addLine(str);
                 return Unit.INSTANCE;
@@ -628,15 +621,16 @@ public class MecanumTeleOp2 extends LinearOpMode {
                             hClawProxy.setClaw(Hardware.FRONT_CLOSE);
                             hardware.claw.setPosition(Hardware.CLAW_OPEN);
                             hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
-                        }))
-                        .then(await(250))
-                        .then(run(() -> {
                             hardware.wrist.setPosition(0);
                             hardware.arm.setTargetPosition(Hardware.ARM_TRANSFER_POS);
                         }))
-                        .then(await(500))
+//                        .then(await(250))
+//                        .then(run(() -> {
+//
+//                        }))
+                        .then(await(400))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
-                        .then(await(250))
+                        .then(await(150))
                         .then(run(() -> {
                             hardware.arm.setTargetPosition(0);
                             hClawProxy.setClaw(Hardware.FRONT_OPEN);
@@ -644,9 +638,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
                         .then(await(100))
                         .then(run(() -> hardware.clawFront.setPosition(0.6)))
                         .then(await(250))
-                        .then(run(() -> {
-                            hardware.wrist.setPosition(Hardware.WRIST_BACK);
-                        }))
+                        .then(run(() -> hardware.wrist.setPosition(Hardware.WRIST_BACK)))
         ).extraDepends(
                 hClawProxy.CONTROL_CLAW,
                 vLiftProxy.CONTROL,
