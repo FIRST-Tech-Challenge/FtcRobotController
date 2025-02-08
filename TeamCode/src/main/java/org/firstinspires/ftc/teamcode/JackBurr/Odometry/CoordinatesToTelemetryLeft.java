@@ -35,8 +35,6 @@ public class CoordinatesToTelemetryLeft extends OpMode {
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         startPose = new Pose2d(startPosition.x, startPosition.y, Math.toRadians(startHeadingDegrees));
         drive = new PinpointDrive(hardwareMap, startPose);
     }
