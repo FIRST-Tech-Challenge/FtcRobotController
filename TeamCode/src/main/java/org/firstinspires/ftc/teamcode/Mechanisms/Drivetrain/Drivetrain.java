@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils.inverseKinematics;
 import static org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils.l;
 import static org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils.r;
@@ -58,8 +59,8 @@ public class Drivetrain {
     public SimpleMatrix wheelPowerPrev = new SimpleMatrix(4, 1);
     public PoseController poseControl = new PoseController();
     public static double acceptablePowerDifference = 0.000001; // The acceptable difference between current and previous wheel power to make a hardware call
-    public static double distanceThreshold = 0.5;
-    public static double angleThreshold = 0.1;
+    public static double distanceThreshold = 0.25;
+    public static double angleThreshold = 0.05;
     public static double maxVoltage = 12.5;
     SimpleMatrix initialState = new SimpleMatrix(6,1);
     public void setInitialPose(double x, double y, double theta){
@@ -282,6 +283,9 @@ public class Drivetrain {
                 );
                 double denominator = Math.max(Math.abs(x) + Math.abs(y) + Math.abs(rx), 1.0);
                 setPower(inverseKinematics(compensatedTwist).scale(1/denominator));
+                telemetryPacket.put("X", state.get(0,0));
+                telemetryPacket.put("Y", state.get(1,0));
+                telemetryPacket.put("Theta", Math.toDegrees(state.get(2,0)));
                 return false;
             }
         };
