@@ -99,6 +99,12 @@ public class BlueBotTeleop extends LinearOpMode {
     driveBase.servoFR.setPosition(x_direction);
   }
 
+  private void wheels(double input){
+    double output = input;
+
+    drive_wheels(output);
+  }
+
   private void drive_wheels(double drive_speed) {
     driveBase.motorBL.setPower(drive_speed);
     driveBase.motorBR.setPower(drive_speed);
