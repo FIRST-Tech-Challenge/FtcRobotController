@@ -12,14 +12,20 @@ public class ITDCons {
     public static double intakeInit = 0.5;
     public static double intakeInitLeft = 0;
     public static double intakeInitRight = 1;
-    public static double dropLeft =0.45;
-    public static double dropRight = 0.55;
+    public static double intakeArmDrop =0.55;
+    public static double intakeChainDrop = 0;
+
+    public static double intakeArmTransfer=0.4;
+    public static double intakeChainTransfer = 0.45;
     public static double liftIntake =0.5;
     public static double liftIntakeLeft= 0.55;
     public static double liftIntakeRight = 0.45;
 
-    public static double open = 0.35;
-    public static double close = 0.75;
+    public static double gateOpen=0.6;
+    public static double gateClose=0.04;
+
+    public static double clawOpen = 0.35;
+    public static double clawClose = 0.75;
 
     public static double wristFront= 0.2;
     public static double wristBack = 0.77;
@@ -51,7 +57,8 @@ public class ITDCons {
     public static int intermediateTarget = 20000;
     public static int WallTarget = 6000;
 
-    public static int MaxExtension = 10000;
+    public static int MaxExtension = 2000;
+    public static int MinExtension = 500;
 
     //color threshold
     public static int blueMin =0;

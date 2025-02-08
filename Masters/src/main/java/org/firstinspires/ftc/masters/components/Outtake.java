@@ -16,7 +16,7 @@ public class Outtake implements Component{
     private PIDController controller;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    public static double p = 0.0024, i = 0.0002, d = 0.00001;
+    public static double p = 0.0045, i = 0.0, d = 0.00001;
     public static double f = 0.09;
 
     public int target = 0;
@@ -117,7 +117,7 @@ public class Outtake implements Component{
         position.setPosition(ITDCons.positionBack);
         angleLeft.setPosition(ITDCons.angleBack);
         angleRight.setPosition(ITDCons.angleBack);
-        claw.setPosition(ITDCons.open);
+        claw.setPosition(ITDCons.clawOpen);
         status= Status.InitWall;
         controller.setP(0.002);
         position.getController().pwmDisable();
@@ -146,11 +146,11 @@ public class Outtake implements Component{
     }
 
     public void openClaw() {
-        claw.setPosition(ITDCons.open);
+        claw.setPosition(ITDCons.clawOpen);
     }
 
     public void closeClaw() {
-        claw.setPosition(ITDCons.close);
+        claw.setPosition(ITDCons.clawClose);
     }
 
     public void moveToPickUpFromWall(){

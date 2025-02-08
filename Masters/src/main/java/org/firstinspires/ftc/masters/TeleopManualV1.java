@@ -36,11 +36,19 @@ public class TeleopManualV1 extends LinearOpMode {
 
         int target=0;
 
+        int dpadUpPressed = 0;
+        int dpadDownPressed = 0;
+
+        boolean relased = true;
+
         telemetry.addData("Before", outtake.outtakeSlideEncoder.getCurrentPosition());
 
         telemetry.update();
 
         waitForStart();
+
+        intake.initStatusTeleop();
+        intake.closeGate();
 
 
         while (opModeIsActive()) {
@@ -64,51 +72,60 @@ public class TeleopManualV1 extends LinearOpMode {
             }
 
             if (gamepad1.x){
-                intake.dropIntake();
+                //turn on
+                intake.startIntake();
+
             } else if (gamepad1.y) {
-                intake.liftIntake();
+                //reverse
+                intake.reverseIntake();
             }
 
-            if (gamepad1.dpad_up) {
-                outtake.moveToBucket();
-//                outake.diffy1(ITDCons.BucketDiffy1);
-//                outake.diffy2(ITDCons.BucketDiffy2);
-                //target= ITDCons.BucketTarget;
-            }
-
-            if (gamepad1.dpad_down) {
-                outtake.moveToTransfer();
-//                outake.diffy1(ITDCons.FloorDiffy1);
-//                outake.diffy2(ITDCons.FloorDiffy2);
-                target=0;
-            }
+//            if (gamepad1.dpad_up) {
+//                outtake.moveToBucket();
+//            }
+//
+//            if (gamepad1.dpad_down) {
+//                outtake.moveToTransfer();
+//            }
 
             if (gamepad1.dpad_left) {
                 outtake.moveToPickUpFromWall();
 
-//                outake.diffy1(ITDCons.WallDiffy1);
-//                outake.diffy2(ITDCons.WallDiffy2);
-              //  target=0;
+            }
+
+            if (gamepad1.dpad_up && relased) {
+                if (dpadUpPressed == 0) {
+                    intake.extendSlideMax();
+                    dpadDownPressed = 1;
+                    dpadUpPressed=1;
+                } else if (dpadUpPressed==1){
+                    dpadDownPressed=0;
+                    intake.dropIntake();
+                }
+                relased = false;
+            } else {
+                relased = true;
+            }
+
+            if (gamepad1.dpad_down && relased) {
+                if (dpadDownPressed == 0) {
+                    intake.moveIntakeToTransfer();
+                    dpadDownPressed=1;
+                    dpadUpPressed=1;
+                } else if (dpadDownPressed==1){
+                    intake.retractExtensionFully();;
+                    dpadUpPressed=0;
+                    dpadDownPressed=0;
+                }
+                relased = false;
+            } else {
+                relased=true;
             }
 
             if (gamepad1.dpad_right) {
                 outtake.scoreSpecimen();
-//                outake.diffy1(ITDCons.SpecimenDiffy1);
-//                outake.diffy2(ITDCons.SpecimenDiffy2);
-               // target= ITDCons.SpecimenTarget;
-
             }
 
-            if (gamepad1.left_bumper) {
-//                if (target>100) {
-//                    target = target - 100;
-//                }
-//                outake.diffy1(ITDCons.ReleaseDiffy1);
-//                outake.diffy2(ITDCons.ReleaseDiffy2);
-//                target= ITDCons.ReleaseTarget;
-                outtake.releaseSpecimen();
-
-            }
 
             if(gamepad1.a){
                 outtake.openClaw();

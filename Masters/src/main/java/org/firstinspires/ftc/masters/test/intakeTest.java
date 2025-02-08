@@ -25,6 +25,7 @@ public class intakeTest extends LinearOpMode {
 
         Servo intakeLeft =hardwareMap.get(Servo.class, "intakeLeft");
         Servo intakeRight = hardwareMap.get(Servo.class, "intakeRight");
+        Servo gate = hardwareMap.get(Servo.class,"gateServo");
 
         DcMotor  intake = hardwareMap.dcMotor.get("intake");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -34,20 +35,20 @@ public class intakeTest extends LinearOpMode {
 
         telemetry.update();
 
-        intakeRight.setPosition(ITDCons.intakeInitRight);
-        intakeLeft.setPosition(ITDCons.intakeInitLeft);
+//        intakeRight.setPosition(ITDCons.intakeInitRight);
+       // intakeRight.setPosition(0.5);
 
         waitForStart();
 
         while (opModeIsActive()) {
 
         if (gamepad1.a){
-            intakeLeft.setPosition(ITDCons.dropLeft);
-            intakeRight.setPosition(ITDCons.dropRight);
+            intakeLeft.setPosition(ITDCons.intakeArmDrop);
+            intakeRight.setPosition(ITDCons.intakeChainDrop);
         }
         if (gamepad1.b){
-            intakeRight.setPosition(ITDCons.intakeInitRight);
-            intakeLeft.setPosition(ITDCons.intakeInitLeft);
+            intakeLeft.setPosition(ITDCons.intakeArmTransfer);
+            intakeRight.setPosition(ITDCons.intakeChainTransfer);
         }
 
         if (gamepad1.x){
@@ -56,6 +57,14 @@ public class intakeTest extends LinearOpMode {
 
         if (gamepad1.y){
             intake.setPower(0);
+        }
+
+        if (gamepad1.dpad_up){
+            gate.setPosition(ITDCons.gateClose);
+        }
+
+        if (gamepad1.dpad_down){
+            gate.setPosition(ITDCons.gateOpen);
         }
 
 

@@ -5,11 +5,10 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -19,8 +18,7 @@ public class Intake {
 
     PIDController pidController;
 
-    public static double p = 0.0024, i = 0.0002, d = 0.00001;
-    public static double f = 0.09;
+    public static double p = 0.04, i = 0, d = 0;
 
     Init init;
 
@@ -33,10 +31,20 @@ public class Intake {
     RevTouchSensor touchSensor;
     DigitalChannel breakBeam;
     Servo led;
+    Servo gate;
 
     public static double RETRACT_POWER = -0.6;
     public static double EXTEND_POWER = 0.6;
-    public static double INTAKE_POWER = 0.9;
+    public static double INTAKE_POWER = -0.9;
+
+    public enum Status{
+        TRANSFER, DROP, INIT, MOVE_TO_TRANSFER
+    }
+
+    ElapsedTime elapsedTime = null;
+    int tempTarget =-1;
+
+    public  Status status;
 
     private int target;
 
@@ -52,14 +60,20 @@ public class Intake {
         touchSensor = init.getTouch();;
         breakBeam = init.getBreakBeam();
         led = init.getLed();
+        gate = init.getGateServo();
         initializeHardware();
-
+        status = Status.INIT;
     }
 
-    public void initializeHardware() {
+    public void initStatusTeleop(){
+        status = Status.TRANSFER;
+        moveIntakeToTransfer();
+    }
 
-        intakeRight.setPosition(ITDCons.intakeInitRight);
-        intakeLeft.setPosition(ITDCons.intakeInitLeft);
+
+
+
+    public void initializeHardware() {
 
         pidController = new PIDController(p,i,d);
         target =0;
@@ -99,6 +113,20 @@ public class Intake {
 //        extendo.setPower(EXTEND_POWER);
     }
 
+    public void extendSlideMax(){
+        if (status==Status.TRANSFER) {
+            target = ITDCons.MaxExtension;
+        } else {
+            moveIntakeToTransfer();
+            elapsedTime = new ElapsedTime();
+            tempTarget= ITDCons.MaxExtension;
+        }
+    }
+
+    public void retractExtensionFully(){
+        target = ITDCons.MinExtension;
+    }
+
     public void stopExtendo(){
         extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         extendo.setPower(0);
@@ -121,13 +149,28 @@ public class Intake {
 
 
     public void dropIntake(){
-        intakeLeft.setPosition(ITDCons.dropLeft);
-        intakeRight.setPosition(ITDCons.dropRight);
+        intakeLeft.setPosition(ITDCons.intakeArmDrop);
+        intakeRight.setPosition(ITDCons.intakeChainDrop);
     }
 
-    public void liftIntake(){
-        intakeLeft.setPosition(ITDCons.liftIntakeLeft);
-        intakeRight.setPosition(ITDCons.liftIntakeRight);
+    public void transferIntake(){
+        intakeLeft.setPosition(ITDCons.intakeArmTransfer);
+        intakeRight.setPosition(ITDCons.intakeChainTransfer);
+    }
+
+    public void moveIntakeToTransfer(){
+        intakeLeft.setPosition(ITDCons.intakeArmTransfer);
+        intakeRight.setPosition(ITDCons.intakeChainTransfer);
+        status = Status.MOVE_TO_TRANSFER;
+        elapsedTime = new ElapsedTime();
+    }
+
+    public void openGate(){
+        gate.setPosition(ITDCons.gateOpen);
+    }
+
+    public void closeGate(){
+        gate.setPosition(ITDCons.gateClose);
     }
 
     public void update(){
@@ -148,7 +191,21 @@ public class Intake {
 
             }
 
+            if (status == Status.MOVE_TO_TRANSFER && elapsedTime!=null && elapsedTime.milliseconds()>500){
+                status = Status.TRANSFER;
+                elapsedTime= null;
+                if (tempTarget!=-1){
+                    target = tempTarget;
+                    tempTarget=-1;
+                }
+            }
+
     }
+
+    public void setTarget(int target){
+        this.target= target;
+    }
+
 
     public void checkColor(){
         if (colorSensor.getRawLightDetected()>ITDCons.blueMin && colorSensor.getRawLightDetected()<ITDCons.blueMAx){
