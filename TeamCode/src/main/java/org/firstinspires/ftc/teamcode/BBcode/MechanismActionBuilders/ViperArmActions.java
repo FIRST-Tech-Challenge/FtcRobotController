@@ -152,7 +152,7 @@ public class ViperArmActions {
 
     public Action RaiseToClip() {
         return new SequentialAction(
-            _WristClawActions.WristMid(),
+            _WristClawActions.WristClip(),
             UtilActions.Wait(0.2),
             MoveArmToSpecimen(),
 //            UtilActions.Wait(0.75),

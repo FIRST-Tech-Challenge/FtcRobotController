@@ -97,6 +97,18 @@ public class WristClawActions {
         return new WristMidAction();
     }
 
+    //Generates Action for WristClip
+    public class WristClipAction implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            _WristClaw.WristClip();
+            return false;
+        }
+    }
+    public Action WristClip() {
+        return new WristClipAction();
+    }
+
     public class WristSpecimenPickupAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
