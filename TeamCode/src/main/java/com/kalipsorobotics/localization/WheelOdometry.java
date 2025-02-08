@@ -114,13 +114,16 @@ public class WheelOdometry {
         double arcTanDeltaTheta = Math.atan2(deltaLeftDistance - deltaRightDistance, TRACK_WIDTH_MM);
 
 
-        Position newPosition = kalmanFilter.update(new Position(encoderDeltaTheta, imuDeltaTheta, arcTanDeltaTheta));
+//        Position newPosition = kalmanFilter.update(new Position(0, 0, arcTanDeltaTheta));
+//        newPosition = kalmanFilter.update(new Position(0, 0, imuDeltaTheta));
+//        newPosition = kalmanFilter.update(new Position(0, 0, encoderDeltaTheta));
+
         Log.d("purepursaction_debug_odo_wheel_deltaTheta",
                 String.format("encoder = %.4f, imu = %.4f, arcTan = %.4f", encoderDeltaTheta, imuDeltaTheta,
                         arcTanDeltaTheta));
-        double blendedDeltaTheta = (newPosition.getX() + newPosition.getY() + newPosition.getTheta());
-        //double blendedDeltaTheta =
-        //        (wheelHeadingWeight * encoderDeltaTheta) + (imuHeadingWeight * imuDeltaTheta) + (wheelHeadingWeight * arcTanDeltaTheta);
+        //double blendedDeltaTheta = (newPosition.getTheta());
+        double blendedDeltaTheta =
+                (wheelHeadingWeight * encoderDeltaTheta) + (imuHeadingWeight * imuDeltaTheta) + (wheelHeadingWeight * arcTanDeltaTheta);
         double deltaTheta = blendedDeltaTheta; //blended compliment eachother — to reduce drift of imu in big movement and to detect small change
 
         double deltaX = (deltaLeftDistance + deltaRightDistance) / 2;

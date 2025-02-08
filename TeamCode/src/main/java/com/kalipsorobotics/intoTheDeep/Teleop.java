@@ -709,6 +709,10 @@ public class Teleop extends LinearOpMode {
             Log.d("teleopforauto", "small sweep " + intakeClaw.getIntakeSmallSweepServo().getPosition());
 
         }
+
+        executorService.shutdown();
+
+
     }
 
     private void setLastOuttakeAction(Action action) {

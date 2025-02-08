@@ -101,7 +101,8 @@ public class AutoBasketFunnel extends LinearOpMode {
 
 
         //================begin of first basket====================
-        SampleToBasketFunnelRoundTrip sampleToBasketFunnelRoundTrip1 = new SampleToBasketFunnelRoundTrip(driveTrain, wheelOdometry, outtake, intakeClaw, 755);
+        SampleToBasketFunnelRoundTrip sampleToBasketFunnelRoundTrip1 = new SampleToBasketFunnelRoundTrip(driveTrain,
+                wheelOdometry, outtake, intakeClaw, 850);
         sampleToBasketFunnelRoundTrip1.setName("sampleToBasketFunnelRoundTrip1");
         sampleToBasketFunnelRoundTrip1.setDependentActions(moveOutSpecimen, intakeFunnelReady1);
         redAutoBasket.addAction(sampleToBasketFunnelRoundTrip1);
@@ -110,7 +111,7 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         //===============start of second basket===============
         SampleToBasketFunnelRoundTrip sampleToBasketFunnelRoundTrip2 = new SampleToBasketFunnelRoundTrip(driveTrain,
-                wheelOdometry, outtake, intakeClaw, 1150, -75);
+                wheelOdometry, outtake, intakeClaw, 1125, -75);
         sampleToBasketFunnelRoundTrip2.setName("sampleToBasketFunnelRoundTrip2");
         sampleToBasketFunnelRoundTrip2.setDependentActions(sampleToBasketFunnelRoundTrip1);
         redAutoBasket.addAction(sampleToBasketFunnelRoundTrip2);
@@ -128,7 +129,8 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveToSample3.setDependentActions(sampleToBasketFunnelRoundTrip2);
         //move basket to sample 3
 //        moveToSample3.addPoint(-440, 1030, 180-29.6);
-        moveToSample3.addPoint(INTAKE_SAMPLE_X-60, 775, 90, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW); //x = INtAKE_SAMPLE_X - 80, y = 760
+        moveToSample3.addPoint(INTAKE_SAMPLE_X-35, 775, 90, PurePursuitAction.P_XY_SLOW,
+                PurePursuitAction.P_ANGLE_SLOW); //x = INtAKE_SAMPLE_X - 80, y = 760
         moveToSample3.setMaxCheckDoneCounter(15);
         redAutoBasket.addAction(moveToSample3);
 
@@ -269,8 +271,9 @@ public class AutoBasketFunnel extends LinearOpMode {
 
             redAutoBasket.updateCheckDone();
 
-
         }
+
+        executorService.shutdown();
 
     }
 }

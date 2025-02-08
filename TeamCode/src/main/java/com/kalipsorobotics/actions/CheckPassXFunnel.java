@@ -10,7 +10,7 @@ public class CheckPassXFunnel extends Action {
     PurePursuitAction purePursuitAction;
     WheelOdometry wheelOdometry;
 
-    final double passingX = SampleToBasketFunnelRoundTrip.INTAKE_SAMPLE_X_FUNNEL;
+    final double passingX = SampleToBasketFunnelRoundTrip.INTAKE_SAMPLE_X_FUNNEL - 50;
 
     public CheckPassXFunnel(PurePursuitAction purePursuitAction, WheelOdometry wheelOdometry) {
         this.purePursuitAction = purePursuitAction;
