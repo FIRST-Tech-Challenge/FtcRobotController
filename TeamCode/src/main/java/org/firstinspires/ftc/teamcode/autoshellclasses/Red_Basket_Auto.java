@@ -10,12 +10,15 @@ import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.RedBasketPose;
 import org.firstinspires.ftc.teamcode.BBcode.OpModeType;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.ViperArmActions;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.WristClawActions;
 import org.firstinspires.ftc.teamcode.BBcode.PoseStorage;
 import org.firstinspires.ftc.teamcode.BBcode.UtilClasses.UtilActions;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
+import org.firstinspires.ftc.teamcode.R;
+
 import java.util.Locale;
 
 
@@ -32,11 +35,9 @@ public class Red_Basket_Auto extends LinearOpMode {
         ViperArmActions _ViperArmActions = new ViperArmActions(this);
 
         //Write the public FTCDesktop static fields back into the private static poses so FTCDesktop actually affects the values on restart of op mode
-        Pose2d initialPose = new Pose2d(-47, -59.5, Math.toRadians(45));
-//        pose_drop = new Pose2d(pose_drop_x, pose_drop_y, Math.toRadians(pose_drop_h_deg));
 
         //Initializes Pinpoint
-        PinpointDrive drive = new PinpointDrive(hardwareMap, initialPose);
+        PinpointDrive drive = new PinpointDrive(hardwareMap, RedBasketPose.init);
 
         //closes claw on init
         Actions.runBlocking(_WristClawActions.CloseClaw());
@@ -54,38 +55,38 @@ public class Red_Basket_Auto extends LinearOpMode {
 
         //drive to drop
         Action driveToDropFromStart = drive.actionBuilder(drive.pose)
-                .strafeToLinearHeading(new Vector2d(-55.9, -55.275), Math.toRadians(45))
+                .strafeToLinearHeading(RedBasketPose.drop.position, RedBasketPose.drop.heading)
                 .build();
 
-        Action driveToDropFromInnerSample = drive.actionBuilder(new Pose2d(-44.60, -43.59, Math.toRadians(102.8)))
+        Action driveToDropFromInnerSample = drive.actionBuilder(RedBasketPose.inner_sample)
                 .setReversed(true)
-                .strafeToLinearHeading(new Vector2d(-55.9, -55.275), Math.toRadians(45))
+                .strafeToLinearHeading(RedBasketPose.drop.position, RedBasketPose.drop.heading)
                 .build();
 
-        Action driveToDropFromMiddleSample = drive.actionBuilder(new Pose2d(-51.70, -43.05, Math.toRadians(113.59)))
+        Action driveToDropFromMiddleSample = drive.actionBuilder(RedBasketPose.middle_sample)
                 .setReversed(true)
-                .strafeToLinearHeading(new Vector2d(-55.9, -55.275), Math.toRadians(45))
+                .strafeToLinearHeading(RedBasketPose.drop.position, RedBasketPose.drop.heading)
                 .build();
 
-        Action driveToDropFromOuterSample = drive.actionBuilder(new Pose2d(-56.65, -39.40, Math.toRadians(127.75)))
+        Action driveToDropFromOuterSample = drive.actionBuilder(RedBasketPose.outer_sample)
                 .setReversed(true)
-                .strafeToLinearHeading(new Vector2d(-55.9, -55.275), Math.toRadians(45))
+                .strafeToLinearHeading(RedBasketPose.drop.position, RedBasketPose.drop.heading)
                 .build();
 
         //sample pickup
-        Action samplePickupInner = drive.actionBuilder(new Pose2d(-55.9, -55.275, Math.toRadians(45)))
-                .strafeToLinearHeading(new Vector2d(-44.60, -43.59), Math.toRadians(102.8))
+        Action samplePickupInner = drive.actionBuilder(RedBasketPose.drop)
+                .strafeToLinearHeading(RedBasketPose.inner_sample.position, RedBasketPose.inner_sample.heading)
                 .build();
-        Action samplePickupMiddle = drive.actionBuilder(new Pose2d(-55.9, -55.275, Math.toRadians(45)))
-                .strafeToLinearHeading(new Vector2d(-51.70, -43.05), Math.toRadians(113.59))
+        Action samplePickupMiddle = drive.actionBuilder(RedBasketPose.drop)
+                .strafeToLinearHeading(RedBasketPose.middle_sample.position, RedBasketPose.middle_sample.heading)
                 .build();
-        Action samplePickupOuter = drive.actionBuilder(new Pose2d(-55.9, -55.275, Math.toRadians(45)))
-                .strafeToLinearHeading(new Vector2d(-56.65, -40.50), Math.toRadians(127.75))
+        Action samplePickupOuter = drive.actionBuilder(RedBasketPose.drop)
+                .strafeToLinearHeading(RedBasketPose.outer_sample.position, RedBasketPose.outer_sample.heading)
                 .build();
 
         //drive to park
-        Action driveToPark = drive.actionBuilder(new Pose2d(-55.9, -55.275, Math.toRadians(45)))
-                .strafeToLinearHeading(new Vector2d(38, -60), Math.toRadians(90))
+        Action driveToPark = drive.actionBuilder(RedBasketPose.drop)
+                .strafeToLinearHeading(RedBasketPose.park.position, RedBasketPose.park.heading)
                 .build();
 
         //----------------------------------------------------------------------------------------------

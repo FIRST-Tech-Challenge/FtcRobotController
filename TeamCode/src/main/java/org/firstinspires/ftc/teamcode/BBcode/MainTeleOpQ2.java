@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.BlueBasketPose;
+import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.RedBasketPose;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
@@ -156,7 +156,7 @@ public class MainTeleOpQ2 extends LinearOpMode{
         arm.MoveToHome();
         //odo.setPosition(PoseStorage.currentPose);
         //Use the following line for measuring auto locations
-        odo.setPosition(BlueBasketPose.basket_init_old);
+        odo.setPosition(RedBasketPose.basket_init_old);
 //        odo.setPosition(PoseStorage.currentPose);
         telemetry.addData("PositionRR", ()-> getPinpoint(odo.getPositionRR()));
         telemetry.addData("Position", ()-> getPinpoint(odo.getPosition()));
