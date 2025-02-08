@@ -4,12 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 public class DifferentialWristBot extends RollerIntakeBot{
 
-    private Servo leftServo;
-    private Servo rightServo;
+    private Servo leftDifferentialWristServo;
+    private Servo rightDifferentialWristServo;
 
     private double leftServoPos;
     private double rightServoPos;
@@ -18,6 +16,10 @@ public class DifferentialWristBot extends RollerIntakeBot{
     public final double MIN_SERVO_POS = 0.0;
     public final double MAX_SERVO_POS = 1.0;
     public final double GEAR_RATIO = 2.0;
+
+    private double currentPitch = 0.0;  // Tracks pitch angle
+    private double currentRoll = 0.0;   // Tracks roll angle
+
     public DifferentialWristBot(LinearOpMode opMode)  {
         super(opMode);
     }
@@ -25,45 +27,58 @@ public class DifferentialWristBot extends RollerIntakeBot{
 
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
-        leftServo = ahwMap.get(Servo.class, "leftServo");
-        rightServo = ahwMap.get(Servo.class, "rightSensor");
+        leftDifferentialWristServo = ahwMap.get(Servo.class, "leftServo");
+        rightDifferentialWristServo = ahwMap.get(Servo.class, "rightSensor");
         // initialize position
-        setServos(0, 0);
-    }
+        pitchTo(0);
+        rollTo(0);    }
 
     protected void onTick() {
         super.onTick();
     }
-
-    public void pitch(double delta) {
+    public double pitch(double delta) {
         adjustServos(delta, -delta);
+        return currentPitch;
     }
 
-    public void roll(double delta) {
+    public double pitchTo(double targetAngle) {
+        double delta = targetAngle - currentPitch;
+        return pitch(delta);
+    }
+
+    public double roll(double delta) {
         adjustServos(delta * GEAR_RATIO, delta * GEAR_RATIO);
+        return currentRoll;
     }
 
+    public double rollTo(double targetAngle) {
+        double delta = targetAngle - currentRoll;
+        return roll(delta);
+    }
 
     private void adjustServos(double leftDelta, double rightDelta) {
-        double currentLeftAngle = servoToAngle(leftServo.getPosition());
-        double currentRightAngle = servoToAngle(rightServo.getPosition());
-
-        double targetLeftAngle = currentLeftAngle + leftDelta;
-        double targetRightAngle = currentRightAngle + rightDelta;
+        double targetLeftAngle = currentPitch + leftDelta;
+        double targetRightAngle = currentRoll + rightDelta;
 
         double targetLeftPos = clamp(angleToServo(targetLeftAngle));
         double targetRightPos = clamp(angleToServo(targetRightAngle));
 
-        // Determine how much movement is actually possible while keeping both servos synchronized
-        double maxAllowedChange = Math.min(targetLeftPos - leftServo.getPosition(), targetRightPos - rightServo.getPosition());
+        // Ensure both servos move the same amount if one hits a limit
+        double maxAllowedChange = Math.min(targetLeftPos - leftDifferentialWristServo.getPosition(),
+                targetRightPos - rightDifferentialWristServo.getPosition());
 
-        // Apply the adjusted positions to maintain sync
-        setServos(leftServo.getPosition() + maxAllowedChange, rightServo.getPosition() + maxAllowedChange);
+        double newLeftPos = leftDifferentialWristServo.getPosition() + maxAllowedChange;
+        double newRightPos = rightDifferentialWristServo.getPosition() + maxAllowedChange;
+
+        currentPitch = servoToAngle(newLeftPos);
+        currentRoll = servoToAngle(newRightPos);
+
+        setServos(newLeftPos, newRightPos);
     }
 
     private void setServos(double leftPos, double rightPos) {
-        leftServo.setPosition(clamp(leftPos));
-        rightServo.setPosition(clamp(rightPos));
+        leftDifferentialWristServo.setPosition(clamp(leftPos));
+        rightDifferentialWristServo.setPosition(clamp(rightPos));
     }
 
     private double angleToServo(double angle) {
