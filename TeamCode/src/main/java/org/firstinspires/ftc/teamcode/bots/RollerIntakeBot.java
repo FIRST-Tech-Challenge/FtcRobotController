@@ -112,32 +112,10 @@ public class RollerIntakeBot extends FourWheelDriveBot {
         setRollerPower(0.0); // Stop the roller
     }
 
-    public void setColorIndicator(Telemetry telemetry, double pos) {
+    public void setColorIndicator(double pos) {
         colorIndicator.setPosition(pos);
         telemetry.addData("Current Color: ", "%.3f", pos);
     }
-    public void updateColorIndicator(Telemetry telemetry) {
-        telemetry.addData("Test", "%.3f", 0.500);
-
-        colorIndicator.setPosition(0.5);
-        return;
-//        NormalizedRGBA colors = colorSensor.getNormalizedColors();
-//
-//        // convert the colors from getNormalizedColors into RGB int values from the toColor function
-//        @ColorInt int color = colors.toColor();
-//        // make the values from color variable into separate red, green, and blue values
-//        int red = Color.red(color);
-//        int green = Color.green(color);
-//        int blue = Color.blue(color);
-//        if (red > 200 && green < 70 && blue < 50) { // red
-//            colorIndicator.setPosition(-1.0); // arbitrary value for red block
-//        } else if (red < 50 && green < 70 && blue > 200) { // blue
-//            colorIndicator.setPosition(0.0); // arbitrary value for blue block
-//        } else if (red > 180 && green > 180 && blue < 50) { // yellow
-//            colorIndicator.setPosition(1.0); // arbitrary value for yellow block
-//        } else {
-//            colorIndicator.setPosition(0.5); // arbitrary value for nothing
-//        }
 
 
     int getColor(int red, int green, int blue) {
@@ -171,15 +149,6 @@ public class RollerIntakeBot extends FourWheelDriveBot {
         // 0 = nothing, 1 = yellow, 2 = blue, 3 = red
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
         @ColorInt int color = colors.toColor();
-
-
-        return (red > 50 || green > 50 || blue > 50) && ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM) < 10.0;
-    } // Arbitrary values for ratio conditions, and distance sensor value
-//    public void setObjCondition(Telemetry telemetry, boolean condition) {
-//        isObjectInPlace();
-//        telemetry.addData("Current Color: ", "%.3f",);
-//    }
-}
 
         if (((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM) > 6.0) {
             return 0;
