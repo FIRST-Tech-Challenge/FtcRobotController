@@ -48,12 +48,12 @@ public class IntakeTransferReady extends KActionSet {
 
         KServoAutoAction moveBigPivot = new KServoAutoAction(intake.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_TRANSFER_READY_POS);
         moveBigPivot.setName("moveBigPivot");
-        moveBigPivot.setDependentActions(linkageToMid);
+        //moveBigPivot.setDependentActions(linkageToMid);
         this.addAction(moveBigPivot);
 
         KServoAutoAction moveSmallPivot = new KServoAutoAction(intake.getIntakeSmallPivotServo(), IntakeClaw.INTAKE_SMALL_PIVOT_TRANSFER_READY_POS);
         moveSmallPivot.setName("moveSmallPivot");
-        moveSmallPivot.setDependentActions(linkageToMid);
+        //moveSmallPivot.setDependentActions(linkageToMid);
         this.addAction(moveSmallPivot);
 
         KServoAutoAction linkageRetract = new KServoAutoAction(intake.getIntakeLinkageServo(), IntakeClaw.INTAKE_LINKAGE_IN_POS);

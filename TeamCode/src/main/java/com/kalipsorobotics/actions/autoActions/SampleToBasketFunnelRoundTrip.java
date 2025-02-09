@@ -73,7 +73,7 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
         // while
         // moving
         //move sample 1 to basket
-        moveToBasket1.addPoint(outtakeXPos - 150, outtakeYPos - 150, -135, PurePursuitAction.P_XY,
+        moveToBasket1.addPoint(outtakeXPos - 150, outtakeYPos - 150, -135, PurePursuitAction.P_XY_FAST,
                 PurePursuitAction.P_ANGLE_SLOW);
         moveToBasket1.addPoint(outtakeXPos, outtakeYPos, -135, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
         this.addAction(moveToBasket1);
