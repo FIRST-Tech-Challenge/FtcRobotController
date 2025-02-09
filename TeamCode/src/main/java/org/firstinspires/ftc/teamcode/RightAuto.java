@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.hardware.AscentProxy;
 import org.firstinspires.ftc.teamcode.hardware.BlinkLightsTask;
 import org.firstinspires.ftc.teamcode.hardware.HClawProxy;
 import org.firstinspires.ftc.teamcode.hardware.HSlideProxy;
@@ -58,6 +59,7 @@ public class RightAuto extends LinearOpMode {
     private VLiftProxy vLiftProxy;
     private HSlideProxy hSlideProxy;
     private HClawProxy hClawProxy;
+    private AscentProxy ascentProxy;
     private Ramps ramps;
     private Ramps rampsSlowEdition;
     private LoopStopwatch loopTimer;
@@ -304,6 +306,7 @@ public class RightAuto extends LinearOpMode {
         vLiftProxy = scheduler.add(new VLiftProxy(scheduler, hardware.verticalLift));
         hSlideProxy = scheduler.add(new HSlideProxy(scheduler, hardware));
         hClawProxy = scheduler.add(new HClawProxy(scheduler, hardware));
+        ascentProxy = scheduler.add(new AscentProxy(scheduler, hardware.ascent, 0));
 
         ElapsedTime finalizeTimer = new ElapsedTime();
 //        AtomicReference<Double> scoredIn = new AtomicReference<>((double) 0);
@@ -313,10 +316,11 @@ public class RightAuto extends LinearOpMode {
         scheduler.add(new BackgroundTasks(
                 scheduler, tracker, loopTimer
         ));
+        scheduler.add(ascentProxy.target(Hardware.ASCENT_UP_POS));
 //        mainAuto();
         runAuto();
-        // park
-        hardware.claw.setPosition(CLAW_CLOSE);
+
+        hardware.ascent.setTargetPosition(Hardware.ASCENT_INIT_POS);
 
         telemetry.addLine("Initialized.");
         telemetry.addLine(String.format("%d in queue.", scheduler.taskCount()));

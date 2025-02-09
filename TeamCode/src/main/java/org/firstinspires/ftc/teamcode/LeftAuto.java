@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.hardware.AscentProxy;
 import org.firstinspires.ftc.teamcode.hardware.HClawProxy;
 import org.firstinspires.ftc.teamcode.hardware.HSlideProxy;
 import org.firstinspires.ftc.teamcode.hardware.VLiftProxy;
@@ -49,6 +50,7 @@ public class LeftAuto extends LinearOpMode {
     private VLiftProxy vLiftProxy;
     private HSlideProxy hSlideProxy;
     private HClawProxy hClawProxy;
+    private AscentProxy ascentProxy;
     private Ramps ramps;
     private LoopStopwatch loopTimer;
     private Speed2Power speed2Power;
@@ -180,13 +182,17 @@ public class LeftAuto extends LinearOpMode {
         vLiftProxy = scheduler.add(new VLiftProxy(scheduler, hardware.verticalLift));
         hSlideProxy = scheduler.add(new HSlideProxy(scheduler, hardware));
         hClawProxy = scheduler.add(new HClawProxy(scheduler, hardware));
+        ascentProxy = scheduler.add(new AscentProxy(scheduler, hardware.ascent, Hardware.ASCENT_UP_POS));
 
         ElapsedTime finalizeTimer = new ElapsedTime();
         double doneIn = 0;
 
+        hardware.ascent.setTargetPosition(Hardware.ASCENT_INIT_POS);
+
         scheduler.add(new BackgroundTasks(
                 scheduler, tracker, loopTimer
         ));
+        scheduler.add(ascentProxy.target(Hardware.ASCENT_UP_POS));
         scheduler
                 .add(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
