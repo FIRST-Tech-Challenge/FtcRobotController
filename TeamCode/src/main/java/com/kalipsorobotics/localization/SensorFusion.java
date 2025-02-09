@@ -16,8 +16,7 @@ public class SensorFusion {
 
     public double getFilteredAngle(double imuAngleDelta, double encoderAngleDelta, double deltaTimeMS) {
 
-        boolean isImuAndEncoderAngleCrazyWildlyDifferentFromEachother =
-              Math.toRadians(90) < Math.abs((Math.abs(imuAngleDelta) - Math.abs(encoderAngleDelta)));
+        boolean isImuAndEncoderAngleCrazyWildlyDifferentFromEachother = (Math.toRadians(90) < (Math.abs((Math.abs(imuAngleDelta) - Math.abs(encoderAngleDelta)))));
         boolean isSpike = isSpike(Math.abs(imuAngleDelta), deltaTimeMS);
 
         double filteredAngle = imuAngleDelta;
@@ -66,7 +65,7 @@ public class SensorFusion {
             Log.d("Sensor_Fusion",
                     "spike detected imu angle delta :" + imuDeltaAngle + "rateChange" + imuRateChange + "deltaTime: " + deltaTimeMS);
             Log.d("Sensor_Fusion",
-                    "spike cause1 :" + (Math.abs(imuRateChange) > MAX_CHANGE_THRESHOLD)
+                    "spike cause change rate too big :" + (Math.abs(imuRateChange) > MAX_CHANGE_THRESHOLD)
                     // + "spike cause2 :" + (Math.abs(imuRateChange - mean) > 2 * stdDev)
             );
         }

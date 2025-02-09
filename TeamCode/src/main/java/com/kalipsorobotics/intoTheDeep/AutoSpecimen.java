@@ -197,13 +197,7 @@ public class AutoSpecimen extends LinearOpMode {
 
         waitForStart();
 
-        executorService.submit(() -> {
-            android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_FOREGROUND);
-            while (true) {
-                wheelOdometry.updatePosition();
-            }
-
-        });
+        OpModeUtilities.runOdometryExecutorService(executorService, wheelOdometry);
 
         while (opModeIsActive()) {
 
@@ -231,7 +225,8 @@ public class AutoSpecimen extends LinearOpMode {
             telemetry.update();
 
         }
-        executorService.shutdownNow();
+
+        OpModeUtilities.shutdownExecutorService(executorService);
 
     }
 }

@@ -131,6 +131,7 @@ public class WheelOdometry {
 //        double blendedDeltaTheta =
 //                (wheelHeadingWeight * encoderDeltaTheta) + (imuHeadingWeight * imuDeltaTheta) + (wheelHeadingWeight * arcTanDeltaTheta);
 
+
         double blendedDeltaTheta = sensorFusion.getFilteredAngle(imuDeltaTheta, arcTanDeltaTheta, deltaTimeMS);
 
         double deltaTheta = blendedDeltaTheta; //blended compliment eachother — to reduce drift of imu in big movement and to detect small change

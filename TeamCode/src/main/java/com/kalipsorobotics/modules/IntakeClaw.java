@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class IntakeClaw {
     @Config
     static public class IntakeClawConfig {
-            public final static double INTAKE_CLAW_CLOSE = 0.35;
+            public final static double INTAKE_CLAW_CLOSE = 0.36; //0.35
             public final static double INTAKE_CLAW_OPEN = 0.07; //increase to close claw more
     }
 
