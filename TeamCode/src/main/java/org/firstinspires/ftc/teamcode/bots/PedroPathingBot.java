@@ -33,15 +33,21 @@ public class PedroPathingBot extends GyroBot{
 
      private final Pose loadSpecimenPose = new Pose(7.9, 23.6, 0);
 
+     private final Pose scoreSamplePose = new Pose(17.7, 122.3, Math.toRadians(-45));
+
+     private final Pose sampleCurveControlPoint = new Pose(21.8, 36.7, Math.toRadians(-36));
+
      /** Park Pose for our robot, after we do all of the scoring. */
      private final Pose parkPose = new Pose(60, 46, Math.toRadians(90));
 
      /** coordinate to control bezier curve for parking, to go around the submersible must use bezier curve, this is mid point.*/
      private final Pose parkControl = new Pose (37, 25, 0);
 
+
+
      private Path scorePreload, park;
 
-     private PathChain pickup, dropoff, loadSpecimen, scoreSpecimen;
+     private PathChain pickup, dropoff, loadSpecimen, scoreSpecimen, scoreSample;
 
      public void buildPaths(){
           scorePreload = new Path(new BezierLine(new Point(startPose), new Point(scoreSpecimenPose)));
@@ -69,6 +75,10 @@ public class PedroPathingBot extends GyroBot{
 
           park = new Path(new BezierCurve(new Point(scoreSpecimenPose), /* Control Point */ new Point(parkControl), new Point(parkPose)));
           park.setLinearHeadingInterpolation(scoreSpecimenPose.getHeading(), parkPose.getHeading());
+
+          scoreSample = follower.pathBuilder()
+                  .addPath(new BezierCurve(new Point(samplePivotPose), new Point(sampleCurveControlPoint), new Point(scoreSamplePose)))
+                  .build();
      }
 
      public PedroPathingBot(LinearOpMode opMode) {
@@ -84,17 +94,17 @@ public class PedroPathingBot extends GyroBot{
           super.onTick();
           // These loop the movements of the robot
           follower.update();
-          autonomousPathUpdate();
+          autonomousPathUpdateSpecimen();
 
           // Feedback to Driver Hub
-          telemetry.addData("path state", pathState);
+          telemetry.addData("path state", EVENT_NAMES[pathState], pathState);
           telemetry.addData("x", follower.getPose().getX());
           telemetry.addData("y", follower.getPose().getY());
           telemetry.addData("heading", follower.getPose().getHeading());
           telemetry.update();
      }
      private int AT_PRELOAD_POSITION= 1;
-     public void autonomousPathUpdate() {
+     public void autonomousPathUpdateSpecimen() {
           switch (pathState) {
                case 0:
                     follower.followPath(scorePreload);
@@ -140,7 +150,7 @@ public class PedroPathingBot extends GyroBot{
                          follower.followPath(dropoff, true);
                          //release sample with claw
                          triggerEvent(EVENT_SAMPLE_1_DROPPEDOFF, 4);
-                         setPathState(EVENT_SAMPLE_1_DROPPEDOFF;
+                         setPathState(EVENT_SAMPLE_1_DROPPEDOFF);
                     }
 
                     break;
@@ -163,7 +173,7 @@ public class PedroPathingBot extends GyroBot{
                          follower.followPath(dropoff, true);
                          //release sample with claw
                          triggerEvent(EVENT_SAMPLE_2_DROPPEDOFF, 6);
-                         setPathState(EVENT_SAMPLE_2_DROPPEDOFF;
+                         setPathState(EVENT_SAMPLE_2_DROPPEDOFF);
                     }
 
                     break;
@@ -271,6 +281,103 @@ public class PedroPathingBot extends GyroBot{
      }
      /** These change the states of the paths and actions
       * It will also reset the timers of the individual switches **/
+
+     public void autonomousPathSample() {
+          switch (pathState) {
+               case 0:
+                    follower.followPath(scorePreload);
+                    setPathState(AT_PRELOAD_POSITION);
+                    //Goes to submersible, in position to score preload
+                    break;
+               case 1:
+
+                /* You could check for
+                - Follower State: "if(!follower.isBusy() {}"
+                - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
+                - Robot Position: "if(follower.getPose().getX() > 36) {}"
+                */
+
+                    /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+                    if (!follower.isBusy()/**||pathTimer.getElapsedTimeSeconds() > 2*/) {
+                         /* Score Preload */
+
+                         //INSERT 3DOF CODE HERE TO SCORE SPECIMEN
+
+                         /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+//                         follower.followPath(grabPickup1,true);
+                         triggerEvent(EVENT_PRELOAD_SCORED, 2);
+                         setPathState(EVENT_PRELOAD_SCORED);
+                    }
+                    break;
+
+               case 2:
+
+                    if (!follower.isBusy()) {
+                         follower.followPath(pickup, true);
+                         //pickup first sample
+                         triggerEvent(EVENT_SAMPLE_1_PICKEDUP, 3);
+                         setPathState(EVENT_SAMPLE_1_PICKEDUP);
+                    }
+                    break;
+
+               case 3:
+
+                    if (!follower.isBusy()) {
+                         follower.followPath(scoreSample, true);
+                         //release sample with claw
+                         triggerEvent(EVENT_SAMPLE_1_SCORED , 4);
+                         setPathState(EVENT_SAMPLE_1_SCORED);
+                    }
+                    break;
+
+               case 4:
+
+                    if (!follower.isBusy()) {
+                         follower.followPath(pickup, true);
+                         //pickup first sample
+                         triggerEvent(EVENT_SAMPLE_2_PICKEDUP, 5);
+                         setPathState(EVENT_SAMPLE_2_PICKEDUP);
+                    }
+                    break;
+
+               case 5:
+
+                    if (!follower.isBusy()) {
+                         follower.followPath(scoreSample, true);
+                         //release sample with claw
+                         triggerEvent(EVENT_SAMPLE_2_SCORED , 6);
+                         setPathState(EVENT_SAMPLE_2_SCORED);
+                    }
+                    break;
+
+               case 6:
+
+                    if (!follower.isBusy()) {
+                         follower.followPath(pickup, true);
+                         //pickup first sample
+                         triggerEvent(EVENT_SAMPLE_3_PICKEDUP, 7);
+                         setPathState(EVENT_SAMPLE_3_PICKEDUP);
+                    }
+                    break;
+
+               case 7:
+
+                    if (!follower.isBusy()) {
+                         follower.followPath(scoreSample, true);
+                         //release sample with claw
+                         triggerEvent(EVENT_SAMPLE_3_SCORED , 8);
+                         setPathState(EVENT_SAMPLE_3_SCORED);
+                    }
+                    break;
+
+               case 8:
+                    if(!follower.isBusy()){
+                         follower.followPath(park, true);
+                         triggerEvent(EVENT_PARKED);
+                         setPathState(-1);
+                    }
+          }
+     }
      public void setPathState(int pState) {
           pathState = pState;
           pathTimer.resetTimer();
@@ -279,10 +386,11 @@ public class PedroPathingBot extends GyroBot{
 
      protected void onEvent(int event, int data) {
           super.onEvent(event, data);
-          if (event == EVENT_SAMPLE_PICKED_UP) {
-              // Do something when the sample is picked up
-              telemetry.addData("Sample picked up - Pedro Pathing", data);
-          }
+//          if (event == EVENT_SAMPLE_PICKED_UP) {
+//              // Do something when the sample is picked up
+//              telemetry.addData("Sample picked up - Pedro Pathing", data);
+//          }
+
           telemetry.update();
      }
 }
