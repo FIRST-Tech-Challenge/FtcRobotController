@@ -1,8 +1,10 @@
 package com.kalipsorobotics.intoTheDeep;
 
+import android.graphics.Path;
 import android.os.Process;
 import android.util.Log;
 
+import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.WallToBarAction;
 import com.kalipsorobotics.actions.Action;
@@ -42,6 +44,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @TeleOp
 public class Teleop extends LinearOpMode {
@@ -162,7 +165,7 @@ public class Teleop extends LinearOpMode {
 
         Position savedWallPosition = null;
 
-        Init init = new Init(intakeClaw, outtake);
+        InitAuto initAuto = new InitAuto(intakeClaw, outtake);
 //        outtake.init();
 //        intakeClaw.init();
 
@@ -173,17 +176,11 @@ public class Teleop extends LinearOpMode {
 
         waitForStart();
 
-        executorService.submit(() -> {
-            android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_FOREGROUND);
-            while (true) {
-                wheelOdometry.updatePosition();
-            }
-
-        });
+        OpModeUtilities.runOdometryExecutorService(executorService, wheelOdometry);
 
         while (opModeIsActive()) {
-            while(!init.getIsDone()) {
-                init.updateCheckDone();
+            while(!initAuto.getIsDone()) {
+                initAuto.updateCheckDone();
             }
 
             // GAMEPAD 1 ASSIGNMENTS ==============================================
@@ -710,8 +707,10 @@ public class Teleop extends LinearOpMode {
 
         }
 
-        executorService.shutdownNow();
-
+        Log.d("executor service", "before shutdown" + SharedData.getOdometryPosition().toString());
+        OpModeUtilities.shutdownExecutorService(executorService);
+        Log.d("executor service",
+                "after shutdown" + SharedData.getOdometryPosition().toString() + "is shutdown " + executorService.isShutdown() + "is terminated " + executorService.isTerminated());
 
     }
 

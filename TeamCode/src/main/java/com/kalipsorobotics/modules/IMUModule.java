@@ -18,13 +18,21 @@ public class IMUModule {
         this.opModeUtilities = opModeUtilities;
 
         resetHardwareMap(opModeUtilities.getHardwareMap(), this);
-
-        imu.initialize(new IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
-                )
-        ));
+        int i = 0;
+        while (i < 3) {
+            i++;
+            boolean isImuIntitalized = imu.initialize(new IMU.Parameters(
+                    new RevHubOrientationOnRobot(
+                            RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                    )
+            ));
+            if (isImuIntitalized) {
+                break;
+            } else {
+                opModeUtilities.getOpMode().sleep(500);
+            }
+        }
 
         imu.resetYaw();
     }

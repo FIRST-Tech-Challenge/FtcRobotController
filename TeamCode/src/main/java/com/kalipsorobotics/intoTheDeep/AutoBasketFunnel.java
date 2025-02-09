@@ -1,7 +1,7 @@
 package com.kalipsorobotics.intoTheDeep;
 
 
-import android.os.Process;
+import android.util.Log;
 
 import com.kalipsorobotics.actions.intake.IntakeTransferThirdSampleReady;
 import com.kalipsorobotics.actions.KActionSet;
@@ -68,8 +68,8 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         final int INTAKE_SAMPLE_X = -590-300;
 
-        int outtakeXPos = -190;
-        int outtakeYPos = 1020;
+//        int outtakeXPos = -190;
+//        int outtakeYPos = 1020;
 
         SetAutoDelayAction setAutoDelayAction = new SetAutoDelayAction(opModeUtilities, gamepad1);
         setAutoDelayAction.setName("setAutoDelayAction");
@@ -181,7 +181,8 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveToBasket3.setName("moveToBasket3");
         moveToBasket3.setDependentActions(sampleIntakeAction3);
         //move sample 3 to basket
-        moveToBasket3.addPoint(outtakeXPos, outtakeYPos, -135);
+        moveToBasket3.addPoint(SampleToBasketFunnelRoundTrip.OUTTAKE_X_POS, SampleToBasketFunnelRoundTrip.OUTTAKE_Y_POS,
+                -135);
         redAutoBasket.addAction(moveToBasket3);
 
         BasketReadyAction basketReady3 = new BasketReadyAction(outtake);
@@ -198,7 +199,10 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveOutBasket3.setName("moveOutBasket3");
         moveOutBasket3.setDependentActions(openClaw3);
         moveOutBasket3.setFinalSearchRadius(50);
-        moveOutBasket3.addPoint(outtakeXPos - 150, outtakeYPos - 150, -135, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
+        moveOutBasket3.addPoint(SampleToBasketFunnelRoundTrip.OUTTAKE_X_POS - 150,
+                SampleToBasketFunnelRoundTrip.OUTTAKE_Y_POS - 150, -135,
+                PurePursuitAction.P_XY_SLOW,
+                PurePursuitAction.P_ANGLE_SLOW);
         redAutoBasket.addAction(moveOutBasket3);
 
         KServoAutoAction pivotOuttakeHalfwayToBar = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_PARKING_READY_POS);
@@ -253,14 +257,7 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         waitForStart();
 
-        executorService.submit(() -> {
-
-            android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_FOREGROUND);
-            while (true) {
-                wheelOdometry.updatePosition();
-            }
-
-        });
+        OpModeUtilities.runOdometryExecutorService(executorService, wheelOdometry);
 
         while (opModeIsActive()) {
 
@@ -273,8 +270,10 @@ public class AutoBasketFunnel extends LinearOpMode {
             redAutoBasket.updateCheckDone();
 
         }
-
-        executorService.shutdownNow();
+        Log.d("executor service", "before shutdown" + SharedData.getOdometryPosition().toString());
+        OpModeUtilities.shutdownExecutorService(executorService);
+        Log.d("executor service",
+                "after shutdown" + SharedData.getOdometryPosition().toString() + "is shutdown " + executorService.isShutdown() + "is terminated " + executorService.isTerminated());
 
     }
 }

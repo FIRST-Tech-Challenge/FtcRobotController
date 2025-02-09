@@ -1,32 +1,28 @@
 package com.kalipsorobotics.actions.autoActions;
 
 import com.kalipsorobotics.actions.CheckPassXFunnel;
-import com.kalipsorobotics.actions.CheckPointDone;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.TransferAction;
-import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.intake.IntakeFunnelAction;
 import com.kalipsorobotics.actions.intake.IntakeFunnelReady;
 import com.kalipsorobotics.actions.intake.IntakeTransferReady;
 import com.kalipsorobotics.actions.outtake.BasketReadyAction;
 import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
 import com.kalipsorobotics.localization.WheelOdometry;
-import com.kalipsorobotics.math.Position;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 
 public class SampleToBasketFunnelRoundTrip extends KActionSet {
     public static final int INTAKE_SAMPLE_X_FUNNEL = -590-325;
+    public static final int OUTTAKE_X_POS = -140;
+    public static final int OUTTAKE_Y_POS = 970;
 
     public SampleToBasketFunnelRoundTrip(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, IntakeClaw intakeClaw, int sampleY){
         this(driveTrain, wheelOdometry, outtake, intakeClaw, sampleY, 0);
     }
 
     public SampleToBasketFunnelRoundTrip(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, IntakeClaw intakeClaw, int sampleY, int overshootX){
-
-        int outtakeXPos = -190;
-        int outtakeYPos = 1020;
 
         PurePursuitAction moveToSample1 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSample1.setName("moveToSample1");
@@ -73,9 +69,9 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
         // while
         // moving
         //move sample 1 to basket
-        moveToBasket1.addPoint(outtakeXPos - 150, outtakeYPos - 150, -135, PurePursuitAction.P_XY_FAST,
+        moveToBasket1.addPoint(OUTTAKE_X_POS - 250, OUTTAKE_Y_POS - 150, -135, PurePursuitAction.P_XY_FAST,
                 PurePursuitAction.P_ANGLE_SLOW);
-        moveToBasket1.addPoint(outtakeXPos, outtakeYPos, -135, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
+        moveToBasket1.addPoint(OUTTAKE_X_POS, OUTTAKE_Y_POS, -135, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
         this.addAction(moveToBasket1);
 
         BasketReadyAction basketReady1 = new BasketReadyAction(outtake);
@@ -92,7 +88,7 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
         moveOutBasket1.setName("moveOutBasket1");
         moveOutBasket1.setDependentActions(openClaw1);
         moveOutBasket1.setFinalSearchRadius(50);
-        moveOutBasket1.addPoint(outtakeXPos - 150, outtakeYPos - 150, -135, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE);
+        moveOutBasket1.addPoint(OUTTAKE_X_POS - 150, OUTTAKE_Y_POS - 150, -135, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE);
         this.addAction(moveOutBasket1);
     }
 }
