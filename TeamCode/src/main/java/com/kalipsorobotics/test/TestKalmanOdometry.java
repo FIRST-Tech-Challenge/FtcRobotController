@@ -45,9 +45,9 @@ public class TestKalmanOdometry extends LinearOpMode {
             //TODO fuse with wheel odo
             //TODO add kalman filter with heading
             telemetry.addLine("Noisy data");
-            telemetry.addLine("x: " + noisyMeasurement1.x + " y: " + noisyMeasurement1.y);
+            telemetry.addLine(String.format("x: %.3f y: %.3f", noisyMeasurement1.x, noisyMeasurement1.y) + "");
             telemetry.addLine("filtered data");
-            telemetry.addLine("x: " + filteredPoint1.x + " y: " + filteredPoint1.y);
+            telemetry.addLine(String.format("x: %.3f y: %.3f", filteredPoint1.x, filteredPoint1.y) + "");
             Log.d("kalmanFilter", noisyMeasurement1.x + noisyMeasurement1.y + "  " + filteredPoint1.x + filteredPoint1.y);
             if (gamepad1.a) {
                 odometrySpark.sparkResetData(true, odometrySpark.headingUpdateData("right", 0, 0));
