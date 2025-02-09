@@ -37,14 +37,16 @@ public class PrimaryOpMode extends LinearOpMode {
         public double backMotorMult  = 1;
         public double frontMotorMult = 1;
 
-        public double kP             = 0;
-        public double kI             = 0;
+        public double kP             = 2;
+        public double kI             = 0.1;
         public double kD             = 0;
 
         public double power        = 1;
 
         public double clawServoAmount = 0.2;
         public int ticks = 3850;
+        public double leftMotorMult = 1;
+        public double rightMotorMult = 1;
     }
     public static Params PARAMS = new Params();
 
@@ -52,8 +54,8 @@ public class PrimaryOpMode extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // TelemetryPacket packet = new TelemetryPacket();
 
-        Servo rightClawArmServo      = hardwareMap.get(Servo.class, "clawArmServo");
-        Servo leftClawArmServo       = hardwareMap.get(Servo.class, "clawArmServo2");
+        //Servo rightClawArmServo      = hardwareMap.get(Servo.class, "clawArmServo");
+        //Servo leftClawArmServo       = hardwareMap.get(Servo.class, "clawArmServo2");
         Servo clawServo              = hardwareMap.get(Servo.class, "clawServo");
         // Declare our motors
         // Make sure your ID's match your configuration
@@ -168,16 +170,15 @@ public class PrimaryOpMode extends LinearOpMode {
             telemetry.addData("Right: ", rightDrive.getCurrentPosition());
             telemetry.addData("Left: ",  leftDrive.getCurrentPosition());
 
-            telemetry.update();
             /* ##################################################
                             Inputs and Initializing
                ################################################## */
 
             double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            botHeading = unwrapAngle(botHeading, currentHeading); // Use unwrapping here
+            botHeading = unwrapAngle(botHeading, currentHeading)%(Math.PI*2); // Use unwrapping here
 
             double y  = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x  = 1.1 * -gamepad1.left_stick_x;
+            double x  = 1.1 * gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
 
@@ -191,8 +192,8 @@ public class PrimaryOpMode extends LinearOpMode {
                         Movement Controls Calculations
                ################################################## */
 
-            double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
-            double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
+            double rotX = x * Math.cos(botHeading) - y * Math.sin(-botHeading);
+            double rotY = x * Math.sin(-botHeading) + y * Math.cos(botHeading);
 
             rotX *= PARAMS.speedMult;
             rotY *= PARAMS.speedMult;
@@ -201,7 +202,7 @@ public class PrimaryOpMode extends LinearOpMode {
             /* ##################################################
                                    Rotation
                ################################################## */
-            double fixError = pid.calculate(botHeading);
+
             if (rx == 0 && isTurning) {
                 wantedAngle = botHeading % (Math.PI*2);
                 isTurning = false;
@@ -209,7 +210,7 @@ public class PrimaryOpMode extends LinearOpMode {
             else if (rx != 0 && !isTurning) {
                 isTurning = true;
             }
-
+            double fixError = pid.calculate(botHeading);
             //makes sure the robot doesn't fix small angles
             if (Math.abs(Math.toDegrees(botHeading-wantedAngle)) > 6 && !isTurning){
                 rx -= fixError;
@@ -292,10 +293,10 @@ public class PrimaryOpMode extends LinearOpMode {
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
             double denominator     = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-            double frontLeftPower  = PARAMS.frontMotorMult * (rotY + rotX + rx) / denominator;
-            double backLeftPower   = PARAMS.backMotorMult * (rotY - rotX + rx) / denominator;
-            double frontRightPower = PARAMS.frontMotorMult * (rotY - rotX - rx) / denominator;
-            double backRightPower  = PARAMS.backMotorMult *(rotY + rotX - rx) / denominator;
+            double frontLeftPower  = PARAMS.frontMotorMult *PARAMS.leftMotorMult* (rotY + rotX + rx) / denominator;
+            double backLeftPower   = PARAMS.backMotorMult *PARAMS.leftMotorMult* (rotY - rotX + rx) / denominator;
+            double frontRightPower = PARAMS.frontMotorMult * PARAMS.rightMotorMult * (rotY - rotX - rx) / denominator;
+            double backRightPower  = PARAMS.backMotorMult *PARAMS.rightMotorMult* (rotY + rotX - rx) / denominator;
 
             frontLeftMotor.setPower(frontLeftPower);
             backLeftMotor.setPower(backLeftPower);

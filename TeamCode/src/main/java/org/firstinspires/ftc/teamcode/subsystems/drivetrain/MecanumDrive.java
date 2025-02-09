@@ -59,18 +59,18 @@ public final class MecanumDrive {
         // TODO: fill in these values based on
         //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
+                RevHubOrientationOnRobot.LogoFacingDirection.UP;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.UP;
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
 
         // drive model parameters
-        public double inPerTick = 0.0224153;
-        public double lateralInPerTick = 0.0227275;
-        public double trackWidthTicks = 1219.5068323;
+        public double inPerTick = 0.02242935;
+        public double lateralInPerTick = 0.022458;
+        public double trackWidthTicks = 1360.266537;
 
         // feedforward parameters (in tick units)
-        public double kS = 1.701174;
-        public double kV =  0.004197633;
+        public double kS = 1.47652928267;
+        public double kV =  0.00407092037;
         public double kA = 0.001;
 
         // path profile parameters (in inches)
@@ -84,12 +84,12 @@ public final class MecanumDrive {
 
         // path controller gains
         public double axialGain = 1;
-        public double lateralGain = 1;
-        public double headingGain = 10; // shared with turn
+        public double lateralGain = 5;
+        public double headingGain = 4; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
-        public double headingVelGain = 1; // shared with turn
+        public double headingVelGain = 0; // shared with turn
     }
 
     public static Params PARAMS = new Params();
