@@ -9,22 +9,20 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.stormbots.MiniPID;
 
-import org.firstinspires.ftc.teamcode.AutonPedroSpecimens;
-
 import java.io.OutputStreamWriter;
 
 public class OdometryBot extends GyroBot {
     // Wheel diameters in mm
-    final double VERTICAL_WHEEL_DIAMETER = 32; // Vertical wheel diameter
-    final double HORIZONTAL_WHEEL_DIAMETER = 48; // Horizontal wheel diameter
+    final double SMALL_WHEEL_DIAMETER = 32; // Vertical wheel diameter
+    final double LARGE_WHEEL_DIAMETER = 48; // Horizontal wheel diameter
     final double ORIGINAL_WHEEL_DIAMETER = 37; // Wheel diameter from previous season - used for conversion of ticks
 
     // Encoder ticks per revolution
     final double TICKS_PER_REV = 2048;
 
     // Conversion factors for ticks to distance (mm)
-    final double VERTICAL_TICKS_TO_ORIGINAL = VERTICAL_WHEEL_DIAMETER/ORIGINAL_WHEEL_DIAMETER;
-    final double HORIZONTAL_TICKS_TO_ORIGINAL = HORIZONTAL_WHEEL_DIAMETER/ORIGINAL_WHEEL_DIAMETER;
+    final double SMALL_WHEEL_TICKS_TO_ORIGINAL = SMALL_WHEEL_DIAMETER /ORIGINAL_WHEEL_DIAMETER;
+    final double LARGE_WHEEL_TICKS_TO_ORIGINAL = LARGE_WHEEL_DIAMETER /ORIGINAL_WHEEL_DIAMETER;
 
     public DcMotor horizontal = null;
     public DcMotor verticalRight = null;
@@ -119,15 +117,15 @@ public class OdometryBot extends GyroBot {
      * @param h position of horizontal encoder
      */
     public void calculateCaseThree(double vL, double vR, double h) {
-        vL = vL * vLDirection * VERTICAL_TICKS_TO_ORIGINAL;
-        vR = vR * vRDirection * VERTICAL_TICKS_TO_ORIGINAL;
-        h = h * hDirection * HORIZONTAL_TICKS_TO_ORIGINAL;
+        vL = vL * vLDirection * SMALL_WHEEL_TICKS_TO_ORIGINAL;
+        vR = vR * vRDirection * SMALL_WHEEL_TICKS_TO_ORIGINAL;
+        h = h * hDirection * SMALL_WHEEL_TICKS_TO_ORIGINAL;
 
         double lC = vL - previousVL;
         double rC = vR - previousVR;
 
-        angleChange = ((lC - rC) / (Math.PI * diameter * 2) * 360);
-        angleChange = 3.7715*(lC - rC)/(rightX - leftX);
+//        angleChange = ((lC - rC) / (Math.PI * diameter * 2) * 360);
+//        angleChange = 3.7715*(lC - rC)/(rightX - leftX);
         angleChange = (lC - rC)/(rightX - leftX);
 
 //        angleChange = (lC - rC)/(2 * diameter);
@@ -140,7 +138,7 @@ public class OdometryBot extends GyroBot {
 
         //angleChange = angleDEG - previousThetaDEG;
 
-        hError = (lC - rC)/(diameter * 2) * hDiameter;
+        hError = angleChange * hDiameter/2;
 
         double hC = h - previousH;
 
