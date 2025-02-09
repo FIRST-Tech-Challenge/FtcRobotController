@@ -10,15 +10,18 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
+
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class RollerIntakeBot extends FourWheelDriveBot {
-    private Servo intakeRoller;
+    private CRServo intakeRoller;
     private Servo colorIndicator;
     private NormalizedColorSensor colorSensor;
 
-    float gain = 2;
+    float gain = 5;
+    float thres = 50;
 
     final int ROLLER_MODE_OFF = 0;
     final int ROLLER_MODE_INTAKE = 1;
@@ -37,13 +40,16 @@ public class RollerIntakeBot extends FourWheelDriveBot {
     @Override
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
-        intakeRoller = ahwMap.get(Servo.class, "intakeRoller");
+        intakeRoller = ahwMap.get(CRServo.class, "intakeRoller");
         colorSensor = ahwMap.get(NormalizedColorSensor.class, "colorSensor");
         colorIndicator = ahwMap.get(Servo.class, "colorIndicator");
+
+        colorSensor.setGain(gain);
     }
 
     public void setRollerPower(double power) {
-        intakeRoller.setPosition((power + 1) / 2); // Convert power (-1 to 1) to position (0 to 1)
+//        intakeRoller.setPosition((power + 1) / 2); // Convert power (-1 to 1) to position (0 to 1)
+        intakeRoller.setPower(power);
     }
 
     protected void onEvent(int event, int data) {
@@ -58,14 +64,28 @@ public class RollerIntakeBot extends FourWheelDriveBot {
 
     protected void onTick() {
         super.onTick();
+
+        telemetry.addData("Mode", rollerMode);
+        NormalizedRGBA colors = colorSensor.getNormalizedColors();
+        @ColorInt int color = colors.toColor();
+        telemetry.addData("Red", Color.red(color));
+        telemetry.addData("Green", Color.green(color));
+        telemetry.addData("Blue", Color.blue(color));
+        telemetry.addData("Gain", gain);
+        telemetry.addData("Thres", thres);
+
+        int obj = getObjectInPlace();
+
+        updateColorIndicator(obj);
+
         if (rollerMode == ROLLER_MODE_INTAKE) {
-            int obj = getObjectInPlace();
+            telemetry.addData("Current obj", obj);
             if (obj != NOTHING) {
                 stopRoller();
                 triggerEvent(EVENT_SAMPLE_ROLLED_IN, obj);
             }
         } else if (rollerMode == ROLLER_MODE_OUTAKE) {
-            int obj = getObjectInPlace();
+//            int obj = getObjectInPlace();
             if (obj == NOTHING) {
                 stopRoller();
                 triggerEvent(EVENT_SAMPLE_ROLLED_OUT, obj);
@@ -84,6 +104,17 @@ public class RollerIntakeBot extends FourWheelDriveBot {
                 .addData("ColorSensor Gain", gain);
     }
 
+    public void adjustThres(boolean increase) {
+        if (increase) {
+            thres += 0.1f;
+        } else {
+            thres -= 0.1f;
+        }
+//        colorSensor.setGain(gain);
+        telemetry.addLine()
+                .addData("Threshold", thres);
+    }
+
     public void logColorSensor() {
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
 
@@ -99,17 +130,23 @@ public class RollerIntakeBot extends FourWheelDriveBot {
 
     public void intake() {
         rollerMode = ROLLER_MODE_INTAKE;
-        setRollerPower(1.0); // Full power intake
+        setRollerPower(-1); // Full power intake
     }
 
     public void outake() {
         rollerMode = ROLLER_MODE_OUTAKE;
-        setRollerPower(-1.0); // Full power outake
+        setRollerPower(1); // Full power outake
     }
 
     public void stopRoller() {
         rollerMode = ROLLER_MODE_OFF;
-        setRollerPower(0.0); // Stop the roller
+
+        // Gradually reduce power before stopping
+
+        setRollerPower(1);   // Briefly reverse
+        opMode.sleep(40);
+
+        setRollerPower(0);     // Fully stop
     }
 
     public void setColorIndicator(double pos) {
@@ -121,14 +158,18 @@ public class RollerIntakeBot extends FourWheelDriveBot {
     int getColor(int red, int green, int blue) {
         // 0 = nothing, 1 = yellow, 2 = blue, 3 = red
 
-        int thres = 120; // Adjust as needed based on lighting conditions
+//        int thres = 100; // Adjust as needed based on lighting conditions
+        //thres = 50, gain = 5
+        //red: 140, 45, 45
+        //yellow: 228, 228, 86
+        //blue: 32, 70, 120
 
-        if (red > thres && green > thres) {
+        if (red > 150 && green > 150) {
             return YELLOW; // Yellow (high red + green, low blue)
-        } else if (blue > thres) {
-            return BLUE; // Blue (high blue, low red + green)
-        } else if (red > thres) {
+        } else if (red > 100) {
             return RED; // Red (high red, low green + blue)
+        }  else if (blue > 100) {
+            return BLUE; // Blue (high blue, low red + green)
         } else {
             return NOTHING; // No object detected
         }
@@ -142,17 +183,17 @@ public class RollerIntakeBot extends FourWheelDriveBot {
         } else if (curColor == YELLOW) { // yellow
             colorIndicator.setPosition(0.388);
         } else {
-            colorIndicator.setPosition(0.5); // arbitrary value for nothing (green)
+            colorIndicator.setPosition(0); // arbitrary value for nothing (green)
         }
     }
     public int getObjectInPlace() {
         // 0 = nothing, 1 = yellow, 2 = blue, 3 = red
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
         @ColorInt int color = colors.toColor();
-
-        if (((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM) > 6.0) {
-            return 0;
-        }
+//
+//        if (((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM) > 6.0) {
+//            return 0;
+//        }
         return getColor(Color.red(color), Color.green(color), Color.blue(color));
     }
 }

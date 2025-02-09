@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.bots.RollerIntakeBot;
 @TeleOp(name = "IntakeTest")
 public class IntakeTest extends LinearOpMode {
     private RollerIntakeBot rollerIntakeBot;
+//    private DifferentialWristBot differentialWristBot;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -34,6 +35,12 @@ public class IntakeTest extends LinearOpMode {
             } else if (gamepad1.y) {
                 rollerIntakeBot.adjustGain(false); // Decrease gain
             }
+            if (gamepad1.dpad_right) {
+                rollerIntakeBot.adjustThres(true);
+            } if (gamepad1.b) {
+                rollerIntakeBot.adjustThres(false);
+            }
+
 
             if (gamepad1.right_bumper) {
 //                gamepad1.
