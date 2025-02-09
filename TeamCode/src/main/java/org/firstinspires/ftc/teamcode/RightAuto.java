@@ -326,7 +326,7 @@ public class RightAuto extends LinearOpMode {
         telemetry.addLine(String.format("%d in queue.", scheduler.taskCount()));
         telemetry.update();
 
-        waitForStart(); // Wait for start button
+        while (!isStarted() && !isStopRequested()) hardware.ascent.update();
 
         telemetry.update();
         finalizeTimer.reset();
