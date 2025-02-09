@@ -20,6 +20,8 @@ public class WheelOdometry {
     OpModeUtilities opModeUtilities;
     IMUModule imuModule;
 
+    SensorFusion sensorFusion;
+
     private double wheelHeadingWeight = 0;
     private double imuHeadingWeight = 1;
     final static private double TRACK_WIDTH_MM = 297;
@@ -54,6 +56,8 @@ public class WheelOdometry {
         prevRightDistanceMM = countRight();
         prevLeftDistanceMM = countLeft();
         prevBackDistanceMM = countBack();
+
+        sensorFusion = new SensorFusion();
     }
 
     public static synchronized WheelOdometry getInstance(OpModeUtilities opModeUtilities, DriveTrain driveTrain, IMUModule imuModule, double xCoordinate, double yCoordinate, double thetaDeg) {
@@ -102,7 +106,8 @@ public class WheelOdometry {
         return ticksToMM(backEncoder.getCurrentPosition());
     }
 
-    private Velocity calculateRelativeDelta(double rightDistanceMM, double leftDistanceMM, double backDistanceMM) {
+    private Velocity calculateRelativeDelta(double rightDistanceMM, double leftDistanceMM, double backDistanceMM,
+                                            double deltaTimeMS) {
         double deltaRightDistance = rightDistanceMM - prevRightDistanceMM;
         double deltaLeftDistance = leftDistanceMM - prevLeftDistanceMM;
         double deltaMecanumDistance = backDistanceMM - prevBackDistanceMM;
@@ -122,8 +127,12 @@ public class WheelOdometry {
                 String.format("encoder = %.4f, imu = %.4f, arcTan = %.4f", encoderDeltaTheta, imuDeltaTheta,
                         arcTanDeltaTheta));
         //double blendedDeltaTheta = (newPosition.getTheta());
-        double blendedDeltaTheta =
-                (wheelHeadingWeight * encoderDeltaTheta) + (imuHeadingWeight * imuDeltaTheta) + (wheelHeadingWeight * arcTanDeltaTheta);
+
+//        double blendedDeltaTheta =
+//                (wheelHeadingWeight * encoderDeltaTheta) + (imuHeadingWeight * imuDeltaTheta) + (wheelHeadingWeight * arcTanDeltaTheta);
+
+        double blendedDeltaTheta = sensorFusion.getFilteredAngle(imuDeltaTheta, arcTanDeltaTheta, deltaTimeMS);
+
         double deltaTheta = blendedDeltaTheta; //blended compliment eachother — to reduce drift of imu in big movement and to detect small change
 
         double deltaX = (deltaLeftDistance + deltaRightDistance) / 2;
@@ -208,13 +217,14 @@ public class WheelOdometry {
         Log.d("updatepos", rightDistanceMM + " " + leftDistanceMM + " " + backDistanceMM);
 
         long currentTime = SystemClock.elapsedRealtime();
-        double timeElapsed = (currentTime - prevTime) / 1000.;
+        double timeElapsedSeconds = (currentTime - prevTime) / 1000.0;
 
-        Velocity relativeDelta = calculateRelativeDelta(rightDistanceMM, leftDistanceMM, backDistanceMM);
+        Velocity relativeDelta = calculateRelativeDelta(rightDistanceMM, leftDistanceMM,
+                backDistanceMM, timeElapsedSeconds * 1000);
         Log.d("relativeDelta", relativeDelta.toString());
         relativeDelta = linearToArcDelta(relativeDelta);
 
-        currentVelocity = relativeDelta.divide(timeElapsed);
+        currentVelocity = relativeDelta.divide(timeElapsedSeconds);
         prevTime = currentTime;
 
         currentPosition = calculateGlobal(relativeDelta, currentPosition);
