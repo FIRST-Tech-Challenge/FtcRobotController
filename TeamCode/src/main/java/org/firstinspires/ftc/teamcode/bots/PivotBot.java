@@ -47,18 +47,26 @@ public class PivotBot extends OdometryBot {
     public int slideTarget = 110;
 
 
-    public DcMotorEx pivotMotor = null;
+    public DcMotorEx pivotMotor2 = null;
+    public DcMotorEx pivotMotor1 = null;
     public DcMotorEx slideMotor = null;
 
     @Override
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
-        pivotMotor = hwMap.get(DcMotorEx.class, "Pivot Motor");
-        pivotMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        pivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        pivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        pivotMotor.setPower(pivotPower);
+        pivotMotor1 = hwMap.get(DcMotorEx.class, "Pivot Motor");
+        pivotMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
+        pivotMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivotMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pivotMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        pivotMotor1.setPower(pivotPower);
+
+        pivotMotor2 = hwMap.get(DcMotorEx.class, "Pivot Motor");
+        pivotMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        pivotMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivotMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pivotMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        pivotMotor2.setPower(pivotPower);
 
         slideMotor = hwMap.get(DcMotorEx.class, "slide");
         slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -68,8 +76,10 @@ public class PivotBot extends OdometryBot {
         slideMotor.setPower(0);
 
         // TODO
-        pivotMotor.setTargetPosition(pivotTarget);
-        pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pivotMotor1.setTargetPosition(pivotTarget);
+        pivotMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pivotMotor2.setTargetPosition(pivotTarget);
+        pivotMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pivotPower = 0.5;
     }
 
@@ -93,16 +103,21 @@ public class PivotBot extends OdometryBot {
 
             pivotOutOfRange = false;
 
-            pivotMotor.setTargetPosition(pivotTarget);
-            pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            pivotMotor1.setTargetPosition(pivotTarget);
+            pivotMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            pivotMotor2.setTargetPosition(pivotTarget);
+            pivotMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // TODO : PID control for the pivot motor
-            pivotMotor.setPower(0.6);
+            pivotMotor1.setPower(0.6);
+            pivotMotor2.setPower(0.6);
 
         } else {
 
             pivotOutOfRange = true;
-            pivotMotor.setPower(0);
+            pivotMotor1.setPower(0);
+            pivotMotor2.setPower(0);
 
         }
         if (slideTarget > 0 && slideTarget < maximumSlidePos + 100){
@@ -145,17 +160,21 @@ public class PivotBot extends OdometryBot {
 
     public void pivotControl(boolean up, boolean down){
         if (up) {
-            if (pivotMotor.getCurrentPosition() < maximumPivotPos) {
-                pivotTarget = pivotMotor.getCurrentPosition() + ((maximumPivotPos - pivotMotor.getCurrentPosition()) / 10);
-                pivotMotor.setTargetPosition(pivotTarget);
-                pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (pivotMotor1.getCurrentPosition() < maximumPivotPos) {
+                pivotTarget = pivotMotor1.getCurrentPosition() + ((maximumPivotPos - pivotMotor1.getCurrentPosition()) / 10);
+                pivotMotor1.setTargetPosition(pivotTarget);
+                pivotMotor2.setTargetPosition(pivotTarget);
+                pivotMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                pivotMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
         }
         if (down) {
-            if (pivotMotor.getCurrentPosition() > minumimPivotPos) {
-                pivotTarget = pivotMotor.getCurrentPosition() - (pivotMotor.getCurrentPosition() / 10);
-                pivotMotor.setTargetPosition(pivotTarget);
-                pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (pivotMotor1.getCurrentPosition() > minumimPivotPos) {
+                pivotTarget = pivotMotor1.getCurrentPosition() - (pivotMotor1.getCurrentPosition() / 10);
+                pivotMotor1.setTargetPosition(pivotTarget);
+                pivotMotor2.setTargetPosition(pivotTarget);
+                pivotMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                pivotMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
         }
     }
@@ -237,8 +256,10 @@ public class PivotBot extends OdometryBot {
 
     public void relatePivotToSlide(){
         pivotTarget = Math.round((slideMotor.getCurrentPosition() / -23) + 245);
-        pivotMotor.setTargetPosition(pivotTarget);
-        pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pivotMotor1.setTargetPosition(pivotTarget);
+        pivotMotor2.setTargetPosition(pivotTarget);
+        pivotMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pivotMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
 }
