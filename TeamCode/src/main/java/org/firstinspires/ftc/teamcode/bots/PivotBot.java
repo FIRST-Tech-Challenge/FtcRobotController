@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.bots;
 
+        import com.acmerobotics.dashboard.config.Config;
         import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
         import com.qualcomm.robotcore.hardware.DcMotor;
         import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -9,23 +10,23 @@ package org.firstinspires.ftc.teamcode.bots;
 
         import java.util.Timer;
         import java.util.TimerTask;
-
+@Config
 public class PivotBot extends OdometryBot {
 
     ElapsedTime timer = new ElapsedTime();
 
 
     // Pivot motor constants
-    public final int maximumPivotPos = 1300;
-    public final int minumimPivotPos = -100;
-    private final int searchPivotPos = 220; // tested
-    private final int pickupSpecimenPivotPos = 115; // tested
-    private final int pickupSamplePivotPos = 20; // tested
-    private final int pickupUpPivotPos = 400;
-    public final int specimenHighPivotPos = 1150;
-    public final int specimenLowPivotPos = 750;
-    public final int highBasketPivotPos = 1200;
-    public final int lowBasketPivotPos = 1000;
+    public static int maximumPivotPos = 1300;
+    public static int minumimPivotPos = -100;
+    private static int searchPivotPos = 220; // tested
+    private static int pickupSpecimenPivotPos = 115; // tested
+    private static int pickupSamplePivotPos = 20; // tested
+    private static int pickupUpPivotPos = 400;
+    public static int specimenHighPivotPos = 1150;
+    public static int specimenLowPivotPos = 750;
+    public static int highBasketPivotPos = 1200;
+    public static int lowBasketPivotPos = 1000;
     public boolean pivotOutOfRange = false;
     public int pivotTarget = 300;
     public double pivotPower = 0.7;
@@ -34,14 +35,14 @@ public class PivotBot extends OdometryBot {
     private TimerTask pivotTimerTask;
 
     // Slide motor constants
-    public final int maximumSlidePos = 2600;
-    public final int minimumSlidePos = 170;
-    public final int searchSlidePos = 350;
-    public final int specimenHighSlidePos = 716;
-    public final int specimenLowSlidePos = 800;
-    public final int highBasketSlidePos = 2540;
-    public final int lowBasketSlidePos = 800;
-    public final double slideCMCoefficient = 31.2;
+    public static int maximumSlidePos = 2600;
+    public static int minimumSlidePos = 170;
+    public static int searchSlidePos = 350;
+    public static int specimenHighSlidePos = 716;
+    public static int specimenLowSlidePos = 800;
+    public static int highBasketSlidePos = 2540;
+    public static int lowBasketSlidePos = 800;
+    public static double slideCMCoefficient = 31.2;
 
     public int slideTarget = 110;
 

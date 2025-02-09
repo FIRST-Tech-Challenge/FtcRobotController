@@ -92,7 +92,25 @@ public class BotBot {
     public static final int EVENT_SAMPLE_ROLLED_IN = 1;
     public static final int EVENT_SAMPLE_ROLLED_OUT = 2;
     public static final int EVENT_PRELOAD_POSITION_ARRIVED = 1;
+
     public static final int EVENT_PRELOAD_SCORED = 2;
+
+    public static final int EVENT_SAMPLE_1_PICKEDUP = 3;
+    public static final int EVENT_SAMPLE_1_DROPPEDOFF= 4;
+    public static final int EVENT_SAMPLE_2_PICKEDUP = 5;
+    public static final int EVENT_SAMPLE_2_DROPPEDOFF = 6;
+    public static final int EVENT_SAMPLE_3_PICKEDUP = 7;
+    public static final int EVENT_SAMPLE_3_DROPPEDOFF = 8;
+    public static final int EVENT_SPECIMEN_1_LOADED = 9;
+    public static final int EVENT_SPECIMEN_1_SCORED = 10;
+    public static final int EVENT_SPECIMEN_2_LOADED = 11;
+    public static final int EVENT_SPECIMEN_2_SCORED = 12;
+    public static final int EVENT_SPECIMEN_3_LOADED = 13;
+    public static final int EVENT_SPECIMEN_3_SCORED = 14;
+    public static final int EVENT_PARKED = 15;
+
+
+
 
     protected void triggerEvent(int type, int data){
         onEvent(type, data);

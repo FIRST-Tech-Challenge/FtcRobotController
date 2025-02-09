@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.bots;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
@@ -21,7 +22,7 @@ public class PedroPathingBot extends GyroBot{
       * It is used by the pathUpdate method. */
      private int pathState;
 
-     private final Pose startPose = new Pose(7.698663426488457, 53.890643985419196, 0);// starting position of robot
+     private final Pose startPose = new Pose(7.7, 53.89, 0);// starting position of robot
      private final Pose scoreSpecimenPose = new Pose(40, 66, Math.toRadians(180));// position where specimen is scored on submersible, robot is aligned to submerisble with back facing it
 
      //    private final Pose sample1 = new Pose(35, 23,0); //these three poses are just behind the samples
@@ -47,7 +48,7 @@ public class PedroPathingBot extends GyroBot{
           scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scoreSpecimenPose.getHeading());
 
           pickup = follower.pathBuilder()
-                  .addPath(new BezierLine(new Point(scoreSpecimenPose), new Point (samplePivotPose)))
+                  .addPath(new BezierLine(new Point(dropSamplePose), new Point (samplePivotPose)))
                   .setLinearHeadingInterpolation(scoreSpecimenPose.getHeading(), samplePivotPose.getHeading())
                   .build();
 
@@ -119,17 +120,145 @@ public class PedroPathingBot extends GyroBot{
                          triggerEvent(EVENT_PRELOAD_SCORED, 2);
                          setPathState(EVENT_PRELOAD_SCORED);
                     }
-                    break;
+               break;
 
                case 2:
 
                     if(!follower.isBusy()){
-                         follower.followPath(pickup);
-                         
+                         follower.followPath(pickup, true);
+                         //pickup first sample
+                         triggerEvent(EVENT_SAMPLE_1_PICKEDUP, 3);
+                         setPathState(EVENT_SAMPLE_1_PICKEDUP);
+
+                    }
+
+                    break;
+
+               case 3:
+
+                    if(!follower.isBusy()){
+                         follower.followPath(dropoff, true);
+                         //release sample with claw
+                         triggerEvent(EVENT_SAMPLE_1_DROPPEDOFF, 4);
+                         setPathState(EVENT_SAMPLE_1_DROPPEDOFF;
+                    }
+
+                    break;
+
+               case 4:
+
+                    if(!follower.isBusy()){
+                         follower.followPath(pickup, true);
+                         //pickup first sample
+                         triggerEvent(EVENT_SAMPLE_2_PICKEDUP, 5);
+                         setPathState(EVENT_SAMPLE_2_PICKEDUP);
                     }
 
 
+                    break;
+
+               case 5:
+
+                    if(!follower.isBusy()){
+                         follower.followPath(dropoff, true);
+                         //release sample with claw
+                         triggerEvent(EVENT_SAMPLE_2_DROPPEDOFF, 6);
+                         setPathState(EVENT_SAMPLE_2_DROPPEDOFF;
+                    }
+
+                    break;
+
+               case 6:
+
+                    if(!follower.isBusy()){
+                         follower.followPath(pickup, true);
+                         //pickup first sample
+                         triggerEvent(EVENT_SAMPLE_3_PICKEDUP, 7);
+                         setPathState(EVENT_SAMPLE_3_PICKEDUP);
+                    }
+
+
+                    break;
+
+               case 7:
+
+                    if(!follower.isBusy()){
+                         follower.followPath(dropoff, true);
+                         //release sample with claw
+                         triggerEvent(EVENT_SAMPLE_3_DROPPEDOFF, 8);
+                         setPathState(EVENT_SAMPLE_3_DROPPEDOFF);
+                    }
+
+                    break;
                case 8:
+
+                    if(!follower.isBusy()){
+                         follower.followPath(loadSpecimen, true);
+                         //RAISE PIVOT FOR SPECIMEN CLAW LOAD, THEN DROP
+                     triggerEvent(EVENT_SPECIMEN_1_LOADED);
+                     setPathState(9);
+
+                    }
+                    break;
+               case 9:
+
+                    if(!follower.isBusy()){
+                         follower.followPath(scoreSpecimen, true);
+                         //RAISE PIVOT TO SCORE HIGH SPECIMEN, THEN DROP
+                         triggerEvent(EVENT_SPECIMEN_1_SCORED);
+                         setPathState(EVENT_SPECIMEN_1_SCORED);
+                    }
+                    break;
+               case 10:
+
+                    if(!follower.isBusy()){
+                         follower.followPath(loadSpecimen, true);
+                         //RAISE PIVOT FOR SPECIMEN CLAW LOAD, THEN DROP
+                         triggerEvent(EVENT_SPECIMEN_2_LOADED);
+                         setPathState(EVENT_SPECIMEN_2_LOADED);
+
+                    }
+                    break;
+               case 11:
+
+                    if(!follower.isBusy()){
+                         follower.followPath(scoreSpecimen, true);
+                         //RAISE PIVOT TO SCORE HIGH SPECIMEN, THEN DROP
+                         triggerEvent(EVENT_SPECIMEN_2_SCORED);
+                         setPathState(EVENT_SPECIMEN_2_SCORED);
+                    }
+                    break;
+               case 12:
+
+                    if(!follower.isBusy()){
+                         follower.followPath(loadSpecimen, true);
+
+                         //RAISE PIVOT FOR SPECIMEN CLAW LOAD, THEN DROP
+                         triggerEvent(EVENT_SPECIMEN_3_SCORED);
+                         setPathState(EVENT_SPECIMEN_3_SCORED);
+
+                    }
+                    break;
+               case 13:
+
+                    if(!follower.isBusy()){
+                         follower.followPath(scoreSpecimen, true);
+                         //RAISE PIVOT TO SCORE HIGH SPECIMEN, THEN DROP
+                         triggerEvent(EVENT_SPECIMEN_3_SCORED);
+                         setPathState(EVENT_SPECIMEN_3_SCORED);
+                    }
+                    break;
+               case 14:
+
+                    if(!follower.isBusy()){
+                         follower.followPath(park, true);
+                         triggerEvent(EVENT_PARKED);
+                         setPathState(EVENT_PARKED);
+                    }
+
+                    break;
+
+               case 15:
                     /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                     if(!follower.isBusy()) {
                          /* Level 1 Ascent */
