@@ -316,11 +316,7 @@ public class PrimaryOpMode extends LinearOpMode {
             telemetry.update();
         }
     }
-    public void setClawArmPower(float power, CRServo rightServo, CRServo leftServo){
-        rightServo.setPower(power);
-        leftServo.setPower(power);
-    }
-    public void setClawPower(float power, CRServo clawServo){ clawServo.setPower(power); }
+
 
     private double unwrapAngle(double previousAngle, double currentAngle) {
         double delta = currentAngle - previousAngle;

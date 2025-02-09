@@ -16,29 +16,28 @@ public class RedPath {
         MeepMeep meepMeep = new MeepMeep(800);
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 18)
                 .setDriveTrainType(DriveTrainType.MECANUM)
                 .build();
-        meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
-                .setDarkMode(true)
-                .setBackgroundAlpha(0.95f)
-                .addEntity(myBot)
-                .start();
-        Pose2d initialPose = new Pose2d(24, -61, Math.toRadians(90));
+
+
+
+
+        Pose2d initialPose = new Pose2d(-36, -61, Math.toRadians(90));
+
+        Vector2d basketPos = new Vector2d(-55,-55);
+
 
         TrajectoryActionBuilder builder1 = myBot.getDrive().actionBuilder(initialPose)
                 .waitSeconds(0.5)
-                .strafeTo(new Vector2d(38, -61))
-                .strafeTo(new Vector2d(38, -34))
-                .strafeTo(new Vector2d(38, -10))
-                .turnTo(new Rotation2d(-1, 0))
-                .strafeTo(new Vector2d(28, -10))
+                .strafeTo(new Vector2d(-48,-42))
                 .waitSeconds(0.5)
-                //Add arm movement.
-                .strafeTo(new Vector2d(60, -10))
-                .turnTo(new Rotation2d(0, 1))
-                .strafeTo(new Vector2d(60, -62))
-                .turn(180);
+                .strafeToSplineHeading(basketPos,Math.toRadians(45))
+                .waitSeconds(0.5)
+                .strafeToSplineHeading(new Vector2d(-58,-42),Math.toRadians(90))
+                .waitSeconds(0.5)
+                .strafeToSplineHeading(basketPos,Math.toRadians(45));
+
 
 
 
@@ -47,6 +46,13 @@ public class RedPath {
         myBot.runAction(new SequentialAction(
                 act1
         ));
+
+
+        meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
+                .setDarkMode(true)
+                .setBackgroundAlpha(0.95f)
+                .addEntity(myBot)
+                .start();
 
 //        TrajectoryActionBuilder tab1Traj = myBot.getDrive().actionBuilder(initialPose)
 //                .waitSeconds(3)
