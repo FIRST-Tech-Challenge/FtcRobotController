@@ -13,20 +13,30 @@ public class SensorFusion {
 
     private LinkedList<Double> imuHistory = new LinkedList<>();
 
+    private double angleEstimateDelta = 0;
+    private double angleVariance = 1;
+
+    private final double PROCESS_NOISE = 0.00005022545673;
+    private final double MEASUREMENT_NOISE_IMU = 0.00001805797825;
+
     public double getFilteredAngleDelta(double imuAngleDelta, double encoderAngleDelta, double deltaTimeMS,
                                         double imuAngle) {
 
 
-
-        double filteredAngleDelta;
+        double predictedAngleDelta = encoderAngleDelta;
+        double predictedVariance = angleVariance + PROCESS_NOISE;
 
         if (isValidImu(imuAngleDelta, encoderAngleDelta, deltaTimeMS, imuAngle)) {
-                    filteredAngleDelta = imuAngleDelta;
+            
+            applyKalmanCorrection(imuAngleDelta, MEASUREMENT_NOISE_IMU, predictedAngleDelta, predictedVariance);
+
         } else {
-            filteredAngleDelta = encoderAngleDelta;
+
+            angleEstimateDelta = predictedAngleDelta;
+            angleVariance = predictedVariance;
         }
 
-        return filteredAngleDelta;
+        return angleEstimateDelta;
     }
 
     private boolean isValidImu(double imuAngleDelta, double encoderAngleDelta, double deltaTimeMS,
@@ -96,5 +106,17 @@ public class SensorFusion {
 
         return isOutlier;
     }
+
+
+    public void applyKalmanCorrection(double measurementImuAngleDelta, double measurementImuAngleDeltaNoise,
+                                        double predictedEncoderAngle, double predictedEncoderVariance) {
+
+        double kalmanGain = predictedEncoderVariance / (predictedEncoderVariance + measurementImuAngleDeltaNoise);
+        angleEstimateDelta = predictedEncoderAngle + kalmanGain * (measurementImuAngleDelta - predictedEncoderAngle);
+        angleVariance = (1 - kalmanGain) * predictedEncoderVariance;
+
+
+    }
+
 
 }
