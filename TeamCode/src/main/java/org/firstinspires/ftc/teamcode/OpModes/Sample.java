@@ -47,7 +47,7 @@ public class Sample extends LinearOpMode {
         claw = robot.claw;
         pivot = robot.pivot;
         lift = robot.lift;
-        drivetrain.setInitialPose(-63,-31,0);
+        drivetrain.setInitialPose(-63,-33,0);
         telemetry.addData("X", 0);
         telemetry.addData("Y", 0);
         telemetry.addData("Theta", 0);
