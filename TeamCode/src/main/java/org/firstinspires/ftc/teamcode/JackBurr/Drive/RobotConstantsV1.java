@@ -40,15 +40,15 @@ public class RobotConstantsV1 {
     public int INTAKE_MOTOR_OUT = 850;
     public int INTAKE_MOTOR_ALL_THE_WAY_IN = 0;
     public int LEFT_SLIDE_HIGH_BASKET = -2709;
-    public int RIGHT_SLIDE_HIGH_BASKET = 2720;
+    public int RIGHT_SLIDE_HIGH_BASKET = 2709;
     public int LEFT_SLIDE_LOW_BASKET = -1416;
-    public int RIGHT_SLIDE_LOW_BASKET = 1423;
+    public int RIGHT_SLIDE_LOW_BASKET = 1416;
     public int LEFT_SLIDE_HIGH_BAR = -419;
-    public int RIGHT_SLIDE_HIGH_BAR = 430;
+    public int RIGHT_SLIDE_HIGH_BAR = 419;
     public int LEFT_SLIDE_HIGH_BAR_AUTO = -419;
-    public int RIGHT_SLIDE_HIGH_BAR_AUTO = 430;
+    public int RIGHT_SLIDE_HIGH_BAR_AUTO = 419;
     public int LEFT_SLIDE_LEVEL_TWO_ASCENT = -2709;
-    public int RIGHT_SLIDE_LEVEL_TWO_ASCENT = 2720;
+    public int RIGHT_SLIDE_LEVEL_TWO_ASCENT = 2709;
     public int LEFT_SLIDE_LEVEL_TWO_ASCENT_HOOK = -629;
     public int RIGHT_SLIDE_LEVEL_TWO_ASCENT_HOOK = 629;
     //CAMERA========================================================================================================
