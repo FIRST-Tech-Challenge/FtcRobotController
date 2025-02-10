@@ -106,7 +106,7 @@ public class TeleOpV3 extends OpMode {
     public boolean waitForSlides = true;
     public boolean sampleTransferred = false;
     public boolean areGrippersAligned = false;
-    public boolean limelightActivated = false;
+    public boolean limelightActivated = true;
     //VARIABLES=================================================================================================================
     public double timeNeeded = 0;
     public int leftSlideHighBar = constants.LEFT_SLIDE_HIGH_BAR;
@@ -155,7 +155,6 @@ public class TeleOpV3 extends OpMode {
 
     @Override
     public void loop() {
-
         //MECANUM_DRIVE====================================================================================================
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = -gamepad1.left_stick_x; // Counteract imperfect strafing, if the back motors are facing downwards this should be negative
@@ -167,11 +166,6 @@ public class TeleOpV3 extends OpMode {
             driveSlowMode(y,x,rx);
         }
         //SYSTEM_STATES====================================================================================================
-        if(limelightActivated) {
-            telemetry.addLine("Limelight 3a");
-            telemetry.addLine("\t FPS: " + limelightV1.getFps());
-            telemetry.addLine("\t Sample angle: " + limelightV1.getAngle());
-        }
         if(gamepad1.right_trigger != 0 && buttonTimer.seconds() > 0.25){
             toggleLimelight();
         }
@@ -321,14 +315,18 @@ public class TeleOpV3 extends OpMode {
                     state = SystemStatesV1.START;
                     buttonTimer.reset();
                 }
-                if (gamepad1.left_bumper && buttonTimer.seconds() > 0.35){
-                    wrist.moveLeft(0.2);
-                    buttonTimer.reset();
+                if(!limelightActivated) {
+                    if (gamepad1.left_bumper && buttonTimer.seconds() > 0.35) {
+                        wrist.moveLeft(0.2);
+                        buttonTimer.reset();
 
+                    } else if (gamepad1.right_bumper && buttonTimer.seconds() > 0.35) {
+                        wrist.moveRight(0.2);
+                        buttonTimer.reset();
+                    }
                 }
-                else if (gamepad1.right_bumper && buttonTimer.seconds() > 0.35){
-                    wrist.moveRight(0.2);
-                    buttonTimer.reset();
+                else {
+                    rotateGrippersToSample();
                 }
                 grippers.setPosition(constants.GRIPPERS_OPEN);
                 grippersClosed = false;
@@ -347,18 +345,14 @@ public class TeleOpV3 extends OpMode {
                     areGrippersAligned = false;
                     buttonTimer.reset();
                 }
-                if(!limelightActivated) {
-                    if (gamepad1.left_bumper && buttonTimer.seconds() > 0.35) {
-                        wrist.moveLeft(0.2);
-                        buttonTimer.reset();
+                if (gamepad1.left_bumper && buttonTimer.seconds() > 0.35){
+                    wrist.moveLeft(0.2);
+                    buttonTimer.reset();
 
-                    } else if (gamepad1.right_bumper && buttonTimer.seconds() > 0.35) {
-                        wrist.moveRight(0.2);
-                        buttonTimer.reset();
-                    }
                 }
-                else {
-                    rotateGrippersToSample();
+                else if (gamepad1.right_bumper && buttonTimer.seconds() > 0.35){
+                    wrist.moveRight(0.2);
+                    buttonTimer.reset();
                 }
                 grippers.setPosition(constants.GRIPPERS_OPEN);
                 grippersClosed = false;
@@ -371,6 +365,13 @@ public class TeleOpV3 extends OpMode {
                 pickedUpSample = false;
                 break;
             case DOWN_ON_SAMPLE:
+                telemetry.addLine("Limelight Activated: " + limelightActivated);
+                if(limelightActivated) {
+                    telemetry.addLine("Limelight 3a");
+                    telemetry.addLine("\t FPS: " + limelightV1.getFps());
+                    telemetry.addLine("\t Sample angle: " + limelightV1.getAngle());
+                    rotateGrippersToSample();
+                }
                 slowmode = true;
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.START;
