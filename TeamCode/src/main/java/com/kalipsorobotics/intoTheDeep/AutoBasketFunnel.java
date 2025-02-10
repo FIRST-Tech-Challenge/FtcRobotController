@@ -130,9 +130,9 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveToSample3.setDependentActions(sampleToBasketFunnelRoundTrip2);
         //move basket to sample 3
 //        moveToSample3.addPoint(-440, 1030, 180-29.6);
-        moveToSample3.addPoint(INTAKE_SAMPLE_X-35, 775, 90, PurePursuitAction.P_XY_SLOW,
+        moveToSample3.addPoint(INTAKE_SAMPLE_X-85, 775, 90, PurePursuitAction.P_XY_SLOW,
                 PurePursuitAction.P_ANGLE_SLOW); //x = INtAKE_SAMPLE_X - 80, y = 760
-        moveToSample3.setMaxCheckDoneCounter(15);
+//        moveToSample3.setMaxCheckDoneCounter(15);
         redAutoBasket.addAction(moveToSample3);
 
         //TODO INTAKE ACTION
@@ -219,7 +219,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         park.setName("park");
         park.setDependentActions(moveOutBasket3);
         park.addPoint(-1225, 700, 45, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE); // 610
-        park.addPoint(-1325, 210, 90, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE);
+        park.addPoint(-1325, 190, 90, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE);
         redAutoBasket.addAction(park);
 
         KServoAutoAction pivotOuttakeToBar = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_TOUCH_BAR_POS);

@@ -6,6 +6,7 @@ import android.util.Log;
 import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.math.MathFunctions;
 import com.kalipsorobotics.modules.IMUModule;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import com.kalipsorobotics.math.Position;
@@ -19,6 +20,8 @@ public class WheelOdometry {
     KalmanFilter kalmanFilter = new KalmanFilter(0.5, 5, 5);
     OpModeUtilities opModeUtilities;
     IMUModule imuModule;
+
+    SparkFunOTOS sparkFunOTOS;
 
     SensorFusion sensorFusion;
 
@@ -43,6 +46,8 @@ public class WheelOdometry {
     private volatile double currentImuHeading;
     private volatile double prevImuHeading;
 //    private final double MM_TO_INCH = 1/25.4;
+    private volatile double currentSparkFunImuHeading;
+    private volatile double prevSparkFunImuHeading;
 
     private WheelOdometry(OpModeUtilities opModeUtilities, DriveTrain driveTrain, IMUModule imuModule, double xCoordinate, double yCoordinate, double thetaDeg) {
         this.opModeUtilities = opModeUtilities;
@@ -53,9 +58,12 @@ public class WheelOdometry {
         prevTime = SystemClock.elapsedRealtime();
         prevImuHeading = getIMUHeading();
         currentImuHeading = prevImuHeading;
+        prevSparkFunImuHeading = getSparkFunIMUHeading();
+        currentSparkFunImuHeading = prevSparkFunImuHeading;
         prevRightDistanceMM = countRight();
         prevLeftDistanceMM = countLeft();
         prevBackDistanceMM = countBack();
+
 
         sensorFusion = new SensorFusion();
     }
@@ -71,6 +79,7 @@ public class WheelOdometry {
 
     private static void resetHardware(OpModeUtilities opModeUtilities, DriveTrain driveTrain, IMUModule imuModule, WheelOdometry wheelOdometry) {
         wheelOdometry.imuModule = imuModule;
+        wheelOdometry.sparkFunOTOS = driveTrain.getOtos();
         wheelOdometry.rightEncoder = driveTrain.getRightEncoder();
         wheelOdometry.leftEncoder = driveTrain.getLeftEncoder();
         wheelOdometry.backEncoder = driveTrain.getBackEncoder();
@@ -117,8 +126,8 @@ public class WheelOdometry {
         //wrapping to normalize theta -pi to pi
         imuDeltaTheta = MathFunctions.angleWrapRad(imuDeltaTheta);
         double arcTanDeltaTheta = Math.atan2(deltaLeftDistance - deltaRightDistance, TRACK_WIDTH_MM);
-
-
+        double sparkFunDeltaTheta = currentSparkFunImuHeading - prevSparkFunImuHeading;
+        sparkFunDeltaTheta = MathFunctions.angleWrapRad(sparkFunDeltaTheta);
 //        Position newPosition = kalmanFilter.update(new Position(0, 0, arcTanDeltaTheta));
 //        newPosition = kalmanFilter.update(new Position(0, 0, imuDeltaTheta));
 //        newPosition = kalmanFilter.update(new Position(0, 0, encoderDeltaTheta));
@@ -133,7 +142,10 @@ public class WheelOdometry {
 
         Log.d("sensor_data",
                 currentImuHeading + ", " + imuDeltaTheta + ", " + arcTanDeltaTheta + ", " + encoderDeltaTheta +  ", " + deltaTimeMS + ", " + (imuDeltaTheta / deltaTimeMS));
-        double blendedDeltaTheta = sensorFusion.getFilteredAngleDelta(imuDeltaTheta, arcTanDeltaTheta, deltaTimeMS, currentImuHeading);
+
+
+        double blendedDeltaTheta = sensorFusion.getFilteredAngleDelta(imuDeltaTheta, arcTanDeltaTheta, deltaTimeMS,
+                currentImuHeading, currentSparkFunImuHeading, sparkFunDeltaTheta);
 
         double deltaTheta = blendedDeltaTheta; //blended compliment eachother — to reduce drift of imu in big movement and to detect small change
 
@@ -210,11 +222,16 @@ public class WheelOdometry {
         return -Math.toRadians(imuModule.getIMU().getRobotYawPitchRollAngles().getYaw());
     }
 
+    public double getSparkFunIMUHeading() {
+        return -sparkFunOTOS.getPosition().h;
+    }
+
     public Position updatePosition() {
         double rightDistanceMM = countRight();
         double leftDistanceMM = countLeft();
         double backDistanceMM = countBack();
         currentImuHeading = getIMUHeading();
+        currentSparkFunImuHeading = getSparkFunIMUHeading();
 
         Log.d("updatepos", rightDistanceMM + " " + leftDistanceMM + " " + backDistanceMM);
 
@@ -237,6 +254,7 @@ public class WheelOdometry {
         prevBackDistanceMM = backDistanceMM;
 
         prevImuHeading = currentImuHeading;
+        prevSparkFunImuHeading = currentSparkFunImuHeading;
 
         SharedData.setOdometryPosition(currentPosition);
 
