@@ -209,10 +209,10 @@ public class TeleOpV2 extends OpMode {
                     buttonTimer.reset();
                 }
                 if(deliverySlides.getLeftSlidePosition() != leftSlideDown) {
-                    deliverySlides.runLeftSlideToPosition(leftSlideDown, 1);
+                    deliverySlides.runLeftSlideToPositionPID(leftSlideDown);
                 }
                 if(deliverySlides.getRightSlidePosition()!= rightSlideDown) {
-                    deliverySlides.runRightSlideToPosition(rightSlideDown, 1);
+                    deliverySlides.runRightSlideToPositionPID(rightSlideDown);
                 }
                 if(slidesResetTimer.seconds() > 1){
                     intakeSlides.intakeIn();
@@ -240,13 +240,13 @@ public class TeleOpV2 extends OpMode {
                     state = SystemStatesV1.START;
                     buttonTimer.reset();
                 }
-                deliverySlides.runLeftSlideToPosition(0, 0.8);
-                deliverySlides.runRightSlideToPosition(0, 0.8);
+                deliverySlides.runLeftSlideToPositionPID(0);
+                deliverySlides.runRightSlideToPositionPID(0);
                 deliveryAxon.setPosition(constants.DELIVERY_WALL_PICKUP);
                 break;
             case LIFT_FROM_WALL:
-                deliverySlides.runLeftSlideToPosition(leftSlideHighBar, 0.5);
-                deliverySlides.runRightSlideToPosition(rightSlideHighBar, 0.5);
+                deliverySlides.runLeftSlideToPositionPID(leftSlideHighBar);
+                deliverySlides.runRightSlideToPositionPID(rightSlideHighBar);
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.GRAB_OFF_WALL;
                     buttonTimer.reset();
@@ -258,8 +258,8 @@ public class TeleOpV2 extends OpMode {
                     state = SystemStatesV1.START;
                     buttonTimer.reset();
                 }
-                deliverySlides.runLeftSlideToPosition(leftSlideHighBar, 0.8);
-                deliverySlides.runRightSlideToPosition(rightSlideHighBar, 0.8);
+                deliverySlides.runLeftSlideToPositionPID(leftSlideHighBar);
+                deliverySlides.runRightSlideToPositionPID(rightSlideHighBar);
                 deliveryAxon.setPosition(constants.DELIVERY_HIGH_BAR);
                 if(gamepad1.dpad_right && buttonTimer.seconds() > 0.3){
                     deliveryAxon.setPosition(deliveryAxon.getPosition() + 0.05);
@@ -494,8 +494,8 @@ public class TeleOpV2 extends OpMode {
                     buttonTimer.reset();
                 }
 
-                deliverySlides.runLeftSlideToPosition(leftSlideHighBasket, 1);
-                deliverySlides.runRightSlideToPosition(rightSlideHighBasket, 1);
+                deliverySlides.runLeftSlideToPositionPID(leftSlideHighBasket);
+                deliverySlides.runRightSlideToPositionPID(rightSlideHighBasket);
                 deliveryGrippersClosed = false;
                 deliveryAxon.setPosition(constants.DELIVERY_UP);
                 slidesReset = false;
@@ -507,8 +507,8 @@ public class TeleOpV2 extends OpMode {
                     buttonTimer.reset();
                 }
 
-                deliverySlides.runLeftSlideToPosition(constants.LEFT_SLIDE_LOW_BASKET, 1);
-                deliverySlides.runRightSlideToPosition(constants.RIGHT_SLIDE_LOW_BASKET, 1);
+                deliverySlides.runLeftSlideToPositionPID(constants.LEFT_SLIDE_LOW_BASKET);
+                deliverySlides.runRightSlideToPositionPID(constants.RIGHT_SLIDE_LOW_BASKET);
                 deliveryGrippersClosed = false;
                 deliveryAxon.setPosition(constants.DELIVERY_UP);
                 slidesReset = false;
@@ -532,18 +532,18 @@ public class TeleOpV2 extends OpMode {
                 //}
                 break;
             case READY_FOR_LEVEL_TWO_ASCENT:
-                deliverySlides.runLeftSlideToPosition(constants.LEFT_SLIDE_LEVEL_TWO_ASCENT, 0.8);
-                deliverySlides.runRightSlideToPosition(constants.RIGHT_SLIDE_LEVEL_TWO_ASCENT, 0.8);
+                deliverySlides.runLeftSlideToPositionPID(constants.LEFT_SLIDE_LEVEL_TWO_ASCENT);
+                deliverySlides.runRightSlideToPositionPID(constants.RIGHT_SLIDE_LEVEL_TWO_ASCENT);
                 deliveryAxon.setPosition(constants.DELIVERY_LEVEL_TWO_ASCENT);
                 break;
             case LEVEL_TWO_ASCENT:
                 if(deliverySlides.getLeftSlidePosition() != leftSlideDown || deliverySlides.getRightSlidePosition() != leftSlideDown) {
-                    deliverySlides.runLeftSlideToPosition(leftSlideDown, 1);
-                    deliverySlides.runRightSlideToPosition(rightSlideDown, 1);
+                    deliverySlides.runLeftSlideToPositionPID(leftSlideDown);
+                    deliverySlides.runRightSlideToPositionPID(rightSlideDown);
                 }
                 else if(deliverySlides.getLeftSlidePosition() != 0 && deliverySlides.getRightSlidePosition() != 0){
-                    deliverySlides.runLeftSlideToPosition(leftSlideDown, 1);
-                    deliverySlides.runRightSlideToPosition(rightSlideDown, 1);
+                    deliverySlides.runLeftSlideToPositionPID(leftSlideDown);
+                    deliverySlides.runRightSlideToPositionPID(rightSlideDown);
                 }
                 if(!intakeSlides.isAllTheWayIn()) {
                     intakeSlides.intakeAllTheWayIn();
