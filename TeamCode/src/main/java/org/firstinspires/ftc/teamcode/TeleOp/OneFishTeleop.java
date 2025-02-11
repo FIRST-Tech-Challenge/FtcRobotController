@@ -271,7 +271,7 @@ public class OneFishTeleop extends LinearOpMode {
                         if(timer.seconds()>DELIVER_PITCH_TIME){
                             if(!transfered){
                                 intake.pitchToTransfer();
-                                intake.setIntakePower(-0.25f);
+                                intake.setIntakePower(-0.45f);
                             }
                             if(gamepad2.a){
                                 sampleDelivery.clawOpen();

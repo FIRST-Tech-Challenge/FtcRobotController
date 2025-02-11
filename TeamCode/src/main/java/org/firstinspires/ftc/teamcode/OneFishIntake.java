@@ -24,7 +24,7 @@ public class OneFishIntake {
     private final double CLICKS_PER_CM = 24.92788;
     private final int MM_PER_METER = 1000;
 
-    public final int MIN_EXTENSION = 0;
+    public final int MIN_EXTENSION = -10;
     public final int MAX_EXTENSION = 1000;
     private final double MIN_PITCH = 0.5;
     private final double DOWN_PITCH = 1;

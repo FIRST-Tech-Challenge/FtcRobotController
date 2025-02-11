@@ -87,24 +87,24 @@ public class Net extends LinearOpMode {
                 .build();
 
         trajToSampleTwo = drive.actionBuilder(new Pose2d(-66, -60, Math.toRadians(10)))
-                .strafeToLinearHeading(new Vector2d(-60, -51), Math.toRadians(120), new AngularVelConstraint(7))
+                .strafeToLinearHeading(new Vector2d(-58, -51), Math.toRadians(115), new AngularVelConstraint(7))
                 .build();
 
         turnToSampleTwo = drive.actionBuilder(new Pose2d(-63, -53, Math.toRadians(55)))
                 .turnTo(Math.toRadians(90))
                 .build();
 
-        returnToNet2 = drive.actionBuilder(new Pose2d(-60, -51, Math.toRadians(120)))
-                .strafeToLinearHeading(new Vector2d(-57.5, -57), Math.toRadians(55))
+        returnToNet2 = drive.actionBuilder(new Pose2d(-58, -51, Math.toRadians(115)))
+                .strafeToLinearHeading(new Vector2d(-57.5, -57), Math.toRadians(30))
                 .build();
 
-        trajToSampleThree = drive.actionBuilder(new Pose2d(-57.5, -57, Math.toRadians(55)))
-                .strafeToLinearHeading(new Vector2d(-58, -51), Math.toRadians(139), new AngularVelConstraint(9))
+        trajToSampleThree = drive.actionBuilder(new Pose2d(-57.5, -57, Math.toRadians(30)))
+                .strafeToLinearHeading(new Vector2d(-55, -48), Math.toRadians(130), new AngularVelConstraint(9))
                 .build();
 
 
 
-        returnToNet3 = drive.actionBuilder(new Pose2d(-58, -51, Math.toRadians(120)))
+        returnToNet3 = drive.actionBuilder(new Pose2d(-58, -48, Math.toRadians(120)))
                 .strafeToLinearHeading(new Vector2d(-57.5, -57), Math.toRadians(30))
                 .build();
 
@@ -123,32 +123,47 @@ public class Net extends LinearOpMode {
         sleep(200);
         sampleDelivery.pitchToTransfer();
         Actions.runBlocking(new ParallelAction(trajToNet, TransferSampleAction(-2050)));
-        sleep(550);
+        sleep(350);
         Actions.runBlocking(new ParallelAction(DeliverSampleHighAction(), intake.RunToLengthAction(1200, 500)));
-        sleep(200);
+        intake.pitchUp();
+        Actions.runBlocking(intake.SpinIntakeAction(0.5, 550));//sleep(550);
+        intake.pitchToTransfer();
+        sleep(100);
         Actions.runBlocking(new ParallelAction(ResetSampleAction(), turnToSampleOne));
-        intake.pitchDown();
+//        intake.pitchDown();
         Actions.runBlocking(new ParallelAction(trajToSampleOne, intake.RunToLengthAction(2000, 500), intake.SpinIntakeAction(-1,1000)));
+        intake.pitchDown();
+        Actions.runBlocking(intake.SpinIntakeAction(-1,1000));
+        intake.pitchToTransfer();
         Actions.runBlocking(new ParallelAction(returnToNet, intake.RunToLengthAction(-5, 900), intake.SpinIntakeAction(-1, 500)));
         intake.pitchToTransfer();
         sleep(100);
         Actions.runBlocking(TransferSampleAction(-2050));
         sleep(350);
         Actions.runBlocking(new ParallelAction(DeliverSampleHighAction(), intake.RunToLengthAction(1200, 500)));
-        intake.pitchDown();
+        intake.pitchUp();
+        Actions.runBlocking(intake.SpinIntakeAction(0.5, 550));//sleep(550);
+        intake.pitchToTransfer();
+//        intake.pitchDown();
 //        Actions.runBlocking(turnToSampleTwo);
         Actions.runBlocking(new ParallelAction(ResetSampleAction(), trajToSampleTwo, intake.RunToLengthAction(1300, 500), intake.SpinIntakeAction(-1,1000)));
-//
+        intake.pitchDown();
+        Actions.runBlocking(intake.SpinIntakeAction(-1,1000));
+        intake.pitchToTransfer();
         Actions.runBlocking(new ParallelAction(returnToNet, intake.RunToLengthAction(-5, 900), intake.SpinIntakeAction(-1, 500)));
         intake.pitchToTransfer();
         sleep(200);
         Actions.runBlocking(new ParallelAction(TransferSampleAction(-1200), returnToNet2));
         Actions.runBlocking(new ParallelAction(DeliverSampleAction(), intake.RunToLengthAction(1200, 500)));
-        intake.pitchDown();
-        Actions.runBlocking(new ParallelAction(ResetSampleAction(), trajToSampleThree, intake.RunToLengthAction(2000, 500), intake.SpinIntakeAction(-1,1000)));
-
-        Actions.runBlocking(new ParallelAction(returnToNet, intake.RunToLengthAction(-5, 900), intake.SpinIntakeAction(-1, 500)));
+        intake.pitchUp();
+        Actions.runBlocking(intake.SpinIntakeAction(0.5, 550));//sleep(550);
         intake.pitchToTransfer();
+        Actions.runBlocking(new ParallelAction(ResetSampleAction(), trajToSampleThree, intake.RunToLengthAction(2000, 500), intake.SpinIntakeAction(-1,1000)));
+        intake.pitchDown();
+        Actions.runBlocking(intake.SpinIntakeAction(-1,1000));
+        intake.pitchToTransfer();
+        Actions.runBlocking(new ParallelAction(returnToNet, intake.RunToLengthAction(-5, 900), intake.SpinIntakeAction(-1, 500)));
+
         sleep(200);
         Actions.runBlocking(new ParallelAction(TransferSampleAction(-1200), returnToNet3));
         Actions.runBlocking(new ParallelAction(DeliverSampleAction(), intake.RunToLengthAction(-5, 500)));
