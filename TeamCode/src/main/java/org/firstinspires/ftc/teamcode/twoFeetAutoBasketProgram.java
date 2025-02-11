@@ -150,6 +150,25 @@ public class twoFeetAutoBasketProgram extends LinearOpMode {
         }
     }
 
+    public enum WallType {
+        LEFT,
+        BACK
+    }
+
+    /**
+     * Continually call this function to align the robot to a wall.
+     * @param wall: WallType.LEFT or WallType.BACK
+     * @param distance: distance from wall in cm
+     * @param angleOffset: angle offset from default position in degrees
+     */
+    public void alignToWall(WallType wall, double distance, double angleOffset) {
+        if (wall == WallType.LEFT) {
+            strafeLeft();
+        } else if (wall == WallType.BACK) {
+            backward();
+        }
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize the hardware
