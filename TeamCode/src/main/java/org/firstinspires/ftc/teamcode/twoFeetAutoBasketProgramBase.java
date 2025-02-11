@@ -5,9 +5,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 @Autonomous(name = "twoFeetAutoBasketProgram")
-public class twoFeetAutoBasketProgram extends LinearOpMode {
+public class twoFeetAutoBasketProgramBase extends LinearOpMode {
     private DcMotorEx frontLeft, frontRight, backLeft, backRight;
     private DcMotorEx leftLiftMotor, rightLiftMotor;
     private Servo basketServo;
@@ -20,13 +22,18 @@ public class twoFeetAutoBasketProgram extends LinearOpMode {
     private int i = 0;
     private boolean basket1stPos = false;
     private boolean basket2ndPos = false;
+    private boolean reachedLeft = false;
+    private boolean reachedForward = false;
+    private boolean rotatedTarget = false;
+    private BNO055IMU imu;
+    private DistanceSensor distanceSensor;
 
     private static final double wheelDiameter = 75;
     private static final double ticksPerRev = 100;
-    private static final int targetRotation = 1550;
+    private static final int targetRotation = 820;
     private static final int forwardMovement = 400;
     private static final int backwardMovement = 400;
-    private static final int leftwardMovement = 3100;
+    private static final int leftwardMovement = 775;
     private static final double BACK_WHEEL_RATIO = 2.0 / 3.0; // 3:2 sprocket ratio;
 
     public void basket() {
@@ -46,10 +53,10 @@ public class twoFeetAutoBasketProgram extends LinearOpMode {
     }
 
     public void rotateRight() {
-        frontLeft.setTargetPosition(frontLeft.getCurrentPosition() - targetRotation);
-        frontRight.setTargetPosition(frontRight.getCurrentPosition() + targetRotation);
-        backLeft.setTargetPosition(backLeft.getCurrentPosition() + targetRotation);
-        backRight.setTargetPosition(backRight.getCurrentPosition() - targetRotation);
+        frontLeft.setTargetPosition(frontLeft.getCurrentPosition() + targetRotation);
+        frontRight.setTargetPosition(frontRight.getCurrentPosition() - targetRotation);
+        backLeft.setTargetPosition(backLeft.getCurrentPosition() - targetRotation);
+        backRight.setTargetPosition(backRight.getCurrentPosition() + targetRotation);
 
         frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -60,13 +67,18 @@ public class twoFeetAutoBasketProgram extends LinearOpMode {
         frontRight.setVelocity(1000);
         backLeft.setVelocity(1000);
         backRight.setVelocity(1000);
+
+        if (frontLeft.getCurrentPosition() == targetRotation) {
+            rotatedTarget = true;
+            resetMotors();
+        }
     }
 
     public void strafeLeft() {
-        frontLeft.setTargetPosition(frontLeft.getCurrentPosition() + leftwardMovement);
-        frontRight.setTargetPosition(frontRight.getCurrentPosition() - leftwardMovement);
-        backLeft.setTargetPosition(backLeft.getCurrentPosition() - leftwardMovement);
-        backRight.setTargetPosition(backRight.getCurrentPosition() + leftwardMovement);
+        frontLeft.setTargetPosition(frontLeft.getCurrentPosition() - leftwardMovement);
+        frontRight.setTargetPosition(frontRight.getCurrentPosition() + leftwardMovement);
+        backLeft.setTargetPosition(backLeft.getCurrentPosition() + leftwardMovement);
+        backRight.setTargetPosition(backRight.getCurrentPosition() - leftwardMovement);
 
         frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -77,13 +89,18 @@ public class twoFeetAutoBasketProgram extends LinearOpMode {
         frontRight.setVelocity(1000);
         backLeft.setVelocity(1000);
         backRight.setVelocity(1000);
+
+        if (frontLeft.getCurrentPosition() == leftwardMovement) {
+            reachedLeft = true;
+            resetMotors();
+        }
     }
 
     public void forward() {
-        frontLeft.setTargetPosition(frontLeft.getCurrentPosition() + leftwardMovement);
-        frontRight.setTargetPosition(frontRight.getCurrentPosition() + leftwardMovement);
-        backLeft.setTargetPosition(backLeft.getCurrentPosition() + leftwardMovement);
-        backRight.setTargetPosition(backRight.getCurrentPosition() + leftwardMovement);
+        frontLeft.setTargetPosition(frontLeft.getCurrentPosition() + forwardMovement);
+        frontRight.setTargetPosition(frontRight.getCurrentPosition() + forwardMovement);
+        backLeft.setTargetPosition(backLeft.getCurrentPosition() + forwardMovement);
+        backRight.setTargetPosition(backRight.getCurrentPosition() + forwardMovement);
 
         frontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -94,6 +111,11 @@ public class twoFeetAutoBasketProgram extends LinearOpMode {
         frontRight.setVelocity(1000);
         backLeft.setVelocity(1000);
         backRight.setVelocity(1000);
+
+        if (frontLeft.getCurrentPosition() == forwardMovement) {
+            reachedForward = true;
+            resetMotors();
+        }
     }
 
     public void backward() {
@@ -121,21 +143,24 @@ public class twoFeetAutoBasketProgram extends LinearOpMode {
         leftLiftMotor.setVelocity(1000);
         rightLiftMotor.setVelocity(1000);
 
-        if (rightLiftMotor.getCurrentPosition() > 3255) {
+        telemetry.addData("Lift value:", rightLiftMotor.getCurrentPosition());
+
+        if (rightLiftMotor.getCurrentPosition() > 2890) {
             isliftUp = true;
+            resetMotors();
         }
     }
 
     private void highBasketProcess() {
         if (isliftUp == false) {
             setLiftPosition(3266); // low basket encoder positions
-            telemetry.addData("Lift up", rightLiftMotor.getCurrentPosition());
-            telemetry.update();
+//            telemetry.addData("Lift up", rightLiftMotor.getCurrentPosition());
+//            telemetry.update();
         }
         else if ((isliftUp == true) && (basket2ndPos == false)) {
             basket();
-            telemetry.addData("Basket", rightLiftMotor.getCurrentPosition());
-            telemetry.update();
+//            telemetry.addData("Basket", rightLiftMotor.getCurrentPosition());
+//            telemetry.update();
         }
         else if (basket2ndPos == true) {
             i += 1;
@@ -168,6 +193,13 @@ public class twoFeetAutoBasketProgram extends LinearOpMode {
         leftLiftMotor = hardwareMap.get(DcMotorEx.class, "leftLiftMotor");
         rightLiftMotor = hardwareMap.get(DcMotorEx.class, "rightLiftMotor");
 
+//        // Distance Sensor
+//        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+//
+//        // Gyroscope
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+
         // Wait for the start signal
         waitForStart();
 
@@ -176,12 +208,7 @@ public class twoFeetAutoBasketProgram extends LinearOpMode {
         backLeft.setDirection(DcMotorEx.Direction.FORWARD);
         backRight.setDirection(DcMotorEx.Direction.REVERSE);
 
-        frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        leftLiftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        rightLiftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        resetMotors();
 
         frontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -191,19 +218,16 @@ public class twoFeetAutoBasketProgram extends LinearOpMode {
         rightLiftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         myStopwatch.reset();
-        // robot travels 20 inches in 1 sec
-        // goes 47.5 inches in 2 sec
-        // goes 66 inches in 3 sec
-        while (myStopwatch.seconds() < 0.35) {
-            frontLeft.setPower(0.9);
-            frontRight.setPower(0.9);
-            backLeft.setPower(0.9);
-            backRight.setPower(0.9);
-            telemetry.addData("Status", "Strafing Right");
-            telemetry.update();
+
+        while (reachedForward == false) {
+            forward();
         }
-        strafeLeft();
-        rotateRight();
+        while (reachedLeft == false) {
+            strafeLeft();
+        }
+        while (rotatedTarget == false) {
+            rotateRight();
+        }
         intakePivotServo.setPosition(-.2);
         while (noHighBasket) {
             highBasketProcess();
@@ -216,5 +240,14 @@ public class twoFeetAutoBasketProgram extends LinearOpMode {
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
+    }
+
+    private void resetMotors() {
+        frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        leftLiftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        rightLiftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
     }
 }
