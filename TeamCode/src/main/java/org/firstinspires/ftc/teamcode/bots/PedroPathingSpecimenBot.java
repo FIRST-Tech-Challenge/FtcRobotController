@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.bots;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
@@ -13,7 +12,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
-public class PedroPathingBot extends GyroBot{
+public class PedroPathingSpecimenBot extends GyroBot{
 
      private Follower follower;
      private Timer pathTimer, actionTimer, opmodeTimer;
@@ -81,7 +80,7 @@ public class PedroPathingBot extends GyroBot{
                   .build();
      }
 
-     public PedroPathingBot(LinearOpMode opMode) {
+     public PedroPathingSpecimenBot(LinearOpMode opMode) {
           super(opMode);
      }
 
@@ -94,7 +93,7 @@ public class PedroPathingBot extends GyroBot{
           super.onTick();
           // These loop the movements of the robot
           follower.update();
-          autonomousPathUpdateSpecimen();
+          autonomousPathUpdate();
 
           // Feedback to Driver Hub
           telemetry.addData("path state", EVENT_NAMES[pathState], pathState);
@@ -104,7 +103,7 @@ public class PedroPathingBot extends GyroBot{
           telemetry.update();
      }
      private int AT_PRELOAD_POSITION= 1;
-     public void autonomousPathUpdateSpecimen() {
+     public void autonomousPathUpdate() {
           switch (pathState) {
                case 0:
                     follower.followPath(scorePreload);
@@ -282,103 +281,8 @@ public class PedroPathingBot extends GyroBot{
      /** These change the states of the paths and actions
       * It will also reset the timers of the individual switches **/
 
-     public void autonomousPathSample() {
-          switch (pathState) {
-               case 0:
-                    follower.followPath(scorePreload);
-                    setPathState(AT_PRELOAD_POSITION);
-                    //Goes to submersible, in position to score preload
-                    break;
-               case 1:
 
-                /* You could check for
-                - Follower State: "if(!follower.isBusy() {}"
-                - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
-                - Robot Position: "if(follower.getPose().getX() > 36) {}"
-                */
-
-                    /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                    if (!follower.isBusy()/**||pathTimer.getElapsedTimeSeconds() > 2*/) {
-                         /* Score Preload */
-
-                         //INSERT 3DOF CODE HERE TO SCORE SPECIMEN
-
-                         /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-//                         follower.followPath(grabPickup1,true);
-                         triggerEvent(EVENT_PRELOAD_SCORED, 2);
-                         setPathState(EVENT_PRELOAD_SCORED);
-                    }
-                    break;
-
-               case 2:
-
-                    if (!follower.isBusy()) {
-                         follower.followPath(pickup, true);
-                         //pickup first sample
-                         triggerEvent(EVENT_SAMPLE_1_PICKEDUP, 3);
-                         setPathState(EVENT_SAMPLE_1_PICKEDUP);
-                    }
-                    break;
-
-               case 3:
-
-                    if (!follower.isBusy()) {
-                         follower.followPath(scoreSample, true);
-                         //release sample with claw
-                         triggerEvent(EVENT_SAMPLE_1_SCORED , 4);
-                         setPathState(EVENT_SAMPLE_1_SCORED);
-                    }
-                    break;
-
-               case 4:
-
-                    if (!follower.isBusy()) {
-                         follower.followPath(pickup, true);
-                         //pickup first sample
-                         triggerEvent(EVENT_SAMPLE_2_PICKEDUP, 5);
-                         setPathState(EVENT_SAMPLE_2_PICKEDUP);
-                    }
-                    break;
-
-               case 5:
-
-                    if (!follower.isBusy()) {
-                         follower.followPath(scoreSample, true);
-                         //release sample with claw
-                         triggerEvent(EVENT_SAMPLE_2_SCORED , 6);
-                         setPathState(EVENT_SAMPLE_2_SCORED);
-                    }
-                    break;
-
-               case 6:
-
-                    if (!follower.isBusy()) {
-                         follower.followPath(pickup, true);
-                         //pickup first sample
-                         triggerEvent(EVENT_SAMPLE_3_PICKEDUP, 7);
-                         setPathState(EVENT_SAMPLE_3_PICKEDUP);
-                    }
-                    break;
-
-               case 7:
-
-                    if (!follower.isBusy()) {
-                         follower.followPath(scoreSample, true);
-                         //release sample with claw
-                         triggerEvent(EVENT_SAMPLE_3_SCORED , 8);
-                         setPathState(EVENT_SAMPLE_3_SCORED);
-                    }
-                    break;
-
-               case 8:
-                    if(!follower.isBusy()){
-                         follower.followPath(park, true);
-                         triggerEvent(EVENT_PARKED);
-                         setPathState(-1);
-                    }
-          }
-     }
-     public void setPathState(int pState) {
+     private void setPathState(int pState) {
           pathState = pState;
           pathTimer.resetTimer();
      }
