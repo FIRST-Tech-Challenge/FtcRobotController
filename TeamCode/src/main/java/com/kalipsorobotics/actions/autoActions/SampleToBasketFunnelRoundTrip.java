@@ -15,8 +15,8 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class SampleToBasketFunnelRoundTrip extends KActionSet {
     public static final int INTAKE_SAMPLE_X_FUNNEL = -590-325;
-    public static final int OUTTAKE_X_POS = -140;
-    public static final int OUTTAKE_Y_POS = 970;
+    public static final int OUTTAKE_X_POS = -180; //-140
+    public static final int OUTTAKE_Y_POS = 980; //970
 
     public SampleToBasketFunnelRoundTrip(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, IntakeClaw intakeClaw, int sampleY){
         this(driveTrain, wheelOdometry, outtake, intakeClaw, sampleY, 0);
@@ -69,7 +69,8 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
         // while
         // moving
         //move sample 1 to basket
-        moveToBasket1.addPoint(OUTTAKE_X_POS - 250, OUTTAKE_Y_POS - 150, -135, PurePursuitAction.P_XY_FAST,
+        moveToBasket1.addPoint(-470, 860,-135);
+        moveToBasket1.addPoint(OUTTAKE_X_POS - 250, OUTTAKE_Y_POS - 125, -135, PurePursuitAction.P_XY_FAST,
                 PurePursuitAction.P_ANGLE_SLOW);
         moveToBasket1.addPoint(OUTTAKE_X_POS, OUTTAKE_Y_POS, -135, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
         this.addAction(moveToBasket1);

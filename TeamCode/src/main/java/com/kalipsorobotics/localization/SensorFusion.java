@@ -20,20 +20,30 @@ public class SensorFusion {
     private final double MEASUREMENT_NOISE_IMU = 0.00001805797825;
 
     public double getFilteredAngleDelta(double imuAngleDelta, double encoderAngleDelta, double deltaTimeMS,
-                                        double imuAngle) {
+                                        double imuAngle, double sparkFunImuAngle, double sparkFunImuAngleDelta) {
 
 
         double predictedAngleDelta = encoderAngleDelta;
         double predictedVariance = angleVariance + PROCESS_NOISE;
 
-        if (isValidImu(imuAngleDelta, encoderAngleDelta, deltaTimeMS, imuAngle)) {
-            
+        if (isValidImu(imuAngleDelta, encoderAngleDelta, deltaTimeMS, imuAngle) &&
+                isValidImu(sparkFunImuAngleDelta, encoderAngleDelta, deltaTimeMS, sparkFunImuAngle)) {
+
+            double blendedImu = sparkFunImuAngleDelta * 0.5 + imuAngleDelta * 0.5;
+            applyKalmanCorrection(blendedImu, MEASUREMENT_NOISE_IMU, predictedAngleDelta, predictedVariance);
+
+        } else if (isValidImu(imuAngleDelta, encoderAngleDelta, deltaTimeMS, imuAngle)) {
+
             applyKalmanCorrection(imuAngleDelta, MEASUREMENT_NOISE_IMU, predictedAngleDelta, predictedVariance);
 
-        } else {
+        } else if (isValidImu(sparkFunImuAngleDelta, encoderAngleDelta, deltaTimeMS, sparkFunImuAngle)) {
 
+            applyKalmanCorrection(sparkFunImuAngleDelta, MEASUREMENT_NOISE_IMU, predictedAngleDelta, predictedVariance);
+
+        } else {
             angleEstimateDelta = predictedAngleDelta;
             angleVariance = predictedVariance;
+
         }
 
         return angleEstimateDelta;

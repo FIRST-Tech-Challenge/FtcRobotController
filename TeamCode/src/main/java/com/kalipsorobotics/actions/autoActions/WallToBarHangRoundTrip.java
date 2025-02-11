@@ -57,7 +57,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         moveToBar1.setMaxTimeOutMS(3500);
         moveToBar1.setDependentActions(liftSpecimenOffWall);
         moveToBar1.addPoint(SPECIMEN_HANG_POS_X+250, hangPosY, 0, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
-        moveToBar1.addPoint(SPECIMEN_HANG_POS_X, hangPosY, 0, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE);
+        moveToBar1.addPoint(SPECIMEN_HANG_POS_X + 50, hangPosY, 0, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE);
         this.addAction(moveToBar1);
 
 //        MoveLSAction raiseSpecimen = new MoveLSAction(outtake, 50);
