@@ -134,10 +134,8 @@ public class RightAutoV5 extends LinearOpMode {
                 }
             }
             else if(step == 3) {
-                if(timerStep03.seconds() > 4) {
-                    Actions.runBlocking(traj2);
-                    step = 4;
-                }
+                Actions.runBlocking(traj2);
+                step = 4;
             }
             else if(step == 4) {
                // Actions.runBlocking(traj3);
