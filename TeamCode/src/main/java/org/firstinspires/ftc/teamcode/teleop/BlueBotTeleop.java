@@ -34,6 +34,18 @@ public class BlueBotTeleop extends LinearOpMode {
 
   public final double change_In_Offset = .025;
 
+  double normalize_angle(double angle) {
+      angle += (Math.PI / 2.0);
+      
+      // If the robot is turning right, the theta angle can become negative.
+      // The angle should remain within the range [0,2*pi).
+      while (angle < 0.0) {
+        angle += 2 * Math.PI;
+      }
+
+      return angle;
+  }
+
   @Override
   public void runOpMode() throws InterruptedException {
 
@@ -56,104 +68,65 @@ public class BlueBotTeleop extends LinearOpMode {
     steer_wheels(previous_steer_direction);
     
     while (opModeIsActive()) {
-      double strafe_joystick = gamepad1.left_stick_x;
-      double drive_joystick = -1 * gamepad1.left_stick_y;
-      double rotate_joystick = gamepad1.right_stick_x;
-      double robot_direction = odometry.getHeading().getRadians() + (Math.PI / 2.0);
-      boolean oriented_right;
+      
+      // Read raw input from left joystick
+      double left_joy_x = gamepad1.left_stick_x;
+      double left_joy_y = gamepad1.left_stick_y;
 
-      if (robot_direction < 0.0) {
-        robot_direction += 2 * Math.PI;
-      }
+      // Reverse joystick y-axis to ensure 1 is up and -1 is down
+      left_joy_y *= -1;
 
-      double odo_x = Math.cos(robot_direction);
-      double odo_y = Math.sin(robot_direction);
+      telemetry.addLine("Left joy x: " + left_joy_x);
+      telemetry.addLine("Left joy y: " + left_joy_y);
 
-      telemetry.addLine("Dir:   " + robot_direction);
-      telemetry.addLine("odo x: " + odo_x);
-      telemetry.addLine("odo y: " + odo_y);
-      telemetry.update();
+      // Compute theta of the left joystick vector
+      double joy_theta = Math.atan2(left_joy_y, left_joy_x);
 
+      // joy_theta = normalize_angle(joy_theta, false);
+
+      telemetry.addLine("Joy theta: " + joy_theta);
+
+      // Compute vector magnitude, this will be the speed of the robot
+      double joy_magnitude = Math.sqrt(Math.pow(left_joy_x, 2.0) + Math.pow(left_joy_y, 2.0));
+
+      telemetry.addLine("Joy mag: " + joy_magnitude);
+
+      // Read raw value from odometer (in radians)
+      double robot_theta = odometry.getHeading().getRadians();
       odometry.update();
 
-      drive_joystick = Math.sqrt(Math.pow(strafe_joystick, 2.0) + Math.pow(drive_joystick, 2.0));
-      if (gamepad1.left_stick_y < 0) {
-        drive_joystick *= -1.0;
-        // 2.0.1 offsets for swerve (done by holding button and then tapping up or down on the d-pad    TODO: add in adjustable rotation offsets
-        d_pad = gamepad1.dpad_down || gamepad1.dpad_up || gamepad1.dpad_left || gamepad1.dpad_right;
-        if (gamepad1.a && !lastPressed) {
-          if (d_pad) {
-            if (gamepad1.dpad_up)
-              blOffset += change_In_Offset;
-            else
-              blOffset -= change_In_Offset;
-            lastPressed = true;
-          }
-        } else if (gamepad1.b && !lastPressed) {
-          if (d_pad) {
-            if (gamepad1.dpad_up)
-              brOffset += change_In_Offset;
-            else
-              brOffset -= change_In_Offset;
-            lastPressed = true;
-          }
-        } else if (gamepad1.x && !lastPressed) {
-          if (d_pad) {
-            if (gamepad1.dpad_up)
-              flOffset += change_In_Offset;
-            else
-              flOffset -= change_In_Offset;
-            lastPressed = true;
-          }
-        } else if (gamepad1.y && !lastPressed) {
-          if (d_pad) {
-            if (gamepad1.dpad_up)
-              frOffset += change_In_Offset;
-            else
-              frOffset -= change_In_Offset;
-            lastPressed = true;
-          }
-        } else
-          lastPressed = false;
+      // Normalize odometry reading to align with standard polar coordinates
+      robot_theta = normalize_angle(robot_theta);
+      telemetry.addLine("Robot theta: " + robot_theta);
 
+      // Compute steering angle relative to field-centric movements
+      double steering_angle;
 
-        // 1. Sets the target position of the slide, limits set in Mekansim class
-        if (-gamepad2.left_stick_y != 0)
-          mek.slideTarget += -gamepad2.left_stick_y * slideSpeed;
-        if (mek.slideTarget < 0) mek.slideTarget = 0;
-        if (mek.slideTarget > mek.limitSlide) mek.slideTarget = mek.limitSlide;
-        telemetry.addData("Slide target position: ", mek.slideTarget);
-
-        // 1.5 Moves the slide all the way down if right bumper is pressed
-        if (gamepad2.right_bumper) {
-          mek.setSlide(0);
-          mek.slideTarget = 0;
-          sleep(1000);
-        }
-
-        double steer_direction = (strafe_joystick + 1.0) / 2.0;
-
-        // Adjust wheel drive speed if needed
-        if (drive_joystick != previous_driving_speed) {
-          previous_driving_speed = drive_joystick;
-          drive_wheels(drive_joystick);
-        }
-
-        // Adjust steering direction if needed
-        if (steer_direction != previous_steer_direction) {
-          previous_steer_direction = steer_direction;
-          steer_wheels(steer_direction);
-        }
-        telemetry.addData("telemtry heading: ", robot_direction);
-        telemetry.addData("steer direction: ", steer_direction);
-        telemetry.update();
+      if (robot_theta > joy_theta) {
+        steering_angle = Math.abs(robot_theta - (joy_theta * 2.0)) % (2.0 * Math.PI);
       }
-      
-      // Adjust steering direction if needed
-      if (steer_direction != previous_steer_direction) {
-        previous_steer_direction = steer_direction;
-        steer_wheels(steer_direction);
+      else if (robot_theta == joy_theta) {
+        steering_angle = robot_theta;
       }
+      else {
+        steering_angle = (Math.abs(joy_theta - (robot_theta * 2.0)) + Math.PI) % (2.0 * Math.PI);
+      }
+
+      telemetry.addLine("Steering to: " + steering_angle);
+
+      if (steering_angle > Math.PI) {
+        steering_angle -= Math.PI;
+        // Set flag to reverse movement
+      }
+
+      // Normalize steering to 0 to 1 range
+      steering_angle /= Math.PI;
+
+      telemetry.addLine("Normalized steering: " + steering_angle);
+
+      telemetry.update();
+
+      // steer_wheels(steering_angle);
     }
   }
 
