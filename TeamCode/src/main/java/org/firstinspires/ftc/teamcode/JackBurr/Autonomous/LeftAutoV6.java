@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.JackBurr.Autonomous;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Trajectory;
@@ -9,6 +12,8 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.JackBurr.Drive.RobotConstantsV1;
@@ -51,7 +56,7 @@ public class LeftAutoV6 extends LinearOpMode {
     public static Vector2d position2 = new Vector2d(47, 43);
     public static double position2HeadingDegrees = -85;
 
-    public static Vector2d position4 = new Vector2d(56, 39);
+    public static Vector2d position4 = new Vector2d(56, 42);
 
 
     //+X is left, +Y is backwards
@@ -60,6 +65,7 @@ public class LeftAutoV6 extends LinearOpMode {
     //----------------------------------------------------------------------------------------
 
     public PinpointDrive drive;
+    public Slides slides2 = new Slides();
     public TrajectoryActionBuilder traj1Builder;
     public TrajectoryActionBuilder traj2Builder;
     public TrajectoryActionBuilder traj3Builder;
@@ -93,6 +99,7 @@ public class LeftAutoV6 extends LinearOpMode {
 
 
         traj1Builder = drive.actionBuilder(startPose)
+                .stopAndAdd(slides2.slidesUp())
                 .strafeTo(position1)
                 .turnTo(Math.toRadians(position1HeadingDegrees));
         traj2Builder = traj1Builder.fresh()
@@ -123,9 +130,6 @@ public class LeftAutoV6 extends LinearOpMode {
         //.turnTo(Math.toRadians(position6HeadingDegrees));
 
 
-
-
-
         traj1 = traj1Builder.build();
         traj2 = traj2Builder.build();
         traj3 = traj3Builder.build();
@@ -152,9 +156,6 @@ public class LeftAutoV6 extends LinearOpMode {
         //.build();
 
 
-
-
-
         waitForStart();
         if (isStopRequested()) return;
         while (opModeIsActive()) {
@@ -163,24 +164,24 @@ public class LeftAutoV6 extends LinearOpMode {
                 deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
                 Actions.runBlocking(traj1);
                 deliveryTimer.reset();
-                step =  1;
+                step = 1;
             }
-            if (step == 1){
-                while (deliveryTimer.seconds() < 2.2){
-                    slides.runLeftSlideToPositionPID(robotConstantsV1.LEFT_SLIDE_HIGH_BASKET);
-                    slides.runRightSlideToPositionPID(robotConstantsV1.RIGHT_SLIDE_HIGH_BASKET);
-                    if(deliveryTimer.seconds() > 1.6){
-                        deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
-                    }
-                    deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_CLOSE);
-                }
-                while (deliveryTimer.seconds() < 3.5){
+            if (step == 1) {
+                //while (deliveryTimer.seconds() < 2.2) {
+                    //slides.runLeftSlideToPositionPID(robotConstantsV1.LEFT_SLIDE_HIGH_BASKET);
+                    //slides.runRightSlideToPositionPID(robotConstantsV1.RIGHT_SLIDE_HIGH_BASKET);
+                    //if (deliveryTimer.seconds() > 1.6) {
+                       // deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
+                    //}
+                    //deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_CLOSE);
+                //}
+                while (deliveryTimer.seconds() < 1) {
                     deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_OPEN);
                 }
-                while (deliveryTimer.seconds() < 3.7){
+                while (deliveryTimer.seconds() < 1.7) {
                     deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
                 }
-                while (deliveryTimer.seconds() < 4.5) {
+                while (deliveryTimer.seconds() < 2.5) {
                     grippers.setPosition(robotConstantsV1.GRIPPERS_OPEN);
                     intakeSlides.runToPosition(intakeTarget01, 1);
                     diffV2.setTopRightServoPosition(robotConstantsV1.FRONT_RIGHT_HOVER);
@@ -196,54 +197,54 @@ public class LeftAutoV6 extends LinearOpMode {
                         slides.runLeftSlideToPositionPID(0);
                         slides.runRightSlideToPositionPID(0);
                     }
-                    if(!traj5Followed) {
+                    if (!traj5Followed) {
                         Actions.runBlocking(traj2);
                         //Actions.runBlocking(traj4);
                         traj5Followed = true;
                     }
                 }
-                while (deliveryTimer.seconds() > 6 && servoSet) {
+                while (deliveryTimer.seconds() > 2.5 && servoSet) {
                     telemetry.addLine("HELLO");
                     servoSet = false;
                     intakeTimer.reset();
                     step = 2;
                 }
             }
-            if(step == 2) {
-                while (intakeTimer.seconds() < 0.8){
+            if (step == 2) {
+                while (intakeTimer.seconds() < 0.8) {
                     diffV2.setTopRightServoPosition(robotConstantsV1.FRONT_RIGHT_PICKUP);
                     diffV2.setTopLeftServoPosition(robotConstantsV1.FRONT_LEFT_PICKUP);
-                    if(!wristSet){
+                    if (!wristSet) {
                         wrist.setPosition(robotConstantsV1.WRIST_CENTER);
                         wristSet = true;
                     }
                 }
-                while (intakeTimer.seconds() < 1.3){
+                while (intakeTimer.seconds() < 1.3) {
                     grippers.setPosition(robotConstantsV1.GRIPPERS_GRAB);
                 }
                 step = 3;
             }
-            if(step == 3) {
+            if (step == 3) {
                 //Actions.runBlocking(traj5);
                 intakeTimer.reset();
                 servoSet2 = false;
                 step = 4;
             }
-            if(step == 4) {
-                while (intakeTimer.seconds() < 2.2){
-                    if(!servoSet2){
+            if (step == 4) {
+                while (intakeTimer.seconds() < 2.2) {
+                    if (!servoSet2) {
                         deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
                     }
                     diffV2.setTopLeftServoPosition(robotConstantsV1.FRONT_LEFT_TRANSFER);
                     diffV2.setTopRightServoPosition(robotConstantsV1.FRONT_RIGHT_TRANSFER);
-                    if(diffV2.rightEncoderIsPast(292) && diffV2.leftEncoderIsPast(77)){
+                    if (diffV2.rightEncoderIsPast(292) && diffV2.leftEncoderIsPast(77)) {
                         intakeSlides.intakeAllTheWayIn();
                     }
                 }
-                while (intakeTimer.seconds() < 2.5){
+                while (intakeTimer.seconds() < 2.5) {
                     deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_CLOSE);
                 }
-                while (intakeTimer.seconds() < 2.8){
+                while (intakeTimer.seconds() < 2.8) {
                     grippers.setPosition(robotConstantsV1.GRIPPERS_OPEN);
                 }
                 Actions.runBlocking(traj3);
@@ -254,11 +255,11 @@ public class LeftAutoV6 extends LinearOpMode {
                 //deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_LEVEL_ONE_ASCENT);
                 step = 5;
             }
-            if(step == 5){
-                while (deliveryTimer.seconds() < 2.2){
+            if (step == 5) {
+                while (deliveryTimer.seconds() < 2.2) {
                     slides.runLeftSlideToPositionPID(robotConstantsV1.LEFT_SLIDE_HIGH_BASKET);
                     slides.runRightSlideToPositionPID(robotConstantsV1.RIGHT_SLIDE_HIGH_BASKET);
-                    if(deliveryTimer.seconds() > 1.6) {
+                    if (deliveryTimer.seconds() > 1.6) {
                         deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
                         servoSet = true;
                     }
@@ -267,15 +268,15 @@ public class LeftAutoV6 extends LinearOpMode {
                 deliveryTimer.reset();
                 step = 6;
             }
-            if(step == 6){
+            if (step == 6) {
                 while (deliveryTimer.seconds() < 1) {
                     deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_OPEN);
                 }
                 servoSet2 = false;
                 step = 7;
             }
-            if(step == 7){
-                if(!servoSet2) {
+            if (step == 7) {
+                if (!servoSet2) {
                     deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
                 }
                 if (slides.getLeftSlidePosition() != 0 || slides.getRightSlidePosition() != 0) {
@@ -290,60 +291,60 @@ public class LeftAutoV6 extends LinearOpMode {
                 diffV2.setTopLeftServoPosition(robotConstantsV1.FRONT_LEFT_HOVER);
                 step = 8;
             }
-            if(step == 8){
+            if (step == 8) {
                 Actions.runBlocking(traj4);
                 telemetry.addLine("Traj4 running");
                 wristSet = false;
                 intakeTimer.reset();
                 step = 9;
             }
-            if(step == 9){
-                while (intakeTimer.seconds() < 0.8){
+            if (step == 9) {
+                while (intakeTimer.seconds() < 0.8) {
                     diffV2.setTopRightServoPosition(robotConstantsV1.FRONT_RIGHT_PICKUP);
                     diffV2.setTopLeftServoPosition(robotConstantsV1.FRONT_LEFT_PICKUP);
-                    if(!wristSet){
+                    if (!wristSet) {
                         wrist.setPosition(robotConstantsV1.WRIST_CENTER);
                         wristSet = true;
                     }
                 }
-                while (intakeTimer.seconds() < 1.3){
+                while (intakeTimer.seconds() < 1.3) {
                     grippers.setPosition(robotConstantsV1.GRIPPERS_GRAB);
                 }
                 step = 10;
             }
-            if(step ==10){
+            if (step == 10) {
                 intakeTimer.reset();
                 step = 11;
             }
-            if(step == 11){
-                while (intakeTimer.seconds() < 0.4){
+            if (step == 11) {
+                while (intakeTimer.seconds() < 0.4) {
                     grippers.setPosition(robotConstantsV1.GRIPPERS_GRAB);
                 }
-                while (intakeTimer.seconds() < 2.2){
-                    if(!servoSet2){
+                while (intakeTimer.seconds() < 2.2) {
+                    if (!servoSet2) {
                         deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
                     }
                     diffV2.setTopLeftServoPosition(robotConstantsV1.FRONT_LEFT_TRANSFER);
                     diffV2.setTopRightServoPosition(robotConstantsV1.FRONT_RIGHT_TRANSFER);
-                    if(diffV2.rightEncoderIsPast(292) && diffV2.leftEncoderIsPast(77)){
+                    if (diffV2.rightEncoderIsPast(292) && diffV2.leftEncoderIsPast(77)) {
                         intakeSlides.intakeAllTheWayIn();
                     }
                 }
-                while (intakeTimer.seconds() < 3){
+                while (intakeTimer.seconds() < 3) {
                     deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_CLOSE);
                 }
-                while (intakeTimer.seconds() < 3.8){
+                while (intakeTimer.seconds() < 3.8) {
                     grippers.setPosition(robotConstantsV1.GRIPPERS_OPEN);
                 }
                 Actions.runBlocking(traj5);
                 deliveryTimer.reset();
                 step = 12;
             }
-            if(step == 12){
-                while (deliveryTimer.seconds() < 2.2){
+            if (step == 12) {
+                while (deliveryTimer.seconds() < 2.2) {
                     slides.runLeftSlideToPositionPID(robotConstantsV1.LEFT_SLIDE_HIGH_BASKET);
                     slides.runRightSlideToPositionPID(robotConstantsV1.RIGHT_SLIDE_HIGH_BASKET);
-                    if(deliveryTimer.seconds() > 1.6) {
+                    if (deliveryTimer.seconds() > 1.6) {
                         deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
                         servoSet = true;
                     }
@@ -353,7 +354,7 @@ public class LeftAutoV6 extends LinearOpMode {
                 step = 13;
             }
 
-            if(step == 13) {
+            if (step == 13) {
                 while (deliveryTimer.seconds() < 1) {
                     deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_OPEN);
                 }
@@ -365,7 +366,7 @@ public class LeftAutoV6 extends LinearOpMode {
                 step = 14;
 
             }
-            if(step == 14){
+            if (step == 14) {
                 while (deliveryTimer.seconds() < 2) {
                     if (slides.getLeftSlidePosition() != 0 || slides.getRightSlidePosition() != 0) {
                         slides.runLeftSlideToPositionPID(0);
@@ -379,4 +380,35 @@ public class LeftAutoV6 extends LinearOpMode {
             }
         }
     }
+
+    public class Slides {
+        public Slides() {
+        }
+
+        public class SlidesUp implements Action {
+            public ElapsedTime timer = new ElapsedTime();
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                packet.put("Left Pos", slides.getLeftSlidePosition());
+                packet.put("Right Pos", slides.getRightSlidePosition());
+                slides.runLeftSlideToPositionPID(robotConstantsV1.LEFT_SLIDE_HIGH_BASKET);
+                slides.runRightSlideToPositionPID(robotConstantsV1.RIGHT_SLIDE_HIGH_BASKET);
+                if (timer.seconds() > 0.8) {
+                    deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
+                }
+                if(timer.seconds() < 2){
+                    return true;
+                }
+                else {
+                    return false;
+                }
+
+            }
+        }
+
+        public Action slidesUp() {
+            return new SlidesUp();
+        }
+    }
 }
+
