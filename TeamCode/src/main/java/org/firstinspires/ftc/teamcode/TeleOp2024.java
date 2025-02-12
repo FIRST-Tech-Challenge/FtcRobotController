@@ -23,6 +23,16 @@ if (robot.clawServo.getPosition() >= 1.05) {
 }
     }
 
+    
+//            \                            /
+//             \         /^\__/^\        /
+//           \   -------/  *   * \-------    /
+//            ---------|          |----------
+//           ----------|          |----------
+//          /    -------\        /-------     \
+//             /         --------        \
+//            /                           \
+
     @Override
     public void loop() {
         Gamepad driver = gamepad1;
@@ -102,4 +112,15 @@ if (robot.clawServo.getPosition() >= 1.05) {
         wasClawTogglePressed = isClawTogglePressed;
     }
 }
+//           /\
+//          /  \
+//         /    \
+//        /______\
+//       |   __   |
+//       |  /  \  |
+//       |  \  /  |
+//       |   --   |
+//      /|        |\
+//     / |        | \
+//    /__|________|__\
 
