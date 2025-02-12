@@ -91,7 +91,6 @@ public class Teleop extends LinearOpMode {
         MoveLSAction maintainLS = new MoveLSAction(outtake, outtake.getCurrentPosMm());
         maintainLS.setName("maintainLS");
         AutoRobotHangAction autoRobotHangAction = null;
-        CameraCapture cameraCapture = new CameraCapture();
         SampleIntakeReady sampleIntakeReady = null;
         SampleIntakeAction sampleIntakeAction = null;
         IntakeTransferReady intakeTransferReady = null;

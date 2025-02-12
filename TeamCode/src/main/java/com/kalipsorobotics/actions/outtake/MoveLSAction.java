@@ -190,7 +190,7 @@ public class MoveLSAction extends Action {
             return true;
         }
 
-        if ((Math.abs(this.targetTicks - currentTicks) <= ERROR_TOLERANCE_TICKS)) {
+        if ((Math.abs(targetErrorTicks) <= ERROR_TOLERANCE_TICKS)) {
             Log.d("Outtake_LS", String.format("action done for=%s, targetErrorTicks=%.3f, errorTolerance=%.3f, " +
                             "targetTicks=%.3f, " +
                             "currentTicks=%.3f, ",
@@ -200,8 +200,8 @@ public class MoveLSAction extends Action {
             return true;
         }
 
-        if(velocityMMperMS < (0.05)) {
-            if(timeoutTimer.milliseconds() > 500) {
+        if(velocityMMperMS < (0.0001)) {
+            if(timeoutTimer.milliseconds() > 100) {
                 Log.d("Outtake_LS", String.format("action timeout =%s, targetErrorTicks=%.3f, errorTolerance=%.3f, " +
                                 "targetTicks=%.3f, " +
                                 "currentTicks=%.3f, ",
