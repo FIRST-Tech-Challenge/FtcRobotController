@@ -23,7 +23,7 @@ public class MrKrabsTeleOp extends RoboMom {
     private ElapsedTime deliveryTimer = new ElapsedTime();
 
     DrivetrainFunctions drivetrainFunctions = null;
-    Intake intake = null;
+//    Intake intake = null;
     Delivery delivery = null;
     public enum DeliveryState{
         DELIVERY_START,
@@ -56,11 +56,11 @@ public class MrKrabsTeleOp extends RoboMom {
 
         drivetrainFunctions = new DrivetrainFunctions(this);
 
-        intake = new Intake(this);
+//        intake = new Intake(this);
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(11.8, 61.7, Math.toRadians(90)));
 
-        intake.unbrakePitch();
+//        intake.unbrakePitch();
 
         waitForStart();
 
@@ -204,18 +204,18 @@ public class MrKrabsTeleOp extends RoboMom {
 
             if (Math.abs(gamepad2.left_stick_y) >= DRIVE_DEADZONE) {
                 if(gamepad2.left_stick_y > 0){
-                    intake.incrementTargetAngleTicks(-PITCH_INCREMENT);
+//                    intake.incrementTargetAngleTicks(-PITCH_INCREMENT);
                 } else if(gamepad2.left_stick_y < 0){
-                    intake.incrementTargetAngleTicks(+PITCH_INCREMENT);
+//                    intake.incrementTargetAngleTicks(+PITCH_INCREMENT);
                 }
             }
 
             if(gamepad2.dpad_left){
-                intake.setTargetAngleTicks(0);
+//                intake.setTargetAngleTicks(0);
             }
 
             if(gamepad2.dpad_right){
-                intake.setTargetAngleTicks(750);
+//                intake.setTargetAngleTicks(750);
             }
 
             float rightTrigger = gamepad2.right_trigger;
@@ -223,15 +223,15 @@ public class MrKrabsTeleOp extends RoboMom {
             if(rightTrigger > 0){
                 extension += rightTrigger/100;
                 extension = Math.max(0.01, Math.min(0.25, extension));
-                intake.setTargetLengthServo(extension);
+//                intake.setTargetLengthServo(extension);
             } else if(leftTrigger > 0){
                 extension -= leftTrigger/100;
                 extension = Math.max(0.01, Math.min(0.25, extension));
-                intake.setTargetLengthServo(extension);
+//                intake.setTargetLengthServo(extension);
             }
 
-            intake.updateAngle();
-            intake.updateLength();
+//            intake.updateAngle();
+//            intake.updateLength();
 
             if(gamepad2.right_bumper){
                 delivery.clawClose();
@@ -240,11 +240,11 @@ public class MrKrabsTeleOp extends RoboMom {
             }
 
             if(gamepad2.x){
-                intake.setEndEffectorSpeed(0);//in
+//                intake.setEndEffectorSpeed(0);//in
             }else if(gamepad2.b){
-                intake.setEndEffectorSpeed(1);//out
+//                intake.setEndEffectorSpeed(1);//out
             }else{
-                intake.setEndEffectorSpeed(0.5f);//stop
+//                intake.setEndEffectorSpeed(0.5f);//stop
             }
 
             targetPosition = Math.max(delivery.bottomPosition, Math.min(delivery.topDelta, targetPosition));
@@ -261,7 +261,7 @@ public class MrKrabsTeleOp extends RoboMom {
 
             telemetry.addLine();
             telemetry.addLine();
-            telemetry.addData("Intake Extension: ", intake.getExtensionServoPosition());
+//            telemetry.addData("Intake Extension: ", intake.getExtensionServoPosition());
         }
     }
 }
