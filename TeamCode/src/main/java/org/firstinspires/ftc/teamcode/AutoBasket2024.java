@@ -68,7 +68,7 @@ public class AutoBasket2024 extends DriveMethods {
             case WaitTwo:
                 if (getStateTime() >= 4) {
                     omniDrive(0,0,0);
-                    changeState(State.MoveForward);
+                    changeState(State.RaiseArm);
                 }
             case RaiseArm:
                 robot.wormGear.setPower(0.25);
@@ -138,8 +138,8 @@ public class AutoBasket2024 extends DriveMethods {
     }
         double moveStraightTwo(double targetPos) {
             double distanceTravelled = position();
-            targetPos = stateStartPos + targetPos;
-            double remainingPos = targetPos - distanceTravelled;
+            double targetPosi = stateStartPos + targetPos;
+            double remainingPos = targetPosi - distanceTravelled;
             double MAX_POWER = .5;
 
             telemetry.addData("remainingDistance", "%.2f", remainingPos);
