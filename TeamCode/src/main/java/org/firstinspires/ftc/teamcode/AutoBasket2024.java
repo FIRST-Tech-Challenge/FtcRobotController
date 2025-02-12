@@ -9,6 +9,17 @@ public class AutoBasket2024 extends DriveMethods {
     double stateStartTime = -1;
     double stateStartPos = 0;
 
+//           /\
+//          /  \
+//         /    \
+//        /______\
+//       |   __   |
+//       |  /  \  |
+//       |  \  /  |
+//       |   --   |
+//      /|        |\
+//     / |        | \
+//    /__|________|__\
 
     enum State {
         Finished,
