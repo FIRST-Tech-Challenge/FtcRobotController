@@ -90,20 +90,20 @@ public class AutoBasket2024 extends DriveMethods {
                     changeState(State.Finished);
                 }
                 break;
-//            case ExtendSlider:
-//                robot.sliderMotor.setPower(0.5);
-//                robot.sliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                setSliderAndReturnConstraint(robot.MAX_HORIZONTAL_SLIDER_TICKS);
-//
-//                if (robot.sliderMotor.getCurrentPosition() >= 1450) {
-//                    robot.sliderMotor.setPower(0);
-//                    changeState(State.OpenClaw);
-//                }
-//                break;
-//            case OpenClaw:
-//                robot.clawServo.setPosition(robot.CLAW_OPEN);
-//                changeState(State.Finished);
-//                break;
+            case ExtendSlider:
+                robot.sliderMotor.setPower(0.5);
+                robot.sliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                setSliderAndReturnConstraint(robot.MAX_HORIZONTAL_SLIDER_TICKS);
+
+                if (robot.sliderMotor.getCurrentPosition() >= 1450) {
+                    robot.sliderMotor.setPower(0);
+                    changeState(State.OpenClaw);
+                }
+                break;
+            case OpenClaw:
+                robot.clawServo.setPosition(robot.CLAW_OPEN);
+                changeState(State.Finished);
+                break;
             case Finished:
                 moveStraightTo(0);
                 break;
