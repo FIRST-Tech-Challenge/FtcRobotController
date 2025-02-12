@@ -45,24 +45,28 @@ public class AutoSwerve {
     //FL
     servoInputFL = opMode.hardwareMap.analogInput.get("FLEncoder");
     servoFL = opMode.hardwareMap.servo.get("FLServo");
+    servoFL.setDirection(Servo.Direction.REVERSE);
     motorFL = opMode.hardwareMap.dcMotor.get("FLMotor");
     motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
 
     //FR
     servoInputFR = opMode.hardwareMap.analogInput.get("FREncoder");
     servoFR = opMode.hardwareMap.servo.get("FRServo");
+    servoFR.setDirection(Servo.Direction.REVERSE);
     motorFR = opMode.hardwareMap.dcMotor.get("FRMotor");
     motorFR.setDirection(DcMotorSimple.Direction.REVERSE);
 
     //BR
     servoInputBR = opMode.hardwareMap.analogInput.get("BREncoder");
     servoBR = opMode.hardwareMap.servo.get("BRServo");
+    servoBR.setDirection(Servo.Direction.REVERSE);
     motorBR = opMode.hardwareMap.dcMotor.get("BRMotor");
     motorBR.setDirection(DcMotorSimple.Direction.FORWARD);
 
     //BL
     servoInputBL = opMode.hardwareMap.analogInput.get("BLEncoder");
     servoBL = opMode.hardwareMap.servo.get("BLServo");
+    servoBL.setDirection(Servo.Direction.REVERSE);
     motorBL = opMode.hardwareMap.dcMotor.get("BLMotor");
     motorBL.setDirection(DcMotorSimple.Direction.FORWARD);
 

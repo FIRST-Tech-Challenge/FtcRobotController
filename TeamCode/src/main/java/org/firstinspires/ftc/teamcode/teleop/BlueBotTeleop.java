@@ -106,21 +106,23 @@ public class BlueBotTeleop extends LinearOpMode {
       }
       steering_angle = steering_angle % (2.0 * Math.PI);
 
-      telemetry.addLine("Steering to: " + steering_angle);
-
-      if (steering_angle > Math.PI) {
-        steering_angle -= Math.PI;
-        // Set flag to reverse movement
-      }
+      telemetry.addLine("Chang in steering (from robot heading): " + steering_angle);
 
       // Normalize steering to 0 to 1 range
       steering_angle /= Math.PI;
 
       telemetry.addLine("Normalized steering: " + steering_angle);
 
+      //set steering angle to usable servo value
+      steering_angle = (steering_angle + .5) / 2 + .25;
+      if(joy_magnitude<0.01)
+        steering_angle = 0.5;
+
+      telemetry.addLine("Servo steering: " + steering_angle);
+
       telemetry.update();
 
-      //steer_wheels(steering_angle);
+      steer_wheels(steering_angle);
     }
   }
 
