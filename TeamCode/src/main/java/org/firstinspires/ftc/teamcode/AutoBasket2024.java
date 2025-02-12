@@ -39,12 +39,12 @@ public class AutoBasket2024 extends DriveMethods {
         telemetry.addData("state", currentState);
         switch (currentState) {
             case Unstarted:
+                changeState(State.TightenClaw);
+                break;
+            case TightenClaw:
+                robot.clawServo.setPosition(1.20);
                 changeState(State.StrafeRight);
                 break;
-//            case TightenClaw:
-//                robot.clawServo.setPosition(1.20);
-//                changeState(State.StrafeRight);
-//                break;
             case StrafeRight:
                 double remainingDistance = moveStraightTo(.250);
 
