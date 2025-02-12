@@ -100,17 +100,11 @@ public class BlueBotTeleop extends LinearOpMode {
       telemetry.addLine("Robot theta: " + robot_theta);
 
       // Compute steering angle relative to field-centric movements
-      double steering_angle;
-
-      if (robot_theta > joy_theta) {
-        steering_angle = Math.abs(robot_theta - (joy_theta * 2.0)) % (2.0 * Math.PI);
+      double steering_angle = joy_theta - robot_theta;
+      if (steering_angle < -1 * Math.PI) {
+        steering_angle = (steering_angle + Math.PI);
       }
-      else if (robot_theta == joy_theta) {
-        steering_angle = robot_theta;
-      }
-      else {
-        steering_angle = (Math.abs(joy_theta - (robot_theta * 2.0)) + Math.PI) % (2.0 * Math.PI);
-      }
+      steering_angle = steering_angle % (2.0 * Math.PI);
 
       telemetry.addLine("Steering to: " + steering_angle);
 
