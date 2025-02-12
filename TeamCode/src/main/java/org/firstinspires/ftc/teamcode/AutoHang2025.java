@@ -15,6 +15,7 @@ public class AutoHang2025 extends DriveMethods {
         Finished
     }
     double stateStartTime = -1;
+    double stateStartPos = 0;
 
     State currentState = State.Unstarted;
 
@@ -27,20 +28,17 @@ public class AutoHang2025 extends DriveMethods {
     public void loop() {
         telemetry.addData("code", "running");
         telemetry.addData("time", "%.1f", getRuntime());
-        telemetry.addData("sliderLength", "%.1f", (double) robot.sliderMotor.getCurrentPosition());
+        telemetry.addData("encoder", "%.1f", (double) robot.leftFrontDrive.getCurrentPosition());
         telemetry.addData("imu", "%.1f", robot.imu.getRobotYawPitchRollAngles().getYaw());
-
         telemetry.addData("state", currentState);
         switch (currentState) {
             case Unstarted:
                 changeState(State.MoveForward);
                 break;
             case MoveForward:
-                omniDrive(0.5, 0, 0);
+                double remainingDistance = moveStraightTo(1);
 
-                if (getStateTime() >= 0.7) {
-                    omniDrive(0, 0, 0);
-
+                if (Math.abs(remainingDistance) <= .01) {
                     changeState(State.RaiseArm);
                 }
                 break;
@@ -86,8 +84,36 @@ public class AutoHang2025 extends DriveMethods {
     void changeState(AutoHang2025.State nextState) {
         currentState = nextState;
         stateStartTime = getRuntime();
+        stateStartPos = position();
     }
     double getStateTime() {
         return getRuntime() - stateStartTime;
+    }
+
+    double position() {
+        double MM_PER_METER = 1000;
+        return robot.leftFrontDrive.getCurrentPosition() / robot.TICKS_PER_MM / MM_PER_METER;
+    }
+
+    double moveStraightTo(double targetDistance) {
+        double distanceTravelled = position();
+        double targetPos = stateStartPos + targetDistance;
+        double remainingDistance = targetPos - distanceTravelled;
+        double MAX_POWER = .5;
+
+        telemetry.addData("remainingDistance", "%.2f", remainingDistance);
+
+        double power = 3 * remainingDistance;
+
+        if (power < -MAX_POWER) {
+            power = -MAX_POWER;
+        }
+        if (power > MAX_POWER) {
+            power = MAX_POWER;
+        }
+
+        omniDrive(power, 0, 0);
+
+        return remainingDistance;
     }
 }

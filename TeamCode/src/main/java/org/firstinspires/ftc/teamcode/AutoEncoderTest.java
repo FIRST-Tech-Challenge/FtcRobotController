@@ -30,7 +30,6 @@ public class AutoEncoderTest extends DriveMethods {
         telemetry.addData("time", "%.1f", getRuntime());
         telemetry.addData("encoder", "%.1f", (double) robot.leftFrontDrive.getCurrentPosition());
         telemetry.addData("imu", "%.1f", robot.imu.getRobotYawPitchRollAngles().getYaw());
-
         telemetry.addData("state", currentState);
         switch (currentState) {
             case Unstarted:
