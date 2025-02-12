@@ -60,7 +60,8 @@ public class AutoBasket2024 extends DriveMethods {
             case MoveForward:
                 double remainingPos = moveStraightTwo(0.150);
 
-                if (Math.abs(remainingPos) <= .01) {
+                if (Math.abs(remainingPos) <= .01 || remainingPos < 0) {
+                    omniDrive(0,0,0);
                     changeState(State.WaitTwo);
                 }
                 break;
