@@ -16,7 +16,7 @@ public class Bucket {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(37, 60, Math.toRadians(90)))
                         .setTangent(Math.toRadians(270))
-                        .lineTo(new Vector2d(37,53))
+                        .strafeTo(new Vector2d(37,53))
                         .splineToConstantHeading(new Vector2d(47,40),Math.toRadians(280))           
                         .waitSeconds(3)
                          //pickup
@@ -26,7 +26,7 @@ public class Bucket {
                         //Slides up
                         //open claw
                         .setTangent(Math.toRadians(225))
-                        .splineToConstantHeading(new Vector2d(49,53),Math.toRadians(90))
+                        .splineToConstantHeading(new Vector2d(50,53.5),Math.toRadians(225))
                         //slides down
                         .splineToLinearHeading(new Pose2d(58,40,Math.toRadians(90)),Math.toRadians(270))
                         .waitSeconds(3)
@@ -37,7 +37,7 @@ public class Bucket {
                         //Slides up
                         //open claw
                         .setTangent(Math.toRadians(225))
-                        .splineToConstantHeading(new Vector2d(49,53),Math.toRadians(90))
+                        .splineToConstantHeading(new Vector2d(49,53),Math.toRadians(225))
 
                         .build());
 
@@ -49,3 +49,5 @@ public class Bucket {
                 .start();
     }
 }
+
+
