@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.JackBurr.OldFiles;
 //import com.acmerobotics.roadrunner.geometry.Vector2d;
 //import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryAxonV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryGrippersV1;
 
 //TODO: PUSH FIRST THING
+@Disabled
 @Autonomous
 public class RightAutoV2 extends LinearOpMode {
     public int step = 1;
