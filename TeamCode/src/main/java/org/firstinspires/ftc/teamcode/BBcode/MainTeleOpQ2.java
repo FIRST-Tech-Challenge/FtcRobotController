@@ -47,6 +47,7 @@ public class MainTeleOpQ2 extends LinearOpMode{
         Home,
         WristUp,
         RaiseArm,
+        ClawClamp,
         ViperExtend,
         SpecimenHang,
         WristDown,
@@ -57,8 +58,10 @@ public class MainTeleOpQ2 extends LinearOpMode{
 
     enum SubmersiblePickupState {
         Home,
-        WristUpIn,
-        ExtendViperPickup,
+        LongWristUpIn,
+        ShortWristUpIn,
+        LongExtendViperPickup,
+        ShortExtendViperPickup,
         SubmersiblePickup,
         WristUpOut,
         ExtendViperClosed
@@ -80,9 +83,9 @@ public class MainTeleOpQ2 extends LinearOpMode{
             wristClaw.WristSpecimenPickup();
         }
         //Inspection wrist setup
-        if (gamepad1.b) {
-            wristClaw.WristMid();
-        }
+//        if (gamepad1.b) {
+//            wristClaw.WristMid();
+//        }
     }
 
     private void handleGamepad2 (WristClaw wristClaw) {
@@ -334,14 +337,22 @@ public class MainTeleOpQ2 extends LinearOpMode{
                     }
                 case RaiseArm:
                     if (arm.getIsArmSpecimenPosition()) {
-                        viper.ExtendSpecimenhang(1);
-                        specimenClipState = SpecimenClipState.ViperExtend;
+//                        viper.ExtendSpecimenhang(1);
+//                        specimenClipState = SpecimenClipState.ViperExtend;
+                        wristClaw.ClampClaw();
+                        specimenClipState = SpecimenClipState.ClawClamp;
                     }
                     else if (gamepad2.right_trigger > 0 && gamepad2.dpad_down) {
                         arm.MoveToHome();
                         specimenClipState = SpecimenClipState.ArmLowerToHome;
                     }
                     break;
+
+                case ClawClamp:
+                    if (wristTimer.seconds() >= wristFlipTime) {
+                        viper.ExtendSpecimenhang(1);
+                        specimenClipState = SpecimenClipState.ViperExtend;
+                    }
 
                 case ViperExtend:
                     if (viper.getIsViperExtendSpecimenHang()) {
@@ -386,20 +397,38 @@ public class MainTeleOpQ2 extends LinearOpMode{
                 case Home:
                     if (gamepad1.y) {
                         wristClaw.WristUp();
-                        submersiblePickupState = SubmersiblePickupState.WristUpIn;
+                        submersiblePickupState = SubmersiblePickupState.LongWristUpIn;
+                        wristTimer.reset();
+                    }
+                    else if (gamepad1.b){
+                        wristClaw.WristUp();
+                        submersiblePickupState = SubmersiblePickupState.ShortWristUpIn;
                         wristTimer.reset();
                     }
                     break;
 
-                case WristUpIn:
+                case LongWristUpIn:
                     if (wristTimer.seconds() >= wristFlipTime) {
-                        viper.Extendsubmersible(0.5);
-                        submersiblePickupState = SubmersiblePickupState.ExtendViperPickup;
+                        viper.Extendlongsubmersible(1);
+                        submersiblePickupState = SubmersiblePickupState.LongExtendViperPickup;
                     }
                     break;
 
-                case ExtendViperPickup:
-                    if (viper.getIsViperExtendSub()) {
+                case ShortWristUpIn:
+                    if (wristTimer.seconds() >= wristFlipTime) {
+                        viper.Extendshortsubmersible(1);
+                        submersiblePickupState = SubmersiblePickupState.ShortExtendViperPickup;
+                    }
+                    break;
+
+                case LongExtendViperPickup:
+                    if (viper.getIsViperlongExtendSub()) {
+                        submersiblePickupState = SubmersiblePickupState.SubmersiblePickup;
+                    }
+                    break;
+
+                case ShortExtendViperPickup:
+                    if (viper.getIsVipershortExtendSub()) {
                         submersiblePickupState = SubmersiblePickupState.SubmersiblePickup;
                     }
                     break;
@@ -414,7 +443,7 @@ public class MainTeleOpQ2 extends LinearOpMode{
 
                 case WristUpOut:
                     if (wristTimer.seconds() >= wristFlipTime) {
-                        viper.ExtendClosed(0.5);
+                        viper.ExtendClosed(1);
                         submersiblePickupState = SubmersiblePickupState.ExtendViperClosed;
                     }
                     break;

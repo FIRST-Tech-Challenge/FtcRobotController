@@ -27,7 +27,8 @@ public class Viper {
     int hangExtend = 15;
     int halfExtend = 8;
     int specimenhangExtend = 9;
-    int submersibleExtend = 16;
+    int shortsubmersibleExtend = 6;
+    int longsubmersibleExtend = 16;
     int shortExtend = 3;
     int closedExtend = 0;
     //--------------------------
@@ -47,13 +48,15 @@ public class Viper {
     public boolean getIsViperExtendFull() {return _viperMotor.getCurrentPosition() > InchConverterToTicks(fullExtend);}
     public boolean getIsViperRetractedShort() {return _viperMotor.getCurrentPosition() < InchConverterToTicks(shortExtend + 0.5);}
     public boolean getIsViperExtendClosed() {return _viperMotor.getCurrentPosition() < InchConverterToTicks(closedExtend + 0.5);}
-    public boolean getIsViperExtendSub() {return _viperMotor.getCurrentPosition() > InchConverterToTicks(submersibleExtend);}
+    public boolean getIsVipershortExtendSub() {return _viperMotor.getCurrentPosition() > InchConverterToTicks(shortsubmersibleExtend);}
+    public boolean getIsViperlongExtendSub() {return _viperMotor.getCurrentPosition() > InchConverterToTicks(longsubmersibleExtend);}
     public boolean getIsViperExtendHang() {return _viperMotor.getCurrentPosition() < InchConverterToTicks(hangExtend + 5);}
     public boolean getIsViperExtendSpecimenHang() {return _viperMotor.getCurrentPosition() > InchConverterToTicks(specimenhangExtend);}
 
     public void StopAndResetEncoder() {_viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);}
     public void ExtendFull(double power) {ViperMotorCustom(fullExtend, power);}
-    public void Extendsubmersible(double power) {ViperMotorCustom(submersibleExtend, power);}
+    public void Extendshortsubmersible(double power) {ViperMotorCustom(shortsubmersibleExtend, power);}
+    public void Extendlongsubmersible(double power) {ViperMotorCustom(longsubmersibleExtend, power);}
     public void ExtendHang(double power) {ViperMotorCustom(hangExtend, power);}
     public void ExtendShort(double power) {ViperMotorCustom(shortExtend, power);}
     public void ExtendHalf(double power) {ViperMotorCustom(halfExtend, power);}

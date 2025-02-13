@@ -109,7 +109,7 @@ public class ViperArmActions {
     public class MoveViperToSamplePickUpAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            _Viper.Extendsubmersible(1);
+            _Viper.Extendlongsubmersible(1);
             return false;
         }
     }

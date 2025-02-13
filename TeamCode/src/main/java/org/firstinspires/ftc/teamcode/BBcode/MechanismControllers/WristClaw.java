@@ -19,9 +19,10 @@ public class WristClaw {
     //Variable Storage:
     double openPosition = 0.73;
     double closePosition = 0.38;
+    double clampPosition = 0.36;
     double upPosition = 0.31;
-    double midPosition = 0.49;
-    double clipPosition = 0.49;
+    double midPosition = 0.47;
+    double clipPosition = 0.47;
     double specimenPickupPosition = 0.7;
     double downPosition = 0.8;
     double dumpPosition = 0.36;
@@ -36,6 +37,7 @@ public class WristClaw {
     public void CloseClaw() {
         ClawCustom(closePosition);
         _light.green();}
+    public void ClampClaw() {ClawCustom(clampPosition);}
     public void WristUp() {WristCustom(upPosition);}
     public void WristMid() {WristCustom(midPosition);}
     public void WristClip() {WristCustom(clipPosition);}

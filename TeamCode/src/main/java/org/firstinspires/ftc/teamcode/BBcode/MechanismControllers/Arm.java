@@ -68,15 +68,15 @@ public class Arm {
     }
     public void MoveToHome()
     {
-        ArmMotorCustom(homePosition, 0.5);
+        ArmMotorCustom(homePosition, 0.75);
     }
     public void MoveToClearance()
     {
-        ArmMotorCustom(clearancePosition, 0.5);
+        ArmMotorCustom(clearancePosition, 0.75);
     }
     public void MoveToHang()
     {
-        ArmMotorCustom(hangPosition, 0.5);
+        ArmMotorCustom(hangPosition, 0.75);
     }
     public void MoveToHighBasket()
     {
