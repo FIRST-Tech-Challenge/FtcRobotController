@@ -34,7 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
 @TeleOp(name="Auto Viper NetZone (1)", group="")
-public class AutoCodeViperToNetZone extends LinearOpMode {
+public class AutoCodeViperToNetZoneV2 extends LinearOpMode {
 
     static final double     DRIVE_SPEED             = 0.9;
     static final double     DRIVE_INCREASED_SPEED             = 0.8;
@@ -106,58 +106,105 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
 
                 if (moveNearToAscentZone) {
                     // Go reverse to be away from submersible to move to pick sample
-                    int reverseDistance = 1; //TODO: Adjust during testing
+                    int reverseDistance = 10; //TODO: Adjust during testing
                     driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, reverseDistance);
                     telemetry.addData("Go reverse to be away from submersible to move to pick sample", reverseDistance);
                     telemetry.update();
 
                     //strafe to go pass submersible edges to avoid hitting when moving forward to pick samples
-                    strafeDistance = 31; //TODO: Adjust during testing
+                    strafeDistance = 46; //TODO: Adjust during testing
                     driveManager.StrafeToPosition(AutoDriveManager.DriveDirection.LEFT, DRIVE_SPEED, strafeDistance);
                     telemetry.addData("strafe to go pass submersible edges to avoid hitting when moving forward to pick samples", strafeDistance);
                     telemetry.update();
 
                     //MOVE FORWARD past sample
-                    distance = 25; //TODO: Adjust during testing
+                    /* distance = 12; //TODO: Adjust during testing
                     driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, distance);
                     telemetry.addData("MOVE FORWARD past sample", distance);
-                    telemetry.update();
+                    telemetry.update(); */
                 }
 
                 if (ploughSampleToNetZone) {
 
-                    strafeDistance = 10; //TODO: Adjust during testing
-                    driveManager.StrafeToPosition(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED, strafeDistance);
-                    telemetry.addData("strafe to go pass submersible edges to avoid hitting when moving forward to pick samples", strafeDistance);
+                    armManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
+
+                    double armPosition = 0.40; //TODO: Correct during testing
+                    armManager.MoveArmToPosition(armPosition);
+                    telemetry.addData("Set Arm Pos: ", armPosition);
                     telemetry.update();
+                    sleep(2000);
 
-                    //Rotate 180 (to point front) + 45 degrees to turn to go in diagonal to plogh sample
-                    rotateToPosition = 2;
-                    driveManager.TurnUsingEncoders(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED, rotateToPosition);
-                    telemetry.addData("rotate to point to front and turn to plough the sample", "");
+                    grabberManager.OpenOrCloseGrabber(true);
+                    telemetry.addData("Open Grabber", "");
                     telemetry.update();
+                    sleep(1000);
 
-                    //Move forward until it reaches net zone
-                    distance = 50; //TODO: Adjust during testing
-                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, distance);
-                    telemetry.addData("Move backward until it reaches net zone", "");
+                    armManager.MoveArmToPosition(0.1);
+                    telemetry.addData("Set Arm Pos: ", 0.1);
                     telemetry.update();
+                    sleep(2000);
 
+                    grabberManager.OpenOrCloseGrabber(false);
+                    telemetry.addData("Open Grabber", "");
+                    telemetry.update();
+                    sleep(1000);
 
+                    armManager.MoveArmToPosition(0.4);
+                    telemetry.addData("Set Arm Pos: ", 0.1);
+                    telemetry.update();
+                    sleep(2000);
 
-                    /*
-                    rotateToPosition = 30;
-
+                    rotateToPosition = -38;
                     driveManager.TurnUsingEncoders(AutoDriveManager.DriveDirection.LEFT, DRIVE_SPEED, rotateToPosition);
                     telemetry.addData("rotate to point to front and turn to plough the sample", "");
                     telemetry.update();
-                    */
+
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, 13);
+
+                    armManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
+                    viperSlideManager.ResetAndSetToEncoder();
+                    armManager.MoveArmToPosition(0.2);
+                    grabberManager.OpenOrCloseGrabber(false);
+
+                    //moving vs up
+                    viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
+                    viperSlideManager.SetPower(0.26);
+                    sleep(1000);
+                    grabberManager.OpenOrCloseGrabber(false);
+
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, 3);
+
+                    //stopping vs and moving arm to drop specimen
+                    viperSlideManager.SetPower(0.0);
+                    armManager.MoveArmToPosition(0.6);
+                    sleep(500);
+
+                    grabberManager.OpenOrCloseGrabber(true);
+
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, -20);
+
+                    viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
+                    viperSlideManager.SetPower(0.7);
+                    sleep(800);
+
+                    //vs stopping for arm to go back
+                    viperSlideManager.SetPower(0.0);
+                    armManager.MoveArmToPosition(0.3);
+                    sleep(800);
+
+                    //vs moving down again
+                    viperSlideManager.SetPower(0.0);
+                    sleep(800);
+
+                    driveManager.TurnUsingEncoders(AutoDriveManager.DriveDirection.LEFT, DRIVE_SPEED, 15);
+                    telemetry.addData("rotate to point to front and turn to plough the sample", "");
+                    telemetry.update();
                      
                 }
 
                 if (parkInAscent)
                 {
-                    distance = 61;
+                    distance = 50;
                     driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, distance);
 
                     /* strafeDistance = 14; //TODO: Adjust during testing
@@ -181,10 +228,10 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
                     telemetry.update();
 
                 */
-                    rotateToPosition = 21;
+                    /* rotateToPosition = 21;
                     driveManager.TurnUsingEncoders(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED, rotateToPosition);
                     telemetry.addData("rotate to point to front and turn to plough the sample", "");
-                    telemetry.update();
+                    telemetry.update(); */
 
                     /*
                     strafeDistance = 40; //TODO: Adjust during testing
@@ -194,13 +241,13 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
 
 
 
-                    distance = 19; //TODO: Adjust during testing
+                    /*distance = 19; //TODO: Adjust during testing
                     driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, distance);
                     telemetry.addData("Move backward until it reaches net zone", "");
-                    telemetry.update();
+                    telemetry.update(); */
 
                     //touch the rails
-                    touchTheRails();
+                    //touchTheRails();
 
                 }
 
@@ -278,16 +325,16 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
         //vs coming down for short time
         viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
         viperSlideManager.SetPower(0.7);
-        sleep(200);
+        sleep(800);
 
         //vs stopping for arm to go back
         viperSlideManager.SetPower(0.0);
         armManager.MoveArmToPosition(0.3);
-        sleep(200);
+        sleep(800);
 
         //vs moving down again
         viperSlideManager.SetPower(0.0);
-        sleep(200);
+        sleep(800);
 
     }
 

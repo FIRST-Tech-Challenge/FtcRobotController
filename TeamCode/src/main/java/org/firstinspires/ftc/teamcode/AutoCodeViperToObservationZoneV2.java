@@ -111,7 +111,7 @@ public class AutoCodeViperToObservationZoneV2 extends LinearOpMode {
                     telemetry.addData("Reached Submersible", "");
                     telemetry.update();
 
-                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD,DRIVE_SPEED, 7);
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD,DRIVE_SPEED, 8);
                     telemetry.addData("Reached Submersible", "");
                     telemetry.update();
 
@@ -217,7 +217,7 @@ public class AutoCodeViperToObservationZoneV2 extends LinearOpMode {
         //moving vs up
         viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
         viperSlideManager.SetPower(0.3);
-        sleep(700);
+        sleep(600);
 
         //stopping vs and moving arm to drop specimen
         viperSlideManager.SetPower(0.0);
@@ -305,12 +305,12 @@ public class AutoCodeViperToObservationZoneV2 extends LinearOpMode {
         //moving vs up
         viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
         viperSlideManager.SetPower(0.3);
-        sleep(700); //800
+        sleep(600); //800
 
         //stopping vs and moving arm to drop specimen
         viperSlideManager.SetPower(0.0);
         armManager.MoveArmToPosition(0.6);
-        sleep(500 );
+        sleep(500);
 
         //vs coming down for short time
         viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
