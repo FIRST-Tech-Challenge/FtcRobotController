@@ -70,21 +70,22 @@ public class RightAutoV6 extends LinearOpMode {
         telemetry.update();
         TranslationalVelConstraint constraint = new TranslationalVelConstraint(30);
         TrajectoryActionBuilder traj1Builder = drive.actionBuilder(startPose)
-                .strafeTo(position1);
+                .splineToConstantHeading(position1, startPose.heading);
         TrajectoryActionBuilder traj2Builder = traj1Builder.fresh()
-                .strafeTo(position2, constraint)
-                .strafeTo(position3)
-                .strafeTo(position4)
+                .splineToConstantHeading(position2, startPose.heading, constraint)
+                .splineToConstantHeading(position3, startPose.heading)
+                .splineToConstantHeading(position4, startPose.heading)
                 .turn(Math.toRadians(182))
-                .strafeTo(position5)
-                .strafeTo(position6)
-                .strafeTo(position7)
-                .strafeTo(position8)
-                .strafeTo(position9)
-                .strafeTo(position10)
-                .strafeTo(position11)
-                .strafeTo(position12)
-                .splineToConstantHeading(position13, drive.pose.heading.real)
+                .splineToConstantHeading(position5, Math.toRadians(272))
+                .splineToConstantHeading(position6, Math.toRadians(272))
+                .splineToConstantHeading(position7, Math.toRadians(272))
+                .splineToConstantHeading(position8, Math.toRadians(272))
+                .splineToConstantHeading(position9, Math.toRadians(272))
+                .splineToConstantHeading(position10, Math.toRadians(272))
+                .splineToConstantHeading(position11, Math.toRadians(272))
+                .splineToConstantHeading(position12, Math.toRadians(272))
+                .splineToConstantHeading(position13, Math.toRadians(272
+                ))
                 .turn(Math.toRadians(-180));
 
         Action traj1 = traj1Builder.build();
