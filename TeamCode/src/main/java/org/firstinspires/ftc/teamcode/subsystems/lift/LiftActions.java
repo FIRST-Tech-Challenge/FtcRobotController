@@ -34,7 +34,7 @@ public class LiftActions {
 
     public class LiftUp implements Action {
         private boolean initialized = false;
-        private int ticks = 3850;
+        private int ticks = 2750;
 
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {

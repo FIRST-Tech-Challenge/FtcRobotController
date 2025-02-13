@@ -12,7 +12,7 @@ public class spinTest extends LinearOpMode {
         if (opModeIsActive()) {
             // Pre-run
             while (opModeIsActive()) {
-                spinner.setPower(-1.0);
+                spinner.setPower(1.0);
             }
         }
     }
