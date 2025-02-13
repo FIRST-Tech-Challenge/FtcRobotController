@@ -87,8 +87,22 @@ public class IntoTheDeepTeleop extends OpMode {
     public void loop() {
         // Get joystick values
         double boost = gamepad1.right_trigger / 2; // Boost
-        double y = -gamepad1.left_stick_y / 2; // Forward/backward
-        double x = gamepad1.left_stick_x / 2; // Strafe
+        double y = 0.0;
+        double x = 0.0;
+
+        if (gamepad1.dpad_up){
+            y = -0.5;
+        }else if (gamepad1.dpad_down){
+            y = 0.5;
+        }else if (gamepad1.dpad_left){
+            x = -0.5;
+        }else if (gamepad1.dpad_right){
+            x = 0.5;
+        }else {
+            y = -gamepad1.left_stick_y / 2; // Forward/backward
+            x = gamepad1.left_stick_x / 2; // Strafe
+        }
+
         double rotation = gamepad1.right_stick_x; // Rotate
         y += y * boost;
         x += x * boost;
