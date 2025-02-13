@@ -36,6 +36,7 @@ public class LeftAutoV6 extends LinearOpMode {
     public DifferentialV2 diffV2 = new DifferentialV2();
     public IntakeSlidesV1 intakeSlides = new IntakeSlidesV1();
     public WristAxonV1 wrist = new WristAxonV1();
+    public DeliveryAxon axon = new DeliveryAxon();
     public GrippersV1 grippers = new GrippersV1();
 
     public ElapsedTime deliveryTimer = new ElapsedTime();
@@ -101,6 +102,7 @@ public class LeftAutoV6 extends LinearOpMode {
         traj1Builder = drive.actionBuilder(startPose)
                 .stopAndAdd(slides2.slidesUp())
                 .strafeTo(position1)
+                .stopAndAdd(axon.axonUp())
                 .turnTo(Math.toRadians(position1HeadingDegrees));
         traj2Builder = traj1Builder.fresh()
                 .strafeTo(position2)
@@ -114,7 +116,9 @@ public class LeftAutoV6 extends LinearOpMode {
                 .turnTo(Math.toRadians(position2HeadingDegrees))
                 .strafeTo(position4);
         traj5Builder = traj4Builder.fresh()
+                .stopAndAdd(slides2.slidesUp())
                 .strafeTo(position1)
+                .stopAndAdd(axon.axonUp())
                 .turnTo(Math.toRadians(position1HeadingDegrees));
         //traj3Builder = traj2Builder.fresh()
         //.turnTo(Math.toRadians(position3Degrees));
@@ -338,19 +342,6 @@ public class LeftAutoV6 extends LinearOpMode {
                 }
                 Actions.runBlocking(traj5);
                 deliveryTimer.reset();
-                step = 12;
-            }
-            if (step == 12) {
-                while (deliveryTimer.seconds() < 2.2) {
-                    slides.runLeftSlideToPositionPID(robotConstantsV1.LEFT_SLIDE_HIGH_BASKET);
-                    slides.runRightSlideToPositionPID(robotConstantsV1.RIGHT_SLIDE_HIGH_BASKET);
-                    if (deliveryTimer.seconds() > 1.6) {
-                        deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
-                        servoSet = true;
-                    }
-                    deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_CLOSE);
-                }
-                deliveryTimer.reset();
                 step = 13;
             }
 
@@ -396,18 +387,31 @@ public class LeftAutoV6 extends LinearOpMode {
                 if (timer.seconds() > 0.8) {
                     deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
                 }
-                if(timer.seconds() < 2){
-                    return true;
-                }
-                else {
-                    return false;
-                }
+                return false;
 
             }
         }
 
         public Action slidesUp() {
             return new SlidesUp();
+        }
+    }
+
+    public class DeliveryAxon {
+        public DeliveryAxon() {
+        }
+
+        public class AxonUp implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
+                return false;
+
+            }
+        }
+
+        public Action axonUp() {
+            return new AxonUp();
         }
     }
 }
