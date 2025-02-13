@@ -101,11 +101,10 @@ public class IntoTheDeepTeleop extends OpMode {
         double backRightPower = (y + x - rotation);
 
         // Normalize the power values to be within -1 and 1
-        double maxPower = Math.max(1.0, Math.abs(frontLeftPower));
-        frontLeftPower /= maxPower;
-        frontRightPower /= maxPower;
-        backLeftPower /= maxPower;
-        backRightPower /= maxPower;
+        frontLeftPower /= Math.max(1.0, Math.abs(frontLeftPower));
+        frontRightPower /= Math.max(1.0, Math.abs(frontRightPower));
+        backLeftPower /= Math.max(1.0, Math.abs(backLeftPower));
+        backRightPower /= Math.max(1.0, Math.abs(backRightPower));
 
 
 
