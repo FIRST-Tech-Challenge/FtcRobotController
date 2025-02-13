@@ -84,8 +84,7 @@ public class RightAutoV6 extends LinearOpMode {
                 .splineToConstantHeading(position10, Math.toRadians(272))
                 .splineToConstantHeading(position11, Math.toRadians(272))
                 .splineToConstantHeading(position12, Math.toRadians(272))
-                .splineToConstantHeading(position13, Math.toRadians(272
-                ))
+                .splineToConstantHeading(position13, Math.toRadians(272))
                 .turn(Math.toRadians(-180));
 
         Action traj1 = traj1Builder.build();
