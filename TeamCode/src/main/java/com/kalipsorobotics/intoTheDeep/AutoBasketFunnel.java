@@ -112,7 +112,7 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         //===============start of second basket===============
         SampleToBasketFunnelRoundTrip sampleToBasketFunnelRoundTrip2 = new SampleToBasketFunnelRoundTrip(driveTrain,
-                wheelOdometry, outtake, intakeClaw, 1125, -75);
+                wheelOdometry, outtake, intakeClaw, 1100, -75);
         sampleToBasketFunnelRoundTrip2.setName("sampleToBasketFunnelRoundTrip2");
         sampleToBasketFunnelRoundTrip2.setDependentActions(sampleToBasketFunnelRoundTrip1);
         redAutoBasket.addAction(sampleToBasketFunnelRoundTrip2);
@@ -181,8 +181,12 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveToBasket3.setName("moveToBasket3");
         moveToBasket3.setDependentActions(sampleIntakeAction3);
         //move sample 3 to basket
+        moveToBasket3.addPoint(SampleToBasketFunnelRoundTrip.OUTTAKE_X_POS - 250,
+                SampleToBasketFunnelRoundTrip.OUTTAKE_Y_POS - 125, -135,
+                PurePursuitAction.P_XY_FAST,
+                PurePursuitAction.P_ANGLE);
         moveToBasket3.addPoint(SampleToBasketFunnelRoundTrip.OUTTAKE_X_POS, SampleToBasketFunnelRoundTrip.OUTTAKE_Y_POS,
-                -135);
+                -135, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
         redAutoBasket.addAction(moveToBasket3);
 
         BasketReadyAction basketReady3 = new BasketReadyAction(outtake);

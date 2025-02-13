@@ -375,8 +375,8 @@ public class Teleop extends LinearOpMode {
             }
 
 
-
-            if (-intakeStickValue != 0) {
+            //intake manual ls linkage
+            if (-intakeStickValue != 0 && intakeOverrideOn) {
                 setLastIntakeAction(null);
                 intakeClaw.getIntakeRatchetServo().setPosition(IntakeClaw.INTAKE_RATCHET_UNLOCK_POS);
 
