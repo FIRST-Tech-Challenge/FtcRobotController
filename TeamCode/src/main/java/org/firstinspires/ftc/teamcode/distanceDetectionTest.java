@@ -49,7 +49,7 @@ public class distanceDetectionTest extends LinearOpMode {
         imu.resetYaw();
 
         waitForStart();
-        while (true) {
+        while (opModeIsActive()) {
             displaySensors();
         }
     }
