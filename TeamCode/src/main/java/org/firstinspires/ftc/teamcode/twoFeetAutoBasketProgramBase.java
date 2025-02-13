@@ -174,15 +174,6 @@ public class twoFeetAutoBasketProgramBase extends LinearOpMode {
         }
     }
 
-    public void setChassisPower() {
-
-    }
-
-    public enum WallType {
-        LEFT,
-        BACK
-    }
-
 
     @Override
     public void runOpMode() throws InterruptedException {
