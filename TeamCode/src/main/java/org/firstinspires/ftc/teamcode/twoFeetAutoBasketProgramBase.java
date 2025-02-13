@@ -1,19 +1,21 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 @Autonomous(name = "twoFeetAutoBasketProgram")
 public class twoFeetAutoBasketProgramBase extends LinearOpMode {
-    private DcMotorEx frontLeft, frontRight, backLeft, backRight;
-    private DcMotorEx leftLiftMotor, rightLiftMotor;
-    private Servo basketServo;
-    private Servo intakePivotServo;
+    private DcMotorEx frontLeft, frontRight, backLeft, backRight, leftLiftMotor, rightLiftMotor;
+    private Servo basketServo, intakePivotServo;
 
     private static ElapsedTime myStopwatch = new ElapsedTime();
     private static ElapsedTime basketTimer = new ElapsedTime();
@@ -25,8 +27,6 @@ public class twoFeetAutoBasketProgramBase extends LinearOpMode {
     private boolean reachedLeft = false;
     private boolean reachedForward = false;
     private boolean rotatedTarget = false;
-    private BNO055IMU imu;
-    private DistanceSensor distanceSensor;
 
     private static final double wheelDiameter = 75;
     private static final double ticksPerRev = 100;
@@ -34,7 +34,6 @@ public class twoFeetAutoBasketProgramBase extends LinearOpMode {
     private static final int forwardMovement = 400;
     private static final int backwardMovement = 400;
     private static final int leftwardMovement = 775;
-    private static final double BACK_WHEEL_RATIO = 2.0 / 3.0; // 3:2 sprocket ratio;
 
     public void basket() {
         if (basket1stPos == false) {
@@ -175,24 +174,15 @@ public class twoFeetAutoBasketProgramBase extends LinearOpMode {
         }
     }
 
+    public void setChassisPower() {
+
+    }
+
     public enum WallType {
         LEFT,
         BACK
     }
 
-    /**
-     * Continually call this function to align the robot to a wall.
-     * @param wall: WallType.LEFT or WallType.BACK
-     * @param distance: distance from wall in cm
-     * @param angleOffset: angle offset from default position in degrees
-     */
-    public void alignToWall(WallType wall, double distance, double angleOffset) {
-        if (wall == WallType.LEFT) {
-            strafeLeft();
-        } else if (wall == WallType.BACK) {
-            backward();
-        }
-    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -201,23 +191,10 @@ public class twoFeetAutoBasketProgramBase extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
         backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
-
-        // Servo for basket
         basketServo = hardwareMap.get(Servo.class, "basketServo");
-
-        // Servo for intake
         intakePivotServo = hardwareMap.get(Servo.class, "intakePivotServo");
-
-        // Initialize lift motors
         leftLiftMotor = hardwareMap.get(DcMotorEx.class, "leftLiftMotor");
         rightLiftMotor = hardwareMap.get(DcMotorEx.class, "rightLiftMotor");
-
-//        // Distance Sensor
-//        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
-//
-//        // Gyroscope
-//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
 
         // Wait for the start signal
         waitForStart();
