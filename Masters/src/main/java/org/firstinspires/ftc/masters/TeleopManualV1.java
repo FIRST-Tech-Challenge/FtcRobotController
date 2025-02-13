@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.masters.components.DriveTrain;
 import org.firstinspires.ftc.masters.components.Init;
@@ -32,6 +33,9 @@ public class TeleopManualV1 extends LinearOpMode {
         Outtake outtake = new Outtake(init, telemetry);
         Intake intake = new Intake(init, telemetry);
 
+        VoltageSensor voltageSensor;
+        voltageSensor = init.getVoltageSensor();
+
         outtake.initTeleopWall();
 
         int target=0;
@@ -41,13 +45,13 @@ public class TeleopManualV1 extends LinearOpMode {
 
         boolean relased = true;
 
-//        telemetry.addData("Before", outtake.outtakeSlideEncoder.getCurrentPosition());
-//
-//        telemetry.update();
+        telemetry.addData("Before", outtake.outtakeSlideEncoder.getCurrentPosition());
+
+        telemetry.update();
 
         waitForStart();
 
-        intake.initStatusTeleop();
+        intake.transferIntake();
         intake.closeGate();
 
 
@@ -76,7 +80,7 @@ public class TeleopManualV1 extends LinearOpMode {
                 intake.startIntake();
 
             } else if (gamepad1.y) {
-                //reverse
+//                reverse
                 intake.reverseIntake();
             }
 
@@ -93,23 +97,25 @@ public class TeleopManualV1 extends LinearOpMode {
 
             }
 
-            if (gamepad1.dpad_up && relased) {
+
+            if (gamepad1.right_bumper && relased) {
                 if (dpadUpPressed == 0) {
                     intake.extendSlideMax();
                     dpadDownPressed = 1;
                     dpadUpPressed=1;
                 } else if (dpadUpPressed==1){
                     dpadDownPressed=0;
-                    intake.dropIntake();
+                    //intake.dropIntake();
                 }
                 relased = false;
             } else {
                 relased = true;
             }
 
-            if (gamepad1.dpad_down && relased) {
+
+            if (gamepad1.left_bumper && relased) {
                 if (dpadDownPressed == 0) {
-                    intake.moveIntakeToTransfer();
+                    //intake.moveIntakeToTransfer();
                     dpadDownPressed=1;
                     dpadUpPressed=1;
                 } else if (dpadDownPressed==1){
@@ -132,6 +138,21 @@ public class TeleopManualV1 extends LinearOpMode {
             } else if (gamepad1.b) {
                 outtake.closeClaw();
             }
+
+            if (gamepad1.dpad_up) {
+                intake.intakeintake();
+            }
+
+            if (gamepad1.dpad_down) {
+                intake.transferIntake();
+            }
+
+            if (voltageSensor.getVoltage() < 11){
+                intake.led();
+            }
+
+            telemetry.addData("Volt", voltageSensor.getVoltage());
+            telemetry.update();
 
             outtake.update();
             intake.update();

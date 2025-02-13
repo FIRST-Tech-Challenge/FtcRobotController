@@ -49,27 +49,27 @@ public class Outtake implements Component{
         InitAutoSpec(0),
         InitAutoSample(0),
 
-        TransferToBucket_CloseClaw(100),
+        TransferToBucket_CloseClaw(200),
         TransferToBucket_Lift(0),
-        TransferToBucket_Move(500),
+        TransferToBucket_Move(600),
 
-        TransferToWall_Up(100),
-        TransferToWall_Back(500),
-        TransferToWall_Final(100),
+        TransferToWall_Up(200),
+        TransferToWall_Back(600),
+        TransferToWall_Final(200),
 
-        BucketToTransfer_Down(400),
-        BucketToTransfer_Open(100),
-        BucketToTransfer_Final(100),
+        BucketToTransfer_Down(500),
+        BucketToTransfer_Open(200),
+        BucketToTransfer_Final(200),
 
 
-        WallToFront_lift(300),
-        WallToFront_move(350),
-        WallToFront3 (200),
+        WallToFront_lift(400),
+        WallToFront_move(450),
+        WallToFront3 (300),
 
-        SpecimenToWall_MoveBack(1200),
-        SpecimenToWall_Final(100),
+        SpecimenToWall_MoveBack(1300),
+        SpecimenToWall_Final(200),
 
-        Front(300);
+        Front(400);
 
         private final long time;
 
@@ -117,7 +117,7 @@ public class Outtake implements Component{
         position.setPosition(ITDCons.positionBack);
         angleLeft.setPosition(ITDCons.angleBack);
         angleRight.setPosition(ITDCons.angleBack);
-        claw.setPosition(ITDCons.clawOpen);
+        claw.setPosition(ITDCons.clawClose);
         status= Status.InitWall;
         //controller.setP(0.002);
         //position.getController().pwmDisable();
@@ -213,12 +213,12 @@ public class Outtake implements Component{
 //frontRight
         int rotatePos = -outtakeSlideEncoder.getCurrentPosition();
 
-        telemetry.addData("rotatePos",rotatePos);
+//        telemetry.addData("rotatePos",rotatePos);
         double pid = controller.calculate(rotatePos, target);
         double lift=pid;
        // double lift = pid + f;
 
-        telemetry.addData("lift", lift);
+//        telemetry.addData("lift", lift);
 
         outtakeSlideLeft.setPower(lift);
         outtakeSlideRight.setPower(lift);
@@ -241,7 +241,7 @@ public class Outtake implements Component{
     public void update(){
         moveSlide();
 
-        telemetry.addData("status", status);
+//        telemetry.addData("status", status);
 
         switch (status){
             case WallToFront_lift:

@@ -11,10 +11,13 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Init {
+
+    private final VoltageSensor voltageSensor;
 
     private final DcMotorEx leftFrontMotor;
     private final DcMotorEx rightFrontMotor;
@@ -43,6 +46,8 @@ public class Init {
         rightFrontMotor = hardwareMap.get(DcMotorEx.class, "frontRight");
         leftRearMotor = hardwareMap.get(DcMotorEx.class, "backLeft");
         rightRearMotor = hardwareMap.get(DcMotorEx.class, "backRight");
+
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         // Set the drive motor direction:
         leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -183,4 +188,6 @@ public class Init {
     public DigitalChannel getBreakBeam() {
         return breakBeam;
     }
+
+    public VoltageSensor getVoltageSensor() { return voltageSensor; }
 }

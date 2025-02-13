@@ -90,26 +90,27 @@ public class Specimen extends LinearOpMode {
 
                     }
                     break;
-//                case ScorePreload:
-//                    if (elapsedTime!=null && elapsedTime.milliseconds()>150){
-//                        follower.followPath(pushSample1);
-//                        state = PathState.Sample1;
-//                        outtake.moveToPickUpFromWall();
-//                        elapsedTime = null;
-//                    }
-//                    break;
-//                case Sample1:
-//                    if (!follower.isBusy()){
-//                        follower.followPath(pushSample2);
-//                        state= PathState.Sample2;
-//                    }
-//                    break;
-//                case Sample2:
-//                    if (!follower.isBusy()){
-//                        follower.followPath(pushSample3);
-//                        state= PathState.Sample3;
-//                    }
-//                    break;
+                case ScorePreload:
+                    if (elapsedTime!=null && elapsedTime.milliseconds()>150){
+                        follower.followPath(pushSample1);
+                        state = PathState.Sample1;
+                        outtake.setTarget(0);
+                        //outtake.moveToPickUpFromWall();
+                        elapsedTime = null;
+                    }
+                    break;
+                case Sample1:
+                    if (!follower.isBusy()){
+                        follower.followPath(pushSample2);
+                        state= PathState.Sample2;
+                    }
+                    break;
+                case Sample2:
+                    if (!follower.isBusy()){
+                        follower.followPath(pushSample3);
+                        state= PathState.Sample3;
+                    }
+                    break;
 //                case Sample3:
 //                    if (!follower.isBusy()){
 //                        follower.followPath(pickup1);

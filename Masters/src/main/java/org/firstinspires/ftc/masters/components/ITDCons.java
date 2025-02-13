@@ -27,7 +27,7 @@ public class ITDCons {
     public static double clawOpen = 0.35;
     public static double clawClose = 0.75;
 
-    public static double wristFront= 0.2;
+    public static double wristFront= 0.23;
     public static double wristBack = 0.77;
 
     public static double positionBack = 0;
@@ -35,10 +35,10 @@ public class ITDCons {
     public static double positionTransfer = 0.5;
     public static double positionFront =1;
 
-    public static double angleBack = 0;
-    public static double angleFront = 0.5;
-    public static double angleMiddle = 0.35;
-    public static double angleScore = 0.4;
+    public static double angleBack = 0.1;
+    public static double angleFront = 1;
+    public static double angleMiddle = 0.8;
+    public static double angleScore = 1;
 
     public static int wallPickupTarget = 5500;
     public static int transferPickupTarget = 0;
@@ -52,12 +52,12 @@ public class ITDCons {
 
 
     public static int BucketTarget = 50000;
-    public static int SpecimenTarget = 20000;
+    public static int SpecimenTarget = 23000;
     public static int ReleaseTarget = 20000;
     public static int intermediateTarget = 20000;
     public static int WallTarget = 6000;
 
-    public static int MaxExtension = 1500;
+    public static int MaxExtension = 1400;
     public static int MinExtension = 500;
 
     //color threshold
@@ -73,6 +73,9 @@ public class ITDCons {
     public static double blue = 0.611;
     public static double red = 0.279;
     public static double off =0;
+
+    public static double intakeintakearm = .503;
+    public static double intakeintakechain = .08;
 
 
 }

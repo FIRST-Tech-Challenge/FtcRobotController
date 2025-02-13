@@ -147,6 +147,11 @@ public class Intake {
         return extendo.getCurrentPosition();
     }
 
+    public void intakeintake(){
+        intakeLeft.setPosition(ITDCons.intakeintakearm);
+        intakeRight.setPosition(ITDCons.intakeintakechain);
+    }
+
 
     public void dropIntake(){
         intakeLeft.setPosition(ITDCons.intakeArmDrop);
@@ -178,18 +183,18 @@ public class Intake {
 //frontRight
             int extendoPos = extendo.getCurrentPosition();
 
-            telemetry.addData("extendoPos",extendoPos);
+//            telemetry.addData("extendoPos",extendoPos);
             double pid = pidController.calculate(extendoPos, target);
 
-            telemetry.addData("extendo PID",pid);
+//            telemetry.addData("extendo PID",pid);
 
             extendo.setPower(pid);
 
-            if (!breakBeam.getState() || touchSensor.isPressed()){
-                //read color
-                checkColor();
-
-            }
+//            if (!breakBeam.getState() || touchSensor.isPressed()){
+//                //read color
+//                checkColor();
+//
+//            }
 
             if (status == Status.MOVE_TO_TRANSFER && elapsedTime!=null && elapsedTime.milliseconds()>500){
                 status = Status.TRANSFER;
@@ -206,18 +211,22 @@ public class Intake {
         this.target= target;
     }
 
-
-    public void checkColor(){
-        if (colorSensor.getRawLightDetected()>ITDCons.blueMin && colorSensor.getRawLightDetected()<ITDCons.blueMax){
-            led.setPosition(ITDCons.blue);
-        } else if (colorSensor.getRawLightDetected()>ITDCons.redMin && colorSensor.getRawLightDetected()<ITDCons.redMax){
-            led.setPosition(ITDCons.red);
-        } else if (colorSensor.getRawLightDetected()>ITDCons.yellowMin && colorSensor.getRawLightDetected()<ITDCons.yellowMax){
-            led.setPosition(ITDCons.yellow);
-        } else {
-            led.setPosition(ITDCons.off);
-        }
+    public void led(){
+        led.setPosition(1);
     }
+
+
+//    public void checkColor(){
+//        if (colorSensor.getRawLightDetected()>ITDCons.blueMin && colorSensor.getRawLightDetected()<ITDCons.blueMax){
+//            led.setPosition(ITDCons.blue);
+//        } else if (colorSensor.getRawLightDetected()>ITDCons.redMin && colorSensor.getRawLightDetected()<ITDCons.redMax){
+//            led.setPosition(ITDCons.red);
+//        } else if (colorSensor.getRawLightDetected()>ITDCons.yellowMin && colorSensor.getRawLightDetected()<ITDCons.yellowMax){
+//            led.setPosition(ITDCons.yellow);
+//        } else {
+//            led.setPosition(ITDCons.off);
+//        }
+//    }
 
 
 }
