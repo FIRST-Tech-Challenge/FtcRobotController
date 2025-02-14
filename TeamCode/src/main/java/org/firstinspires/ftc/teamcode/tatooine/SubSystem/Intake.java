@@ -74,6 +74,10 @@ public class Intake {
         return setPowerAction(0);
     }
 
+    public Action intakeByTimer(double power , double timeout){
+        return new IntakeByTimer(power, timeout);
+    }
+
     // Intake with color sensor verification
     public Action intakeByColor(boolean isSpecimen) {
         return new IntakeByColor(isSpecimen);
@@ -129,4 +133,29 @@ public class Intake {
             return !isCorrectColor && currentDistance > 2;
         }
     }
+    public class IntakeByTimer implements Action {
+        private boolean reset = false;
+
+        private double power = 0;
+
+        private double timeout = 0;
+    public IntakeByTimer(double power, double timeout) {
+        this.timeout = timeout;
+        this.power = power;
+        ElapsedTime timer = new ElapsedTime();
+        reset = true;
+    }
+
+    @Override
+    public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+        if (reset){
+            timer.reset();
+            reset = false;
+        }
+        setPower(power);
+        DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, "Intake", "Set Power", power);
+        DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, "Intake", "Get Power", intake.getPower());
+        return timer.seconds() < timeout;
+    }
+}
 }

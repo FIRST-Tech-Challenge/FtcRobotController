@@ -24,13 +24,13 @@ public class Arm {
     private DcMotorEx angleLeft = null;  // Left motor controlling angle
     private DcMotorEx angleRight = null; // Right motor controlling angle
 
-    private double startAngle = -5; // Initial starting angle of the arm
+    private double startAngle = -6; // Initial starting angle of the arm
 
-    private double ANGLE_OFFSET = -5;   // Angle offset for the arm
+    private double ANGLE_OFFSET = -6;   // Angle offset for the arm
 
     private DigitalChannel limitSwitch = null; // Limit switch to detect arm position limits
 
-    private final double ANGLE_AMP_LIMIT = 7000.0; // Maximum allowed amperage for angle motors
+    private final double ANGLE_AMP_LIMIT = 200000.0; // Maximum allowed amperage for angle motors
 
 
     // Extend system variables
@@ -38,29 +38,29 @@ public class Arm {
     private DcMotorEx extendRight = null; // Right motor for extension
 
     private final double EXTEND_UP_LIMIT_AMPS = 0; // Upper amperage limit for extend motors
-    private final double EXTEND_DOWN_LIMIT_AMPS = 5000.0; // Lower amperage limit for extend motors
+    private final double EXTEND_DOWN_LIMIT_AMPS = 10000000; // Lower amperage limit for extend motors
     public static double MIN_EXTEND = 37.0; // Minimum extension value
-    public static double MAX_EXTEND = 67.0; // Maximum extension value
+    public static double MAX_EXTEND = 64; // Maximum extension value
 
     public static double LIMIT = UnitConverter.convert(42.0, unit.INCHES, unit.CM) - 20.0 - 5.0; // Conversion for limit distance
 
-    private PIDFController anglePID = new PIDFController(0.1, 0.0, 0.005, 0); // PID controller for angle movement
+    private PIDFController anglePID = new PIDFController(0.06, 0.0, 0.004, 0); // PID controller for angle movement
     private PIDFController extendPID = new PIDFController(0.2, 0.00001, 0.0, 0); // PID controller for extension movement
 
     private final double ANGLE_CPR = 28.0 * 100.0 * (34.0 / 16.0); // Counts per revolution for angle motors
     private final double EXTEND_CPR = 537.7; // Counts per revolution for extension motors
 
-    private final double ANGLE_TIMEOUT = 3.0; // Timeout for angle movement
+    private final double ANGLE_TIMEOUT = 2.7; // Timeout for angle movement
     private final double EXTEND_TIMEOUT = 4; // Timeout for extension movement
 
-    private final double ANGLE_TOLERANCE = 0.5; // Tolerance for angle movement
-    private final double EXTEND_TOLERANCE = 2.5; // Tolerance for extension movement
+    private final double ANGLE_TOLERANCE = 1.5; // Tolerance for angle movement
+    private final double EXTEND_TOLERANCE = 1.5; // Tolerance for extension movement
 
     private final double LIMIT_TOLERANCE = 0.0; // Tolerance for limit switch reading
 
     private final double SPOOL_DIM = 4.0; // Spool dimensions for extension calculation
 
-    private double lastAngle = 0.0; // Last recorded angle for force calculation
+    private double lastAngle = 0.0; // Last recorded angle for force calculation81.68
     private double lastF = 0.0; // Last recorded force value
 
     private String SUBSYSTEM_NAME = "Arm"; // Name of the subsystem
@@ -69,9 +69,9 @@ public class Arm {
 
     private OpMode opMode = null; // OpMode reference
 
-    public static double KF = 0.15; // Constant factor for force calculation
+    public static double KF = 0.16; // Constant factor for force calculation
 
-    public static double KP = 0;
+    public static double KP = 0.7;
 
     public static double KI = 0;
 
@@ -262,11 +262,7 @@ public class Arm {
     // Set power to the extension motors
     public void setPowerExtend(double power) {
         // Prevent movement if within power limits
-        //TODO: rewrite Amper Limit for extention
-        if (power < 0 && getCurrentExtend() >= EXTEND_DOWN_LIMIT_AMPS){
-            power = 0;
-            resetExtendEncoders();
-        } else if (getExtend() >= MAX_EXTEND && power > 0) {
+        if (getExtend() >= MAX_EXTEND && power > 0) {
             power = 0;
         }
         extendLeft.setPower(power); // Set power for left extension motor
@@ -274,6 +270,13 @@ public class Arm {
 
         // Debug logging for extension power
         DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "Extend Power", power);
+    }
+
+    public void setPowerWithLimit(double power){
+        if (getAngle() < 45 && getExtend() >= ( UnitConverter.convert(42, unit.INCHES, unit.CM) - 20 - 5)){
+            power = 0;
+        }
+        setPowerExtend(power);
     }
 
 
@@ -301,7 +304,7 @@ public class Arm {
     }
 
     public Action intaking(double extend){
-        return new ParallelAction(setExtend(extend), setAngle((extend/ getMaxExtend())));
+        return new ParallelAction(setExtend(extend),setAngle(-10));
     }
 
     // Action class to move the arm angle
@@ -316,6 +319,11 @@ public class Arm {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+//            if(IS_DEBUG_MODE){
+//                anglePID.setP(KP);
+//                anglePID.setI(KI);
+//                anglePID.setD(KD);
+//            }
             PIDPower = anglePID.calculate(getAngle());
             setPowerAngleWithF(PIDPower);
             return true;
@@ -329,19 +337,26 @@ public class Arm {
         private boolean doOne = false;
 
         public SetAngle(double goal) {
-            this.goal = goal; // Set goal for the angle
+            if (goal > 90){
+                this.goal = 90;
+            }
+            else{
+                this.goal = goal;
+            }
             doOne = true;
-            anglePID.reset();
+//            anglePID.setTimeout(100000000);
         }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             if (doOne){
+                anglePID.reset();
                 anglePID.setSetPoint(goal);
                 doOne = false;
             }
             DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "setPointAngle", anglePID.getSetPoint());
             // Return true if angle is not yet at the setpoint
+            opMode.telemetry.update();
             return !anglePID.atSetPoint();
         }
     }
@@ -357,13 +372,18 @@ public class Arm {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+//                        if(IS_DEBUG_MODE){
+//                extendPID.setP(KP);
+//                extendPID.setI(KI);
+//                extendPID.setD(KD);
+//            }
             // Calculate power using PID and apply with limits
-            if (Math.abs(Math.cos(Math.toRadians(getAngle())) * getExtend()) >= LIMIT){
-                extendPID.setSetPoint(LIMIT);
-            }
+//            if (Math.abs(Math.cos(Math.toRadians(getAngle())) * extendPID.getSetPoint()) >= LIMIT){
+//                extendPID.setSetPoint(LIMIT);
+//            }
             PIDPower = extendPID.calculate(getExtend());
-            setPowerExtend(PIDPower);
 
+            setPowerExtend(PIDPower);
             return true; // Return true if extension is not at setpoint
         }
     }
@@ -376,19 +396,31 @@ public class Arm {
         private double goal = getAngle();
 
         public SetExtend(double goal){
-            this.goal = goal;
+            if (goal > getMaxExtend()){
+                this.goal = getMaxExtend();
+            }
+            else if (goal < 0){
+                goal = 0;
+            }
+            else{
+                this.goal = goal;
+            }
             doOne = true;
-            extendPID.reset();
+//            if (IS_DEBUG_MODE) {
+//                extendPID.setTimeout(10000);
+//            }
 //            goal = MathUtil.wrap(goal, 0, getMaxExtend());
 
         }
 
         public boolean run(@NonNull TelemetryPacket telemetryPacket){
             if (doOne){
+                extendPID.reset();
                 extendPID.setSetPoint(goal);
                 doOne = false;
             }
-            DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "setPointExtend", extendPID.getSetPoint());
+            DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "getSetPointExtend", extendPID.getSetPoint());
+            opMode.telemetry.update();
             return !extendPID.atSetPoint();
         }
     }

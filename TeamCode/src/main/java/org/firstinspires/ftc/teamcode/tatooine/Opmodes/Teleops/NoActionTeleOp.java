@@ -52,7 +52,7 @@ public class NoActionTeleOp extends LinearOpMode {
             // Arm angle and extension control
 
             arm.setPowerAngleWithF(MathUtil.applyDeadzone(gamepadEx2.getStick(GamepadKeys.Stick.LEFT_STICK_Y),0.1));
-            arm.setPowerExtend(MathUtil.applyDeadzone(gamepadEx2.getStick(GamepadKeys.Stick.RIGHT_STICK_Y), 0.1));
+            arm.setPowerWithLimit(MathUtil.applyDeadzone(gamepadEx2.getStick(GamepadKeys.Stick.RIGHT_STICK_Y), 0.1));
 
             // Wrist position presets based on button presses
             if (gamepadEx2.justPressedButton(GamepadKeys.Button.CIRCLE)) {
@@ -67,6 +67,7 @@ public class NoActionTeleOp extends LinearOpMode {
             if (gamepadEx1.justPressedButton(GamepadKeys.Button.START)) {
                 drive.resetIMU();
             }
+            telemetry.update();
         }
     }
 }

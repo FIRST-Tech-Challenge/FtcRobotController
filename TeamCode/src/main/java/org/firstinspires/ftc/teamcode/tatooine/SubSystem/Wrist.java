@@ -59,6 +59,7 @@ public class Wrist {
         // Log debug message for initialization
         wristLeft.setDirection(Servo.Direction.FORWARD);
         wristRight.setDirection(Servo.Direction.FORWARD);
+        intakeFlat();
         DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG, SUBSYSTEM_NAME, "Wrist init called.");
     }
 

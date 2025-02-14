@@ -14,13 +14,13 @@ public class Conts {
 
             public static double angleScoreSample = 90.0;
 
-            public static double extendScoreSampleHigh = 62.0;
+            public static double extendScoreSampleHigh = 61.0;
 
             public static double extendScoreSampleLow = 0;
 
             public static double angleScoreSpecimenLow = 0;
 
-            public static double angleScoreSpecimenHigh = 0;
+            public static double angleScoreSpecimenHigh = 50;
             public static double extendScoreSpecimenLow = 0;
 
             public static double extendScoreSpecimenHigh = 0;
@@ -46,7 +46,7 @@ public class Conts {
 
             public static Pose2d parkSub = new Pose2d(0,0, Math.toRadians(0));
 
-            public static double angleDrive = -5;
+            public static double angleDrive = 5;
 
 
     }

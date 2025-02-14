@@ -9,6 +9,8 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.Trajectory;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -36,6 +38,8 @@ public class ActionTeleOp extends LinearOpMode {
 
     private double extend = 0;
 
+    private double angle = -5;
+
     private double lastExtend = 0;
 
     private final  double EXTEND_TOLERANCE= 2;
@@ -61,7 +65,12 @@ public class ActionTeleOp extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0,0, Math.toRadians(0)));
         EasyGamepad gamepadEx1 = new EasyGamepad(gamepad1);
         EasyGamepad gamepadEx2 = new EasyGamepad(gamepad2);
-
+        Pose2d beginPose = new Pose2d(6+(18.0/2.0) - 30, -(72-(18.0/2.0)), Math.toRadians(90));
+        TrajectoryActionBuilder goScoreSampleFromPark = drive.actionBuilder(beginPose)
+                .splineToLinearHeading(new Pose2d(-63,-61, Math.toRadians(45)), Math.toRadians(-90));
+        TrajectoryActionBuilder goScoreSampleFromHang = drive.actionBuilder(beginPose)
+                .splineToLinearHeading(new Pose2d(-63,-61, Math.toRadians(45)), Math.toRadians(-90));
+        Action chosenPath = goScoreSampleFromPark.build();
         waitForStart();
         while (opModeIsActive()){
             TelemetryPacket packet = new TelemetryPacket();
@@ -79,12 +88,15 @@ public class ActionTeleOp extends LinearOpMode {
             if (gamepadEx1.getButton(GamepadKeys.Button.START)){
                 drive.resetIMU();
             }
-            if (intaking){
-
+            if (intaking) {
+                drive.fieldDrive(new Pose2d(-MathUtil.applyDeadzone(gamepadEx1.getStick(GamepadKeys.Stick.LEFT_STICK_X), 0.1), MathUtil.applyDeadzone(gamepadEx1.getStick(GamepadKeys.Stick.LEFT_STICK_Y), 0.1), MathUtil.applyDeadzone(gamepadEx1.getStick(GamepadKeys.Stick.RIGHT_STICK_X), 0.1)));
             }
-            drive.fieldDrive(new Pose2d(-gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x));
-             //score sample button
+            if (gamepadEx1.justPressedButton(GamepadKeys.Button.DPAD_UP)){
+                runningActions.add(chosenPath);
+            }
+            //score sample button
             if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_UP) && !dPadUpToggle){
+                intaking = false;
                 dPadUpToggle = true;
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());
@@ -98,10 +110,28 @@ public class ActionTeleOp extends LinearOpMode {
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());
                 runningActions.add(arm.moveExtend());
-                runningActions.add(new SequentialAction(intake.stop(),new InstantAction(()-> wrist.intakeFlat()), arm.setExtend(0), arm.setAngle(0)));
+                runningActions.add(new SequentialAction(intake.stop(),new InstantAction(()-> wrist.intakeFlat()), arm.setExtend(0), arm.setAngle(Conts.angleDrive)));
+                intaking = false;
+            } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.START)) {
+                intaking = !intaking;
+                if (intaking){
+                    runningActions.clear();
+                    runningActions.add(arm.moveAngle());
+                    runningActions.add(arm.moveExtend());
+                    runningActions.add(intake.intake());
+                }
             }
-
-
+            if (intaking){
+                arm.setPowerAngleWithF(MathUtil.applyDeadzone(gamepadEx2.getStick(GamepadKeys.Stick.LEFT_STICK_Y),0.1));
+                arm.setPowerExtend(MathUtil.applyDeadzone(gamepadEx2.getStick(GamepadKeys.Stick.RIGHT_STICK_Y), 0.1));
+                if (gamepadEx2.justPressedButton(GamepadKeys.Button.CIRCLE)) {
+                    wrist.intakeUp();
+                } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.TRIANGLE)) {
+                    wrist.intakeFlat();
+                } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.SQUARE)) {
+                    wrist.doc();
+                }
+            }
 
 
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
