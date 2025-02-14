@@ -28,7 +28,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class BETTER_itd_auto extends LinearOpMode {
 
     /* Declare OpMode members. */
-    //TODO: Relabel motors correctly in comments
     private DcMotor leftFrontDrive = null; //motor 0
     private DcMotor leftBackDrive = null; //motor 1
     private DcMotor rightFrontDrive = null; //motor 2
@@ -38,7 +37,6 @@ public class BETTER_itd_auto extends LinearOpMode {
     private DcMotor forearm = null; //motor 2
 
     private ElapsedTime runtime = new ElapsedTime();
-
 
     static final double FORWARD_SPEED = 0.6;
 
@@ -62,8 +60,10 @@ public class BETTER_itd_auto extends LinearOpMode {
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        shoulder_left.setDirection(DcMotor.Direction.FORWARD);
+        shoulder_right.setDirection(DcMotor.Direction.REVERSE);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");
@@ -91,48 +91,53 @@ public class BETTER_itd_auto extends LinearOpMode {
         rightFrontDrive.setPower(-FORWARD_SPEED);
         rightBackDrive.setPower(-FORWARD_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 0.7)) {
+        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
             telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
 
         //step 3: Strafe Right for 2.0 Seconds
-        rightFrontDrive.setPower(FORWARD_SPEED);
-        rightBackDrive.setPower(-FORWARD_SPEED);
-        leftFrontDrive.setPower(-FORWARD_SPEED);
-        leftBackDrive.setPower(FORWARD_SPEED);
+        rightFrontDrive.setPower(-FORWARD_SPEED);
+        rightBackDrive.setPower(FORWARD_SPEED);
+        leftFrontDrive.setPower(FORWARD_SPEED);
+        leftBackDrive.setPower(-FORWARD_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
+        while (opModeIsActive() && (runtime.seconds() < 2.0)) {
             telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
 
-        //step 4: Go to observation zone for 0.2 seconds
+        //step 4: Go to observation zone for 0.5 seconds
         rightFrontDrive.setPower(-FORWARD_SPEED);
         rightBackDrive.setPower(-FORWARD_SPEED);
         leftFrontDrive.setPower(-FORWARD_SPEED);
         leftBackDrive.setPower(-FORWARD_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 0.2)) {
+        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
             telemetry.addData("Path", "Leg 4: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
 
-        //Step 5: Touch Bar
+        //Step 5: Pause
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
+
+
+        //Step 6: Touch Bar
         shoulder_left.setPower(ARM_SPEED);
         shoulder_right.setPower(ARM_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2.0)) {
+        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
             telemetry.addData("Arm Moved", "Leg 5: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
 
         }
 
-        // Step 6:  Stop
-        leftFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        rightBackDrive.setPower(0);
+        // Step 7:  Stop
+       shoulder_right.setPower(0);
+        shoulder_left.setPower(0);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
