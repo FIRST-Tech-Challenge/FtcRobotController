@@ -133,9 +133,9 @@ public class Drivetrain {
         // stay square with wall
         setAngle(0);
 
-        // get distance from wall depending on which type is selected (left or back)
+        // get distance from wall depending on which type is selected (left or back), also apply normalization; nothing above 100
         double currentDistance = (wall == WallType.LEFT)
-                ? horizontalDistanceSensor.getDistance(DistanceUnit.CM) : verticalDistanceSensor.getDistance(DistanceUnit.CM);
+                ? Math.min(100, horizontalDistanceSensor.getDistance(DistanceUnit.CM)) : Math.min(100, verticalDistanceSensor.getDistance(DistanceUnit.CM));
 
         // distance compensation calc
         if (currentDistance > (distance + distanceThreshold)) {
@@ -214,8 +214,8 @@ public class Drivetrain {
         double x = calculateAverage(xWeights); // Strafe
         double rotation = calculateAverage(rWeights); // Rotate
 
-        // set is moving variable, check if each motors are between -0.1 and 0.1
-        isMoving = (Math.abs(y) > 0.1) || (Math.abs(x) > 0.1) || (Math.abs(rotation) > 0.1);
+        // set is moving variable, check if each motors are between -0.05 and 0.05
+        isMoving = (Math.abs(y) > 0.05) || (Math.abs(x) > 0.05) || (Math.abs(rotation) > 0.05);
 
         // clear lists
         xWeights.clear();

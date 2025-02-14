@@ -91,9 +91,9 @@ public class IntoTheDeepTeleop extends OpMode {
         double x = 0.0;
 
         if (gamepad1.dpad_up){
-            y = -0.5;
-        }else if (gamepad1.dpad_down){
             y = 0.5;
+        }else if (gamepad1.dpad_down){
+            y = -0.5;
         }else if (gamepad1.dpad_left){
             x = -0.5;
         }else if (gamepad1.dpad_right){
