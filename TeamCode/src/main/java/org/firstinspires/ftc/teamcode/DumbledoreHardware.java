@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.hardware.ZeroPower;
 import org.firstinspires.ftc.teamcode.mmooover.TriOdoProvider;
 
 
-public class DumbledoreHardware extends HardwareMapper implements TriOdoProvider {
+public class DumbledoreHardware extends HardwareMapper {
     // left = left motor = exp 0 frontLeft
     // right = right motor = ctr 0 frontRight
     // center = ctr 3 intake
@@ -42,22 +42,22 @@ public class DumbledoreHardware extends HardwareMapper implements TriOdoProvider
     @AutoClearEncoder
     public Encoder encoderLeft;
 
-    @EncoderFor("intake")
-    @AutoClearEncoder
-    public Encoder encoderCenter;
+
 
     @EncoderFor("frontRight")
     @AutoClearEncoder
     public Encoder encoderRight;
 
-    @HardwareName("gyro")
+   /* @HardwareName("gyro")
     public NavxMicroNavigationSensor gyro;
-
 
     @Override
     public Encoder getLeftEncoder() {
         return encoderLeft;
     }
+ @EncoderFor("intake")
+    @AutoClearEncoder
+    public Encoder encoderCenter;
 
     @Override
     public Encoder getRightEncoder() {
@@ -88,7 +88,7 @@ public class DumbledoreHardware extends HardwareMapper implements TriOdoProvider
     public double getEncoderWheelRadius() {
         return 0.70;
     }
-
+*/
     public MotorSet driveMotors;
 
     public DumbledoreHardware(HardwareMap hwMap) {
