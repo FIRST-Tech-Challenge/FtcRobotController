@@ -8,6 +8,8 @@ public class Path {
     private final List<Position> path;
     private int currentSearchWayPointIndex = 0;
 
+    private final double PATH_ANGLE_TOLERANCE = Math.toRadians(10);
+
     public Path(List<Position> path) {
         this.path = Collections.unmodifiableList(path);
     }
@@ -41,13 +43,24 @@ public class Path {
         return Optional.empty();
     }
 
-    public Optional<Position> lookAhead(Position currentPosition, double radiusInch) {
+    public Optional<Position> lookAhead(Position currentPosition, Optional<Position> lastFollowPosition, double radiusInch) {
         for (int i = currentSearchWayPointIndex; i < numPoints(); i++) {
-            if (currentPosition.distanceTo(getPoint(i)) > radiusInch) {
-                Position position = getPoint(i);
+            Position currentFollowPosition = getPoint(i);
+
+            if (!lastFollowPosition.isPresent()) {
                 currentSearchWayPointIndex = i;
-                return Optional.of(position);
+                return Optional.of(currentFollowPosition);
             }
+
+            if (currentPosition.distanceTo(currentFollowPosition) > radiusInch) {
+                currentSearchWayPointIndex = i;
+                return Optional.of(currentFollowPosition);
+            }/* else {
+                if (Math.abs(currentPosition.getTheta() - currentFollowPosition.getTheta()) > PATH_ANGLE_TOLERANCE) {
+                    currentSearchWayPointIndex = i;
+                    return Optional.of(currentFollowPosition);
+                }
+            }*/
         }
         return Optional.empty();
     }

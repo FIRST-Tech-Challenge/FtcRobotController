@@ -29,6 +29,9 @@ public class PurePursuitAction extends Action {
     public static final double P_XY_SLOW = 1.0/800.0;
     public static final double P_ANGLE_SLOW = 1.0/ Math.toRadians(130);
 
+    public static final double P_XY_SUPER_FAST = 1.0/50.0;
+    public static final double P_ANGLE_SUPER_FAST = 1.0/ Math.toRadians(15);
+
     private double lastSearchRadius = LAST_RADIUS_MM;
 
     List<Position> pathPoints = new ArrayList<Position>();
@@ -124,9 +127,9 @@ public class PurePursuitAction extends Action {
     }
 
     public double[] calcAdaptiveP(double x, double y, double theta) {
-        final double SLOW = 1./600;
-        final double FAST = 1./120;
-        final double MAX = 1./70;
+        final double SLOW = 1.0/600;
+        final double FAST = 1.0/120;
+        final double MAX = 1.0/70;
         final double ANGLE_THRESHOLD = Math.toRadians(45);
         final double MAX_ANGLE_THRESHOLD = Math.toRadians(180);
 
@@ -239,7 +242,7 @@ public class PurePursuitAction extends Action {
         if (prevFollow.isPresent() && (path.findIndex(prevFollow.get()) > (path.numPoints() - 2))) {
             currentLookAheadRadius = lastSearchRadius;
         }
-        follow = path.lookAhead(currentPosition, currentLookAheadRadius);
+        follow = path.lookAhead(currentPosition, prevFollow, currentLookAheadRadius);
 
         if (follow.isPresent()) {
             Log.d("purepursaction_debug_follow",

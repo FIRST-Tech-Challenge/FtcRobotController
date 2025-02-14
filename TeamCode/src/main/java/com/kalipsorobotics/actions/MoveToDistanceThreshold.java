@@ -36,11 +36,12 @@ public class MoveToDistanceThreshold extends Action {
             return;
         }
 
-        driveTrain.setPower(power);
-
         if (distanceDetectionAction.checkDistance()) {
             finishedMoving();
+        } else {
+            driveTrain.setPower(power);
         }
+
 
     }
 }

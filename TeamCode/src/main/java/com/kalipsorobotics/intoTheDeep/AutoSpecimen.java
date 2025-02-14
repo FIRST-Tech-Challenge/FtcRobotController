@@ -2,6 +2,10 @@ package com.kalipsorobotics.intoTheDeep;
 
 import android.os.Process;
 
+import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
+import com.kalipsorobotics.actions.intake.IntakeCounterWeight;
+import com.kalipsorobotics.actions.intake.IntakeTransferReady;
+import com.kalipsorobotics.actions.intake.SampleIntakeReady;
 import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.actions.SetAutoDelayAction;
 import com.kalipsorobotics.actions.WallToBarHangAction;
@@ -20,6 +24,7 @@ import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
+import com.qualcomm.hardware.ams.AMSColorSensor;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -105,37 +110,66 @@ public class AutoSpecimen extends LinearOpMode {
         outtakeTransferReady.setName("outtakeTransferReady");
         outtakeTransferReady.setDependentActions(wallToBarHangAction);
         redAutoSpecimen.addAction(outtakeTransferReady);
+//
+//        KServoAutoAction ratchetUnlock = new KServoAutoAction(intakeClaw.getIntakeRatchetServo(), IntakeClaw.INTAKE_RATCHET_UNLOCK_POS);
+//        ratchetUnlock.setName("ratchetUnlock");
+//        ratchetUnlock.setDependentActions(wallToBarHangAction);
+//        redAutoSpecimen.addAction(ratchetUnlock);
+
+        WaitAction waitForLinkageExtend = new WaitAction(3000);
+        waitForLinkageExtend.setName("waitForLinkageExtend");
+        waitForLinkageExtend.setDependentActions(wallToBarHangAction);
+        redAutoSpecimen.addAction(waitForLinkageExtend);
+//
+//        KServoAutoAction extendLinkage = new KServoAutoAction(intakeClaw.getIntakeLinkageServo(),
+//                IntakeClaw.INTAKE_LINKAGE_EXTEND_POS);
+//        extendLinkage.setName("extendLinkage");
+//        extendLinkage.setDependentActions(waitForLinkageExtend);
+//        redAutoSpecimen.addAction(extendLinkage);
+
+
+        IntakeCounterWeight intakeCounterWeight = new IntakeCounterWeight(intakeClaw, outtake);
+        intakeCounterWeight.setName("intakeCounterWeight");
+        intakeCounterWeight.setDependentActions(waitForLinkageExtend);
+        redAutoSpecimen.addAction(intakeCounterWeight);
 
         PurePursuitAction moveFloorSamples = new PurePursuitAction(driveTrain, wheelOdometry);
         moveFloorSamples.setName("moveFloorSamples");
         moveFloorSamples.setMaxTimeOutMS(12000);
         moveFloorSamples.setTelemetry(telemetry);
         moveFloorSamples.setDependentActions(wallToBarHangAction);
+
         //first sample to depot
-        moveFloorSamples.addPoint( -620, -475, -90, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //y -500
+        moveFloorSamples.addPoint(-570, 230, -135, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
+        moveFloorSamples.addPoint(-570, -425, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
+        moveFloorSamples.addPoint( -670, -425, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_FAST); //y
         moveFloorSamples.addPoint(-1330, -500, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //y -475
-        moveFloorSamples.addPoint(-1330, -775, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);// before push //y=800
-        moveFloorSamples.addPoint(-380, -775, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
+        moveFloorSamples.addPoint(-1330, -775, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);//before push y=800
+        moveFloorSamples.addPoint(-580, -775, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
+        moveFloorSamples.addPoint(-280, -775, -180, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
 
         //second sample to depot
-        moveFloorSamples.addPoint(-1330, -775, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //y -800
-        moveFloorSamples.addPoint(-1330, -1065, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);// before push
-        moveFloorSamples.addPoint(-380,-1065,-180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //-367.5
+        moveFloorSamples.addPoint(-1330, -775, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW); //y -800
+        moveFloorSamples.addPoint(-1330, -1000, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);//// beforepush
+        moveFloorSamples.addPoint(-580, -1000, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
+        moveFloorSamples.addPoint(-280,-1000,-180, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
+        //-367.5
         //moveFloorSamples.addPoint(-175, -1065, -180);?
 
         // 3rd sample push depot
-        final double THRID_SAMPLE_PUSHING_Y = -1205;
+        final double THRID_SAMPLE_PUSHING_Y = -1190;
 //        moveFloorSamples.addPoint(-1300, -1050, -180);
-        moveFloorSamples.addPoint(-1300, -1065, -180,  PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
-        moveFloorSamples.addPoint(-1300, THRID_SAMPLE_PUSHING_Y, -180, PurePursuitAction.P_XY_FAST,
+        moveFloorSamples.addPoint(-1300, -950, -180,  PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
+        moveFloorSamples.addPoint(-1300, THRID_SAMPLE_PUSHING_Y, -180, PurePursuitAction.P_XY,
                 PurePursuitAction.P_ANGLE_SLOW);//before push //-1300, -1175 // -1175 BEFORE DARREN CHANGED
-        moveFloorSamples.addPoint(-600, THRID_SAMPLE_PUSHING_Y, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
+        moveFloorSamples.addPoint(-600, THRID_SAMPLE_PUSHING_Y, -180, PurePursuitAction.P_XY,
+                PurePursuitAction.P_ANGLE_SLOW);
         moveFloorSamples.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X, THRID_SAMPLE_PUSHING_Y, -180,
-                PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW); // -1065 // WAllPICKUP = -150
+                PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW); // -1065 // WAllPICKUP = -150
 //        moveFloorSamples.addPoint(-350, -1065, -180);//move back out to avoid sample carry //y = -1200 y = 375
         redAutoSpecimen.addAction(moveFloorSamples);
 //
-        WaitAction waitBeforeSpecimenReady = new WaitAction(7000); // I swears its ok waiting for transfer ready
+        WaitAction waitBeforeSpecimenReady = new WaitAction(9000); // I swears its ok waiting for transfer ready
         waitBeforeSpecimenReady.setName("waitBeforeSpecimenReady");
         waitBeforeSpecimenReady.setTelemetry(telemetry);
         waitBeforeSpecimenReady.setDependentActions(wallToBarHangAction);
@@ -156,6 +190,11 @@ public class AutoSpecimen extends LinearOpMode {
 //        moveToDepot.setMaxTimeOutMS(1200);
 //        moveToDepot.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X+25, -1065, -180);// y = -1065 x = wall_pickupX
 //        redAutoSpecimen.addAction(moveToDepot);
+
+        IntakeTransferReady intakeTransferReady = new IntakeTransferReady(intakeClaw);
+        intakeTransferReady.setName("intakeTransferReady");
+        intakeTransferReady.setDependentActions(moveFloorSamples);
+        redAutoSpecimen.addAction(intakeTransferReady);
         //==============end of pushing================//
 
         WallPickupDistanceSensorAction wallPickupDistanceSensorAction = new WallPickupDistanceSensorAction(outtake, moveFloorSamples, driveTrain);
@@ -166,7 +205,7 @@ public class AutoSpecimen extends LinearOpMode {
 
         //=============begin of second specimen=================
         WallToBarHangRoundTrip wallToBarHangRoundTrip2 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, 240); //400 //375
+                outtake, 290); //400 //375
         wallToBarHangRoundTrip2.setName("wallToBarHangRoundTrip2");
         wallToBarHangRoundTrip2.setTelemetry(telemetry);
         wallToBarHangRoundTrip2.setDependentActions(wallPickupDistanceSensorAction);
@@ -175,7 +214,7 @@ public class AutoSpecimen extends LinearOpMode {
 
         //============begin of third================
         WallToBarHangRoundTrip wallToBarHangRoundTrip3 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake,300); //500 //450
+                outtake,350); //500 //450
         wallToBarHangRoundTrip3.setName("wallToBarHangRoundTrip3");
         wallToBarHangRoundTrip3.setTelemetry(telemetry);
         wallToBarHangRoundTrip3.setDependentActions(wallToBarHangRoundTrip2);
@@ -184,7 +223,7 @@ public class AutoSpecimen extends LinearOpMode {
 
         //===============start of fourth specimen==============
         WallToBarHangRoundTrip wallToBarHangRoundTrip4 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake,360);
+                outtake,410);
         wallToBarHangRoundTrip4.setName("wallToBarHangRoundTrip4");
         wallToBarHangRoundTrip4.setTelemetry(telemetry);
         wallToBarHangRoundTrip4.setDependentActions(wallToBarHangRoundTrip3);
