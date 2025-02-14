@@ -59,7 +59,7 @@ public class LimelightBot extends PinchBot {
 
         double distance = sample.getDeltaX() * 2.2;
         telemetry.addData("DRIVE --------------> distance :", distance);
-        strafing(distance);
+        //strafing(distance);
         // sample is close enough, pick it up
         inAutoPickup = true;
         // rotate to the sample orientation
@@ -68,7 +68,7 @@ public class LimelightBot extends PinchBot {
         openPinch();
         // lower the pivot
 
-        schedule(this::stopCoordinateDrive, 1000);
+        //schedule(this::stopCoordinateDrive, 1000);
 
 //        `if (isSpecimen) {
 //            schedule(this::pivotToPickupPosSpecimen, 1500);

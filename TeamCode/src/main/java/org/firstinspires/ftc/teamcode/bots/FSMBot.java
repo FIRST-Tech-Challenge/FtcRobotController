@@ -15,8 +15,8 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import java.util.Timer;
 import java.util.TimerTask;
 
-@Disabled
-public class FSMBot extends WristBot{
-
-}
+//@Disabled
+//public class FSMBot extends WristBot{
+//
+//}
 

@@ -19,7 +19,7 @@ public class AutonomousTest extends LinearOpMode {
 
         while (!opModeIsActive()) {
             telemetry.addData("rotate position", robot.rotate.getPosition());
-            telemetry.addData("slide position", robot.slideMotor.getCurrentPosition());
+            telemetry.addData("slide position", robot.slideMotor1.getCurrentPosition());
             telemetry.update();
         }
 

@@ -215,7 +215,7 @@ public class AutonPedroSpecimens extends LinearOpMode{
                 if(follower.getPose().getX() > (scorePose.getX() - 1.3) && follower.getPose().getY() > (scorePose.getY() - 1.3)) {
                     if(pathTimer.getElapsedTimeSeconds() >startingTime + 0.4) {
                     if (!slideReadyFlag) {
-                            robot.slideMotor.setPower(0.4);
+                            //robot.slideMotor.setPower(0.4);
                             robot.slideTarget -= 440;
                             robot.sleep(10);
                             slideReadyFlag = true;
@@ -227,7 +227,7 @@ public class AutonPedroSpecimens extends LinearOpMode{
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     if(pathTimer.getElapsedTimeSeconds() > startingTime + 1) {
                         robot.openPinch();
-                        robot.slideMotor.setPower(0.6);
+                        //robot.slideMotor.setPower(0.6);
                         robot.slideTarget = 100;
                         robot.pivotTarget = 200;
                         robot.sleep(10);
@@ -327,7 +327,7 @@ public class AutonPedroSpecimens extends LinearOpMode{
                 if(follower.getPose().getX() > (obsScorePose.getX() - 1.3) && follower.getPose().getY() > (obsScorePose.getY() - 1.3)) {
                     if(pathTimer.getElapsedTimeSeconds() > startingTime + 0.4) {
                         if (!slideReadyFlag) {
-                            robot.slideMotor.setPower(0.4);
+                            //robot.slideMotor.setPower(0.4);
                             robot.slideTarget -= 440;
                             robot.sleep(10);
                             slideReadyFlag = true;
@@ -335,7 +335,7 @@ public class AutonPedroSpecimens extends LinearOpMode{
                     }
                     if(pathTimer.getElapsedTimeSeconds() > startingTime + 1) {
                         robot.openPinch();
-                        robot.slideMotor.setPower(0.6);
+                        //robot.slideMotor.setPower(0.6);
                         robot.slideTarget = 100;
                         robot.pivotTarget = 200;
                         robot.sleep(10);
@@ -395,7 +395,7 @@ public class AutonPedroSpecimens extends LinearOpMode{
                 if(follower.getPose().getX() > (obsScorePose.getX() - 1.3) && follower.getPose().getY() > (obsScorePose.getY() - 1.3)) {
                     if(pathTimer.getElapsedTimeSeconds() > startingTime + 0.4) {
                         if (!slideReadyFlag) {
-                            robot.slideMotor.setPower(0.4);
+                            //robot.slideMotor.setPower(0.4);
                             robot.slideTarget -= 440;
                             robot.sleep(10);
                             slideReadyFlag = true;
@@ -403,7 +403,7 @@ public class AutonPedroSpecimens extends LinearOpMode{
                     }
                     if(pathTimer.getElapsedTimeSeconds() > startingTime + 1.0) {
                         robot.openPinch();
-                        robot.slideMotor.setPower(0.6);
+                        //robot.slideMotor.setPower(0.6);
                         robot.slideTarget = 100;
                         robot.pivotTarget = 200;
                         robot.sleep(10);
@@ -464,7 +464,7 @@ public class AutonPedroSpecimens extends LinearOpMode{
                 if(follower.getPose().getX() > (obsScorePose.getX() - 1.3) && follower.getPose().getY() > (obsScorePose.getY() - 1.3)) {
                     if(pathTimer.getElapsedTimeSeconds() > startingTime + 0.4) {
                         if (!slideReadyFlag) {
-                            robot.slideMotor.setPower(0.4);
+                            //robot.slideMotor.setPower(0.4);
                             robot.slideTarget -= 440;
                             robot.sleep(10);
                             slideReadyFlag = true;
@@ -472,7 +472,7 @@ public class AutonPedroSpecimens extends LinearOpMode{
                     }
                     if(pathTimer.getElapsedTimeSeconds() > startingTime + 1.0) {
                         robot.openPinch();
-                        robot.slideMotor.setPower(0.6);
+                        //robot.slideMotor.setPower(0.6);
                         robot.slideTarget = 100;
                         robot.pivotTarget = 200;
                         robot.sleep(10);
