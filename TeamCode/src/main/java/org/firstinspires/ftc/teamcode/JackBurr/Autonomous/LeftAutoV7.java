@@ -42,7 +42,7 @@ public class LeftAutoV7 extends LinearOpMode {
     public ElapsedTime deliveryTimer = new ElapsedTime();
     public ElapsedTime intakeTimer = new ElapsedTime();
     public int step = 0;
-    public static int intakeTarget01 = 401;
+    public static int intakeTarget01 = 421;
     public boolean servoSet = false;
     public boolean servoSet2 = false;
     public boolean wristSet = false;
@@ -62,7 +62,7 @@ public class LeftAutoV7 extends LinearOpMode {
 
     public static Vector2d position5 = new Vector2d(47, 47);
     public static Vector2d position6 = new Vector2d(47, 0);
-    public static Vector2d position7 = new Vector2d(10, 10);
+    public static Vector2d position7 = new Vector2d(22, 6.5);
 
 
 
@@ -336,10 +336,10 @@ public class LeftAutoV7 extends LinearOpMode {
                         intakeSlides.intakeAllTheWayIn();
                     }
                 }
-                while (intakeTimer.seconds() < 2.9) {
+                while (intakeTimer.seconds() < 2.7) {
                     deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_CLOSE);
                 }
-                while (intakeTimer.seconds() < 3.6) {
+                while (intakeTimer.seconds() < 3.1) {
                     grippers.setPosition(robotConstantsV1.GRIPPERS_OPEN);
                 }
                 Actions.runBlocking(traj5);

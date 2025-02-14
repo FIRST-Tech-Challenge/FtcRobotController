@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.JackBurr.Odometry.PinpointDrive;
 
 import java.util.Vector;
 
+@Disabled
 @Autonomous
 public class RightAutoV6 extends LinearOpMode {
     public int step = 1;
