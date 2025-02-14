@@ -528,7 +528,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         scheduler.add(
                 groupOf(it -> it.add(run(() -> hardware.claw.setPosition(clawclose)))
                         .then(vLiftProxy.moveTo(Hardware.VLIFT_SCORE_SPECIMEN, 5, 1.0))
-                        .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(-99))))
+                        .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(Hardware.SCORE_SPECIMEN_ARM_DEG))))
                         .then(await(500))
                         .then(run(() -> hardware.wrist.setPosition(1)))
                 ).extraDepends(

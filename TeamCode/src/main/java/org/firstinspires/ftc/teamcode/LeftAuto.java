@@ -191,7 +191,7 @@ public class LeftAuto extends LinearOpMode {
                 .add(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
                 .then(groupOf(a -> {
-                    a.add(moveTo(new Pose(16.5, 13.5, Math.toRadians(0))));
+                    a.add(moveTo(new Pose(18.0, 13.5, Math.toRadians(0))));
                     a.add(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
                         .then(hSlideProxy.moveOut());
                 }))
@@ -199,14 +199,16 @@ public class LeftAuto extends LinearOpMode {
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
                 .then(groupOf(a -> {
-                    a.add(moveTo(new Pose(16.5, 23.75, Math.toRadians(0))));
+                    a.add(moveTo(new Pose(18.0, 23.75, Math.toRadians(0))));
                     a.add(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
                             .then(hSlideProxy.moveOut());
                 }))
                 .then(pickUpYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
-                .then(moveTo(new Pose(30.75, 12.75, Math.toRadians(75))))
+                // 30.75 + sin(15 deg) * 2.0
+                // 12.75 + cos(15 deg) * 2.0
+                .then(moveTo(new Pose(31.26763809, 14.68185165, Math.toRadians(75))))
                 .then(fourthYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
