@@ -17,8 +17,8 @@ import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import java.util.Locale;
 
-@TeleOp(name = "MainTeleopQ2")
-public class MainTeleOpQ2 extends LinearOpMode{
+@TeleOp(name = "MainTeleOp")
+public class MainTeleOp extends LinearOpMode{
     enum HighBasketState {
         Home,
         RisingArmSample,
@@ -238,6 +238,7 @@ public class MainTeleOpQ2 extends LinearOpMode{
 
                 case ViperClosed:
                     if (viper.getIsViperExtendClosed()) {
+                        viper.Rest();
                         arm.MoveToHome();
                         highBasketState = HighBasketState.LoweringArm;
                     }
@@ -308,6 +309,7 @@ public class MainTeleOpQ2 extends LinearOpMode{
 
                 case EmergencyExitViperDown:
                     if (viper.getIsViperExtendClosed()) {
+                        viper.Rest();
                         arm.MoveToHome();
                         hangState = HangState.Home;
                     }
@@ -380,6 +382,7 @@ public class MainTeleOpQ2 extends LinearOpMode{
 
                 case ViperExtendClosed:
                     if (viper.getIsViperExtendClosed()) {
+                        viper.Rest();
                         arm.MoveToHome();
                         specimenClipState = SpecimenClipState.ArmLowerToHome;
                     }
@@ -450,6 +453,7 @@ public class MainTeleOpQ2 extends LinearOpMode{
 
                 case ExtendViperClosed:
                     if (viper.getIsViperExtendClosed()) {
+                        viper.Rest();
                         submersiblePickupState = SubmersiblePickupState.Home;
                     }
                     break;

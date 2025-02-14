@@ -19,6 +19,7 @@ public class Viper {
         telemetryHelper.initMotorTelemetry( _viperMotor, "VM");
         _armMotor = _opMode.hardwareMap.tryGet(DcMotorEx.class, "armMotor");
         telemetryHelper.initMotorTelemetry( _viperMotor, "VM");
+        _viperMotor.setDirection(DcMotor.Direction.REVERSE);
     }
     //--------------------------
     //Variable Storage:
@@ -62,6 +63,7 @@ public class Viper {
     public void ExtendHalf(double power) {ViperMotorCustom(halfExtend, power);}
     public void ExtendClosed(double power) {ViperMotorCustom(closedExtend, power);}
     public void ExtendSpecimenhang(double power) {ViperMotorCustom(specimenhangExtend, power);}
+    public void Rest() {_viperMotor.setPower(0);}
 
     public void ViperMotorCustom(double lengthInches, double power)
     {
@@ -76,7 +78,6 @@ public class Viper {
 //        if (minimumAngleTrue) {
 //            lengthInches = Math.min(lengthInches, 18);
 //        }
-        _viperMotor.setDirection(DcMotor.Direction.REVERSE);
         int extensionTicks = InchConverterToTicks(lengthInches);
         _viperMotor.setTargetPosition(extensionTicks);    //Sets Target Tick Position
         _viperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
