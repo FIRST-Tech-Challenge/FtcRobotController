@@ -20,6 +20,8 @@ import org.firstinspires.ftc.teamcode.hardware.AscentProxy;
 import org.firstinspires.ftc.teamcode.hardware.HClawProxy;
 import org.firstinspires.ftc.teamcode.hardware.HSlideProxy;
 import org.firstinspires.ftc.teamcode.hardware.VLiftProxy;
+import org.firstinspires.ftc.teamcode.limelight.LimelightDetectionMode;
+import org.firstinspires.ftc.teamcode.limelight.LimelightSearch;
 import org.firstinspires.ftc.teamcode.mmooover.EncoderTracking;
 import org.firstinspires.ftc.teamcode.mmooover.Pose;
 import org.firstinspires.ftc.teamcode.mmooover.Ramps;
@@ -29,6 +31,7 @@ import org.firstinspires.ftc.teamcode.utilities.LoopStopwatch;
 
 import java.util.function.Consumer;
 
+import dev.aether.collaborative_multitasking.ITask;
 import dev.aether.collaborative_multitasking.ITaskWithResult;
 import dev.aether.collaborative_multitasking.MultitaskScheduler;
 import dev.aether.collaborative_multitasking.OneShot;
@@ -49,6 +52,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
     public static final double PUSH_TO_BYPASS = 0.20;
     double wristPos = 0.28;
     int highBasketTicks = 2180;
+    LimelightSearch activeSearchTask = null;
     private Hardware hardware;
     private MultitaskScheduler scheduler;
     private NavxMicroNavigationSensor navxMicro;
@@ -106,9 +110,13 @@ public class MecanumTeleOp2 extends LinearOpMode {
         );
 
         hardware.sharedHardwareInit();
+        hardware.limelight.setPollRateHz(100);
+        hardware.limelight.pipelineSwitch(6);
 
         navxMicro = hardware.gyro;
     }
+
+    /////////////////////////////////////////////
 
     @Override
     public void runOpMode() {
@@ -140,7 +148,9 @@ public class MecanumTeleOp2 extends LinearOpMode {
         vLiftProxy = scheduler.add(new VLiftProxy(scheduler, hardware.verticalLift));
         hSlideProxy = scheduler.add(new HSlideProxy(scheduler, hardware));
         hClawProxy = scheduler.add(new HClawProxy(scheduler, hardware));
-        ascentProxy = scheduler.add(new AscentProxy(scheduler, hardware.ascent, Hardware.ASCENT_UP_POS));
+        ascentProxy = scheduler.add(new AscentProxy(scheduler, hardware.ascent));
+        hardware.ascent.calibrate(Hardware.ASCENT_UP_POS);
+        hardware.ascent.setTargetPosition(Hardware.ASCENT_UP_POS);
 
         telemetry.log().clear();
         telemetry.log().add("Set and ready to roll!");
@@ -159,6 +169,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         boolean isTxDump = false;
         boolean isClearArmPos = false;
         boolean isResetVL = false;
+        boolean isAutodetect = false;
 
         double yaw_offset = 0.0;
         while (opModeIsActive()) {
@@ -275,6 +286,11 @@ public class MecanumTeleOp2 extends LinearOpMode {
                 resetAll();
             }
 
+            boolean shouldAutodetect = gamepad2.y;
+            if (shouldAutodetect && !isAutodetect) {
+                autodetect();
+            }
+
             isSpecimenPick = shouldSpecimenPick;
             isFlipIn = shouldFlipIn;
             isFlipOut = shouldFlipOut;
@@ -284,6 +300,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
             isTx = shouldTx;
             isTxDump = shouldTxDump;
             isResetVL = shouldResetVL;
+            isAutodetect = shouldAutodetect;
 
             int verticalPosition = hardware.verticalLift.getCurrentPosition();
 
@@ -305,18 +322,16 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
     }
 
-    /////////////////////////////////////////////
-
     String formatAngle(AngleUnit angleUnit, double angle) {
         return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
     }
+
+    // lifts the vertical slides to a target position in ticks
 
     @SuppressLint("DefaultLocale")
     String formatDegrees(double degrees) {
         return String.format("%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
-
-    // lifts the vertical slides to a target position in ticks
 
     private ITaskWithResult<Boolean> targetLift(int targetPosition) {
         abandonLock(vLiftProxy.CONTROL);
@@ -324,6 +339,8 @@ public class MecanumTeleOp2 extends LinearOpMode {
     }
 
     private void lamps() {
+        if (scheduler.isResourceInUse(Locks.Signals)) return;
+
 //        @ColorInt int color = hardware.clawColor.argb();
         // extract the components from the packed number
 //        int red = (color >> 16) & 0xff;
@@ -517,27 +534,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
         );
     }
 
-    private void score() {
-        double clawclose = 0.02;
-        abandonLock(vLiftProxy.CONTROL);
-        abandonLock(Locks.ArmAssembly);
-        abandonLock(Locks.DriveMotors);
-
-
-        // if something else takes the locks between these it's the driver's fault smh
-        scheduler.add(
-                groupOf(it -> it.add(run(() -> hardware.claw.setPosition(clawclose)))
-                        .then(vLiftProxy.moveTo(Hardware.VLIFT_SCORE_SPECIMEN, 5, 1.0))
-                        .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(Hardware.SCORE_SPECIMEN_ARM_DEG))))
-                        .then(await(500))
-                        .then(run(() -> hardware.wrist.setPosition(1)))
-                ).extraDepends(
-                        vLiftProxy.CONTROL,
-                        Locks.ArmAssembly
-                )
-        );
-    }
-
     /* // might need for Left Auto
     public void Horizontalpick() {
         double hslideout = 0.35;
@@ -560,6 +556,27 @@ public class MecanumTeleOp2 extends LinearOpMode {
         sleep(500);
     }
     */
+
+    private void score() {
+        double clawclose = 0.02;
+        abandonLock(vLiftProxy.CONTROL);
+        abandonLock(Locks.ArmAssembly);
+        abandonLock(Locks.DriveMotors);
+
+
+        // if something else takes the locks between these it's the driver's fault smh
+        scheduler.add(
+                groupOf(it -> it.add(run(() -> hardware.claw.setPosition(clawclose)))
+                        .then(vLiftProxy.moveTo(Hardware.VLIFT_SCORE_SPECIMEN, 5, 1.0))
+                        .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(Hardware.SCORE_SPECIMEN_ARM_DEG))))
+                        .then(await(500))
+                        .then(run(() -> hardware.wrist.setPosition(1)))
+                ).extraDepends(
+                        vLiftProxy.CONTROL,
+                        Locks.ArmAssembly
+                )
+        );
+    }
 
     // TODO: Reject while running
     public void transferAndDrop() {
@@ -653,4 +670,12 @@ public class MecanumTeleOp2 extends LinearOpMode {
         transferInternal();
     }
 
+    void autodetect() {
+        if (activeSearchTask != null && activeSearchTask.getState() == ITask.State.Ticking) {
+            activeSearchTask.proceed();
+            return;
+        }
+        int enabled = LimelightDetectionMode.RED | LimelightDetectionMode.YELLOW;
+        activeSearchTask = scheduler.add(new LimelightSearch(scheduler, hardware, hSlideProxy, hClawProxy, enabled, telemetry));
+    }
 }
