@@ -243,7 +243,7 @@ public class RightAuto extends LinearOpMode {
                 }))
                 .then(scoreSpecimen())
                 .then(groupOf(a -> {
-                    a.add(moveTo(new Pose(15.5, -36, 0)));
+                    a.add(moveTo(new Pose(17.0, -36, 0)));
                     a.add(postScoreSpecimen());
                 }))
                 .then(grab())

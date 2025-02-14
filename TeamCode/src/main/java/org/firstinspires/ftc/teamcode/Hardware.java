@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -26,8 +27,9 @@ import dev.aether.collaborative_multitasking.SharedResource;
 
 public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final int ARM_TRANSFER_POS = -40;
+    public static final double SCORE_SPECIMEN_ARM_DEG =-100;
     public static final double spinTickPerRev = 751.8;
-    public static final double RIGHT_SLIDE_OUT = 0.69;
+    public static final double RIGHT_SLIDE_OUT = 0.60;
     @Deprecated public static final double LEFT_SLIDE_OUT = 1.05 - RIGHT_SLIDE_OUT;
     public static final double RIGHT_SLIDE_IN = 0.38;
     @Deprecated public static final double LEFT_SLIDE_IN = 1.05 - RIGHT_SLIDE_IN;
@@ -199,6 +201,9 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
 
     public Ascent ascent;
 
+    @HardwareName("limelight")
+    public Limelight3A limelight;
+
     @Override
     public Encoder getLeftEncoder() {
         return encoderLeft;
@@ -260,6 +265,8 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
 
         lightLeft.setPosition(Hardware.LAMP_PURPLE);
         lightRight.setPosition(Hardware.LAMP_PURPLE);
+
+        limelight.stop();
     }
 
     public Hardware(HardwareMap hwMap) {
