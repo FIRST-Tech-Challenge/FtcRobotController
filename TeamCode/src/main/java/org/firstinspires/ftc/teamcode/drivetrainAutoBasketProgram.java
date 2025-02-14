@@ -25,7 +25,7 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Initialize drivetrain
-        drivetrain = new Drivetrain(hardwareMap, 3, 3, 30, 20, 1600);
+        drivetrain = new Drivetrain(hardwareMap, 3, 3, 20, 30, 1600);
 
         // Initialize lift motors
         leftLiftMotor = hardwareMap.get(DcMotorEx.class, "leftLiftMotor");
@@ -101,12 +101,28 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
                 }
             }
 
-            // deposit block in robot basket
-            intakePivotServo.setPosition(0.0);
-            sleep(1000); // sleep 1 second
-            runIntakeMotors(IntakeMode.REVERSE);
-            sleep(2000); // sleep 2 second
-            runIntakeMotors(IntakeMode.STOP);
+            // deposit block in robot basket ---------------------------------
+            intakePivotServo.setPosition(0.0); // pivot back to face robot basket
+
+            // start un-intaking? block after 0.3 seconds, async call
+            new java.util.Timer().schedule(
+                    new java.util.TimerTask() {
+                        @Override
+                        public void run() {
+                            runIntakeMotors(IntakeMode.REVERSE);
+                        }
+                    },
+                    300);
+
+            // stop unloading block after 2 seconds, async call
+            new java.util.Timer().schedule(
+                    new java.util.TimerTask() {
+                        @Override
+                        public void run() {
+                            runIntakeMotors(IntakeMode.STOP);
+                        }
+                    },
+                    2000);
 
             scoreInHighBasket(); // score block in high basket, code will continue after completion
         }
