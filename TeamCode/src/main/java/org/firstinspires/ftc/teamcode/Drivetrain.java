@@ -14,11 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Drivetrain {
-    private final DcMotorEx frontLeft, frontRight, backLeft, backRight;
-    private final DistanceSensor horizontalDistanceSensor, verticalDistanceSensor;
+    public final DcMotorEx frontLeft, frontRight, backLeft, backRight;
+    public final DistanceSensor horizontalDistanceSensor, verticalDistanceSensor;
     private final IMU imu;
-    private final List<Double> xWeights, yWeights, rWeights;
-    private final double distanceThreshold, angleThreshold, decelerationDistance;
+    public  final List<Double> xWeights, yWeights, rWeights;
+    private final double distanceThreshold, angleThreshold, decelerationDistance, decelerationAngle, maxSpeed;
+    public boolean isMoving;
 
     /**
      * Initializes the drivetrain.
@@ -27,11 +28,16 @@ public class Drivetrain {
      * @param distanceThreshold: distance threshold for wall alignment in CM
      * @param angleThreshold: angle threshold for wall alignment in DEGREES
      * @param decelerationDistance: distance threshold for deceleration in CM
+     * @param decelerationAngle: angle threshold for deceleration in DEGREES
      */
-    public Drivetrain(HardwareMap hardwareMap, double distanceThreshold, double angleThreshold, double decelerationDistance) {
+    public Drivetrain(HardwareMap hardwareMap, double distanceThreshold, double angleThreshold, double decelerationDistance, double decelerationAngle, double maxSpeed) {
         this.distanceThreshold = distanceThreshold;
         this.angleThreshold = angleThreshold;
         this.decelerationDistance = decelerationDistance;
+        this.decelerationAngle = decelerationAngle;
+
+        // make sure maxSpeed input is within range (0.0 to 1.0)
+        this.maxSpeed = Math.max(0.0, Math.min(1.0, maxSpeed));
 
         // initialize motors
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
@@ -117,14 +123,15 @@ public class Drivetrain {
     /**
      * Continually call this function to align the robot to a wall.
      * Can be called several times to align to multiple walls.
+     * This method should not be called with setAngle as it is already set to 0 internally
+     *
      * @param wall: WallType.LEFT or WallType.BACK
      * @param distance: distance from wall in cm
-     * @param angleOffset: angle offset from default position in degrees
      */
-    public void alignToWall(WallType wall, double distance, double angleOffset) {
+    public void alignToWall(WallType wall, double distance) {
 
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        double currentAngle = orientation.getYaw(AngleUnit.DEGREES);
+        // stay square with wall
+        setAngle(0);
 
         // get distance from wall depending on which type is selected (left or back)
         double currentDistance = (wall == WallType.LEFT)
@@ -152,12 +159,27 @@ public class Drivetrain {
                 yWeights.add(weight); // move forward
             }
         }
+    }
+
+    public void setAngle(double angleOffset){
+
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        double currentAngle = orientation.getYaw(AngleUnit.DEGREES);
 
         // angle compensation calc
         if (currentAngle > (angleOffset + angleThreshold)) {
-            rWeights.add(-0.5); // rotate left
+
+            // calculate weight using parabolic function
+            double weight = calculateParabolicWeight(currentAngle - (angleOffset + angleThreshold), decelerationAngle);
+
+            rWeights.add(weight); // rotate left
+
         } else if (currentAngle < (angleOffset - angleThreshold)) {
-            rWeights.add(0.5); // rotate right
+
+            // calculate weight using parabolic function
+            double weight = calculateParabolicWeight((angleOffset - angleThreshold) - currentAngle, decelerationAngle);
+
+            rWeights.add(-weight); // rotate right
         }
     }
 
@@ -181,16 +203,6 @@ public class Drivetrain {
     }
 
     /**
-     * Checks if the drivetrain is aligned to a wall.
-     * Must be called before nudging in any direction.
-     *
-     * @return boolean: true if aligned to wall, false otherwise
-     */
-    public boolean isAlignedToWall(){
-        return yWeights.isEmpty() && xWeights.isEmpty() && rWeights.isEmpty();
-    }
-
-    /**
      * Must be continually called within your main loop to manage the drivetrain motors
      */
     public void update(){
@@ -201,6 +213,9 @@ public class Drivetrain {
         double y = calculateAverage(yWeights); // Forward/backward
         double x = calculateAverage(xWeights); // Strafe
         double rotation = calculateAverage(rWeights); // Rotate
+
+        // set is moving variable, check if each motors are between -0.1 and 0.1
+        isMoving = (Math.abs(y) > 0.1) || (Math.abs(x) > 0.1) || (Math.abs(rotation) > 0.1);
 
         // clear lists
         xWeights.clear();
@@ -218,6 +233,12 @@ public class Drivetrain {
         frontRightPower /= Math.max(1.0, Math.abs(frontRightPower));
         backLeftPower /= Math.max(1.0, Math.abs(backLeftPower));
         backRightPower /= Math.max(1.0, Math.abs(backRightPower));
+
+        // scale values to be within maxSpeed
+        frontLeftPower *= maxSpeed;
+        frontRightPower *= maxSpeed;
+        backLeftPower *= maxSpeed;
+        backRightPower *= maxSpeed;
 
         frontLeft.setPower(frontLeftPower);
         frontRight.setPower(frontRightPower);
