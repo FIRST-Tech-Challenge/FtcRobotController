@@ -40,7 +40,8 @@ public class Viper {
         //~1541 ticks per inch
 
         //int ticksPerInch = 1541;
-        double ticksPerInch = 537.7/4.625;
+//        double ticksPerInch = 537.7/4.625;
+        double ticksPerInch = 384.5/4.625;
         return (int)(lengthInches*ticksPerInch);
     }
     public DcMotorEx get_viperMotor() {

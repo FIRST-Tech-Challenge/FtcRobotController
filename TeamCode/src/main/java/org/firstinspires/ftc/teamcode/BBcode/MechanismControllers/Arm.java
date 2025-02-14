@@ -23,8 +23,8 @@ public class Arm {
     //Total ticks in a revolution for 117 RPM motor: 1425.1
     //variables are in degrees
     final int homePosition = 0;
-    final int clearancePosition = 24;
-    final int hangPosition = 55;
+    final int slowDownPosition = 5;
+    final int hangPosition = 75;
     final int highBasketPosition = 95;
     final double specimenPosition = 44;
     //-----------------------
@@ -47,6 +47,7 @@ public class Arm {
     public boolean getIsArmHomePosition() {return _armMotor.getCurrentPosition() < DegreeConverterToTicks(homePosition + 5);}
     public boolean getIsArmSpecimenPosition() {return _armMotor.getCurrentPosition() > DegreeConverterToTicks(specimenPosition);}
     public boolean getIsArmHangPosition() {return _armMotor.getCurrentPosition() < DegreeConverterToTicks(hangPosition);}
+    public boolean getIsArmSlowDownPosition() {return _armMotor.getCurrentPosition() < DegreeConverterToTicks(slowDownPosition);}
 
     public DcMotorEx get_armMotor() {
         return _armMotor;
@@ -68,15 +69,15 @@ public class Arm {
     }
     public void MoveToHome()
     {
-        ArmMotorCustom(homePosition, 0.75);
+        ArmMotorCustom(homePosition, 0.25);
     }
-    public void MoveToClearance()
+    public void MoveToSlowDown()
     {
-        ArmMotorCustom(clearancePosition, 0.75);
+        ArmMotorCustom(slowDownPosition, 0.75);
     }
     public void MoveToHang()
     {
-        ArmMotorCustom(hangPosition, 0.75);
+        ArmMotorCustom(hangPosition, 1);
     }
     public void MoveToHighBasket()
     {
