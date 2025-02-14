@@ -72,6 +72,7 @@ public class CTBSB extends LinearOpMode {
                 ,arm.setExtend(arm.getMaxExtend() - 18)
                 ))
                 , new SleepAction(1)
+
                 , new ParallelAction(goScoreSample2.build(), arm.setAngle(65), arm.setExtend(arm.getMaxExtend()- 4))
                 , intake.intakeByTimer(-1, 0.5)
                 , intake.intakeByTimer(1, 0.5)
