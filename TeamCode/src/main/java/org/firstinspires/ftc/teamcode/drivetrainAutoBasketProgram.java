@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Autonomous(name = "drivetrainAutoBasketProgram", group = "Drive")
 public class drivetrainAutoBasketProgram extends LinearOpMode {
 
@@ -17,11 +20,12 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
     private Servo intakePivotServo, basketServo;
     private DcMotorEx leftLiftMotor, rightLiftMotor;
     private Drivetrain drivetrain;
+    public List<Double> blockPositions;
 
     @Override
     public void runOpMode() {
         // Initialize drivetrain
-        drivetrain = new Drivetrain(hardwareMap, 1, 3, 30, 20, 0.8);
+        drivetrain = new Drivetrain(hardwareMap, 3, 3, 15, 20, 1600);
 
         // Initialize lift motors
         leftLiftMotor = hardwareMap.get(DcMotorEx.class, "leftLiftMotor");
@@ -45,87 +49,73 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
         // initialize intake pivot servo to 0
         intakePivotServo.setPosition(0.0);
 
+        blockPositions = new ArrayList<Double>();
+        blockPositions.add(37.0);
+        blockPositions.add(16.0);
+        blockPositions.add(5.0);
+
         waitForStart();
 
-        // stick to the back wall at a 40cm distance to align for basket
-        while (opModeIsActive()) {
+        scoreInHighBasket(); // score the preloaded
 
-            drivetrain.alignToWall(Drivetrain.WallType.BACK, 40);
-            drivetrain.alignToWall(Drivetrain.WallType.LEFT, 40);
-            drivetrain.update();
+        // loop through all block positions, first doing basket and then pickup
+        for (double bPosition : blockPositions) {
 
-            telemetry.addData("isAlignedToWall: ", drivetrain.isMoving);
-            telemetry.addData("horz: ", drivetrain.horizontalDistanceSensor.getDistance(DistanceUnit.CM));
-            telemetry.addData("vert: ", drivetrain.verticalDistanceSensor.getDistance(DistanceUnit.CM));
-            telemetry.addData("xWeights: ", drivetrain.xWeights.toString());
-            telemetry.addData("yWeights: ", drivetrain.yWeights.toString());
-            telemetry.addData("rWeights: ", drivetrain.rWeights.toString());
-            telemetry.update();
+            // its time to pick up a block, start by getting the robot in position
+            while (opModeIsActive()) {
+                drivetrain.alignToWall(Drivetrain.WallType.BACK, 40);
+                drivetrain.alignToWall(Drivetrain.WallType.LEFT, bPosition);
+                drivetrain.update();
 
-            if (!drivetrain.isMoving) {
-                drivetrain.stop();
-
-                break;
+                if (drivetrain.isAtTarget) {
+                    drivetrain.stop();
+                    break;
+                }
             }
+
+            // start intake
+            runIntakeMotors(IntakeMode.NORMAL);
+            intakePivotServo.setPosition(1.0);
+
+            // now move forward while staying aligned to the left wall until intake is full
+            while (opModeIsActive()) {
+
+                // go at an angle on the last (3rd) pickup
+                if (blockPositions.indexOf(bPosition) == 2){
+                    drivetrain.setAngle(30);
+                    drivetrain.nudgeInDirection(0.1, 0.1); // move strafe north east slowly
+
+                } else { // otherwise stay aligned with back wall
+                    drivetrain.alignToWall(Drivetrain.WallType.LEFT, bPosition);
+                    drivetrain.nudgeInDirection(0.0, 0.06); // move forward slowly
+                }
+
+                drivetrain.update();
+
+                if (intakeTouchSensor.isPressed()) {
+                    drivetrain.stop();
+                    runIntakeMotors(IntakeMode.STOP);
+
+                    break;
+                }
+            }
+
+            // deposit block in robot basket
+            intakePivotServo.setPosition(0.0);
+            sleep(1000); // sleep 1 second
+            runIntakeMotors(IntakeMode.REVERSE);
+            sleep(2000); // sleep 2 second
+            runIntakeMotors(IntakeMode.STOP);
+
+            scoreInHighBasket(); // score block in high basket, code will continue after completion
         }
 
-        // rotate to face the basket
+        // now go over to park
         while (opModeIsActive()) {
-            drivetrain.setAngle(-45);
+            drivetrain.alignToWall(Drivetrain.WallType.BACK, 10);
+            drivetrain.nudgeInDirection(1.0, 0.0);
             drivetrain.update();
-
-            if (!drivetrain.isMoving) {
-                drivetrain.stop();
-
-                break;
-            }
         }
-
-        scoreInHighBasket(); // score block in basket, code will continue after completion
-
-        // pause for 1 second
-        sleep(1000);
-
-        // its time to pick up a block, start by getting the robot in position
-        while (opModeIsActive()) {
-            drivetrain.alignToWall(Drivetrain.WallType.BACK, 40);
-            drivetrain.alignToWall(Drivetrain.WallType.LEFT, 37);
-            drivetrain.update();
-
-            if (!drivetrain.isMoving) {
-                drivetrain.stop();
-                break;
-            }
-        }
-
-        // start intake
-        runIntakeMotors(IntakeMode.NORMAL);
-        intakePivotServo.setPosition(1.0);
-
-        // pause for 1 second
-        sleep(1000);
-
-        // now move forward while staying aligned to the left wall until intake is full
-        while (opModeIsActive()) {
-            // stick to the back wall at a 20cm distance
-            drivetrain.alignToWall(Drivetrain.WallType.LEFT, 37);
-            drivetrain.nudgeInDirection(0.0, 0.2);
-            drivetrain.update();
-
-            if (intakeTouchSensor.isPressed()) {
-                drivetrain.stop();
-                runIntakeMotors(IntakeMode.STOP);
-                break;
-            }
-        }
-
-        // deposit block in robot basket
-        intakePivotServo.setPosition(0.0);
-        sleep(1000); // sleep 1 second
-        runIntakeMotors(IntakeMode.REVERSE);
-        sleep(3000); // sleep 3 second
-        runIntakeMotors(IntakeMode.STOP);
-
     }
 
     private enum IntakeMode {
@@ -165,9 +155,44 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
     }
 
     /**
-     * Runs the lift up to the high basket, scores a block, then goes back down to starting position
+     * Move over to basket area, runs the lift up to the high basket, scores a block, then lowers lift back down
+     * This is a blocking method.
      */
     private void scoreInHighBasket() {
+
+        // stick to the back wall at a 40cm distance to align for basket
+        while (opModeIsActive()) {
+
+            drivetrain.alignToWall(Drivetrain.WallType.BACK, 40);
+            drivetrain.alignToWall(Drivetrain.WallType.LEFT, 40);
+            drivetrain.update();
+
+            telemetry.addData("isAtTarget: ", drivetrain.isAtTarget);
+            telemetry.addData("horz: ", drivetrain.horizontalDistanceSensor.getDistance(DistanceUnit.CM));
+            telemetry.addData("vert: ", drivetrain.verticalDistanceSensor.getDistance(DistanceUnit.CM));
+            telemetry.addData("xWeights: ", drivetrain.xWeights.toString());
+            telemetry.addData("yWeights: ", drivetrain.yWeights.toString());
+            telemetry.addData("rWeights: ", drivetrain.rWeights.toString());
+            telemetry.update();
+
+            if (drivetrain.isAtTarget) {
+                drivetrain.stop();
+
+                break;
+            }
+        }
+
+        // rotate to face the basket
+        while (opModeIsActive()) {
+            drivetrain.setAngle(-45);
+            drivetrain.update();
+
+            if (drivetrain.isAtTarget) {
+                drivetrain.stop();
+
+                break;
+            }
+        }
 
         setLiftPosition(3266); // high basket encoder position for lift
 
@@ -178,16 +203,27 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
 
         // score block
         basketServo.setPosition(1.0); // up
-        sleep(1500); // sleep 1.5 seconds
+        sleep(1000); // sleep 1 seconds
         basketServo.setPosition(0.0); // back down
-        sleep(1500); // sleep 1.5 seconds
 
-        // return lift to default position
+        // return lift to default down position
         setLiftPosition(0);
 
         // wait until lift is at target position
         while (rightLiftMotor.getCurrentPosition() > 20){
             sleep(1);
+        }
+
+        // turn back
+        while (opModeIsActive()) {
+            drivetrain.setAngle(0);
+            drivetrain.update();
+
+            if (drivetrain.isAtTarget) {
+                drivetrain.stop();
+
+                break;
+            }
         }
     }
 }

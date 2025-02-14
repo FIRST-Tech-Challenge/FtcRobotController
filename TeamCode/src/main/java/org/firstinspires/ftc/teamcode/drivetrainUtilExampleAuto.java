@@ -15,7 +15,7 @@ public class drivetrainUtilExampleAuto extends LinearOpMode {
     public void runOpMode() {
 
         // Initialize drivetrain
-        Drivetrain drivetrain = new Drivetrain(hardwareMap, 1, 3, 30, 20, 0.8);
+        Drivetrain drivetrain = new Drivetrain(hardwareMap, 2, 3, 30, 20, 2000);
 
         waitForStart();
         while (opModeIsActive()) {
@@ -24,7 +24,7 @@ public class drivetrainUtilExampleAuto extends LinearOpMode {
             drivetrain.alignToWall(Drivetrain.WallType.LEFT, 40);
             drivetrain.update();
 
-            telemetry.addData("isAlignedToWall: ", drivetrain.isMoving);
+            telemetry.addData("isAtTarget: ", drivetrain.isAtTarget);
             telemetry.addData("horz: ", drivetrain.horizontalDistanceSensor.getDistance(DistanceUnit.CM));
             telemetry.addData("vert: ", drivetrain.verticalDistanceSensor.getDistance(DistanceUnit.CM));
             telemetry.addData("xWeights: ", drivetrain.xWeights.toString());
@@ -32,7 +32,7 @@ public class drivetrainUtilExampleAuto extends LinearOpMode {
             telemetry.addData("rWeights: ", drivetrain.rWeights.toString());
             telemetry.update();
 
-            if (!drivetrain.isMoving) {
+            if (drivetrain.isAtTarget) {
                 break;
             }
         }

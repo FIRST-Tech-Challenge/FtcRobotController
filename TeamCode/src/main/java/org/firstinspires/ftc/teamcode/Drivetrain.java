@@ -18,8 +18,10 @@ public class Drivetrain {
     public final DistanceSensor horizontalDistanceSensor, verticalDistanceSensor;
     private final IMU imu;
     public  final List<Double> xWeights, yWeights, rWeights;
-    private final double distanceThreshold, angleThreshold, decelerationDistance, decelerationAngle, maxSpeed;
-    public boolean isMoving;
+    private final double distanceThreshold, angleThreshold, decelerationDistance, decelerationAngle, maxVelocity;
+    public boolean isAtTarget;
+    private long targetReachedStartTime = 0; // Timestamp when weights became empty, if not at target will be -1
+    private final long targetReachedDelay = 500; // 0.5 second delay in milliseconds
 
     /**
      * Initializes the drivetrain.
@@ -30,14 +32,14 @@ public class Drivetrain {
      * @param decelerationDistance: distance threshold for deceleration in CM
      * @param decelerationAngle: angle threshold for deceleration in DEGREES
      */
-    public Drivetrain(HardwareMap hardwareMap, double distanceThreshold, double angleThreshold, double decelerationDistance, double decelerationAngle, double maxSpeed) {
+    public Drivetrain(HardwareMap hardwareMap, double distanceThreshold, double angleThreshold, double decelerationDistance, double decelerationAngle, double maxVelocity) {
         this.distanceThreshold = distanceThreshold;
         this.angleThreshold = angleThreshold;
         this.decelerationDistance = decelerationDistance;
         this.decelerationAngle = decelerationAngle;
 
-        // make sure maxSpeed input is within range (0.0 to 1.0)
-        this.maxSpeed = Math.max(0.0, Math.min(1.0, maxSpeed));
+        // make sure maxVelocity input is above 0
+        this.maxVelocity = Math.max(0.0, maxVelocity);
 
         // initialize motors
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
@@ -69,14 +71,14 @@ public class Drivetrain {
         imu.resetYaw();
 
         // set run mode of all motors
-        setRunWithoutEncoders();
+        setRunUsingEncoders();
     }
 
-    private void setRunWithoutEncoders() {
-        frontLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        frontRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        backLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        backRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+    private void setRunUsingEncoders() {
+        frontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
 
     /**
@@ -207,15 +209,24 @@ public class Drivetrain {
      */
     public void update(){
         // Set run modes
-        setRunWithoutEncoders();
+        setRunUsingEncoders();
 
         // average all nudges and wall alignments
         double y = calculateAverage(yWeights); // Forward/backward
         double x = calculateAverage(xWeights); // Strafe
         double rotation = calculateAverage(rWeights); // Rotate
 
-        // set is moving variable, check if each motors are between -0.1 and 0.1
-        isMoving = (Math.abs(y) > 0.1) || (Math.abs(x) > 0.1) || (Math.abs(rotation) > 0.1);
+        // set isAtTarget variable if all weight lists are empty for 1 second
+        if (xWeights.isEmpty() && yWeights.isEmpty() && rWeights.isEmpty()) {
+            if (targetReachedStartTime == -1) {
+                targetReachedStartTime = System.currentTimeMillis();
+            } else if (System.currentTimeMillis() - targetReachedStartTime >= targetReachedDelay) {
+                isAtTarget = true;
+            }
+        } else{
+            isAtTarget = false;
+            targetReachedStartTime = -1;
+        }
 
         // clear lists
         xWeights.clear();
@@ -234,16 +245,16 @@ public class Drivetrain {
         backLeftPower /= Math.max(1.0, Math.abs(backLeftPower));
         backRightPower /= Math.max(1.0, Math.abs(backRightPower));
 
-        // scale values to be within maxSpeed
-        frontLeftPower *= maxSpeed;
-        frontRightPower *= maxSpeed;
-        backLeftPower *= maxSpeed;
-        backRightPower *= maxSpeed;
+        // convert joystick emulation into velocities for each motor
+        frontLeftPower *= maxVelocity;
+        frontRightPower *= maxVelocity;
+        backLeftPower *= maxVelocity;
+        backRightPower *= maxVelocity;
 
-        frontLeft.setPower(frontLeftPower);
-        frontRight.setPower(frontRightPower);
-        backLeft.setPower(backLeftPower);
-        backRight.setPower(backRightPower);
+        frontLeft.setVelocity(frontLeftPower);
+        frontRight.setVelocity(frontRightPower);
+        backLeft.setVelocity(backLeftPower);
+        backRight.setVelocity(backRightPower);
 
     }
 
@@ -251,9 +262,9 @@ public class Drivetrain {
      * Stops the drivetrain motors.
      */
     public void stop(){
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
+        frontLeft.setVelocity(0);
+        frontRight.setVelocity(0);
+        backLeft.setVelocity(0);
+        backRight.setVelocity(0);
     }
 }
