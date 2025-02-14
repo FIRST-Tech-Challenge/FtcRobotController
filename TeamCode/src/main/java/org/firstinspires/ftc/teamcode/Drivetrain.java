@@ -214,8 +214,8 @@ public class Drivetrain {
         double x = calculateAverage(xWeights); // Strafe
         double rotation = calculateAverage(rWeights); // Rotate
 
-        // set is moving variable, check if each motors are between -0.05 and 0.05
-        isMoving = (Math.abs(y) > 0.05) || (Math.abs(x) > 0.05) || (Math.abs(rotation) > 0.05);
+        // set is moving variable, check if each motors are between -0.1 and 0.1
+        isMoving = (Math.abs(y) > 0.1) || (Math.abs(x) > 0.1) || (Math.abs(rotation) > 0.1);
 
         // clear lists
         xWeights.clear();
