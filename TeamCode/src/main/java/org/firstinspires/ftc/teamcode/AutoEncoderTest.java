@@ -36,27 +36,27 @@ public class AutoEncoderTest extends DriveMethods {
                 changeState(State.MoveForward);
                 break;
             case MoveForward:
-                double remainingDistance = moveStraightTo(1);
+                double remainingDistance = moveStraightToo(1);
 
                 if (Math.abs(remainingDistance) <= .01) {
                     changeState(State.Wait);
                 }
                 break;
                 case Wait:
-                    moveStraightTo(0);
+                    moveStraightToo(0);
                     if (getStateTime() >= 2) {
                         changeState(State.Move2);
                     }
                     break;
                 case Move2:
-                    remainingDistance = moveStraightTo(-1);
+                    remainingDistance = moveStraightToo(-1);
                 if (Math.abs(remainingDistance) <= .01) {
                     changeState(State.Finished);
                 }
                 break;
             case Finished:
 
-                moveStraightTo(0);
+                moveStraightToo(0);
                 break;
         }
     }
@@ -76,7 +76,7 @@ public class AutoEncoderTest extends DriveMethods {
         return robot.leftFrontDrive.getCurrentPosition() / robot.TICKS_PER_MM / MM_PER_METER;
     }
 
-    double moveStraightTo(double targetDistance) {
+    double moveStraightToo(double targetDistance) {
         double distanceTravelled = position();
         double targetPos = stateStartPos + targetDistance;
         double remainingDistance = targetPos - distanceTravelled;
