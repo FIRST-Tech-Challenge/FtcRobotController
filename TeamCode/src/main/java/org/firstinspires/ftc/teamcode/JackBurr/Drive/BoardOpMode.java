@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.JackBurr.Servos.WristServoTest;
 
 import java.util.Optional;
 
+@Disabled
 @TeleOp
 public class BoardOpMode extends OpMode {
     //MOTORS====================================================================================================================

@@ -10,7 +10,9 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.nio.channels.MulticastChannel;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+@Disabled
 @Config
 @TeleOp
 public class MotorPIDTest extends OpMode {

@@ -5,7 +5,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.JackBurr.Drive.RobotConstantsV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryAxonV1;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+@Disabled
 public class HangOnly extends OpMode {
     public DeliverySlidesV1 slides = new DeliverySlidesV1();
     public enum SlidesState {
