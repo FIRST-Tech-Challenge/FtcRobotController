@@ -641,6 +641,10 @@ public class TeleOpV2 extends OpMode {
                 }
                 intakeSlides.intakeIn();
                 slidesTimer.reset();
+                grippersTimer.reset();
+                grippersOpened = false;
+                sampleTransferred = false;
+                pickedUpSample = false;
                 break;
             case EXTEND_AND_DROP:
                 if(gamepad1.triangle && buttonTimer.seconds() > 0.3){
