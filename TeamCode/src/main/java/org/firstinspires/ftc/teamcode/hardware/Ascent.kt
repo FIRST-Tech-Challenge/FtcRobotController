@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import android.util.Log
-import com.qualcomm.robotcore.hardware.CRServo
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.util.ElapsedTime
 import dev.aether.collaborative_multitasking.ITask
@@ -13,7 +12,6 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.time.DurationUnit
-import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 
@@ -50,6 +48,7 @@ class Ascent(
     fun calibrate(actualPosition: Int) {
         offsetL = actualPosition - leftAscentEncoder.getCurrentPosition()
         offsetR = actualPosition - rightAscentEncoder.getCurrentPosition()
+        Log.i("Ascent", "!! New offsets configured: %d / %d (to %d)".format(offsetL, offsetR, actualPosition))
     }
 
     private val timeSource = TimeSource.Monotonic
@@ -92,8 +91,7 @@ class Ascent(
 
 class AscentProxy(
     scheduler: Scheduler,
-    private val ascent: Ascent,
-    private val initialPos: Int
+    private val ascent: Ascent
 ) : TaskTemplate(scheduler) {
     companion object {
         private val requires = setOf(Hardware.Locks.Ascent)
@@ -112,8 +110,6 @@ class AscentProxy(
     }
 
     override fun invokeOnStart() {
-        ascent.calibrate(initialPos)
-        ascent.setTargetPosition(initialPos)
     }
 
     fun target(target: Int): ITask {
