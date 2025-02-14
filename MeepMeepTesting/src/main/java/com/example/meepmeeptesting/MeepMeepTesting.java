@@ -27,10 +27,12 @@ public class MeepMeepTesting {
 
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(6+(18.0/2.0) -30, -(72-(18.0/2.0)), Math.toRadians(90)))
                 .splineToLinearHeading(new Pose2d(-7, -31.5, Math.toRadians(90)), Math.toRadians(90))
+                //intake
                 .strafeTo(new Vector2d(-7, -40))
-                .splineToLinearHeading(new Pose2d(-54.5,-38,Math.toRadians(90)), Math.toRadians(180))
-                        .splineToLinearHeading(new Pose2d(-56,-56,Math.toRadians(45)), Math.toRadians(-90))
-                             .build());
+                .splineToLinearHeading(new Pose2d(-27,-58,Math.toRadians(125)), Math.toRadians(180))
+                //score
+                .splineToLinearHeading(new Pose2d(-32, -58, Math.toRadians(180)), Math.toRadians(180))
+                .build());
         myBot2.runAction(myBot.getDrive().actionBuilder(new Pose2d(6+(18.0/2.0), -(72-(18.0/2.0)), Math.toRadians(90)))
 
                 .build());

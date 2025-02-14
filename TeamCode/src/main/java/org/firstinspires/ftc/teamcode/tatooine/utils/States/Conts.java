@@ -14,7 +14,7 @@ public class Conts {
 
             public static double angleScoreSample = 90.0;
 
-            public static double extendScoreSampleHigh = 61.0;
+            public static double extendScoreSampleHigh = 60;
 
             public static double extendScoreSampleLow = 0;
 

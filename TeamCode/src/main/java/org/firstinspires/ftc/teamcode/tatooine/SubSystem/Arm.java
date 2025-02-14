@@ -24,13 +24,13 @@ public class Arm {
     private DcMotorEx angleLeft = null;  // Left motor controlling angle
     private DcMotorEx angleRight = null; // Right motor controlling angle
 
-    private double startAngle = -6; // Initial starting angle of the arm
+    private double startAngle = -7; // Initial starting angle of the arm
 
-    private double ANGLE_OFFSET = -6;   // Angle offset for the arm
+    private double ANGLE_OFFSET = 90;   // Angle offset for the arm
 
     private DigitalChannel limitSwitch = null; // Limit switch to detect arm position limits
 
-    private final double ANGLE_AMP_LIMIT = 200000.0; // Maximum allowed amperage for angle motors
+    private final double ANGLE_AMP_LIMIT = 5000; // Maximum allowed amperage for angle motors
 
 
     // Extend system variables
@@ -50,7 +50,7 @@ public class Arm {
     private final double ANGLE_CPR = 28.0 * 100.0 * (34.0 / 16.0); // Counts per revolution for angle motors
     private final double EXTEND_CPR = 537.7; // Counts per revolution for extension motors
 
-    private final double ANGLE_TIMEOUT = 2.7; // Timeout for angle movement
+    private final double ANGLE_TIMEOUT = 2.5; // Timeout for angle movement
     private final double EXTEND_TIMEOUT = 4; // Timeout for extension movement
 
     private final double ANGLE_TOLERANCE = 1.5; // Tolerance for angle movement
@@ -76,6 +76,8 @@ public class Arm {
     public static double KI = 0;
 
     public static double KD = 0;
+
+    private double lastPower = 0;
 
     // Constructor for the Arm system, passing opMode and debug flag
     public Arm(OpMode opMode, boolean isDebug) {
@@ -229,26 +231,26 @@ public class Arm {
 
     // Set power to the angle motors
     public void setAnglePower(double power) {
-        // Prevent movement if the current angle exceeds the amperage limit
-        if (getCurrentAngle() >= ANGLE_AMP_LIMIT && power > 0) {
-            power = 0; // No movement if amperage limit is exceeded
-        }
 
-        if (getAngle() >= 90 && power > 0){
+        // Prevent movement if the current angle exceeds the amperage limit
+        if (getCurrentAngle() >= ANGLE_AMP_LIMIT){
+            if (power > 0 && lastPower == power)
+            {
+                resetAngleEncoders();
+                startAngle = ANGLE_OFFSET;
+            }
+            power = 0;
+
+        }
+        if (getAngle() < -4 && power < 0){
             power = 0;
         }
 
-        // Reset encoders if limit switch is pressed
-        if (limitSwitch.getState()) {
-            resetAngleEncoders(); // Reset encoders if limit switch is pressed
-            startAngle = ANGLE_OFFSET;
-            if (power < 0) {
-                power = 0; // Prevent negative power if limit switch is pressed
-            }
-        }
+        lastPower = power;
 
         angleRight.setPower(power); // Set power for right angle motor
         angleLeft.setPower(power); // Set power for left angle motor
+
 
         // Debug logging for angle power
         DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "Angle Power", power);
@@ -356,7 +358,6 @@ public class Arm {
             }
             DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "setPointAngle", anglePID.getSetPoint());
             // Return true if angle is not yet at the setpoint
-            opMode.telemetry.update();
             return !anglePID.atSetPoint();
         }
     }
