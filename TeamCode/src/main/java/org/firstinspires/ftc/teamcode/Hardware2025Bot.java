@@ -119,21 +119,22 @@ public class Hardware2025Bot
     public double       WORM_TILT_VIPER_TO_BASKET_DEG= 45.0;   // angle at when the viper motor starts extending when going to basket
     public double       WORM_TILT_VIPER_FROM_BASKET_DEG  = 80; // angle at when the viper motor starts extending from the basket
 
-    protected AnalogInput armTiltEncoder   = null;    // US Digital absolute magnetic encoder (MA3)
-    public double           armTiltAngle   = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
-    public static final double armTiltAngleOffset = 129.0;     // allows us to adjust the 0-360 deg range
-    public double       turretAngleTarget   = 0.0;     // Automatic movement target angle (degrees)
+    protected AnalogInput      armTiltEncoder    = null;    // US Digital absolute magnetic encoder (MA3)
+    public double              armTiltAngle       = 0.0;    // 0V = 0 degrees; 3.3V = 359.99 degrees
+    public static final double armTiltAngleOffset = 128.0;  // allows us to adjust the 0-360 deg range
 
     // This value is set at init.
     public static double startingArmTiltAngle = 0.0;
-    // Delta math from -0.1 deg -3891 encoder counts
-    //                  94.4 deg 5 encoder counts
-    //                  94.5 deg 3896 encoder counts range
-    public final static double ENCODER_COUNTS_PER_DEG  = 3896.0 / 94.5;
+    // Delta math: 332rpm -0.1 deg = -3891 encoder counts       435rpm:  3.8 deg = 0 encoder counts
+    //                    94.4 deg = 5 encoder counts                   91.2 deg = 2614 encoder counts
+    //             ==>    94.5 deg for 3896 encoder counts              87.4 deg = 2614 encoder counts
+//  public final static double ENCODER_COUNTS_PER_DEG  = 3896.0 / 94.5;  // for 332rpm motor
+    public final static double ENCODER_COUNTS_PER_DEG  = 2614.0 / 87.4;  // for 435rpm motor
+
 //  public final static double GOBILDA_435_MOTOR_REV = 537.7; // Ticks per revolution for a GOBILDA 435 RPM motor
-//  public final static double SUPER_DUTY_WORM_GEAR_REDUCTION = 28.0; // Gear reduction for the super duty worm gear from ardufruit
+//  public final static double SUPER_DUTY_WORM_GEAR_REDUCTION = 28.0; // Gear reduction for super duty worm gear
 //  public final static double ENCODER_COUNTS_PER_REV  = (GOBILDA_435_MOTOR_REV * SUPER_DUTY_WORM_GEAR_REDUCTION); // The number of counts it takes to complete one revolution
-//  public final static double ENCODER_COUNTS_PER_DEG = ENCODER_COUNTS_PER_REV / 360.0; // The number of counts it takes to tilt one degree
+//  public final static double ENCODER_COUNTS_PER_DEG = ENCODER_COUNTS_PER_REV / 360.0;  // The number of counts it takes to tilt one degree
 
     public final static double TILT_ANGLE_HW_MAX_DEG      = 94.00; // Arm at maximum rotation UP/BACK (horizontal = -200)
     public final static double TILT_ANGLE_BASKET_DEG      = 90.00; // Arm at rotation back to the basket for scoring
@@ -184,33 +185,32 @@ public class Hardware2025Bot
     public double       VIPER_HOLD_POWER   =  0.001; // Motor power used to HOLD viper slide at current extension
     public double       VIPER_LOWER_POWER  = -0.500; // Motor power used to RETRACT viper slide
 
-    // Encoder counts for 435 RPM lift motors theoretical max 5.8 rev * 384.54 ticks/rev = 2230 counts
-    // Encoder counts for 312 RPM lift motors theoretical max 5.8 rev * 537.7  ticks/rev = 3118 counts
-    // Encoder counts for 223 RPM lift motors theoretical max 5.8 rev * 751.8  ticks/rev = 4360 counts
+    // Encoder counts for 435 RPM lift motors theoretical max 5.80 rev * 384.54 ticks/rev = 2230 counts
+    // Encoder counts for 312 RPM lift motors theoretical max 5.76 rev * 537.7  ticks/rev = 3100 counts
+    // Encoder counts for 223 RPM lift motors theoretical max 5.60 rev * 751.8  ticks/rev = 4214 counts
 
-    public final static int    VIPER_EXTEND_ZERO  = 0;      // fully retracted (may need to be adjustable??)
-    public final static int    VIPER_EXTEND_AUTO_READY  = 1600;    // extend for collecting during auto
-    public final static int    VIPER_EXTEND_AUTO_COLLECT = 1600;    // extend for collecting during auto
-    public final static int    VIPER_EXTEND_SAMPLE3 = 1500;  // extend for collecting during auto (3rd sample along wall)
-    public final static int    VIPER_EXTEND_HANG1 = 3000;   // extend to this to prepare for level 2 ascent
-    public final static int    VIPER_EXTEND_PARK2 = 3410;   // extend to this to park in auto
-    public final static int    VIPER_EXTEND_PARK1  = 2200;   // extend to this to park in auto
-    public final static int    VIPER_EXTEND_HANG2 = 4000;   // retract to this extension during level 2 ascent
-    public final static int    VIPER_EXTEND_HANG3 = 3400;   // retract to this extension during level 2 ascent
-    public final static int    VIPER_EXTEND_GRAB  = 1600;   // extend for collection from submersible
-    public final static int    VIPER_EXTEND_SECURE=  490;   // Intake is tucked into robot to be safe
-    public final static int    VIPER_EXTEND_SAFE  = 1100;   // Intake is far enough out to safely rotate down and rotate up
-    public final static int    VIPER_EXTEND_AUTO1 = 1980;   // NEW raised to where the specimen hook is above the high bar
-    public final static int    VIPER_EXTEND_AUTO2 = 1200;   // NEW retract to clip the specimen to the bar
-    public final static int    VIPER_EXTEND_AUTO3 = 1410;   // NEW raised to where the specimen hook is above the high bar
-    public final static int    VIPER_EXTEND_CLIP  = 1580;   // AUTO: clip specimen on bar by just driving forward
-    public final static int    VIPER_EXTEND_BASKET= 4200;   // raised to basket-scoring height
-    public final static int    VIPER_EXTEND_42    = 3400;   // max forward extension for 42" limit
-    public final static int    VIPER_EXTEND_FULL1 = 2800;   // extended 36" forward (max for 20"x42" limit at horizontal)
-    public final static int    VIPER_EXTEND_FULL2 = 4214;   // hardware fully extended (never exceed this count!)
-    public final static int    VIPER_EXTEND_WALL0 = 25;     // AUTO: grab specimen off wall (on approach)
-    public final static int    VIPER_EXTEND_WALL1 = 230;    // AUTO: grab specimen off wall (lift off)
-    public final static double TILT_ANGLE_42      = Math.toDegrees(Math.acos((double)Hardware2025Bot.VIPER_EXTEND_42/(double)Hardware2025Bot.VIPER_EXTEND_BASKET)); // Minimum tilt angle needed to fully extend viper
+    public final static int    VIPER_EXTEND_ZERO         = 0;     // fully retracted (may need to be adjustable??)
+    public final static int    VIPER_EXTEND_AUTO_READY   = 1177;  // extend for collecting during auto
+    public final static int    VIPER_EXTEND_AUTO_COLLECT = 1177;  // extend for collecting during auto
+    public final static int    VIPER_EXTEND_SAMPLE3 = 1103;   // extend for collecting during auto (3rd sample along wall)
+    public final static int    VIPER_EXTEND_HANG1   = 2207;   // extend to this to prepare for level 2 ascent
+    public final static int    VIPER_EXTEND_PARK2   = 2508;   // extend to this to park in auto
+    public final static int    VIPER_EXTEND_PARK1   = 1618;   // extend to this to park in auto
+    public final static int    VIPER_EXTEND_HANG2   = 2942;   // retract to this extension during level 2 ascent
+    public final static int    VIPER_EXTEND_HANG3   = 2501;   // retract to this extension during level 2 ascent
+    public final static int    VIPER_EXTEND_GRAB    = 1177;   // extend for collection from submersible
+    public final static int    VIPER_EXTEND_SECURE  =  360;   // Intake is tucked into robot to be safe
+    public final static int    VIPER_EXTEND_SAFE    =  809;   // Intake is far enough out to safely rotate down and rotate up
+    public final static int    VIPER_EXTEND_AUTO1   = 1420;   // raised to where the specimen hook is above the high bar
+    public final static int    VIPER_EXTEND_AUTO2   =  810;   // retract to clip the specimen to the bar
+    public final static int    VIPER_EXTEND_AUTO3   = 1037;   // raised to where the specimen hook is above the high bar
+    public final static int    VIPER_EXTEND_CLIP    = 1162;   // AUTO: clip specimen on bar by just driving forward
+    public final static int    VIPER_EXTEND_BASKET  = 2980;   // raised to basket-scoring height
+    public final static int    VIPER_EXTEND_42      = 2501;   // max forward extension for 42" limit
+    public final static int    VIPER_EXTEND_FULL2   = 2975;   // hardware fully extended (never exceed this count!)
+    public final static int    VIPER_EXTEND_WALL0   = 19;     // AUTO: grab specimen off wall (on approach)
+    public final static int    VIPER_EXTEND_WALL1   = 170;    // AUTO: grab specimen off wall (lift off)
+    public final static double TILT_ANGLE_42  = Math.toDegrees(Math.acos((double)Hardware2025Bot.VIPER_EXTEND_42/(double)Hardware2025Bot.VIPER_EXTEND_BASKET)); // Minimum tilt angle needed to fully extend viper
 //  PIDControllerLift   liftPidController;           // PID parameters for the lift motors
 //  public double       liftMotorPID_p     = -0.100; //  Raise p = proportional
 //  public double       liftMotorPID_i     =  0.000; //  Raise i = integral

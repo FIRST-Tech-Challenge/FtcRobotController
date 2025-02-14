@@ -255,9 +255,6 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Viper", "%d counts ", robot.viperMotorPos );
             telemetry.addData("Elbow", "%.2f (%.1f deg)", robot.getElbowServoPos(), robot.getElbowServoAngle() );
             telemetry.addData("Wrist", "%.2f (%.1f deg)", robot.getWristServoPos(), robot.getElbowServoAngle() );
-//          telemetry.addData("42TiltAngle " , "(%.2f deg)", Hardware2025Bot.TILT_ANGLE_42);
-//          telemetry.addData("Secure Arm State", secureArmState);
-//          telemetry.addData("Gyro Angle", "%.1f degrees", robot.headingIMU() );
             telemetry.addData("Snorkle Ascent State", ascent2state);
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
             telemetry.update();
@@ -701,7 +698,7 @@ public abstract class Teleop extends LinearOpMode {
             robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_AUTO2);
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR2);
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR2);
-            sleep( 1500 ); //while( autoTiltMotorMoving() || autoViperMotorMoving());
+            sleep( 1200 ); //while( autoTiltMotorMoving() || autoViperMotorMoving());
             // release the specimen
             robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
         }
