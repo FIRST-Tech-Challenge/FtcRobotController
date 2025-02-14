@@ -25,7 +25,7 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Initialize drivetrain
-        drivetrain = new Drivetrain(hardwareMap, 3, 3, 15, 20, 1600);
+        drivetrain = new Drivetrain(hardwareMap, 3, 3, 30, 20, 1600);
 
         // Initialize lift motors
         leftLiftMotor = hardwareMap.get(DcMotorEx.class, "leftLiftMotor");
@@ -65,12 +65,13 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
             while (opModeIsActive()) {
                 drivetrain.alignToWall(Drivetrain.WallType.BACK, 40);
                 drivetrain.alignToWall(Drivetrain.WallType.LEFT, bPosition);
-                drivetrain.update();
 
-                if (drivetrain.isAtTarget) {
+                if (drivetrain.isAtTarget()) {
                     drivetrain.stop();
                     break;
                 }
+
+                drivetrain.update();
             }
 
             // start intake
@@ -165,9 +166,8 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
 
             drivetrain.alignToWall(Drivetrain.WallType.BACK, 40);
             drivetrain.alignToWall(Drivetrain.WallType.LEFT, 40);
-            drivetrain.update();
 
-            telemetry.addData("isAtTarget: ", drivetrain.isAtTarget);
+            telemetry.addData("isAtTarget: ", drivetrain.isAtTarget());
             telemetry.addData("horz: ", drivetrain.horizontalDistanceSensor.getDistance(DistanceUnit.CM));
             telemetry.addData("vert: ", drivetrain.verticalDistanceSensor.getDistance(DistanceUnit.CM));
             telemetry.addData("xWeights: ", drivetrain.xWeights.toString());
@@ -175,23 +175,26 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
             telemetry.addData("rWeights: ", drivetrain.rWeights.toString());
             telemetry.update();
 
-            if (drivetrain.isAtTarget) {
+            if (drivetrain.isAtTarget()) {
                 drivetrain.stop();
 
                 break;
             }
+
+            drivetrain.update();
         }
 
         // rotate to face the basket
         while (opModeIsActive()) {
             drivetrain.setAngle(-45);
-            drivetrain.update();
 
-            if (drivetrain.isAtTarget) {
+            if (drivetrain.isAtTarget()) {
                 drivetrain.stop();
 
                 break;
             }
+
+            drivetrain.update();
         }
 
         setLiftPosition(3266); // high basket encoder position for lift
@@ -217,13 +220,15 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
         // turn back
         while (opModeIsActive()) {
             drivetrain.setAngle(0);
-            drivetrain.update();
 
-            if (drivetrain.isAtTarget) {
+            if (drivetrain.isAtTarget()) {
                 drivetrain.stop();
 
                 break;
             }
+
+            drivetrain.update();
+
         }
     }
 }
