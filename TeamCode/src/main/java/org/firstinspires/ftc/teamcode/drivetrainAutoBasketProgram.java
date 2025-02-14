@@ -6,9 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Autonomous(name = "drivetrainAutoBasketProgram", group = "Drive")
@@ -16,33 +14,27 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
 
     private CRServo intakeServoLeft, intakeServoRight;
     private TouchSensor intakeTouchSensor;
-    private Servo intakePivotServo;
-
-    DcMotorEx leftLiftMotor, rightLiftMotor;
-    Servo basketServo;
-
-    static final int forwardMovement = 400;
-    boolean noHighBasket = true;
-    boolean isliftUp = false;
-    int pauseSeperation = 0;
-    boolean basket1stPos = false;
-    boolean basket2ndPos = false;
-    Drivetrain drivetrain;
+    private Servo intakePivotServo, basketServo;
+    private DcMotorEx leftLiftMotor, rightLiftMotor;
+    private Drivetrain drivetrain;
 
     @Override
     public void runOpMode() {
         // Initialize drivetrain
+        drivetrain = new Drivetrain(hardwareMap, 1, 3, 30, 20, 0.8);
+
         // Initialize lift motors
-        Drivetrain drivetrain = new Drivetrain(hardwareMap, 1, 3, 30, 20, 0.8);
         leftLiftMotor = hardwareMap.get(DcMotorEx.class, "leftLiftMotor");
         rightLiftMotor = hardwareMap.get(DcMotorEx.class, "rightLiftMotor");
-        basketServo = hardwareMap.get(Servo.class, "basketServo");
 
         leftLiftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         rightLiftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
         leftLiftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         rightLiftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+        // basket servo
+        basketServo = hardwareMap.get(Servo.class, "basketServo");
 
         // intake servos
         intakePivotServo = hardwareMap.get(Servo.class, "intakePivotServo");
@@ -54,8 +46,10 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
         intakePivotServo.setPosition(0.0);
 
         waitForStart();
+
+        // stick to the back wall at a 40cm distance to align for basket
         while (opModeIsActive()) {
-            // stick to the back wall at a 20cm distance
+
             drivetrain.alignToWall(Drivetrain.WallType.BACK, 40);
             drivetrain.alignToWall(Drivetrain.WallType.LEFT, 40);
             drivetrain.update();
@@ -75,6 +69,7 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
             }
         }
 
+        // rotate to face the basket
         while (opModeIsActive()) {
             drivetrain.setAngle(-45);
             drivetrain.update();
@@ -86,16 +81,13 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
             }
         }
 
-        while (noHighBasket) {
-            highBasketProcess(); // do basket
-        }
+        scoreInHighBasket(); // score block in basket, code will continue after completion
 
         // pause for 1 second
         sleep(1000);
 
         // its time to pick up a block, start by getting the robot in position
         while (opModeIsActive()) {
-            // stick to the back wall at a 20cm distance
             drivetrain.alignToWall(Drivetrain.WallType.BACK, 40);
             drivetrain.alignToWall(Drivetrain.WallType.LEFT, 37);
             drivetrain.update();
@@ -107,7 +99,7 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
         }
 
         // start intake
-        runIntakeMotors(IntoTheDeepTeleop.IntakeMode.NORMAL);
+        runIntakeMotors(IntakeMode.NORMAL);
         intakePivotServo.setPosition(1.0);
 
         // pause for 1 second
@@ -122,26 +114,27 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
 
             if (intakeTouchSensor.isPressed()) {
                 drivetrain.stop();
-                runIntakeMotors(IntoTheDeepTeleop.IntakeMode.STOP);
+                runIntakeMotors(IntakeMode.STOP);
                 break;
             }
         }
 
+        // deposit block in robot basket
         intakePivotServo.setPosition(0.0);
         sleep(1000); // sleep 1 second
-        runIntakeMotors(IntoTheDeepTeleop.IntakeMode.REVERSE);
-
+        runIntakeMotors(IntakeMode.REVERSE);
         sleep(3000); // sleep 3 second
+        runIntakeMotors(IntakeMode.STOP);
 
     }
 
-    public enum IntakeMode {
+    private enum IntakeMode {
         NORMAL,
         REVERSE,
         STOP
     }
 
-    public void runIntakeMotors(IntoTheDeepTeleop.IntakeMode mode) {
+    private void runIntakeMotors(IntakeMode mode) {
         switch (mode) {
             case NORMAL:
                 intakeServoLeft.setPower(-1.0);
@@ -158,57 +151,43 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
         }
     }
 
-
-    public void setLiftPosition(int targetPosition) {
+    /**
+     * Sets the lift to a specific position
+     * @param targetPosition: target position in encoder ticks
+     */
+    private void setLiftPosition(int targetPosition) {
         leftLiftMotor.setTargetPosition(-targetPosition);
         rightLiftMotor.setTargetPosition(targetPosition);
         leftLiftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         rightLiftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         leftLiftMotor.setVelocity(2000);
         rightLiftMotor.setVelocity(2000);
-
-        if (rightLiftMotor.getCurrentPosition() > 2890) {
-            isliftUp = true;
-        }
     }
 
-    private void highBasketProcess() {
-        if (!isliftUp) {
-            setLiftPosition(3266); // low basket encoder positions
-            telemetry.addData("Lift up", rightLiftMotor.getCurrentPosition());
-            telemetry.update();
-        }
-        else if ((isliftUp) && (!basket2ndPos)) {
-            basket();
-            telemetry.addData("Basket", rightLiftMotor.getCurrentPosition());
-            telemetry.update();
-        }
-        else if (basket2ndPos) {
-            pauseSeperation += 1;
-            if (pauseSeperation == 1) {
-                // drivetrain.nudgeInDirection(0.0, 0.4);
-                // drivetrain.stop();
-            }
-            setLiftPosition(0); // low basket encoder positions
-        }
-        else {
-            noHighBasket = false;
-        }
-    }
+    /**
+     * Runs the lift up to the high basket, scores a block, then goes back down to starting position
+     */
+    private void scoreInHighBasket() {
 
-    public void basket() {
-        if (basket1stPos == false) {
-            basketServo.setPosition(1.0);
+        setLiftPosition(3266); // high basket encoder position for lift
+
+        // wait until lift is at target position
+        while (rightLiftMotor.getCurrentPosition() < 2890){
+            sleep(1);
         }
-        else if ((basketServo.getPosition() > 0.45) && (basket1stPos == false)) {
-            basket1stPos = true;
+
+        // score block
+        basketServo.setPosition(1.0); // up
+        sleep(1500); // sleep 1.5 seconds
+        basketServo.setPosition(0.0); // back down
+        sleep(1500); // sleep 1.5 seconds
+
+        // return lift to default position
+        setLiftPosition(0);
+
+        // wait until lift is at target position
+        while (rightLiftMotor.getCurrentPosition() > 20){
+            sleep(1);
         }
-        sleep(1500);
-        basketServo.setPosition(0.0);
-        if (basketServo.getPosition() < 0.075) {
-            basket2ndPos = true;
-            basket1stPos = true;
-        }
-        sleep(1500);
     }
 }
