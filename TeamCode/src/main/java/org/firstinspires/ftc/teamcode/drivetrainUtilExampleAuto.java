@@ -24,7 +24,7 @@ public class drivetrainUtilExampleAuto extends LinearOpMode {
             drivetrain.alignToWall(Drivetrain.WallType.LEFT, 40);
             drivetrain.update();
 
-            telemetry.addData("isAtTarget: ", drivetrain.isAtTarget());
+            telemetry.addData("isAtTarget: ", drivetrain.isAtTarget);
             telemetry.addData("horz: ", drivetrain.horizontalDistanceSensor.getDistance(DistanceUnit.CM));
             telemetry.addData("vert: ", drivetrain.verticalDistanceSensor.getDistance(DistanceUnit.CM));
             telemetry.addData("xWeights: ", drivetrain.xWeights.toString());
@@ -32,7 +32,7 @@ public class drivetrainUtilExampleAuto extends LinearOpMode {
             telemetry.addData("rWeights: ", drivetrain.rWeights.toString());
             telemetry.update();
 
-            if (drivetrain.isAtTarget()) {
+            if (drivetrain.isAtTarget) {
                 break;
             }
         }

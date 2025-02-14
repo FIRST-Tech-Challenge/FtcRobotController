@@ -19,7 +19,7 @@ public class Drivetrain {
     private final IMU imu;
     public  final List<Double> xWeights, yWeights, rWeights;
     private final double distanceThreshold, angleThreshold, decelerationDistance, decelerationAngle, maxVelocity;
-    private boolean isLeftAligned = true, isBackAligned = true, isRotated = true, isAtTarget;
+    public boolean isAtTarget;
     private long targetReachedStartTime = 0; // Timestamp when weights became empty, if not at target will be -1
     private final long targetReachedDelay = 500; // 0.5 second delay in milliseconds
 
@@ -132,22 +132,15 @@ public class Drivetrain {
      */
     public void alignToWall(WallType wall, double distance) {
 
+        // stay square with wall
+        setAngle(0);
+
         // get distance from wall depending on which type is selected (left or back), also apply normalization; nothing above 100
         double currentDistance = (wall == WallType.LEFT)
                 ? Math.min(100, horizontalDistanceSensor.getDistance(DistanceUnit.CM)) : Math.min(100, verticalDistanceSensor.getDistance(DistanceUnit.CM));
 
-        // update alignment flags for each wall using distances and thresholds
-        if (wall == WallType.LEFT) {
-            isLeftAligned = ((currentDistance - distance) < distanceThreshold);
-        } else if (wall == WallType.BACK) {
-            isBackAligned = (Math.abs(currentDistance - distance) < distanceThreshold);
-        }
-
-        // stay square with wall
-        setAngle(0);
-
         // distance compensation calc
-        if (currentDistance > distance) {
+        if (currentDistance > (distance + distanceThreshold)) {
 
             // calculate weight using parabolic function
             double weight = calculateParabolicWeight(currentDistance - (distance + distanceThreshold), decelerationDistance);
@@ -157,7 +150,7 @@ public class Drivetrain {
             } else if (wall == WallType.BACK){
                 yWeights.add(-weight); // move back
             }
-        } else if (currentDistance < distance) {
+        } else if (currentDistance < (distance - distanceThreshold)) {
 
             // calculate weight using parabolic function
             double weight = calculateParabolicWeight((distance - distanceThreshold) - currentDistance, decelerationDistance);
@@ -175,18 +168,15 @@ public class Drivetrain {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         double currentAngle = orientation.getYaw(AngleUnit.DEGREES);
 
-        // update rotation flag, if within threshold of angleOffset
-        isRotated = (Math.abs(currentAngle - angleOffset) < angleThreshold);
-
         // angle compensation calc
-        if (currentAngle > angleOffset) {
+        if (currentAngle > (angleOffset + angleThreshold)) {
 
             // calculate weight using parabolic function
             double weight = calculateParabolicWeight(currentAngle - (angleOffset + angleThreshold), decelerationAngle);
 
             rWeights.add(weight); // rotate left
 
-        } else if (currentAngle < angleOffset) {
+        } else if (currentAngle < (angleOffset - angleThreshold)) {
 
             // calculate weight using parabolic function
             double weight = calculateParabolicWeight((angleOffset - angleThreshold) - currentAngle, decelerationAngle);
@@ -215,28 +205,6 @@ public class Drivetrain {
     }
 
     /**
-     * Checks if the drivetrain has reached its target using the distance sensor values and thresholds
-     * Has a delay to prevent false positives
-     *
-     * @return true if the drivetrain has reached its target, false otherwise
-     */
-    public boolean isAtTarget(){
-        // isAtTarget buffer
-        if (isLeftAligned && isBackAligned && isRotated) {
-            if (targetReachedStartTime == -1) {
-                targetReachedStartTime = System.currentTimeMillis();
-            } else if (System.currentTimeMillis() - targetReachedStartTime >= targetReachedDelay) {
-                isAtTarget = true;
-            }
-        } else{
-            isAtTarget = false;
-            targetReachedStartTime = -1;
-        }
-
-        return (isAtTarget);
-    }
-
-    /**
      * Must be continually called within your main loop to manage the drivetrain motors
      */
     public void update(){
@@ -247,6 +215,18 @@ public class Drivetrain {
         double y = calculateAverage(yWeights); // Forward/backward
         double x = calculateAverage(xWeights); // Strafe
         double rotation = calculateAverage(rWeights); // Rotate
+
+        // set isAtTarget variable if all weight lists are empty for 1 second
+        if (xWeights.isEmpty() && yWeights.isEmpty() && rWeights.isEmpty()) {
+            if (targetReachedStartTime == -1) {
+                targetReachedStartTime = System.currentTimeMillis();
+            } else if (System.currentTimeMillis() - targetReachedStartTime >= targetReachedDelay) {
+                isAtTarget = true;
+            }
+        } else{
+            isAtTarget = false;
+            targetReachedStartTime = -1;
+        }
 
         // clear lists
         xWeights.clear();
@@ -275,11 +255,6 @@ public class Drivetrain {
         frontRight.setVelocity(frontRightPower);
         backLeft.setVelocity(backLeftPower);
         backRight.setVelocity(backRightPower);
-
-        // reset target flags
-        isLeftAligned = true;
-        isBackAligned = true;
-        isRotated = true;
 
     }
 
