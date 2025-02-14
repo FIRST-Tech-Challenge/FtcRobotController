@@ -14,17 +14,17 @@ public class Claw {
     
     // Servo positions
     private static final double CLAW_OPEN = 0.1;
-    private static final double CLAW_CLOSED = 0.5;
+    private static final double CLAW_CLOSED = 0.7;
     private static final double WRIST_UP = 0.2;
     private static final double WRIST_DOWN = 0.55;
     private static final double ELBOW_UP = 0.65;      // Fully raised position
-    private static final double ELBOW_FORWARD = 0.4;  // Horizontal position
+    private static final double ELBOW_FORWARD = 0.35;  // Horizontal position
     private static final double ELBOW_DOWN = 0.0;     // Fully lowered position
     
     // Slide positions (in encoder ticks)
     private static final int SLIDE_GROUND = 0;
     private static final int SLIDE_LOW = 800;
-    private static final int SLIDE_MEDIUM = 1600;
+    private static final int SLIDE_MEDIUM = 1350;
     private static final int SLIDE_HIGH = 3000;
     
     // Slide movement parameters

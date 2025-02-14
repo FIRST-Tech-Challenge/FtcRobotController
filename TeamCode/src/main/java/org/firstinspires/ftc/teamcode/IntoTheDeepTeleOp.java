@@ -31,26 +31,6 @@ public class IntoTheDeepTeleOp extends OpMode {
     private Flywheel flywheel;
     private ElapsedTime timer = new ElapsedTime();
     
-    // Constants for vertical slide positions (encoder ticks)
-    private static final int SLIDE_GROUND = 0;
-    private static final int SLIDE_LOW = 800;
-    private static final int SLIDE_MEDIUM = 1600;
-    private static final int SLIDE_HIGH = 3000;
-    
-    // Constants for slide motor control
-    private static final double MAX_POWER = 0.5;
-    private static final double HOLDING_POWER = 0.1;  // Power to hold against gravity
-    private static final int POSITION_TOLERANCE = 10; // Acceptable error in encoder ticks
-    
-    // Servo position constants
-    private static final double CLAW_OPEN = 0.0;    // Claw servo open position
-    private static final double CLAW_CLOSED = 1.0;  // Claw servo closed position
-    private static final double WRIST_UP = 0.25;    // Wrist servo raised position
-    private static final double WRIST_DOWN = 0.55;  // Wrist servo lowered position
-    private static final double ELBOW_UP = 0.65;    // Elbow servo fully raised position
-    private static final double ELBOW_FORWARD = 0.3; // Elbow servo horizontal position
-    private static final double ELBOW_DOWN = 0.0;   // Elbow servo fully lowered position
-    
     // State tracking variables
     private boolean isInScoringSequence = false;    // Tracks if scoring sequence is active
     private double scoringSequenceStartTime = 0;    // Time when scoring sequence started
@@ -60,6 +40,8 @@ public class IntoTheDeepTeleOp extends OpMode {
     private boolean isWaitingToMoveMedium = false; // Tracks if we're waiting to move to medium position
     private double clawCloseTime = 0;              // Time when claw was closed
     private static final double CLAW_CLOSE_WAIT_TIME = 0.5; // Time to wait after closing claw
+    private int rightTriggerSequence = 0;          // Tracks the right trigger sequence stage
+    private boolean rightTriggerPressed = false;   // Tracks if right trigger was previously pressed
     
     // Hardware devices for manual control
     private DcMotorEx slideMotor;      // Vertical slide motor
@@ -102,7 +84,7 @@ public class IntoTheDeepTeleOp extends OpMode {
         // Initial robot setup - move to starting position
         claw.moveToGround();  // Move slide to ground position
         claw.elbowUp();       // Raise elbow
-        intake.in();          // Retract intake
+        //intake.in();          // Retract intake
         
         telemetry.addData("Status", "Initialized - Moving to ground position and retracting intake");
         telemetry.update();
@@ -132,61 +114,56 @@ public class IntoTheDeepTeleOp extends OpMode {
         }
         
         // Slide to low position sequence
-        if (gamepad1.right_bumper && !isMovingToLow) {
-            claw.moveToLow();      // Start moving slide to low position
-            isMovingToLow = true;
-            telemetry.addData("Status", "Starting movement to low position...");
+        if (gamepad1.right_bumper) {
+            claw.moveToLow();
         }
 
-        // Monitor and complete low position sequence
-        if (isMovingToLow) {
-            if (claw.isAtTargetPosition()) {
-                claw.openClaw();   // Open claw when target position reached
-                telemetry.addData("Status", "At target position, opening claw");
-                isMovingToLow = false;
-            } else {
-                telemetry.addData("Status", "Moving to position... Current: %d", claw.getCurrentPosition());
+        if (gamepad1.b) {
+            claw.openClaw();
+            rightTriggerSequence = 0;  // Reset the sequence
+        }
+            
+        // Ground pickup position
+        if (gamepad1.y) {
+            claw.moveToGround();
+            claw.elbowForward();
+            claw.wristUp();
+            claw.openClaw();
+            rightTriggerSequence = 0;  // Reset the sequence
+        }
+        
+        // Reset position
+        if (gamepad1.a) {
+            claw.moveToGround();
+            claw.elbowUp();
+        }
+        
+        // Claw grip control
+        if (gamepad1.right_trigger > 0.1) {
+            if (!rightTriggerPressed) {  // Only trigger once when pressed
+                if (rightTriggerSequence == 0) {
+                    claw.closeClaw();
+                    rightTriggerSequence = 1;
+                } else if (rightTriggerSequence == 1) {
+                    claw.moveToMedium();
+                    mecanumDrive.drive(-1, 0, 0);
+                }
+                rightTriggerPressed = true;
             }
         } else {
-            // Handle other claw controls when not moving to low position
-            
-            // Ground pickup position
-            if (gamepad1.y) {
-                claw.moveToGround();
-                claw.elbowForward();
-                claw.wristUp();
-                claw.openClaw();
-            }
-            
-            // Reset position
-            if (gamepad1.a) {
-                claw.moveToGround();
-                claw.elbowUp();
-            }
-            
-            // Claw grip control
-            if (gamepad1.right_trigger > 0.1) {
-                if (!isWaitingToMoveMedium) {
-                    claw.closeClaw();
-                    clawCloseTime = timer.seconds();
-                    isWaitingToMoveMedium = true;
-                } else if (timer.seconds() - clawCloseTime >= CLAW_CLOSE_WAIT_TIME) {
-                    claw.moveToMedium();
-                    isWaitingToMoveMedium = false;
-                }
-            }
-            
-            // Scoring sequence
-            if (gamepad1.left_trigger > 0.1 && !isInScoringSequence) {
-                isInScoringSequence = true;
-                scoringSequenceStartTime = timer.seconds();
-                // Initialize scoring position
-                claw.moveToLow();
-                claw.elbowDown();
-                claw.wristDown();
-                claw.openClaw();
-                intake.in();
-            }
+            rightTriggerPressed = false;  // Reset when trigger is released
+        }
+        
+        // Scoring sequence
+        if (gamepad1.left_trigger > 0.1 && !isInScoringSequence) {
+            isInScoringSequence = true;
+            scoringSequenceStartTime = timer.seconds();
+            // Initialize scoring position
+            claw.moveToLow();
+            claw.elbowDown();
+            claw.wristDown();
+            claw.openClaw();
+            intake.in();
         }
         
         // Handle scoring sequence timing
@@ -220,6 +197,9 @@ public class IntoTheDeepTeleOp extends OpMode {
         telemetry.addData("Slide Position", claw.getCurrentPosition());
         telemetry.addData("Slide Power", "%.2f", currentSlidePower);
         telemetry.addData("Limit Switch", limitSwitch.isPressed() ? "PRESSED" : "NOT PRESSED");
+        telemetry.addData("Right Trigger Sequence", rightTriggerSequence == 0 ? "Ready to Close" : 
+                                                  rightTriggerSequence == 1 ? "Ready to Raise" : 
+                                                  "Sequence Complete");
         telemetry.update();
     }
 }
