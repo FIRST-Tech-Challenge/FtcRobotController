@@ -306,7 +306,8 @@ public class RightAuto extends LinearOpMode {
         vLiftProxy = scheduler.add(new VLiftProxy(scheduler, hardware.verticalLift));
         hSlideProxy = scheduler.add(new HSlideProxy(scheduler, hardware));
         hClawProxy = scheduler.add(new HClawProxy(scheduler, hardware));
-        ascentProxy = scheduler.add(new AscentProxy(scheduler, hardware.ascent, 0));
+        ascentProxy = scheduler.add(new AscentProxy(scheduler, hardware.ascent));
+        hardware.ascent.calibrate(Hardware.ASCENT_INIT_POS);
 
         ElapsedTime finalizeTimer = new ElapsedTime();
 //        AtomicReference<Double> scoredIn = new AtomicReference<>((double) 0);

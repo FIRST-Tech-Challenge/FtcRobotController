@@ -140,7 +140,9 @@ public class MecanumTeleOp2 extends LinearOpMode {
         vLiftProxy = scheduler.add(new VLiftProxy(scheduler, hardware.verticalLift));
         hSlideProxy = scheduler.add(new HSlideProxy(scheduler, hardware));
         hClawProxy = scheduler.add(new HClawProxy(scheduler, hardware));
-        ascentProxy = scheduler.add(new AscentProxy(scheduler, hardware.ascent, Hardware.ASCENT_UP_POS));
+        ascentProxy = scheduler.add(new AscentProxy(scheduler, hardware.ascent));
+        hardware.ascent.calibrate(Hardware.ASCENT_UP_POS);
+        hardware.ascent.setTargetPosition(Hardware.ASCENT_UP_POS);
 
         telemetry.log().clear();
         telemetry.log().add("Set and ready to roll!");
