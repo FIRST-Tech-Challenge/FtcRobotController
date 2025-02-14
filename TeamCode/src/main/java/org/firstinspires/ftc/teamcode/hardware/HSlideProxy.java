@@ -57,6 +57,11 @@ public class HSlideProxy extends TaskTemplate {
         update();
     }
 
+    public void moveInSync() {
+        moveTo(Hardware.RIGHT_SLIDE_IN);
+        isOut = false;
+    }
+
     public ITask moveIn() {
         return new TaskTemplate(scheduler) {
             ElapsedTime timer;
@@ -67,7 +72,7 @@ public class HSlideProxy extends TaskTemplate {
                 if (activeTask != null) activeTask.requestStop();
                 activeTask = this;
                 isOut = false;
-                moveTo(Hardware.SLIDE_OVERSHOOT);
+                moveInSync();
                 timer = new ElapsedTime();
                 timer.reset();
             }
@@ -84,6 +89,11 @@ public class HSlideProxy extends TaskTemplate {
         };
     }
 
+    public void moveOutSync() {
+        moveTo(Hardware.RIGHT_SLIDE_OUT);
+        isOut = true;
+    }
+
     public ITask moveOut() {
         return new TaskTemplate(scheduler) {
             ElapsedTime timer;
@@ -93,7 +103,7 @@ public class HSlideProxy extends TaskTemplate {
                 if (isOut) requestStop();
                 if (activeTask != null) activeTask.requestStop();
                 activeTask = this;
-                moveTo(Hardware.RIGHT_SLIDE_OUT);
+                moveOutSync();
                 isOut = true;
                 timer = new ElapsedTime();
                 timer.reset();

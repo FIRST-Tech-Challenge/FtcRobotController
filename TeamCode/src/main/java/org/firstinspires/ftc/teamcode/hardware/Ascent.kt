@@ -71,7 +71,7 @@ class Ascent(
         } else lastTime = timeSource.markNow()
         var power = error * KP + eTotal * KI
 
-        Log.i("Ascent", "error: %d (iE: %f) target: %d actual: %d power: %f".format(error, eTotal, targetPos, currentPosition, power))
+//        Log.i("Ascent", "error: %d (iE: %f) target: %d actual: %d power: %f".format(error, eTotal, targetPos, currentPosition, power))
 
         device.power = min(max(power, -MAXPOW), +MAXPOW)
     }

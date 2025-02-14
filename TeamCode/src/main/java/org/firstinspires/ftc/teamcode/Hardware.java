@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -52,6 +51,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final double LAMP_ORANGE = 0.333;
     public static final double LAMP_YELLOW = 0.36;
     public static final double LAMP_PURPLE = 0.700;
+    public static final double LAMP_GREEN = 0.440;
     public static final int VLIFT_MAX_HEIGHT = 825;
     public static final int VLIFT_SCORE_HIGH = 790;
     public static final int VLIFT_SCORE_SPECIMEN = 283;
@@ -87,6 +87,12 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
         public static final SharedResource HSlideClaw = new SharedResource("HSlideClaw");
 
         public static final SharedResource Ascent = new SharedResource("Ascent");
+
+        /// The two lights on the top of the robot.
+        public static final SharedResource Signals = new SharedResource("Signals");
+
+        /// Limelight 3A.
+        public static final SharedResource Limelight = new SharedResource("Limelight");
     }
 
     public static final double TRACK_WIDTH = 11.375;
@@ -179,6 +185,9 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
 
     @HardwareName("lightRight")
     public Servo lightRight;
+
+    @HardwareName("limelightlight")
+    public Servo limelightLight;
 
     @HardwareName("clawColor")
     public ColorSensor clawColor;
