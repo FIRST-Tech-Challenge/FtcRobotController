@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.util.RobotLog
 import dev.aether.collaborative_multitasking.MultitaskScheduler
 import dev.aether.collaborative_multitasking.SharedResource
 import dev.aether.collaborative_multitasking.TaskTemplate
+import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.Hardware
 import kotlin.math.abs
 import kotlin.math.max
@@ -49,6 +50,7 @@ class Lift(val primaryMotor: DcMotor, val secondaryMotor: DcMotor) {
 
     fun stop() {
         setPower(0.0)
+        setTargetPosition(currentPosition)
     }
 
     private fun setPower(newPower: Double) {
@@ -67,7 +69,6 @@ class Lift(val primaryMotor: DcMotor, val secondaryMotor: DcMotor) {
 
     fun setTargetPosition(newPos: Int) {
         targetPos = clamp(newPos, MIN_HEIGHT, MAX_HEIGHT)
-        eTotal = 0.0
     }
 
     init {
@@ -80,6 +81,12 @@ class Lift(val primaryMotor: DcMotor, val secondaryMotor: DcMotor) {
 
     private val timeSource = TimeSource.Monotonic
     private var lastTime: ValueTimeMark? = null
+
+    private var lastPowerFinal = 0.0
+    private var lastPowerUnclamped = 0.0
+    private var lastError = 0
+
+    @JvmField var useInstrumentation = false
 
     private fun runToPosition() {
         val error = targetPos - currentPosition
@@ -97,8 +104,24 @@ class Lift(val primaryMotor: DcMotor, val secondaryMotor: DcMotor) {
         if (power < -0.05) power /= 10.0
         val powerFinal = clamp(power, -0.02, 1.0)
 
-        if (targetPos <= 0 && currentPosition <= POWEROFF_ZERO) setPower(0.0)
+        if (useInstrumentation) {
+            lastPowerFinal = powerFinal
+            lastPowerUnclamped = power
+            lastError = error
+        }
+
+        if (targetPos <= 0 && currentPosition <= POWEROFF_ZERO) {
+            setPower(0.0)
+            lastPowerFinal = 0.0
+        }
         else setPower(powerFinal)
+    }
+
+    fun writeInstrumentation(t: Telemetry) {
+        t.addData("Lift power final", lastPowerFinal)
+        t.addData("Lift power", lastPowerUnclamped)
+        t.addData("Lift error", lastError)
+        t.addData("Lift eTotal", eTotal)
     }
 
     fun update() {
