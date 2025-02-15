@@ -33,9 +33,6 @@ public class TeleopManualV1 extends LinearOpMode {
         Outtake outtake = new Outtake(init, telemetry);
         Intake intake = new Intake(init, telemetry);
 
-        VoltageSensor voltageSensor;
-        voltageSensor = init.getVoltageSensor();
-
         outtake.initTeleopWall();
 
         int target=0;
@@ -147,12 +144,17 @@ public class TeleopManualV1 extends LinearOpMode {
                 intake.transferIntake();
             }
 
-            if (voltageSensor.getVoltage() < 11){
-                intake.led();
+            // Controller 2 anti-fuck up code
+
+            // Reset Vertical slides
+
+            if (gamepad2.a){
+
             }
 
-            telemetry.addData("Volt", voltageSensor.getVoltage());
-            telemetry.update();
+            // Adjust Slides
+
+            // Reset Horizontal slides
 
             outtake.update();
             intake.update();
@@ -170,4 +172,3 @@ public class TeleopManualV1 extends LinearOpMode {
         }
     }
 }
-

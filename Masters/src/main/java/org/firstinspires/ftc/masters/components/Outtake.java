@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -21,11 +22,17 @@ public class Outtake implements Component{
 
     public int target = 0;
 
+    Servo led;
     private final Servo claw;
     public final Servo wrist, angleLeft, angleRight, position;
     private final DcMotor outtakeSlideLeft;
     private final DcMotor outtakeSlideRight;
     public final DcMotor outtakeSlideEncoder;
+
+    public int slideIncrement = 0;
+    public boolean slideFixed = false;
+
+    VoltageSensor voltageSensor;
 
     private Status status;
 
@@ -99,9 +106,11 @@ public class Outtake implements Component{
         this.outtakeSlideLeft =init.getOuttakeSlideLeft();
         this.outtakeSlideRight =init.getOuttakeSlideRight();
         this.outtakeSlideEncoder =init.getRightFrontMotor();
+        voltageSensor = init.getVoltageSensor();
         angleLeft = init.getAngleLeft();
         angleRight = init.getAngleRight();
         position = init.getPosition();
+        led = init.getLed();
         initializeHardware();
         status = Status.Front;
 
@@ -400,6 +409,23 @@ public class Outtake implements Component{
     private void setAngleServoTipSample(){
         angleLeft.setPosition(ITDCons.angleTipSample);
         angleRight.setPosition(ITDCons.angleTipSample);
+    }
+
+    private void resetSlides(){
+        if (!slideFixed) {
+            slideIncrement = slideIncrement - 100;
+            setTarget(slideIncrement);
+            if (voltageSensor.getVoltage() < 9) {
+                outtakeSlideLeft.setPower(0);
+                outtakeSlideRight.setPower(0);
+                outtakeSlideEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                outtakeSlideEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                slideFixed = true;
+            }
+        }
+        if (slideFixed){
+            led.setPosition(1);
+        }
     }
 
     private void setOuttakeBack(){
