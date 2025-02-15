@@ -249,14 +249,6 @@ public class BlueBotTeleop extends LinearOpMode {
       double right_joystick_steering_amt = right_joy_x * max_turn_radius;
       telemetry.addLine("Rt joystick raw: " + right_joy_x);
       telemetry.addLine("Rt joystick steer: " + right_joystick_steering_amt);
-      
-      // FIXME: Don't steer wheels back to home if vector magnitude is less than something
-      steer_wheels(
-        steering_angle + right_joystick_steering_amt,
-        steering_angle + right_joystick_steering_amt,
-        steering_angle - right_joystick_steering_amt,
-        steering_angle - right_joystick_steering_amt
-      );
 
       // Make the wheels move
       double actual_wheel_speed;
@@ -271,7 +263,41 @@ public class BlueBotTeleop extends LinearOpMode {
       }
 
       telemetry.addLine("Actual speed: " + actual_wheel_speed);
-      drive_wheels(actual_wheel_speed);
+
+      if (actual_wheel_speed != 0.0) {
+        steer_wheels(
+          steering_angle + right_joystick_steering_amt,
+          steering_angle + right_joystick_steering_amt,
+          steering_angle - right_joystick_steering_amt,
+          steering_angle - right_joystick_steering_amt
+        );
+        drive_wheels(actual_wheel_speed);
+      }
+      // Determine if the robot should turn in place
+      else {
+        // See if both joysticks are at center position, if so steer wheels
+        // to default position
+        if (right_joy_x == 0.0) {
+          steer_wheels(0.5);
+          drive_wheels(0.0);
+        }
+        else {
+          // Turn wheels to central pivot position
+          steer_wheels(
+            (0.25 + 0.5) / 2.0, // Front left
+            (0.5 + 0.75) / 2.0, // Front right
+            (0.0 + 0.25) / 2.0, // Back left
+            (0.75 + 1.0) / 2.0  // Back right
+          );
+
+          drive_wheels(
+            -1.0 * right_joy_x,
+            right_joy_x,
+            right_joy_x,
+            -1.0 * right_joy_x
+          );
+        }
+      }
 
       telemetry.update();
 
@@ -290,6 +316,9 @@ public class BlueBotTeleop extends LinearOpMode {
   }
 
   private void steer_wheels(double x_direction) {
+    if (Double.isNaN(x_direction)) {
+      x_direction = 0.5;
+    }
     driveBase.servoBL.setPosition(x_direction);
     driveBase.servoBR.setPosition(x_direction);
     driveBase.servoFL.setPosition(x_direction);
@@ -297,6 +326,12 @@ public class BlueBotTeleop extends LinearOpMode {
   }
 
   private void steer_wheels(double fl, double fr, double bl, double br) {
+    if (Double.isNaN(fl) || Double.isNaN(fr) || Double.isNaN(bl) || Double.isNaN(br)) {
+      fl = 0.5;
+      fr = 0.5;
+      bl = 0.5;
+      br = 0.5;
+    }
     driveBase.servoBL.setPosition(bl);
     driveBase.servoBR.setPosition(br);
     driveBase.servoFL.setPosition(fl);
@@ -304,10 +339,26 @@ public class BlueBotTeleop extends LinearOpMode {
   }
 
   private void drive_wheels(double drive_speed) {
+    if (Double.isNaN(drive_speed)) {
+      drive_speed = 0.0;
+    }
     driveBase.motorBL.setPower(drive_speed);
     driveBase.motorBR.setPower(drive_speed);
     driveBase.motorFL.setPower(drive_speed);
     driveBase.motorFR.setPower(drive_speed);
+  }
+
+  private void drive_wheels(double fl, double fr, double bl, double br) {
+    if (Double.isNaN(fl) || Double.isNaN(fr) || Double.isNaN(bl) || Double.isNaN(br)) {
+      fl = 0.5;
+      fr = 0.5;
+      bl = 0.5;
+      br = 0.5;
+    }
+    driveBase.motorBL.setPower(bl);
+    driveBase.motorBR.setPower(br);
+    driveBase.motorFL.setPower(fl);
+    driveBase.motorFR.setPower(fr);
   }
 
   public double fieldOrientedHeading() {
