@@ -16,9 +16,14 @@ public class BasketReadyAction extends KActionSet {
         pivotOuttakeHalfway.setName("pivotOuttakeHalfway");
         this.addAction(pivotOuttakeHalfway);
 
+        CheckLSPastHeightMM checkLSPastBasketReadyPos = new CheckLSPastHeightMM(raiseSlidesBasket,
+                Outtake.LS_SAMPLE_BASKET_READY_POS);
+        checkLSPastBasketReadyPos.setName("checkLSPastBasketReadyPos");
+        this.addAction(checkLSPastBasketReadyPos);
+
         KServoAutoAction pivotOuttakeBasket = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_BASKET_POS);
         pivotOuttakeBasket.setName("pivotOuttakeBasket");
-        pivotOuttakeBasket.setDependentActions(raiseSlidesBasket, pivotOuttakeHalfway);
+        pivotOuttakeBasket.setDependentActions(checkLSPastBasketReadyPos, pivotOuttakeHalfway);
         this.addAction(pivotOuttakeBasket);
 
     }

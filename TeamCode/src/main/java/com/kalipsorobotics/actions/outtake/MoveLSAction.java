@@ -29,6 +29,11 @@ public class MoveLSAction extends Action {
     public static double ERROR_TOLERANCE_TICKS;
     private final PidNav pidOuttakeLS;
     private double targetTicks;
+
+    public double getCurrentTicks() {
+        return currentTicks;
+    }
+
     private double currentTicks;
     private double overridePower = 0;
     private double targetErrorTicks;
