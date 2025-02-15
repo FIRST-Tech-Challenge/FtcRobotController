@@ -35,7 +35,7 @@ public class WallPickupDistanceSensorAction extends Action {
 
         this.purePursuitAction = purePursuitAction;
 
-        moveToDistanceThreshold = new MoveToDistanceThreshold(driveTrain, detectDistanceAction, -0.2);
+        moveToDistanceThreshold = new MoveToDistanceThreshold(driveTrain, detectDistanceAction, -0.4);
         moveToDistanceThreshold.setName("moveToDistanceThreshold");
         moveToDistanceThreshold.setDependentActions(purePursuitAction);
 

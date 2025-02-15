@@ -29,8 +29,6 @@ public class PurePursuitAction extends Action {
     public static final double P_XY_SLOW = 1.0/800.0;
     public static final double P_ANGLE_SLOW = 1.0/ Math.toRadians(130);
 
-    public static final double P_XY_SUPER_FAST = 1.0/50.0;
-    public static final double P_ANGLE_SUPER_FAST = 1.0/ Math.toRadians(15);
 
     private double lastSearchRadius = LAST_RADIUS_MM;
 

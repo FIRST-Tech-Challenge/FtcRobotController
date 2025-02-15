@@ -139,20 +139,24 @@ public class AutoSpecimen extends LinearOpMode {
         moveFloorSamples.setTelemetry(telemetry);
         moveFloorSamples.setDependentActions(wallToBarHangAction);
 
-        //first sample to depot
+        //move to sample
         moveFloorSamples.addPoint(-570, 230, -135, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
         moveFloorSamples.addPoint(-570, -425, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
         moveFloorSamples.addPoint( -670, -425, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_FAST); //y
         moveFloorSamples.addPoint(-1330, -500, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //y -475
+
+        //first sample to depot
         moveFloorSamples.addPoint(-1330, -775, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);//before push y=800
-        moveFloorSamples.addPoint(-580, -775, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
-        moveFloorSamples.addPoint(-280, -775, -180, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
+        //moveFloorSamples.addPoint(-580, -775, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
+        moveFloorSamples.addPoint(-510, -875, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
+        moveFloorSamples.addPoint(-280, -675, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
 
         //second sample to depot
         moveFloorSamples.addPoint(-1330, -775, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW); //y -800
         moveFloorSamples.addPoint(-1330, -1000, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);//// beforepush
-        moveFloorSamples.addPoint(-580, -1000, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
-        moveFloorSamples.addPoint(-280,-1000,-180, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
+        //moveFloorSamples.addPoint(-580, -1000, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
+        moveFloorSamples.addPoint(-510,-1100,-180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
+        moveFloorSamples.addPoint(-280,-900,-180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
         //-367.5
         //moveFloorSamples.addPoint(-175, -1065, -180);?
 
@@ -165,7 +169,7 @@ public class AutoSpecimen extends LinearOpMode {
         moveFloorSamples.addPoint(-600, THRID_SAMPLE_PUSHING_Y, -180, PurePursuitAction.P_XY,
                 PurePursuitAction.P_ANGLE_SLOW);
         moveFloorSamples.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X, THRID_SAMPLE_PUSHING_Y, -180,
-                PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW); // -1065 // WAllPICKUP = -150
+                PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW); // -1065 // WAllPICKUP = -150
 //        moveFloorSamples.addPoint(-350, -1065, -180);//move back out to avoid sample carry //y = -1200 y = 375
         redAutoSpecimen.addAction(moveFloorSamples);
 //

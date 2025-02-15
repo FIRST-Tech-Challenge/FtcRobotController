@@ -39,7 +39,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         liftSpecimenOffWall.setDependentActions(closeClaw);
         this.addAction(liftSpecimenOffWall);
 
-        WaitAction wait = new WaitAction(750);
+        WaitAction wait = new WaitAction(250);
         wait.setName("wait");
         wait.setDependentActions(liftSpecimenOffWall);
         this.addAction(wait);
@@ -53,7 +53,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         moveToBar1.setName("moveToBar1");
         moveToBar1.setMaxTimeOutMS(3500);
         moveToBar1.setDependentActions(liftSpecimenOffWall);
-        moveToBar1.addPoint(SPECIMEN_HANG_POS_X + 150, hangPosY, 0, PurePursuitAction.P_XY_SUPER_FAST,
+        moveToBar1.addPoint(SPECIMEN_HANG_POS_X + 150, hangPosY, 0, PurePursuitAction.P_XY_FAST,
                 PurePursuitAction.P_ANGLE_FAST);
         moveToBar1.addPoint(SPECIMEN_HANG_POS_X + 50, hangPosY, 0, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE);
         this.addAction(moveToBar1);
@@ -96,10 +96,17 @@ public class WallToBarHangRoundTrip extends KActionSet {
         moveBarToWall.setName("moveBarToWall");
         moveBarToWall.setMaxTimeOutMS(3500);
         moveBarToWall.setDependentActions(specimenHang);//-367.5
-        moveBarToWall.addPoint(-200, WALL_PICKUP_Y, -170, PurePursuitAction.P_XY_SUPER_FAST,
+        moveBarToWall.addPoint(-200, WALL_PICKUP_Y, -170, PurePursuitAction.P_XY_FAST,
                 PurePursuitAction.P_ANGLE_FAST); //-205, 700
+//        moveBarToWall.addPoint(-200, WALL_PICKUP_Y, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
         moveBarToWall.addPoint(WALL_PICKUP_X + 25, WALL_PICKUP_Y, -180, PurePursuitAction.P_XY,
+                PurePursuitAction.P_ANGLE_FAST);
+        /*moveBarToWall.addPoint(SPECIMEN_HANG_POS_X + 100, hangPosY, 135, PurePursuitAction.P_XY_SLOW,
+                PurePursuitAction.P_ANGLE_FAST);
+        moveBarToWall.addPoint(WALL_PICKUP_X - 150, WALL_PICKUP_Y, 135, PurePursuitAction.P_XY_FAST,
                 PurePursuitAction.P_ANGLE_SLOW);
+        moveBarToWall.addPoint(WALL_PICKUP_X + 25, WALL_PICKUP_Y, 180, PurePursuitAction.P_XY,
+                PurePursuitAction.P_ANGLE_FAST);*/
         this.addAction(moveBarToWall);
 
         WallPickupDistanceSensorAction wallPickupDistanceSensorAction2 = new WallPickupDistanceSensorAction(outtake, moveBarToWall, driveTrain);
