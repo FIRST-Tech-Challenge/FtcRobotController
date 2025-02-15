@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.BBcode;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -9,6 +12,7 @@ import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.RedBasketP
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Arm;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.ChristmasLight;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Viper;
@@ -75,7 +79,7 @@ public class MainTeleOpWithAutoBasket extends LinearOpMode{
     HangState hangState = HangState.Home;
     SpecimenClipState specimenClipState = SpecimenClipState.Home;
     SubmersiblePickupState submersiblePickupState = SubmersiblePickupState.Home;
-
+    Limelight3A _limelight;
     ElapsedTime wristTimer = new ElapsedTime();
 
     final double wristFlipTime = 0.75;
@@ -132,6 +136,11 @@ public class MainTeleOpWithAutoBasket extends LinearOpMode{
         odo.setEncoderDirections(xDirection, yDirection);
         odo.resetPosAndIMU();
 
+        //Init limelight
+        _limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        _limelight.pipelineSwitch(1);
+        _limelight.start();
+
         TelemetryHelper telemetryHelper = new TelemetryHelper(this);
         //Allows for telemetry to be added to without clearing previous data. This allows setting up telemetry functions to be called in the loop or adding telemetry items within a function and not having it cleared on next loop
         telemetry.setAutoClear(false);
@@ -178,9 +187,31 @@ public class MainTeleOpWithAutoBasket extends LinearOpMode{
 //        odo.setPosition(PoseStorage.currentPose);
         telemetry.addData("PositionRR", ()-> getPinpoint(odo.getPositionRR()));
         telemetry.addData("Position", ()-> getPinpoint(odo.getPosition()));
+        boolean tagFound = false;
+        double botYaw = 0;
         while(opModeIsActive()){ //while loop for when program is active
             odo.update();
 
+            //Manage LimeLight
+            LLResult lLResult = _limelight.getLatestResult();
+            if (lLResult != null) {
+                Pose3D botPose;
+                if (lLResult.getTa() > 0) {
+                    tagFound = true;
+                    botPose = lLResult.getBotpose();
+                    botYaw = lLResult.getBotpose().getOrientation().getYaw();
+                    telemetry.addData("BotPose", botPose.getPosition());
+                    telemetry.addData("Yaw", botYaw);
+                }
+                else {
+                    tagFound = false;
+                    telemetry.addData("Limelight", "Tag not found");
+                }
+            }
+            else {
+                tagFound = false;
+                telemetry.addData("Limelight", "No data available");
+            }
             //Drive code
             drivetrain.Drive();
 
@@ -517,4 +548,5 @@ public class MainTeleOpWithAutoBasket extends LinearOpMode{
     private String getPinpoint(Pose2d pos) {
         return String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.position.x, pos.position.y, Math.toDegrees(pos.heading.toDouble()));
     }
+
 }
