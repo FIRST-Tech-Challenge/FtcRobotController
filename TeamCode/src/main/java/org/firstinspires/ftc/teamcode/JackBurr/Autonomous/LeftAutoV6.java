@@ -57,7 +57,7 @@ public class LeftAutoV6 extends LinearOpMode {
     public static Vector2d position2 = new Vector2d(47, 43);
     public static double position2HeadingDegrees = -85;
 
-    public static Vector2d position4 = new Vector2d(56, 42);
+    public static Vector2d position4 = new Vector2d(53, 45);
 
 
     //+X is left, +Y is backwards

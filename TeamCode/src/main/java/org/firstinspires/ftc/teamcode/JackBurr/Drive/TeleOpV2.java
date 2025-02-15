@@ -538,12 +538,12 @@ public class TeleOpV2 extends OpMode {
                 break;
             case LEVEL_TWO_ASCENT:
                 if(deliverySlides.getLeftSlidePosition() != leftSlideDown || deliverySlides.getRightSlidePosition() != leftSlideDown) {
-                    deliverySlides.runLeftSlideToPositionPID(leftSlideDown);
-                    deliverySlides.runRightSlideToPositionPID(rightSlideDown);
+                    deliverySlides.runLeftSlideToPosition(leftSlideDown, 1);
+                    deliverySlides.runRightSlideToPosition(rightSlideDown, 1);
                 }
                 else if(deliverySlides.getLeftSlidePosition() != 0 && deliverySlides.getRightSlidePosition() != 0){
-                    deliverySlides.runLeftSlideToPositionPID(leftSlideDown);
-                    deliverySlides.runRightSlideToPositionPID(rightSlideDown);
+                    deliverySlides.runLeftSlideToPosition(leftSlideDown, 1);
+                    deliverySlides.runRightSlideToPosition(rightSlideDown, 1);
                 }
                 if(!intakeSlides.isAllTheWayIn()) {
                     intakeSlides.intakeAllTheWayIn();
@@ -639,7 +639,7 @@ public class TeleOpV2 extends OpMode {
                     state = SystemStatesV1.EXTEND_AND_DROP;
                     buttonTimer.reset();
                 }
-                intakeSlides.intakeIn();
+                intakeSlides.intakeAllTheWayIn();
                 slidesTimer.reset();
                 grippersTimer.reset();
                 grippersOpened = false;

@@ -51,18 +51,18 @@ public class LeftAutoV7 extends LinearOpMode {
     //----------------------------------------------------------------------------------------
     public static Pose2d startPose = new Pose2d(36, 62, Math.toRadians(-90)); // (60,0), 180
 
-    public static Vector2d position1 = new Vector2d(51, 47);
-    public static double position1HeadingDegrees = -132;
+    public static Vector2d position1 = new Vector2d(53, 49);
+    public static double position1HeadingDegrees = -135;
 
     public static Vector2d position2 = new Vector2d(47, 43);
-    public static double position2HeadingDegrees = -83;
+    public static double position2HeadingDegrees = -85;
 
     public static Vector2d position4 = new Vector2d(56, 42);
     public static double position4HeadingDegrees = -85;
 
     public static Vector2d position5 = new Vector2d(47, 47);
     public static Vector2d position6 = new Vector2d(47, 0);
-    public static Vector2d position7 = new Vector2d(22, 6.5);
+    public static Vector2d position7 = new Vector2d(23, 6.5);
 
 
 
@@ -140,6 +140,7 @@ public class LeftAutoV7 extends LinearOpMode {
                 .strafeTo(position5)
                 .strafeTo(position6)
                 .turnTo(Math.toRadians(0))
+                .stopAndAdd(axon.axonLevelOne())
                 .strafeTo(position7);
         //traj3Builder = traj2Builder.fresh()
         //.turnTo(Math.toRadians(position3Degrees));
@@ -365,7 +366,6 @@ public class LeftAutoV7 extends LinearOpMode {
                     if(isStopRequested()){
                         return;
                     }
-                    deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_LEVEL_ONE_ASCENT);
                 }
                 step = 16;
             }
@@ -437,11 +437,23 @@ public class LeftAutoV7 extends LinearOpMode {
             }
         }
 
+        public class AxonLevelOne implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_LEVEL_ONE_ASCENT);
+                return false;
+
+            }
+        }
+
         public Action axonUp() {
             return new AxonUp();
         }
         public Action axonDown() {
             return new AxonDown();
+        }
+        public Action axonLevelOne(){
+            return new AxonLevelOne();
         }
     }
 }
