@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.BBcode;
 
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
 import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.RedBasketPose;
+import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.SpecimenPose;
 import org.firstinspires.ftc.teamcode.autoshellclasses.Red_Basket_Auto;
 
 import java.util.Arrays;
@@ -29,6 +31,7 @@ public class MecanumDrivetrain {
     //TODO drop and target pose needs to be set based on start location red vs blue
     private static final Pose2d dropPose = RedBasketPose.drop;
     private static final Pose2d targetPose = new Pose2d(dropPose.position.x+1.5, dropPose.position.y+1.5, dropPose.heading.toDouble());
+    private static final Pose2d specimenTargetPose = new Pose2d(38,-58, Math.toRadians(0));
     private static final double kpTranslation = 0.07;
     private static final double kpRotation = .7;
     private static final double angleToleranceDeg = 1;
@@ -105,13 +108,19 @@ public class MecanumDrivetrain {
         double turnEasingExponet = 3, turnEasingYIntercept = 0.05;
 
         Gamepad gamepad1 = _opMode.gamepad1;
-        if (gamepad1.right_bumper && PoseStorage.hasFieldCentricDrive) {
+        if (gamepad1.left_bumper && PoseStorage.hasFieldCentricDrive) {
             previousPose = pinpoint.getPositionRR();
 
             double[] motorPowers = calMotorPowers(previousPose, targetPose);
             setMotorPowers(motorPowers);
 
-        } else {
+        } else if(gamepad1.right_bumper && PoseStorage.hasFieldCentricDrive) {
+            previousPose = pinpoint.getPositionRR();
+            double[] motorPowers = calMotorPowers(previousPose, specimenTargetPose);
+            setMotorPowers(motorPowers);
+
+        }
+        else {
             //drive inputs
             drive = gamepad1.left_stick_y;
             turn = turnSpeedMultiplier * (Math.pow((gamepad1.right_stick_x * -1), turnEasingExponet) + (Math.signum(gamepad1.right_stick_x * -1) * turnEasingYIntercept));
