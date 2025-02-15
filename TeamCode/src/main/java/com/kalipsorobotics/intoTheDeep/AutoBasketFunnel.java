@@ -82,7 +82,8 @@ public class AutoBasketFunnel extends LinearOpMode {
         redAutoBasket.addAction(delayBeforeStart);
 
         //================begin of first specimen====================
-        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake,-190);
+        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake,-290,
+                true);
         wallToBarHangAction.setName("wallToBarHangAction");
         wallToBarHangAction.setDependentActions(delayBeforeStart);
         redAutoBasket.addAction(wallToBarHangAction);

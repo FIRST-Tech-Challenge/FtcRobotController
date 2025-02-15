@@ -19,7 +19,7 @@ public class CheckLSPastHeightMM extends Action {
     public boolean checkIfPastHeight() {
         Log.d("checkPastHeight",
                 "numba  " + moveLSAction.linearSlide1.getCurrentPosition() + "  checking litmita  " + checkingLimitMM );
-        return (Math.abs(CalculateTickPer.ticksToMmLS(moveLSAction.linearSlide1.getCurrentPosition())) > Math.abs(checkingLimitMM  - MoveLSAction.ERROR_TOLERANCE_TICKS - 7));
+        return (Math.abs(CalculateTickPer.ticksToMmLS(moveLSAction.linearSlide1.getCurrentPosition())) > Math.abs(checkingLimitMM  - CalculateTickPer.ticksToMmLS(MoveLSAction.ERROR_TOLERANCE_TICKS) - 25));
     }
 
     @Override
