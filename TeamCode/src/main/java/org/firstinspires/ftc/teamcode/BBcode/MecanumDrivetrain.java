@@ -23,8 +23,16 @@ public class MecanumDrivetrain {
     DcMotorEx _rightBack;
     GoBildaPinpointDriverRR pinpoint;
     // Proportional control gains (tweak these values during testing)
-    private static final double kpTranslation = 0.01;
-    private static final double kpRotation = 0.01;
+    private static Pose2d previousPose = new Pose2d(0, 0, 0);
+    //private static final Pose2d testTargetPose = new Pose2d(-39.5, -43.5, 0);
+    //private static final Pose2d targetPose = new Pose2d(-53.9, -53.275, Math.toRadians(45));
+    //TODO drop and target pose needs to be set based on start location red vs blue
+    private static final Pose2d dropPose = RedBasketPose.drop;
+    private static final Pose2d targetPose = new Pose2d(dropPose.position.x+1.5, dropPose.position.y+1.5, dropPose.heading.toDouble());
+    private static final double kpTranslation = 0.07;
+    private static final double kpRotation = .7;
+    private static final double angleToleranceDeg = 1;
+    private static final double distanceToleranceInch = .25;
     // Constructor
     public MecanumDrivetrain(OpMode opMode) {
         _opMode = opMode;
@@ -54,14 +62,16 @@ public class MecanumDrivetrain {
         opMode.telemetry.addData("Error X", ()->getErrorX(pinpoint.getPositionRR()));
         opMode.telemetry.addData("Error Y", ()->getErrorY(pinpoint.getPositionRR()));
         opMode.telemetry.addData("Error Yaw", ()->getErrorYaw(pinpoint.getPositionRR()));
-        opMode.telemetry.addData("Powers", ()-> Arrays.toString(calMotorPowers(getErrorX(pinpoint.getPositionRR()), getErrorY(pinpoint.getPositionRR()), getErrorYaw(pinpoint.getPositionRR()))));
+        opMode.telemetry.addData("LF", ()-> calMotorPowers(previousPose, targetPose)[0]);
+        opMode.telemetry.addData("RF", ()-> calMotorPowers(previousPose, targetPose)[1]);
+        opMode.telemetry.addData("LB", ()-> calMotorPowers(previousPose, targetPose)[2]);
+        opMode.telemetry.addData("RB", ()-> calMotorPowers(previousPose, targetPose)[3]);
 
     }
     private double getErrorX(Pose2d currentPose) {
         if (currentPose == null) {
             return 0;
         }
-        Pose2d targetPose = RedBasketPose.drop;
 
         //get error from pinpoint stuff
         double errorX = targetPose.position.x - currentPose.position.x;
@@ -71,7 +81,6 @@ public class MecanumDrivetrain {
         if (currentPose == null) {
             return 0;
         }
-        Pose2d targetPose = RedBasketPose.drop;
 
         //get error from pinpoint stuff
         double errorY = targetPose.position.y - currentPose.position.y;
@@ -81,10 +90,9 @@ public class MecanumDrivetrain {
         if (currentPose == null) {
             return 0;
         }
-        Pose2d targetPose = RedBasketPose.drop;
 
         //get error from pinpoint stuff
-        double errorYaw = targetPose.heading.toDouble() - currentPose.heading.toDouble();
+        double errorYaw = Math.toDegrees(targetPose.heading.toDouble()) - Math.toDegrees(currentPose.heading.toDouble());
         return errorYaw;
     }
     public void Drive() {
@@ -98,31 +106,11 @@ public class MecanumDrivetrain {
 
         Gamepad gamepad1 = _opMode.gamepad1;
         if (gamepad1.right_bumper) {
-            Pose2d currentPose = pinpoint.getPositionRR();
-            Pose2d targetPose = new Pose2d(-39.5, -43.5, 0);
+            previousPose = pinpoint.getPositionRR();
 
-            //get error from pinpoint stuff
-            double errorX = targetPose.position.x - currentPose.position.x;
-            double errorY = targetPose.position.y - currentPose.position.y;
-            double distanceError = Math.hypot(errorX, errorY);
+            double[] motorPowers = calMotorPowers(previousPose, targetPose);
+            setMotorPowers(motorPowers);
 
-            /*
-             * For a mecanum drive, we want to translate the field-centric error vector into
-             * robot–centric coordinates. To do this, rotate the error vector by the negative
-             * of the robot’s current heading.
-             */
-            double robotHeading = currentPose.heading.toDouble();
-            double robotRelativeX = errorX * Math.cos(robotHeading) + errorY * Math.sin(robotHeading);
-            double robotRelativeY = -errorX * Math.sin(robotHeading) + errorY * Math.cos(robotHeading);
-
-            double errorYaw = targetPose.heading.toDouble() - robotHeading;
-            if (distanceError < .5 && Math.abs(errorYaw) < Math.toRadians(2)) {
-                setMotorPowers(new double[]{0, 0, 0, 0});
-                return;
-            } else {
-                double[] motorPowers = calMotorPowers(robotRelativeX, robotRelativeY, errorYaw);
-                setMotorPowers(motorPowers);
-            }
         } else {
             //drive inputs
             drive = gamepad1.left_stick_y;
@@ -193,36 +181,66 @@ public class MecanumDrivetrain {
         _leftBack.setPower(powers[2]);
         _rightBack.setPower(powers[3]);
     }
-    private double[] calMotorPowers(double x, double y, double yaw) {
+    private double[] calMotorPowers(Pose2d currentPose, Pose2d targetPose) {
+        //get error from pinpoint stuff
+        double errorX = targetPose.position.x - currentPose.position.x;
+        double errorY = targetPose.position.y - currentPose.position.y;
+        double distanceError = Math.hypot(errorX, errorY);
+        double maxDrive = 1;
+        double targetSlowDownDistance = 8;
+        double minDrive = 0.30;
+        /*
+         * For a mecanum drive, we want to translate the field-centric error vector into
+         * robot–centric coordinates. To do this, rotate the error vector by the negative
+         * of the robot’s current heading.
+         */
+        double robotHeading = currentPose.heading.toDouble();
+        double robotRelativeX = errorX * Math.cos(robotHeading) + errorY * Math.sin(robotHeading);
+        double robotRelativeY = -errorX * Math.sin(robotHeading) + errorY * Math.cos(robotHeading);
+        robotRelativeY = -robotRelativeY;
+        double errorYaw = targetPose.heading.toDouble() - robotHeading;
+        if (distanceError < distanceToleranceInch && Math.abs(Math.toDegrees(errorYaw)) < angleToleranceDeg) {
+            return new double[]{0, 0, 0, 0};
+        } else {
 
-        x = x * kpTranslation;
-        y = y * kpTranslation;
-        yaw = yaw * kpRotation;
-        // Calculate wheel powers.
+            double drive = robotRelativeX * kpTranslation;
+            double strafe = robotRelativeY * kpTranslation;
+            double turn = errorYaw * kpRotation;
+            // Calculate wheel powers.
 //        double leftFrontPower    =  x - y - yaw;
 //        double rightFrontPower   =  x + y + yaw;
 //        double leftBackPower     =  x + y - yaw;
 //        double rightBackPower    =  x - y + yaw;
 
-        // Calculate individual motor powers for mecanum drive
-        double leftFrontPower  = y + x + yaw;
-        double rightFrontPower = y - x - yaw;
-        double leftBackPower   = y - x + yaw;
-        double rightBackPower  = y + x - yaw;
+            // Calculate individual motor powers for mecanum drive
+            double leftFrontPower = strafe + drive - turn;
+            double rightFrontPower = strafe - drive - turn;
+            double leftBackPower = strafe - drive + turn;
+            double rightBackPower = strafe + drive + turn;
 
-        // Normalize wheel powers to be less than 1.0
-        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        max = Math.max(max, Math.abs(leftBackPower));
-        max = Math.max(max, Math.abs(rightBackPower));
+            leftFrontPower = -leftFrontPower;
+            rightBackPower = -rightBackPower;
+            // Normalize wheel powers to be less than 1.0
+            double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+            max = Math.max(max, Math.abs(leftBackPower));
+            max = Math.max(max, Math.abs(rightBackPower));
 
-        if (max > 1.0) {
-            leftFrontPower /= max;
-            rightFrontPower /= max;
-            leftBackPower /= max;
-            rightBackPower /= max;
+            if (distanceError < targetSlowDownDistance) {
+                maxDrive = distanceError / targetSlowDownDistance;
+                maxDrive = Math.max(maxDrive, minDrive);
+            } else {
+                maxDrive = 1;
+            }
+            if (max > maxDrive) {
+                leftFrontPower /= max;
+                rightFrontPower /= max;
+                leftBackPower /= max;
+                rightBackPower /= max;
+            }
+
+
+            // Return the motor powers.
+            return new double[]{leftFrontPower, rightFrontPower, leftBackPower, rightBackPower};
         }
-
-        // Return the motor powers.
-        return new double[]{leftFrontPower, rightFrontPower, leftBackPower, rightBackPower};
     }
 }
