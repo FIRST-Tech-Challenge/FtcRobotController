@@ -93,6 +93,37 @@ public class BlueBotTeleop extends LinearOpMode {
     return updated_drive_direction;
   }
 
+  enum GeneralDirection {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+  }
+
+  private GeneralDirection get_general_direction(double steering_angle) {
+    double north = 0.5;
+    double east = 0.25;
+    double west = 0.75;
+
+    double northEast = (east + north) / 2.0;
+    double northWest = (north + west) / 2.0;
+    double southWest = (west + 1.0) / 2.0;
+    double southEast = (0.0 + east) / 2.0;
+
+    if (steering_angle <= northEast && steering_angle >= southEast) {
+      return GeneralDirection.RIGHT;
+    }
+    else if (steering_angle <= northWest && steering_angle >= northEast) {
+      return GeneralDirection.UP;
+    }
+    else if (steering_angle >= northWest && steering_angle <= southWest) {
+      return GeneralDirection.LEFT;
+    }
+    else {
+      return GeneralDirection.DOWN;
+    }
+  }
+
   @Override
   public void runOpMode() throws InterruptedException {
 
@@ -271,12 +302,42 @@ public class BlueBotTeleop extends LinearOpMode {
       telemetry.addLine("Actual speed: " + actual_wheel_speed);
 
       if ((actual_wheel_speed > 0.001) || (actual_wheel_speed < -0.001)) {
-        steer_wheels(
-          steering_angle + right_joystick_steering_amt,
-          steering_angle + right_joystick_steering_amt,
-          steering_angle - right_joystick_steering_amt,
-          steering_angle - right_joystick_steering_amt
-        );
+        // Here we're moving the robot in some direction. The heading can be simplified
+        // as generally strafing (relative to the front of the robot) up, down, left, or right.
+        // That general direction implies that different pairs of wheels are driving the robot.
+        // That wheel pair needs to turn into the turn and the other two wheels drive out of
+        // the turn.
+        // As an example, if the robot is moving forward, the front left and right wheels should
+        // steer into the turn and the back left and right wheels should steer awy from the turn.
+        // When the robot is moving right, the right two wheels should steer into the turn and 
+        // the left two wheels should steer out of the turn.
+
+        // Determine the general direction of the robot
+        GeneralDirection general_direction = get_general_direction(steering_angle);
+        if (general_direction == GeneralDirection.UP || general_direction == GeneralDirection.DOWN) {
+          steer_wheels(
+            steering_angle + right_joystick_steering_amt,
+            steering_angle + right_joystick_steering_amt,
+            steering_angle - right_joystick_steering_amt,
+            steering_angle - right_joystick_steering_amt
+          );
+        }
+        else if (general_direction == GeneralDirection.LEFT) {
+          steer_wheels(
+            steering_angle + right_joystick_steering_amt, // Front left
+            steering_angle - right_joystick_steering_amt, // Front right
+            steering_angle + right_joystick_steering_amt, // Back left
+            steering_angle - right_joystick_steering_amt  // Back right
+          );
+        }
+        else {
+          steer_wheels(
+            steering_angle - right_joystick_steering_amt, // Front left
+            steering_angle + right_joystick_steering_amt, // Front right
+            steering_angle - right_joystick_steering_amt, // Back left
+            steering_angle + right_joystick_steering_amt  // Back right
+          );
+        }
         actual_wheel_speed *= 0.75;
         drive_wheels(actual_wheel_speed);
       }
