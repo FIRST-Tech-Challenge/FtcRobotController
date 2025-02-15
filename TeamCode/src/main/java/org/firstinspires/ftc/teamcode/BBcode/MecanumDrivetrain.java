@@ -59,13 +59,13 @@ public class MecanumDrivetrain {
         _telemetryHelper.initMotorTelemetry( _leftBack, "LB");
         _telemetryHelper.initMotorTelemetry( _rightFront, "RF");
         _telemetryHelper.initMotorTelemetry( _rightBack, "RB");
-        opMode.telemetry.addData("Error X", ()->getErrorX(pinpoint.getPositionRR()));
-        opMode.telemetry.addData("Error Y", ()->getErrorY(pinpoint.getPositionRR()));
-        opMode.telemetry.addData("Error Yaw", ()->getErrorYaw(pinpoint.getPositionRR()));
-        opMode.telemetry.addData("LF", ()-> calMotorPowers(previousPose, targetPose)[0]);
-        opMode.telemetry.addData("RF", ()-> calMotorPowers(previousPose, targetPose)[1]);
-        opMode.telemetry.addData("LB", ()-> calMotorPowers(previousPose, targetPose)[2]);
-        opMode.telemetry.addData("RB", ()-> calMotorPowers(previousPose, targetPose)[3]);
+//        opMode.telemetry.addData("Error X", ()->getErrorX(pinpoint.getPositionRR()));
+//        opMode.telemetry.addData("Error Y", ()->getErrorY(pinpoint.getPositionRR()));
+//        opMode.telemetry.addData("Error Yaw", ()->getErrorYaw(pinpoint.getPositionRR()));
+//        opMode.telemetry.addData("LF", ()-> calMotorPowers(previousPose, targetPose)[0]);
+//        opMode.telemetry.addData("RF", ()-> calMotorPowers(previousPose, targetPose)[1]);
+//        opMode.telemetry.addData("LB", ()-> calMotorPowers(previousPose, targetPose)[2]);
+//        opMode.telemetry.addData("RB", ()-> calMotorPowers(previousPose, targetPose)[3]);
 
     }
     private double getErrorX(Pose2d currentPose) {
@@ -105,7 +105,7 @@ public class MecanumDrivetrain {
         double turnEasingExponet = 3, turnEasingYIntercept = 0.05;
 
         Gamepad gamepad1 = _opMode.gamepad1;
-        if (gamepad1.right_bumper) {
+        if (gamepad1.right_bumper && PoseStorage.hasFieldCentricDrive) {
             previousPose = pinpoint.getPositionRR();
 
             double[] motorPowers = calMotorPowers(previousPose, targetPose);

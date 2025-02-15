@@ -160,6 +160,16 @@ public class MainTeleOpWithAutoBasket extends LinearOpMode{
         //Where the start button is clicked, put some starting commands after
 
         waitForStart();
+        telemetry.addData("HasRolloverPose", PoseStorage::hasRolloverPose);
+        if (PoseStorage.hasRolloverPose()) {
+            _christmasLight.off();
+            odo.setPosition(PoseStorage.currentPose);
+            PoseStorage.hasFieldCentricDrive = true;
+        } else {
+            _christmasLight.yellow();
+            PoseStorage.hasFieldCentricDrive = false;
+            //TODO setPose to a some other likely position??
+        }
 
         arm.MoveToHome();
         //odo.setPosition(PoseStorage.currentPose);
