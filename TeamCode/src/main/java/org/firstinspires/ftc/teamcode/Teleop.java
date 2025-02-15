@@ -59,7 +59,7 @@ public abstract class Teleop extends LinearOpMode {
 
     double    viperPower = 0.0;
     long      nanoTimeCurr=0, nanoTimePrev=0;
-    double    elapsedTime, elapsedHz;
+    double    cycleTimeElapsed, cycleTimeHz;
 
     /* Declare OpMode members. */
     Hardware2025Bot robot = new Hardware2025Bot();
@@ -98,8 +98,8 @@ public abstract class Teleop extends LinearOpMode {
     int         ascent2state = ASCENT_STATE_IDLE;
 	boolean     ascent2telem = false;
 
-    int geckoWheelState = 0;
-	
+    protected ElapsedTime ascent2Timer = new ElapsedTime();
+
     Gamepad.RumbleEffect visibleAprilTagRumble1;    // Use to build a custom rumble sequence.
     Gamepad.RumbleEffect rumblePixelBinSingle;
     Gamepad.RumbleEffect rumbleAscentReady;
@@ -240,8 +240,8 @@ public abstract class Teleop extends LinearOpMode {
             // Compute current cycle time
             nanoTimePrev = nanoTimeCurr;
             nanoTimeCurr = System.nanoTime();
-            elapsedTime  = (nanoTimeCurr - nanoTimePrev)/ 1000000.0;   // msec
-            elapsedHz    =  1000.0 / elapsedTime;
+            cycleTimeElapsed = (nanoTimeCurr - nanoTimePrev)/ 1000000.0;   // msec
+            cycleTimeHz =  1000.0 / cycleTimeElapsed;
 
             // Update telemetry data
 //          telemetry.addData("Front", "%.2f (%.0f cts/sec) %.2f (%.0f cts/sec)",
@@ -256,7 +256,7 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Elbow", "%.2f (%.1f deg)", robot.getElbowServoPos(), robot.getElbowServoAngle() );
             telemetry.addData("Wrist", "%.2f (%.1f deg)", robot.getWristServoPos(), robot.getElbowServoAngle() );
             telemetry.addData("Snorkle Ascent State", ascent2state);
-            telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
+            telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", cycleTimeElapsed, cycleTimeHz);
             telemetry.update();
 
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
@@ -786,6 +786,7 @@ public abstract class Teleop extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void processLevel2Ascent() {
+        boolean motorsFinished;
 
         // DRIVER 1 controls position the arm for hanging
         // DRIVER 2 controls initiate the actual hang
@@ -839,20 +840,24 @@ public abstract class Teleop extends LinearOpMode {
                     robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );  // we accidentally open the claw
                     robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_HANG2, 1.0, 1.0 );
                     ascent2state = ASCENT_STATE_LEVEL2;
+                    ascent2Timer.reset();
                 }
                 break;
 
             case ASCENT_STATE_LEVEL2 :
                 robot.processSnorkleExtension();
-                if( !robot.viperMotorBusy && !robot.snorkleLMotorBusy && !robot.snorkleRMotorBusy ) {
+                motorsFinished = !robot.viperMotorBusy && !robot.snorkleLMotorBusy && !robot.snorkleRMotorBusy;
+                if( motorsFinished || (ascent2Timer.milliseconds() > 3000.0) ) {
                     // Once viper is extended and snorkle has lifted us, rotate up to bar
                     robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_ASCENT2_DEG);
                     ascent2state = ASCENT_STATE_RETRACT;
+                    ascent2Timer.reset();
                 }
                 break;
 
             case ASCENT_STATE_RETRACT :
-                if( !robot.wormTiltMotorBusy) {
+                motorsFinished = !robot.wormTiltMotorBusy;
+                if( motorsFinished || (ascent2Timer.milliseconds() > 3000.0) ) {
                     // Once arm is up against the bar, retract the hook
                     robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_HANG3, 1.0, 1.0);
                     ascent2state = ASCENT_STATE_LIFT;
@@ -860,10 +865,12 @@ public abstract class Teleop extends LinearOpMode {
                 break;
 
             case ASCENT_STATE_LIFT :
-                if( !robot.viperMotorBusy) {
+                motorsFinished = !robot.viperMotorBusy;
+                if( motorsFinished || (ascent2Timer.milliseconds() > 3000.0) ) {
                     // Once hooked, tilt down to reduce stress on tilt-angle worm gear
                     robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_ASCENT3_DEG);
-                    robot.startSnorkleExtension(Hardware2025Bot.SNORKLE_LEVEL3C, 0.7 );
+                    robot.startSnorkleExtension(Hardware2025Bot.SNORKLE_LEVEL3C, 0.8 );
+//                  robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_HANG4, 1.0, 1.0);
                     ascent2state = ASCENT_STATE_MOVING2;
                 }
                 break;

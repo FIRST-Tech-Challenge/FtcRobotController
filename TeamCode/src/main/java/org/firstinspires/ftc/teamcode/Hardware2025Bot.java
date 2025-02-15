@@ -150,8 +150,8 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_DRIVE_DEG       =  4.00; // Arm for parking in auto or driving around
     public final static double TILT_ANGLE_TELEOP_COLLECT_DEG =  3.80; // Arm for collecting in TeleOp
     public final static double TILT_ANGLE_SPECIMEN0_DEG   = 60.00; // (NEW) Angle for grabbing specimens off field wall
-    public final static double TILT_ANGLE_SPECIMEN1_DEG   = 65.00; // AUTO: Angle for scoring specimens (above bar)
-    public final static double TILT_ANGLE_SPECIMEN2_DEG   = 59.40; // AUTO: Angle for scoring specimens (clipped)
+    public final static double TILT_ANGLE_SPECIMEN1_DEG   = 63.00; // AUTO: Angle for scoring specimens (above bar)
+    public final static double TILT_ANGLE_SPECIMEN2_DEG   = 57.40; // AUTO: Angle for scoring specimens (clipped)
     public final static double TILT_ANGLE_SPECIMEN3_DEG   = 90.00; // AUTO: Angle for backward specimen scoring
     public final static double TILT_ANGLE_CLIP_DEG        = 45.00; // AUTO: clip specimen on bar by just driving forward
     public final static double TILT_ANGLE_HW_MIN_DEG      =  0.00; // Arm at maximum rotation DOWN/FWD
@@ -198,10 +198,11 @@ public class Hardware2025Bot
     public final static int    VIPER_EXTEND_PARK1   = 1618;   // extend to this to park in auto
     public final static int    VIPER_EXTEND_HANG2   = 2942;   // retract to this extension during level 2 ascent
     public final static int    VIPER_EXTEND_HANG3   = 2501;   // retract to this extension during level 2 ascent
+    public final static int    VIPER_EXTEND_HANG4   = 2501;   // retract to this extension during level 2 ascent
     public final static int    VIPER_EXTEND_GRAB    = 1177;   // extend for collection from submersible
     public final static int    VIPER_EXTEND_SECURE  =  360;   // Intake is tucked into robot to be safe
     public final static int    VIPER_EXTEND_SAFE    =  809;   // Intake is far enough out to safely rotate down and rotate up
-    public final static int    VIPER_EXTEND_AUTO1   = 1420;   // raised to where the specimen hook is above the high bar
+    public final static int    VIPER_EXTEND_AUTO1   = 1450;   // raised to where the specimen hook is above the high bar
     public final static int    VIPER_EXTEND_AUTO2   =  810;   // retract to clip the specimen to the bar
     public final static int    VIPER_EXTEND_AUTO3   = 1037;   // raised to where the specimen hook is above the high bar
     public final static int    VIPER_EXTEND_CLIP    = 1162;   // AUTO: clip specimen on bar by just driving forward
