@@ -31,6 +31,9 @@ public class Outtake implements Component{
 
     private ElapsedTime elapsedTime = null;
 
+    protected boolean isLiftReady = false;
+    protected boolean isScoringDone = false;
+
 
     Telemetry telemetry;
     Init init;
@@ -52,6 +55,9 @@ public class Outtake implements Component{
         TransferToBucket_CloseClaw(200),
         TransferToBucket_Lift(0),
         TransferToBucket_Move(600),
+        AutoLiftToBucket(0),
+        ScoreSample(100),
+        ScoringSampleDone(100),
 
         TransferToWall_Up(200),
         TransferToWall_Back(600),
@@ -60,7 +66,6 @@ public class Outtake implements Component{
         BucketToTransfer_Down(500),
         BucketToTransfer_Open(200),
         BucketToTransfer_Final(200),
-
 
         WallToFront_lift(400),
         WallToFront_move(450),
@@ -134,8 +139,8 @@ public class Outtake implements Component{
 
     public void initAutoSample(){
         position.setPosition(ITDCons.positionBack);
-        angleLeft.setPosition(ITDCons.angleBack);
-        angleRight.setPosition(ITDCons.angleBack);
+        angleLeft.setPosition(ITDCons.angleMiddle);
+        angleRight.setPosition(ITDCons.angleMiddle);
         closeClaw();
         status= Status.InitAutoSample;
 
@@ -176,7 +181,6 @@ public class Outtake implements Component{
     public void moveToTransfer(){
 
         target = ITDCons.intermediateTarget;
-//        wrist.setPosition(ITDCons.wristFront);
         position.setPosition(ITDCons.positionTransfer);
         setAngleServoScore();
         status = Status.BucketToTransfer_Down;
@@ -186,10 +190,6 @@ public class Outtake implements Component{
     public void moveToBucket(){
         closeClaw();
         status = Status.TransferToBucket_CloseClaw;
-//        wrist.setPosition(ITDCons.wristBack);
-//        position.setPosition(ITDCons.positionBack);
-//        angleRight.setPosition(ITDCons.angleBack);
-//        angleLeft.setPosition(ITDCons.angleBack);
     }
 
     public void scoreSpecimen(){
@@ -204,9 +204,20 @@ public class Outtake implements Component{
         elapsedTime = new ElapsedTime();
     }
 
-    public void releaseSpecimen(){
-        target= ITDCons.ReleaseTarget;
+    public void scoreSample(){
+        if (status == Status.InitAutoSample){
+            setOuttakeBack();
+            setAngleServoScore();
+            status = Status.AutoLiftToBucket;
+        } else{
+            closeClaw(); //should already be closed but just in case
+            status = Status.TransferToBucket_CloseClaw;
+        }
+
+        elapsedTime = new ElapsedTime();
+        target = ITDCons.BucketTarget;
     }
+
 
     protected void moveSlide() {
 
@@ -214,8 +225,7 @@ public class Outtake implements Component{
         int rotatePos = -outtakeSlideEncoder.getCurrentPosition();
 
 //        telemetry.addData("rotatePos",rotatePos);
-        double pid = controller.calculate(rotatePos, target);
-        double lift=pid;
+        double lift = controller.calculate(rotatePos, target);
        // double lift = pid + f;
 
 //        telemetry.addData("lift", lift);
@@ -233,8 +243,19 @@ public class Outtake implements Component{
         this.target = target;
     }
 
-    public int getExtensionPos(){
+    public int getLiftPos(){
         return outtakeSlideEncoder.getCurrentPosition();
+    }
+
+    public void releaseSample(){
+        if (isLiftReady){
+            setAngleServoTipSample();
+            status=Status.ScoreSample;
+            elapsedTime = new ElapsedTime();
+
+        } else {
+            openClaw();
+        }
     }
 
 
@@ -279,19 +300,22 @@ public class Outtake implements Component{
                     target = ITDCons.BucketTarget;
                     elapsedTime= new ElapsedTime();
                     status = Status.TransferToBucket_Lift;
+                    isScoringDone= false;
+                    isLiftReady = false;
                 }
                 break;
 
             case TransferToBucket_Lift:
 
                //TODO: change from time to vertical slide position
-                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+                if (getLiftPos()>ITDCons.BucketTarget-500){
                     elapsedTime = new ElapsedTime();
 
                     setAngleServoToMiddle();
                     position.setPosition(ITDCons.positionBack);
 
                     status = Status.TransferToBucket_Move;
+                    isLiftReady = true;
                 }
                 break;
             case TransferToBucket_Move:
@@ -299,6 +323,28 @@ public class Outtake implements Component{
                     elapsedTime = null;
                     status = Status.Bucket;
                 }
+                break;
+
+            case AutoLiftToBucket:
+
+                if (getLiftPos()>ITDCons.BucketTarget-500) {
+                    isLiftReady = true;
+                }
+                break;
+
+            case ScoreSample:
+                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+                    elapsedTime=null;
+                    status = Status.ScoringSampleDone;
+                    openClaw();
+                }
+                break;
+            case ScoringSampleDone:
+                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+                    isScoringDone = true;
+                    moveToTransfer();
+                }
+
                 break;
 
             case BucketToTransfer_Down:
@@ -351,7 +397,24 @@ public class Outtake implements Component{
         angleRight.setPosition(ITDCons.angleScore);
     }
 
+    private void setAngleServoTipSample(){
+        angleLeft.setPosition(ITDCons.angleTipSample);
+        angleRight.setPosition(ITDCons.angleTipSample);
+    }
+
+    private void setOuttakeBack(){
+        position.setPosition(ITDCons.positionBack);
+    }
+
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public boolean isLiftReady(){
+        return isLiftReady;
+    }
+
+    public boolean isScoringDone(){
+        return  isScoringDone;
     }
 }

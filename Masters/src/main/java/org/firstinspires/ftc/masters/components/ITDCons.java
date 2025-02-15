@@ -39,6 +39,7 @@ public class ITDCons {
     public static double angleFront = 1;
     public static double angleMiddle = 0.8;
     public static double angleScore = 1;
+    public static double angleTipSample = 0.5;
 
     public static int wallPickupTarget = 5500;
     public static int transferPickupTarget = 0;
@@ -53,7 +54,7 @@ public class ITDCons {
 
     public static int BucketTarget = 50000;
     public static int SpecimenTarget = 23000;
-    public static int ReleaseTarget = 20000;
+
     public static int intermediateTarget = 20000;
     public static int WallTarget = 6000;
 
