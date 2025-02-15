@@ -66,7 +66,13 @@ public class BlueBotTeleop extends LinearOpMode {
     odometry.resetHeading();
     odometry.resetPosAndIMU();
     steer_wheels(previous_steer_direction);
-    
+
+    // Direction of drive, true = forward, false = reverse
+    boolean schmitt_direction = true;
+
+    // The tolerance of the schmitt trigger from y-axis set to zero.
+    double schmitt_breakpoint_tolerance = Math.PI / 8.0;
+
     while (opModeIsActive()) {
       
       // Read raw input from left joystick
@@ -121,22 +127,46 @@ public class BlueBotTeleop extends LinearOpMode {
       telemetry.addLine("Servo steering: " + steering_angle);
 
 
-      // At this point we've determine the direction as if the wheels are
-      // moving forward. If they should move in reverse though, add pi (mod 360 deg)
-      // and reverse the wheel direction by inverting the vector magnitude.
-      if (joy_theta < 0.0) {
+      // Determine if we should have positive or negative direction based on a Schmitt trigger
+      // style calculation.
+      //
+      // Determine if the strafe joystick theta is above the high watermark of the Schmitt trigger.
+      // If that's the case, set to a positive direction.
+      if (joy_theta >= 0.0) {
+        if ((joy_theta > (0.0 + schmitt_breakpoint_tolerance)) && (joy_theta < (Math.PI - schmitt_breakpoint_tolerance))) {
+          schmitt_direction = true;
+        }
+      }
 
-        // If x-axis is positive, add pi/2
-        // If x-axis is negative, add 3*pi/2
-        if (left_joy_x > 0.0) {
-          steering_angle = (steering_angle + (Math.PI / 2.0)) % (2.0 * Math.PI);
+      // Otherwise determine if the theta is below the low watermark of the Schmitt trigger.
+      // If that's the case, set to a negative direction.
+      else {
+        if ((joy_theta < (0 - schmitt_breakpoint_tolerance)) && (joy_theta > (-Math.PI + schmitt_breakpoint_tolerance))) {
+          schmitt_direction = false;
+        }
+      }
+
+      if (schmitt_direction) {
+        telemetry.addLine("POS");
+      } else {
+        telemetry.addLine("NEG");
+      }
+
+      // At this point we're assuming that we're moving forward. See if the schmitt direction
+      // needs to move backwards, if so set to reverse. 
+      if (schmitt_direction == false) {
+        
+        // If wheels are facing left
+        if (steering_angle > 0.5) {
+          steering_angle = steering_angle + -schmitt_breakpoint_tolerance;
         }
         else {
-          steering_angle = (steering_angle + (3.0 * Math.PI / 2.0)) % (2.0 * Math.PI);
+          steering_angle = steering_angle - -schmitt_breakpoint_tolerance;
         }
 
         joy_magnitude *= -1.0;
       }
+      telemetry.addLine("New theta: " + steering_angle);
 
       steer_wheels(steering_angle);
 
