@@ -12,7 +12,8 @@ public class hardware {
     // Arm components
     public DcMotor mantis; //EXP PRT 0
     public DcMotor lift; //EXP PRT 2
-    public DcMotor hopper; //EXP PRT 3
+    public DcMotor hopper;
+    public DcMotor bar;//EXP PRT 3
 
     // Wrist and door
     public CRServo bottomGrabber; //EXP PRT 0

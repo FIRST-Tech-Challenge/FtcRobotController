@@ -23,10 +23,12 @@ public enum mainEnum {
     HOPPER,
     LIFT,
     MANTIS,
+    BAR,
 
     STOP,
 
     GRABBER,
     WRIST,
-    DOOR
+    DOOR,
+
 }

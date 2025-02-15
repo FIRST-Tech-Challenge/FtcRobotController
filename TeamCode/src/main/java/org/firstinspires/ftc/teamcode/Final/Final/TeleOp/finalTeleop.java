@@ -4,7 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.hardware;
 import org.firstinspires.ftc.teamcode.mainEnum;
@@ -17,8 +19,6 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
 
     private final Random random = new Random();
     private final String randomPun = hardware.puns[random.nextInt(hardware.puns.length)];
-    boolean lastXPressed = gamepad1.x;
-    boolean lastYPressed = gamepad1.y;
 
     @Override
     public void runOpMode() {
@@ -32,8 +32,10 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
         setBrakesArms();
         setBrakesWheels();
 
+        ElapsedTime timer = new ElapsedTime();
         //Telemetry while initializing
         while(opModeInInit()) {
+            timer.reset();
             telemetry.addLine("Robot started");
             telemetry.addLine(randomPun);
             telemetry.addLine("Press start when ready");
@@ -42,10 +44,40 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
 
         waitForStart();
         while (opModeIsActive()) {
-            telemetry(); // Telemetry
+            // Display robot's current position, speed, and other relevant data
+            telemetry.addData("Current time: ",timer.seconds());
+
+            // Add any additional sensor or status information
+            telemetry.addData("Robot Status", "Active");
+
+            // Update the telemetry
+            telemetry.update();
             finalMovement(); // Wheel control
             finalArm(); // Arm control
             finalGrabber(); // Grabber control
+        }
+    }
+
+    private void stopAndResetWheelEncoders() {
+        hardware.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    private void sendTelemetryData() {
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+
+        while(opModeIsActive()) {
+            // Display robot's current position, speed, and other relevant data
+            telemetry.addData("Current time: ",timer.seconds());
+
+            // Add any additional sensor or status information
+            telemetry.addData("Robot Status", "Active");
+
+            // Update the telemetry
+            telemetry.update();
         }
     }
 
@@ -56,6 +88,7 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
             hardware.mantis = hardwareMap.get(DcMotor.class, "mantis");
             hardware.lift = hardwareMap.get(DcMotor.class, "lift");
             hardware.hopper = hardwareMap.get(DcMotor.class, "hopper");
+            hardware.bar = hardwareMap.get(DcMotor.class, "bar");
 
             hardware.door = hardwareMap.get(Servo.class, "door");
             hardware.topGrabber = hardwareMap.get(CRServo.class, "topGrabber");
@@ -90,6 +123,7 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
         hardware.lift.setDirection(DcMotor.Direction.REVERSE);
         hardware.mantis.setDirection(DcMotor.Direction.REVERSE);
         hardware.hopper.setDirection(DcMotor.Direction.FORWARD);
+        hardware.bar.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     @Override
@@ -147,18 +181,26 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
     @Override
     // Final Movement
     public void finalMovement() {
+        boolean lastXPressed = false;
+        boolean lastYPressed = false;
+
         double reduction = 0.8;
         double turnReduction = 0.55;
 
-        if (gamepad1.x && !lastXPressed) {//SLOW
-            reduction = 0.4;
-            turnReduction = 0.35;
-        } else if (gamepad1.y && !lastYPressed){//FAST
-            reduction = 1;
-            turnReduction = 1;
-        } else if ((gamepad1.left_stick_button) || (gamepad1.right_stick_button)) {//BRAKE
+        if (gamepad1.x) {//SLOW
+            lastXPressed = !lastXPressed;
+        } else if (gamepad1.y){//FAST
+            lastXPressed = !lastYPressed;
+        } else if ((gamepad2.left_stick_button) || (gamepad2.right_stick_button)) {//BRAKE
             reduction = 0.0;
             turnReduction = 0.0;
+        }
+        if(lastXPressed){
+            reduction = 0.4;
+            turnReduction = 0.35;
+        }else if(lastYPressed){
+            reduction = 1;
+            turnReduction = 1;
         }
 
         double vertical = reduction * gamepad1.left_stick_y;
@@ -179,6 +221,8 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
             case HOPPER:
                 hardware.hopper.setPower(speed); // Set hopper motor power
                 break;
+            case BAR:
+                hardware.bar.setPower(speed); // Set bar motor power
         }
     }
 
@@ -209,6 +253,11 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
         double liftDown = -1; //lift down speed
         double liftHold = 0; //Holds the lift position
 
+        //BAR
+        double barUp = 1; //bar up speed
+        double barDown = -1; //bar down speed
+        double barHold = 0; //Holds the bar position
+
         // Determine arm state and speed based on gamepad input
         //MANTIS
         if (Math.abs(gamepad2.right_stick_y) > threshold) {
@@ -218,11 +267,11 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
             } else if (gamepad2.right_stick_y < -threshold) {
                 armSpeed = mantisDown;
             }
-            arm(state, armSpeed); // Call the arm control
         }else{
             state = mainEnum.MANTIS;
-            armSpeed = mantisBrake;          arm(state, armSpeed);
+            armSpeed = mantisBrake;
         }
+        arm(state, armSpeed); // Call the arm control
 
 
         //HOPPER
@@ -250,6 +299,18 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
         } else {
             state = mainEnum.LIFT;
             armSpeed = liftHold;
+        }
+        arm(state, armSpeed); // Call the arm control
+
+        if(Math.abs(gamepad2.left_trigger) > threshold){
+            state = mainEnum.BAR;
+            armSpeed = barUp;
+        }else if(Math.abs(gamepad2.right_trigger) > threshold){
+            state = mainEnum.BAR;
+            armSpeed = barDown;
+        }else{
+            state = mainEnum.BAR;
+            armSpeed = barHold;
         }
         arm(state, armSpeed); // Call the arm control
     }
@@ -280,7 +341,7 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
         double grabberHold = 0;
 
         //DOOR
-        double open = 0;       // Open door position
+        double open = 0.25;       // Open door position
         double close = 0.6;// Close door position
 
         // Control gripper based on button presses
@@ -303,4 +364,6 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
             hardware.door.setPosition(close);
         }
     }
+
+
 }
