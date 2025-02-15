@@ -238,16 +238,6 @@ public class BlueBotTeleop extends LinearOpMode {
       }
       telemetry.addLine("New theta: " + steering_angle);
 
-      /**
-       * To this point, the code supports strafe. Steering can be determined by taking into
-       * consideration the drive speed and the value of the right joystick x-axis.
-       */
-      double right_joy_x = gamepad1.right_stick_x * -1.0; 
-      double max_turn_radius = 0.1;
-      
-      double right_joystick_steering_amt = right_joy_x * max_turn_radius;
-      telemetry.addLine("Rt joystick raw: " + right_joy_x);
-      telemetry.addLine("Rt joystick steer: " + right_joystick_steering_amt);
 
       // Make the wheels move
       double actual_wheel_speed;
@@ -261,23 +251,40 @@ public class BlueBotTeleop extends LinearOpMode {
         actual_wheel_speed = joy_magnitude;
       }
 
+      /**
+       * To this point, the code supports strafe. Steering can be determined by taking into
+       * consideration the drive speed and the value of the right joystick x-axis.
+       */
+      double right_joy_x = gamepad1.right_stick_x * -1.0; 
+      double max_turn_radius;
+      
+      if (Math.abs(actual_wheel_speed) < 0.5) {
+        max_turn_radius = 0.15;
+      }
+      else {
+        max_turn_radius = 0.1;
+      }
+
+      double right_joystick_steering_amt = right_joy_x * max_turn_radius;
+      telemetry.addLine("Rt joystick raw: " + right_joy_x);
+      telemetry.addLine("Rt joystick steer: " + right_joystick_steering_amt);
       telemetry.addLine("Actual speed: " + actual_wheel_speed);
 
-      if (actual_wheel_speed != 0.0) {
+      if ((actual_wheel_speed > 0.001) || (actual_wheel_speed < -0.001)) {
         steer_wheels(
           steering_angle + right_joystick_steering_amt,
           steering_angle + right_joystick_steering_amt,
           steering_angle - right_joystick_steering_amt,
           steering_angle - right_joystick_steering_amt
         );
+        actual_wheel_speed *= 0.75;
         drive_wheels(actual_wheel_speed);
       }
       // Determine if the robot should turn in place
       else {
         // See if both joysticks are at center position, if so steer wheels
         // to default position
-        if (right_joy_x == 0.0) {
-          steer_wheels(0.5);
+        if (right_joy_x < 0.001 && right_joy_x > -0.001) {
           drive_wheels(0.0);
         }
         else {
@@ -285,15 +292,16 @@ public class BlueBotTeleop extends LinearOpMode {
           steer_wheels(
             (0.25 + 0.5) / 2.0, // Front left
             (0.5 + 0.75) / 2.0, // Front right
-            (0.0 + 0.25) / 2.0, // Back left
-            (0.75 + 1.0) / 2.0  // Back right
+            (0.5 + 0.75) / 2.0, // Back left
+            (0.25 + 0.5) / 2.0  // Back right
           );
 
+          right_joy_x *= 0.75;
           drive_wheels(
-            -1.0 * right_joy_x,
-            right_joy_x,
-            right_joy_x,
-            -1.0 * right_joy_x
+            -1.0 * right_joy_x, // Front left
+            right_joy_x,        // Front right
+            -1.0 * right_joy_x,        // Back left
+            right_joy_x  // Back right
           );
         }
       }

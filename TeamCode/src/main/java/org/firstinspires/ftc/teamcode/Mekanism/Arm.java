@@ -134,7 +134,7 @@ public class Arm {
     slide2.setMode(STOP_AND_RESET_ENCODER);
 
     // Sets mode back to original mode
-    pivot.setMode(RUN_USING_ENCODER);
+    pivot.setMode(RUN_TO_POSITION);
     slide.setMode(RUN_TO_POSITION);
     slide2.setMode(RUN_TO_POSITION);
 
