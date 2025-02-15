@@ -27,7 +27,7 @@ public class Utils {
    * @see #map(int, int, int, int, int)
    */
   public static double map(double input, double old_Lower, double old_Upper, double new_Lower, double new_Upper) {
-    return (input - old_Lower) / (old_Lower - old_Upper) * (new_Upper - new_Lower) + new_Lower;
+    return (input - old_Lower) / (old_Upper - old_Lower) * (new_Upper - new_Lower) + new_Lower;
   }
 
   /**
@@ -44,6 +44,6 @@ public class Utils {
    * @see #map(int, int, int, int, int)
    */
   public static int map(int input, int old_Lower, int old_Upper, int new_Lower, int new_Upper) {
-    return (input - old_Lower) / (old_Lower - old_Upper) * (new_Upper - new_Lower) + new_Lower;
+    return (input - old_Lower) / (old_Upper - old_Lower) * (new_Upper - new_Lower) + new_Lower;
   }
 }
