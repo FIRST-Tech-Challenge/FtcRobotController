@@ -16,12 +16,12 @@ import java.util.List;
 public class Drivetrain {
     public final DcMotorEx frontLeft, frontRight, backLeft, backRight;
     public final DistanceSensor horizontalDistanceSensor, verticalDistanceSensor;
-    private final IMU imu;
+    public final IMU imu;
     public  final List<Double> xWeights, yWeights, rWeights;
     private final double distanceThreshold, angleThreshold, decelerationDistance, decelerationAngle, maxVelocity;
     public boolean isAtTarget;
     private long targetReachedStartTime = 0; // Timestamp when weights became empty, if not at target will be -1
-    private final long targetReachedDelay = 500; // 0.5 second delay in milliseconds
+    private final long targetReachedDelay = 200; // 0.2 second delay in milliseconds
 
     /**
      * Initializes the drivetrain.
@@ -113,8 +113,8 @@ public class Drivetrain {
         // Normalize the distance difference to a range of 0 to 1
         double normalizedDistance = Math.min(distanceDifference / maxDistance, 1.0);
 
-        // Apply a parabolic function (y = 1 - (1-x)^2) for smooth acceleration
-        return 1.0 - Math.pow(1.0 - normalizedDistance, 2.0);
+        // Apply a parabolic function (y = 1 - (1-x)^2) for smooth acceleration, make sure output is at least 0.2
+        return Math.max(0.2, (1.0 - Math.pow(1.0 - normalizedDistance, 2.0)));
     }
 
     public enum WallType {

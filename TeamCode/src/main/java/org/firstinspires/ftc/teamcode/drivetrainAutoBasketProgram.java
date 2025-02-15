@@ -7,7 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,7 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Initialize drivetrain
-        drivetrain = new Drivetrain(hardwareMap, 3, 3, 20, 30, 1600);
+        drivetrain = new Drivetrain(hardwareMap, 3.5, 3, 12, 10, 1600);
 
         // Initialize lift motors
         leftLiftMotor = hardwareMap.get(DcMotorEx.class, "leftLiftMotor");
@@ -50,11 +52,37 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
         intakePivotServo.setPosition(0.0);
 
         blockPositions = new ArrayList<Double>();
-        blockPositions.add(37.0);
-        blockPositions.add(16.0);
-        blockPositions.add(5.0);
+        blockPositions.add(40.0);
+        blockPositions.add(14.0);
 
-        waitForStart();
+        // output sensor data during init
+        while (!isStarted()){
+            telemetry.addData("horz: ", drivetrain.horizontalDistanceSensor.getDistance(DistanceUnit.CM));
+            telemetry.addData("vert: ", drivetrain.verticalDistanceSensor.getDistance(DistanceUnit.CM));
+
+            YawPitchRollAngles orientation = drivetrain.imu.getRobotYawPitchRollAngles();
+            telemetry.addData("ang: ", orientation.getYaw(AngleUnit.DEGREES));
+
+            telemetry.update();
+        }
+
+//        // at 28 seconds lift will drop to 0 just in case :)
+//        new java.util.Timer().schedule(
+//                new java.util.TimerTask() {
+//                    @Override
+//                    public void run() {
+//                        if (rightLiftMotor.getCurrentPosition() > 20) {
+//                            setLiftPosition(0);
+//
+//                            while (rightLiftMotor.getCurrentPosition() > 20){
+//                                sleep(1);
+//                            }
+//
+//                            stop();
+//                        }
+//                    }
+//                },
+//                28000);
 
         scoreInHighBasket(); // score the preloaded
 
@@ -65,13 +93,12 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
             while (opModeIsActive()) {
                 drivetrain.alignToWall(Drivetrain.WallType.BACK, 40);
                 drivetrain.alignToWall(Drivetrain.WallType.LEFT, bPosition);
+                drivetrain.update();
 
-                if (drivetrain.isAtTarget()) {
+                if (drivetrain.isAtTarget) {
                     drivetrain.stop();
                     break;
                 }
-
-                drivetrain.update();
             }
 
             // start intake
@@ -81,16 +108,8 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
             // now move forward while staying aligned to the left wall until intake is full
             while (opModeIsActive()) {
 
-                // go at an angle on the last (3rd) pickup
-                if (blockPositions.indexOf(bPosition) == 2){
-                    drivetrain.setAngle(30);
-                    drivetrain.nudgeInDirection(0.1, 0.1); // move strafe north east slowly
-
-                } else { // otherwise stay aligned with back wall
-                    drivetrain.alignToWall(Drivetrain.WallType.LEFT, bPosition);
-                    drivetrain.nudgeInDirection(0.0, 0.06); // move forward slowly
-                }
-
+                drivetrain.alignToWall(Drivetrain.WallType.LEFT, bPosition);
+                drivetrain.nudgeInDirection(0.0, 0.2); // move forward slowly
                 drivetrain.update();
 
                 if (intakeTouchSensor.isPressed()) {
@@ -125,13 +144,6 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
                     2000);
 
             scoreInHighBasket(); // score block in high basket, code will continue after completion
-        }
-
-        // now go over to park
-        while (opModeIsActive()) {
-            drivetrain.alignToWall(Drivetrain.WallType.BACK, 10);
-            drivetrain.nudgeInDirection(1.0, 0.0);
-            drivetrain.update();
         }
     }
 
@@ -177,46 +189,36 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
      */
     private void scoreInHighBasket() {
 
-        // stick to the back wall at a 40cm distance to align for basket
+        // stick to the back wall at a 35cm distance to align for basket
         while (opModeIsActive()) {
 
-            drivetrain.alignToWall(Drivetrain.WallType.BACK, 40);
-            drivetrain.alignToWall(Drivetrain.WallType.LEFT, 40);
+            drivetrain.alignToWall(Drivetrain.WallType.BACK, 35);
+            drivetrain.alignToWall(Drivetrain.WallType.LEFT, 35);
+            drivetrain.update();
 
-            telemetry.addData("isAtTarget: ", drivetrain.isAtTarget());
-            telemetry.addData("horz: ", drivetrain.horizontalDistanceSensor.getDistance(DistanceUnit.CM));
-            telemetry.addData("vert: ", drivetrain.verticalDistanceSensor.getDistance(DistanceUnit.CM));
-            telemetry.addData("xWeights: ", drivetrain.xWeights.toString());
-            telemetry.addData("yWeights: ", drivetrain.yWeights.toString());
-            telemetry.addData("rWeights: ", drivetrain.rWeights.toString());
-            telemetry.update();
-
-            if (drivetrain.isAtTarget()) {
+            if (drivetrain.isAtTarget) {
                 drivetrain.stop();
 
                 break;
             }
-
-            drivetrain.update();
         }
 
         // rotate to face the basket
         while (opModeIsActive()) {
             drivetrain.setAngle(-45);
+            drivetrain.update();
 
-            if (drivetrain.isAtTarget()) {
+            if (drivetrain.isAtTarget) {
                 drivetrain.stop();
 
                 break;
             }
-
-            drivetrain.update();
         }
 
         setLiftPosition(3266); // high basket encoder position for lift
 
         // wait until lift is at target position
-        while (rightLiftMotor.getCurrentPosition() < 2890){
+        while (rightLiftMotor.getCurrentPosition() < 2800){
             sleep(1);
         }
 
@@ -228,22 +230,21 @@ public class drivetrainAutoBasketProgram extends LinearOpMode {
         // return lift to default down position
         setLiftPosition(0);
 
-        // wait until lift is at target position
-        while (rightLiftMotor.getCurrentPosition() > 20){
+        // wait until lift is at partially down to continue code execution
+        while (rightLiftMotor.getCurrentPosition() > 1800){
             sleep(1);
         }
 
         // turn back
         while (opModeIsActive()) {
             drivetrain.setAngle(0);
+            drivetrain.update();
 
-            if (drivetrain.isAtTarget()) {
+            if (drivetrain.isAtTarget) {
                 drivetrain.stop();
 
                 break;
             }
-
-            drivetrain.update();
 
         }
     }
