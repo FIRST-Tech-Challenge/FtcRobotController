@@ -6,10 +6,12 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.hardware;
 
 
-@Autonomous(name = "Position Based Auto", group = "Autonomous")
+@Autonomous(name = "Time Based Auto", group = "Autonomous")
 public class positionBasedAuto extends LinearOpMode {
+    hardware hardware = new hardware();
     // Arm components
     private DcMotor mantis; //EXP PRT 0
     private DcMotor lift; //EXP PRT 2
@@ -20,12 +22,7 @@ public class positionBasedAuto extends LinearOpMode {
     private CRServo topGrabber; //EXP PRT 1
     private Servo door; //EXP PRT 2
 
-    // Wheel components
-    private DcMotor frontLeft; //CTRL PRT 0
-    private DcMotor frontRight; //CTRL PRT 1
-    private DcMotor backLeft; //CTRL PRT 2
-    private DcMotor backRight; //CTRL PRT 3
-
+    
     private final String[] puns = {
             "A robot didn’t want to have his photo taken. When he was asked why, he replied: Because I’m a photo-resistor!",
             "A robot gets arrested. He’s charged with battery.",
@@ -65,18 +62,34 @@ public class positionBasedAuto extends LinearOpMode {
     //TIME
     private ElapsedTime totalGameTime = new ElapsedTime();
     private ElapsedTime timer = new ElapsedTime();
-    private double timeToRotate360 = 3.65;
+    private double timeToRotate360 = 2.29;
+    private double timeToTravel1Tile = 1;
+
+    //SPEED
+    private double armSpeed = 0.5;
+    private double driveSpeed = 0.55;
+    private double turnSpeed = 0.55;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
         setWheelDirection();
         setArmDirection();
-        stopAndResetWheelEncoders();
-        stopAndResetArmEncoders();
+
+        while(opModeInInit()){
+            timer.reset();
+        }
 
         waitForStart();
         while (opModeIsActive()) {
+            while(timer.seconds() <= timeToTravel1Tile){
+                telemetry.addLine("Working");
+                telemetry.update();
+                moveWheels("FORWARD", driveSpeed);
+            }
+            break;
+
 
         }
     }
@@ -84,134 +97,96 @@ public class positionBasedAuto extends LinearOpMode {
     //Initializes the components
     private void initialize() {
         //Wheels
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
+        hardware.frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        hardware.frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        hardware.backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        hardware.backRight = hardwareMap.get(DcMotor.class, "backRight");
 
         //Arms
-        mantis = hardwareMap.get(DcMotor.class, "mantis");
-        lift = hardwareMap.get(DcMotor.class, "lift");
-        hopper = hardwareMap.get(DcMotor.class, "hopper");
+        hardware.mantis = hardwareMap.get(DcMotor.class, "mantis");
+        hardware.lift = hardwareMap.get(DcMotor.class, "lift");
+        hardware.hopper = hardwareMap.get(DcMotor.class, "hopper");
 
         //Claws
-        bottomGrabber = hardwareMap.get(CRServo.class, "bottomGrabber");
-        topGrabber = hardwareMap.get(CRServo.class, "topGrabber");
-        door = hardwareMap.get(Servo.class, "door");
+        hardware.bottomGrabber = hardwareMap.get(CRServo.class, "bottomGrabber");
+        hardware.topGrabber = hardwareMap.get(CRServo.class, "topGrabber");
+        hardware.door = hardwareMap.get(Servo.class, "door");
     }
 
     //Sets the directions of each component
     private void setWheelDirection() {
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+        hardware.frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        hardware.frontRight.setDirection(DcMotor.Direction.FORWARD);
+        hardware.backLeft.setDirection(DcMotor.Direction.REVERSE);
+        hardware.backRight.setDirection(DcMotor.Direction.FORWARD);
     }
 
     private void setArmDirection() {
-        lift.setDirection(DcMotor.Direction.REVERSE);
-        mantis.setDirection(DcMotor.Direction.REVERSE);
-        hopper.setDirection(DcMotor.Direction.FORWARD);
+        hardware.lift.setDirection(DcMotor.Direction.REVERSE);
+        hardware.mantis.setDirection(DcMotor.Direction.REVERSE);
+        hardware.hopper.setDirection(DcMotor.Direction.FORWARD);
     }
 
-    //Resets the encoders for each component
-    private void stopAndResetWheelEncoders() {
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
+    // Function to send telemetry data
+    private void sendTelemetryData() {
+        // Display robot's current position, speed, and other relevant data
+        telemetry.addData("Time", totalGameTime.seconds());
+        telemetry.addData("Front Left Wheel Speed", hardware.frontLeft.getPower());
+        telemetry.addData("Front Right Wheel Speed", hardware.frontRight.getPower());
+        telemetry.addData("Back Left Wheel Speed", hardware.backLeft.getPower());
+        telemetry.addData("Back Right Wheel Speed", hardware.backRight.getPower());
 
-    private void stopAndResetArmEncoders() {
-        mantis.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hopper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
+        telemetry.addData("Bottom Grabber Power", bottomGrabber.getPower());
+        telemetry.addData("Top Grabber Power", topGrabber.getPower());
+        telemetry.addData("Door Position", door.getPosition());
 
-    //Sets the positions of each component
-    private void setWheelsPosition(int flTargetEncoderCount, int frTargetEncoderCount, int blTargetEncoderCount, int brTargetEncoderCount) {
-        frontLeft.setTargetPosition(flTargetEncoderCount);
-        frontRight.setTargetPosition(frTargetEncoderCount);
-        backLeft.setTargetPosition(blTargetEncoderCount);
-        backRight.setTargetPosition(brTargetEncoderCount);
-    }
-    private void setArmPosition(String armType, int targetEncoderCount) {
-        switch (armType) {
-            case "MANTIS":
-                mantis.setTargetPosition(targetEncoderCount);
-                break;
-            case "LIFT":
-                lift.setTargetPosition(targetEncoderCount);
-                break;
-            case "HOPPER":
-                hopper.setTargetPosition(targetEncoderCount);
-                break;
-        }
-    }
+        // Add any additional sensor or status information
+        telemetry.addData("Robot Status", "Active");
 
-    //Sets the run mode to run to position for each component
-    private void runToWheelsPosition() {
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-    }
-
-    private void runToArmPosition(String armType) {
-        switch (armType) {
-            case "MANTIS":
-                mantis.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                break;
-            case "LIFT":
-                lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                break;
-            case "HOPPER":
-                hopper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                break;
-        }
+        // Update the telemetry
+        telemetry.update();
     }
 
     //Set the components speed
     private void setWheelSpeed(double flSpeed, double frSpeed, double blSpeed, double brSpeed) {
-        frontLeft.setPower(flSpeed);
-        frontRight.setPower(frSpeed);
-        backLeft.setPower(blSpeed);
-        backRight.setPower(brSpeed);
+        hardware.frontLeft.setPower(flSpeed);
+        hardware.frontRight.setPower(frSpeed);
+        hardware.backLeft.setPower(blSpeed);
+        hardware.backRight.setPower(brSpeed);
     }
 
     private void setArmSpeed(String armType, double speed) {
         switch (armType) {
             case "MANTIS":
-                mantis.setPower(speed);
+                hardware.mantis.setPower(speed);
                 break;
             case "LIFT":
-                lift.setPower(speed);
+                hardware.lift.setPower(speed);
                 break;
             case "HOPPER":
-                hopper.setPower(speed);
+                hardware.hopper.setPower(speed);
                 break;
         }
     }
 
     //Brake for the motors
     private void wheelBrake() {
-        frontLeft.setPower(0.0);
-        frontRight.setPower(0.0);
-        backLeft.setPower(0.0);
-        backRight.setPower(0.0);
+        hardware.frontLeft.setPower(0.0);
+        hardware.frontRight.setPower(0.0);
+        hardware.backLeft.setPower(0.0);
+        hardware.backRight.setPower(0.0);
     }
 
     private void armBrake(String armType) {
         switch (armType) {
             case "MANTIS":
-                mantis.setPower(0.0);
+                hardware.mantis.setPower(0.0);
                 break;
             case "LIFT":
-                lift.setPower(0.0);
+                hardware.lift.setPower(0.0);
                 break;
             case "HOPPER":
-                hopper.setPower(0.0);
+                hardware.hopper.setPower(0.0);
                 break;
         }
     }
@@ -219,75 +194,53 @@ public class positionBasedAuto extends LinearOpMode {
     private void clawBrake(String clawType) {
         switch (clawType) {
             case "BOTTOM_GRABBER":
-                bottomGrabber.setPower(0.0);
+                hardware.bottomGrabber.setPower(0.0);
                 break;
             case "TOP_GRABBER":
-                topGrabber.setPower(0.0);
+                hardware.topGrabber.setPower(0.0);
                 break;
             case "DOOR":
-                door.setPosition(door.getPosition());
+                hardware.door.setPosition(door.getPosition());
                 break;
         }
     }
 
-    //Utalizes the position and speed functions to make a base for all directions
-    private void baseWheelMovement(double flSpeed, double frSpeed, double blSpeed, double brSpeed,
-                                   int flPosition, int frPosition, int blPosition, int brPosition) {
-        setWheelsPosition(flPosition, frPosition, blPosition, brPosition);
-        runToWheelsPosition();
-        setWheelSpeed(flSpeed, frSpeed, blSpeed, brSpeed);
-        while (opModeIsActive() && (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())) {
-
-        }
-        wheelBrake();
-        stopAndResetWheelEncoders();
-    }
-    private void setArmMovement(String armType, double speed, int position){
-        setArmPosition(armType, position);
-        runToArmPosition(armType);
-        setArmSpeed(armType, speed);
-        while (opModeIsActive() && (mantis.isBusy() || lift.isBusy() || hopper.isBusy())) {
-
-        }
-        armBrake(armType);
-        stopAndResetArmEncoders();
-    }
-    private void setClawPosition(String clawType, double position) {
-        switch (clawType) {
-            case "BOTTOM_GRABBER":
-                bottomGrabber.setPower(position);
-                break;
-            case "TOP_GRABBER":
-                topGrabber.setPower(position);
-                break;
-            case "DOOR":
-                door.setPosition(position);
-                break;
-
-        }
-    }
 
     //Movement for the wheels, arms, and claws
-    private void moveWheels(String direction, double speed, int position) {
+    private void moveWheels(String direction, double speed) {
         switch (direction) {
             case "FORWARD":
-                baseWheelMovement(speed, speed, speed, speed, position, position, position, position);
+                setWheelSpeed(speed, speed, speed, speed);
                 break;
             case "BACKWARD":
-                baseWheelMovement(-speed, -speed, -speed, -speed, -position, -position, -position, -position);
+                setWheelSpeed(-speed, -speed, -speed, -speed);
                 break;
             case "TURN_RIGHT":
-                baseWheelMovement(speed, -speed, speed, -speed, position, -position, position, -position);
+                setWheelSpeed(speed, -speed, speed, -speed);
                 break;
             case "TURN_LEFT":
-                baseWheelMovement(-speed, speed, -speed, speed, -position, position, -position, position);
+                setWheelSpeed(-speed, speed, -speed, speed);
                 break;
             case "STOP":
                 wheelBrake();
                 break;
         }
     }
-    private void moveArm(String armType, double speed) {
+    private void setClawPosition(String clawType, double position) {
+        switch (clawType) {
+            case "BOTTOM_GRABBER":
+                hardware.bottomGrabber.setPower(position);
+                clawBrake(clawType);
+                break;
+            case "TOP_GRABBER":
+                hardware.topGrabber.setPower(position);
+                clawBrake(clawType);
+                break;
+            case "DOOR":
+                hardware.door.setPosition(position);
+                clawBrake(clawType);
+                break;
 
+        }
     }
 }
