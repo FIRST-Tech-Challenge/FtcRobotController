@@ -46,6 +46,53 @@ public class BlueBotTeleop extends LinearOpMode {
       return angle;
   }
 
+  enum SteerDirection {
+    left,
+    right
+  };
+
+  private SteerDirection get_steer_direction(double steering_angle) {
+    if (steering_angle > 0.5) {
+      return SteerDirection.left;
+    }
+    else {
+      return SteerDirection.right;
+    }
+  }
+
+  /**
+   * Returns boolean based on a software implementation of a Schmitt trigger.
+   */
+  private boolean get_drive_direction(double steering_angle, boolean current_drive_direction, double schmitt_breakpoint_tolerance) {
+    boolean updated_drive_direction = current_drive_direction;
+    SteerDirection steer_direction = get_steer_direction(steering_angle);
+
+    if (steer_direction == SteerDirection.left) {
+      telemetry.addLine("Steer dir: LEFT");
+      // Check if steering_angle is above the top threshold to result in a shift to drive forward
+      if (steering_angle < (0.75 - schmitt_breakpoint_tolerance)) {
+        updated_drive_direction = true;
+      }
+      // Check if steering_angle is below the bottom threshold to result in a shift to drive backwards
+      else if (steering_angle > (0.75 + schmitt_breakpoint_tolerance)) {
+        updated_drive_direction = false;
+      }
+    }
+    else {
+      telemetry.addLine("Steer dir: RIGHT");
+      // Check if steering_angle is above the top threshold to result in a shift to drive forward
+      if (steering_angle > (0.25 + schmitt_breakpoint_tolerance)) {
+        updated_drive_direction = true;
+      }
+      // Check if steering_angle is below the bottom threshold to result in a shift to drive backwards
+      else if (steering_angle < (0.25 - schmitt_breakpoint_tolerance)) {
+        updated_drive_direction = false;
+      }
+    }
+
+    return updated_drive_direction;
+  }
+
   @Override
   public void runOpMode() throws InterruptedException {
 
@@ -68,10 +115,10 @@ public class BlueBotTeleop extends LinearOpMode {
     steer_wheels(previous_steer_direction);
 
     // Direction of drive, true = forward, false = reverse
-    boolean schmitt_direction = true;
+    boolean drive_direction = true;
 
     // The tolerance of the schmitt trigger from y-axis set to zero.
-    double schmitt_breakpoint_tolerance = Math.PI / 8.0;
+    double schmitt_breakpoint_tolerance = 0.05; // = Math.PI / 8.0;
 
     while (opModeIsActive()) {
       
@@ -164,21 +211,10 @@ public class BlueBotTeleop extends LinearOpMode {
        *    Reverse     | 0 or 1
        */
 
-      if (joy_theta >= 0.0) {
-        if ((joy_theta > (0.0 + schmitt_breakpoint_tolerance)) && (joy_theta < (Math.PI - schmitt_breakpoint_tolerance))) {
-          schmitt_direction = true;
-        }
-      }
+      boolean previous_drive_direction = drive_direction;
+      drive_direction = get_drive_direction(steering_angle, drive_direction, schmitt_breakpoint_tolerance);
 
-      // Otherwise determine if the theta is below the low watermark of the Schmitt trigger.
-      // If that's the case, set to a negative direction.
-      else {
-        if ((joy_theta < (0 - schmitt_breakpoint_tolerance)) && (joy_theta > (-Math.PI + schmitt_breakpoint_tolerance))) {
-          schmitt_direction = false;
-        }
-      }
-
-      if (schmitt_direction) {
+      if (drive_direction) {
         telemetry.addLine("POS");
       } else {
         telemetry.addLine("NEG");
@@ -186,14 +222,16 @@ public class BlueBotTeleop extends LinearOpMode {
 
       // At this point we're assuming that we're moving forward. See if the schmitt direction
       // needs to move backwards, if so set to reverse. 
-      if (schmitt_direction == false) {
+      if (drive_direction == false) {
         
+        double reverse_amt = Math.PI / 8.0;
+
         // If wheels are facing left
         if (steering_angle > 0.5) {
-          steering_angle = steering_angle + -schmitt_breakpoint_tolerance;
+          steering_angle = (steering_angle - 0.75) + 0.25;
         }
         else {
-          steering_angle = steering_angle - -schmitt_breakpoint_tolerance;
+          steering_angle = 0.75 - (0.25 - steering_angle);
         }
 
         joy_magnitude *= -1.0;
