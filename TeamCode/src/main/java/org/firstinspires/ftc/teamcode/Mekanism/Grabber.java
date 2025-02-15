@@ -38,6 +38,10 @@ public class Grabber {
     myOp = opMode;
   }
 
+
+  /**
+   * Update intake and wrist positions
+   */
   public void update() {
     intake1.setPosition((intakePower + 1) / 2);
     intake2.setPosition((intakePower + 1) / 2);
@@ -46,21 +50,31 @@ public class Grabber {
   }
 
 
+  public void initWrist() {
+    wrist.setPosition(0.65);
+  }
+
+
   /**
+   * Sets the speed of the grabber wheels
+   * <br>
+   * 1 full intake<br>
+   * -1 full outtake
+   *
    * @param power (-1) to 1
    */
-  public void setPower(double power) {
+  public void setGrabber(double power) {
     intakePower = power;
   }
 
+
+  /**
+   * Sets the angle of the wrist<br>
+   * 0 is fully down
+   *
+   * @param pos 0 - 1
+   */
   public void setWrist(double pos) {
     wristPos = pos;
-  }
-
-  public void wristUp(){
-    wristPos = 1;
-  }
-  public void wristDown(){
-    wristPos = 0;
   }
 }

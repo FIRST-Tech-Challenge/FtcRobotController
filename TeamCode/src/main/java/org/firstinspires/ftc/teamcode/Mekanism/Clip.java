@@ -13,47 +13,58 @@ public class Clip {
 
   LinearOpMode myOp;
 
-  private Servo
-      ramp1,
-      ramp2,
+  private final Servo
+      clip1,
+      clip2,
       funnel;
 
-  private double rampPos = 0, funnelPos = 0;
+  private double
+      funnelPos = 0;
 
   private boolean clamped = false;
 
 
   public Clip(LinearOpMode opMode) {
 
-    ramp1 = opMode.hardwareMap.get(Servo.class, "ramp 1");
-    ramp2 = opMode.hardwareMap.get(Servo.class, "ramp 2");
+    clip1 = opMode.hardwareMap.get(Servo.class, "ramp 1");
+    clip2 = opMode.hardwareMap.get(Servo.class, "ramp 2");
     funnel = opMode.hardwareMap.get(Servo.class, "funnel");
 
-    ramp1.setDirection(FORWARD);
-    ramp2.setDirection(REVERSE);
+    clip1.setDirection(FORWARD);
+    clip2.setDirection(REVERSE);
     funnel.setDirection(FORWARD);
 
-    ramp1.scaleRange(0, 0.15);
-    ramp2.scaleRange(0, 0.15);
+    clip1.scaleRange(0, 0.15);
+    clip2.scaleRange(0, 0.15);
     funnel.scaleRange(0, 0.035);
     myOp = opMode;
   }
 
+
+  /**
+   * Updates the position of everything related to the clipping mechanism
+   */
   public void update() {
 
     if (clamped) {
-      rampPos = 1;
+      clip1.setPosition(1);
+      clip2.setPosition(1);
     } else {
-      rampPos = 0;
+      clip1.setPosition(0);
+      clip2.setPosition(0);
     }
-
-    ramp1.setPosition(rampPos);
-    ramp2.setPosition(rampPos);
 
     funnel.setPosition(funnelPos);
   }
 
 
+  /**
+   * Sets the angle of the clip funnel<br>
+   * 0 - flat
+   * 1 - fully up
+   *
+   * @param pos 0 - 1
+   */
   public void setFunnel(double pos) {
     funnelPos = pos;
   }
@@ -66,6 +77,4 @@ public class Clip {
   public void unclamp() {
     clamped = false;
   }
-
-
 }

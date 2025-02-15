@@ -16,12 +16,12 @@ public class Utils {
   /**
    * Map one range of numbers to another
    *
-   * @param input - Input variable
-   * @param old_Lower - Lower range of input
-   * @param old_Upper - Upper range of input
-   * @param new_Lower - Lower range of output
-   * @param new_Upper - Upper range of output
-   * @return - New mapped variable
+   * @param input Input variable
+   * @param old_Lower Lower range of input
+   * @param old_Upper Upper range of input
+   * @param new_Lower Lower range of output
+   * @param new_Upper Upper range of output
+   * @return New mapped variable
    *
    * @see #map(double, double, double, double, double)
    * @see #map(int, int, int, int, int)
@@ -33,12 +33,12 @@ public class Utils {
   /**
    * Map one range of numbers to another
    *
-   * @param input - Input variable
-   * @param old_Lower - Lower range of input
-   * @param old_Upper - Upper range of input
-   * @param new_Lower - Lower range of output
-   * @param new_Upper - Upper range of output
-   * @return - New mapped variable
+   * @param input Input variable
+   * @param old_Lower Lower range of input
+   * @param old_Upper Upper range of input
+   * @param new_Lower Lower range of output
+   * @param new_Upper Upper range of output
+   * @return New mapped variable
    *
    * @see #map(double, double, double, double, double)
    * @see #map(int, int, int, int, int)

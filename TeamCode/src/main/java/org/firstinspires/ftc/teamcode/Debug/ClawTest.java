@@ -5,8 +5,7 @@ package org.firstinspires.ftc.teamcode.Debug;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.Mekanism.Clip;
-import org.firstinspires.ftc.teamcode.Mekanism.Grabber;
+import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 
 @TeleOp
 public class ClawTest extends LinearOpMode {
@@ -14,8 +13,7 @@ public class ClawTest extends LinearOpMode {
 
   public void runOpMode() throws InterruptedException {
 
-    Clip clip = new Clip(this);
-    Grabber grabber = new Grabber(this);
+    Mekanism mek = new Mekanism(this);
 
     boolean
         is2A = false,
@@ -35,8 +33,8 @@ public class ClawTest extends LinearOpMode {
         is2A = true;
       } else if (!gamepad2.a) is2A = false;
       if (game2A)
-        clip.setFunnel(1.0);
-      else clip.setFunnel(0);
+        mek.clip.setFunnel(1.0);
+      else mek.clip.setFunnel(0);
 
 
       if (gamepad2.b && !is2B) {
@@ -44,8 +42,8 @@ public class ClawTest extends LinearOpMode {
         is2B = true;
       } else if (!gamepad2.b) is2B = false;
       if (game2B)
-        clip.clamp();
-      else clip.unclamp();
+        mek.clip.clamp();
+      else mek.clip.unclamp();
 
 
       if (gamepad2.x && !is2X) {
@@ -53,15 +51,14 @@ public class ClawTest extends LinearOpMode {
         is2X = true;
       } else if (!gamepad2.x) is2X = false;
       if (game2X)
-        grabber.wristUp();
-      else grabber.wristDown();
+        mek.grabber.setWrist(1);
+      else mek.grabber.setWrist(0);
 
 
-      grabber.setPower(-gamepad2.left_stick_y);
+      mek.grabber.setGrabber(-gamepad2.left_stick_y);
 
 
-      clip.update();
-      grabber.update();
+      mek.update();
 
     }
   }

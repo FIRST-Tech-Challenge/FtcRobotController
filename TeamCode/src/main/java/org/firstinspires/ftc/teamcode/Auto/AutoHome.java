@@ -12,13 +12,13 @@ import org.firstinspires.ftc.teamcode.Swerve.Swerve;
 public class AutoHome extends LinearOpMode {
   @Override
   public void runOpMode() throws InterruptedException {
-    Mekanism arm = new Mekanism(this);
+    Mekanism mek = new Mekanism(this);
     Swerve drivebase = new Swerve(this);
 
     drivebase.initGyro();
 
 
     waitForStart();
-    arm.homeArm();
+    mek.arm.homeArm();
   }
 }

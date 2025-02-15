@@ -43,24 +43,24 @@ public class CompBotAuto extends LinearOpMode {
   }
 
   private void stop_moving_pivot_arm() {
-    mek.setPivot(0, false);
+    mek.arm.setPivot(0);
     sleep(250);
   }
 
   private void move_pivot_arm_up(int movementTimeInMs) {
-    mek.setPivot(-1, false);
+    mek.arm.setPivot(-1);
     sleep(movementTimeInMs);
     stop_moving_pivot_arm();
   }
 
   private void move_pivot_arm_down(int movementTimeInMs) {
-    mek.setPivot(1, false);
+    mek.arm.setPivot(1);
     sleep(movementTimeInMs);
     stop_moving_pivot_arm();
   }
 
   private void adjust_arm_extension(int extensionPosition, int extensionTimeInMs) {
-    mek.setSlide(extensionPosition);
+    mek.arm.setSlide(extensionPosition);
     sleep(extensionTimeInMs);
   }
 
@@ -73,17 +73,17 @@ public class CompBotAuto extends LinearOpMode {
   }
 
   private void stop_intake_outtake() {
-    mek.runIntake(false, false);
+    mek.grabber.setGrabber(0);
   }
 
   private void run_intake(int intakeTimeInMs) {
-    mek.runIntake(true, false);
+    mek.grabber.setGrabber(1);
     sleep(intakeTimeInMs);
     stop_intake_outtake();
   }
 
   private void run_outtake(int outtakeTimeInMs) {
-    mek.runIntake(false, true);
+    mek.grabber.setGrabber(-1);
     sleep(outtakeTimeInMs);
     stop_intake_outtake();
   }
@@ -107,7 +107,7 @@ public class CompBotAuto extends LinearOpMode {
     retract_arm_all_the_way_in();
 
     // Move arm all the way back up to know where it is
-    mek.homeArm();
+    mek.arm.homeArm();
   }
 
   private void setIMUOffset() {
@@ -399,10 +399,10 @@ public class CompBotAuto extends LinearOpMode {
   public void telem() {
     driveBase.odo.update();
     driveBase.odo.getPose();
-    telemetry.addData("slide current: ", mek.slide.getCurrentPosition());
-    telemetry.addData("slide goal: ", mek.slide.getTargetPosition());
-    telemetry.addData("pivot current: ", mek.pivot.getCurrentPosition());
-    telemetry.addData("pivot goal: ", mek.pivot.getTargetPosition());
+    telemetry.addData("slide current: ", mek.arm.slide.getCurrentPosition());
+    telemetry.addData("slide goal: ", mek.arm.slide.getTargetPosition());
+    telemetry.addData("pivot current: ", mek.arm.pivot.getCurrentPosition());
+    telemetry.addData("pivot goal: ", mek.arm.pivot.getTargetPosition());
 //    telemetry.addLine(". . . . . . . . . . . . . . . .");
 //    telemetry.addData("odometry Status",driveBase.odo.getDeviceStatus());
 //    telemetry.addData("odometry x: ",driveBase.odo.getPosX());

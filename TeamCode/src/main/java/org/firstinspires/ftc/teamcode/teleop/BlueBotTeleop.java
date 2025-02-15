@@ -105,8 +105,8 @@ public class BlueBotTeleop extends LinearOpMode {
 
     Init();
     waitForStart();
-    mek.initWrist();
-    mek.homeArm();
+    mek.arm.homeArm();
+    mek.grabber.initWrist();
 
     double previous_steer_direction = 0.5;
     double previous_driving_speed = 0.0;

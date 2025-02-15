@@ -17,10 +17,10 @@ TeleGrey extends LinearOpMode {
   public void runOpMode() {
 
     Swerve swerve = new Swerve(this);
-    Mekanism arm = new Mekanism(this);
+    Mekanism mek = new Mekanism(this);
 
     waitForStart();
-    arm.homeArm();
+    mek.arm.homeArm();
     double lastTime = Utils.getTimeSeconds();
     while (opModeIsActive()) {
       double currentTime = Utils.getTimeSeconds();
