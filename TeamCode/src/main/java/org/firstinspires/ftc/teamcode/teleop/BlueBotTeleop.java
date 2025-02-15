@@ -151,9 +151,19 @@ public class BlueBotTeleop extends LinearOpMode {
        * reducing unwanted oscillations. The `steering_angle` variable should be used to 
        * determine transitions between positive and negative directions to maintain smooth 
        * and predictable steering behavior.
+       *
+       * 
+       * The `steering_angle` variable represents the steering direction relative to the robot's frame.
+       * The values are mapped as follows:
+       *
+       *    Direction   | steering_angle Value
+       *  ------------------------------------
+       *    Forward     | 0.5
+       *    Left        | 0.75
+       *    Right       | 0.25
+       *    Reverse     | 0 or 1
        */
 
-      // FIXME: This should not be based on `joy_theta` (see previous comment block)
       if (joy_theta >= 0.0) {
         if ((joy_theta > (0.0 + schmitt_breakpoint_tolerance)) && (joy_theta < (Math.PI - schmitt_breakpoint_tolerance))) {
           schmitt_direction = true;
