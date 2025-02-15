@@ -251,7 +251,7 @@ public abstract class MecanumTeleOp2 extends LinearOpMode {
             if (shouldTx && !isTx) {
                 transfer();
             }
-            boolean shouldTxDump = gamepad1.x;
+            boolean shouldTxDump = gamepad2.y;
             if (shouldTxDump && !isTxDump) {
                 transferAndDrop();
             }
@@ -287,7 +287,7 @@ public abstract class MecanumTeleOp2 extends LinearOpMode {
                 resetAll();
             }
 
-            boolean shouldAutodetect = gamepad2.y;
+            boolean shouldAutodetect = gamepad1.x; // previously TransferDrop
             if (shouldAutodetect && !isAutodetect) {
                 autodetect();
             }
