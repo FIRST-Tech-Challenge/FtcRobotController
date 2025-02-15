@@ -126,12 +126,34 @@ public class BlueBotTeleop extends LinearOpMode {
 
       telemetry.addLine("Servo steering: " + steering_angle);
 
+      /**
+       * At this point, we have vector magnitudes and angles associated with both the 
+       * joystick input and the robot's odometry. The robot's odometry operates on the 
+       * unit circle, meaning its vector magnitude is irrelevant for determining field-centric 
+       * control. This is why simply computing the vector sum is insufficient for accurate 
+       * field-centric steering adjustments.
+       * 
+       * The `steering_angle` variable represents the actual orientation of the swerve 
+       * module wheels required for field-centric strafing. However, a key challenge arises 
+       * because the swerve drive modules have a limited steering range—typically 270 degrees. 
+       * If the wheels attempt to rotate past this limit to align with the intended direction, 
+       * they will suddenly rotate the full 270 degrees to reach the target angle from the 
+       * opposite side.
+       * 
+       * One way to address this issue is to constrain steering adjustments to a 180-degree 
+       * range. If the computed angle exceeds this threshold, the direction should be inverted, 
+       * and the drive motor should reverse. This method works effectively as long as the robot 
+       * isn't continuously strafing left and right. Otherwise, a hysteresis effect occurs, 
+       * causing oscillations when the wheels attempt to realign near the 180-degree boundary.
+       * 
+       * To mitigate this, a software-based Schmitt trigger can be implemented. By defining 
+       * upper and lower threshold limits, the system can establish a stable directional state, 
+       * reducing unwanted oscillations. The `steering_angle` variable should be used to 
+       * determine transitions between positive and negative directions to maintain smooth 
+       * and predictable steering behavior.
+       */
 
-      // Determine if we should have positive or negative direction based on a Schmitt trigger
-      // style calculation.
-      //
-      // Determine if the strafe joystick theta is above the high watermark of the Schmitt trigger.
-      // If that's the case, set to a positive direction.
+      // FIXME: This should not be based on `joy_theta` (see previous comment block)
       if (joy_theta >= 0.0) {
         if ((joy_theta > (0.0 + schmitt_breakpoint_tolerance)) && (joy_theta < (Math.PI - schmitt_breakpoint_tolerance))) {
           schmitt_direction = true;
