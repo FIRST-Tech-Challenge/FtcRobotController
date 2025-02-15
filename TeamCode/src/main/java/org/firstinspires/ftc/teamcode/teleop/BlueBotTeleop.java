@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.Auto.AutoSwerve;
 import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
-import org.firstinspires.ftc.teamcode.Utils;
 
 @TeleOp(name = "Blue Bot Teleop")
 public class BlueBotTeleop extends LinearOpMode {

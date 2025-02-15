@@ -40,6 +40,11 @@ public class Arm {
     slide = (DcMotorEx) opMode.hardwareMap.dcMotor.get("slide");
     slide2 = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "slide 2");
 
+    // Sets rotation direction for the motors
+    pivot.setDirection(DcMotorSimple.Direction.REVERSE);
+    slide.setDirection(DcMotorSimple.Direction.FORWARD);
+    slide2.setDirection(DcMotorSimple.Direction.FORWARD);
+
     // Reset all encoders
     pivot.setMode(STOP_AND_RESET_ENCODER);
     slide.setMode(STOP_AND_RESET_ENCODER);
@@ -60,19 +65,16 @@ public class Arm {
     slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     slide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-    // Sets rotation direction for the motors
-    pivot.setDirection(DcMotorSimple.Direction.FORWARD);
-    slide.setDirection(DcMotorSimple.Direction.FORWARD);
-    slide2.setDirection(DcMotorSimple.Direction.FORWARD);
-
     // Sets the maximum power that the motors are allowed to run at
     pivot.setPower(1);
     slide.setPower(1);
     slide2.setPower(1);
 
+
     // Mapping limit switch
     limitSwitch = opMode.hardwareMap.get(DigitalChannel.class, "limit switch");
     limitSwitch.setMode(DigitalChannel.Mode.INPUT);
+
 
     // Maps local variables
     this.limitSlide = limitSlide;
@@ -105,13 +107,18 @@ public class Arm {
     // Reset timer
     pivotTimer.reset();
 
+    // Makes sure the motors are not moving when starting the function
+    pivot.setPower(0);
+    slide.setPower(0);
+    slide2.setPower(0);
+
     // Makes it so that motor power can be set directly
     pivot.setMode(RUN_USING_ENCODER);
     slide.setMode(RUN_USING_ENCODER);
     slide2.setMode(RUN_USING_ENCODER);
 
-
-    while (limitSwitch.getState() && pivotTimer.seconds() < 5 && myOp.opModeIsActive()) {
+    // Move the pivot while the limit switch is not pressed and a timer is not over its limit
+    while (!limitSwitch.getState() && pivotTimer.seconds() < 5 && myOp.opModeIsActive()) {
       telemetry.addData("limit switch: ", limitSwitch.getState());
       pivot.setPower(-0.5);
       slide.setPower(-0.3);
@@ -163,7 +170,7 @@ public class Arm {
   /**
    * Sets the target length of the arm
    *
-   * @param x - Target length in IN.
+   * @param x - Target length
    */
   public void setSlide(int x) {
 
