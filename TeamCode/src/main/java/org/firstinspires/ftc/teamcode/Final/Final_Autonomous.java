@@ -9,20 +9,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.hardware;
 
+import java.util.Random;
+
 
 @Autonomous(name = "Time Based Auto", group = "Final")
 public class Final_Autonomous extends LinearOpMode {
     hardware hardware = new hardware();
-    // Arm components
-    private DcMotor mantis; //EXP PRT 0
-    private DcMotor lift; //EXP PRT 2
-    private DcMotor hopper; //EXP PRT 3
-
-    // Wrist and door
-    private CRServo bottomGrabber; //EXP PRT 0
-    private CRServo topGrabber; //EXP PRT 1
-    private Servo door; //EXP PRT 2
-
     
     private final String[] puns = {
             "A robot didn’t want to have his photo taken. When he was asked why, he replied: Because I’m a photo-resistor!",
@@ -60,16 +52,12 @@ public class Final_Autonomous extends LinearOpMode {
             "There was a giant, steel, robot who had one job, protect the city. One day when it was raining some of the screws got rusty and fell off causing one of the legs to fall off entirely. When the leg fell off it crushed the city that it was meant to protect. Oh, the iron knee!"
     };
 
+    private final Random random = new Random();
+    private final String randomPun = puns[random.nextInt(puns.length)];
+
     //TIME
     private ElapsedTime totalGameTime = new ElapsedTime();
     private ElapsedTime timer = new ElapsedTime();
-    private double timeToRotate360 = 2.29;
-    private double timeToTravel1Tile = 1;
-
-    //SPEED
-    private double armSpeed = 0.5;
-    private double driveSpeed = 0.55;
-    private double turnSpeed = 0.55;
 
 
     @Override
@@ -80,18 +68,28 @@ public class Final_Autonomous extends LinearOpMode {
 
         while(opModeInInit()){
             timer.reset();
+            telemetry.addLine(randomPun);
         }
 
         waitForStart();
         while (opModeIsActive()) {
+            sendTelemetryData();
+            //SPEED
+            double armSpeed = 0.5;
+            double driveSpeed = 0.55;
+            double turnSpeed = 0.55;
+
+            //TIME
+            double timeToRotate360 = 2.29;
+            double timeToTravel1Tile = 1;
+
+            //MOVEMENT
             while(timer.seconds() <= timeToTravel1Tile){
                 telemetry.addLine("Working");
                 telemetry.update();
                 moveWheels("FORWARD", driveSpeed);
             }
             break;
-
-
         }
     }
 
@@ -137,9 +135,9 @@ public class Final_Autonomous extends LinearOpMode {
         telemetry.addData("Back Left Wheel Speed", hardware.backLeft.getPower());
         telemetry.addData("Back Right Wheel Speed", hardware.backRight.getPower());
 
-        telemetry.addData("Bottom Grabber Power", bottomGrabber.getPower());
-        telemetry.addData("Top Grabber Power", topGrabber.getPower());
-        telemetry.addData("Door Position", door.getPosition());
+        telemetry.addData("Bottom Grabber Power", hardware.bottomGrabber.getPower());
+        telemetry.addData("Top Grabber Power", hardware.topGrabber.getPower());
+        telemetry.addData("Door Position", hardware.door.getPosition());
 
         // Add any additional sensor or status information
         telemetry.addData("Robot Status", "Active");
@@ -201,7 +199,7 @@ public class Final_Autonomous extends LinearOpMode {
                 hardware.topGrabber.setPower(0.0);
                 break;
             case "DOOR":
-                hardware.door.setPosition(door.getPosition());
+                hardware.door.setPosition(hardware.door.getPosition());
                 break;
         }
     }
