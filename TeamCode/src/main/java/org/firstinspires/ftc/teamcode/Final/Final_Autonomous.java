@@ -59,6 +59,15 @@ public class Final_Autonomous extends LinearOpMode {
     private ElapsedTime totalGameTime = new ElapsedTime();
     private ElapsedTime timer = new ElapsedTime();
 
+    //SPEED
+    double armSpeed = 0.5;
+    double driveSpeed = 0.5;
+    double turnSpeed = 0.55;
+
+    //TIME
+    double timeToRotate360 = 2.29;
+    double timeToTravel1Tile = 0.73;
+    double timeToLiftHopper = 1.8;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -66,29 +75,15 @@ public class Final_Autonomous extends LinearOpMode {
         setWheelDirection();
         setArmDirection();
 
+
         while(opModeInInit()){
             timer.reset();
             telemetry.addLine(randomPun);
         }
-
         waitForStart();
         while (opModeIsActive()) {
             sendTelemetryData();
-            //SPEED
-            double armSpeed = 0.5;
-            double driveSpeed = 0.55;
-            double turnSpeed = 0.55;
-
-            //TIME
-            double timeToRotate360 = 2.29;
-            double timeToTravel1Tile = 1;
-
-            //MOVEMENT
-            while(timer.seconds() <= timeToTravel1Tile){
-                telemetry.addLine("Working");
-                telemetry.update();
-                moveWheels("FORWARD", driveSpeed);
-            }
+            moveToHopper();
             break;
         }
     }
@@ -123,7 +118,7 @@ public class Final_Autonomous extends LinearOpMode {
     private void setArmDirection() {
         hardware.lift.setDirection(DcMotor.Direction.REVERSE);
         hardware.mantis.setDirection(DcMotor.Direction.REVERSE);
-        hardware.hopper.setDirection(DcMotor.Direction.FORWARD);
+        hardware.hopper.setDirection(DcMotor.Direction.REVERSE);
     }
 
     // Function to send telemetry data
@@ -179,13 +174,13 @@ public class Final_Autonomous extends LinearOpMode {
     private void armBrake(String armType) {
         switch (armType) {
             case "MANTIS":
-                hardware.mantis.setPower(0.0);
+                hardware.mantis.setPower(0.05);
                 break;
             case "LIFT":
                 hardware.lift.setPower(0.0);
                 break;
             case "HOPPER":
-                hardware.hopper.setPower(0.0);
+                hardware.hopper.setPower(0.1);
                 break;
         }
     }
@@ -241,5 +236,30 @@ public class Final_Autonomous extends LinearOpMode {
                 break;
 
         }
+    }
+
+    //Moves the preset block to the hopper
+    private void moveToHopper(){
+        armBrake("MANTIS");
+        while(timer.seconds() <= timeToTravel1Tile * 2.68){
+            telemetry.addLine("Working");
+            telemetry.update();
+            moveWheels("BACKWARD", driveSpeed);
+        }
+        timer.reset();
+
+        while(timer.seconds() <= timeToRotate360 / 8) {
+            telemetry.addLine("Working");
+            telemetry.update();
+            moveWheels("TURN_LEFT", driveSpeed);
+        }
+        timer.reset();
+
+        while(timer.seconds() <= timeToLiftHopper){
+            setArmSpeed("HOPPER", 1);
+        }
+        timer.reset();
+
+        armBrake("HOPPER");
     }
 }
