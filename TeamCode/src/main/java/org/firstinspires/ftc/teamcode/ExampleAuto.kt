@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import dev.aether.collaborative_multitasking.MultitaskScheduler
@@ -7,6 +8,7 @@ import org.firstinspires.ftc.teamcode.mmooover.EncoderTracking
 import org.firstinspires.ftc.teamcode.mmooover.Player
 
 @TeleOp
+@Disabled
 class ExampleAuto: LinearOpMode() {
     override fun runOpMode() {
         val scheduler = MultitaskScheduler()

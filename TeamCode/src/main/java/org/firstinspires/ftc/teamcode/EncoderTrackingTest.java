@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import static java.lang.StrictMath.PI;
 
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.mmooover.Pose;
 import java.util.List;
 
 @TeleOp
+@Disabled
 public class EncoderTrackingTest extends LinearOpMode {
     private double ticksPerRotation;
     private double radiusInches = 0.70;

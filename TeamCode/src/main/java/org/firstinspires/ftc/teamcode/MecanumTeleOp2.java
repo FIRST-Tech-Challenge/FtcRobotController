@@ -44,8 +44,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 
 
-@TeleOp
-public class MecanumTeleOp2 extends LinearOpMode {
+public abstract class MecanumTeleOp2 extends LinearOpMode {
     /**
      * How much you need to push the joysticks to stop autonomous code.
      */
@@ -65,6 +64,8 @@ public class MecanumTeleOp2 extends LinearOpMode {
     private Speed2Power speed2Power;
     private org.firstinspires.ftc.teamcode.hardware.VLiftProxy vLiftProxy;
     private double heading = 0.0;
+
+    protected abstract boolean isRed();
 
     /**
      * Forces any tasks using this lock to be stopped immediately.
@@ -675,7 +676,8 @@ public class MecanumTeleOp2 extends LinearOpMode {
             activeSearchTask.proceed();
             return;
         }
-        int enabled = LimelightDetectionMode.RED | LimelightDetectionMode.YELLOW;
+        int myColor = isRed() ? LimelightDetectionMode.RED : LimelightDetectionMode.BLUE;
+        int enabled = myColor | LimelightDetectionMode.YELLOW;
         activeSearchTask = scheduler.add(new LimelightSearch(scheduler, hardware, hSlideProxy, hClawProxy, enabled, telemetry));
     }
 }
