@@ -44,8 +44,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 
 
-@TeleOp
-public class MecanumTeleOp2 extends LinearOpMode {
+public abstract class MecanumTeleOp2 extends LinearOpMode {
     /**
      * How much you need to push the joysticks to stop autonomous code.
      */
@@ -65,6 +64,9 @@ public class MecanumTeleOp2 extends LinearOpMode {
     private Speed2Power speed2Power;
     private org.firstinspires.ftc.teamcode.hardware.VLiftProxy vLiftProxy;
     private double heading = 0.0;
+    private boolean useDetectYellow = true;
+
+    protected abstract boolean isRed();
 
     /**
      * Forces any tasks using this lock to be stopped immediately.
@@ -170,9 +172,13 @@ public class MecanumTeleOp2 extends LinearOpMode {
         boolean isClearArmPos = false;
         boolean isResetVL = false;
         boolean isAutodetect = false;
+        boolean isToggleYellow = false;
 
         double yaw_offset = 0.0;
         while (opModeIsActive()) {
+            // this is at the top of the list so it's below all of the spam
+            telemetry.addData("Yellow enabled?", useDetectYellow);
+            telemetry.addLine();
 
             Orientation angles = navxMicro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
             if (gamepad1.back) {
@@ -250,7 +256,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
             if (shouldTx && !isTx) {
                 transfer();
             }
-            boolean shouldTxDump = gamepad1.x;
+            boolean shouldTxDump = gamepad2.y;
             if (shouldTxDump && !isTxDump) {
                 transferAndDrop();
             }
@@ -286,9 +292,14 @@ public class MecanumTeleOp2 extends LinearOpMode {
                 resetAll();
             }
 
-            boolean shouldAutodetect = gamepad2.y;
+            boolean shouldAutodetect = gamepad1.x; // previously TransferDrop
             if (shouldAutodetect && !isAutodetect) {
                 autodetect();
+            }
+
+            boolean shouldToggleYellow = gamepad2.dpad_right;
+            if (shouldToggleYellow && !isToggleYellow) {
+                useDetectYellow = !useDetectYellow;
             }
 
             isSpecimenPick = shouldSpecimenPick;
@@ -301,6 +312,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
             isTxDump = shouldTxDump;
             isResetVL = shouldResetVL;
             isAutodetect = shouldAutodetect;
+            isToggleYellow = shouldToggleYellow;
 
             int verticalPosition = hardware.verticalLift.getCurrentPosition();
 
@@ -675,7 +687,8 @@ public class MecanumTeleOp2 extends LinearOpMode {
             activeSearchTask.proceed();
             return;
         }
-        int enabled = LimelightDetectionMode.RED | LimelightDetectionMode.YELLOW;
-        activeSearchTask = scheduler.add(new LimelightSearch(scheduler, hardware, hSlideProxy, hClawProxy, enabled, telemetry));
+        int myColor = isRed() ? LimelightDetectionMode.RED : LimelightDetectionMode.BLUE;
+        if (useDetectYellow) myColor |= LimelightDetectionMode.YELLOW;
+        activeSearchTask = scheduler.add(new LimelightSearch(scheduler, hardware, hSlideProxy, hClawProxy, myColor, telemetry));
     }
 }
