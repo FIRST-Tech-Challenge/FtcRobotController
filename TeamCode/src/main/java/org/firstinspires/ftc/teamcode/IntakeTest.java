@@ -27,20 +27,32 @@ public class IntakeTest extends LinearOpMode {
             if(gamepad1.dpad_left){
                 rollerIntakeBot.stopRoller();
             }
-            if (gamepad1.a) {
-                rollerIntakeBot.logColorSensor(); // Get colour values
-            }
-            if (gamepad1.x) {
-                rollerIntakeBot.adjustGain(true); // Increase gain
-            } else if (gamepad1.y) {
-                rollerIntakeBot.adjustGain(false); // Decrease gain
-            }
-            if (gamepad1.dpad_right) {
-                rollerIntakeBot.adjustThres(true);
-            } if (gamepad1.b) {
-                rollerIntakeBot.adjustThres(false);
-            }
+//            if (gamepad1.a) {
+//                rollerIntakeBot.logColorSensor(); // Get colour values
+//            }
+//            if (gamepad1.x) {
+//                rollerIntakeBot.adjustGain(true); // Increase gain
+//            } else if (gamepad1.y) {
+//                rollerIntakeBot.adjustGain(false); // Decrease gain
+//            }
+//            if (gamepad1.dpad_right) {
+//                rollerIntakeBot.adjustThres(true);
+//            } if (gamepad1.b) {
+//                rollerIntakeBot.adjustThres(false);
+//            }
 
+            if(gamepad1.dpad_up){
+                rollerIntakeBot.pitch(0.3);
+            }
+            if(gamepad1.dpad_down){
+                rollerIntakeBot.pitch(-0.3);
+            }
+            if(gamepad1.dpad_left){
+                rollerIntakeBot.roll(0.3);
+            }
+            if(gamepad1.dpad_right){
+                rollerIntakeBot.roll(-0.3);
+            }
 
             if (gamepad1.right_bumper) {
 //                gamepad1.
