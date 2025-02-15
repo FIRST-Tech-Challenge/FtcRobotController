@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Auto.AutoSwerve;
 import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
+import org.firstinspires.ftc.teamcode.Utils;
 
 @TeleOp(name = "Blue Bot Teleop")
 public class BlueBotTeleop extends LinearOpMode {
@@ -238,7 +239,24 @@ public class BlueBotTeleop extends LinearOpMode {
       }
       telemetry.addLine("New theta: " + steering_angle);
 
-      steer_wheels(steering_angle);
+      /**
+       * To this point, the code supports strafe. Steering can be determined by taking into
+       * consideration the drive speed and the value of the right joystick x-axis.
+       */
+      double right_joy_x = gamepad1.right_stick_x * -1.0; 
+      double max_turn_radius = 0.1;
+      
+      double right_joystick_steering_amt = right_joy_x * max_turn_radius;
+      telemetry.addLine("Rt joystick raw: " + right_joy_x);
+      telemetry.addLine("Rt joystick steer: " + right_joystick_steering_amt);
+      
+      // FIXME: Don't steer wheels back to home if vector magnitude is less than something
+      steer_wheels(
+        steering_angle + right_joystick_steering_amt,
+        steering_angle + right_joystick_steering_amt,
+        steering_angle - right_joystick_steering_amt,
+        steering_angle - right_joystick_steering_amt
+      );
 
       // Make the wheels move
       double actual_wheel_speed;
@@ -276,6 +294,13 @@ public class BlueBotTeleop extends LinearOpMode {
     driveBase.servoBR.setPosition(x_direction);
     driveBase.servoFL.setPosition(x_direction);
     driveBase.servoFR.setPosition(x_direction);
+  }
+
+  private void steer_wheels(double fl, double fr, double bl, double br) {
+    driveBase.servoBL.setPosition(bl);
+    driveBase.servoBR.setPosition(br);
+    driveBase.servoFL.setPosition(fl);
+    driveBase.servoFR.setPosition(fr);
   }
 
   private void drive_wheels(double drive_speed) {
