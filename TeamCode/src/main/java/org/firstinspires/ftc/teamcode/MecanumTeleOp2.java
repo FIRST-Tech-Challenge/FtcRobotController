@@ -61,6 +61,7 @@ public abstract class MecanumTeleOp2 extends LinearOpMode {
     private EncoderTracking tracker;
     private Ramps ramps;
     private LoopStopwatch loopTimer;
+    private ElapsedTime endgameTimer = new ElapsedTime();
     private Speed2Power speed2Power;
     private org.firstinspires.ftc.teamcode.hardware.VLiftProxy vLiftProxy;
     private double heading = 0.0;
@@ -120,6 +121,7 @@ public abstract class MecanumTeleOp2 extends LinearOpMode {
 
     /////////////////////////////////////////////
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode() {
         // this scheduler will only be used in init
@@ -160,6 +162,7 @@ public abstract class MecanumTeleOp2 extends LinearOpMode {
 
         waitForStart();
         if (isStopRequested()) return;
+        endgameTimer.reset();
 
         boolean isFlipIn = false;
         boolean isFlipOut = false;
@@ -178,6 +181,8 @@ public abstract class MecanumTeleOp2 extends LinearOpMode {
         while (opModeIsActive()) {
             // this is at the top of the list so it's below all of the spam
             telemetry.addData("Yellow enabled?", useDetectYellow);
+            boolean isEndgame = endgameTimer.time() >= (60 + 30); // 1 m 30 s
+            telemetry.addData("Endgame?", isEndgame ? "YES!!!" : String.format("Not yet... %.2fs to go", 90 - endgameTimer.time()));
             telemetry.addLine();
 
             Orientation angles = navxMicro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
@@ -275,10 +280,10 @@ public abstract class MecanumTeleOp2 extends LinearOpMode {
                 if (untwist90) hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
             }
 
-            if (gamepad1.b) {
+            if (gamepad1.b && isEndgame) {
                 hardware.ascent.setTargetPosition(Hardware.ASCENT_PREPARE_POS);
             }
-            if (gamepad1.right_bumper) {
+            if (gamepad1.right_bumper && isEndgame) {
                 hardware.ascent.setTargetPosition(Hardware.ASCENT_FINISH_POS);
             }
 
