@@ -205,12 +205,12 @@ public class MainTeleOpWithAutoBasket extends LinearOpMode{
                 }
                 else {
                     tagFound = false;
-                    telemetry.addData("Limelight", "Tag not found");
+                    //telemetry.addData("Limelight", "Tag not found");
                 }
             }
             else {
                 tagFound = false;
-                telemetry.addData("Limelight", "No data available");
+                //telemetry.addData("Limelight", "No data available");
             }
             //Drive code
             drivetrain.Drive();
