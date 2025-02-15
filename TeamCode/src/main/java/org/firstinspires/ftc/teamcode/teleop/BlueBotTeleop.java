@@ -120,9 +120,43 @@ public class BlueBotTeleop extends LinearOpMode {
 
       telemetry.addLine("Servo steering: " + steering_angle);
 
-      telemetry.update();
+
+      // At this point we've determine the direction as if the wheels are
+      // moving forward. If they should move in reverse though, add pi (mod 360 deg)
+      // and reverse the wheel direction by inverting the vector magnitude.
+      if (joy_theta < 0.0) {
+
+        // If x-axis is positive, add pi/2
+        // If x-axis is negative, add 3*pi/2
+        if (left_joy_x > 0.0) {
+          steering_angle = (steering_angle + (Math.PI / 2.0)) % (2.0 * Math.PI);
+        }
+        else {
+          steering_angle = (steering_angle + (3.0 * Math.PI / 2.0)) % (2.0 * Math.PI);
+        }
+
+        joy_magnitude *= -1.0;
+      }
 
       steer_wheels(steering_angle);
+
+      // Make the wheels move
+      double actual_wheel_speed;
+      if (joy_magnitude > 1.0) {
+        actual_wheel_speed = 1.0;
+      }
+      else if (joy_magnitude < -1.0) {
+        actual_wheel_speed = -1.0;
+      }
+      else {
+        actual_wheel_speed = joy_magnitude;
+      }
+
+      telemetry.addLine("Actual speed: " + actual_wheel_speed);
+      drive_wheels(actual_wheel_speed);
+
+      telemetry.update();
+
     }
   }
 
