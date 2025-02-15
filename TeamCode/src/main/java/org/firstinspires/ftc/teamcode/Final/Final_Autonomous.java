@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Final;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,8 +10,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.hardware;
 
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Time Based Auto", group = "Final")
-public class Autonomous extends LinearOpMode {
+@Autonomous(name = "Time Based Auto", group = "Final")
+public class Final_Autonomous extends LinearOpMode {
     hardware hardware = new hardware();
     // Arm components
     private DcMotor mantis; //EXP PRT 0

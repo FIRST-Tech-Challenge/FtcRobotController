@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Final;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -13,8 +14,8 @@ import org.firstinspires.ftc.teamcode.mainEnum;
 
 import java.util.Random;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "Final")
-public class TeleOp extends LinearOpMode implements teleop_interface {
+@TeleOp(name = "TeleOp", group = "Final")
+public class Final_TeleOp extends LinearOpMode implements teleop_interface {
     hardware hardware = new hardware();
 
     private final Random random = new Random();
