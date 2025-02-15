@@ -10,6 +10,7 @@ public class Arm {
     OpMode _opMode;
     DcMotorEx _armMotor;
     TelemetryHelper _telemetryHelper;
+
     public Arm (OpMode opMode, TelemetryHelper telemetryHelper)
     {
         _opMode = opMode;
@@ -26,7 +27,11 @@ public class Arm {
     final int slowDownPosition = 5;
     final int hangPosition = 75;
     final int highBasketPosition = 95;
-    final double specimenPosition = 44;
+    final double initialSpecimenPosition = 44;
+    final double maxSpecimenPosition = 49;
+    final double minSpecimenPosition = 39;
+    final double specimanAdjustment = 0.5;
+    double specimenPosition = initialSpecimenPosition;
     //-----------------------
 
     private int DegreeConverterToTicks(double degrees) {
@@ -67,6 +72,16 @@ public class Arm {
 //            telemetryHelper.initMotorTelemetry( armMotor, "armMotor");
         }
     }
+    public void IncreaseSpecimenAngle()
+    {
+        specimenPosition += specimanAdjustment;
+        specimenPosition = Math.min(maxSpecimenPosition, specimenPosition);
+    }
+    public void DecreaseSpecimenAngle()
+    {
+        specimenPosition -= specimanAdjustment;
+        specimenPosition = Math.max(minSpecimenPosition, specimenPosition);
+    }
     public void MoveToHome()
     {
         ArmMotorCustom(homePosition, 0.25);
@@ -85,9 +100,13 @@ public class Arm {
     }
     public void MoveToSpecimen()
     {
+        MoveToSpecimen(1);
+    }
+    public void MoveToSpecimen(double power)
+    {
         //target height: 27 inches
         //(entire front claw needs to be that height and clear robot front)
-        ArmMotorCustom(specimenPosition, 1);
+        ArmMotorCustom(specimenPosition, power);
         //extension of viper slide to place specimens
     }
     public void ArmMotorCustom(double degrees, double power)

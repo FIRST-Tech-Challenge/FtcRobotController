@@ -82,6 +82,18 @@ public class ViperArmActions {
         return new MoveArmToHomeAction();
     }
 
+    //Moves Arm to SlowDown
+    public class MoveArmToSlowDownAction implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            _Arm.MoveToSlowDown();
+            return false;
+        }
+    }
+    public Action MoveArmToSlowDown() {
+        return new MoveArmToSlowDownAction();
+    }
+
     //Moves Viper to Home
     public class MoveViperToHomeAction implements Action {
         @Override
@@ -130,8 +142,10 @@ public class ViperArmActions {
                 UtilActions.Wait(0.2),
                 MoveViperToHome(),
                 UtilActions.Wait(0.75),
+                MoveArmToSlowDown(),
+                UtilActions.Wait(0.75),
                 MoveArmToHome(),
-                UtilActions.Wait(1)
+                UtilActions.Wait(0.25)
         );
     }
 
@@ -147,8 +161,10 @@ public class ViperArmActions {
                 UtilActions.Wait(0.2),
                 MoveViperHalfExtend(),
                 UtilActions.Wait(0.5),
+                MoveArmToSlowDown(),
+                UtilActions.Wait(0.75),
                 MoveArmToHome(),
-                UtilActions.Wait(1)
+                UtilActions.Wait(0.25)
         );
     }
 
@@ -170,8 +186,10 @@ public class ViperArmActions {
                 UtilActions.Wait(0.2),
                 MoveViperToHome(),
                 UtilActions.Wait(0.75),
+                MoveArmToSlowDown(),
+                UtilActions.Wait(0.5),
                 MoveArmToHome(),
-                UtilActions.Wait(0.75),
+                UtilActions.Wait(0.25),
                 _WristClawActions.WristSpecimenPickup()
         );
     }
