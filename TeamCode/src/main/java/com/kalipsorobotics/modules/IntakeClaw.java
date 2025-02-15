@@ -10,7 +10,7 @@ public class IntakeClaw {
     @Config
     static public class IntakeClawConfig {
             public final static double INTAKE_CLAW_CLOSE = 0.36; //0.35
-            public final static double INTAKE_CLAW_OPEN = 0.07; //increase to close claw more
+            public final static double INTAKE_CLAW_OPEN = 0.11; //increase to close claw more
     }
 
     private static IntakeClaw single_instance = null;

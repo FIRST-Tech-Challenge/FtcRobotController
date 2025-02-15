@@ -57,6 +57,8 @@ public class Teleop extends LinearOpMode {
     Action lastIntakeAction = null;
 
     Action lastMoveAction = null;
+//    private Action lastIntakeClawAction = null;
+//    private Action lastOuttakeClawAction = null;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -110,6 +112,8 @@ public class Teleop extends LinearOpMode {
         MoveLSAction moveLS = null;
         WallToBarAction wallToBarAction = null;
         OuttakePivotAction outtakePivotAction = null;
+        KServoAutoAction outtakeClawOpenClose = null;
+        KServoAutoAction intakeClawOpenClose = null;
 
         boolean needMaintainLs = true;
 
@@ -140,16 +144,16 @@ public class Teleop extends LinearOpMode {
         double sweepStickValue;
         boolean outtakeOverrideOn;
         boolean specimenHangReadyPressed;
-        boolean intakeClawOpenClose;
-        boolean intakeClawOpenCloseWasPressed = false;
+        boolean intakeClawOpenClosePressed;
+        boolean islastIntakeClawOpen;
         boolean intakeOverrideOn;
         boolean intakeReadyPressed;
         boolean intakeTransferReadyPressed;
         boolean transferPressed;
         boolean intakePressed;
         boolean outtakeTransferReadyPressed;
-        boolean outtakeClawOpenClose;
-        boolean outtakeClawOpenCloseWasPressed = false;
+        boolean outtakeClawOpenClosePressed;
+        boolean islastOuttakeClawOpen;
         boolean basketReadyPressed;
         boolean specimenHangPressed;
         boolean specimenReadyPressed;
@@ -197,14 +201,14 @@ public class Teleop extends LinearOpMode {
             sweepStickValue = gamepad2.left_stick_x;
             outtakeOverrideOn = kGamePad2.isRightTriggerPressed();
             specimenHangReadyPressed = kGamePad2.isToggleButtonB();
-            intakeClawOpenClose = kGamePad2.isToggleLeftBumper();
+            intakeClawOpenClosePressed = kGamePad2.isToggleLeftBumper();
             intakeOverrideOn = kGamePad2.isLeftTriggerPressed();
             intakeReadyPressed = kGamePad2.isToggleDpadLeft() && !kGamePad2.isLeftTriggerPressed();
             intakeTransferReadyPressed = kGamePad2.isToggleDpadRight();
             transferPressed = kGamePad2.isToggleDpadUp();
             intakePressed = kGamePad2.isToggleDpadDown();
             outtakeTransferReadyPressed = kGamePad2.isToggleButtonX();
-            outtakeClawOpenClose = kGamePad2.isToggleRightBumper();
+            outtakeClawOpenClosePressed = kGamePad2.isToggleRightBumper();
             outtakePivotStickValue = gamepad2.right_stick_x;
             basketReadyPressed = kGamePad2.isToggleButtonY();
             specimenHangPressed = kGamePad2.isToggleButtonA();
@@ -353,11 +357,11 @@ public class Teleop extends LinearOpMode {
 
             //INTAKE
 
-            if(intakeClawOpenClose) {
+            /*if(intakeClawOpenClosePressed) {
                 intakeClawOpenCloseWasPressed = true;
             }
 
-            if(!intakeClawOpenClose) {
+            if(!intakeClawOpenClosePressed) {
                 if(intakeClawOpenCloseWasPressed) {
 
                     setLastIntakeAction(null);
@@ -372,6 +376,33 @@ public class Teleop extends LinearOpMode {
                 }
 
                 intakeClawOpenCloseWasPressed = false;
+            }*/
+
+            /*if (intakeClawOpenClosePressed) {
+
+                if (intakeClawOpenClose == null || intakeClawOpenClose.getIsDone()) {
+                    intakeClawOpenClose = new KServoAutoAction(intakeClaw.getIntakeClawServo(),
+                            IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN);
+                    setLastIntakeAction(intakeClawOpenClose);
+                }
+
+            }*/
+
+
+            if (intakeClawOpenClosePressed) {
+
+                if (intakeClawOpenClose == null || intakeClawOpenClose.getIsDone()) {
+
+                    if (intakeClaw.getIntakeClawServo().isCurrentPosEqualTo(IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN)) {
+                        intakeClawOpenClose = new KServoAutoAction(intakeClaw.getIntakeClawServo(),
+                                IntakeClaw.IntakeClawConfig.INTAKE_CLAW_CLOSE);
+                    } else {
+                        intakeClawOpenClose = new KServoAutoAction(intakeClaw.getIntakeClawServo(),
+                                IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN);
+                    }
+                    setLastIntakeAction(intakeClawOpenClose);
+
+                }
             }
 
 
@@ -521,6 +552,23 @@ public class Teleop extends LinearOpMode {
                 moveLS = null;
             }
 
+
+            if (outtakeClawOpenClosePressed) {
+
+                if (outtakeClawOpenClose == null || outtakeClawOpenClose.getIsDone()) {
+
+                    if (outtake.getOuttakeClaw().isCurrentPosEqualTo(Outtake.OUTTAKE_CLAW_OPEN)) {
+                        outtakeClawOpenClose = new KServoAutoAction(outtake.getOuttakeClawServo(),
+                                Outtake.OUTTAKE_CLAW_CLOSE);
+                    } else {
+                        outtakeClawOpenClose = new KServoAutoAction(outtake.getOuttakeClawServo(),
+                                Outtake.OUTTAKE_CLAW_OPEN);
+                    }
+                    setLastOuttakeAction(outtakeClawOpenClose);
+
+                }
+            }
+
 //            if (gamepad2.left_stick_button) {
 //                //outtake slide
 //                CalculateTickPer.MIN_RANGE_LS_TICKS = -2500;
@@ -585,11 +633,11 @@ public class Teleop extends LinearOpMode {
             }
 
 
-            if(outtakeClawOpenClose) {
+            /*if(outtakeClawOpenClosePressed) {
                 outtakeClawOpenCloseWasPressed = true;
             }
 
-            if(!outtakeClawOpenClose) {
+            if(!outtakeClawOpenClosePressed) {
                 if(outtakeClawOpenCloseWasPressed){
                     if(outtakeClawPos == Outtake.OUTTAKE_CLAW_CLOSE) {
                         outtakeClawPos = Outtake.OUTTAKE_CLAW_OPEN;
@@ -609,7 +657,9 @@ public class Teleop extends LinearOpMode {
 
                     outtakeClawOpenCloseWasPressed = false;
                 }
-            }
+            }*/
+
+
 
             if (outtakePivotStickValue > 0.5) {
                 if(outtakePivotAction == null || outtakePivotAction.getIsDone()) {
@@ -682,6 +732,14 @@ public class Teleop extends LinearOpMode {
                 lastIntakeAction.updateCheckDone();
             }
 
+//            if (lastIntakeClawAction != null) {
+//                lastIntakeClawAction.updateCheckDone();
+//            }
+//
+//            if (lastOuttakeClawAction != null) {
+//                lastOuttakeClawAction.updateCheckDone();
+//            }
+
             if(lastMoveAction != null) {
                 lastMoveAction.updateCheckDone();
             }
@@ -726,6 +784,20 @@ public class Teleop extends LinearOpMode {
         }
         lastIntakeAction = action;
     }
+
+//    private void setLastIntakeClawAction(Action action) {
+//        if (lastIntakeClawAction != null) {
+//            lastIntakeClawAction.setIsDone(true);
+//        }
+//        lastIntakeClawAction = action;
+//    }
+//
+//    private void setLastOuttakeClawAction(Action action) {
+//        if (lastOuttakeClawAction != null) {
+//            lastOuttakeClawAction.setIsDone(true);
+//        }
+//        lastOuttakeClawAction = action;
+//    }
 
     private void setLastMoveAction(Action action) {
         if(lastMoveAction != null) {

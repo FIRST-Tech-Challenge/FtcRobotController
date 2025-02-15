@@ -86,6 +86,10 @@ public class KServo {
         servo.setPosition(position);
     }
 
+    public boolean isCurrentPosEqualTo(double position) {
+        return Math.abs(getServo().getPosition() - position) < 0.00001;
+    }
+
 
     public double getTargetPosition() {
         return targetPosition;
