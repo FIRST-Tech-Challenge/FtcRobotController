@@ -100,6 +100,12 @@ public class BlueBotTeleop extends LinearOpMode {
     RIGHT
   }
 
+  /**
+   * Determines the general direction of the robot strafe.
+   * General in this case is either up, down, left, or right.
+   * This function is used to determine which two wheels should be the drive wheels
+   * during a turn.
+   */
   private GeneralDirection get_general_direction(double steering_angle) {
     double north = 0.5;
     double east = 0.25;
@@ -149,7 +155,7 @@ public class BlueBotTeleop extends LinearOpMode {
     boolean drive_direction = true;
 
     // The tolerance of the schmitt trigger from y-axis set to zero.
-    double schmitt_breakpoint_tolerance = 0.05; // = Math.PI / 8.0;
+    double schmitt_breakpoint_tolerance = 0.05;
 
     while (opModeIsActive()) {
       
@@ -165,8 +171,6 @@ public class BlueBotTeleop extends LinearOpMode {
 
       // Compute theta of the left joystick vector
       double joy_theta = Math.atan2(left_joy_y, left_joy_x);
-
-      // joy_theta = normalize_angle(joy_theta, false);
 
       telemetry.addLine("Joy theta: " + joy_theta);
 
@@ -254,9 +258,6 @@ public class BlueBotTeleop extends LinearOpMode {
       // At this point we're assuming that we're moving forward. See if the schmitt direction
       // needs to move backwards, if so set to reverse. 
       if (drive_direction == false) {
-        
-        double reverse_amt = Math.PI / 8.0;
-
         // If wheels are facing left
         if (steering_angle > 0.5) {
           steering_angle = (steering_angle - 0.75) + 0.25;
@@ -270,7 +271,7 @@ public class BlueBotTeleop extends LinearOpMode {
       telemetry.addLine("New theta: " + steering_angle);
 
 
-      // Make the wheels move
+      // The computed vector exceeds the allowable drive speed, cap the speed where needed
       double actual_wheel_speed;
       if (joy_magnitude > 1.0) {
         actual_wheel_speed = 1.0;
@@ -285,10 +286,14 @@ public class BlueBotTeleop extends LinearOpMode {
       /**
        * To this point, the code supports strafe. Steering can be determined by taking into
        * consideration the drive speed and the value of the right joystick x-axis.
+       * Multiplying by -1 is because smaller numbers of steering_angle are on the right
+       * side whereas -1 is on the left side of the x-axis joystick.
        */
-      double right_joy_x = gamepad1.right_stick_x * -1.0; 
+      double right_joy_x = gamepad1.right_stick_x * -1.0;
       double max_turn_radius;
       
+      // If the speed decreases enough, allow turns to be sharper. These values are the max
+      // the wheels can turn (if the right joystick is held all the way to one side)
       if (Math.abs(actual_wheel_speed) < 0.5) {
         max_turn_radius = 0.15;
       }
@@ -296,7 +301,9 @@ public class BlueBotTeleop extends LinearOpMode {
         max_turn_radius = 0.1;
       }
 
+      // Compute the turning radius
       double right_joystick_steering_amt = right_joy_x * max_turn_radius;
+      
       telemetry.addLine("Rt joystick raw: " + right_joy_x);
       telemetry.addLine("Rt joystick steer: " + right_joystick_steering_amt);
       telemetry.addLine("Actual speed: " + actual_wheel_speed);
@@ -314,6 +321,9 @@ public class BlueBotTeleop extends LinearOpMode {
 
         // Determine the general direction of the robot
         GeneralDirection general_direction = get_general_direction(steering_angle);
+
+        // Strafing up or down means the front two wheels are the driving wheels.
+        // This works in reverse because of the simple direction change.
         if (general_direction == GeneralDirection.UP || general_direction == GeneralDirection.DOWN) {
           steer_wheels(
             steering_angle + right_joystick_steering_amt,
@@ -322,6 +332,7 @@ public class BlueBotTeleop extends LinearOpMode {
             steering_angle - right_joystick_steering_amt
           );
         }
+        // Strafing left means the left front and back wheels are now the driving wheels
         else if (general_direction == GeneralDirection.LEFT) {
           steer_wheels(
             steering_angle + right_joystick_steering_amt, // Front left
@@ -330,6 +341,7 @@ public class BlueBotTeleop extends LinearOpMode {
             steering_angle - right_joystick_steering_amt  // Back right
           );
         }
+        // Strafing right means the right front and back wheels are now the driving wheels
         else {
           steer_wheels(
             steering_angle - right_joystick_steering_amt, // Front left
@@ -338,18 +350,26 @@ public class BlueBotTeleop extends LinearOpMode {
             steering_angle + right_joystick_steering_amt  // Back right
           );
         }
+
+        // Reduce drive speed to 75%
         actual_wheel_speed *= 0.75;
         drive_wheels(actual_wheel_speed);
       }
       // Determine if the robot should turn in place
       else {
         // See if both joysticks are at center position, if so steer wheels
-        // to default position
+        // to default position. The 0.001 here is because doubles in java are dumb.
+        // This is a way to check if the value is equal to 0.0 with some rounding
+        // issues.
         if (right_joy_x < 0.001 && right_joy_x > -0.001) {
+          // keep the steering in place to allow for finer movements up to a target.
+          // But stop the wheels.
           drive_wheels(0.0);
         }
         else {
-          // Turn wheels to central pivot position
+          // Turn wheels to central pivot position. The math here (0.25 + 0.5) is done
+          // for readability. 0.25 is right, 0.5 is up, therefore if we add those and
+          // divide the result by 2, we get the value for the north-east direction.
           steer_wheels(
             (0.25 + 0.5) / 2.0, // Front left
             (0.5 + 0.75) / 2.0, // Front right
@@ -357,12 +377,17 @@ public class BlueBotTeleop extends LinearOpMode {
             (0.25 + 0.5) / 2.0  // Back right
           );
 
+          // Reduce steering power to 75%
           right_joy_x *= 0.75;
+
+          // While turning, the drive of some wheels needs to be reversed.
+          // This is because the wheels take the shortest path to get to their 45-degree
+          // position, meaning two of them will be backwards from where they should be.
           drive_wheels(
             -1.0 * right_joy_x, // Front left
             right_joy_x,        // Front right
-            -1.0 * right_joy_x,        // Back left
-            right_joy_x  // Back right
+            -1.0 * right_joy_x, // Back left
+            right_joy_x         // Back right
           );
         }
       }
