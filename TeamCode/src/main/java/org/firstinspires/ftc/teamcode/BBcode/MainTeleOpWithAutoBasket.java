@@ -4,15 +4,15 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.RedBasketPose;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Arm;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.ChristmasLight;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Viper;
@@ -83,6 +83,7 @@ public class MainTeleOpWithAutoBasket extends LinearOpMode{
     ElapsedTime wristTimer = new ElapsedTime();
 
     final double wristFlipTime = 0.75;
+    Pose2d botPose = new Pose2d(0, 0, 0);
 
     private void handleGamepad1 (Viper viper, WristClaw wristClaw) {
         //Specimen Pickup Position
@@ -187,7 +188,9 @@ public class MainTeleOpWithAutoBasket extends LinearOpMode{
         odo.setPosition(PoseStorage.currentPose);
         telemetry.addData("PoseStorage", ()-> PoseStorage.currentPose);
         //telemetry.addData("PositionRR", ()-> getPinpoint(odo.getPositionRR()));
+
         telemetry.addData("PositionRR", () -> String.format(Locale.US, "{X: %.2f, Y: %.2f, H: %.2f}", odo.getPositionRR().position.x, odo.getPositionRR().position.y, Math.toDegrees(odo.getPositionRR().heading.toDouble())));
+        telemetry.addData("LimeLightPose", () -> formatLimeLight(botPose));
         //telemetry.addData("Position", ()-> getPinpoint(odo.getPosition()));
         boolean tagFound = false;
         double botYaw = 0;
@@ -196,22 +199,28 @@ public class MainTeleOpWithAutoBasket extends LinearOpMode{
 
             //Manage LimeLight
             LLResult lLResult = _limelight.getLatestResult();
-            if (lLResult != null) {
-                Pose3D botPose;
+            if (lLResult != null && lLResult.isValid()) {
+
                 if (lLResult.getTa() > 0) {
                     tagFound = true;
-                    botPose = lLResult.getBotpose();
+                    Pose3D limeLightPose = lLResult.getBotpose();
+                    botPose = new Pose2d(limeLightPose.getPosition().x*39.3701, limeLightPose.getPosition().y*39.3701, limeLightPose.getOrientation().getYaw());
                     botYaw = lLResult.getBotpose().getOrientation().getYaw();
+//                    _christmasLight.green();
                     //telemetry.addData("BotPose", botPose.getPosition());
                     //telemetry.addData("Yaw", botYaw);
                 }
                 else {
                     tagFound = false;
+//                    _christmasLight.off();
+                    botPose = null;
                     //telemetry.addData("Limelight", "Tag not found");
                 }
             }
             else {
                 tagFound = false;
+//                _christmasLight.off();
+                botPose = null;
                 //telemetry.addData("Limelight", "No data available");
             }
             //Drive code
@@ -550,5 +559,11 @@ public class MainTeleOpWithAutoBasket extends LinearOpMode{
     private String getPinpoint(Pose2d pos) {
         return String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.position.x, pos.position.y, Math.toDegrees(pos.heading.toDouble()));
     }
+    private static String formatLimeLight(Pose2d botPose) {
+        if (botPose == null) {
+            return "No data available";
+        }
+        return String.format(Locale.US, "{X: %.2f, Y: %.2f, H: %.2f}", botPose.position.x, botPose.position.y, Math.toDegrees(botPose.heading.toDouble()));
 
+    }
 }
