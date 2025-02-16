@@ -55,7 +55,7 @@ public class Red_Basket_Auto extends LinearOpMode {
 
         //drive to drop
         Action driveToDropFromStart = drive.actionBuilder(drive.pose)
-                .strafeToLinearHeading(RedBasketPose.drop.position, RedBasketPose.drop.heading)
+                .strafeToLinearHeading(RedBasketPose.initialDrop.position, RedBasketPose.initialDrop.heading)
                 .build();
 
         Action driveToDropFromInnerSample = drive.actionBuilder(RedBasketPose.inner_sample)

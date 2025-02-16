@@ -183,10 +183,12 @@ public class MainTeleOpWithAutoBasket extends LinearOpMode{
         arm.MoveToHome();
         //odo.setPosition(PoseStorage.currentPose);
         //Use the following line for measuring auto locations
-        odo.setPosition(RedBasketPose.basket_init_old);
-//        odo.setPosition(PoseStorage.currentPose);
-        telemetry.addData("PositionRR", ()-> getPinpoint(odo.getPositionRR()));
-        telemetry.addData("Position", ()-> getPinpoint(odo.getPosition()));
+        //odo.setPosition(RedBasketPose.basket_init_old);
+        odo.setPosition(PoseStorage.currentPose);
+        telemetry.addData("PoseStorage", ()-> PoseStorage.currentPose);
+        //telemetry.addData("PositionRR", ()-> getPinpoint(odo.getPositionRR()));
+        telemetry.addData("PositionRR", () -> String.format(Locale.US, "{X: %.2f, Y: %.2f, H: %.2f}", odo.getPositionRR().position.x, odo.getPositionRR().position.y, Math.toDegrees(odo.getPositionRR().heading.toDouble())));
+        //telemetry.addData("Position", ()-> getPinpoint(odo.getPosition()));
         boolean tagFound = false;
         double botYaw = 0;
         while(opModeIsActive()){ //while loop for when program is active
@@ -200,8 +202,8 @@ public class MainTeleOpWithAutoBasket extends LinearOpMode{
                     tagFound = true;
                     botPose = lLResult.getBotpose();
                     botYaw = lLResult.getBotpose().getOrientation().getYaw();
-                    telemetry.addData("BotPose", botPose.getPosition());
-                    telemetry.addData("Yaw", botYaw);
+                    //telemetry.addData("BotPose", botPose.getPosition());
+                    //telemetry.addData("Yaw", botYaw);
                 }
                 else {
                     tagFound = false;
