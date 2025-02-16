@@ -1,7 +1,6 @@
 package com.kalipsorobotics.modules;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.utilities.KServo;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -17,6 +16,11 @@ public class IntakeClaw {
 //0.0018
     //INTAKE READY
 
+    public static final double INTAKE_BIG_PIVOT_SWEEPING_READY = 0.987;
+    public static final double INTAKE_BIG_SWEEP_SWEEPING_READY = 0;
+    public static final double INTAKE_SMALL_PIVOT_SWEEPING_READY = 0.172;
+
+    public static final double INTAKE_SMALL_SWEEP_SWEEPING_READY = 0.77;
 
     public static final double INTAKE_BIG_SWEEP_PARALLEL_TO_ROBOT = 0.48;
 

@@ -108,7 +108,7 @@ public class AutoSpecimen extends LinearOpMode {
 
 //        WaitAction waitForHangFinish = new WaitAction(100);
 //        waitForHangFinish.setDependentActions(wallToBarHangAction);
-//        redAutoSpecimen.addAction(waitForHangFinish);
+//        redAutoSpecimen.addAction(waiftForHangFinish);
 
         //================beginning of push================
         OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
