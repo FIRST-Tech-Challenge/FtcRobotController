@@ -6,13 +6,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 @Config
 public class PivotBotTest extends FourWheelDriveBot { //change back to odometry bot later
-    public static int maximumPivotPos = 1300;
+    public static int maximumPivotPos = 1000;
     public static int minumimPivotPos = -100;
 
     public static int maximumSlidePos = 550;
@@ -20,13 +21,23 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
 
     public boolean pivotOutOfRange = false;
     public int pivotTarget = 200;
+    public int oldPt = 0;
     public double pivotPower = 0.7;
+    public boolean reachedPivotPos = false;
     public int slideTarget = minimumSlidePos;
 
     public DcMotorEx pivotMotor2 = null;
     public DcMotorEx pivotMotor1 = null;
     public DcMotorEx slideMotor1 = null;
     public DcMotorEx slideMotor2 = null;
+
+    double integralSum = 0;
+    double Kp = 0.5;
+    double Ki = 0;
+    double Kd = 0;
+
+    ElapsedTime timer = new ElapsedTime();
+    private double lastError = 0;
 
     @Override
     public void init(HardwareMap ahwMap) {
@@ -79,9 +90,18 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
 
         super.onTick();
 
+        if (reachedPivotPos && oldPt != pivotTarget) {
+
+            reachedPivotPos = false;
+            oldPt = pivotTarget;
+
+        }
+
         if (pivotTarget > minumimPivotPos - 100 && pivotTarget < maximumPivotPos + 100){
 
             pivotOutOfRange = false;
+
+            pivotPower = PIDControl(pivotTarget, getPivotPosition());
 
             runPivotMotors(pivotTarget, 0.3);
 
@@ -143,7 +163,7 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
 
     public void pivotControl(boolean up, boolean down){
         if (up) {
-            if (pivotMotor1.getCurrentPosition() < maximumPivotPos) {
+            if (pivotMotor1.getCurrentPosition() < maximumPivotPos - 100) {
                 pivotTarget = pivotMotor1.getCurrentPosition() + ((maximumPivotPos - pivotMotor1.getCurrentPosition()) / 10);
             }
         }
@@ -159,17 +179,41 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
 
         if (getPivotPosition() > pT - 20 && getPivotPosition() < pT + 20) {
 
-            pivotMotor1.setPower(-0.2);
-            pivotMotor2.setPower(-0.2);
+            reachedPivotPos = true;
 
-        } else {
+            pivotMotor1.setPower(0.2);
+            pivotMotor2.setPower(0.2);
+
+        } else if (reachedPivotPos == false) {
 
             if (getPivotPosition() < pT) {
+
+                pivotMotor1.setPower(power);
+                pivotMotor2.setPower(power);
+
+            }
+
+            if (getPivotPosition() > pT) {
 
                 pivotMotor1.setPower(-power);
                 pivotMotor2.setPower(-power);
 
             }
         }
+    }
+
+    public double PIDControl(double reference, double state)
+    {
+
+        double error = reference - state;
+        integralSum += error * timer.seconds();
+        double derivative = (error - lastError) / timer.seconds();
+        lastError = error;
+
+        timer.reset();
+
+        double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
+        return output;
+
     }
 }

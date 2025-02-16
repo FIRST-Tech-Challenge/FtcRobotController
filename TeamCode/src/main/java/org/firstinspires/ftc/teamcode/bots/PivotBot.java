@@ -64,7 +64,7 @@ public class PivotBot extends OdometryBot {
         pivotMotor1.setPower(pivotPower);
 
         pivotMotor = hwMap.get(DcMotorEx.class, "pivot1");
-        pivotMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        pivotMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         pivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -90,7 +90,7 @@ public class PivotBot extends OdometryBot {
         pivotMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pivotMotor.setTargetPosition(pivotTarget);
         pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        pivotPower = 0.5;
+        pivotPower = 0.7;
     }
 
     public PivotBot(LinearOpMode opMode) {
