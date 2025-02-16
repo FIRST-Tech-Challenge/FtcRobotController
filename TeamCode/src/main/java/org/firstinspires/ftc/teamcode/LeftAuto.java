@@ -201,7 +201,7 @@ public class LeftAuto extends LinearOpMode {
                     a.add(moveTo(new Pose(18.0, 13.5, Math.toRadians(0))));
                     a.add(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
                         .then(hSlideProxy.moveOut());
-                    a.add(vLiftProxy.moveTo(0, 5, 2.0));
+                    a.add(vLiftProxy.moveTo(0, 5, 1.0));
                 }))
                 .then(pickUpYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
@@ -210,7 +210,7 @@ public class LeftAuto extends LinearOpMode {
                     a.add(moveTo(new Pose(18.0, 23.75, Math.toRadians(0))));
                     a.add(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
                             .then(hSlideProxy.moveOut());
-                    a.add(vLiftProxy.moveTo(0, 5, 2.0));
+                    a.add(vLiftProxy.moveTo(0, 5, 1.0));
                 }))
                 .then(pickUpYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
@@ -219,14 +219,14 @@ public class LeftAuto extends LinearOpMode {
                 // 12.75 + cos(15 deg) * 2.0
                 .then(groupOf(a -> {
                     a.add(moveTo(new Pose(31.26763809, 14.68185165, Math.toRadians(75))));
-                    a.add(vLiftProxy.moveTo(0, 5, 2.0));
+                    a.add(vLiftProxy.moveTo(0, 5, 1.0));
                 }))
                 .then(fourthYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
                 .then(groupOf(a -> {
                     a.add(moveTo(PARK_BAD));
-                    a.add(vLiftProxy.moveTo(0, 5, 2.0));
+                    a.add(vLiftProxy.moveTo(0, 5, 1.0));
                 }))
                 .then(run(() -> hardware.driveMotors.setAll(0)));
         ;
