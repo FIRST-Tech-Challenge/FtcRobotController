@@ -31,7 +31,7 @@ public class Arm {
     final double maxSpecimenPosition = 49;
     final double minSpecimenPosition = 39;
     final double specimanAdjustment = 0.5;
-    double specimenPosition = initialSpecimenPosition;
+    public double specimenPosition = initialSpecimenPosition;
     //-----------------------
 
     private int DegreeConverterToTicks(double degrees) {

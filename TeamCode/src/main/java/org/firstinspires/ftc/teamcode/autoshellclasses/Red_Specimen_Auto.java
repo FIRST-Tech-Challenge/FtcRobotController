@@ -9,13 +9,19 @@ import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.RedBasketPose;
 import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.SpecimenPose;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.ViperArmActions;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.WristClawActions;
+import org.firstinspires.ftc.teamcode.BBcode.OpModeType;
+import org.firstinspires.ftc.teamcode.BBcode.PoseStorage;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
+
+import java.util.Locale;
 
 
 @Config
@@ -24,6 +30,8 @@ public class Red_Specimen_Auto extends LinearOpMode {
     @Override
     public void runOpMode() {
         //Initialization steps
+        PoseStorage.previousOpMode = OpModeType.AUTONOMOUS;
+        PoseStorage.currentPose = RedBasketPose.basket_init_old; //This is to reset the pose te a default value that is not affected by where the auto ends so that teleop opmodes can be debugged
         //Creates instance of MechanismActionBuilders
         WristClawActions _WristClawActions = new WristClawActions(this);
         ViperArmActions _ViperArmActions = new ViperArmActions(this);
@@ -42,6 +50,8 @@ public class Red_Specimen_Auto extends LinearOpMode {
         //----------------------------------------------------------------------------------------------
 
         if (isStopRequested()) return;
+        // Declare OpMode member for the Odometry Computer
+        GoBildaPinpointDriverRR odo;
 
         Action driveToClip1, clippingSpecimen1, driveForSamplePush, driveToClip2, clippingSpecimen2, grabSpecimen3, driveToClip3, clippingSpecimen3, driveToPark, clawCloseWait1, clawCloseWait2;
 
@@ -118,6 +128,10 @@ public class Red_Specimen_Auto extends LinearOpMode {
                         driveToPark
                 )
         );
+        odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
+        PoseStorage.currentPose = odo.getPositionRR(); //save the pose for teleop
+        telemetry.addData("Stored Pose: ", String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", PoseStorage.currentPose.position.x, PoseStorage.currentPose.position.y, Math.toDegrees(PoseStorage.currentPose.heading.toDouble())) );
+
         while(opModeIsActive()) {
             // _leftFront.setPower(0.3);
             telemetry.update();

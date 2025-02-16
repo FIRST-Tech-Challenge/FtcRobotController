@@ -30,6 +30,7 @@ public class Red_Basket_Auto extends LinearOpMode {
     public void runOpMode() {
         //Initialization steps
         PoseStorage.previousOpMode = OpModeType.AUTONOMOUS;
+        PoseStorage.currentPose = RedBasketPose.basket_init_old; //This is to reset the pose te a default value that is not affected by where the auto ends so that teleop opmodes can be debugged
         //Creates instance of MechanismActionBuilders
         WristClawActions _WristClawActions = new WristClawActions(this);
         ViperArmActions _ViperArmActions = new ViperArmActions(this);
@@ -116,7 +117,7 @@ public class Red_Basket_Auto extends LinearOpMode {
                 )
         );
         odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
-        PoseStorage.currentPose = odo.getPositionRR();
+        PoseStorage.currentPose = odo.getPositionRR(); //save the pose for teleop
         telemetry.addData("Stored Pose: ", String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", PoseStorage.currentPose.position.x, PoseStorage.currentPose.position.y, Math.toDegrees(PoseStorage.currentPose.heading.toDouble())) );
         //odo.setOffsets(-84.0, -168.0); //these are tuned for 3110-0002-0001 Product Insight #1
         //odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
