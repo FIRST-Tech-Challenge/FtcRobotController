@@ -33,18 +33,6 @@ public class MainTeleOp extends LinearOpMode{
         ArmDown
     }
 
-    enum HangState {
-        Home,
-        RaiseArmHang,
-        ViperExtendHang,
-        WristDown,
-        Hang,
-        ViperDown,
-        ArmDown,
-        EmergencyExitViperDown,
-        EmergencyExitArmDown
-    }
-
     enum SpecimenClipState {
         Home,
         WristUp,
@@ -73,7 +61,6 @@ public class MainTeleOp extends LinearOpMode{
 
 
     HighBasketState highBasketState = HighBasketState.Home;
-    HangState hangState = HangState.Home;
     SpecimenClipState specimenClipState = SpecimenClipState.Home;
     SubmersiblePickupState submersiblePickupState = SubmersiblePickupState.Home;
 
@@ -264,82 +251,6 @@ public class MainTeleOp extends LinearOpMode{
                     if (arm.getIsArmHomePosition()) {
                         highBasketState = HighBasketState.Home;
                     }
-            }
-
-            switch (hangState) {
-                case Home:
-                    if (viper.getIsViperExtendHang() && gamepad1.right_trigger > 0 && gamepad1.dpad_up) {
-                        arm.MoveToHighBasket();
-                        hangState = HangState.RaiseArmHang;
-                    }
-                    else if (gamepad1.left_trigger > 0 && gamepad1.dpad_down) {
-                        viper.ExtendClosed(0.75);
-                        hangState = HangState.EmergencyExitViperDown;
-                    }
-                    break;
-                case RaiseArmHang:
-                    if (arm.getIsArmHighBasketPosition()) {
-                        viper.ExtendFull(1);
-                        hangState = HangState.ViperExtendHang;
-                    }
-                    break;
-
-                case ViperExtendHang:
-                    if (viper.getIsViperExtendFull()) {
-                        wristClaw.WristDown();
-                        hangState = HangState.WristDown;
-                        wristTimer.reset();
-                    }
-                    break;
-
-                case WristDown:
-                    if (wristTimer.seconds() >= wristFlipTime){
-                        hangState = HangState.Hang;
-                    }
-                    break;
-
-                case Hang:
-                    if (gamepad1.right_trigger > 0 && gamepad1.dpad_down) {
-                        viper.ExtendHang(1);
-                        hangState = HangState.ViperDown;
-                    }
-                    break;
-
-                case ViperDown:
-                    if (viper.getIsViperExtendHang()) {
-                        arm.MoveToSlowDown();
-                        hangState = HangState.ArmDown;
-                    }
-                    else if (gamepad1.left_trigger > 0 && gamepad1.dpad_down) {
-                        viper.ExtendClosed(0.75);
-                        hangState = HangState.EmergencyExitViperDown;
-                    }
-                    break;
-
-                case ArmDown:
-                    if (arm.getIsArmSpecimenPosition()) {
-                        hangState = HangState.Home;
-                    }
-                    else if (gamepad1.right_trigger > 0 && gamepad1.dpad_down) {
-                        viper.ExtendClosed(1);
-                        hangState = HangState.EmergencyExitViperDown;
-                    }
-                    break;
-
-                case EmergencyExitViperDown:
-                    if (viper.getIsViperExtendClosed()) {
-                        viper.Rest();
-                        arm.MoveToHome();
-                        hangState = HangState.Home;
-                    }
-                    break;
-
-                case EmergencyExitArmDown:
-                    if (arm.getIsArmHomePosition()) {
-                        hangState = HangState.Home;
-                    }
-                    break;
-
             }
 
             switch (specimenClipState) {
