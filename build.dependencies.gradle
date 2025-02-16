@@ -1,7 +1,7 @@
 repositories {
     mavenCentral()
     google() // Needed for androidx
-    maven { url = 'https://maven.firstinspires.org/' }
+    maven { url = 'https://www.firstinspires.org/FTC/maven' }
 }
 
 dependencies {

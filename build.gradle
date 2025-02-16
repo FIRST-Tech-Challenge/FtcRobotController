@@ -21,7 +21,10 @@ allprojects {
     repositories {
         mavenCentral()
         google()
-        maven { url = 'https://maven.firstinspires.org/' }
+        maven { 
+            url = 'https://www.firstinspires.org/FTC/maven'
+            allowInsecureProtocol = true
+        }
     }
 }
 
