@@ -3,7 +3,9 @@ package com.kalipsorobotics.actions.autoActions;
 import static com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip.SPECIMEN_HANG_POS_X;
 
 import com.kalipsorobotics.actions.KActionSet;
+import com.kalipsorobotics.actions.MoveToDistanceThreshold;
 import com.kalipsorobotics.actions.WaitAction;
+import com.kalipsorobotics.actions.outtake.DistanceDetectionAction;
 import com.kalipsorobotics.actions.outtake.PurePursuitDistanceSensorCorrection;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenHang;
@@ -77,14 +79,26 @@ public class WallToBarHangRoundTrip extends KActionSet {
         wait2.setDependentActions(closeClaw);
         this.addAction(wait2);
 
-        PurePursuitDistanceSensorCorrection purePursuitDistanceSensorCorrection =
-                new PurePursuitDistanceSensorCorrection(outtake, moveToBar1, driveTrain);
-        purePursuitDistanceSensorCorrection.setName("barHangPickupDistanceSensorActionMoveUntilThreshold");
-        purePursuitDistanceSensorCorrection.setDependentActions(wait2);
-        this.addAction(purePursuitDistanceSensorCorrection);
+//        PurePursuitDistanceSensorCorrection purePursuitDistanceSensorCorrection =
+//                new PurePursuitDistanceSensorCorrection(outtake, moveToBar1, driveTrain);
+//        purePursuitDistanceSensorCorrection.setName("barHangPickupDistanceSensorActionMoveUntilThreshold");
+//        purePursuitDistanceSensorCorrection.setDependentActions(wait2);
+//        this.addAction(purePursuitDistanceSensorCorrection);
+
+        DistanceDetectionAction distanceDetectionAction = new DistanceDetectionAction(outtake.getRevDistanceBottom(),
+                155);
+        distanceDetectionAction.setName("distanceDetectionAction");
+        distanceDetectionAction.setDependentActions(moveToBar1);
+        this.addAction(distanceDetectionAction);
+
+        MoveToDistanceThreshold moveToDistanceThreshold = new MoveToDistanceThreshold(driveTrain,
+                distanceDetectionAction, -0.3);
+        moveToDistanceThreshold.setName("moveToDistanceThreshold");
+        moveToDistanceThreshold.setDependentActions(moveToBar1);
+        this.addAction(moveToDistanceThreshold);
 
         SpecimenHang specimenHang = new SpecimenHang(outtake);
-        specimenHang.setDependentActions(moveToBar1, specimenHangReady, purePursuitDistanceSensorCorrection);
+        specimenHang.setDependentActions(moveToBar1, specimenHangReady, moveToDistanceThreshold);
         this.addAction(specimenHang);
 
         SpecimenWallReady specimenWallReady = new SpecimenWallReady(outtake);
