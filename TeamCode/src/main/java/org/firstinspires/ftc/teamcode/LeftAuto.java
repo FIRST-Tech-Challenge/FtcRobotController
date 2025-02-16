@@ -154,7 +154,6 @@ public class LeftAuto extends LinearOpMode {
                         .then(await(100))
                         .then(run(() -> hardware.wrist.setPosition(0.28)))
                         .then(run(() -> hardware.arm.setTargetPosition(0)))
-                        .then(vLiftProxy.moveTo(0, 5, 2.0))
         );
     }
 
@@ -202,6 +201,7 @@ public class LeftAuto extends LinearOpMode {
                     a.add(moveTo(new Pose(18.0, 13.5, Math.toRadians(0))));
                     a.add(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
                         .then(hSlideProxy.moveOut());
+                    a.add(vLiftProxy.moveTo(0, 5, 1.0));
                 }))
                 .then(pickUpYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
@@ -210,37 +210,26 @@ public class LeftAuto extends LinearOpMode {
                     a.add(moveTo(new Pose(18.0, 23.75, Math.toRadians(0))));
                     a.add(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
                             .then(hSlideProxy.moveOut());
+                    a.add(vLiftProxy.moveTo(0, 5, 1.0));
                 }))
                 .then(pickUpYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
                 // 30.75 + sin(15 deg) * 2.0
                 // 12.75 + cos(15 deg) * 2.0
-                .then(moveTo(new Pose(31.26763809, 14.68185165, Math.toRadians(75))))
+                .then(groupOf(a -> {
+                    a.add(moveTo(new Pose(31.26763809, 14.68185165, Math.toRadians(75))));
+                    a.add(vLiftProxy.moveTo(0, 5, 1.0));
+                }))
                 .then(fourthYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
-                .then(moveTo(PARK_BAD))
-////                .then(moveTo(PARK2))
-//                .then(run(() -> {
-//                    hardware.frontLeft.setPower(0.6);
-//                    hardware.frontRight.setPower(-0.6);
-//                    hardware.backLeft.setPower(-0.6);
-//                    hardware.backRight.setPower(0.6);
-//                }))
-//                .then(wait(0.5))
-//                .then(run(() -> {
-//                    hardware.frontLeft.setPower(0.3);
-//                    hardware.frontRight.setPower(-0.3);
-//                    hardware.backLeft.setPower(-0.3);
-//                    hardware.backRight.setPower(0.3);
-//                }))
-//                .then(wait(0.5))
+                .then(groupOf(a -> {
+                    a.add(moveTo(PARK_BAD));
+                    a.add(vLiftProxy.moveTo(0, 5, 1.0));
+                }))
                 .then(run(() -> hardware.driveMotors.setAll(0)));
-//                .then(moveTo(scheduler,
-//                        new Pose(65, -12, Math.toRadians(0))))*/
         ;
-        // park
 
         telemetry.addLine("Initialized.");
         telemetry.addLine(String.format("%d in queue.", scheduler.taskCount()));
