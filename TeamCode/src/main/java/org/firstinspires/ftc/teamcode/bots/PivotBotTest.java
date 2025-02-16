@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -27,6 +28,14 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
     public DcMotorEx pivotMotor1 = null;
     public DcMotorEx slideMotor1 = null;
     public DcMotorEx slideMotor2 = null;
+
+    double integralSum = 0;
+    double Kp = 5;
+    double Ki = 0;
+    double Kd = 0;
+
+    ElapsedTime timer = new ElapsedTime();
+    private double lastError = 0;
 
     @Override
     public void init(HardwareMap ahwMap) {
@@ -82,6 +91,8 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
         if (pivotTarget > minumimPivotPos - 100 && pivotTarget < maximumPivotPos + 100){
 
             pivotOutOfRange = false;
+
+            pivotPower = PIDControl(pivotTarget, getPivotPosition());
 
             runPivotMotors(pivotTarget, 0.3);
 
@@ -171,5 +182,20 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
 
             }
         }
+    }
+
+    public double PIDControl(double reference, double state)
+    {
+
+        double error = reference - state;
+        integralSum += error * timer.seconds();
+        double derivative = (error - lastError) / timer.seconds();
+        lastError = error;
+
+        timer.reset();
+
+        double output = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
+        return output;
+
     }
 }
