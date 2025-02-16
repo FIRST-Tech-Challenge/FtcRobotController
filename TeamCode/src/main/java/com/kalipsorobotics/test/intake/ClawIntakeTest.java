@@ -1,5 +1,6 @@
 package com.kalipsorobotics.test.intake;
 
+import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
@@ -12,18 +13,18 @@ import com.qualcomm.robotcore.hardware.ServoController;
 public class ClawIntakeTest extends LinearOpMode {
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode(){
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         IntakeClaw intakeClaw = IntakeClaw.getInstance(opModeUtilities);
         Outtake outtake = Outtake.getInstance(opModeUtilities);
         ServoController servoController = intakeClaw.getIntakeBigPivotServo().getServo().getController();
 
-        double intakeLinkagePos = 0.5;
-        double intakeBigSweepPos = 0.1;
-        double intakeBigPivotPos = 0.1;
-        double intakeSmallPivotPos = 0.5;
-        double intakeSmallSweepPos = 0.5;
-        double intakeClawPos = 0.5;
+        double intakeLinkagePos = IntakeClaw.INTAKE_LINKAGE_OUT_POS;
+        double intakeBigSweepPos = IntakeClaw.INTAKE_BIG_SWEEP_PARALLEL_TO_ROBOT;
+        double intakeBigPivotPos = IntakeClaw.INTAKE_BIG_PIVOT_INTAKE_READY_POS;
+        double intakeSmallPivotPos = IntakeClaw.INTAKE_SMALL_PIVOT_INTAKE_READY_POS;
+        double intakeSmallSweepPos = IntakeClaw.INTAKE_SMALL_SWEEP_INTAKE_READY_POS;
+        double intakeClawPos = IntakeClaw.IntakeClawConfig.INTAKE_CLAW_OPEN;
 
         intakeClaw.getIntakeLinkageServo().setPosition(0.95);
         intakeClaw.getIntakeBigSweepServo().setPosition(intakeBigSweepPos);
@@ -119,11 +120,11 @@ public class ClawIntakeTest extends LinearOpMode {
             }
 
 
-            telemetry.addData("outtakeClawPos", outtakeClawPos);
-            telemetry.addData("intakeClawPos", intakeClawPos);
-            telemetry.addData("intakeLinkagePos", intakeLinkagePos);
-            telemetry.addData("intakeBigPivot", intakeBigPivotPos);
-            telemetry.addData("intakeSmallPivot", intakeSmallPivotPos);
+            telemetry.addData("outtakeClawPos", ""+outtakeClawPos);
+            telemetry.addData("intakeClawPos", ""+intakeClawPos);
+            telemetry.addData("intakeLinkagePos", ""+intakeLinkagePos);
+            telemetry.addData("intakeBigPivot", ""+intakeBigPivotPos);
+            telemetry.addData("intakeSmallPivot", ""+intakeSmallPivotPos);
             telemetry.update();
         }
 
