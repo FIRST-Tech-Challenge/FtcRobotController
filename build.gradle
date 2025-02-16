@@ -6,8 +6,16 @@
 
 buildscript {
     repositories {
-        mavenCentral()
+        maven {
+            url 'https://dl.google.com/dl/android/maven2/'
+            allowInsecureProtocol = true
+        }
+        maven {
+            url 'https://repo1.maven.org/maven2/'
+            allowInsecureProtocol = true
+        }
         google()
+        mavenCentral()
     }
     dependencies {
         // Note for FTC Teams: Do not modify this yourself.
@@ -19,12 +27,22 @@ buildscript {
 // google() repository beginning with version 3.2 of the Android Gradle Plugin
 allprojects {
     repositories {
-        mavenCentral()
-        google()
+        maven {
+            url 'https://dl.google.com/dl/android/maven2/'
+            allowInsecureProtocol = true
+        }
+        maven {
+            url 'https://repo1.maven.org/maven2/'
+            allowInsecureProtocol = true
+        }
         maven { 
             url = 'https://www.firstinspires.org/FTC/maven'
             allowInsecureProtocol = true
         }
+        maven { url = 'https://maven.brott.dev/' }
+        google()
+        mavenCentral()
+        maven { url = 'https://jitpack.io' }
     }
 }
 
