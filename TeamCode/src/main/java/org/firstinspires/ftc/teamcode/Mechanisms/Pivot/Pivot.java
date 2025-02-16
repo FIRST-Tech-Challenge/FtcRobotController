@@ -32,14 +32,14 @@ public class Pivot {
             public boolean run(@NonNull TelemetryPacket Packet) {
                     if (intakePos== Intake.intakeState.INTAKE) {
                         pivotLeft.setPosition(pivotDown);
-                        pivotRight.setPosition(pivotUp);
+                        pivotRight.setPosition(pivotDown);
                     }
                     else if (intakePos == Intake.intakeState.OUTTAKE) {
                         pivotLeft.setPosition(pivotDown);
-                        pivotRight.setPosition(pivotUp);
+                        pivotRight.setPosition(pivotDown);
                     } else if (intakePos == Intake.intakeState.STOP){
                         pivotLeft.setPosition(pivotUp);
-                        pivotRight.setPosition(pivotDown);
+                        pivotRight.setPosition(pivotUp);
                     }
                 return false;
             }
