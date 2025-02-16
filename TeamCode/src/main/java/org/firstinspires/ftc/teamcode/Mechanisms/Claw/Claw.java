@@ -13,14 +13,17 @@ import org.firstinspires.ftc.teamcode.Hardware.Actuators.ServoAdvanced;
 public class Claw {
     HardwareMap hardwareMap;
     ServoAdvanced clawServo;
-
+    ServoAdvanced clawRotation;
     public static double clawOpen = 0.66;
     public static double clawClosed = 0.5;
+    public static double rotationParallel = 0;
+    public static double rotationPerpendicular = 0;
     public clawState clawPos = clawState.OPEN;
+
     public Claw(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
         this.clawServo = new ServoAdvanced(hardwareMap.get(Servo.class, "clawServo"));
-
+        this.clawRotation = new ServoAdvanced(hardwareMap.get(Servo.class, "clawRotation"));
     }
 
     public enum clawState {
@@ -34,9 +37,11 @@ public class Claw {
             public boolean run(@NonNull TelemetryPacket Packet) {
                     if (clawPos == clawState.CLOSE) {
                         clawServo.setPosition(clawClosed);
+                        clawRotation.setPosition(rotationParallel);
                     }
                     else if (clawPos == clawState.OPEN) {
                         clawServo.setPosition(clawOpen);
+                        clawRotation.setPosition(rotationParallel);
                     }
                 // servo parameter -1, 0   0, 1
                 return false;
