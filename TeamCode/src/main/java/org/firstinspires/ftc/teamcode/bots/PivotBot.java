@@ -7,6 +7,7 @@ package org.firstinspires.ftc.teamcode.bots;
         import com.qualcomm.robotcore.hardware.DcMotorSimple;
         import com.qualcomm.robotcore.hardware.HardwareMap;
         import com.qualcomm.robotcore.util.ElapsedTime;
+        import com.stormbots.MiniPID;
 
         import java.util.Timer;
         import java.util.TimerTask;
@@ -27,6 +28,7 @@ public class PivotBot extends OdometryBot {
     public DcMotorEx pivotMotor1 = null;
     public DcMotorEx slideMotor1 = null;
     public DcMotorEx slideMotor = null;
+
 
 
 
@@ -55,7 +57,7 @@ public class PivotBot extends OdometryBot {
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
         pivotMotor1 = hwMap.get(DcMotorEx.class, "pivot2");
-        pivotMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
+        pivotMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
         pivotMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivotMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pivotMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -116,6 +118,7 @@ public class PivotBot extends OdometryBot {
 
             pivotMotor.setTargetPosition(pivotTarget);
             pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
 
             // TODO : PID control for the pivot motor
             pivotMotor1.setPower(0.6);

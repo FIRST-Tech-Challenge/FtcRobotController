@@ -39,7 +39,7 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
         pivotMotor1.setPower(0);
 
         pivotMotor2 = hwMap.get(DcMotorEx.class, "pivot2");
-        pivotMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
+        pivotMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
         pivotMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivotMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         pivotMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -170,8 +170,6 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
                 pivotMotor2.setPower(-power);
 
             }
-
         }
     }
-
 }
