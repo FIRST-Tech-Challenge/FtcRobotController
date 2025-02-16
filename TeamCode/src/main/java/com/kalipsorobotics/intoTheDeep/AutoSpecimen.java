@@ -145,8 +145,8 @@ public class AutoSpecimen extends LinearOpMode {
         moveFloorSamples.setDependentActions(wallToBarHangAction);
 
         //move to sample
-        moveFloorSamples.addPoint(-570, 230, -135, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
-        moveFloorSamples.addPoint(-570, -425, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
+        moveFloorSamples.addPoint(-570, 230, -135, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //
+        moveFloorSamples.addPoint(-570, -450, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); // y = -450
         moveFloorSamples.addPoint( -670, -425, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_FAST); //y
         moveFloorSamples.addPoint(-1330, -500, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //y -475
 
