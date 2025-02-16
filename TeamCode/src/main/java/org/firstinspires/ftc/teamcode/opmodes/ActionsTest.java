@@ -30,12 +30,12 @@ public class ActionsTest extends LinearOpMode {
             while (opModeIsActive()) {
                 // OpMode loop
 
-                rotator.setPosition(0.85);
-                sleep(1250);
                 ComplexActions comp = new ComplexActions(hardwareMap);
-                Actions.runBlocking(comp.grabCubeFromTray());
-                sleep(2500);
-                Actions.runBlocking(comp.returnToTray());
+                if (gamepad1.a) {
+                    rotator.setPosition(0.85);
+                    sleep(1250);
+                    Actions.runBlocking(comp.grabCubeFromTray());
+                }
 
                 /// Telemetry ///
 

@@ -32,7 +32,7 @@ public class ClawActions {
         public boolean run(@NonNull TelemetryPacket packet) {
             claw.setPosition(clawPosition);
             rotator.setPosition(rotatorPosition);
-            return rotator.getPosition() == rotatorPosition && claw.getPosition()  == clawPosition;
+            return rotator.getPosition() == rotatorPosition && claw.getPosition() == clawPosition;
         }
     }
 
