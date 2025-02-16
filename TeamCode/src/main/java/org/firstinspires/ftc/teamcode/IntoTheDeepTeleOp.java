@@ -106,7 +106,7 @@ public class IntoTheDeepTeleOp extends OpMode {
         
         // Intake position and flywheel control
         if (gamepad1.dpad_right) {
-            intake.in();           // Retract intake
+            intake.in(false);           // Retract intake
         } else if (gamepad1.dpad_left) {
             intake.down(true);     // Lower intake with flywheel forward
         } else if (gamepad1.left_bumper) {
@@ -163,7 +163,7 @@ public class IntoTheDeepTeleOp extends OpMode {
             claw.elbowDown();
             claw.wristDown();
             claw.openClaw();
-            intake.in();
+            intake.in(true);
         }
         
         // Handle scoring sequence timing
