@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-public class RollerIntakeBot extends DifferentialWristBot {
+public class RollerIntakeBot extends FourWheelDriveBot {
     private CRServo intakeRoller;
     private Servo colorIndicator;
     private NormalizedColorSensor colorSensor;

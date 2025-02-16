@@ -1,8 +1,6 @@
 repositories {
     mavenCentral()
     maven { url = 'https://maven.brott.dev/' }
-    maven { url = 'https://maven.brott.dev/' }
-    maven { url= 'https://maven.pedropathing.com/' }
 
     google() // Needed for androidx
 }
@@ -18,8 +16,11 @@ dependencies {
     implementation 'org.firstinspires.ftc:Vision:10.2.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.5'
+<<<<<<< HEAD
     implementation 'com.pedropathing:pedro:1.0.8'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.16'
+=======
+>>>>>>> parent of 8ddbd11 (imported gradle for pedro, plan to delete existing pedro package)
 
 }
 
