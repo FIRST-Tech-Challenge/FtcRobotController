@@ -45,8 +45,6 @@ import org.firstinspires.ftc.teamcode.RoadRunner.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.teamcode.RoadRunner.messages.MecanumLocalizerInputsMessage;
 import org.firstinspires.ftc.teamcode.RoadRunner.messages.PoseMessage;
 import org.firstinspires.ftc.teamcode.tatooine.utils.mathUtil.MathUtil;
-import org.firstinspires.ftc.teamcode.tatooine.utils.unit.UnitConverter;
-import org.firstinspires.ftc.teamcode.tatooine.utils.unit.unit;
 
 import java.lang.Math;
 import java.util.Arrays;
@@ -109,7 +107,7 @@ public final class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);
+        localizer = new ThreeDeadWheelLocalizerIMU(hardwareMap,lazyImu.get() , PARAMS.inPerTick);
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
 
@@ -218,27 +216,28 @@ public final class MecanumDrive {
 
         // drive model parameters
 
-//        public double inPerTick = UnitConverter.convert(315, unit.CM, unit.INCHES) /232651;
-        public double inPerTick = 0.000533054867;
+//        public double inPerTick = UnitConverter.convert(315, unit.CM, unit.INCHES) /233069;
+        public double inPerTick = 0.000532098863;
 //        public double lateralInPerTick = 0.0002968932740733096;
 
-        public double lateralInPerTick = 0.0003445067628091891;
+        public double lateralInPerTick = 0.0003663283863563854;
 
 
 //        public double trackWidthTicks = 28193.156296462217;
-        public double trackWidthTicks =  27009.36397466802;
+        public double trackWidthTicks =  27683.682178927535;
 
         // feedforward parameters (in tick units)
-        public double kS =   1.2336966376918683;
-        public double kV = 0.0001043392843674281;
+        public double kS = 1.1629516754880225;
+        public double kV = 0.00010429847393400597;
     //        public double kA = 0.00004;
-        public double kA = 0.00004;
+        public double kA = 0.00003;
 
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 60;
-        public double minProfileAccel =-40;
-        public double maxProfileAccel = 60;
+        public double maxWheelVel = 50;
+        public double minProfileAccel = -30;
+        public double maxProfileAccel = 50;
+
 
         // turn profile parameters (in radians)
         public double maxAngVel = Math.PI; // shared with path

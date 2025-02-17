@@ -37,15 +37,25 @@ public class CTBSB extends LinearOpMode {
         TrajectoryActionBuilder goScoreSpecimen = drive.actionBuilder(beginPose)
                 .splineToLinearHeading(new Pose2d(-7, -31.5, Math.toRadians(90)), Math.toRadians(90));
         TrajectoryActionBuilder goIntakeSample1 = goScoreSpecimen.endTrajectory().fresh()
-                .strafeTo(new Vector2d(-7, -40))
-                .splineToLinearHeading(new Pose2d(-27, -58, Math.toRadians(131.5)), Math.toRadians(180))
-                .strafeTo(new Vector2d(-27 - 0.5, -58 + 0.5));
+                .strafeTo(new Vector2d(-7, -39))
+                .splineToLinearHeading(new Pose2d(-27.5, -58 + 0.5, Math.toRadians(128)), Math.toRadians(180));
         TrajectoryActionBuilder goScoreSample1 = goIntakeSample1.endTrajectory().fresh()
-                .splineToLinearHeading(new Pose2d(-48, -64.5, Math.toRadians(192.5)), Math.toRadians(180));
+                .splineToLinearHeading(new Pose2d(-48, -64.5+ 5, Math.toRadians(210)), Math.toRadians(180));
         TrajectoryActionBuilder goIntakeSample2 = goScoreSample1.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-42 ,-56), Math.toRadians(112));
+                .strafeToLinearHeading(new Vector2d(-42 ,-56), Math.toRadians(122.5));
         TrajectoryActionBuilder goScoreSample2 = goIntakeSample2.endTrajectory().fresh()
-                .splineToLinearHeading(new Pose2d(-48, -64.5, Math.toRadians(193.5)), Math.toRadians(180));
+                .splineToLinearHeading(new Pose2d(-48, -64.5, Math.toRadians(200.5)), Math.toRadians(180));
+        TrajectoryActionBuilder goIntakeSample3 = goScoreSample2.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-42 ,-56), Math.toRadians(120))
+                .strafeToLinearHeading(new Vector2d(-42+3 , -56-3), Math.toRadians(137))
+                ;
+        TrajectoryActionBuilder goIntakeSample3Half = goIntakeSample3.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-42+3-5 , -56-3+ 5), Math.toRadians(137))
+                ;
+        TrajectoryActionBuilder goScoreSample3 = goIntakeSample3Half.endTrajectory().fresh()
+                .splineToLinearHeading(new Pose2d(-55,-60,Math.toRadians(45)), Math.toRadians(-90))
+                ;
+
         waitForStart();
         Actions.runBlocking(new ParallelAction(
                 arm.moveExtend(), arm.moveAngle(), new SequentialAction(
@@ -56,7 +66,7 @@ public class CTBSB extends LinearOpMode {
                         , arm.setAngle(Conts.angleScoreSpecimenHigh)
                         , arm.setExtend(15)
                         , goScoreSpecimen.build())
-                , arm.setAngle(45)
+                , arm.setAngle(48)
                 , arm.setExtend(0)
                 , new ParallelAction(goIntakeSample1.build(), new SequentialAction(intake.intakeByTimer(-1, 0.5), intake.intakeByTimer(1, 0.5)))
                 , arm.setAngle(5)
@@ -68,14 +78,28 @@ public class CTBSB extends LinearOpMode {
                 , goIntakeSample2.build()
                 , new ParallelAction(arm.setExtend(arm.getMaxExtend() - 27.5)  , new SequentialAction(
                 arm.setAngle(30)
-                , arm.setAngle(-1)
-                ,arm.setExtend(arm.getMaxExtend() - 18)
+                , arm.setAngle(0)
+                ,arm.setExtend(arm.getMaxExtend() - 16)
                 ))
                 , new SleepAction(1)
-
-                , new ParallelAction(goScoreSample2.build(), arm.setAngle(65), arm.setExtend(arm.getMaxExtend()- 4))
+                , new InstantAction(wrist::intakeFlat)
+                , new InstantAction(wrist::intakeFlat)
+                , new ParallelAction( new InstantAction(wrist::intakeFlat), goScoreSample2.build(), arm.setAngle(69),  new InstantAction(wrist::intakeFlat), arm.setExtend(arm.getMaxExtend()- 4))
                 , intake.intakeByTimer(-1, 0.5)
                 , intake.intakeByTimer(1, 0.5)
+                , goIntakeSample3.build()
+                , new InstantAction(wrist::intakeFlat)
+                , arm.setAngle(20)
+                , arm.setAngle(1.5)
+                , goIntakeSample3Half.build()
+                , new SleepAction(1)
+                , new ParallelAction(arm.setExtend(30)
+                , arm.setAngle(20)
+                )
+                , goScoreSample3.build()
+                , new ParallelAction(arm.setAngle(Conts.angleScoreSample), arm.setExtend(Conts.extendScoreSampleHigh + 4))
+                , new InstantAction(wrist::doc),new SleepAction(0.2), intake.intakeByTimer(-1, 0.5)
+                , new SequentialAction(intake.stop(),new InstantAction(()-> wrist.intakeUp()), arm.setExtend(0), arm.setAngle(Conts.angleDrive))
         )
         ));
     }

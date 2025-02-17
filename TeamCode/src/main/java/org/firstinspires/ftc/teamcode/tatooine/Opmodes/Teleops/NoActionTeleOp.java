@@ -68,9 +68,6 @@ public class NoActionTeleOp extends LinearOpMode {
                 drive.resetIMU();
             }
 
-            telemetry.addData("currentAmp", arm.getCurrentAngle());
-            telemetry.addData("ang", arm.getAngle());
-            telemetry.update();
         }
     }
 }

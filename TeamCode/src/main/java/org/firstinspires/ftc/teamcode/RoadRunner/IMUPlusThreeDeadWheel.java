@@ -32,7 +32,7 @@ public class IMUPlusThreeDeadWheel implements Localizer {
             //public double perpXTicks = -805.1190472263876; // x position of the perpendicular encoder (in tick units)
         }
 
-        public static ThreeDeadWheelLocalizer.Params PARAMS = new ThreeDeadWheelLocalizer.Params();
+        public static ThreeDeadWheelLocalizerIMU.Params PARAMS = new ThreeDeadWheelLocalizerIMU.Params();
 
         public final Encoder par0, par1, perp;
 

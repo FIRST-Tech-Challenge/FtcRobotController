@@ -233,8 +233,8 @@ public class Arm {
     public void setAnglePower(double power) {
 
         // Prevent movement if the current angle exceeds the amperage limit
-        if (getCurrentAngle() >= ANGLE_AMP_LIMIT){
-            if (power > 0 && lastPower == power)
+        if (getCurrentAngle() >= ANGLE_AMP_LIMIT * ((MIN_EXTEND + getExtend()) / MIN_EXTEND)){
+            if (power > 0 && MathUtil.inTolerance(lastPower, power, 0.05))
             {
                 resetAngleEncoders();
                 startAngle = ANGLE_OFFSET;
@@ -242,7 +242,7 @@ public class Arm {
             power = 0;
 
         }
-        if (getAngle() < -4 && power < 0){
+        if ((getAngle() < -4 && power < 0) || (getAngle() > 90 && power > 0)){
             power = 0;
         }
 
