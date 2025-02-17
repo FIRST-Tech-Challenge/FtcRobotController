@@ -109,8 +109,9 @@ public class MecanumDrivetrain {
 
         Gamepad gamepad1 = _opMode.gamepad1;
         previousPose = pinpoint.getPositionRR();
+        Pose2d targetPose = null;
         if (PoseStorage.hasFieldCentricDrive) {
-            Pose2d targetPose = null;
+
             if (gamepad1.left_bumper) {
                 targetPose = basketDropTargetPose;
             }
@@ -138,14 +139,9 @@ public class MecanumDrivetrain {
             else {
                 isDpad_RightPressed = false;
             }
-            if (targetPose != null){
-                double[] motorPowers = calMotorPowers(previousPose, targetPose);
-                setMotorPowers(motorPowers);
-            }
         }
-
-        else {
-            //drive inputs
+        if (targetPose == null){
+            //manual teleop drive
             drive = gamepad1.left_stick_y;
             turn = turnSpeedMultiplier * (Math.pow((gamepad1.right_stick_x * -1), turnEasingExponet) + (Math.signum(gamepad1.right_stick_x * -1) * turnEasingYIntercept));
             strafe = gamepad1.left_stick_x * -1;
@@ -169,6 +165,9 @@ public class MecanumDrivetrain {
             if (_rightBack != null) {
                 _rightBack.setPower(bRightPow);
             }
+        } else { //automatic teleop drive
+            double[] motorPowers = calMotorPowers(previousPose, targetPose);
+            setMotorPowers(motorPowers);
         }
     }
     /**
