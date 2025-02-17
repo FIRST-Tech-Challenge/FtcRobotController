@@ -51,7 +51,7 @@ public class LimelightTestTeleOps extends LinearOpMode {
 
             robot.onLoop(0, "manual drive");
 
-            robot.pivotControl(gamepad1.dpad_up, gamepad1.dpad_down);
+//            robot.pivotControl(gamepad1.dpad_up, gamepad1.dpad_down);
             robot.slideControl(gamepad1.right_bumper, gamepad1.left_bumper);
             robot.pinchControl(gamepad1.a, gamepad1.b);
             robot.rotateControl(gamepad1.left_trigger > 0.5,gamepad1.right_trigger > 0.5);

@@ -18,10 +18,10 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
 
     public final float ticksToDegree = 360/8192; // 8192 ticks per rotation
     public float kfAngled;
-    public static double kp = 0.8;
-    public static double ki = 0.08;
-    public static double kd = 0.08;
-    public static double kf = 0.04;
+    public static double kp = 0.1;
+    public static double ki = 0.00;
+    public static double kd = 0.00;
+    public static double kf = 0.00;
 
     PIDFController pivotController = new PIDFController(kp,ki,kd,kf);
 
@@ -55,7 +55,7 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
         pivotMotor1 = hwMap.get(DcMotorEx.class, "pivot1");
-        pivotMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
+        pivotMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
         pivotMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivotMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         pivotMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -69,14 +69,14 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
         pivotMotor2.setPower(0);
 
         slideMotor1 = hwMap.get(DcMotorEx.class, "slide1");
-        slideMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
         slideMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         slideMotor1.setPower(0);
 
         slideMotor2 = hwMap.get(DcMotorEx.class, "slide2");
-        slideMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
         slideMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -104,19 +104,21 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
         super.onTick();
 
         /** commmented out pid to test slide */
-//        pivotController.setTolerance(20,120);
-//        kfAngled = (float) (kf*Math.cos(Math.toRadians(ticksToDegree)*pivotMotor1.getCurrentPosition()));
-//        pivotController.setPIDF(kp,ki,kd,0);
-//        pivotController.setSetPoint(pivotTarget);
-//
-//        if (!pivotController.atSetPoint()){
-//            double output = pivotController.calculate(pivotMotor1.getCurrentPosition());
-//            pivotMotor2.setVelocity(output+kfAngled);
-//            pivotMotor1.setVelocity(output+kfAngled);
-//        } else{
-//            pivotMotor2.setPower(0);
-//            pivotMotor1.setPower(0);
-//        }
+        pivotController.setTolerance(20,120);
+        kfAngled = (float) (kf*Math.cos(Math.toRadians(ticksToDegree)*(-pivotMotor1.getCurrentPosition())));
+        pivotController.setPIDF(kp,ki,kd,0);
+        pivotController.setSetPoint(pivotTarget);
+        int pivotCorrected = -pivotMotor1.getCurrentPosition();
+
+        if (!pivotController.atSetPoint()){
+            double output = pivotController.calculate(pivotCorrected);
+            pivotMotor2.setVelocity(output+kfAngled);
+            pivotMotor1.setVelocity(output+kfAngled);
+            telemetry.addData("output velocity",output);
+        } else{
+            pivotMotor2.setPower(0);
+            pivotMotor1.setPower(0);
+        }
 
 
 //        if (reachedPivotPos && oldPt != pivotTarget) {
@@ -143,8 +145,7 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
 //            pivotMotor2.setPower(0);
 //
 //        }
-pivotMotor1.setPower(0);
-pivotMotor2.setPower(0);
+
         if (slideTarget > 0 && slideTarget < maximumSlidePos + 100){
 
             slideMotor1.setTargetPosition(slideTarget);

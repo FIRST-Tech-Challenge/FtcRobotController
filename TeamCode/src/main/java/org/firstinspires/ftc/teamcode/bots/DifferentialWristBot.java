@@ -1,14 +1,29 @@
 package org.firstinspires.ftc.teamcode.bots;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-
-public class DifferentialWristBot extends PivotBotTest{
+@Config
+public class DifferentialWristBot extends PivotBot{
 
     private Servo leftDifferentialWristServo;
     private Servo rightDifferentialWristServo;
+;
+    public static double groundIntakePitchTarget = -60;
 
+    public static double groundIntakeRollTarget = 0;
+
+    public static double wallIntakePitchTarget = 25;
+
+    public static double wallIntakeRollTarget = 60;
+
+    public static double sampleOuttakePitchTarget = 0;
+    public static double sampleOuttakeRollTarget = 60;
+
+    public static double tuningPitchTarget;
+
+    public static double tuningRollTarget;
     public final double MIN_ANGLE = -90.0;
     public final double MAX_ANGLE = 90.0;
     public final double MIN_SERVO_POS = 0.0;
@@ -78,6 +93,8 @@ public class DifferentialWristBot extends PivotBotTest{
         // Update telemetry (if needed, but ensure it's non-blocking)
         telemetry.addData("Left Servo Target", leftPos);
         telemetry.addData("Right Servo Target", rightPos);
+        telemetry.addData("pitch", currentRoll);
+        telemetry.addData("roll", currentPitch);
 
     }
 

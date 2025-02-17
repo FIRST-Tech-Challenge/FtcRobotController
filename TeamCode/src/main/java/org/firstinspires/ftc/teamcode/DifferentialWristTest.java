@@ -20,17 +20,19 @@ public class DifferentialWristTest extends LinearOpMode {
         while (opModeIsActive()) {
             differentialWristBot.onLoop(0,"test");
             if(gamepad1.dpad_up){
-                differentialWristBot.pitch(0.3);
+                differentialWristBot.pitch(1);
             }
             if(gamepad1.dpad_down){
-                differentialWristBot.pitch(-0.3);
+                differentialWristBot.pitch(-1);
             }
             if(gamepad1.dpad_left){
-                differentialWristBot.roll(0.3);
+                differentialWristBot.roll(1);
             }
             if(gamepad1.dpad_right){
-                differentialWristBot.roll(-0.3);
+                differentialWristBot.roll(-1);
             }
+//            differentialWristBot.pitchTo(differentialWristBot.tuningPitchTarget);
+//            differentialWristBot.rollTo(differentialWristBot.tuningRollTarget);
 
             telemetry.update();
         }

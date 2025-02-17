@@ -41,7 +41,7 @@ public class PivotSlideTest extends LinearOpMode {
 
             robot.onLoop(0, "manual drive");
 
-//            robot.pivotControlTest(gamepad1.dpad_up, gamepad1.dpad_down);
+            robot.pivotControlTest(gamepad1.dpad_up, gamepad1.dpad_down);
             robot.slideControl(gamepad1.dpad_right, gamepad1.dpad_left);
 
 //            robot.climbControl(gamepad1.a);

@@ -64,7 +64,7 @@ public class ThreeWheelIMULocalizer extends Localizer {
     private double deltaRadians;
     private double totalHeading;
     public static double FORWARD_TICKS_TO_INCHES = -0.001984210206760794;//8192 * 1.37795 * 2 * Math.PI * 0.5008239963;
-    public static double STRAFE_TICKS_TO_INCHES = -0.002967444452514647;//8192 * 1.37795 * 2 * Math.PI * 0.5018874659;
+    public static double STRAFE_TICKS_TO_INCHES = -0.00195864245;//8192 * 1.37795 * 2 * Math.PI * 0.5018874659;
     public static double TURN_TICKS_TO_RADIANS = -0.0020317466853682986;//8192 * 1.37795 * 2 * Math.PI * 0.5;
 
 
@@ -107,7 +107,7 @@ public class ThreeWheelIMULocalizer extends Localizer {
         strafeEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightRear"));
 
         // TODO: reverse any encoders necessary
-        leftEncoder.setDirection(Encoder.REVERSE);
+        leftEncoder.setDirection(Encoder.FORWARD);
         rightEncoder.setDirection(Encoder.REVERSE);
         strafeEncoder.setDirection(Encoder.REVERSE);
 
