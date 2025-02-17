@@ -1,5 +1,6 @@
 package com.kalipsorobotics.actions.outtake;
 
+import android.os.SystemClock;
 import android.util.Log;
 
 import com.kalipsorobotics.actions.KActionSet;
@@ -14,6 +15,7 @@ public class DistanceDetectionAction extends KActionSet {
     PurePursuitAction purePursuitAction;
     Rev2mDistanceSensor revDistance;
     double targetDistance;
+    double startTime;
 
 //    public CloseWhenDetectDistanceAction(RevDistance  revDistance, double targetDistance) {
 //        this(null, null, null, revDistance, targetDistance);
@@ -29,6 +31,13 @@ public class DistanceDetectionAction extends KActionSet {
         long timestamp = System.currentTimeMillis();
         double distance_mm = revDistance.getDistance(DistanceUnit.MM);
         Log.d("DistanceDetectAction", "getDistance elapse ms " + (System.currentTimeMillis() - timestamp));
+
+        double elapsedTime = System.currentTimeMillis() - startTime;
+
+        if(elapsedTime > 2500) {
+            return true;
+        }
+
         return (distance_mm < targetDistance);
     }
 
@@ -38,11 +47,15 @@ public class DistanceDetectionAction extends KActionSet {
             return true;
         }
 
+        if(!hasStarted) {
+            startTime = System.currentTimeMillis();
+            hasStarted = true;
+        }
+
         return checkDistance();
     }
 
     @Override
     public void update() {
-
     }
 }

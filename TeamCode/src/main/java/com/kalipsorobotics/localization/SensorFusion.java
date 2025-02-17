@@ -82,15 +82,15 @@ public class SensorFusion {
             return false;
         }
 
-        //double mean = imuHistory.stream().mapToDouble(a -> a).average().orElse(imuRateChange);
-
-
+//        double mean = imuHistory.stream().mapToDouble(a -> a).average().orElse(imuRateChange);
+//
+//
 //        double variance = imuHistory.stream()
 //                .mapToDouble(a -> Math.pow(a - mean, 2))
 //                .average()
 //                .orElse(0);
-        // Avoid division by zero
-        //double stdDev = Math.sqrt(variance);
+////         Avoid division by zero
+//        double stdDev = Math.sqrt(variance);
 
 
 

@@ -36,10 +36,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Autonomous(name = "AutoSpecimen 3 PUSH")
-public class AutoSpecimen extends LinearOpMode {
+@Autonomous(name = "AutoSpecimen 2 PRELOAD")
+public class AutoSpecimen2Pre extends LinearOpMode {
 
-    protected boolean isThirdPush = true;
+    protected boolean isThirdPush = false;
 
 
     @Override
@@ -99,21 +99,34 @@ public class AutoSpecimen extends LinearOpMode {
         redAutoSpecimen.addAction(delayBeforeStart);
 
         //================begin of first specimen====================
-        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, 200);
-        wallToBarHangAction.setName("wallToBarHangAction");
-        wallToBarHangAction.setTelemetry(telemetry);
-        wallToBarHangAction.setDependentActions(delayBeforeStart);
-        redAutoSpecimen.addAction(wallToBarHangAction);
+//        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, 200);
+//        wallToBarHangAction.setName("wallToBarHangAction");
+//        wallToBarHangAction.setTelemetry(telemetry);
+//        wallToBarHangAction.setDependentActions(delayBeforeStart);
+//        redAutoSpecimen.addAction(wallToBarHangAction);
+
+        WallToBarHangRoundTrip wallToBarHangRoundTripPre = new WallToBarHangRoundTrip(driveTrain, wheelOdometry, outtake, 200);
+        wallToBarHangRoundTripPre.setName("wallToBarHangRoundTripPre");
+        wallToBarHangRoundTripPre.setTelemetry(telemetry);
+        wallToBarHangRoundTripPre.setDependentActions(delayBeforeStart);
+        redAutoSpecimen.addAction(wallToBarHangRoundTripPre);
+
+        WallToBarHangAction wallToBarHangRoundTripPre2 = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, 250, false);
+        wallToBarHangRoundTripPre2.setName("wallToBarHangRoundTripPre2");
+        wallToBarHangRoundTripPre2.setTelemetry(telemetry);
+        wallToBarHangRoundTripPre2.setDependentActions(wallToBarHangRoundTripPre);
+        redAutoSpecimen.addAction(wallToBarHangRoundTripPre2);
         //===============end of first specimen===============
+
 
 //        WaitAction waitForHangFinish = new WaitAction(100);
 //        waitForHangFinish.setDependentActions(wallToBarHangAction);
-//        redAutoSpecimen.addAction(waitForHangFinish);
+//        redAutoSpecimen.addAction(waiftForHangFinish);
 
         //================beginning of push================
         OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
         outtakeTransferReady.setName("outtakeTransferReady");
-        outtakeTransferReady.setDependentActions(wallToBarHangAction);
+        outtakeTransferReady.setDependentActions(wallToBarHangRoundTripPre2);
         redAutoSpecimen.addAction(outtakeTransferReady);
 //
 //        KServoAutoAction ratchetUnlock = new KServoAutoAction(intakeClaw.getIntakeRatchetServo(), IntakeClaw.INTAKE_RATCHET_UNLOCK_POS);
@@ -123,7 +136,7 @@ public class AutoSpecimen extends LinearOpMode {
 
         WaitAction waitForLinkageExtend = new WaitAction(3000);
         waitForLinkageExtend.setName("waitForLinkageExtend");
-        waitForLinkageExtend.setDependentActions(wallToBarHangAction);
+        waitForLinkageExtend.setDependentActions(wallToBarHangRoundTripPre2);
         redAutoSpecimen.addAction(waitForLinkageExtend);
 //
 //        KServoAutoAction extendLinkage = new KServoAutoAction(intakeClaw.getIntakeLinkageServo(),
@@ -131,7 +144,6 @@ public class AutoSpecimen extends LinearOpMode {
 //        extendLinkage.setName("extendLinkage");
 //        extendLinkage.setDependentActions(waitForLinkageExtend);
 //        redAutoSpecimen.addAction(extendLinkage);
-
 
         IntakeCounterWeight intakeCounterWeight = new IntakeCounterWeight(intakeClaw, outtake);
         intakeCounterWeight.setName("intakeCounterWeight");
@@ -142,14 +154,13 @@ public class AutoSpecimen extends LinearOpMode {
         moveFloorSamples.setName("moveFloorSamples");
         moveFloorSamples.setMaxTimeOutMS(12000);
         moveFloorSamples.setTelemetry(telemetry);
-        moveFloorSamples.setDependentActions(wallToBarHangAction);
+        moveFloorSamples.setDependentActions(wallToBarHangRoundTripPre2);
 
         //move to sample
-        moveFloorSamples.addPoint(-570, 230, -135, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
-        moveFloorSamples.addPoint(-570, -425, -170, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE);
-        moveFloorSamples.addPoint( -670, -425, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE); //y
-        moveFloorSamples.addPoint(-1330, -525, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE);
-        //y -475
+        moveFloorSamples.addPoint(-570, 230, -135, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //
+        moveFloorSamples.addPoint(-570, -450, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); // y = -450
+        moveFloorSamples.addPoint( -670, -425, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_FAST); //y
+        moveFloorSamples.addPoint(-1330, -500, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //y -475
 
         //first sample to depot
         moveFloorSamples.addPoint(-1330, -775, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);//before push y=800
@@ -167,31 +178,9 @@ public class AutoSpecimen extends LinearOpMode {
         //-367.5
         //moveFloorSamples.addPoint(-175, -1065, -180);?
 
-        if (isThirdPush) {
-            moveFloorSamples.addPoint(-610,-1100,-180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
-            moveFloorSamples.addPoint(-380,-900,-180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
-            //part of second push
-
-
-
-            // 3rd sample push depot
-            final double THRID_SAMPLE_PUSHING_Y = -1206;
-//        moveFloorSamples.addPoint(-1300, -1050, -180);
-            moveFloorSamples.addPoint(-1300, -950, -180,  PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
-            moveFloorSamples.addPoint(-1300, THRID_SAMPLE_PUSHING_Y, -180, PurePursuitAction.P_XY_FAST,
-                    PurePursuitAction.P_ANGLE_SLOW);//before push //-1300, -1175 // -1175 BEFORE DARREN CHANGED
-            moveFloorSamples.addPoint(-400, THRID_SAMPLE_PUSHING_Y, -180, PurePursuitAction.P_XY_FAST,
-                    PurePursuitAction.P_ANGLE_SLOW);
-            moveFloorSamples.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X, THRID_SAMPLE_PUSHING_Y, -180,
-                    PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW); // -1065 // WAllPICKUP = -150
-//        moveFloorSamples.addPoint(-350, -1065, -180);//move back out to avoid sample carry //y = -1200 y = 375
-        } else {
-            moveFloorSamples.addPoint(-500,-1000,-180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
-
-            moveFloorSamples.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X - 50, -1000, -180,
-
+        moveFloorSamples.addPoint(-500,-1000,-180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
+            moveFloorSamples.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X - 100, -1000, -180,
                     PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
-        }
         redAutoSpecimen.addAction(moveFloorSamples);
 
 //
@@ -199,7 +188,7 @@ public class AutoSpecimen extends LinearOpMode {
         // transfer ready
         waitBeforeSpecimenReady.setName("waitBeforeSpecimenReady");
         waitBeforeSpecimenReady.setTelemetry(telemetry);
-        waitBeforeSpecimenReady.setDependentActions(wallToBarHangAction);
+        waitBeforeSpecimenReady.setDependentActions(wallToBarHangRoundTripPre2);
         redAutoSpecimen.addAction(waitBeforeSpecimenReady);
 
         SpecimenWallReady specimenWallReady = new SpecimenWallReady(outtake);
@@ -237,14 +226,14 @@ public class AutoSpecimen extends LinearOpMode {
         redAutoSpecimen.addAction(distanceDetectionAction);
 
         MoveToDistanceThreshold moveToDistanceThreshold = new MoveToDistanceThreshold(driveTrain,
-                distanceDetectionAction, -0.3);
+                distanceDetectionAction, -0.25);
         moveToDistanceThreshold.setName("moveToDistanceThreshold");
         moveToDistanceThreshold.setDependentActions(moveFloorSamples);
         redAutoSpecimen.addAction(moveToDistanceThreshold);
 
         //=============begin of second specimen=================
         WallToBarHangRoundTrip wallToBarHangRoundTrip2 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, 290); //400 //375
+                outtake, 320); //400 //375
         wallToBarHangRoundTrip2.setName("wallToBarHangRoundTrip2");
         wallToBarHangRoundTrip2.setTelemetry(telemetry);
         wallToBarHangRoundTrip2.setDependentActions(moveToDistanceThreshold);
@@ -253,7 +242,7 @@ public class AutoSpecimen extends LinearOpMode {
 
         //============begin of third================
         WallToBarHangRoundTrip wallToBarHangRoundTrip3 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake,350); //500 //450
+                outtake,380); //500 //450
         wallToBarHangRoundTrip3.setName("wallToBarHangRoundTrip3");
         wallToBarHangRoundTrip3.setTelemetry(telemetry);
         wallToBarHangRoundTrip3.setDependentActions(wallToBarHangRoundTrip2);
@@ -261,12 +250,12 @@ public class AutoSpecimen extends LinearOpMode {
         //===============end of third specimen===========
 
         //===============start of fourth specimen==============
-        WallToBarHangRoundTrip wallToBarHangRoundTrip4 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake,410);
-        wallToBarHangRoundTrip4.setName("wallToBarHangRoundTrip4");
-        wallToBarHangRoundTrip4.setTelemetry(telemetry);
-        wallToBarHangRoundTrip4.setDependentActions(wallToBarHangRoundTrip3);
-        redAutoSpecimen.addAction(wallToBarHangRoundTrip4);
+//        WallToBarHangRoundTrip wallToBarHangRoundTrip4 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
+//                outtake,410);
+//        wallToBarHangRoundTrip4.setName("wallToBarHangRoundTrip4");
+//        wallToBarHangRoundTrip4.setTelemetry(telemetry);
+//        wallToBarHangRoundTrip4.setDependentActions(wallToBarHangRoundTrip3);
+//        redAutoSpecimen.addAction(wallToBarHangRoundTrip4);
         //================end of specimen 4================
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
