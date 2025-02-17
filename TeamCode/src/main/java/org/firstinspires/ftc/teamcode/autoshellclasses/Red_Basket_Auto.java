@@ -83,7 +83,7 @@ public class Red_Basket_Auto extends LinearOpMode {
 
         //drive to park
         Action driveToPark = drive.actionBuilder(RedBasketPose.drop)
-                .strafeToLinearHeading(RedBasketPose.submersible_park.position, RedBasketPose.submersible_park.heading)
+                .splineToSplineHeading(RedBasketPose.submersible_park, Math.toRadians(0))
                 .build();
 
         //----------------------------------------------------------------------------------------------
@@ -109,7 +109,8 @@ public class Red_Basket_Auto extends LinearOpMode {
                         driveToDropFromInnerSample,
                         _ViperArmActions.DumpInHighBasket(),
                         _WristClawActions.WristUp(),
-                        driveToPark
+                        driveToPark,
+                        _ViperArmActions.MoveArmToHighBasket()
                 )
         );
         odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
