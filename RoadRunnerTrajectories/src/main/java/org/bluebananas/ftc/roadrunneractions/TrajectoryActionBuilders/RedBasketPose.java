@@ -13,6 +13,7 @@ public class RedBasketPose {
     public final static Pose2d middle_sample = new Pose2d(-51.70, -43.05, Math.toRadians(113.59));
     public final static Pose2d outer_sample = new Pose2d(-56.65, -40.50, Math.toRadians(127.75)); //outer closest to wall
     public final static Pose2d park = new Pose2d(38, -60, Math.toRadians(90));
+//    public final static Pose2d submersiblPark = new Pose2d(38, -60, Math.toRadians(90));
     public final static Pose2d fifth_sample = new Pose2d(31, 61.875, Math.toRadians(180));
     //fifth sample needs to be set at 8,61 parallel to alliance wall
     public final static Pose2d manual_teleop_init = drop; //This is the pose to use for a manual drive to and button press style reset

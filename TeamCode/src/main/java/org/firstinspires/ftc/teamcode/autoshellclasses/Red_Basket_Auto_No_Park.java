@@ -84,6 +84,9 @@ public class Red_Basket_Auto_No_Park extends LinearOpMode {
                 .strafeToLinearHeading(RedBasketPose.outer_sample.position, RedBasketPose.outer_sample.heading)
                 .build();
 
+//        Action submersiblePark = drive.actionBuilder(RedBasketPose.submersiblePark)
+//                .strafeToLinearHeading(RedBasketPose.submersiblePark.position, RedBasketPose.submersiblePark.heading)
+//                .build();
         //----------------------------------------------------------------------------------------------
         Actions.runBlocking(
                 new SequentialAction(

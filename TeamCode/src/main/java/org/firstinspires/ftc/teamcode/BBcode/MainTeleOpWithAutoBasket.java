@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.SpecimenPose;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
@@ -192,6 +193,7 @@ public class MainTeleOpWithAutoBasket extends LinearOpMode{
         telemetry.addData("PositionRR", () -> String.format(Locale.US, "{X: %.2f, Y: %.2f, H: %.2f}", odo.getPositionRR().position.x, odo.getPositionRR().position.y, Math.toDegrees(odo.getPositionRR().heading.toDouble())));
         //telemetry.addData("LimeLightPose", () -> formatLimeLight(botPose));
         telemetry.addData("Specimen Angle (deg)", () -> arm.specimenPosition);
+        telemetry.addData("Current Clip Position", () -> SpecimenPose.current_Clip);
         //telemetry.addData("Position", ()-> getPinpoint(odo.getPosition()));
         boolean tagFound = false;
         double botYaw = 0;

@@ -28,7 +28,6 @@ public class MecanumDrivetrain {
     private static final Pose2d dropPose = RedBasketPose.drop;
     private static final Pose2d basketDropTargetPose = new Pose2d(dropPose.position.x+1.5, dropPose.position.y+1.5, dropPose.heading.toDouble());
     private static final Pose2d specimenGrabTargetPose = new Pose2d(38,-58, Math.toRadians(0));
-    private static final Pose2d specimenClipTargetPose = new Pose2d(0,-36, Math.toRadians(90));
     private static final double kpTranslation = 0.07;
     private static final double kpRotation = .7;
     private static final double angleToleranceDeg = 1;
@@ -118,23 +117,27 @@ public class MecanumDrivetrain {
             if(gamepad1.right_bumper) {
                 targetPose = specimenGrabTargetPose;
             }
-            if(gamepad1.dpad_up) {
+            if(gamepad1.right_trigger > 0) {
                 targetPose = SpecimenPose.current_Clip;
             }
-            if(gamepad1.dpad_left && !isDpad_LeftPressed) {
-                isDpad_LeftPressed = true;
-                double newX = SpecimenPose.current_Clip.position.x;
-                newX -= 1;
-                SpecimenPose.current_Clip = new Pose2d(newX,specimenClipTargetPose.position.y,specimenClipTargetPose.heading.toDouble());
+            if(gamepad1.dpad_left) {
+                if (!isDpad_LeftPressed) {
+                    isDpad_LeftPressed = true;
+                    double newX = SpecimenPose.current_Clip.position.x;
+                    newX -= 1;
+                    SpecimenPose.current_Clip = new Pose2d(newX, SpecimenPose.current_Clip.position.y, SpecimenPose.current_Clip.heading.toDouble());
+                }
             }
-            else {
+                else {
                 isDpad_LeftPressed = false;
             }
-            if(gamepad1.dpad_right && !isDpad_RightPressed) {
-                isDpad_RightPressed = true;
-                double newX = SpecimenPose.current_Clip.position.x;
-                newX += 1;
-                SpecimenPose.current_Clip = new Pose2d(newX,specimenClipTargetPose.position.y,specimenClipTargetPose.heading.toDouble());
+            if(gamepad1.dpad_right) {
+                if (!isDpad_RightPressed) {
+                    isDpad_RightPressed = true;
+                    double newX = SpecimenPose.current_Clip.position.x;
+                    newX += 1;
+                    SpecimenPose.current_Clip = new Pose2d(newX, SpecimenPose.current_Clip.position.y, SpecimenPose.current_Clip.heading.toDouble());
+                }
             }
             else {
                 isDpad_RightPressed = false;

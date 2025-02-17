@@ -3,11 +3,9 @@ package org.firstinspires.ftc.teamcode.autoshellclasses;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -56,7 +54,7 @@ public class Red_Specimen_Auto extends LinearOpMode {
         Action driveToClip1, clippingSpecimen1, driveForSamplePush, driveToClip2, clippingSpecimen2, grabSpecimen3, driveToClip3, clippingSpecimen3, driveToPark, clawCloseWait1, clawCloseWait2;
 
         driveToClip1 = drive.actionBuilder(drive.pose)
-                .strafeToLinearHeading(new Vector2d(0,-48), Math.toRadians(90))
+                .strafeToLinearHeading(SpecimenPose.clipCenter.position, SpecimenPose.clipCenter.heading)
                 .build();
         driveToClip2 = drive.actionBuilder(new Pose2d(46,-60, Math.toRadians(0)))
                 .strafeToLinearHeading(new Vector2d(2, -48), Math.toRadians(90))
@@ -66,13 +64,13 @@ public class Red_Specimen_Auto extends LinearOpMode {
                 .build();
 
         clippingSpecimen1 = drive.actionBuilder(new Pose2d(0,-48,Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(0,-36),Math.toRadians(90), new TranslationalVelConstraint(10))
+                .strafeToLinearHeading(new Vector2d(0,-35.5),Math.toRadians(90), new TranslationalVelConstraint(10))
                 .build();
         clippingSpecimen2 = drive.actionBuilder(new Pose2d(2,-48,Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(2,-36),Math.toRadians(90), new TranslationalVelConstraint(10))
+                .strafeToLinearHeading(new Vector2d(2,-35.5),Math.toRadians(90), new TranslationalVelConstraint(10))
                 .build();
         clippingSpecimen3 = drive.actionBuilder(new Pose2d(4,-48,Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(4,-36),Math.toRadians(90), new TranslationalVelConstraint(10))
+                .strafeToLinearHeading(new Vector2d(4,-35.5),Math.toRadians(90), new TranslationalVelConstraint(10))
                 .build();
 
         driveForSamplePush = drive.actionBuilder(new Pose2d(0,-36,Math.toRadians(90)))
