@@ -1,16 +1,12 @@
 package com.kalipsorobotics.intoTheDeep;
 
-import android.os.Process;
-
 import com.kalipsorobotics.actions.MoveToDistanceThreshold;
-import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.intake.IntakeCounterWeight;
 import com.kalipsorobotics.actions.intake.IntakeTransferReady;
-import com.kalipsorobotics.actions.intake.SampleIntakeReady;
 import com.kalipsorobotics.actions.outtake.DistanceDetectionAction;
 import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.actions.SetAutoDelayAction;
-import com.kalipsorobotics.actions.WallToBarHangAction;
+import com.kalipsorobotics.actions.autoActions.FirstWallToBarHangAction;
 import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
@@ -19,19 +15,15 @@ import com.kalipsorobotics.actions.autoActions.WallToBarHangRoundTrip;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
-import com.kalipsorobotics.actions.outtake.WallPickupDistanceSensorAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
-import com.qualcomm.hardware.ams.AMSColorSensor;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -99,11 +91,11 @@ public class AutoSpecimen extends LinearOpMode {
         redAutoSpecimen.addAction(delayBeforeStart);
 
         //================begin of first specimen====================
-        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, 200);
-        wallToBarHangAction.setName("wallToBarHangAction");
-        wallToBarHangAction.setTelemetry(telemetry);
-        wallToBarHangAction.setDependentActions(delayBeforeStart);
-        redAutoSpecimen.addAction(wallToBarHangAction);
+        FirstWallToBarHangAction firstWallToBarHangAction = new FirstWallToBarHangAction(driveTrain, wheelOdometry, outtake, 200);
+        firstWallToBarHangAction.setName("wallToBarHangAction");
+        firstWallToBarHangAction.setTelemetry(telemetry);
+        firstWallToBarHangAction.setDependentActions(delayBeforeStart);
+        redAutoSpecimen.addAction(firstWallToBarHangAction);
         //===============end of first specimen===============
 
 //        WaitAction waitForHangFinish = new WaitAction(100);
@@ -113,7 +105,7 @@ public class AutoSpecimen extends LinearOpMode {
         //================beginning of push================
         OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
         outtakeTransferReady.setName("outtakeTransferReady");
-        outtakeTransferReady.setDependentActions(wallToBarHangAction);
+        outtakeTransferReady.setDependentActions(firstWallToBarHangAction);
         redAutoSpecimen.addAction(outtakeTransferReady);
 //
 //        KServoAutoAction ratchetUnlock = new KServoAutoAction(intakeClaw.getIntakeRatchetServo(), IntakeClaw.INTAKE_RATCHET_UNLOCK_POS);
@@ -123,7 +115,7 @@ public class AutoSpecimen extends LinearOpMode {
 
         WaitAction waitForLinkageExtend = new WaitAction(3000);
         waitForLinkageExtend.setName("waitForLinkageExtend");
-        waitForLinkageExtend.setDependentActions(wallToBarHangAction);
+        waitForLinkageExtend.setDependentActions(firstWallToBarHangAction);
         redAutoSpecimen.addAction(waitForLinkageExtend);
 //
 //        KServoAutoAction extendLinkage = new KServoAutoAction(intakeClaw.getIntakeLinkageServo(),
@@ -142,7 +134,7 @@ public class AutoSpecimen extends LinearOpMode {
         moveFloorSamples.setName("moveFloorSamples");
         moveFloorSamples.setMaxTimeOutMS(12000);
         moveFloorSamples.setTelemetry(telemetry);
-        moveFloorSamples.setDependentActions(wallToBarHangAction);
+        moveFloorSamples.setDependentActions(firstWallToBarHangAction);
 
         //move to sample
         moveFloorSamples.addPoint(-570, 230, -135, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
@@ -199,7 +191,7 @@ public class AutoSpecimen extends LinearOpMode {
         // transfer ready
         waitBeforeSpecimenReady.setName("waitBeforeSpecimenReady");
         waitBeforeSpecimenReady.setTelemetry(telemetry);
-        waitBeforeSpecimenReady.setDependentActions(wallToBarHangAction);
+        waitBeforeSpecimenReady.setDependentActions(firstWallToBarHangAction);
         redAutoSpecimen.addAction(waitBeforeSpecimenReady);
 
         SpecimenWallReady specimenWallReady = new SpecimenWallReady(outtake);
@@ -237,7 +229,7 @@ public class AutoSpecimen extends LinearOpMode {
         redAutoSpecimen.addAction(distanceDetectionAction);
 
         MoveToDistanceThreshold moveToDistanceThreshold = new MoveToDistanceThreshold(driveTrain,
-                distanceDetectionAction, -0.3);
+                distanceDetectionAction, -0.3, 1000);
         moveToDistanceThreshold.setName("moveToDistanceThreshold");
         moveToDistanceThreshold.setDependentActions(moveFloorSamples);
         redAutoSpecimen.addAction(moveToDistanceThreshold);

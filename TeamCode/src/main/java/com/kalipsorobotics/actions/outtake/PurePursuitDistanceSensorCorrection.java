@@ -30,7 +30,7 @@ public class PurePursuitDistanceSensorCorrection extends Action {
 
         this.purePursuitAction = purePursuitAction;
 
-        moveToDistanceThreshold = new MoveToDistanceThreshold(driveTrain, detectDistanceAction, -0.4);
+        moveToDistanceThreshold = new MoveToDistanceThreshold(driveTrain, detectDistanceAction, -0.4, 1000);
         moveToDistanceThreshold.setName("moveToDistanceThreshold");
         moveToDistanceThreshold.setDependentActions(purePursuitAction);
 

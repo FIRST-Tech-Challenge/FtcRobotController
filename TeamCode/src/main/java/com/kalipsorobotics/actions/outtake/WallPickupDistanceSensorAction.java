@@ -25,7 +25,6 @@ public class WallPickupDistanceSensorAction extends Action {
     KServoAutoAction outtakeClawClose;
     MoveToDistanceThreshold moveToDistanceThreshold;
     WaitAction timeout;
-    Telemetry telemetry;
 
     public WallPickupDistanceSensorAction(Outtake outtake, PurePursuitAction purePursuitAction, DriveTrain driveTrain) {
 
@@ -35,7 +34,7 @@ public class WallPickupDistanceSensorAction extends Action {
 
         this.purePursuitAction = purePursuitAction;
 
-        moveToDistanceThreshold = new MoveToDistanceThreshold(driveTrain, detectDistanceAction, -0.2);
+        moveToDistanceThreshold = new MoveToDistanceThreshold(driveTrain, detectDistanceAction, -0.2, 1000);
         moveToDistanceThreshold.setName("moveToDistanceThreshold");
         moveToDistanceThreshold.setDependentActions(purePursuitAction);
 
@@ -44,7 +43,6 @@ public class WallPickupDistanceSensorAction extends Action {
         outtakeClawClose.setDependentActions(detectDistanceAction, moveToDistanceThreshold, purePursuitAction);
 
         timeout = new WaitAction(3000);
-        telemetry = outtake.getOpModeUtilities().getTelemetry();
     }
 
     @Override
@@ -77,12 +75,12 @@ public class WallPickupDistanceSensorAction extends Action {
                 Log.d("cancelPurePursuit", "Wall " + revDistance.getDistance(DistanceUnit.MM));
                 moveToDistanceThreshold.finishedMoving();
             }
-
+/*
             telemetry.addData("detect distance done status", detectDistanceAction.getIsDone());
             telemetry.addData("move to distance threshold done status", moveToDistanceThreshold.getIsDone());
             telemetry.addData("ppa done status", purePursuitAction.getIsDone());
             telemetry.addData("claw close done status", outtakeClawClose.getIsDone());
-            telemetry.update();
+            telemetry.update();*/
 
         }
     }

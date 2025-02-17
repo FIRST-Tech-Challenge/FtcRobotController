@@ -8,7 +8,7 @@ import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.SetAutoDelayAction;
 import com.kalipsorobotics.actions.TransferAction;
 import com.kalipsorobotics.actions.WaitAction;
-import com.kalipsorobotics.actions.WallToBarHangAction;
+import com.kalipsorobotics.actions.autoActions.FirstWallToBarHangAction;
 import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
@@ -31,7 +31,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.jar.Attributes;
 
 @Autonomous(name = "AutoBasket 1 SPECIMEN 3 BASKET 3+1")
 public class AutoBasketFunnel extends LinearOpMode {
@@ -91,16 +90,15 @@ public class AutoBasketFunnel extends LinearOpMode {
         PurePursuitAction moveOutBasket1 = null;
         if (isFirstMoveSpecimen) {
 
-            WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, -290,
-                    true);
-            wallToBarHangAction.setName("wallToBarHangAction");
-            wallToBarHangAction.setDependentActions(delayBeforeStart);
-            redAutoBasket.addAction(wallToBarHangAction);
+            FirstWallToBarHangAction firstWallToBarHangAction = new FirstWallToBarHangAction(driveTrain, wheelOdometry, outtake, -290);
+            firstWallToBarHangAction.setName("wallToBarHangAction");
+            firstWallToBarHangAction.setDependentActions(delayBeforeStart);
+            redAutoBasket.addAction(firstWallToBarHangAction);
 
             moveOutSpecimen = new PurePursuitAction(driveTrain, wheelOdometry);
             moveOutSpecimen.setName("moveOutSpecimen");
             moveOutSpecimen.setFinalSearchRadius(75);
-            moveOutSpecimen.setDependentActions(wallToBarHangAction);
+            moveOutSpecimen.setDependentActions(firstWallToBarHangAction);
             moveOutSpecimen.addPoint(-500, 775, 180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE); // y = -250 (midpt)
             redAutoBasket.addAction(moveOutSpecimen);
 

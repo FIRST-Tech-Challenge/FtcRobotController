@@ -15,7 +15,6 @@ public class DistanceDetectionAction extends KActionSet {
     PurePursuitAction purePursuitAction;
     Rev2mDistanceSensor revDistance;
     double targetDistance;
-    double startTime;
 
 //    public CloseWhenDetectDistanceAction(RevDistance  revDistance, double targetDistance) {
 //        this(null, null, null, revDistance, targetDistance);
@@ -28,15 +27,9 @@ public class DistanceDetectionAction extends KActionSet {
     }
 
     public boolean checkDistance() {
-        long timestamp = System.currentTimeMillis();
         double distance_mm = revDistance.getDistance(DistanceUnit.MM);
-        Log.d("DistanceDetectAction", "getDistance elapse ms " + (System.currentTimeMillis() - timestamp));
+        //Log.d("DistanceDetectAction", "getDistance elapse ms " + (System.currentTimeMillis() - timestamp));
 
-        double elapsedTime = System.currentTimeMillis() - startTime;
-
-        if(elapsedTime > 2000) {
-            return true;
-        }
 
         return (distance_mm < targetDistance);
     }
@@ -48,7 +41,6 @@ public class DistanceDetectionAction extends KActionSet {
         }
 
         if(!hasStarted) {
-            startTime = System.currentTimeMillis();
             hasStarted = true;
         }
 

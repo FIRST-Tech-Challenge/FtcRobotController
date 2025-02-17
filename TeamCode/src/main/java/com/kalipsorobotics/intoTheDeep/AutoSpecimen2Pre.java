@@ -1,16 +1,15 @@
 package com.kalipsorobotics.intoTheDeep;
 
-import android.os.Process;
-
 import com.kalipsorobotics.actions.MoveToDistanceThreshold;
-import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
+import com.kalipsorobotics.actions.autoActions.FirstWallToBarRoundTrip;
+import com.kalipsorobotics.actions.autoActions.WallToBarMoveHang;
 import com.kalipsorobotics.actions.intake.IntakeCounterWeight;
 import com.kalipsorobotics.actions.intake.IntakeTransferReady;
-import com.kalipsorobotics.actions.intake.SampleIntakeReady;
 import com.kalipsorobotics.actions.outtake.DistanceDetectionAction;
+import com.kalipsorobotics.actions.outtake.WallPickupDistanceSensorAction;
 import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.actions.SetAutoDelayAction;
-import com.kalipsorobotics.actions.WallToBarHangAction;
+import com.kalipsorobotics.actions.autoActions.FirstWallToBarHangAction;
 import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
@@ -19,27 +18,21 @@ import com.kalipsorobotics.actions.autoActions.WallToBarHangRoundTrip;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
-import com.kalipsorobotics.actions.outtake.WallPickupDistanceSensorAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
-import com.qualcomm.hardware.ams.AMSColorSensor;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Autonomous(name = "AutoSpecimen 2 PRELOAD")
+@Autonomous(name = "AutoSpecimen  2 SPECIMEN + 2 PUSH ")
 public class AutoSpecimen2Pre extends LinearOpMode {
-
-    protected boolean isThirdPush = false;
 
 
     @Override
@@ -61,9 +54,6 @@ public class AutoSpecimen2Pre extends LinearOpMode {
         IMUModule.setInstanceNull();
         IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
         sleep(1000);
-
-        Rev2mDistanceSensor revDistanceClaw = hardwareMap.get(Rev2mDistanceSensor.class, "revDistanceClaw");
-        Rev2mDistanceSensor revDistanceBottom = hardwareMap.get(Rev2mDistanceSensor.class, "revDistanceBottom");
 
         WheelOdometry.setInstanceNull();
         WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
@@ -98,52 +88,34 @@ public class AutoSpecimen2Pre extends LinearOpMode {
         delayBeforeStart.setName("delayBeforeStart");
         redAutoSpecimen.addAction(delayBeforeStart);
 
-        //================begin of first specimen====================
-//        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, 200);
-//        wallToBarHangAction.setName("wallToBarHangAction");
-//        wallToBarHangAction.setTelemetry(telemetry);
-//        wallToBarHangAction.setDependentActions(delayBeforeStart);
-//        redAutoSpecimen.addAction(wallToBarHangAction);
+        //================begin of first specimen=============//
+        FirstWallToBarRoundTrip firstWallToBarRoundTrip = new FirstWallToBarRoundTrip(driveTrain, wheelOdometry,
+                outtake, 200);
+        firstWallToBarRoundTrip.setName("firstWallToBarRoundTrip");
+        firstWallToBarRoundTrip.setTelemetry(telemetry);
+        firstWallToBarRoundTrip.setDependentActions(delayBeforeStart);
+        redAutoSpecimen.addAction(firstWallToBarRoundTrip);
+        //===============end of first specimen===============//
 
-        WallToBarHangRoundTrip wallToBarHangRoundTripPre = new WallToBarHangRoundTrip(driveTrain, wheelOdometry, outtake, 200);
-        wallToBarHangRoundTripPre.setName("wallToBarHangRoundTripPre");
-        wallToBarHangRoundTripPre.setTelemetry(telemetry);
-        wallToBarHangRoundTripPre.setDependentActions(delayBeforeStart);
-        redAutoSpecimen.addAction(wallToBarHangRoundTripPre);
+        //================begin of second specimen=============//
+        WallToBarMoveHang wallToBarMoveHang = new WallToBarMoveHang(driveTrain, wheelOdometry, outtake, 250);
+        wallToBarMoveHang.setName("wallToBarHangRoundTripPre2");
+        wallToBarMoveHang.setTelemetry(telemetry);
+        wallToBarMoveHang.setDependentActions(firstWallToBarRoundTrip);
+        redAutoSpecimen.addAction(wallToBarMoveHang);
+        //===============end of second specimen===============//
 
-        WallToBarHangAction wallToBarHangRoundTripPre2 = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, 250, false);
-        wallToBarHangRoundTripPre2.setName("wallToBarHangRoundTripPre2");
-        wallToBarHangRoundTripPre2.setTelemetry(telemetry);
-        wallToBarHangRoundTripPre2.setDependentActions(wallToBarHangRoundTripPre);
-        redAutoSpecimen.addAction(wallToBarHangRoundTripPre2);
-        //===============end of first specimen===============
-
-
-//        WaitAction waitForHangFinish = new WaitAction(100);
-//        waitForHangFinish.setDependentActions(wallToBarHangAction);
-//        redAutoSpecimen.addAction(waiftForHangFinish);
 
         //================beginning of push================
         OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
         outtakeTransferReady.setName("outtakeTransferReady");
-        outtakeTransferReady.setDependentActions(wallToBarHangRoundTripPre2);
+        outtakeTransferReady.setDependentActions(wallToBarMoveHang);
         redAutoSpecimen.addAction(outtakeTransferReady);
-//
-//        KServoAutoAction ratchetUnlock = new KServoAutoAction(intakeClaw.getIntakeRatchetServo(), IntakeClaw.INTAKE_RATCHET_UNLOCK_POS);
-//        ratchetUnlock.setName("ratchetUnlock");
-//        ratchetUnlock.setDependentActions(wallToBarHangAction);
-//        redAutoSpecimen.addAction(ratchetUnlock);
 
         WaitAction waitForLinkageExtend = new WaitAction(3000);
         waitForLinkageExtend.setName("waitForLinkageExtend");
-        waitForLinkageExtend.setDependentActions(wallToBarHangRoundTripPre2);
+        waitForLinkageExtend.setDependentActions(wallToBarMoveHang);
         redAutoSpecimen.addAction(waitForLinkageExtend);
-//
-//        KServoAutoAction extendLinkage = new KServoAutoAction(intakeClaw.getIntakeLinkageServo(),
-//                IntakeClaw.INTAKE_LINKAGE_EXTEND_POS);
-//        extendLinkage.setName("extendLinkage");
-//        extendLinkage.setDependentActions(waitForLinkageExtend);
-//        redAutoSpecimen.addAction(extendLinkage);
 
         IntakeCounterWeight intakeCounterWeight = new IntakeCounterWeight(intakeClaw, outtake);
         intakeCounterWeight.setName("intakeCounterWeight");
@@ -154,7 +126,7 @@ public class AutoSpecimen2Pre extends LinearOpMode {
         moveFloorSamples.setName("moveFloorSamples");
         moveFloorSamples.setMaxTimeOutMS(12000);
         moveFloorSamples.setTelemetry(telemetry);
-        moveFloorSamples.setDependentActions(wallToBarHangRoundTripPre2);
+        moveFloorSamples.setDependentActions(wallToBarMoveHang);
 
         //move to sample
         moveFloorSamples.addPoint(-570, 230, -135, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //
@@ -170,16 +142,9 @@ public class AutoSpecimen2Pre extends LinearOpMode {
 
         //second sample to depot
         moveFloorSamples.addPoint(-1400, -675, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE); //y
-        // -800
         moveFloorSamples.addPoint(-1375, -1000, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);//
-        // strafe -> normal PXY
-        // beforepush
-        //moveFloorSamples.addPoint(-580, -1000, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
-        //-367.5
-        //moveFloorSamples.addPoint(-175, -1065, -180);?
-
         moveFloorSamples.addPoint(-500,-1000,-180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
-            moveFloorSamples.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X - 200, -1000, -180,
+            moveFloorSamples.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X + 25, -1000, -180,
                     PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
         redAutoSpecimen.addAction(moveFloorSamples);
 
@@ -187,7 +152,7 @@ public class AutoSpecimen2Pre extends LinearOpMode {
         // transfer ready
         waitBeforeSpecimenReady.setName("waitBeforeSpecimenReady");
         waitBeforeSpecimenReady.setTelemetry(telemetry);
-        waitBeforeSpecimenReady.setDependentActions(wallToBarHangRoundTripPre2);
+        waitBeforeSpecimenReady.setDependentActions(wallToBarMoveHang);
         redAutoSpecimen.addAction(waitBeforeSpecimenReady);
 
         SpecimenWallReady specimenWallReady = new SpecimenWallReady(outtake);
@@ -196,75 +161,44 @@ public class AutoSpecimen2Pre extends LinearOpMode {
         specimenWallReady.setDependentActions(waitBeforeSpecimenReady);
         redAutoSpecimen.addAction(specimenWallReady);
 
-//        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain, wheelOdometry); //2200
-//        moveToDepot.setName("moveToDepot");
-//        moveToDepot.setTelemetry(telemetry);
-//        moveToDepot.setDependentActions(moveFloorSamples, specimenWallReady);
-//        //to depot for specimen
-//        //moveToDepot.addPoint(-380, -1050, -180); //-380, -615
-//        moveToDepot.setMaxTimeOutMS(1200);
-//        moveToDepot.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X+25, -1065, -180);// y = -1065 x = wall_pickupX
-//        redAutoSpecimen.addAction(moveToDepot);
-
         IntakeTransferReady intakeTransferReady = new IntakeTransferReady(intakeClaw);
         intakeTransferReady.setName("intakeTransferReady");
         intakeTransferReady.setDependentActions(moveFloorSamples);
         redAutoSpecimen.addAction(intakeTransferReady);
         //==============end of pushing================//
 
-//        WallPickupDistanceSensorAction wallPickupDistanceSensorAction = new WallPickupDistanceSensorAction(outtake, moveFloorSamples, driveTrain);
-//        wallPickupDistanceSensorAction.setName("wallPickupDistanceSensor");
-//        wallPickupDistanceSensorAction.setTelemetry(telemetry);
-//        wallPickupDistanceSensorAction.setDependentActions(specimenWallReady);
-//        redAutoSpecimen.addAction(wallPickupDistanceSensorAction);
+        WallPickupDistanceSensorAction wallPickupDistanceSensorAction = new WallPickupDistanceSensorAction(outtake, moveFloorSamples, driveTrain);
+        wallPickupDistanceSensorAction.setName("wallPickupDistanceSensor");
+        wallPickupDistanceSensorAction.setTelemetry(telemetry);
+        wallPickupDistanceSensorAction.setDependentActions(specimenWallReady);
+        redAutoSpecimen.addAction(wallPickupDistanceSensorAction);
 
-        DistanceDetectionAction distanceDetectionAction = new DistanceDetectionAction(outtake.getRevDistanceClaw(),
-                45);
-        distanceDetectionAction.setName("distanceDetectionAction");
-        distanceDetectionAction.setDependentActions(moveFloorSamples);
-        redAutoSpecimen.addAction(distanceDetectionAction);
 
-        MoveToDistanceThreshold moveToDistanceThreshold = new MoveToDistanceThreshold(driveTrain,
-                distanceDetectionAction, -0.2);
-        moveToDistanceThreshold.setName("moveToDistanceThreshold");
-        moveToDistanceThreshold.setDependentActions(moveFloorSamples);
-        redAutoSpecimen.addAction(moveToDistanceThreshold);
 
-        //=============begin of second specimen=================
+        //=============begin of third specimen=================
         WallToBarHangRoundTrip wallToBarHangRoundTrip2 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
                 outtake, 320); //400 //375
         wallToBarHangRoundTrip2.setName("wallToBarHangRoundTrip2");
         wallToBarHangRoundTrip2.setTelemetry(telemetry);
-        wallToBarHangRoundTrip2.setDependentActions(moveToDistanceThreshold); //move to distance
+        wallToBarHangRoundTrip2.setDependentActions(wallPickupDistanceSensorAction, moveFloorSamples); //move to distance
         redAutoSpecimen.addAction(wallToBarHangRoundTrip2);
-        //===============end of second specimen==============
+        //===============end of third specimen==============
 
-        //============begin of third================
+        //============begin of fourth================
         WallToBarHangRoundTrip wallToBarHangRoundTrip3 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
                 outtake,380); //500 //450
         wallToBarHangRoundTrip3.setName("wallToBarHangRoundTrip3");
         wallToBarHangRoundTrip3.setTelemetry(telemetry);
         wallToBarHangRoundTrip3.setDependentActions(wallToBarHangRoundTrip2);
         redAutoSpecimen.addAction(wallToBarHangRoundTrip3);
-        //===============end of third specimen===========
+        //===============end of fourth specimen===========
 
-        //===============start of fourth specimen==============
-//        WallToBarHangRoundTrip wallToBarHangRoundTrip4 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-//                outtake,410);
-//        wallToBarHangRoundTrip4.setName("wallToBarHangRoundTrip4");
-//        wallToBarHangRoundTrip4.setTelemetry(telemetry);
-//        wallToBarHangRoundTrip4.setDependentActions(wallToBarHangRoundTrip3);
-//        redAutoSpecimen.addAction(wallToBarHangRoundTrip4);
-        //================end of specimen 4================
 
+        //===============do not touch -- essential for auto 0_0======================/
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-
         redAutoSpecimen.printWithDependentActions();
-
         waitForStart();
-
         OpModeUtilities.runOdometryExecutorService(executorService, wheelOdometry);
-
         while (opModeIsActive()) {
 
 
