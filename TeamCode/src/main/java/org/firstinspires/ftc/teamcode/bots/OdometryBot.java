@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -94,15 +95,15 @@ public class OdometryBot extends GyroBot {
 
     private void initDriveHardwareMap(HardwareMap ahwMap){
 
-//        horizontal = ahwMap.dcMotor.get(horizontalEncoderName);
-//        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        horizontal.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-////        verticalLeft = ahwMap.dcMotor.get(verticalLeftEncoderName);
-////        verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-////        verticalLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        verticalRight = ahwMap.dcMotor.get(verticalRightEncoderName);
-//        verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        verticalRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        horizontal = ahwMap.get(DcMotorEx.class, "leftFront"); /**changed initialization because it was showing error might mess something uup idk*/
+        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        horizontal.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        verticalLeft = ahwMap.dcMotor.get(verticalLeftEncoderName);
+//        verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        verticalLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        verticalRight = ahwMap.get(DcMotorEx.class, "leftRear");
+        verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        verticalRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         telemetry.addData("Status", "Hardware Map Init Complete");
         telemetry.update();
@@ -203,7 +204,7 @@ public class OdometryBot extends GyroBot {
         telemetry.addData("X:", xBlue);
         telemetry.addData("Y:", yBlue);
         telemetry.addData("Theta:", thetaDEG);
-        telemetry.addData("vL", leftFront.getCurrentPosition());
+        telemetry.addData("vL", leftRear.getCurrentPosition());
         telemetry.addData("vR", rightRear.getCurrentPosition());
         telemetry.addData("h", rightFront.getCurrentPosition());
 //        telemetry.addData("h diameter", (int)((thetaDEG*360)/(horizontal.getCurrentPosition() * Math.PI)));

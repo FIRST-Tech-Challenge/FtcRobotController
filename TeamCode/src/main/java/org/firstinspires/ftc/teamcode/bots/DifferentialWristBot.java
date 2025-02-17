@@ -27,7 +27,7 @@ public class DifferentialWristBot extends PivotBotTest{
         leftDifferentialWristServo = ahwMap.get(Servo.class, "leftDifferentialWristServo");
         rightDifferentialWristServo = ahwMap.get(Servo.class, "rightDifferentialWristServo");
 
-        // Initialize position
+//         Initialize position
         pitchTo(0);
         rollTo(0);
     }
@@ -78,6 +78,7 @@ public class DifferentialWristBot extends PivotBotTest{
         // Update telemetry (if needed, but ensure it's non-blocking)
         telemetry.addData("Left Servo Target", leftPos);
         telemetry.addData("Right Servo Target", rightPos);
+
     }
 
     private double angleToServo(double angle) {
@@ -94,5 +95,12 @@ public class DifferentialWristBot extends PivotBotTest{
 
     private double clampAngle(double angle) {
         return Math.max(MIN_ANGLE, Math.min(MAX_ANGLE, angle));
+    }
+
+    public void setLeftDifferentialWristServo(double pos) {
+        leftDifferentialWristServo.setPosition(pos);
+    }
+    public void setRightDifferentialWristServo(double pos) {
+        rightDifferentialWristServo.setPosition(pos);
     }
 }

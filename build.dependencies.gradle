@@ -4,6 +4,7 @@ repositories {
     maven { url = 'https://maven.brott.dev/' }
     maven { url= 'https://maven.pedropathing.com/' }
 
+
     google() // Needed for androidx
 }
 
@@ -20,5 +21,7 @@ dependencies {
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.5'
     implementation 'com.pedropathing:pedro:1.0.8'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.16'
+    implementation 'org.ftclib.ftclib:vision:2.1.0' // vision
+    implementation 'org.ftclib.ftclib:core:2.1.1' // core
 }
 

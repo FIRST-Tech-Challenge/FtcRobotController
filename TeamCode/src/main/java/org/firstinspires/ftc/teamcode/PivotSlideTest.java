@@ -17,9 +17,12 @@ import org.firstinspires.ftc.teamcode.bots.PinchBot;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 import org.firstinspires.ftc.teamcode.sample.Sample;
 import com.acmerobotics.dashboard.FtcDashboard;
+import org.firstinspires.ftc.teamcode.bots.PivotBot;
 
 @TeleOp(name = "PivotSlideTest")
 public class PivotSlideTest extends LinearOpMode {
+//    private PivotBot robot = new PivotBot(this);
+
     private PivotBotTest robot = new PivotBotTest(this);
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry dashboardTelemetry = dashboard.getTelemetry();
@@ -38,14 +41,16 @@ public class PivotSlideTest extends LinearOpMode {
 
             robot.onLoop(0, "manual drive");
 
-            robot.pivotControlTest(gamepad1.dpad_up, gamepad1.dpad_down);
+//            robot.pivotControlTest(gamepad1.dpad_up, gamepad1.dpad_down);
             robot.slideControl(gamepad1.dpad_right, gamepad1.dpad_left);
+
 //            robot.climbControl(gamepad1.a);
             double lTime = LoopTime.getElapsedTimeSeconds();
             telemetry.addData("slide position", robot.getSlidePosition());
             telemetry.addData("pivot position", robot.getPivotPosition());
             telemetry.addData("looptime", lTime);
-            telemetry.addData("targetposition",robot.pivotTarget);
+            telemetry.addData("pivot targetposition",robot.pivotTarget);
+            telemetry.addData("slide target pos", robot.slideTarget);
             dashboardTelemetry.addData("slide position", robot.getSlidePosition());
             dashboardTelemetry.addData("pivot position", robot.getPivotPosition());
             dashboardTelemetry.addData("looptime", lTime);

@@ -102,19 +102,21 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
     protected void onTick() {
 
         super.onTick();
-        pivotController.setTolerance(20,120);
-        kfAngled = (float) (kf*Math.cos(Math.toRadians(ticksToDegree)*pivotMotor1.getCurrentPosition()));
-        pivotController.setPIDF(kp,ki,kd,0);
-        pivotController.setSetPoint(pivotTarget);
 
-        if (!pivotController.atSetPoint()){
-            double output = pivotController.calculate(pivotMotor1.getCurrentPosition());
-            pivotMotor2.setVelocity(output+kfAngled);
-            pivotMotor1.setVelocity(output+kfAngled);
-        } else{
-            pivotMotor2.setPower(0);
-            pivotMotor1.setPower(0);
-        }
+        /** commmented out pid to test slide */
+//        pivotController.setTolerance(20,120);
+//        kfAngled = (float) (kf*Math.cos(Math.toRadians(ticksToDegree)*pivotMotor1.getCurrentPosition()));
+//        pivotController.setPIDF(kp,ki,kd,0);
+//        pivotController.setSetPoint(pivotTarget);
+//
+//        if (!pivotController.atSetPoint()){
+//            double output = pivotController.calculate(pivotMotor1.getCurrentPosition());
+//            pivotMotor2.setVelocity(output+kfAngled);
+//            pivotMotor1.setVelocity(output+kfAngled);
+//        } else{
+//            pivotMotor2.setPower(0);
+//            pivotMotor1.setPower(0);
+//        }
 
 
 //        if (reachedPivotPos && oldPt != pivotTarget) {
@@ -141,7 +143,8 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
 //            pivotMotor2.setPower(0);
 //
 //        }
-
+pivotMotor1.setPower(0);
+pivotMotor2.setPower(0);
         if (slideTarget > 0 && slideTarget < maximumSlidePos + 100){
 
             slideMotor1.setTargetPosition(slideTarget);
@@ -165,28 +168,37 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
     }
     public void slideControl(boolean up, boolean down) {
         if (up) {
-            if (slideMotor1.getCurrentPosition() < maximumSlidePos) {
+            if (/**slideMotor1.getCurrentPosition() < maximumSlidePos*/true) {
                 slideTarget = slideMotor1.getCurrentPosition() + ((maximumSlidePos - slideMotor1.getCurrentPosition()) / 10);
-                slideMotor1.setTargetPosition(slideTarget);
-                slideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                slideMotor2.setTargetPosition(slideTarget);
-                slideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                slideMotor1.setTargetPosition(slideTarget);
+//                slideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                slideMotor2.setTargetPosition(slideTarget);
+//                slideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
             }
         }
         if (down) {
-            if (slideMotor1.getCurrentPosition() > minimumSlidePos) {
+            if (/**slideMotor1.getCurrentPosition() > minimumSlidePos*/ true) {
                 slideTarget = slideMotor1.getCurrentPosition() - (slideMotor1.getCurrentPosition() / 10);
-                slideMotor1.setTargetPosition(slideTarget);
-                slideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                slideMotor2.setTargetPosition(slideTarget);
-                slideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                slideMotor1.setTargetPosition(slideTarget);
+//                slideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                slideMotor2.setTargetPosition(slideTarget);
+//                slideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             }
         }
 
         //make pivot same
+    }
+
+    public void slidePosition(int position){
+        slideTarget = position;
+        slideMotor1.setTargetPosition(slideTarget);
+        slideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotor2.setTargetPosition(slideTarget);
+        slideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
     }
 
     public void pivotControlTest(boolean up, boolean down){

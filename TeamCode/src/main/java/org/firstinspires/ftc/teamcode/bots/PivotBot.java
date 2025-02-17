@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.bots;
         import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
         import com.qualcomm.robotcore.hardware.DcMotor;
         import com.qualcomm.robotcore.hardware.DcMotorEx;
+        import com.qualcomm.robotcore.hardware.DcMotorImplEx;
         import com.qualcomm.robotcore.hardware.DcMotorSimple;
         import com.qualcomm.robotcore.hardware.HardwareMap;
         import com.qualcomm.robotcore.util.ElapsedTime;
@@ -32,10 +33,10 @@ public class PivotBot extends OdometryBot {
 
 
 
-    private static int searchPivotPos = 220; // tested
-    private static int pickupSpecimenPivotPos = 115; // tested
-    private static int pickupSamplePivotPos = 20; // tested
-    private static int pickupUpPivotPos = 400;
+    public static int searchPivotPos = 220; // tested
+    public static int pickupSpecimenPivotPos = 115; // tested
+    public static int pickupSamplePivotPos = 20; // tested
+    public static int pickupUpPivotPos = 400;
     public static int specimenHighPivotPos = 1150;
     public static int specimenLowPivotPos = 750;
     public static int highBasketPivotPos = 1200;
