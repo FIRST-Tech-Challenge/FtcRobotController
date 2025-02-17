@@ -54,9 +54,8 @@ public class PrimaryOpMode extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // TelemetryPacket packet = new TelemetryPacket();
 
-        //Servo rightClawArmServo      = hardwareMap.get(Servo.class, "clawArmServo");
-        //Servo leftClawArmServo       = hardwareMap.get(Servo.class, "clawArmServo2");
         Servo clawServo              = hardwareMap.get(Servo.class, "clawServo");
+
         // Declare our motors
         // Make sure your ID's match your configuration
         DcMotor frontLeftMotor         = hardwareMap.dcMotor.get("frontLeft");

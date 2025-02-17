@@ -14,9 +14,9 @@ public class ArmTest extends LinearOpMode {
     public static class Params {
         public double power = 1;
         public int ticks = 3500;
-        public double copen = 0.5;
-        public double cclose= 0.3;
-        public double slup = 0.2;
+        public double copen = 0.48;
+        public double cclose= 0.448;
+        public double slup = 0.5;
     }
     public static Params PARAMS = new Params();
 
@@ -39,7 +39,8 @@ public class ArmTest extends LinearOpMode {
         frontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
-        rightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+//        rightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // make the motors brake when [power == 0]
         // should stop the elevator from retracting because of gravity...
