@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode.autoshellclasses;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -15,9 +13,7 @@ import org.firstinspires.ftc.teamcode.BBcode.OpModeType;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.ViperArmActions;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.WristClawActions;
 import org.firstinspires.ftc.teamcode.BBcode.PoseStorage;
-import org.firstinspires.ftc.teamcode.BBcode.UtilClasses.UtilActions;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
-import org.firstinspires.ftc.teamcode.R;
 
 import java.util.Locale;
 
@@ -87,7 +83,7 @@ public class Red_Basket_Auto extends LinearOpMode {
 
         //drive to park
         Action driveToPark = drive.actionBuilder(RedBasketPose.drop)
-                .strafeToLinearHeading(RedBasketPose.park.position, RedBasketPose.park.heading)
+                .strafeToLinearHeading(RedBasketPose.submersible_park.position, RedBasketPose.submersible_park.heading)
                 .build();
 
         //----------------------------------------------------------------------------------------------

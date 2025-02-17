@@ -30,7 +30,7 @@ public class ActionBuilder {
                 .strafeToLinearHeading(RedBasketPose.outer_sample.position, RedBasketPose.outer_sample.heading)
                 .setReversed(true)
                 .strafeToLinearHeading(RedBasketPose.drop.position, RedBasketPose.drop.heading)
-                .strafeToLinearHeading(RedBasketPose.park.position, RedBasketPose.park.heading)
+                .strafeToLinearHeading(RedBasketPose.submersible_park.position, RedBasketPose.submersible_park.heading)
                 .build();
     }
 
