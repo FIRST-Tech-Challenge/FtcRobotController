@@ -109,7 +109,7 @@ public class AutoBasketFunnel extends LinearOpMode {
             moveToBasket1 = new PurePursuitAction(driveTrain, wheelOdometry);
             moveToBasket1.setName("moveToBasket3");
             //move sample 3 to basket
-            moveToBasket1.addPoint(SampleToBasketFunnelRoundTrip.OUTTAKE_X_POS - 250,
+            moveToBasket1.addPoint(SampleToBasketFunnelRoundTrip.OUTTAKE_X_POS - 300,
                     SampleToBasketFunnelRoundTrip.OUTTAKE_Y_POS - 125, -135,
                     PurePursuitAction.P_XY_FAST,
                     PurePursuitAction.P_ANGLE);
