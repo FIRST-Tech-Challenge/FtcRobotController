@@ -9,7 +9,6 @@ import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.WallToBarAction;
 import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.AutoRobotHangAction;
-import com.kalipsorobotics.actions.Init;
 import com.kalipsorobotics.actions.SampleEndToEndSequence;
 import com.kalipsorobotics.actions.TrussSpecimenEndToEndSequence;
 import com.kalipsorobotics.actions.TransferAction;

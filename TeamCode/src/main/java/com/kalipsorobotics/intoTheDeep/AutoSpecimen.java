@@ -108,7 +108,7 @@ public class AutoSpecimen extends LinearOpMode {
 
 //        WaitAction waitForHangFinish = new WaitAction(100);
 //        waitForHangFinish.setDependentActions(wallToBarHangAction);
-//        redAutoSpecimen.addAction(waiftForHangFinish);
+//        redAutoSpecimen.addAction(waitForHangFinish);
 
         //================beginning of push================
         OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
@@ -145,10 +145,11 @@ public class AutoSpecimen extends LinearOpMode {
         moveFloorSamples.setDependentActions(wallToBarHangAction);
 
         //move to sample
-        moveFloorSamples.addPoint(-570, 230, -135, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //
-        moveFloorSamples.addPoint(-570, -450, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); // y = -450
-        moveFloorSamples.addPoint( -670, -425, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_FAST); //y
-        moveFloorSamples.addPoint(-1330, -500, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //y -475
+        moveFloorSamples.addPoint(-570, 230, -135, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
+        moveFloorSamples.addPoint(-570, -425, -170, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE);
+        moveFloorSamples.addPoint( -670, -425, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE); //y
+        moveFloorSamples.addPoint(-1330, -525, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE);
+        //y -475
 
         //first sample to depot
         moveFloorSamples.addPoint(-1330, -775, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);//before push y=800
@@ -188,6 +189,7 @@ public class AutoSpecimen extends LinearOpMode {
             moveFloorSamples.addPoint(-500,-1000,-180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
 
             moveFloorSamples.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X - 50, -1000, -180,
+
                     PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
         }
         redAutoSpecimen.addAction(moveFloorSamples);
