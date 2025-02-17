@@ -13,11 +13,16 @@ import com.kalipsorobotics.modules.Outtake;
 public class WallToBarHangAction extends KActionSet {
 
     public WallToBarHangAction(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, int barY) {
-        this(driveTrain, wheelOdometry, outtake, barY, false);
+        this(driveTrain, wheelOdometry, outtake, barY, false, true);
     }
 
+    public WallToBarHangAction(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, int barY, boolean firstAction) {
+        this(driveTrain, wheelOdometry, outtake, barY, false, false);
+    }
+
+
     public WallToBarHangAction(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, int barY,
-                               boolean isSlow) {
+                               boolean isSlow, boolean firstAction) {
 
         WaitAction waitAtStart = new WaitAction(50);
         waitAtStart.setName("waitAtStart");
@@ -25,7 +30,9 @@ public class WallToBarHangAction extends KActionSet {
 
         PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSpecimenBar.setName("moveToSpecimenBar");
-        moveToSpecimenBar.addPoint(0, 0, 0);
+        if(firstAction) {
+            moveToSpecimenBar.addPoint(0, 0, 0);
+        }
             moveToSpecimenBar.addPoint(-450, barY/2.0 + 50, 0,
                     isSlow?PurePursuitAction.P_XY : PurePursuitAction.P_XY_FAST,
                     PurePursuitAction.P_ANGLE);
