@@ -156,7 +156,7 @@ public class AutoSpecimen extends LinearOpMode {
         moveFloorSamples.addPoint(-610, -875, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
         moveFloorSamples.addPoint(-380, -675, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
 
-        //second sample to depot
+        //second sample to depot 
         moveFloorSamples.addPoint(-1400, -675, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW); //y
         // -800
         moveFloorSamples.addPoint(-1400, -1000, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);//
