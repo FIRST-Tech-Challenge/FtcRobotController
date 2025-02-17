@@ -99,7 +99,7 @@ public class AutoSpecimen extends LinearOpMode {
         redAutoSpecimen.addAction(delayBeforeStart);
 
         //================begin of first specimen====================
-        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, 230);
+        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, 200);
         wallToBarHangAction.setName("wallToBarHangAction");
         wallToBarHangAction.setTelemetry(telemetry);
         wallToBarHangAction.setDependentActions(delayBeforeStart);
@@ -153,13 +153,13 @@ public class AutoSpecimen extends LinearOpMode {
         //first sample to depot
         moveFloorSamples.addPoint(-1330, -775, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);//before push y=800
         //moveFloorSamples.addPoint(-580, -775, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
-        moveFloorSamples.addPoint(-610, -875, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
+        moveFloorSamples.addPoint(-610, -825, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
         moveFloorSamples.addPoint(-380, -675, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
 
         //second sample to depot
-        moveFloorSamples.addPoint(-1400, -675, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW); //y
+        moveFloorSamples.addPoint(-1400, -675, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE); //y
         // -800
-        moveFloorSamples.addPoint(-1400, -1000, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);//
+        moveFloorSamples.addPoint(-1350, -1000, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);//
         // strafe -> normal PXY
         // beforepush
         //moveFloorSamples.addPoint(-580, -1000, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
@@ -185,9 +185,9 @@ public class AutoSpecimen extends LinearOpMode {
                     PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW); // -1065 // WAllPICKUP = -150
 //        moveFloorSamples.addPoint(-350, -1065, -180);//move back out to avoid sample carry //y = -1200 y = 375
         } else {
-            moveFloorSamples.addPoint(-480,-1000,-180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
+            moveFloorSamples.addPoint(-500,-1000,-180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
 
-            moveFloorSamples.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X, -900, -180,
+            moveFloorSamples.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X - 50, -1000, -180,
                     PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
         }
         redAutoSpecimen.addAction(moveFloorSamples);
