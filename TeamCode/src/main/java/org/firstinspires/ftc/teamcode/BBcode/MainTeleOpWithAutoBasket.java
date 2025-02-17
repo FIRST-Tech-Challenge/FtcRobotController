@@ -169,7 +169,8 @@ public class MainTeleOpWithAutoBasket extends LinearOpMode{
 //            //TODO setPose to a some other likely position??
 //        }
         //Where the start button is clicked, put some starting commands after
-
+        boolean isDpadUpPressed = false;
+        boolean isDpadDownPressed = false;
         waitForStart();
         telemetry.addData("HasRolloverPose", PoseStorage::hasRolloverPose);
         if (PoseStorage.hasRolloverPose()) {
@@ -438,6 +439,28 @@ public class MainTeleOpWithAutoBasket extends LinearOpMode{
                     break;
 
                 case SpecimenHang:
+                    if (gamepad2.dpad_up) {
+                        if (!isDpadDownPressed)
+                        {
+                            isDpadUpPressed = true;
+                            arm.IncreaseSpecimenAngle();
+                            arm.MoveToSpecimen(.5);
+                            //specimenClipState = SpecimenClipState.RaiseArm;
+                        }
+                    } else {
+                        isDpadUpPressed = false;
+                    }
+                    if (gamepad2.dpad_down) {
+                        if (!isDpadUpPressed)
+                        {
+                            isDpadDownPressed = true;
+                            arm.DecreaseSpecimenAngle();
+                            arm.MoveToSpecimen(.1);
+                            //specimenClipState = SpecimenClipState.RaiseArm;
+                        }
+                    } else {
+                        isDpadDownPressed = false;
+                    }
                     if (gamepad2.right_trigger > 0 && gamepad2.dpad_down) {
                         wristClaw.WristDown();
                         specimenClipState = SpecimenClipState.WristDown;
