@@ -92,23 +92,23 @@ public class ArmTest extends LinearOpMode {
                     frontDrive.setPower(0);
                 }
                 if (gamepad2.x) {
-                    spinner.setPower(1.0);
+                    spinner.setPower(1);
                 }
                 else spinner.setPower(0);
 
                 if (gamepad2.dpad_up) {
-                    lefts.setPosition(0.7);
+                    lefts.setPosition(PARAMS.slup);
                     rights.setPosition(0);
                 }
                 else if(gamepad2.dpad_down) {
                     lefts.setPosition(0);
-                    rights.setPosition(0.7);
+                    rights.setPosition(PARAMS.slup);
                 }
 
                 if (gamepad2.dpad_left) {
-                    claw.setPosition(0.49);
+                    claw.setPosition(PARAMS.copen);
                 } else if (gamepad2.dpad_right) {
-                    claw.setPosition(0.48);
+                    claw.setPosition(PARAMS.cclose);
                 }
 
                 /* ##################################################
