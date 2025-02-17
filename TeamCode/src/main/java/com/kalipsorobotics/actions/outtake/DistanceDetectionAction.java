@@ -34,7 +34,7 @@ public class DistanceDetectionAction extends KActionSet {
 
         double elapsedTime = System.currentTimeMillis() - startTime;
 
-        if(elapsedTime > 2500) {
+        if(elapsedTime > 2000) {
             return true;
         }
 

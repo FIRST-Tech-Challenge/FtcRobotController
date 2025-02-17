@@ -158,7 +158,7 @@ public class AutoSpecimen2Pre extends LinearOpMode {
 
         //move to sample
         moveFloorSamples.addPoint(-570, 230, -135, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //
-        moveFloorSamples.addPoint(-570, -450, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); // y = -450
+        moveFloorSamples.addPoint(-570, -450, -170, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); // y = -450
         moveFloorSamples.addPoint( -670, -425, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_FAST); //y
         moveFloorSamples.addPoint(-1330, -500, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //y -475
 
@@ -179,12 +179,11 @@ public class AutoSpecimen2Pre extends LinearOpMode {
         //moveFloorSamples.addPoint(-175, -1065, -180);?
 
         moveFloorSamples.addPoint(-500,-1000,-180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
-            moveFloorSamples.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X - 100, -1000, -180,
+            moveFloorSamples.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X - 200, -1000, -180,
                     PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
         redAutoSpecimen.addAction(moveFloorSamples);
 
-//
-        WaitAction waitBeforeSpecimenReady = new WaitAction(isThirdPush? 11000 : 8000); // I swears its ok waiting for
+        WaitAction waitBeforeSpecimenReady = new WaitAction(6000); // I swears its ok waiting for
         // transfer ready
         waitBeforeSpecimenReady.setName("waitBeforeSpecimenReady");
         waitBeforeSpecimenReady.setTelemetry(telemetry);
@@ -226,7 +225,7 @@ public class AutoSpecimen2Pre extends LinearOpMode {
         redAutoSpecimen.addAction(distanceDetectionAction);
 
         MoveToDistanceThreshold moveToDistanceThreshold = new MoveToDistanceThreshold(driveTrain,
-                distanceDetectionAction, -0.25);
+                distanceDetectionAction, -0.2);
         moveToDistanceThreshold.setName("moveToDistanceThreshold");
         moveToDistanceThreshold.setDependentActions(moveFloorSamples);
         redAutoSpecimen.addAction(moveToDistanceThreshold);
@@ -236,7 +235,7 @@ public class AutoSpecimen2Pre extends LinearOpMode {
                 outtake, 320); //400 //375
         wallToBarHangRoundTrip2.setName("wallToBarHangRoundTrip2");
         wallToBarHangRoundTrip2.setTelemetry(telemetry);
-        wallToBarHangRoundTrip2.setDependentActions(moveToDistanceThreshold);
+        wallToBarHangRoundTrip2.setDependentActions(moveToDistanceThreshold); //move to distance
         redAutoSpecimen.addAction(wallToBarHangRoundTrip2);
         //===============end of second specimen==============
 

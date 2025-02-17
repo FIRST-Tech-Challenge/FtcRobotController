@@ -195,7 +195,7 @@ public class AutoSpecimen extends LinearOpMode {
         redAutoSpecimen.addAction(moveFloorSamples);
 
 //
-        WaitAction waitBeforeSpecimenReady = new WaitAction(isThirdPush? 11000 : 8000); // I swears its ok waiting for
+        WaitAction waitBeforeSpecimenReady = new WaitAction(isThirdPush? 11000 : 6000); // I swears its ok waiting for
         // transfer ready
         waitBeforeSpecimenReady.setName("waitBeforeSpecimenReady");
         waitBeforeSpecimenReady.setTelemetry(telemetry);
