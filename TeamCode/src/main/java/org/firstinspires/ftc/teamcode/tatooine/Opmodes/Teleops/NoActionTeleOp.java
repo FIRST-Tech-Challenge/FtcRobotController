@@ -67,6 +67,14 @@ public class NoActionTeleOp extends LinearOpMode {
             if (gamepadEx1.justPressedButton(GamepadKeys.Button.START)) {
                 drive.resetIMU();
             }
+            if (gamepadEx2.justPressedButton(GamepadKeys.Button.START)){
+                arm.resetExtendEncoders();
+            }
+            if (gamepadEx2.justPressedButton(GamepadKeys.Button.BACK)){
+                arm.resetAngleEncoders();
+                arm.setStartAngle(-6);
+            }
+
 
         }
     }

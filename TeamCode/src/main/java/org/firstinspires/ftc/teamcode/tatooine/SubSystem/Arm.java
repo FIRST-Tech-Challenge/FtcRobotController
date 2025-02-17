@@ -40,7 +40,7 @@ public class Arm {
     private final double EXTEND_UP_LIMIT_AMPS = 0; // Upper amperage limit for extend motors
     private final double EXTEND_DOWN_LIMIT_AMPS = 10000000; // Lower amperage limit for extend motors
     public static double MIN_EXTEND = 37.0; // Minimum extension value
-    public static double MAX_EXTEND = 64; // Maximum extension value
+    public static double MAX_EXTEND = 62; // Maximum extension value
 
     public static double LIMIT = UnitConverter.convert(42.0, unit.INCHES, unit.CM) - 20.0 - 5.0; // Conversion for limit distance
 
@@ -58,7 +58,7 @@ public class Arm {
 
     private final double LIMIT_TOLERANCE = 0.0; // Tolerance for limit switch reading
 
-    private final double SPOOL_DIM = 4.0; // Spool dimensions for extension calculation
+    private final double SPOOL_DIM = 3.82; // Spool dimensions for extension calculation
 
     private double lastAngle = 0.0; // Last recorded angle for force calculation81.68
     private double lastF = 0.0; // Last recorded force value
