@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
 @TeleOp(name = "ArmTest")
@@ -12,8 +13,10 @@ public class ArmTest extends LinearOpMode {
 
     public static class Params {
         public double power = 1;
-        public int ticks = 3850;
-
+        public int ticks = 3500;
+        public double copen = 0.5;
+        public double cclose= 0.3;
+        public double slup = 0.2;
     }
     public static Params PARAMS = new Params();
 
@@ -24,6 +27,10 @@ public class ArmTest extends LinearOpMode {
         DcMotor frontDrive = hardwareMap.get(DcMotor.class, "frontArm");
 
         DcMotor spinner  = hardwareMap.get(DcMotor.class, "spinner");
+
+        Servo lefts = hardwareMap.servo.get("leftSlider");
+        Servo rights = hardwareMap.servo.get("rightSlider");
+        Servo claw = hardwareMap.servo.get("clawServo");
 
 //        CRServo slideServo = hardwareMap.get(CRServo.class, "slideServo");
 
@@ -60,12 +67,12 @@ public class ArmTest extends LinearOpMode {
             // Pre-run
             while (opModeIsActive()) {
                 // Extend / Retract
-                if (gamepad1.right_bumper) {
+                if (gamepad2.right_bumper) {
                     rightDrive.setPower(PARAMS.power);
                     leftDrive.setPower(PARAMS.power);
                     rightDrive.setTargetPosition(PARAMS.ticks);
                     leftDrive.setTargetPosition(PARAMS.ticks);
-                } else if (gamepad1.left_bumper) {
+                } else if (gamepad2.left_bumper) {
                     rightDrive.setPower(PARAMS.power);
                     leftDrive.setPower(PARAMS.power);
                     rightDrive.setTargetPosition(rightStartingPos+50);
@@ -73,23 +80,36 @@ public class ArmTest extends LinearOpMode {
                 }
 
                 // TODO: Change to targetposition movement once motor is actually fixed
-                /// ARM MECHANISM TEST - TEMPORARY///
+                /// ARM MECHANISM TEST - TEMPORARY ///
                 // Arad requested me to program this to use power and NOT targets
                 // Dont blame me
-                if(gamepad1.y) {
+                if(gamepad2.y) {
                     frontDrive.setPower(-PARAMS.power);
-                } else if (gamepad1.a) {
+                } else if (gamepad2.a) {
                     frontDrive.setPower(PARAMS.power);
                 }
                 else {
                     frontDrive.setPower(0);
                 }
-                if (gamepad1.x) {
-                    spinner.setPower(-1.0);
+                if (gamepad2.x) {
+                    spinner.setPower(1.0);
                 }
                 else spinner.setPower(0);
 
+                if (gamepad2.dpad_up) {
+                    lefts.setPosition(0.7);
+                    rights.setPosition(0);
+                }
+                else if(gamepad2.dpad_down) {
+                    lefts.setPosition(0);
+                    rights.setPosition(0.7);
+                }
 
+                if (gamepad2.dpad_left) {
+                    claw.setPosition(0.49);
+                } else if (gamepad2.dpad_right) {
+                    claw.setPosition(0.48);
+                }
 
                 /* ##################################################
                              TELEMETRY ADDITIONS

@@ -7,24 +7,23 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import java.security.PrivilegedAction;
 
 public class SlideActions {
     private Servo left;
     private Servo right;
 
     public SlideActions(HardwareMap hardwareMap) {
-        left = hardwareMap.servo.get("slideLeftServo");
-        right = hardwareMap.servo.get("slideServoRight");
+        left = hardwareMap.servo.get("leftSlider");
+        right = hardwareMap.servo.get("rightSlider");
     }
 
     private class SlideUp implements Action {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            double pos = 1;
+            double pos = 0.8;
             left.setPosition(pos);
-            right.setPosition(pos);
+            right.setPosition(0);
             return left.getPosition() != pos && right.getPosition() != pos;
         }
     }
@@ -39,7 +38,7 @@ public class SlideActions {
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             double pos = 0;
             left.setPosition(pos);
-            right.setPosition(pos);
+            right.setPosition(0.8);
             return left.getPosition() != pos && right.getPosition() != pos;
         }
     }

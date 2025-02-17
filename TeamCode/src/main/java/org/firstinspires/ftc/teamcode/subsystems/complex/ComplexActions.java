@@ -24,13 +24,14 @@ public class ComplexActions {
     public ComplexActions(HardwareMap hardwareMap) {
         liftActions = new LiftActions(hardwareMap);
         clawActions = new ClawActions(hardwareMap);
+        slideActions = new SlideActions(hardwareMap);
 
-        claw = hardwareMap.servo.get("claw");
-        rotator = hardwareMap.servo.get("rotator");
+        claw = hardwareMap.servo.get("clawServo");
+        rotator = hardwareMap.servo.get("rotatorServo");
     }
 
     public class grabCubeFromTray implements Action {
-        private double clawPosition = 0.2;
+        private double clawPosition = 0.25;
         private double rotatorPosition = 0.2;
         private double slidePosition = 0;
         boolean slideStatus = true;
@@ -40,7 +41,6 @@ public class ComplexActions {
 
             claw.setPosition(clawPosition);
             sleep(250);
-            if (claw.getPosition() == clawPosition){
                 if (slideStatus) {
                     slideStatus = slideActions.SlideUp().run(packet);
                 }
@@ -48,8 +48,8 @@ public class ComplexActions {
                     liftStatus = liftActions.liftUp().run(packet);
                 }
                 else rotator.setPosition(rotatorPosition);
-            }
-            return rotator.getPosition() == rotatorPosition && claw.getPosition() == clawPosition && !liftStatus;
+
+            return rotator.getPosition() == rotatorPosition && !liftStatus;
         }
     }
 
@@ -58,23 +58,18 @@ public class ComplexActions {
     }
 
     public class returnToTray implements Action {
-        private double clawPosition = 1;
+        private double clawPosition = 0.5;
         private double rotatorPosition = 0.85;
 //        boolean clawStatus = true;
         boolean liftStatus = true;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-//            if (clawStatus) {
-//                clawStatus = clawActions.releaseCube().run(packet);
-//            }
-            claw.setPosition(clawPosition);
-            sleep(250);
-            if (claw.getPosition() == clawPosition) {
                 if (liftStatus) {
                     liftStatus = liftActions.liftDown().run(packet);
                 }
-            }
-            return rotator.getPosition() == rotatorPosition && claw.getPosition() == clawPosition && !liftStatus;
+            claw.setPosition(clawPosition);
+            sleep(250);
+            return rotator.getPosition() == rotatorPosition && !liftStatus;
         }
 
     }

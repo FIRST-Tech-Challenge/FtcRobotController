@@ -18,9 +18,8 @@ public class ClawActions {
 
 
     public ClawActions(HardwareMap hardwareMap) {
-        claw = hardwareMap.get(Servo.class, "claw");
-        rotator = hardwareMap.get(Servo.class, "rotator");
-//        this.hardwareMap = hardwareMap;
+        claw = hardwareMap.get(Servo.class, "clawServo");
+        rotator = hardwareMap.get(Servo.class, "rotatorServo");
         lift = new LiftActions(hardwareMap);
     }
 
