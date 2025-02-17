@@ -7,7 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class FSMBot extends HangBot{
+public class FSMBot extends RollerIntakeBot{
+    private RollerIntakeBot robot = new RollerIntakeBot(this.opMode);
+
     private ElapsedTime timeSince = new ElapsedTime();
     public ElapsedTime timer2 = new ElapsedTime();
     private ElapsedTime timer3 = new ElapsedTime();
@@ -64,6 +66,7 @@ public class FSMBot extends HangBot{
     public boolean hingeDown = false;
 
 
+
     public gameState currentState = gameState.INIT_READY;
 
     public FSMBot(LinearOpMode opMode) {
@@ -75,6 +78,7 @@ public class FSMBot extends HangBot{
         super.init(ahwmap);
         timeSince.reset();
         auto = isAuto;
+
     }
 
     public void waitForState(gameState goalState) {
@@ -209,11 +213,8 @@ public class FSMBot extends HangBot{
         super.onTick();
         switch (currentState) {
             case INIT_READY:
-                pivotMotor1.setTargetPosition(pivotTarget);
-                pivotMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                pivotMotor.setTargetPosition(pivotTarget);
-                pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                pivotPower = 0.5;
+               pitchTo(0); //sets differential wrist positions
+               rollTo(0);
                 currentState = gameState.DRIVE;
                 break;
             case SUBMERSIBLE_INTAKE_1:

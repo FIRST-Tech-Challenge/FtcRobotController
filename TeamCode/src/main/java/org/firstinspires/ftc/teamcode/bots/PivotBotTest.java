@@ -86,53 +86,53 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
         return pivotMotor1.getCurrentPosition();
     }
 
-    protected void onTick() {
-
-        super.onTick();
-
-        if (reachedPivotPos && oldPt != pivotTarget) {
-
-            reachedPivotPos = false;
-            oldPt = pivotTarget;
-
-        }
-
-        if (pivotTarget > minumimPivotPos - 100 && pivotTarget < maximumPivotPos + 100){
-
-            pivotOutOfRange = false;
-
-            pivotPower = PIDControl(pivotTarget, getPivotPosition());
-
-            runPivotMotors(pivotTarget, 0.3);
-
-            // TODO : PID control for the pivot motor
-
-        } else {
-
-            pivotOutOfRange = true;
-            pivotMotor1.setPower(0);
-            pivotMotor2.setPower(0);
-
-        }
-
-        if (slideTarget > 0 && slideTarget < maximumSlidePos + 100){
-
-            slideMotor1.setTargetPosition(slideTarget);
-            slideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            slideMotor2.setTargetPosition(slideTarget);
-            slideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // TODO : PID control for the slide motor
-            slideMotor1.setPower(0.5);
-            slideMotor2.setPower(0.5);
-
-        } else {
-
-            slideMotor1.setPower(0);
-            slideMotor2.setPower(0);
-
-        }
-    }
+//    protected void onTick() {
+//
+//        super.onTick();
+//
+//        if (reachedPivotPos && oldPt != pivotTarget) {
+//
+//            reachedPivotPos = false;
+//            oldPt = pivotTarget;
+//
+//        }
+//
+//        if (pivotTarget > minumimPivotPos - 100 && pivotTarget < maximumPivotPos + 100){
+//
+//            pivotOutOfRange = false;
+//
+//            pivotPower = PIDControl(pivotTarget, getPivotPosition());
+//
+//            runPivotMotors(pivotTarget, 0.3);
+//
+//            // TODO : PID control for the pivot motor
+//
+//        } else {
+//
+//            pivotOutOfRange = true;
+//            pivotMotor1.setPower(0);
+//            pivotMotor2.setPower(0);
+//
+//        }
+//
+//        if (slideTarget > 0 && slideTarget < maximumSlidePos + 100){
+//
+//            slideMotor1.setTargetPosition(slideTarget);
+//            slideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            slideMotor2.setTargetPosition(slideTarget);
+//            slideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//            // TODO : PID control for the slide motor
+//            slideMotor1.setPower(0.5);
+//            slideMotor2.setPower(0.5);
+//
+//        } else {
+//
+//            slideMotor1.setPower(0);
+//            slideMotor2.setPower(0);
+//
+//        }
+//    }
     public void slideByDelta(int delta){
         slideTarget += delta;
     }
@@ -165,6 +165,10 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
         if (up) {
             if (pivotMotor1.getCurrentPosition() < maximumPivotPos - 100) {
                 pivotTarget = pivotMotor1.getCurrentPosition() + ((maximumPivotPos - pivotMotor1.getCurrentPosition()) / 10);
+                pivotMotor1.setTargetPosition(pivotTarget);
+                pivotMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                pivotMotor2.setTargetPosition(pivotTarget);
+
             }
         }
         if (down) {
@@ -216,4 +220,10 @@ public class PivotBotTest extends FourWheelDriveBot { //change back to odometry 
         return output;
 
     }
+
+    public void setPivotTarget(int target){
+        pivotTarget = target;
+    }
+
+
 }

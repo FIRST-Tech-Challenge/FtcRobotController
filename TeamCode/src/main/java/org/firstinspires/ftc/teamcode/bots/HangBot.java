@@ -11,12 +11,15 @@ import com.acmerobotics.dashboard.config.Config;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class HangBot extends AutomationBot {
+
     private DcMotorEx hangMotor1 = null;
     private DcMotorEx hangMotor2 = null;
 
     public static int hangTarget = 830;
     public static double hangPower = 1.0;
     private boolean hangReady = false;
+
+
 
     @Override
     public void init(HardwareMap ahwMap) {
