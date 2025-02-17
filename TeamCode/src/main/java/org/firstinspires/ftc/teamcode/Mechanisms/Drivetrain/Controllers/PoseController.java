@@ -20,7 +20,8 @@ public class PoseController {
     public static double kDY = 0;
     public static double kDTheta = 0;
     private double lastTheta = 0;
-
+    private double lastX;
+    private double lastY;
     public PoseController(){
         this.xPID = new PID(kPX, kIX, kDX, functionType.SQRT);
         this.yPID = new PID(kPY, kIY, kDY, functionType.SQRT);
@@ -28,10 +29,17 @@ public class PoseController {
     }
     public SimpleMatrix calculate(SimpleMatrix pose, SimpleMatrix desiredPose){
         if (pose.hasUncountable()){
+            pose.set(0, 0, lastX);
+            pose.set(1, 0, lastY);
             pose.set(2,0,lastTheta);
         } else {
+            lastX = pose.get(0, 0);
+            lastY = pose.get(1, 0);
             lastTheta = pose.get(2,0);
         }
+
+
+
         SimpleMatrix errorField = new SimpleMatrix(
                 new double[][]{
                         new double[]{desiredPose.get(0,0)-pose.get(0,0)},

@@ -21,6 +21,8 @@ public class Arm {
     public static double wristRetract = 0.5;
     public static double wristSpecimenExtend = 0.66;
     public static double armNeutral = 0.75;
+    public static double armAuton = 0.75;
+    public static double wristAuton = 0;
     public ElapsedTime timer = new ElapsedTime();
     public Arm(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
@@ -114,6 +116,17 @@ public class Arm {
                         armTimer.reset();
                     }
                 }
+                return false;
+            }
+        };
+    }
+    public Action servoSpecimenAuton(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                servoArmLeft.setPosition(armAuton);
+                servoArmRight.setPosition(armAuton);
+                servoWrist.setPosition(wristAuton);
                 return false;
             }
         };

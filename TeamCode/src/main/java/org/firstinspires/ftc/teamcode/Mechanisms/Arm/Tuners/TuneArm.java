@@ -21,6 +21,12 @@ public class TuneArm extends LinearOpMode {
             if (gamepad1.triangle){
                 Actions.runBlocking(arm.servoArm());
             }
+            if(gamepad1.cross){
+                Actions.runBlocking(arm.servoSpecimenAuton());
+            }
+            if(gamepad1.square){
+                Actions.runBlocking(arm.servoArmSpec());
+            }
         }
     }
 }

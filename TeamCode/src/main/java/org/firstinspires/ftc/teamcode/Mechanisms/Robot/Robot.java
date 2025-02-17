@@ -46,9 +46,10 @@ public class Robot {
     }
     public Action intakeDown(){
         return new SequentialAction(
-                intake.motorIntake(Intake.intakeState.INTAKE),
                 pivot.setPosition(Intake.intakeState.INTAKE),
-                extension.servoExtension(Extension.extensionState.EXTEND)
+                extension.servoExtension(Extension.extensionState.EXTEND),
+                new SleepAction(0.25),
+                intake.motorIntake(Intake.intakeState.INTAKE)
         );
     }
     public Action intakeUp(){
