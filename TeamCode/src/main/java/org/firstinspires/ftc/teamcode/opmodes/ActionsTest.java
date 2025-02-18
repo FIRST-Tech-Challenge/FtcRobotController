@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.*;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -57,8 +58,8 @@ public class ActionsTest extends LinearOpMode {
             Servo rotator         = hardwareMap.servo.get("rotatorServo");
             Servo clawServo       = hardwareMap.servo.get("clawServo");
 
-            Servo leftArm         = hardwareMap.servo.get("leftSpinner");
-            Servo rightArm        = hardwareMap.servo.get("rightSpinner");
+            CRServo leftArm         = hardwareMap.crservo.get("leftSpinner");
+            //Servo rightArm        = hardwareMap.servo.get("rightSpinner");
             Servo leftSlide       = hardwareMap.servo.get("leftSlider");
             Servo rightSlide      = hardwareMap.servo.get("rightSlider");
 
@@ -118,11 +119,11 @@ public class ActionsTest extends LinearOpMode {
                     clawServo.setPosition(0.5);
                 }
                 if (gamepad1.b) {
-                    clawServo.setPosition(0.35);
+                    clawServo.setPosition(0.40);
                 }
 
                 if (gamepad1.a) {
-                    rotator.setPosition(0.2);
+                    rotator.setPosition(0.25);
                 }
                 if (gamepad1.y) {
                     rotator.setPosition(0.85);
