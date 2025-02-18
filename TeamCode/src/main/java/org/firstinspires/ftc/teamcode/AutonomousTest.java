@@ -4,11 +4,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.bots.FSMBot;
 import org.firstinspires.ftc.teamcode.bots.HangBot;
 
 @Autonomous(name = "Auto Test", group = "Auto")
 public class AutonomousTest extends LinearOpMode {
-    protected HangBot robot = new HangBot(this);
+    protected FSMBot robot = new FSMBot(this);
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -18,8 +19,7 @@ public class AutonomousTest extends LinearOpMode {
         robot.pivotTarget = 300;
 
         while (!opModeIsActive()) {
-            telemetry.addData("rotate position", robot.rotate.getPosition());
-            telemetry.addData("slide position", robot.slideMotor1.getCurrentPosition());
+
             telemetry.update();
         }
 
