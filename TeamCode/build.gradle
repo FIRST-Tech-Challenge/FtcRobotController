@@ -31,4 +31,5 @@ dependencies {
     implementation "com.acmerobotics.roadrunner:actions:1.0.1"
     implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
     implementation 'org.ftclib.ftclib:core:2.1.1'
+    implementation "com.acmerobotics.roadrunner:ftc:0.1.15"
 }

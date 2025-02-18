@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.JackBurr.Autonomous;
+package org.firstinspires.ftc.teamcode.JackBurr.OldFiles;
 
 import androidx.annotation.NonNull;
 
@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.JackBurr.Servos.WristAxonV1;
 
 @Config
 @Autonomous
-public class LeftAutoV7 extends LinearOpMode {
+public class LeftAutoV8 extends LinearOpMode {
     public DeliverySlidesV1 slides = new DeliverySlidesV1();
     public DeliveryAxonV1 deliveryAxonV1 = new DeliveryAxonV1();
     public RobotConstantsV1 robotConstantsV1 = new RobotConstantsV1();
@@ -39,7 +39,7 @@ public class LeftAutoV7 extends LinearOpMode {
     public ElapsedTime deliveryTimer = new ElapsedTime();
     public ElapsedTime intakeTimer = new ElapsedTime();
     public int step = 0;
-    public static int intakeTarget01 = 421;
+    public static int intakeTarget01 = 401;
     public boolean servoSet = false;
     public boolean servoSet2 = false;
     public boolean wristSet = false;
@@ -48,18 +48,17 @@ public class LeftAutoV7 extends LinearOpMode {
     //----------------------------------------------------------------------------------------
     public static Pose2d startPose = new Pose2d(36, 62, Math.toRadians(-90)); // (60,0), 180
 
-    public static Vector2d position1 = new Vector2d(53, 49);
+    public static Vector2d position1 = new Vector2d(51, 47);
     public static double position1HeadingDegrees = -135;
 
     public static Vector2d position2 = new Vector2d(47, 43);
-    public static double position2HeadingDegrees = -85;
+    public static double position2HeadingDegrees = -83;
 
     public static Vector2d position4 = new Vector2d(56, 42);
     public static double position4HeadingDegrees = -85;
 
-    public static Vector2d position5 = new Vector2d(47, 47);
-    public static Vector2d position6 = new Vector2d(47, 0);
-    public static Vector2d position7 = new Vector2d(23, 6.5);
+    public static Vector2d position6 = new Vector2d(65, 41);
+    public static double position6HeadingDegrees = -84;
 
 
 
@@ -133,12 +132,9 @@ public class LeftAutoV7 extends LinearOpMode {
                 .turnTo(Math.toRadians(position1HeadingDegrees));
         traj6Builder = traj5Builder.fresh()
                 .stopAndAdd(axon.axonDown())
+                .turnTo(Math.toRadians(position6HeadingDegrees))
                 .stopAndAdd(slides2.slidesDown())
-                .strafeTo(position5)
-                .strafeTo(position6)
-                .turnTo(Math.toRadians(0))
-                .stopAndAdd(axon.axonLevelOne())
-                .strafeTo(position7);
+                .strafeTo(position6);
         //traj3Builder = traj2Builder.fresh()
         //.turnTo(Math.toRadians(position3Degrees));
         //traj4Builder = traj3Builder.fresh()
@@ -334,10 +330,10 @@ public class LeftAutoV7 extends LinearOpMode {
                         intakeSlides.intakeAllTheWayIn();
                     }
                 }
-                while (intakeTimer.seconds() < 2.7) {
+                while (intakeTimer.seconds() < 3) {
                     deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_CLOSE);
                 }
-                while (intakeTimer.seconds() < 3.1) {
+                while (intakeTimer.seconds() < 3.8) {
                     grippers.setPosition(robotConstantsV1.GRIPPERS_OPEN);
                 }
                 Actions.runBlocking(traj5);
@@ -355,16 +351,8 @@ public class LeftAutoV7 extends LinearOpMode {
 
             }
             if (step == 14) {
-                step = 15;
-            }
-            if(step == 15){
                 Actions.runBlocking(traj6);
-                while (deliveryTimer.seconds() > 0) {
-                    if(isStopRequested()){
-                        return;
-                    }
-                }
-                step = 16;
+                step = 15;
             }
         }
     }
@@ -434,23 +422,11 @@ public class LeftAutoV7 extends LinearOpMode {
             }
         }
 
-        public class AxonLevelOne implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_LEVEL_ONE_ASCENT);
-                return false;
-
-            }
-        }
-
         public Action axonUp() {
             return new AxonUp();
         }
         public Action axonDown() {
             return new AxonDown();
-        }
-        public Action axonLevelOne(){
-            return new AxonLevelOne();
         }
     }
 }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.JackBurr.Autonomous;
+package org.firstinspires.ftc.teamcode.JackBurr.OldFiles;
 
 import androidx.annotation.NonNull;
 
@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.JackBurr.Servos.WristAxonV1;
 
 @Config
 @Autonomous
-public class LeftAutoV8 extends LinearOpMode {
+public class LeftAutoV6 extends LinearOpMode {
     public DeliverySlidesV1 slides = new DeliverySlidesV1();
     public DeliveryAxonV1 deliveryAxonV1 = new DeliveryAxonV1();
     public RobotConstantsV1 robotConstantsV1 = new RobotConstantsV1();
@@ -52,14 +52,9 @@ public class LeftAutoV8 extends LinearOpMode {
     public static double position1HeadingDegrees = -135;
 
     public static Vector2d position2 = new Vector2d(47, 43);
-    public static double position2HeadingDegrees = -83;
+    public static double position2HeadingDegrees = -85;
 
-    public static Vector2d position4 = new Vector2d(56, 42);
-    public static double position4HeadingDegrees = -85;
-
-    public static Vector2d position6 = new Vector2d(65, 41);
-    public static double position6HeadingDegrees = -84;
-
+    public static Vector2d position4 = new Vector2d(53, 45);
 
 
     //+X is left, +Y is backwards
@@ -107,34 +102,21 @@ public class LeftAutoV8 extends LinearOpMode {
                 .stopAndAdd(axon.axonUp())
                 .turnTo(Math.toRadians(position1HeadingDegrees));
         traj2Builder = traj1Builder.fresh()
-                .stopAndAdd(axon.axonDown())
                 .strafeTo(position2)
-                .stopAndAdd(axon.axonDown())
                 .turnTo(Math.toRadians(position2HeadingDegrees))
-                .stopAndAdd(slides2.slidesDown())
                 .turnTo(Math.toRadians(position2HeadingDegrees))
-                .stopAndAdd(slides2.slidesDown())
                 .strafeTo(position2);
         traj3Builder = traj2Builder.fresh()
-                .stopAndAdd(slides2.slidesUp())
                 .strafeTo(position1)
-                .stopAndAdd(axon.axonUp())
                 .turnTo(Math.toRadians(position1HeadingDegrees));
         traj4Builder = traj3Builder.fresh()
-                .stopAndAdd(axon.axonDown())
-                .turnTo(Math.toRadians(position4HeadingDegrees))
-                .stopAndAdd(slides2.slidesDown())
+                .turnTo(Math.toRadians(position2HeadingDegrees))
                 .strafeTo(position4);
         traj5Builder = traj4Builder.fresh()
                 .stopAndAdd(slides2.slidesUp())
                 .strafeTo(position1)
                 .stopAndAdd(axon.axonUp())
                 .turnTo(Math.toRadians(position1HeadingDegrees));
-        traj6Builder = traj5Builder.fresh()
-                .stopAndAdd(axon.axonDown())
-                .turnTo(Math.toRadians(position6HeadingDegrees))
-                .stopAndAdd(slides2.slidesDown())
-                .strafeTo(position6);
         //traj3Builder = traj2Builder.fresh()
         //.turnTo(Math.toRadians(position3Degrees));
         //traj4Builder = traj3Builder.fresh()
@@ -154,7 +136,7 @@ public class LeftAutoV8 extends LinearOpMode {
         traj3 = traj3Builder.build();
         traj4 = traj4Builder.build();
         traj5 = traj5Builder.build();
-        traj6 = traj6Builder.build();
+        //traj6 = traj6Builder.build();
         //traj7 = traj7Builder.build();
 
 
@@ -187,12 +169,12 @@ public class LeftAutoV8 extends LinearOpMode {
             }
             if (step == 1) {
                 //while (deliveryTimer.seconds() < 2.2) {
-                //slides.runLeftSlideToPositionPID(robotConstantsV1.LEFT_SLIDE_HIGH_BASKET);
-                //slides.runRightSlideToPositionPID(robotConstantsV1.RIGHT_SLIDE_HIGH_BASKET);
-                //if (deliveryTimer.seconds() > 1.6) {
-                // deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
-                //}
-                //deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_CLOSE);
+                    //slides.runLeftSlideToPositionPID(robotConstantsV1.LEFT_SLIDE_HIGH_BASKET);
+                    //slides.runRightSlideToPositionPID(robotConstantsV1.RIGHT_SLIDE_HIGH_BASKET);
+                    //if (deliveryTimer.seconds() > 1.6) {
+                       // deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
+                    //}
+                    //deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_CLOSE);
                 //}
                 while (deliveryTimer.seconds() < 1) {
                     deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_OPEN);
@@ -275,6 +257,15 @@ public class LeftAutoV8 extends LinearOpMode {
                 step = 5;
             }
             if (step == 5) {
+                while (deliveryTimer.seconds() < 2.2) {
+                    slides.runLeftSlideToPositionPID(robotConstantsV1.LEFT_SLIDE_HIGH_BASKET);
+                    slides.runRightSlideToPositionPID(robotConstantsV1.RIGHT_SLIDE_HIGH_BASKET);
+                    if (deliveryTimer.seconds() > 1.6) {
+                        deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
+                        servoSet = true;
+                    }
+                    deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_CLOSE);
+                }
                 deliveryTimer.reset();
                 step = 6;
             }
@@ -286,6 +277,16 @@ public class LeftAutoV8 extends LinearOpMode {
                 step = 7;
             }
             if (step == 7) {
+                if (!servoSet2) {
+                    deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
+                }
+                if (slides.getLeftSlidePosition() != 0 || slides.getRightSlidePosition() != 0) {
+                    slides.runLeftSlideToPositionPID(0);
+                    slides.runRightSlideToPositionPID(0);
+                } else if (slides.getRightSlidePosition() != 0 && slides.getLeftSlidePosition() != 0) {
+                    slides.runLeftSlideToPositionPID(0);
+                    slides.runRightSlideToPositionPID(0);
+                }
                 intakeSlides.runToPosition(intakeTarget01, 1);
                 diffV2.setTopRightServoPosition(robotConstantsV1.FRONT_RIGHT_HOVER);
                 diffV2.setTopLeftServoPosition(robotConstantsV1.FRONT_LEFT_HOVER);
@@ -345,13 +346,24 @@ public class LeftAutoV8 extends LinearOpMode {
                 while (deliveryTimer.seconds() < 1) {
                     deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_OPEN);
                 }
+                while (deliveryTimer.seconds() < 1.5) {
+                    deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
+                }
                 servoSet2 = false;
                 deliveryTimer.reset();
                 step = 14;
 
             }
             if (step == 14) {
-                Actions.runBlocking(traj6);
+                while (deliveryTimer.seconds() < 2) {
+                    if (slides.getLeftSlidePosition() != 0 || slides.getRightSlidePosition() != 0) {
+                        slides.runLeftSlideToPositionPID(0);
+                        slides.runRightSlideToPositionPID(0);
+                    } else if (slides.getRightSlidePosition() != 0 && slides.getLeftSlidePosition() != 0) {
+                        slides.runLeftSlideToPositionPID(0);
+                        slides.runRightSlideToPositionPID(0);
+                    }
+                }
                 step = 15;
             }
         }
@@ -377,26 +389,8 @@ public class LeftAutoV8 extends LinearOpMode {
             }
         }
 
-        public class SlidesDown implements Action {
-            public ElapsedTime timer = new ElapsedTime();
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
-                packet.put("Left Pos", slides.getLeftSlidePosition());
-                packet.put("Right Pos", slides.getRightSlidePosition());
-                slides.runLeftSlideToPositionPID(0);
-                slides.runRightSlideToPositionPID(0);
-                return false;
-
-            }
-        }
-
         public Action slidesUp() {
             return new SlidesUp();
-        }
-
-        public Action slidesDown() {
-            return new SlidesDown();
         }
     }
 
@@ -413,20 +407,8 @@ public class LeftAutoV8 extends LinearOpMode {
             }
         }
 
-        public class AxonDown implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
-                return false;
-
-            }
-        }
-
         public Action axonUp() {
             return new AxonUp();
-        }
-        public Action axonDown() {
-            return new AxonDown();
         }
     }
 }
