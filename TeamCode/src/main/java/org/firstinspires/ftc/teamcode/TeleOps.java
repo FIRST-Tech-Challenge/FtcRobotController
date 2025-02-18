@@ -34,14 +34,13 @@ public class TeleOps extends LinearOpMode {
         }
 
         waitForStart();
+
         while(opModeIsActive()){
+            robot.currentState = FSMBot.gameState.DRIVE;
             telemetry.setMsTransmissionInterval(11);
 
-            telemetry.addData("slide position", robot.getSlidePosition());
-            telemetry.addData("pivot position", robot.getPivotPosition());
-            telemetry.addData("vR",robot.rightFront.getCurrentPosition() );
-            telemetry.addData("vL", robot.rightRear.getCurrentPosition());
-            telemetry.addData("h", robot.leftRear.getCurrentPosition());
+
+            telemetry.addData("state:",robot.currentState);
 
             if (robot.pivotOutOfRange) {
 

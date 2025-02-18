@@ -99,7 +99,7 @@ public class FSMBot extends RollerIntakeBot{
 
 
     public void subIntake (boolean button){
-        if(button && timer3.milliseconds() > 500) {
+        if(button) {
             intakeDown = true;
             currentState = gameState.SUBMERSIBLE_INTAKE_1;
             timer3.reset();
@@ -115,7 +115,7 @@ public class FSMBot extends RollerIntakeBot{
 
     }
     public void retractSubIntake (boolean button){
-        if(button && timer3.milliseconds() > 500) {
+        if(button) {
             intakeDown = false;
             currentState = gameState.DRIVE;
             timer3.reset();
@@ -123,14 +123,14 @@ public class FSMBot extends RollerIntakeBot{
     }
 
     public void raisePivotSample (boolean button){
-        if(button && timer3.milliseconds() > 500){
+        if(button){
             currentState = gameState.SAMPLE_SCORING_HIGH_1;
             timer3.reset();
         }
     }
 
     public void raiseSlidesSample (boolean button){
-        if(button && timer3.milliseconds() > 500) {
+        if(button) {
             currentState = gameState.SAMPLE_SCORING_HIGH_2;
             timer3.reset();
         }
