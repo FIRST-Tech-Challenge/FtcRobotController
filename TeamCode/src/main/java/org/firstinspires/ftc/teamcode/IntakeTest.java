@@ -18,12 +18,12 @@ public class IntakeTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             rollerIntakeBot.onLoop(0,"test");
-            if(gamepad1.dpad_up){
-                rollerIntakeBot.intake();
-            }
-            if(gamepad1.dpad_down){
-                rollerIntakeBot.outake();
-            }
+//            if(gamepad1.dpad_up){
+//                rollerIntakeBot.intake();
+//            }
+//            if(gamepad1.dpad_down){
+//                rollerIntakeBot.outake();
+//            }
             if(gamepad1.dpad_left){
                 rollerIntakeBot.stopRoller();
             }

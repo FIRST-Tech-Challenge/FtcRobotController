@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
-
-public class PedroPathingSpecimenBot extends GyroBot{
+import org.firstinspires.ftc.teamcode.bots.DifferentialWristBot;
+public class PedroPathingSpecimenBot extends FSMBot{
 
      private Follower follower;
      private Timer pathTimer, actionTimer, opmodeTimer;
@@ -102,11 +102,13 @@ public class PedroPathingSpecimenBot extends GyroBot{
           telemetry.addData("heading", follower.getPose().getHeading());
           telemetry.update();
      }
+
      private int AT_PRELOAD_POSITION= 1;
      public void autonomousPathUpdate() {
           switch (pathState) {
                case 0:
                     follower.followPath(scorePreload);
+
                     setPathState(AT_PRELOAD_POSITION);
                     //Goes to submersible, in position to score preload
                     break;
@@ -122,8 +124,9 @@ public class PedroPathingSpecimenBot extends GyroBot{
                     if(!follower.isBusy()/**||pathTimer.getElapsedTimeSeconds() > 2*/) {
                          /* Score Preload */
 
-                         //INSERT 3DOF CODE HERE TO SCORE SPECIMEN
 
+                         currentState = gameState.SPECIMEN_SCORING_HIGH;
+                         //INSERT 3DOF CODE HERE TO SCORE SPECIMEN
                          /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
 //                         follower.followPath(grabPickup1,true);
                          triggerEvent(EVENT_PRELOAD_SCORED, 2);

@@ -115,7 +115,32 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
     protected void onTick() {
 
         super.onTick();
+        pivotController.setTolerance(40,30);
+        if (pivotMotor1.getCurrentPosition() > -20 && pivotTarget == 0 ){
+            pivotMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            pivotMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            pivotMotor1.setPower(0);
+            pivotMotor2.setPower(0);
+        }
+        else if(pivotMotor1.getCurrentPosition() > - 2000) {
+            if (pivotMotor1.getCurrentPosition() > -1900) {
+                kfAngled = (float) (kf * Math.cos(Math.toRadians(ticksToDegree * pivotMotor1.getCurrentPosition())));
+            } else{ kfAngled = 0;}
+            pivotController.setPIDF(kp, ki, kd, 0);
+            pivotController.setSetPoint(pivotTarget);
 
+            double output = pivotController.calculate(pivotMotor1.getCurrentPosition());
+            pivotMotor2.setVelocity(output + kfAngled);
+            pivotMotor1.setVelocity(output + kfAngled);
+            telemetry.addData("output velocity", output);
+            packet.put("position",pivotMotor1.getCurrentPosition());
+            dashboard.sendTelemetryPacket(packet);
+
+        } else {
+            pivotMotor1.setPower(0);
+            pivotMotor2.setPower(0);
+            pivotMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            pivotMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);}
         /** commmented out pid to test slide */
 //        pivotController.setTolerance(20,30);
 //        kfAngled = (float) (kf*Math.cos(Math.toRadians(ticksToDegree)*(-pivotMotor1.getCurrentPosition())));

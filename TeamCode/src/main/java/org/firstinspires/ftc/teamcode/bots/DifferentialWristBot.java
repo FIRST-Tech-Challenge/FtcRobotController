@@ -57,6 +57,7 @@ public class DifferentialWristBot extends PivotBot{
         return currentPitch;
     }
 
+
     public double pitchTo(double targetAngle) {
         currentPitch = clampAngle(targetAngle);
         updateServos();

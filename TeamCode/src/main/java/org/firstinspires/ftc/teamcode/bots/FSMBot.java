@@ -270,9 +270,10 @@ public class FSMBot extends RollerIntakeBot{
             case SUBMERSIBLE_INTAKE_2:
                 robot.pitchTo(groundIntakePitchTarget);
                 robot.rollTo(groundIntakeRollTarget);
-                robot.intake();
+                robot.intake(true);
                 driveSlides(gamepad1.right_bumper,gamepad1.left_bumper);
                 retractSubIntake(gamepad1.b);
+                robot.pivotRunToPosition(0);
                 //
                 currentState = gameState.ARM_DOWN;
                 break;
@@ -319,7 +320,7 @@ public class FSMBot extends RollerIntakeBot{
                 //wait for score
                 break;
             case SAMPLE_SCORING_HIGH_3:
-                robot.outake();
+                robot.outake(true);
                 currentState = gameState.ARM_DOWN;
                 //arm up
                 //wait for score
