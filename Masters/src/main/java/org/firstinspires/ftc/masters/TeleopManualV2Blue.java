@@ -7,21 +7,22 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.masters.components.DriveTrain;
+import org.firstinspires.ftc.masters.components.ITDCons;
 import org.firstinspires.ftc.masters.components.Init;
 import org.firstinspires.ftc.masters.components.Intake;
 import org.firstinspires.ftc.masters.components.Outtake;
 
 @Config // Enables FTC Dashboard
-@TeleOp(name = "V2 Manual Teleop")
-public class TeleopManualV2 extends LinearOpMode {
+@TeleOp(name = "V2 Manual Teleop BLue")
+public class TeleopManualV2Blue extends LinearOpMode {
 
 
 /*   controls:
-    control : drop intake/ motor on/ auto spit out wrong color (maybe lift and back down)
+    x : drop intake/ motor on/ auto spit out wrong color (maybe lift and back down)
     if yellow transfer (maybe retract first
     if red/blue put intake in neutral position. if slide full, retract to half, if half retract fully
     control: low bucket
-    dpap_up: high bucket/score spec
+    y: high bucket/score spec
     right stick y up: extends slide and spit out red/blue (to human player)
     b: go to wall position (if yellow in transfer go to low bucket), press again close claw
     control: yellow in transfer go high bucket else score spec
@@ -57,6 +58,7 @@ public class TeleopManualV2 extends LinearOpMode {
 
         outtake.setIntake(intake);
         intake.setOuttake(outtake);
+        intake.setAllianceColor(ITDCons.Color.blue);
 
         outtake.initTeleopWall();
 
@@ -84,13 +86,13 @@ public class TeleopManualV2 extends LinearOpMode {
             if (gamepad1.right_stick_y > 0.5){
                 intake.retractSlide();
             } else if (gamepad1.right_stick_y < -0.5) {
-                //extends / eject to human plyer
+                //extends / eject to human player
                 intake.extendSlideHumanPlayer();
             }
 
-            if (gamepad1.right_stick_x > 0.1){
+            if (gamepad1.right_stick_x > 0.2){
                 intake.startIntake();
-            } else if (gamepad1.right_stick_x < -0.1) {
+            } else if (gamepad1.right_stick_x < -0.2) {
                 intake.reverseIntake();
             }
 
@@ -98,56 +100,49 @@ public class TeleopManualV2 extends LinearOpMode {
                 intake.stopIntake();
             }
 
-            if (gamepad1.x){
-                //turn on
-                intake.startIntake();
-
-            } else if (gamepad1.y) {
-//                reverse
-                intake.reverseIntake();
-            }
-
 
             if (gamepad1.dpad_left) {
 
                 outtake.moveToPickUpFromWall();
 
+            } else if (gamepad1.dpad_up) {
+                intake.extendSlideMax();
+            } else if (gamepad1.dpad_down){
+                intake.extendSlideHalf();
             }
 
 
-            if (gamepad1.right_bumper && relased) {
-                if (dpadUpPressed == 0) {
-                    intake.extendSlideMax();
-                    dpadDownPressed = 1;
-                    dpadUpPressed=1;
-                } else if (dpadUpPressed==1){
-                    dpadDownPressed=0;
-                    //intake.dropIntake();
-                }
-                relased = false;
-            } else {
-                relased = true;
-            }
 
+//            if (gamepad1.right_bumper && relased) {
+//                if (dpadUpPressed == 0) {
+//                    intake.extendSlideMax();
+//                    dpadDownPressed = 1;
+//                    dpadUpPressed=1;
+//                } else if (dpadUpPressed==1){
+//                    dpadDownPressed=0;
+//                    //intake.dropIntake();
+//                }
+//                relased = false;
+//            } else {
+//                relased = true;
+//            }
+//
+//
+//            if (gamepad1.left_bumper && relased) {
+//                if (dpadDownPressed == 0) {
+//                    //intake.moveIntakeToTransfer();
+//                    dpadDownPressed=1;
+//                    dpadUpPressed=1;
+//                } else if (dpadDownPressed==1){
+//                    intake.retractExtensionFully();;
+//                    dpadUpPressed=0;
+//                    dpadDownPressed=0;
+//                }
+//                relased = false;
+//            } else {
+//                relased=true;
+//            }
 
-            if (gamepad1.left_bumper && relased) {
-                if (dpadDownPressed == 0) {
-                    //intake.moveIntakeToTransfer();
-                    dpadDownPressed=1;
-                    dpadUpPressed=1;
-                } else if (dpadDownPressed==1){
-                    intake.retractExtensionFully();;
-                    dpadUpPressed=0;
-                    dpadDownPressed=0;
-                }
-                relased = false;
-            } else {
-                relased=true;
-            }
-
-            if (gamepad1.dpad_up) {
-                outtake.score();
-            }
 
 
             if(gamepad1.a){
@@ -155,9 +150,16 @@ public class TeleopManualV2 extends LinearOpMode {
             } else if (gamepad1.b) {
                 if (outtake.isReadyToPickUp()){
                     outtake.closeClaw();
-                } else if (intake.)
-
-                outtake.closeClaw();
+                } else if (intake.getColor()== ITDCons.Color.yellow){
+                    outtake.scoreSampleLow();
+                } else {
+                    outtake.moveToPickUpFromWall();
+                }
+            } else if (gamepad1.x){
+                intake.dropIntake();
+                intake.startIntake();
+            } else if (gamepad1.y){
+                outtake.score();
             }
 
 
@@ -189,7 +191,11 @@ public class TeleopManualV2 extends LinearOpMode {
 //            telemetry.addData("Slide Servo Pos", intake.getExtensionPosition());
 //            telemetry.addData("Diffy Servo1 Pos", servo1pos);
 //            telemetry.addData("Diffy Servo2 Pos", servo2pos);
-//            telemetry.update();
+            telemetry.addData("intake color", intake.getColor());
+            telemetry.addData("intake status", intake.getStatus());
+            telemetry.addData("Outtake status", outtake.getStatus());
+
+            telemetry.update();
 
         }
     }

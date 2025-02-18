@@ -252,6 +252,14 @@ public class Outtake implements Component{
         target = ITDCons.BucketTarget;
     }
 
+    public void scoreSampleLow(){
+        closeClaw(); //should already be closed but just in case
+        status = Status.TransferToBucket_CloseClaw;
+        elapsedTime = new ElapsedTime();
+        target = ITDCons.LowBucketTarget;
+
+    }
+
 
     protected void moveSlide() {
 
@@ -471,5 +479,9 @@ public class Outtake implements Component{
 
     public boolean isReadyToPickUp(){
         return  status== Status.Wall;
+    }
+
+    public Status getStatus(){
+        return status;
     }
 }

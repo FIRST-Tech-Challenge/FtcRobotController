@@ -33,6 +33,7 @@ public class Intake {
     Servo led;
     Servo pusher;
     Outtake outtake;
+    ITDCons.Color allianceColor;
 
 
     public static double RETRACT_POWER = -0.6;
@@ -76,9 +77,20 @@ public class Intake {
         color= ITDCons.Color.unknown;
     }
 
+    public void setAllianceColor(ITDCons.Color color){
+        allianceColor = color;
+    }
+
     public void initStatusTeleop(){
         status = Status.TRANSFER;
         moveIntakeToTransfer();
+    }
+
+    public void pickupSample(){
+        color= ITDCons.Color.unknown;
+        dropIntake();
+        startIntake();
+        status=Status.DROP;
     }
 
     public void setOuttake(Outtake outtake){
@@ -124,11 +136,9 @@ public class Intake {
 
     }
 
-    public void extendSlide() {
+    public void extendSlideHalf() {
 
-        if (target < ITDCons.MaxExtension){
-            target = target - 50;
-        }
+        target = ITDCons.MaxExtension/2;
 //        extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        extendo.setPower(EXTEND_POWER);
     }
@@ -215,20 +225,11 @@ public class Intake {
 
             extendo.setPower(pid);
 
-            if (!breakBeam.getState()){
-                //read color
-                checkColor();
-                intakeMotor.setPower(0);
-
-            }
 
             if (status == Status.MOVE_TO_TRANSFER && elapsedTime!=null && elapsedTime.milliseconds()>500){
                 status = Status.TRANSFER;
                 elapsedTime= null;
-                if (tempTarget!=-1){
-                    target = tempTarget;
-                    tempTarget=-1;
-                }
+                target =0;
             }
 
 
@@ -247,6 +248,27 @@ public class Intake {
                         retractSlideHalf();
                     }
                     break;
+                case DROP: //get samples from submersible
+
+                    if (!breakBeam.getState()){
+                        //read color
+                        checkColor();
+                        intakeMotor.setPower(0);
+                        if (color!= ITDCons.Color.unknown && color!= ITDCons.Color.yellow && color!=allianceColor){
+                            ejectIntake();
+                        } else if (color== ITDCons.Color.yellow){
+                            moveIntakeToTransfer();
+                        } else if (color == allianceColor){
+                            intakeToNeutral();
+                            if (target<ITDCons.MaxExtension){
+                                target = 0;
+                            } else {
+                                target = ITDCons.MaxExtension/2;
+                            }
+                        }
+
+                    }
+                    break;
             }
 
     }
@@ -263,17 +285,25 @@ public class Intake {
     public void checkColor(){
         if (colorSensor.getRawLightDetected()>ITDCons.blueMin && colorSensor.getRawLightDetected()<ITDCons.blueMax){
             led.setPosition(ITDCons.blue);
+            color = ITDCons.Color.blue;
         } else if (colorSensor.getRawLightDetected()>ITDCons.redMin && colorSensor.getRawLightDetected()<ITDCons.redMax){
             led.setPosition(ITDCons.red);
+            color = ITDCons.Color.red;
         } else if (colorSensor.getRawLightDetected()>ITDCons.yellowMin && colorSensor.getRawLightDetected()<ITDCons.yellowMax){
             led.setPosition(ITDCons.yellow);
+            color = ITDCons.Color.yellow;
         } else {
             led.setPosition(ITDCons.off);
+            color = ITDCons.Color.unknown;
         }
     }
 
     public ITDCons.Color getColor(){
         return color;
+    }
+
+    public Status getStatus(){
+        return status;
     }
 
 
