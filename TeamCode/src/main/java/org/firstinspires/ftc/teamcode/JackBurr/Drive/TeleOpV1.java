@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.JackBurr.Drive;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,7 +16,7 @@ import org.firstinspires.ftc.teamcode.JackBurr.Servos.WristAxonV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.WristServoTest;
 
 import java.util.Optional;
-
+@Disabled
 @TeleOp
 public class TeleOpV1 extends OpMode {
     //MOTORS====================================================================================================================

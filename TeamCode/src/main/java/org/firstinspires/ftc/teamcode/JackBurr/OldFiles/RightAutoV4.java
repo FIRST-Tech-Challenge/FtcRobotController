@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.JackBurr.Drive.RobotConstantsV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Motors.DeliverySlidesV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryAxonV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryGrippersV1;
-import org.firstinspires.ftc.teamcode.JackBurr.Odometry.PinpointDrive;
+import org.firstinspires.ftc.teamcode.JackBurr.Odometry.Roadrunner.PinpointDrive;
 @Disabled
 @Autonomous
 public class RightAutoV4 extends LinearOpMode {
