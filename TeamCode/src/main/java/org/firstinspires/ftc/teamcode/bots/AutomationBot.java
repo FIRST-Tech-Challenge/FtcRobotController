@@ -24,29 +24,29 @@ public class AutomationBot extends LimelightBot{
 
     protected void onTick() {
         super.onTick();
-        pivotInSpecimenPosition = (getPivotPosition() >= specimenHighPivotPos - 10) && (getPivotPosition() <= specimenHighPivotPos + 10);
-        slideInSpecimenPosition = (getSlidePosition() >= specimenHighSlidePos - 10) && (getSlidePosition() <= specimenHighSlidePos + 10);
-        pivotInHighBasketPosition = (getPivotPosition() >= highBasketPivotPos - 10) && (getPivotPosition() <= highBasketPivotPos + 10);
-        slideInHighBasketPosition = (getSlidePosition() >= highBasketSlidePos - 10) && (getSlidePosition() <= highBasketSlidePos + 10);
+//        pivotInSpecimenPosition = (getPivotPosition() >= specimenHighPivotPos - 10) && (getPivotPosition() <= specimenHighPivotPos + 10);
+//        slideInSpecimenPosition = (getSlidePosition() >= specimenHighSlidePos - 10) && (getSlidePosition() <= specimenHighSlidePos + 10);
+//        pivotInHighBasketPosition = (getPivotPosition() >= highBasketPivotPos - 10) && (getPivotPosition() <= highBasketPivotPos + 10);
+//        slideInHighBasketPosition = (getSlidePosition() >= highBasketSlidePos - 10) && (getSlidePosition() <= highBasketSlidePos + 10);
     }
 
     public void goToDefaultPosition(boolean input){
         if (input) {
-            moveSlide(minimumSlidePos);
-            schedule(this::relatePivotToSlide, 1500);
+//            moveSlide(minimumSlidePos);
+//            schedule(this::relatePivotToSlide, 1500);
         }
     }
     public void scoreSpecimen(boolean input) {
         if (input) {
             if (!pivotInSpecimenPosition || !slideInSpecimenPosition) {
 
-                pivotToSpecimenHighPos();
-                rotateToVerticalPos();
-                schedule(this::moveSlideToHighSpecimenPos, 600);
+//                pivotToSpecimenHighPos();
+//                rotateToVerticalPos();
+//                schedule(this::moveSlideToHighSpecimenPos, 600);
             }
             else{
-                moveSlideByDelta(-350);
-                schedule(this::openPinch, 600);
+//                moveSlideByDelta(-350);
+//                schedule(this::openPinch, 600);
 
             }
         }
@@ -54,8 +54,8 @@ public class AutomationBot extends LimelightBot{
     public void scoreBucket(boolean input) {
         if (input) {
             if (!pivotInHighBasketPosition || !slideInHighBasketPosition) {
-                pivotToHighBasketPos();
-                schedule(this::moveSlideToHighBucketPos, 1000);
+//                pivotToHighBasketPos();
+//                schedule(this::moveSlideToHighBucketPos, 1000);
             }
             else{
                 openPinch();
@@ -72,11 +72,11 @@ public class AutomationBot extends LimelightBot{
         if (input) {
             rotateToVerticalPos();
             if (aimHigh) {
-                pivotToSpecimenHighPos();
-                schedule(this::moveSlideToHighSpecimenPos, 300);
+//                pivotToSpecimenHighPos();
+//                schedule(this::moveSlideToHighSpecimenPos, 300);
             } else {
-                pivotToSpecimenLowPos();
-                moveSlideToLowSpecimenPos();
+//                pivotToSpecimenLowPos();
+//                moveSlideToLowSpecimenPos();
             }
         }
     }

@@ -62,8 +62,8 @@ public class LimelightTestTeleOps extends LinearOpMode {
                 robot.inAutoPickup = false;
                 robot.openPinch();
                 robot.rotateToVerticalPos();
-                robot.pivotToSearchPos();
-                robot.moveSlideToSearchPos();
+//                robot.pivotToSearchPos();
+//                robot.moveSlideToSearchPos();
                 boolean isBlueAlliance, includeSharedSample;
                 if (gamepad2.dpad_down) {
                     isBlueAlliance = false;

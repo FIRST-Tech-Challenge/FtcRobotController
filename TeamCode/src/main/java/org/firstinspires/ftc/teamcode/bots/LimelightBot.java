@@ -55,7 +55,7 @@ public class LimelightBot extends PinchBot {
 
         int delta = (int)Math.round(sample.getDeltaY() * 7);
         telemetry.addData("extendSlide-------->", delta);
-        moveSlideByDelta(delta);
+//        moveSlideByDelta(delta);
 
         double distance = sample.getDeltaX() * 2.2;
         telemetry.addData("DRIVE --------------> distance :", distance);
@@ -142,7 +142,7 @@ public class LimelightBot extends PinchBot {
             // rotate to angle
             rotateToAngle(result.rotationAngle);
             // adjust slide
-            moveSlideByDelta(result.deltaY);
+//            moveSlideByDelta(result.deltaY);
         }
         else{
             // do nothing, the sample is not reachable
@@ -155,15 +155,15 @@ public class LimelightBot extends PinchBot {
         openPinch();
         // lower the pivot
         if (isSpecimen){
-            pivotToPickupPosSpecimen();
+//            pivotToPickupPosSpecimen();
         }
         else {
-            pivotToPickupPosSample();
+  //          pivotToPickupPosSample();
         }
         // close the pinch at a future time
         schedule(this::closePinch, 500);
         // raise the pivot at a future time and also reset the auto pickup mode
-        schedule(this::pivotToPickupUpPos, 1000);
+        //schedule(this::pivotToPickupUpPos, 1000);
 
     }
     public Sample detectOne(boolean isBlueAlliance, boolean includeSharedSample) {

@@ -309,7 +309,7 @@ public class FSMBot extends RollerIntakeBot{
                 break;
             case SAMPLE_SCORING_HIGH_2:
 
-                robot.slideRunToPosition(samplePivotDropOffPos);
+                robot.slideRunToPosition(sampleSlideDropOffPos);
                 robot.pitchTo(sampleOuttakePitchTarget);
                 robot.rollTo(sampleOuttakeRollTarget);
                 if(gamepad1.a){

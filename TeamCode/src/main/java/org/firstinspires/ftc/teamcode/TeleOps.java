@@ -1,24 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.bots.GyroBot;
-import org.firstinspires.ftc.teamcode.bots.HangBot;
-import org.firstinspires.ftc.teamcode.bots.AutomationBot;
-import org.firstinspires.ftc.teamcode.bots.LimelightBot;
-import org.firstinspires.ftc.teamcode.bots.PivotBot;
-import org.firstinspires.ftc.teamcode.bots.PinchBot;
+import org.firstinspires.ftc.teamcode.bots.FSMBot;
 import org.firstinspires.ftc.teamcode.bots.RollerIntakeBot;
 import org.firstinspires.ftc.teamcode.sample.Sample;
 
 @TeleOp(name = "Drive")
 public class TeleOps extends LinearOpMode {
-    private RollerIntakeBot robot = new RollerIntakeBot(this);
+    private FSMBot robot = new FSMBot(this);
 
     private Sample lastSample = null;
 
@@ -43,7 +35,6 @@ public class TeleOps extends LinearOpMode {
 
         waitForStart();
         while(opModeIsActive()){
-
             telemetry.setMsTransmissionInterval(11);
 
             telemetry.addData("slide position", robot.getSlidePosition());
