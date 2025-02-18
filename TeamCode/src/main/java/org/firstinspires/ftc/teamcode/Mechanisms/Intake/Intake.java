@@ -2,20 +2,23 @@ package org.firstinspires.ftc.teamcode.Mechanisms.Intake;
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Planners.MotionProfile;
+import org.firstinspires.ftc.teamcode.Hardware.Actuators.ServoAdvanced;
 
 public class Intake {
     DcMotorEx motor;
+    ServoAdvanced servo;
     HardwareMap hardwareMap;
+    public static double LidOpen = 0;
+    public static double LidClosed = 0.5;
 
     public Intake(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
         motor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
+        servo = hardwareMap.get(ServoAdvanced.class, "intakeLid");
     }
 
     public enum intakeState {
@@ -31,14 +34,16 @@ public class Intake {
                 double timeLastUpdate = timer.seconds();
                 if (intakePos == intakeState.INTAKE) {
                     motor.setPower(0.75);
+                    servo.setPosition(LidClosed);
                 }
                 if (intakePos == intakeState.OUTTAKE) {
                     motor.setPower(-0.75);
+                    servo.setPosition(LidOpen);
                 }
                 if (intakePos == intakeState.STOP) {
                     motor.setPower(0);
+                    servo.setPosition(LidOpen);
                 }
-
                 return false;
             }
         };

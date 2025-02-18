@@ -102,7 +102,7 @@ public class Drivetrain {
 //        this.motorRightFront = hardwareMap.get(DcMotorEx.class, "rfm");
 
         this.motorLeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        this.motorLeftBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        this.motorLeftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         this.motorRightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         this.motorRightBack.setDirection(DcMotorSimple.Direction.FORWARD);
 
