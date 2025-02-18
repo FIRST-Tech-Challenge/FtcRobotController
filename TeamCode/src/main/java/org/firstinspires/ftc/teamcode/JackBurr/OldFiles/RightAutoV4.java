@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.JackBurr.Drive.RobotConstantsV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Motors.DeliverySlidesV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryAxonV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryGrippersV1;
-import org.firstinspires.ftc.teamcode.JackBurr.Odometry.Roadrunner.PinpointDrive;
+//import org.firstinspires.ftc.teamcode.JackBurr.Odometry.Roadrunner.PinpointDrive;
 @Disabled
 @Autonomous
 public class RightAutoV4 extends LinearOpMode {
@@ -35,13 +35,13 @@ public class RightAutoV4 extends LinearOpMode {
     public ElapsedTime timerStep03 = new ElapsedTime();
     public int leftSlideTarget = 0;
     public int rightSlideTarget = 0;
-    public PinpointDrive drive;
+    //public PinpointDrive drive;
     public int slowSpeed = 20;
     @Override
     public void runOpMode() throws InterruptedException {
         //Pick SampleMecanumDrive for dashboard and RRMecanumDrive for no dashboard
         Pose2d startPose = new Pose2d(60, 0, Math.toRadians(0));
-        drive = new PinpointDrive(hardwareMap, startPose);
+       // drive = new PinpointDrive(hardwareMap, startPose);
         deliveryAxon.init(hardwareMap);
         deliverySlides.init(hardwareMap);
         deliveryGrippers.init(hardwareMap, telemetry);
@@ -52,22 +52,22 @@ public class RightAutoV4 extends LinearOpMode {
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
         VelConstraint slow = new TranslationalVelConstraint(slowSpeed);
-        TrajectoryActionBuilder traj1Builder = drive.actionBuilder(startPose)
-            .splineToConstantHeading(new Vector2d(0, -50), startPose.heading, slow);
-        TrajectoryActionBuilder traj2Builder = traj1Builder.fresh()
-                 .strafeTo(new Vector2d(15, -50));
-        TrajectoryActionBuilder traj3Builder = traj2Builder.fresh()
-                .strafeTo(new Vector2d(40, 14));
-        TrajectoryActionBuilder traj4Builder = traj3Builder.fresh()
-                .splineToConstantHeading(new Vector2d(0, -20), startPose.heading);
-        TrajectoryActionBuilder traj5Builder = traj4Builder.fresh()
-                .turn(90);
+        //TrajectoryActionBuilder traj1Builder = drive.actionBuilder(startPose)
+            //.splineToConstantHeading(new Vector2d(0, -50), startPose.heading, slow);
+        //TrajectoryActionBuilder traj2Builder = traj1Builder.fresh()
+                 //.strafeTo(new Vector2d(15, -50));
+        //TrajectoryActionBuilder traj3Builder = traj2Builder.fresh()
+                //.strafeTo(new Vector2d(40, 14));
+        //TrajectoryActionBuilder traj4Builder = traj3Builder.fresh()
+                //.splineToConstantHeading(new Vector2d(0, -20), startPose.heading);
+        //TrajectoryActionBuilder traj5Builder = traj4Builder.fresh()
+                //.turn(90);
 
-        Action traj1 = traj1Builder.build();
-        Action traj2 = traj2Builder.build();
-        Action traj3 = traj3Builder.build();
-        Action traj4 = traj4Builder.build();
-        Action traj5 = traj5Builder.build();
+        //Action traj1 = traj1Builder.build();
+        //Action traj2 = traj2Builder.build();
+        //Action traj3 = traj3Builder.build();
+        //Action traj4 = traj4Builder.build();
+        //Action traj5 = traj5Builder.build();
 
 
 
@@ -94,7 +94,7 @@ public class RightAutoV4 extends LinearOpMode {
             else if(step == 2){
                 if(!traj1Followed){
                     deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_CLOSE);
-                    Actions.runBlocking(traj1);
+                    //Actions.runBlocking(traj1);
                     traj1Followed = true;
                 }
                 else if(traj1Followed){
@@ -109,20 +109,20 @@ public class RightAutoV4 extends LinearOpMode {
             }
             else if(step == 3) {
                 if(timerStep03.seconds() > 4) {
-                    Actions.runBlocking(traj2);
+                    //Actions.runBlocking(traj2);
                     step = 4;
                 }
             }
             else if(step == 4) {
-                Actions.runBlocking(traj3);
+                //Actions.runBlocking(traj3);
                 step = 5;
             }
             else if(step == 5){
-                Actions.runBlocking(traj4);
+                //Actions.runBlocking(traj4);
                 step = 6;
             }
             else if(step == 6){
-                Actions.runBlocking(traj5);
+                //Actions.runBlocking(traj5);
                 step = 7;
             }
         }
@@ -167,19 +167,5 @@ public class RightAutoV4 extends LinearOpMode {
         }
     }
 
-    public TrajectoryActionBuilder moveForward(Pose2d previousCoordinates, int distance, boolean slow){
-        Vector2d newCoordinates = new Vector2d((previousCoordinates.position.x - distance), previousCoordinates.position.y);
-        TrajectoryActionBuilder builder;
-        if(slow) {
-            builder = drive.actionBuilder(previousCoordinates)
-                    .strafeTo(newCoordinates);
-        }
-        else {
-            builder = drive.actionBuilder(previousCoordinates)
-                    .strafeTo(newCoordinates, new TranslationalVelConstraint(slowSpeed));
-        }
-        return builder;
-
-    }
 
 }

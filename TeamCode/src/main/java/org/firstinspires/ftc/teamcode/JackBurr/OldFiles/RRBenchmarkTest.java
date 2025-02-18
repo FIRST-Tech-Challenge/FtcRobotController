@@ -17,20 +17,20 @@ public class RRBenchmarkTest extends LinearOpMode {
     public static Vector2d position2 = new Vector2d(-50, -48);
     public static Vector2d position3 = new Vector2d(-50, 52);
     public static Vector2d position4 = new Vector2d(36, 52);
-    public PinpointDrive drive;
+    //public PinpointDrive drive;
     @Override
     public void runOpMode() throws InterruptedException {
-        drive = new PinpointDrive(hardwareMap, startPose);
-        TrajectoryActionBuilder traj1Builder = drive.actionBuilder(startPose)
-                .strafeTo(position1)
-                .waitSeconds(2)
-                .strafeTo(position2)
-                .waitSeconds(2)
-                .strafeTo(position3)
-                .waitSeconds(2)
-                .strafeTo(position4);
-        Action action1 = traj1Builder.build();
+        //drive = new PinpointDrive(hardwareMap, startPose);
+        //TrajectoryActionBuilder traj1Builder = drive.actionBuilder(startPose)
+                //.strafeTo(position1)
+                //.waitSeconds(2)
+                //.strafeTo(position2)
+                //.waitSeconds(2)
+                //.strafeTo(position3)
+                //.waitSeconds(2)
+                //.strafeTo(position4);
+        //Action action1 = traj1Builder.build();
         waitForStart();
-        Actions.runBlocking(action1);
+        //Actions.runBlocking(action1);
     }
 }

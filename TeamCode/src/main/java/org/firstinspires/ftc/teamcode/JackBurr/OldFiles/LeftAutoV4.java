@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.JackBurr.Drive.RobotConstantsV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Motors.DeliverySlidesV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Motors.IntakeSlidesV1;
-import org.firstinspires.ftc.teamcode.JackBurr.Odometry.Roadrunner.PinpointDrive;
+//import org.firstinspires.ftc.teamcode.JackBurr.Odometry.Roadrunner.PinpointDrive;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryAxonV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryGrippersV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DifferentialV2;
@@ -68,7 +68,7 @@ public class LeftAutoV4 extends LinearOpMode {
 
     //----------------------------------------------------------------------------------------
 
-    public PinpointDrive drive;
+    //public PinpointDrive drive;
     public TrajectoryActionBuilder traj1Builder;
     public TrajectoryActionBuilder traj2Builder;
     public TrajectoryActionBuilder traj3Builder;
@@ -87,7 +87,7 @@ public class LeftAutoV4 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //Pick SampleMecanumDrive for dashboard and RRMecanumDrive for no dashboard
-        drive = new PinpointDrive(hardwareMap, startPose);
+        //drive = new PinpointDrive(hardwareMap, startPose);
         deliveryAxonV1.init(hardwareMap);
         deliveryGrippers.init(hardwareMap, telemetry);
         slides.init(hardwareMap);
@@ -102,8 +102,8 @@ public class LeftAutoV4 extends LinearOpMode {
 
         Pose2d startPose = new Pose2d(60, 0, Math.toRadians(180));
 
-        traj1Builder = drive.actionBuilder(startPose)
-                .splineTo(position1, Math.toRadians(position1HeadingDegrees));
+        //traj1Builder = drive.actionBuilder(startPose)
+                //.splineTo(position1, Math.toRadians(position1HeadingDegrees));
         traj2Builder = traj1Builder.fresh()
                 .lineToX(position2.x);
         traj3Builder = traj2Builder.fresh()
