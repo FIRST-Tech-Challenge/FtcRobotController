@@ -7,19 +7,23 @@ import com.acmerobotics.dashboard.config.Config;
 public class ITDCons {
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
+    public enum Color {red, blue, yellow, unknown}
+
     public static double zero = 0;
 
     public static double intakeInit = 0.5;
     public static double intakeInitLeft = 0;
     public static double intakeInitRight = 1;
-    public static double intakeArmDrop =0.55;
-    public static double intakeChainDrop = 0;
+    public static double intakeArmDrop =0.73;
+    public static double intakeChainDrop = 0.32;
 
-    public static double intakeArmTransfer=0.4;
-    public static double intakeChainTransfer = 0.45;
+    public static double intakeArmTransfer=0.1;
+    public static double intakeChainTransfer = 0.7;
     public static double liftIntake =0.5;
     public static double liftIntakeLeft= 0.55;
     public static double liftIntakeRight = 0.45;
+
+    public static double intakeTransfer= 0.65;
 
     public static double gateOpen=0.6;
     public static double gateClose=0.04;
@@ -30,7 +34,7 @@ public class ITDCons {
     public static double wristFront= 0.23;
     public static double wristBack = 0.77;
 
-    public static double positionBack = 0;
+    public static double positionBack = 0.03;
     public static double positionInitSpec=0.4;
     public static double positionTransfer = 0.5;
     public static double positionFront =1;

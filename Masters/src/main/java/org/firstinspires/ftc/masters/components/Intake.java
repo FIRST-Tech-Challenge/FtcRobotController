@@ -31,11 +31,13 @@ public class Intake {
     RevTouchSensor touchSensor;
     DigitalChannel breakBeam;
     Servo led;
-    Servo gate;
+    Servo pusher;
+
+
 
     public static double RETRACT_POWER = -0.6;
     public static double EXTEND_POWER = 0.6;
-    public static double INTAKE_POWER = -0.9;
+    public static double INTAKE_POWER = -1;
 
     public enum Status{
         TRANSFER, DROP, INIT, MOVE_TO_TRANSFER
@@ -48,6 +50,8 @@ public class Intake {
 
     private int target;
 
+    private ITDCons.Color color;
+
     public Intake(Init init, Telemetry telemetry){
         this.telemetry = telemetry;
         this.init = init;
@@ -57,20 +61,18 @@ public class Intake {
         intakeMotor = init.getIntake();
         extendo = init.getIntakeExtendo();
         colorSensor = init.getColor();
-        touchSensor = init.getTouch();;
         breakBeam = init.getBreakBeam();
         led = init.getLed();
-        gate = init.getGateServo();
+        pusher = init.getPusherServo();
         initializeHardware();
         status = Status.INIT;
+        color= ITDCons.Color.unknown;
     }
 
     public void initStatusTeleop(){
         status = Status.TRANSFER;
         moveIntakeToTransfer();
     }
-
-
 
 
     public void initializeHardware() {
@@ -171,11 +173,11 @@ public class Intake {
     }
 
     public void openGate(){
-        gate.setPosition(ITDCons.gateOpen);
+        pusher.setPosition(ITDCons.gateOpen);
     }
 
     public void closeGate(){
-        gate.setPosition(ITDCons.gateClose);
+        pusher.setPosition(ITDCons.gateClose);
     }
 
     public void update(){
@@ -190,11 +192,12 @@ public class Intake {
 
             extendo.setPower(pid);
 
-//            if (!breakBeam.getState() || touchSensor.isPressed()){
-//                //read color
-//                checkColor();
-//
-//            }
+            if (!breakBeam.getState()){
+                //read color
+                checkColor();
+                intakeMotor.setPower(0);
+
+            }
 
             if (status == Status.MOVE_TO_TRANSFER && elapsedTime!=null && elapsedTime.milliseconds()>500){
                 status = Status.TRANSFER;
@@ -216,17 +219,19 @@ public class Intake {
     }
 
 
-//    public void checkColor(){
-//        if (colorSensor.getRawLightDetected()>ITDCons.blueMin && colorSensor.getRawLightDetected()<ITDCons.blueMax){
-//            led.setPosition(ITDCons.blue);
-//        } else if (colorSensor.getRawLightDetected()>ITDCons.redMin && colorSensor.getRawLightDetected()<ITDCons.redMax){
-//            led.setPosition(ITDCons.red);
-//        } else if (colorSensor.getRawLightDetected()>ITDCons.yellowMin && colorSensor.getRawLightDetected()<ITDCons.yellowMax){
-//            led.setPosition(ITDCons.yellow);
-//        } else {
-//            led.setPosition(ITDCons.off);
-//        }
-//    }
+    public void checkColor(){
+        if (colorSensor.getRawLightDetected()>ITDCons.blueMin && colorSensor.getRawLightDetected()<ITDCons.blueMax){
+            led.setPosition(ITDCons.blue);
+        } else if (colorSensor.getRawLightDetected()>ITDCons.redMin && colorSensor.getRawLightDetected()<ITDCons.redMax){
+            led.setPosition(ITDCons.red);
+        } else if (colorSensor.getRawLightDetected()>ITDCons.yellowMin && colorSensor.getRawLightDetected()<ITDCons.yellowMax){
+            led.setPosition(ITDCons.yellow);
+        } else {
+            led.setPosition(ITDCons.off);
+        }
+    }
+
+
 
 
 }

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.masters.components;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -10,7 +9,6 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -31,9 +29,8 @@ public class Init {
 
     private final Servo led, claw;
     private final Servo wrist, angleLeft, angleRight, position;
-    private final Servo gateServo;
+    private final Servo pusherServo;
 //    private final Servo ptoRight, ptoLeft, hangLeft, hangRight;
-    private final RevTouchSensor touch;
     private final RevColorSensorV3 color;
     private final DigitalChannel breakBeam;
     private IMU imu;
@@ -68,11 +65,6 @@ public class Init {
         leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-//        imu = hardwareMap.get(IMU.class, "imu");
-//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-//                org.firstinspires.ftc.masters.drive.DriveConstants.LOGO_FACING_DIR, org.firstinspires.ftc.masters.drive.DriveConstants.USB_FACING_DIR));
-//        imu.initialize(parameters);
-
         // Initialize intake motors and servos
         claw = hardwareMap.servo.get("claw");
         position = hardwareMap.servo.get("position");
@@ -97,14 +89,8 @@ public class Init {
         outtakeSlideLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         color = hardwareMap.get(RevColorSensorV3.class, "color");
-        touch = hardwareMap.get(RevTouchSensor.class, "touch");
         breakBeam = hardwareMap.digitalChannel.get("breakBeam");
-        gateServo = hardwareMap.servo.get("gateServo");
-
-//        ptoRight = hardwareMap.servo.get("ptoRight");
-//        ptoLeft = hardwareMap.servo.get("ptoLeft");
-//        hangLeft = hardwareMap.servo.get("hangLeft");
-//        hangRight = hardwareMap.servo.get("hangRight");
+        pusherServo = hardwareMap.servo.get("pusher");
 
         led = hardwareMap.servo.get("led");
 
@@ -163,22 +149,12 @@ public class Init {
         return position;
     }
 
-//    public Servo getPtoRight() {return ptoRight;}
-//
-//    public Servo getPtoLeft(){ return  ptoLeft;}
-//     public Servo getHangLeft() {return hangLeft;}
-//    public Servo getHangRight() {return hangRight;}
-
     public Telemetry getTelemetry() {
         return telemetry;
     }
 
-    public Servo getGateServo() {
-        return gateServo;
-    }
-
-    public RevTouchSensor getTouch() {
-        return touch;
+    public Servo getPusherServo() {
+        return pusherServo;
     }
 
     public RevColorSensorV3 getColor() {

@@ -105,7 +105,7 @@ public class Outtake implements Component{
 
         this.outtakeSlideLeft =init.getOuttakeSlideLeft();
         this.outtakeSlideRight =init.getOuttakeSlideRight();
-        this.outtakeSlideEncoder =init.getRightFrontMotor();
+        this.outtakeSlideEncoder =init.getOuttakeSlideRight();
         voltageSensor = init.getVoltageSensor();
         angleLeft = init.getAngleLeft();
         angleRight = init.getAngleRight();
@@ -160,7 +160,15 @@ public class Outtake implements Component{
     //}
 
     public void openClaw() {
-        claw.setPosition(ITDCons.clawOpen);
+
+        if (status==Status.ScoreSpecimen){
+            claw.setPosition(ITDCons.clawOpen);
+            moveToPickUpFromWall();
+        } else if (status == Status.Bucket){
+            scoreSample();
+        } else {
+            openClaw();
+        }
     }
 
     public void closeClaw() {
