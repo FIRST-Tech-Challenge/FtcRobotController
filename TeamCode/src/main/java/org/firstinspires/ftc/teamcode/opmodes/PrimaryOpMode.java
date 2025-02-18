@@ -54,16 +54,22 @@ public class PrimaryOpMode extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // TelemetryPacket packet = new TelemetryPacket();
 
-        Servo clawServo              = hardwareMap.get(Servo.class, "clawServo");
-
-        // Declare our motors
-        // Make sure your ID's match your configuration
         DcMotor frontLeftMotor         = hardwareMap.dcMotor.get("frontLeft");
         DcMotor backLeftMotor          = hardwareMap.dcMotor.get("backLeft");
         DcMotor frontRightMotor        = hardwareMap.dcMotor.get("frontRight");
         DcMotor backRightMotor         = hardwareMap.dcMotor.get("backRight");
 
-        DcMotor spinner                = hardwareMap.dcMotor.get("spinner");
+        DcMotor leftElevator  = hardwareMap.dcMotor.get("armLeft");
+        DcMotor rightElevator = hardwareMap.dcMotor.get("armRight");
+        DcMotor frontArm      = hardwareMap.dcMotor.get("frontArm");
+        DcMotor spinner       = hardwareMap.dcMotor.get("spinnerServo");
+
+        Servo rotator         = hardwareMap.servo.get("rotatorServo");
+        Servo clawServo       = hardwareMap.servo.get("clawServo");
+
+        CRServo leftSpinArm   = hardwareMap.crservo.get("leftSpinner");
+        Servo leftSlide       = hardwareMap.servo.get("leftSlider");
+        Servo rightSlide      = hardwareMap.servo.get("rightSlider");
 
         DcMotor leftDrive  = hardwareMap.get(DcMotor.class, "armLeft");
         DcMotor rightDrive = hardwareMap.get(DcMotor.class, "armRight");
@@ -109,6 +115,7 @@ public class PrimaryOpMode extends LinearOpMode {
         frontLeftMotor      .setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor       .setDirection(DcMotorSimple.Direction.REVERSE);
 
+        leftSpinArm         .setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Retrieve the IMU from the hardware map
         IMU imu = hardwareMap.get(IMU.class, "imu");
@@ -136,39 +143,7 @@ public class PrimaryOpMode extends LinearOpMode {
 
         boolean isSpinnerSpinning = false;
 
-        boolean isClawOpen = false;
-
-
         while (opModeIsActive()) {
-            if (gamepad1.right_bumper) {
-                rightDrive.setPower(PARAMS.power);
-                leftDrive.setPower(PARAMS.power);
-                rightDrive.setTargetPosition(PARAMS.ticks);
-                leftDrive.setTargetPosition(PARAMS.ticks);
-            } else if (gamepad1.left_bumper) {
-                rightDrive.setPower(PARAMS.power);
-                leftDrive.setPower(PARAMS.power);
-                rightDrive.setTargetPosition(rightStartingPos+50);
-                leftDrive.setTargetPosition(leftStartingPos+50);
-            }
-
-            // TODO: Change to targetposition movement once motor is actually fixed
-            /// ARM MECHANISM TEST - TEMPORARY///
-            // Arad requested me to program this to use power and NOT targets
-            // Dont blame me
-            if (gamepad1.x) {
-                spinner.setPower(-1.0);
-            }
-            else spinner.setPower(0);
-
-
-
-                /* ##################################################
-                             TELEMETRY ADDITIONS
-               ################################################## */
-            telemetry.addData("Right: ", rightDrive.getCurrentPosition());
-            telemetry.addData("Left: ",  leftDrive.getCurrentPosition());
-
             /* ##################################################
                             Inputs and Initializing
                ################################################## */
@@ -184,8 +159,12 @@ public class PrimaryOpMode extends LinearOpMode {
             // This button choice was made so that it is hard to hit on accident,
             // it can be freely changed based on preference.
             // The equivalent button is start on Xbox-style controllers.
-            if (gamepad1.y)
-                imu.resetYaw();
+            if (gamepad1.y) imu.resetYaw();
+
+            // Drop the fucking nigger shit spinner thingie >:(
+            leftSpinArm.setPower(0.5);
+            sleep(175);
+            leftSpinArm.setPower(0);
 
             /* ##################################################
                         Movement Controls Calculations
@@ -216,7 +195,6 @@ public class PrimaryOpMode extends LinearOpMode {
             }
 
             pid.setSetPoint(wantedAngle);
-
             if (gamepad1.dpad_up)
                 wantedAngle = 0;
             if (gamepad1.dpad_right)
@@ -225,64 +203,45 @@ public class PrimaryOpMode extends LinearOpMode {
                 wantedAngle += 0.5 * Math.PI;
 
             /* ##################################################
-                                    Elevator
+                                  Front Arm
                ################################################## */
 
-            /* ##################################################
-                                  Front Arm
-            ################################################## */
-
-            double frontArmMult = 0;
-            if (gamepad1.right_trigger > 0 && gamepad1.left_trigger == 0) {
-                frontArmMult = gamepad1.right_trigger;
-                setFrontArmPower(frontArmMotor, PARAMS.power*frontArmMult);
-            } else if(gamepad1.left_trigger > 0 && gamepad1.right_trigger == 0) {
-                frontArmMult = gamepad1.left_trigger;
-                setFrontArmPower(frontArmMotor, -PARAMS.power*frontArmMult);
-            } else setFrontArmPower(frontArmMotor, 0);
+            if (gamepad1.right_bumper || gamepad1.right_trigger > 0) {
+                frontArmMotor.setPower(1);
+            }
+            else if (gamepad1.left_bumper || gamepad1.left_trigger > 0) {
+                frontArmMotor.setPower(-1);
+            }
+            else frontArmMotor.setPower(0);
 
             /*###################################################
                                 Spinner
-            ################################################### */
+              ################################################### */
 
             if (gamepad1.b && isSpinnerSpinning) {
                 spinner.setPower(0);
                 isSpinnerSpinning = false;
             }
             else if (gamepad1.b && !isSpinnerSpinning) {
-                spinner.setPower(0.5);
+                spinner.setPower(1);
                 isSpinnerSpinning = true;
             }
 
-            /* ##################################################
-                                    Claw
-            ################################################## */
+             /* ######################################################
+                   Runs Autonomous Actions in TeleOp - TODO: Enable
+                ###################################################### */
 
-            if (gamepad1.a && isClawOpen) {
-                clawServo.setPosition(0.5);
-                isClawOpen = false;
-            }
-            else if (gamepad1.a && !isClawOpen) {
-                clawServo.setPosition(0);
-                isClawOpen = true;
-            }
-
-
-/*           ######################################################
-             Runs Autonomous Actions in TeleOp - CURRENTLY DISABLED
-             ###################################################### */
-
-//            // update running actions
-//            List<Action> newActions = new ArrayList<>();
+//           // update running actions
+//           List<Action> newActions = new ArrayList<>();
 //            for (Action action : runningActions) {
 //                action.preview(packet.fieldOverlay());
 //                if (action.run(packet)) {
 //                    newActions.add(action);
 //                }
-//            }
+//           }
 //            runningActions = newActions;
 //
-//            dash.sendTelemetryPacket(packet);
+//           dash.sendTelemetryPacket(packet);
 
             /* ##################################################
                      Applying the Calculations to the Motors
@@ -311,6 +270,8 @@ public class PrimaryOpMode extends LinearOpMode {
             telemetry.addData("rx:", rx);
             telemetry.addData("wanted angle",wantedAngle);
             telemetry.addData("bot heading", botHeading);
+            telemetry.addData("Right: ", rightDrive.getCurrentPosition());
+            telemetry.addData("Left: ",  leftDrive.getCurrentPosition());
             telemetry.addData("x", x);
             telemetry.addData("y", y);
             telemetry.update();
@@ -326,14 +287,5 @@ public class PrimaryOpMode extends LinearOpMode {
             delta += 2 * Math.PI;
         }
         return previousAngle + delta;
-    }
-
-    public void setElevatorPower(DcMotor left, DcMotor right, double power) {
-        left.setPower(power);
-        right.setPower(power);
-    }
-
-    public void setFrontArmPower(DcMotor arm, double power) {
-        arm.setPower(power);
     }
 }
