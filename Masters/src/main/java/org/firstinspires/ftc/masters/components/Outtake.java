@@ -41,6 +41,8 @@ public class Outtake implements Component{
     protected boolean isLiftReady = false;
     protected boolean isScoringDone = false;
 
+    public Intake intake;
+
 
     Telemetry telemetry;
     Init init;
@@ -115,6 +117,11 @@ public class Outtake implements Component{
         status = Status.Front;
 
     }
+
+    public void setIntake(Intake intake){
+        this.intake= intake;
+    }
+
 
     public void initializeHardware() {
 
@@ -208,6 +215,16 @@ public class Outtake implements Component{
         closeClaw();
         status = Status.TransferToBucket_CloseClaw;
     }
+
+    public void score(){
+
+        if (status== Status.Wall){
+            scoreSpecimen();
+        }
+
+
+    }
+
 
     public void scoreSpecimen(){
         if (status==Status.InitAutoSpec){
@@ -450,5 +467,9 @@ public class Outtake implements Component{
 
     public boolean isScoringDone(){
         return  isScoringDone;
+    }
+
+    public boolean isReadyToPickUp(){
+        return  status== Status.Wall;
     }
 }

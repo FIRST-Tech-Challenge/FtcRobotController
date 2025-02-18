@@ -17,13 +17,17 @@ public class ITDCons {
     public static double intakeArmDrop =0.73;
     public static double intakeChainDrop = 0.32;
 
+    public static double intakeArmNeutral= 0.5;
+    public static double intakeChainNeutral=0.6;
+
     public static double intakeArmTransfer=0.1;
     public static double intakeChainTransfer = 0.7;
     public static double liftIntake =0.5;
     public static double liftIntakeLeft= 0.55;
     public static double liftIntakeRight = 0.45;
 
-    public static double intakeTransfer= 0.65;
+    public static double intakeTransferSpeed = 0.65;
+    public static double intakeEjectSpeed =0.8;
 
     public static double gateOpen=0.6;
     public static double gateClose=0.04;
@@ -81,6 +85,9 @@ public class ITDCons {
 
     public static double intakeintakearm = .503;
     public static double intakeintakechain = .08;
+
+    public static double pusherIn=0.5;
+    public static double pusherOut= 0.6;
 
 
 }

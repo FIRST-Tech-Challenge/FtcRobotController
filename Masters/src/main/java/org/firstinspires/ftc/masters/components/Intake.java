@@ -32,7 +32,7 @@ public class Intake {
     DigitalChannel breakBeam;
     Servo led;
     Servo pusher;
-
+    Outtake outtake;
 
 
     public static double RETRACT_POWER = -0.6;
@@ -40,7 +40,14 @@ public class Intake {
     public static double INTAKE_POWER = -1;
 
     public enum Status{
-        TRANSFER, DROP, INIT, MOVE_TO_TRANSFER
+        TRANSFER(0), DROP(0), INIT(0), MOVE_TO_TRANSFER(0), EXTEND_TO_HUMAN(0), EJECT(200);
+        private final long time;
+        Status(long time){
+            this.time= time;
+        }
+        public long getTime() {
+            return time;
+        }
     }
 
     ElapsedTime elapsedTime = null;
@@ -74,6 +81,10 @@ public class Intake {
         moveIntakeToTransfer();
     }
 
+    public void setOuttake(Outtake outtake){
+        this.outtake= outtake;
+    }
+
 
     public void initializeHardware() {
 
@@ -99,11 +110,18 @@ public class Intake {
 
     public void retractSlide() {
 
-        if (target>0){
-            target = target -50;
-        }
-//        extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//      extendo.setPower(RETRACT_POWER);
+        target =0;
+    }
+
+    public void retractSlideHalf(){
+        target = ITDCons.MaxExtension/2;
+    }
+
+    public void extendSlideHumanPlayer(){
+        target = ITDCons.MaxExtension;
+        dropIntake();
+        status= Status.EXTEND_TO_HUMAN;
+
     }
 
     public void extendSlide() {
@@ -165,6 +183,11 @@ public class Intake {
         intakeRight.setPosition(ITDCons.intakeChainTransfer);
     }
 
+    public  void intakeToNeutral(){
+        intakeLeft.setPosition(ITDCons.intakeArmNeutral);
+        intakeRight.setPosition(ITDCons.intakeChainNeutral);
+    }
+
     public void moveIntakeToTransfer(){
         intakeLeft.setPosition(ITDCons.intakeArmTransfer);
         intakeRight.setPosition(ITDCons.intakeChainTransfer);
@@ -208,6 +231,24 @@ public class Intake {
                 }
             }
 
+
+            switch (status){
+                case EXTEND_TO_HUMAN:
+                    if (extendoPos>ITDCons.MaxExtension-50) {
+                        intakeMotor.setPower(ITDCons.intakeEjectSpeed);
+                        status= Status.EJECT;
+                        elapsedTime = new ElapsedTime();
+                    }
+                    break;
+                case EJECT:
+                    if (elapsedTime.milliseconds()> status.getTime()){
+                        intakeMotor.setPower(0);
+                        intakeToNeutral();
+                        retractSlideHalf();
+                    }
+                    break;
+            }
+
     }
 
     public void setTarget(int target){
@@ -231,7 +272,9 @@ public class Intake {
         }
     }
 
-
+    public ITDCons.Color getColor(){
+        return color;
+    }
 
 
 }

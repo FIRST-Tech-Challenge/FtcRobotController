@@ -60,7 +60,7 @@ public class intakeTest extends LinearOpMode {
             }
 
             if (gamepad1.dpad_down){
-                intake.setPower(ITDCons.intakeTransfer);
+                intake.setPower(ITDCons.intakeTransferSpeed);
             }
         }
 

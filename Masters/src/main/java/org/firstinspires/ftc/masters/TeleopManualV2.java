@@ -21,11 +21,11 @@ public class TeleopManualV2 extends LinearOpMode {
     if yellow transfer (maybe retract first
     if red/blue put intake in neutral position. if slide full, retract to half, if half retract fully
     control: low bucket
-    control: high bucket
-    control: extends slide and spit out red/blue (to human player)
-    control: go to wall position (if yellow in transfer go to low bucket), press again close claw
+    dpap_up: high bucket/score spec
+    right stick y up: extends slide and spit out red/blue (to human player)
+    b: go to wall position (if yellow in transfer go to low bucket), press again close claw
     control: yellow in transfer go high bucket else score spec
-    control: open claw (go to transfer or wall)
+    a: open claw (go to transfer or wall)
     control: extendo half out
     control: extendo full out
 
@@ -55,6 +55,9 @@ public class TeleopManualV2 extends LinearOpMode {
         Outtake outtake = new Outtake(init, telemetry);
         Intake intake = new Intake(init, telemetry);
 
+        outtake.setIntake(intake);
+        intake.setOuttake(outtake);
+
         outtake.initTeleopWall();
 
         int target=0;
@@ -81,7 +84,8 @@ public class TeleopManualV2 extends LinearOpMode {
             if (gamepad1.right_stick_y > 0.5){
                 intake.retractSlide();
             } else if (gamepad1.right_stick_y < -0.5) {
-                intake.extendSlide();
+                //extends / eject to human plyer
+                intake.extendSlideHumanPlayer();
             }
 
             if (gamepad1.right_stick_x > 0.1){
@@ -103,13 +107,6 @@ public class TeleopManualV2 extends LinearOpMode {
                 intake.reverseIntake();
             }
 
-//            if (gamepad1.dpad_up) {
-//                outtake.moveToBucket();
-//            }
-//
-//            if (gamepad1.dpad_down) {
-//                outtake.moveToTransfer();
-//            }
 
             if (gamepad1.dpad_left) {
 
@@ -148,20 +145,22 @@ public class TeleopManualV2 extends LinearOpMode {
                 relased=true;
             }
 
-            if (gamepad1.dpad_right) {
-                outtake.scoreSpecimen();
+            if (gamepad1.dpad_up) {
+                outtake.score();
             }
 
 
             if(gamepad1.a){
                 outtake.openClaw();
             } else if (gamepad1.b) {
+                if (outtake.isReadyToPickUp()){
+                    outtake.closeClaw();
+                } else if (intake.)
+
                 outtake.closeClaw();
             }
 
-            if (gamepad1.dpad_up) {
-                intake.intakeintake();
-            }
+
 
             if (gamepad1.dpad_down) {
                 intake.transferIntake();
