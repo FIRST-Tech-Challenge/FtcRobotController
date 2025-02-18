@@ -128,14 +128,20 @@ public class RollerIntakeBot extends DifferentialWristBot {
         }
     }
 
-    public void intake() {
-        rollerMode = ROLLER_MODE_INTAKE;
-        setRollerPower(-1); // Full power intake
+    public void intake(boolean input) {
+        if(input) {
+            rollerMode = ROLLER_MODE_INTAKE;
+            setRollerPower(-1); // Full power intake
+        }
     }
 
-    public void outake() {
-        rollerMode = ROLLER_MODE_OUTAKE;
-        setRollerPower(1); // Full power outake
+
+
+    public void outake(boolean input) {
+        if(input) {
+            rollerMode = ROLLER_MODE_OUTAKE;
+            setRollerPower(1); // Full power outake
+        }
     }
 
     public void stopRoller() {
