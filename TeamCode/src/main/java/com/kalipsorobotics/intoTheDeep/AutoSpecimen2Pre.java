@@ -90,7 +90,7 @@ public class AutoSpecimen2Pre extends LinearOpMode {
 
         //================begin of first specimen=============//
         FirstWallToBarRoundTrip firstWallToBarRoundTrip = new FirstWallToBarRoundTrip(driveTrain, wheelOdometry,
-                outtake, 200);
+                outtake, 175);
         firstWallToBarRoundTrip.setName("firstWallToBarRoundTrip");
         firstWallToBarRoundTrip.setTelemetry(telemetry);
         firstWallToBarRoundTrip.setDependentActions(delayBeforeStart);
@@ -175,8 +175,6 @@ public class AutoSpecimen2Pre extends LinearOpMode {
         wallPickupDistanceSensorAction.setTelemetry(telemetry);
         wallPickupDistanceSensorAction.setDependentActions(specimenWallReady);
         redAutoSpecimen.addAction(wallPickupDistanceSensorAction);
-
-
 
         //=============begin of third specimen=================
         WallToBarHangRoundTrip wallToBarHangRoundTrip2 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,

@@ -18,7 +18,7 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class WallToBarHangRoundTrip extends KActionSet {
 
-    public static final double WALL_PICKUP_X = -200; //150-155 normal (overshoot val) //
+    public static final double WALL_PICKUP_X = -170; //150-155 normal (overshoot val) //
     public static final double WALL_PICKUP_Y = -790;
     public static final double WALL_PICKUP_PID_VALUE = 1.0/2000.0;
 
