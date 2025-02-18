@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import com.acmerobotics.dashboard.FtcDashboard;
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.InstantAction;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -18,9 +17,6 @@ import org.firstinspires.ftc.teamcode.subsystems.lift.LiftActions;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Config
@@ -44,7 +40,7 @@ public class PrimaryOpMode extends LinearOpMode {
         public double power        = 1;
 
         public double clawServoAmount = 0.2;
-        public int ticks = 3850;
+        public int armTicks = 3850;
         public double leftMotorMult = 1;
         public double rightMotorMult = 1;
     }
@@ -82,8 +78,11 @@ public class PrimaryOpMode extends LinearOpMode {
         // should stop the elevator from retracting because of gravity...
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        int rightStartingPos = rightDrive.getCurrentPosition();
-        int leftStartingPos = leftDrive.getCurrentPosition();
+
+        int rightStartingPos = rightDrive.getCurrentPosition() + 150;
+        int leftStartingPos = leftDrive.getCurrentPosition() + 150;
+        int frontStartingPos = frontArm.getCurrentPosition();
+
         rightDrive.setTargetPosition(rightStartingPos);
         leftDrive.setTargetPosition(leftStartingPos);
         rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -130,7 +129,6 @@ public class PrimaryOpMode extends LinearOpMode {
         imu.resetYaw();
 
         PIDController pid = new PIDController(PARAMS.kP, PARAMS.kI, PARAMS.kD);
-        // LiftActions lift = new LiftActions(hardwareMap);
 
         waitForStart();
 
@@ -165,6 +163,14 @@ public class PrimaryOpMode extends LinearOpMode {
             leftSpinArm.setPower(0.5);
             sleep(175);
             leftSpinArm.setPower(0);
+
+            // Lift a lil bit up
+            LiftActions liftActions = new LiftActions(hardwareMap, leftStartingPos, rightStartingPos);
+            Action liftUpAction = liftActions.liftUp();
+            new Thread(() -> {
+                TelemetryPacket packet = new TelemetryPacket();
+                while (liftUpAction.run(packet)); // Run until complete
+            }).start();
 
             /* ##################################################
                         Movement Controls Calculations
@@ -266,18 +272,40 @@ public class PrimaryOpMode extends LinearOpMode {
                              TELEMETRY ADDITIONS
                ################################################## */
 
-            telemetry.addData("Angle", Math.toDegrees(botHeading));
+            telemetry.addData("Angle (Degrees)", Math.toDegrees(botHeading));
             telemetry.addData("rx:", rx);
-            telemetry.addData("wanted angle",wantedAngle);
-            telemetry.addData("bot heading", botHeading);
-            telemetry.addData("Right: ", rightDrive.getCurrentPosition());
-            telemetry.addData("Left: ",  leftDrive.getCurrentPosition());
-            telemetry.addData("x", x);
-            telemetry.addData("y", y);
+            telemetry.addData("Wanted Angle", wantedAngle);
+            telemetry.addData("Bot Heading", botHeading);
+
+            // Arm Encoders
+            telemetry.addData("Arm Right Position", rightDrive.getCurrentPosition());
+            telemetry.addData("Arm Left Position", leftDrive.getCurrentPosition());
+            telemetry.addData("Front Arm Position", frontArmMotor.getCurrentPosition());
+
+            // CRServo Debugging
+            telemetry.addData("CRServo Power (leftSpinArm)", leftSpinArm.getPower());
+
+            // Spinner Motor
+            telemetry.addData("Spinner Power", spinner.getPower());
+
+            // Front Arm Motor
+            telemetry.addData("Front Arm Motor Power", frontArmMotor.getPower());
+
+            // Servo Positions
+            telemetry.addData("Claw Servo Position", clawServo.getPosition());
+            telemetry.addData("Rotator Servo Position", rotator.getPosition());
+            telemetry.addData("Left Slide Servo Position", leftSlide.getPosition());
+            telemetry.addData("Right Slide Servo Position", rightSlide.getPosition());
+
             telemetry.update();
+
         }
     }
 
+    private void resetFrontArm(DcMotor frontArm, int startPos) {
+        frontArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontArm.setTargetPosition(startPos);
+    }
 
     private double unwrapAngle(double previousAngle, double currentAngle) {
         double delta = currentAngle - previousAngle;

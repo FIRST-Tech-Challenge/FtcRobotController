@@ -57,6 +57,7 @@ public class ArmTest extends LinearOpMode {
         int rightStartingPos = rightDrive.getCurrentPosition();
         int leftStartingPos = leftDrive.getCurrentPosition();
 
+
         rightDrive.setTargetPosition(rightStartingPos);
         leftDrive.setTargetPosition(leftStartingPos);
         //frontDrive.setTargetPosition(frontStartingPos);

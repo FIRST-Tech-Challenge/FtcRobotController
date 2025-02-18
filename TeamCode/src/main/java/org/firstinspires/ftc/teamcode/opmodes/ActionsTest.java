@@ -112,10 +112,20 @@ public class ActionsTest extends LinearOpMode {
             while (opModeIsActive()) {
                 // OpMode loop
 
-                ComplexActions comp = new ComplexActions(hardwareMap);
+                //ComplexActions comp = new ComplexActions(hardwareMap,);
 
-                if (gamepad2.a) {
-                    Actions.runBlocking(comp.grabCubeFromTray());
+                if (gamepad1.x) {
+                    clawServo.setPosition(0.5);
+                }
+                if (gamepad1.b) {
+                    clawServo.setPosition(0.35);
+                }
+
+                if (gamepad1.a) {
+                    rotator.setPosition(0.2);
+                }
+                if (gamepad1.y) {
+                    rotator.setPosition(0.85);
                 }
 
                 /// Telemetry ///

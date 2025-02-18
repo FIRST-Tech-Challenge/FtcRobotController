@@ -15,7 +15,7 @@ public class LiftActions {
     int rightStartingPos;
     int leftStartingPos;
 
-    public LiftActions(HardwareMap hardwareMap) {
+    public LiftActions(HardwareMap hardwareMap, int leftPos, int rightPos) {
         leftDrive = hardwareMap.get(DcMotor.class, "armLeft");
         rightDrive = hardwareMap.get(DcMotor.class, "armRight");
 
@@ -27,8 +27,8 @@ public class LiftActions {
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        rightStartingPos = rightDrive.getCurrentPosition();
-        leftStartingPos = leftDrive.getCurrentPosition();
+        leftStartingPos = leftPos;
+        rightStartingPos = rightPos;
 
     }
 
@@ -60,7 +60,7 @@ public class LiftActions {
 
     public class LiftDown implements Action {
         private boolean initialized = false;
-        private int ticksSafeZone = 50;
+        private int ticksSafeZone = 150;
 
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {

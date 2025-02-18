@@ -29,7 +29,7 @@ public class RoadRunnerMechanumTest extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         //Claw claw = new Claw(hardwareMap);
-        LiftActions lift = new LiftActions(hardwareMap);
+        //LiftActions lift = new LiftActions(hardwareMap);
 
         //TODO - Build Movement Trajectory
 
@@ -68,14 +68,14 @@ public class RoadRunnerMechanumTest extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        Actions.runBlocking(
-                new SequentialAction(
-                        new ParallelAction(
-                                lift.liftUp(),
-                                trajectoryActionChosen),// TODO add actions to perform and also build trajectories
-                        lift.liftDown(),
-                        trajectoryActionCloseOut
-                )
-        );
+//        Actions.runBlocking(
+//                new SequentialAction(
+//                        new ParallelAction(
+//                                lift.liftUp(),
+//                                trajectoryActionChosen),// TODO add actions to perform and also build trajectories
+//                        lift.liftDown(),
+//                        trajectoryActionCloseOut
+//                )
+//        );
         }
 }
