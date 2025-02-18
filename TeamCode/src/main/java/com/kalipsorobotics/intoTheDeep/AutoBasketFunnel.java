@@ -115,14 +115,18 @@ public class AutoBasketFunnel extends LinearOpMode {
                     -135, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
             redAutoBasket.addAction(moveToBasket1);
 
+            WaitAction waitForPurePure = new WaitAction(1000);
+            waitForPurePure.setName("waitForPurePure");
+            redAutoBasket.addAction(waitForPurePure);
+
             BasketReadyAction basketReady3 = new BasketReadyAction(outtake);
             basketReady3.setName("basketReady3");
-            basketReady3.setDependentActions(moveToBasket1);
+            basketReady3.setDependentActions(waitForPurePure);
             redAutoBasket.addAction(basketReady3);
 
             KServoAutoAction openClaw3 = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_OPEN);
             openClaw3.setName("openClaw3");
-            openClaw3.setDependentActions(basketReady3);
+            openClaw3.setDependentActions(basketReady3, moveToBasket1);
             redAutoBasket.addAction(openClaw3);
 
             moveOutBasket1 = new PurePursuitAction(driveTrain,wheelOdometry);
@@ -174,7 +178,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveToSample3.setDependentActions(sampleToBasketFunnelRoundTrip2);
         //move basket to sample 3
 //        moveToSample3.addPoint(-440, 1030, 180-29.6);
-        moveToSample3.addPoint(INTAKE_SAMPLE_X-70, 775, 90, PurePursuitAction.P_XY_SLOW,
+        moveToSample3.addPoint(INTAKE_SAMPLE_X-70, 750, 90, PurePursuitAction.P_XY_SLOW,
                 PurePursuitAction.P_ANGLE_SLOW); //x = INtAKE_SAMPLE_X - 80, y = 760
 //        moveToSample3.setMaxCheckDoneCounter(15);
         redAutoBasket.addAction(moveToSample3);
