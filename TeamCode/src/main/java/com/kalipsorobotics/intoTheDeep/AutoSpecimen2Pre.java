@@ -128,28 +128,31 @@ public class AutoSpecimen2Pre extends LinearOpMode {
         moveFloorSamples.setTelemetry(telemetry);
         moveFloorSamples.setDependentActions(wallToBarMoveHang);
 
-        //move to sample
-        moveFloorSamples.addPoint(-570, 230, -135, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //
-        moveFloorSamples.addPoint(-570, -450, -170, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); // y = -450
-        moveFloorSamples.addPoint( -670, -425, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_FAST); //y
-        moveFloorSamples.addPoint(-1330, -500, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //y -475
+        //move to sample:
+        moveFloorSamples.addPoint(-570, 130, -90, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); //
+        //turning:
+        moveFloorSamples.addPoint(-900, -500, -175, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); // y
+        //move back:
+        moveFloorSamples.addPoint(-1330, -500, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE);
+        //y -475
+
 
         //first sample to depot
         moveFloorSamples.addPoint(-1330, -775, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);//before push y=800
-        //moveFloorSamples.addPoint(-580, -775, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
         moveFloorSamples.addPoint(-610, -825, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
         moveFloorSamples.addPoint(-380, -675, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
 
+        final double WALL_PICKUP_Y = -1108;
         //second sample to depot
-        moveFloorSamples.addPoint(-1400, -675, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE); //y
-        moveFloorSamples.addPoint(-1375, -1000, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);//
-        moveFloorSamples.addPoint(-500,-1000,-180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_SLOW);
-            moveFloorSamples.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X + 25, -1000, -180,
+        moveFloorSamples.addPoint(-1000, -675, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE); //y
+        moveFloorSamples.addPoint(-1400, -675, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE); //y
+        moveFloorSamples.addPoint(-1400, WALL_PICKUP_Y, -180, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);//
+        moveFloorSamples.addPoint(-600,WALL_PICKUP_Y,-180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
+        moveFloorSamples.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X + 25, WALL_PICKUP_Y, -180,
                     PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
         redAutoSpecimen.addAction(moveFloorSamples);
 
-        WaitAction waitBeforeSpecimenReady = new WaitAction(6000); // I swears its ok waiting for
-        // transfer ready
+        WaitAction waitBeforeSpecimenReady = new WaitAction(6000); // I swears its ok waiting
         waitBeforeSpecimenReady.setName("waitBeforeSpecimenReady");
         waitBeforeSpecimenReady.setTelemetry(telemetry);
         waitBeforeSpecimenReady.setDependentActions(wallToBarMoveHang);

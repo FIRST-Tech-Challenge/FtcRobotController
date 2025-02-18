@@ -25,6 +25,7 @@ public class FirstWallToBarHangAction extends KActionSet {
 
         PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSpecimenBar.setName("moveToSpecimenBar");
+        moveToSpecimenBar.setMaxTimeOutMS(4300);
             moveToSpecimenBar.addPoint(-450, barY/2.0 + 50, 0,
                     isSlow?PurePursuitAction.P_XY : PurePursuitAction.P_XY_FAST,
                     PurePursuitAction.P_ANGLE);

@@ -34,7 +34,7 @@ public class WallPickupDistanceSensorAction extends Action {
 
         this.purePursuitAction = purePursuitAction;
 
-        moveToDistanceThreshold = new MoveToDistanceThreshold(driveTrain, detectDistanceAction, -0.2, 1000);
+        moveToDistanceThreshold = new MoveToDistanceThreshold(driveTrain, detectDistanceAction, -0.1, 1000);
         moveToDistanceThreshold.setName("moveToDistanceThreshold");
         moveToDistanceThreshold.setDependentActions(purePursuitAction);
 
@@ -57,30 +57,18 @@ public class WallPickupDistanceSensorAction extends Action {
         }
 
         if (purePursuitAction.getHasStarted()) {
-            purePursuitAction.updateCheckDone();
-            detectDistanceAction.updateCheckDone();
-            moveToDistanceThreshold.updateCheckDone();
-            outtakeClawClose.updateCheckDone();
-
-//            if (detectDistanceAction.getHasStarted()) {
-//                timeout.updateCheckDone();
-//            }
-
-//            if (purePursuitAction.getHasStarted() && timeout.getIsDone()) {
-//                detectDistanceAction.setIsDone(true);
-//            }
-
             if (detectDistanceAction.getIsDone()) {
                 purePursuitAction.finishedMoving();
                 Log.d("cancelPurePursuit", "Wall " + revDistance.getDistance(DistanceUnit.MM));
                 moveToDistanceThreshold.finishedMoving();
             }
-/*
-            telemetry.addData("detect distance done status", detectDistanceAction.getIsDone());
-            telemetry.addData("move to distance threshold done status", moveToDistanceThreshold.getIsDone());
-            telemetry.addData("ppa done status", purePursuitAction.getIsDone());
-            telemetry.addData("claw close done status", outtakeClawClose.getIsDone());
-            telemetry.update();*/
+
+
+            purePursuitAction.updateCheckDone();
+            detectDistanceAction.updateCheckDone();
+            moveToDistanceThreshold.updateCheckDone();
+            outtakeClawClose.updateCheckDone();
+
 
         }
     }

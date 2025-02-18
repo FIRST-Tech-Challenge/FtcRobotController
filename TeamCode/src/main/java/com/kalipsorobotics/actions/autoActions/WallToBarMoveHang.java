@@ -38,7 +38,7 @@ public class WallToBarMoveHang extends KActionSet {
         PurePursuitAction moveToBar1 = new PurePursuitAction(driveTrain, wheelOdometry); // Chunking pure pursuit 300
         moveToBar1.setName("moveToBar1");
         this.addAction(moveToBar1);
-        moveToBar1.setMaxTimeOutMS(3500);
+        moveToBar1.setMaxTimeOutMS(4300);
         moveToBar1.setDependentActions(liftSpecimenOffWall);
         moveToBar1.addPoint(SPECIMEN_HANG_POS_X + 150, hangPosY, 0, PurePursuitAction.P_XY_FAST,
                 PurePursuitAction.P_ANGLE_FAST);

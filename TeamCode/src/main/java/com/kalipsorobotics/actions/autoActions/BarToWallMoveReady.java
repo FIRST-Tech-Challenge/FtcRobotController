@@ -23,7 +23,7 @@ public class BarToWallMoveReady extends KActionSet {
         moveBarToWall.setName("moveBarToWall");
         this.addAction(moveBarToWall);
         moveBarToWall.setMaxTimeOutMS(3500);
-        moveBarToWall.addPoint(-400, WALL_PICKUP_Y, -170, PurePursuitAction.P_XY_FAST,
+        moveBarToWall.addPoint(-400, WALL_PICKUP_Y, -180, PurePursuitAction.P_XY_FAST,
                 PurePursuitAction.P_ANGLE_FAST); //-205, 700
         moveBarToWall.addPoint(WALL_PICKUP_X + 25, WALL_PICKUP_Y, -180, PurePursuitAction.P_XY_SLOW,
                 PurePursuitAction.P_ANGLE_SLOW);
