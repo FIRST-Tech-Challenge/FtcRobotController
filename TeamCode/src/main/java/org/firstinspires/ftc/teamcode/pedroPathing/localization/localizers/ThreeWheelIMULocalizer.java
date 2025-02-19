@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.MathFunctions;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Vector;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.NanoTimer;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 
 /**
  * This is the ThreeWheelIMULocalizer class. This class extends the Localizer superclass and is a
@@ -65,8 +67,10 @@ public class ThreeWheelIMULocalizer extends Localizer {
     private double totalHeading;
     public static double FORWARD_TICKS_TO_INCHES = -0.001984210206760794;//8192 * 1.37795 * 2 * Math.PI * 0.5008239963;
     public static double STRAFE_TICKS_TO_INCHES = -0.00195864245;//8192 * 1.37795 * 2 * Math.PI * 0.5018874659;
-    public static double TURN_TICKS_TO_RADIANS = -0.0020317466853682986;//8192 * 1.37795 * 2 * Math.PI * 0.5;
-
+    public static double TURN_TICKS_TO_RADIANS = -0.002220903;//8192 * 1.37795 * 2 * Math.PI * 0.5;
+//0.002290905990167658
+    //0.0021740156841077284
+    //0.0021977882135988083
 
     public static boolean useIMU = true;
 
@@ -86,7 +90,9 @@ public class ThreeWheelIMULocalizer extends Localizer {
      *
      * @param map          the HardwareMap
      * @param setStartPose the Pose to start from
+     *
      */
+
     public ThreeWheelIMULocalizer(HardwareMap map, Pose setStartPose) {
         hardwareMap = map;
         imu = hardwareMap.get(IMU.class, "imu 1");
@@ -102,12 +108,12 @@ public class ThreeWheelIMULocalizer extends Localizer {
         hardwareMap = map;
 
         // TODO: replace these with your encoder ports
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftFront"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightFront"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightFront"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftFront"));
         strafeEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightRear"));
 
         // TODO: reverse any encoders necessary
-        leftEncoder.setDirection(Encoder.FORWARD);
+        leftEncoder.setDirection(Encoder.REVERSE);
         rightEncoder.setDirection(Encoder.REVERSE);
         strafeEncoder.setDirection(Encoder.REVERSE);
 

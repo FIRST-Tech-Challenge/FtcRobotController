@@ -1,15 +1,20 @@
 package org.firstinspires.ftc.teamcode.bots;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
+import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.localizers.ThreeWheelIMULocalizer;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
+import org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 import org.firstinspires.ftc.teamcode.bots.DifferentialWristBot;
 public class PedroPathingSpecimenBot extends FSMBot{
@@ -19,7 +24,7 @@ public class PedroPathingSpecimenBot extends FSMBot{
 
      /** This is the variable where we store the state of our auto.
       * It is used by the pathUpdate method. */
-     private int pathState;
+     public int pathState;
 
      private final Pose startPose = new Pose(7.7, 53.89, 0);// starting position of robot
      private final Pose scoreSpecimenPose = new Pose(40, 66, Math.toRadians(180));// position where specimen is scored on submersible, robot is aligned to submerisble with back facing it
@@ -46,9 +51,12 @@ public class PedroPathingSpecimenBot extends FSMBot{
 
      private Path scorePreload, park;
 
-     private PathChain pickup, dropoff, loadSpecimen, scoreSpecimen, scoreSample;
+     private PathChain pickup, dropoff, loadSpecimen, scoreSpecimen;
+
+//     private HardwareMap testMap = new HardwareMap();
 
      public void buildPaths(){
+          follower = new Follower(hardwareMap);
           scorePreload = new Path(new BezierLine(new Point(startPose), new Point(scoreSpecimenPose)));
           scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scoreSpecimenPose.getHeading());
 
@@ -75,18 +83,21 @@ public class PedroPathingSpecimenBot extends FSMBot{
           park = new Path(new BezierCurve(new Point(scoreSpecimenPose), /* Control Point */ new Point(parkControl), new Point(parkPose)));
           park.setLinearHeadingInterpolation(scoreSpecimenPose.getHeading(), parkPose.getHeading());
 
-          scoreSample = follower.pathBuilder()
-                  .addPath(new BezierCurve(new Point(samplePivotPose), new Point(sampleCurveControlPoint), new Point(scoreSamplePose)))
-                  .build();
      }
 
      public PedroPathingSpecimenBot(LinearOpMode opMode) {
           super(opMode);
      }
-
+@Override
      public void init(HardwareMap ahwMap) {
           super.init(ahwMap);
+     Constants.setConstants(FollowerConstants.class, ThreeWheelIMULocalizer.class);
+     pathTimer = new Timer();
+     opmodeTimer = new Timer();
+     opmodeTimer.resetTimer();
           buildPaths();
+          follower = new Follower(ahwMap);
+          follower.setStartingPose(startPose);
      }
 
      protected void onTick() {
@@ -104,6 +115,12 @@ public class PedroPathingSpecimenBot extends FSMBot{
      }
 
      private int AT_PRELOAD_POSITION= 1;
+
+     public int getPathState(){
+          return pathState;
+     }
+
+
      public void autonomousPathUpdate() {
           switch (pathState) {
                case 0:
