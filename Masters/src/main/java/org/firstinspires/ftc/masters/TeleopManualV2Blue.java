@@ -60,7 +60,8 @@ public class TeleopManualV2Blue extends LinearOpMode {
         intake.setOuttake(outtake);
         intake.setAllianceColor(ITDCons.Color.blue);
 
-        outtake.initTeleopWall();
+
+//        outtake.initTeleopWall();
 
         int target=0;
 
@@ -93,7 +94,7 @@ public class TeleopManualV2Blue extends LinearOpMode {
             if (gamepad1.right_stick_x > 0.2){
                 intake.startIntake();
             } else if (gamepad1.right_stick_x < -0.2) {
-                intake.reverseIntake();
+                intake.ejectIntake();
             }
 
             if (gamepad1.right_stick_button) {
@@ -113,38 +114,6 @@ public class TeleopManualV2Blue extends LinearOpMode {
 
 
 
-//            if (gamepad1.right_bumper && relased) {
-//                if (dpadUpPressed == 0) {
-//                    intake.extendSlideMax();
-//                    dpadDownPressed = 1;
-//                    dpadUpPressed=1;
-//                } else if (dpadUpPressed==1){
-//                    dpadDownPressed=0;
-//                    //intake.dropIntake();
-//                }
-//                relased = false;
-//            } else {
-//                relased = true;
-//            }
-//
-//
-//            if (gamepad1.left_bumper && relased) {
-//                if (dpadDownPressed == 0) {
-//                    //intake.moveIntakeToTransfer();
-//                    dpadDownPressed=1;
-//                    dpadUpPressed=1;
-//                } else if (dpadDownPressed==1){
-//                    intake.retractExtensionFully();;
-//                    dpadUpPressed=0;
-//                    dpadDownPressed=0;
-//                }
-//                relased = false;
-//            } else {
-//                relased=true;
-//            }
-
-
-
             if(gamepad1.a){
                 outtake.openClaw();
             } else if (gamepad1.b) {
@@ -156,8 +125,7 @@ public class TeleopManualV2Blue extends LinearOpMode {
                     outtake.moveToPickUpFromWall();
                 }
             } else if (gamepad1.x){
-                intake.dropIntake();
-                intake.startIntake();
+                intake.pickupSample();
             } else if (gamepad1.y){
                 outtake.score();
             }

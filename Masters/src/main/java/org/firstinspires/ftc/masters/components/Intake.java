@@ -39,9 +39,10 @@ public class Intake {
     public static double RETRACT_POWER = -0.6;
     public static double EXTEND_POWER = 0.6;
     public static double INTAKE_POWER = -1;
+    public static double EJECT_POWER = 0.7;
 
     public enum Status{
-        TRANSFER(0), DROP(0), INIT(0), MOVE_TO_TRANSFER(0), EXTEND_TO_HUMAN(0), EJECT(200);
+        TRANSFER(0), DROP(0), INIT(0), MOVE_TO_TRANSFER(500), EXTEND_TO_HUMAN(0), EJECT(1000), NEUTRAL(0);
         private final long time;
         Status(long time){
             this.time= time;
@@ -109,16 +110,15 @@ public class Intake {
         intakeMotor.setPower(INTAKE_POWER);
     }
 
-    public void reverseIntake(){
-        intakeMotor.setPower(-INTAKE_POWER);
-    }
 
-    public void ejectIntake(){intakeMotor.setPower(INTAKE_POWER/2);}
+    public void ejectIntake(){
+        intakeMotor.setPower(EJECT_POWER);
+        elapsedTime= new ElapsedTime();
+    }
 
     public void stopIntake(){
         intakeMotor.setPower(0);
     }
-
 
     public void retractSlide() {
 
@@ -223,14 +223,14 @@ public class Intake {
 
 //            telemetry.addData("extendo PID",pid);
 
-            extendo.setPower(pid);
+        //    extendo.setPower(pid);
 
 
-            if (status == Status.MOVE_TO_TRANSFER && elapsedTime!=null && elapsedTime.milliseconds()>500){
-                status = Status.TRANSFER;
-                elapsedTime= null;
-                target =0;
-            }
+//            if (status == Status.MOVE_TO_TRANSFER && elapsedTime!=null && elapsedTime.milliseconds()>500){
+//                status = Status.TRANSFER;
+//                elapsedTime= null;
+//                target =0;
+//            }
 
 
             switch (status){
@@ -242,10 +242,11 @@ public class Intake {
                     }
                     break;
                 case EJECT:
-                    if (elapsedTime.milliseconds()> status.getTime()){
+                    if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
                         intakeMotor.setPower(0);
                         intakeToNeutral();
                         retractSlideHalf();
+                        elapsedTime=null;
                     }
                     break;
                 case DROP: //get samples from submersible
@@ -260,6 +261,7 @@ public class Intake {
                             moveIntakeToTransfer();
                         } else if (color == allianceColor){
                             intakeToNeutral();
+                            status= Status.NEUTRAL;
                             if (target<ITDCons.MaxExtension){
                                 target = 0;
                             } else {
@@ -267,6 +269,15 @@ public class Intake {
                             }
                         }
 
+                    } else{
+                        led.setPosition(ITDCons.off);
+                        color = ITDCons.Color.unknown;
+                    }
+                    break;
+                case MOVE_TO_TRANSFER:
+                    if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
+                        ejectIntake();
+                        status = Status.EJECT;
                     }
                     break;
             }
@@ -283,19 +294,22 @@ public class Intake {
 
 
     public void checkColor(){
-        if (colorSensor.getRawLightDetected()>ITDCons.blueMin && colorSensor.getRawLightDetected()<ITDCons.blueMax){
-            led.setPosition(ITDCons.blue);
-            color = ITDCons.Color.blue;
-        } else if (colorSensor.getRawLightDetected()>ITDCons.redMin && colorSensor.getRawLightDetected()<ITDCons.redMax){
+
+        if (colorSensor.red()>colorSensor.blue() && colorSensor.red()> colorSensor.green()){
             led.setPosition(ITDCons.red);
             color = ITDCons.Color.red;
-        } else if (colorSensor.getRawLightDetected()>ITDCons.yellowMin && colorSensor.getRawLightDetected()<ITDCons.yellowMax){
+        }
+        else if (colorSensor.green()>colorSensor.blue() && colorSensor.green()>colorSensor.red()){
             led.setPosition(ITDCons.yellow);
             color = ITDCons.Color.yellow;
+        } else if (colorSensor.blue()>colorSensor.green() && colorSensor.blue()>colorSensor.red()){
+            led.setPosition(ITDCons.blue);
+            color = ITDCons.Color.blue;
         } else {
             led.setPosition(ITDCons.off);
             color = ITDCons.Color.unknown;
         }
+
     }
 
     public ITDCons.Color getColor(){
