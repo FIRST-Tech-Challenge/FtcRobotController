@@ -9,30 +9,63 @@ import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.GoBildaOd
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Swerve.Swerve;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics.ChassisSpeeds;
+import org.firstinspires.ftc.teamcode.Utils;
 
 
 @Autonomous(name = "Auto Top Bucket")
 public class AutoBucket extends LinearOpMode {
   private AutoSwerve drivebase;
   private GoBildaPinpointDriver odo;
-  public Telemetry telemetry;
+  private Mekanism mek;
 
   @Override
   public void runOpMode() throws InterruptedException {
     initOdo();
-    drivebase = new AutoSwerve(this,odo);
+    drivebase = new AutoSwerve(this, odo);
+    mek = new Mekanism(this);
+    mek.grabber.initWrist();
 
     waitForStart();
+    mek.arm.homeArm();
     // raise arm to top bucket drop and then move out to second one
+    mek.arm.setSlide(4100);
+    sleepWithMekUpdate(5000);
+    mek.arm.setPivot(15);
+    sleepWithMekUpdate(1000);
+    mek.grabber.setGrabber(-.5);
+    sleepWithMekUpdate(500);
+    mek.grabber.setGrabber(0);
+    mek.arm.setPivot(0);
+    sleepWithMekUpdate(500);
+    mek.arm.setSlide(0);
+    sleepWithMekUpdate(5000);
   }
 
-  public void initOdo(){
+  public void sleepWithMekUpdate(int timeInMS) {
+    double currentTime = Utils.getTimeMiliSeconds();
+    double startTime = Utils.getTimeMiliSeconds() + timeInMS;
+    while (currentTime < startTime && opModeIsActive()) {
+      mek.arm.update();
+      currentTime = Utils.getTimeMiliSeconds();
+      try {
+        telemetry.addData("Slide pos: ", mek.arm.slide.getCurrentPosition());
+        telemetry.addData("Pivot pos: ", mek.arm.pivot.getCurrentPosition());
+      } catch (Exception e) {
+        telemetry.addLine("error");
+      }
+      telemetry.update();
+    }
+  }
+
+  public void initOdo() {
     odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
     odo.recalibrateIMU();
     odo.resetPosAndIMU();
@@ -43,8 +76,8 @@ public class AutoBucket extends LinearOpMode {
   }
 
   /**
-   *  targetPos Pose2d target position relative to the field. 0,0 is where the robot first started
-   *  timeLimit Time to take to move the specified distance
+   * targetPos Pose2d target position relative to the field. 0,0 is where the robot first started
+   * timeLimit Time to take to move the specified distance
    * needs to be entirely rewritten
    */
   /*
@@ -118,8 +151,6 @@ public class AutoBucket extends LinearOpMode {
     drivebase.drive(new ChassisSpeeds(0, 0, 0), 0);
   }
   */
-
-
   private double calculatePID(double error, double deltaTime, double kP, double kI, double kD, double integral, double previousError) {
     double derivative = (error - previousError) / deltaTime;
     return kP * error + kI * integral + kD * derivative;
