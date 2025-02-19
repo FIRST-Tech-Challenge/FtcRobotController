@@ -64,13 +64,13 @@ public class Red_Specimen_Auto extends LinearOpMode {
                 .build();
 
         clippingSpecimen1 = drive.actionBuilder(new Pose2d(0,-48,Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(0,-35.5),Math.toRadians(90), new TranslationalVelConstraint(10))
+                .strafeToLinearHeading(new Vector2d(0,-35.5),Math.toRadians(90), new TranslationalVelConstraint(25))
                 .build();
         clippingSpecimen2 = drive.actionBuilder(new Pose2d(2,-48,Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(2,-35.5),Math.toRadians(90), new TranslationalVelConstraint(10))
+                .strafeToLinearHeading(new Vector2d(2,-35.5),Math.toRadians(90), new TranslationalVelConstraint(25))
                 .build();
         clippingSpecimen3 = drive.actionBuilder(new Pose2d(4,-48,Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(4,-35.5),Math.toRadians(90), new TranslationalVelConstraint(10))
+                .strafeToLinearHeading(new Vector2d(4,-35.5),Math.toRadians(90), new TranslationalVelConstraint(25))
                 .build();
 
         driveForSamplePush = drive.actionBuilder(new Pose2d(0,-36,Math.toRadians(90)))
