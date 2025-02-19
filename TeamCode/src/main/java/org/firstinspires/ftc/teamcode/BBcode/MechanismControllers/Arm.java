@@ -27,7 +27,7 @@ public class Arm {
     final int slowDownPosition = 5;
     final int hangPosition = 75;
     final int highBasketPosition = 95;
-    final double initialSpecimenPosition = 44;
+    final double initialSpecimenPosition = 43;//used in auto and tele
     final double maxSpecimenPosition = 49;
     final double minSpecimenPosition = 39;
     final double specimanAdjustment = 0.5;
