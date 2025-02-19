@@ -21,6 +21,9 @@ public class DifferentialWristBot extends PivotBot{
     public static double sampleOuttakePitchTarget = 0;
     public static double sampleOuttakeRollTarget = 60;
 
+    public static double specimenHighOuttakePitchTarget = 50;
+    public static double specimenHighOuttakeRollTarget = 60;
+
     public static double tuningPitchTarget;
 
     public static double tuningRollTarget;
