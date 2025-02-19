@@ -61,12 +61,12 @@ public class Arm {
     slide.setMode(STOP_AND_RESET_ENCODER);
     slide2.setMode(STOP_AND_RESET_ENCODER);
 
-    // Make SURE target position is set
+    // Make SURE target position is set before setting the mode to RUN_TO_POSITION
     pivot.setTargetPosition(0);
     slide.setTargetPosition(0);
     slide2.setTargetPosition(0);
 
-    // Set all mek motors RUN_USING_ENCODER mode
+    // Set all mek motors RUN_TO_POSITION mode
     pivot.setMode(RUN_TO_POSITION);
     slide.setMode(RUN_TO_POSITION);
     slide2.setMode(RUN_TO_POSITION);
@@ -203,7 +203,7 @@ public class Arm {
    */
   public void setPivot(int x) {
 
-    double current_Angle = pivot.getCurrentPosition();
+    double current_Angle = countsPerDegree * pivot.getCurrentPosition();
 
     // Limits for the motor
     if (current_Angle > limitPivot) {
@@ -276,7 +276,7 @@ public class Arm {
     if (maxLength > limitSlide) maxLength = limitSlide;
 
     if (slide.getCurrentPosition() > maxLength && power > 0) {
-      power = 0;
+      power = -0.5;
       telemetry.addLine("Slide over robot length limit");
     } else if (slide.getCurrentPosition() < 0 && power < 0) {
       telemetry.addLine("Slide under 0");

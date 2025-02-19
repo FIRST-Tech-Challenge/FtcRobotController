@@ -73,17 +73,17 @@ public class CompBotAuto extends LinearOpMode {
   }
 
   private void stop_intake_outtake() {
-    mek.grabber.setGrabber(0);
+    mek.grabber.setGrabber(0, 0);
   }
 
   private void run_intake(int intakeTimeInMs) {
-    mek.grabber.setGrabber(1);
+    mek.grabber.setGrabber(1, 1);
     sleep(intakeTimeInMs);
     stop_intake_outtake();
   }
 
   private void run_outtake(int outtakeTimeInMs) {
-    mek.grabber.setGrabber(-1);
+    mek.grabber.setGrabber(-1, -1);
     sleep(outtakeTimeInMs);
     stop_intake_outtake();
   }

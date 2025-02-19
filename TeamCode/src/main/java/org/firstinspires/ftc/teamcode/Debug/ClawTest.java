@@ -55,7 +55,7 @@ public class ClawTest extends LinearOpMode {
       else mek.grabber.setWrist(0);
 
 
-      mek.grabber.setGrabber(-gamepad2.left_stick_y);
+      mek.grabber.setGrabber(-gamepad2.left_stick_y, -gamepad2.left_stick_y);
 
 
       mek.update();

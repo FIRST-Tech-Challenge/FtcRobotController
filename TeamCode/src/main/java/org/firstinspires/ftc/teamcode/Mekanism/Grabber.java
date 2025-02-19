@@ -19,7 +19,8 @@ public class Grabber {
       wrist;
 
   private double
-      intakePower = 0,
+      intake1Power = 0,
+      intake2Power = 0,
       wristPos = 0;
 
   public Grabber(LinearOpMode opMode) {
@@ -43,13 +44,15 @@ public class Grabber {
    * Update intake and wrist positions
    */
   public void update() {
-    intake1.setPosition((intakePower + 1) / 2);
-    intake2.setPosition((intakePower + 1) / 2);
+    intake1.setPosition((intake1Power + 1) / 2);
+    intake2.setPosition((intake2Power + 1) / 2);
 
     wrist.setPosition(wristPos);
   }
 
-
+  /**
+   * Initial position of the wrist
+   */
   public void initWrist() {
     wrist.setPosition(0.65);
   }
@@ -61,16 +64,18 @@ public class Grabber {
    * 1 full intake<br>
    * -1 full outtake
    *
-   * @param power (-1) to 1
+   * @param power1 (-1) to 1
    */
-  public void setGrabber(double power) {
-    intakePower = power;
+  public void setGrabber(double power1, double power2) {
+    intake1Power = power1;
+    intake2Power = power2;
   }
 
 
   /**
    * Sets the angle of the wrist<br>
-   * 0 is fully down
+   * 0 - Fully down
+   * 1 - Fully up
    *
    * @param pos 0 - 1
    */

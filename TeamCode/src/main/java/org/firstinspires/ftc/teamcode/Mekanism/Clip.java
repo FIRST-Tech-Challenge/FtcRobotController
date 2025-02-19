@@ -70,10 +70,17 @@ public class Clip {
   }
 
 
+  /**
+   * Clamp onto the clip
+   */
   public void clamp() {
     clamped = true;
   }
 
+
+  /**
+   * Unclamp the clip
+   */
   public void unclamp() {
     clamped = false;
   }
