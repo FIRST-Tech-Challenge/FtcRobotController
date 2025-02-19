@@ -1,32 +1,14 @@
 package org.firstinspires.ftc.teamcode.bots;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-@Config
-public class DifferentialWristBot extends PivotBot{
+
+public class DifferentialWristBot extends FourWheelDriveBot {
 
     private Servo leftDifferentialWristServo;
     private Servo rightDifferentialWristServo;
-;
-    public static double groundIntakePitchTarget = -60;
 
-    public static double groundIntakeRollTarget = 0;
-
-    public static double wallIntakePitchTarget = 25;
-
-    public static double wallIntakeRollTarget = 60;
-
-    public static double sampleOuttakePitchTarget = 0;
-    public static double sampleOuttakeRollTarget = 60;
-
-    public static double specimenHighOuttakePitchTarget = 50;
-    public static double specimenHighOuttakeRollTarget = 60;
-
-    public static double tuningPitchTarget;
-
-    public static double tuningRollTarget;
     public final double MIN_ANGLE = -90.0;
     public final double MAX_ANGLE = 90.0;
     public final double MIN_SERVO_POS = 0.0;
@@ -45,7 +27,7 @@ public class DifferentialWristBot extends PivotBot{
         leftDifferentialWristServo = ahwMap.get(Servo.class, "leftDifferentialWristServo");
         rightDifferentialWristServo = ahwMap.get(Servo.class, "rightDifferentialWristServo");
 
-//         Initialize position
+        // Initialize position
         pitchTo(0);
         rollTo(0);
     }
@@ -59,7 +41,6 @@ public class DifferentialWristBot extends PivotBot{
         updateServos();
         return currentPitch;
     }
-
 
     public double pitchTo(double targetAngle) {
         currentPitch = clampAngle(targetAngle);
@@ -97,9 +78,6 @@ public class DifferentialWristBot extends PivotBot{
         // Update telemetry (if needed, but ensure it's non-blocking)
         telemetry.addData("Left Servo Target", leftPos);
         telemetry.addData("Right Servo Target", rightPos);
-        telemetry.addData("pitch", currentRoll);
-        telemetry.addData("roll", currentPitch);
-
     }
 
     private double angleToServo(double angle) {
@@ -116,12 +94,5 @@ public class DifferentialWristBot extends PivotBot{
 
     private double clampAngle(double angle) {
         return Math.max(MIN_ANGLE, Math.min(MAX_ANGLE, angle));
-    }
-
-    public void setLeftDifferentialWristServo(double pos) {
-        leftDifferentialWristServo.setPosition(pos);
-    }
-    public void setRightDifferentialWristServo(double pos) {
-        rightDifferentialWristServo.setPosition(pos);
     }
 }
