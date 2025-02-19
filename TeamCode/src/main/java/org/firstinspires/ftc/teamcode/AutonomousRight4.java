@@ -320,7 +320,7 @@ public class AutonomousRight4 extends AutonomousBase {
 
         // Rotate arm, viper slide, and claw down to clip the specimen
         if( opModeIsActive() ) {
-            autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO3 - 700);
+            autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO4);
             sleep( 750 ); //while( autoTiltMotorMoving() || autoViperMotorMoving());
             // release the specimen
             robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );

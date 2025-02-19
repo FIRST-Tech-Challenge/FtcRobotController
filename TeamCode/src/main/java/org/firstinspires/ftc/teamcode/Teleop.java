@@ -439,7 +439,7 @@ public abstract class Teleop extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void processStandardDriveMode() {
         // Retrieve X/Y and ROTATION joystick input
-        if( controlMultSegLinear ) {
+        if( controlMultSegLinear ) {  // robot centric results in 1.0 max power
             yTranslation = multSegLinearXY( -gamepad1.left_stick_y );
             xTranslation = multSegLinearXY(  gamepad1.left_stick_x );
             rotation     = multSegLinearRot( -gamepad1.right_stick_x );
@@ -486,10 +486,10 @@ public abstract class Teleop extends LinearOpMode {
         double gyroAngle;
 
         // Retrieve X/Y and ROTATION joystick input
-        if( controlMultSegLinear ) {
-            yTranslation = multSegLinearXY( -gamepad1.left_stick_y );
-            xTranslation = multSegLinearXY(  gamepad1.left_stick_x );
-            rotation     = multSegLinearRot( -gamepad1.right_stick_x );
+        if( controlMultSegLinear ) { // // driver centric results in 0.6 max??
+            yTranslation = 1.66 * multSegLinearXY( -gamepad1.left_stick_y );
+            xTranslation = 1.66 * multSegLinearXY(  gamepad1.left_stick_x );
+            rotation     = 1.66 * multSegLinearRot( -gamepad1.right_stick_x );
         }
         else {
             yTranslation = -gamepad1.left_stick_y;
@@ -693,12 +693,9 @@ public abstract class Teleop extends LinearOpMode {
         }
         // Check for ON-to-OFF toggle of the gamepad2 TRIANGLE
         else if( gamepad2_triangle_now && !gamepad2_triangle_last )
-        {   // clip specimen on high bar
-            robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_SPECIMEN2_DEG);
-            robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_AUTO2);
-            robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR2);
-            robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR2);
-            sleep( 1200 ); //while( autoTiltMotorMoving() || autoViperMotorMoving());
+        {   // clip specimen on high bar REVERSE-SCORE!
+            robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_AUTO4);
+            sleep( 900 ); //while( autoViperMotorMoving() );
             // release the specimen
             robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
         }
@@ -1116,27 +1113,27 @@ public abstract class Teleop extends LinearOpMode {
     public void startScoreArmSpec(){
         if(scoreArmSpecState == Score_Arm_Spec_Steps.IDLE) {
             terminateAutoArmMovements();
-            robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_SPECIMEN1_DEG);
+            robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_SPECIMEN3_DEG);
             scoreArmSpecState = Score_Arm_Spec_Steps.ROTATING_ARM;
             //robot.geckoServo.setPower(-0.3);
         }
     }
-    public void processScoreArmSpec() {
+    public void processScoreArmSpec() { // REVERSE SCORING!
         switch(scoreArmSpecState) {
             case ROTATING_ARM:
                 // Check to see if arm is in the range to start changing the viper length
                 // and the intake will be ok
                 if((robot.armTiltAngle > Hardware2025Bot.TILT_ANGLE_ZERO_DEG) &&
-                        (robot.armTiltAngle < Hardware2025Bot.TILE_ANGLE_BASKET_SAFE_DEG)) {
-                    robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_AUTO1);
+                   (robot.armTiltAngle < Hardware2025Bot.TILE_ANGLE_BASKET_SAFE_DEG)) {
+                    robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_AUTO3);
                     scoreArmSpecState = Score_Arm_Spec_Steps.EXTENDING_ARM;
                 }
                 break;
             case EXTENDING_ARM:
                 // Check to see if the arm is out far enough to swing the intake
                 if(robot.viperMotorPos > Hardware2025Bot.VIPER_EXTEND_SAFE) {
-                    robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR1);
-                    robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR1);
+                    robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR3);
+                    robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR3);
                     scoreSpecTimer.reset();
                     scoreArmSpecState = Score_Arm_Spec_Steps.POSITION_INTAKE;
                 }

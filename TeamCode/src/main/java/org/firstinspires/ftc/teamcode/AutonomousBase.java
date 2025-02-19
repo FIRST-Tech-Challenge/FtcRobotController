@@ -349,8 +349,8 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     public void performEveryLoop() {
-        robot.readBulkData();
-        robot.odom.update();
+        robot.readBulkData();  // 7.3 msec for readBulkData
+        robot.odom.update();   // 6.9 msec for odom.update + odom.getPosition (14 msec total)
         Pose2D pos = robot.odom.getPosition();  // x,y pos in inch; heading in degrees
         robotGlobalXCoordinatePosition = pos.getX(DistanceUnit.INCH);
         robotGlobalYCoordinatePosition = pos.getY(DistanceUnit.INCH);
@@ -1202,9 +1202,11 @@ public abstract class AutonomousBase extends LinearOpMode {
                 speedMax, driveType)
                 && opModeIsActive()) {
             performEveryLoop();
-            telemetry.addData("Drive", "x=%.1f, y=%.1f, %.1f deg",
-                    robotGlobalXCoordinatePosition, robotGlobalYCoordinatePosition, Math.toDegrees(robotOrientationRadians) );
-            telemetry.update();
+            if( false ) {
+                telemetry.addData("Drive", "x=%.1f, y=%.1f, %.1f deg",
+                        robotGlobalXCoordinatePosition, robotGlobalYCoordinatePosition, Math.toDegrees(robotOrientationRadians));
+                telemetry.update();
+            }
         }
 
         // Fix the angle if we didn't reach angle in the drive

@@ -204,7 +204,8 @@ public class Hardware2025Bot
     public final static int    VIPER_EXTEND_SAFE    =  809;   // Intake is far enough out to safely rotate down and rotate up
     public final static int    VIPER_EXTEND_AUTO1   = 1450;   // raised to where the specimen hook is above the high bar
     public final static int    VIPER_EXTEND_AUTO2   =  810;   // retract to clip the specimen to the bar
-    public final static int    VIPER_EXTEND_AUTO3   = 1037;   // raised to where the specimen hook is above the high bar
+    public final static int    VIPER_EXTEND_AUTO3   = 1037;   // raised to where the specimen hook is above the high bar REVERSE
+    public final static int    VIPER_EXTEND_AUTO4   =  337;   // retract to clip the specimen to the bar REVERSE
     public final static int    VIPER_EXTEND_CLIP    = 1162;   // AUTO: clip specimen on bar by just driving forward
     public final static int    VIPER_EXTEND_BASKET  = 2980;   // raised to basket-scoring height
     public final static int    VIPER_EXTEND_42      = 2501;   // max forward extension for 42" limit
@@ -273,7 +274,7 @@ public class Hardware2025Bot
     public final static double WRIST_SERVO_BAR1_ANGLE = 173.0;
     public final static double WRIST_SERVO_BAR2 = 0.640;         // AUTO: specimen bar (when clipped)
     public final static double WRIST_SERVO_BAR2_ANGLE = 173.0;
-    public final static double WRIST_SERVO_BAR3 = 0.170;
+    public final static double WRIST_SERVO_BAR3 = 0.170;         // AUTO: specimen bar (reverse scoring)
     public final static double WRIST_SERVO_WALL0 = 0.500;        // AUTO: grab specimen off wall (on approach)
     public final static double WRIST_SERVO_WALL0_ANGLE = 180.0;
     public final static double WRIST_SERVO_WALL1 = 0.519;        // AUTO: grab specimen off wall (lift off)
