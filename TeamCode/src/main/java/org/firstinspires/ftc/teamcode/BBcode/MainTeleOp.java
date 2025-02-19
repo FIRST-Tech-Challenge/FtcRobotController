@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Arm;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.ChristmasLight;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Viper;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.WristClaw;
+import org.firstinspires.ftc.teamcode.BBcode.UtilClasses.Time;
+
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import java.util.Locale;
@@ -128,7 +130,6 @@ public class MainTeleOp extends LinearOpMode{
         Arm arm = new Arm(this, telemetryHelper);
         Viper viper = new Viper(this);
         WristClaw wristClaw = new WristClaw(this);
-        arm.Reset();
         viper.StopAndResetEncoder();
         wristTimer.reset();
 
@@ -152,14 +153,24 @@ public class MainTeleOp extends LinearOpMode{
         waitForStart();
 
         arm.MoveToHome();
+        arm.Rest();
+
         //odo.setPosition(PoseStorage.currentPose);
         //Use the following line for measuring auto locations
         odo.setPosition(RedBasketPose.basket_init_old);
 //        odo.setPosition(PoseStorage.currentPose);
         telemetry.addData("PositionRR", ()-> getPinpoint(odo.getPositionRR()));
         telemetry.addData("Position", ()-> getPinpoint(odo.getPosition()));
+        boolean armHasReset = false;
         while(opModeIsActive()){ //while loop for when program is active
             odo.update();
+            if (Time.Wait(2) && !armHasReset) {
+                arm.Reset();
+                armHasReset = true;
+            }
+            else if (!armHasReset) {
+                _christmasLight.red();
+            }
 
             //Drive code
             drivetrain.Drive();

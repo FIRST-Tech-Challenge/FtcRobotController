@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.BBcode.OpModeType;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.ViperArmActions;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.WristClawActions;
 import org.firstinspires.ftc.teamcode.BBcode.PoseStorage;
+import org.firstinspires.ftc.teamcode.BBcode.UtilClasses.UtilActions;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 
 import java.util.Locale;
@@ -82,7 +83,7 @@ public class Red_Basket_Auto extends LinearOpMode {
                 .build();
 
         //drive to park
-        Action driveToPark = drive.actionBuilder(RedBasketPose.drop)
+        Action driveToSubmersiblePark = drive.actionBuilder(RedBasketPose.drop)
                 .splineToSplineHeading(RedBasketPose.submersible_park, Math.toRadians(0))
                 .build();
 
@@ -109,8 +110,10 @@ public class Red_Basket_Auto extends LinearOpMode {
                         driveToDropFromInnerSample,
                         _ViperArmActions.DumpInHighBasket(),
                         _WristClawActions.WristUp(),
-                        driveToPark,
-                        _ViperArmActions.MoveArmToHighBasket()
+                        driveToSubmersiblePark,
+                        _ViperArmActions.MoveArmToHighBasket(),
+                        UtilActions.Wait(10)
+
                 )
         );
         odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");

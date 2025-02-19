@@ -133,9 +133,12 @@ public class ViperArmActions {
     public Action DumpInHighBasket() {
         return new SequentialAction(
                 MoveArmToHighBasket(),
+                _WristClawActions.WristDown(),
                 UtilActions.Wait(1),
                 MoveViperToHighBasket(),
-                UtilActions.Wait(1.25),
+                UtilActions.Wait(.5),
+                _WristClawActions.WristUp(),
+                UtilActions.Wait(.5),
                 _WristClawActions.OpenClaw(),
                 UtilActions.Wait(0.1),
                 _WristClawActions.WristDown(),
@@ -152,9 +155,12 @@ public class ViperArmActions {
     public Action DumpInHighBasketHalfExtend() {
         return new SequentialAction(
                 MoveArmToHighBasket(),
+                _WristClawActions.WristDown(),
                 UtilActions.Wait(1),
                 MoveViperToHighBasket(),
-                UtilActions.Wait(1),
+                UtilActions.Wait(.5),
+                _WristClawActions.WristUp(),
+                UtilActions.Wait(.5),
                 _WristClawActions.OpenClaw(),
                 UtilActions.Wait(0.1),
                 _WristClawActions.WristDown(),

@@ -109,6 +109,9 @@ public class Arm {
         ArmMotorCustom(specimenPosition, power);
         //extension of viper slide to place specimens
     }
+
+    public void Rest() {_armMotor.setPower(0);}
+
     public void ArmMotorCustom(double degrees, double power)
     {
         if (_armMotor == null)
