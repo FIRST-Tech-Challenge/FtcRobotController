@@ -223,7 +223,7 @@ public class MecanumDrivetrain {
         double distanceError = Math.hypot(errorX, errorY);
         double maxDrive = 1;
         double targetSlowDownDistance = 24;
-        double minDrive = 0.20;
+        double minDrive = 0.10;
         /*
          * For a mecanum drive, we want to translate the field-centric error vector into
          * robot–centric coordinates. To do this, rotate the error vector by the negative
@@ -261,7 +261,7 @@ public class MecanumDrivetrain {
             max = Math.max(max, Math.abs(rightBackPower));
 
             if (distanceError < targetSlowDownDistance) {
-                maxDrive = distanceError / targetSlowDownDistance;
+                maxDrive = Math.pow(distanceError, 2) / Math.pow(targetSlowDownDistance, 2);
                 maxDrive = Math.max(maxDrive, minDrive);
             } else {
                 maxDrive = 1;
