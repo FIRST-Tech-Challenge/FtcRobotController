@@ -1,0 +1,149 @@
+package org.firstinspires.ftc.teamcode;
+
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+@Disabled
+public class TwoFishDelivery {
+    private static final double TICK_LOW_POWER_DISTANCE = 200;
+    private DcMotor slide = null;
+    private Servo claw = null;
+    private Servo pitch1 = null;
+    private Servo pitch2 = null;
+    private Servo wrist = null;
+
+
+    private LinearOpMode linearOpMode;
+
+    private double CLICKS_PER_METER = 2492.788;
+    private double CLICKS_PER_INCH = 63.317;
+    private final int MM_PER_METER = 1000;
+    private boolean slidesRunToPosition;
+
+    public boolean isDisabled = false;
+
+    private double initAttempts = 0;
+
+    private ElapsedTime time = new ElapsedTime();
+
+    private double slideTarget;
+
+    public TwoFishDelivery(LinearOpMode l, Boolean slidesRunToPosition)
+    {
+        linearOpMode = l;
+        slidesRunToPosition = slidesRunToPosition;
+        Initialize();
+    }
+
+
+    private void Initialize(){//4mm
+        try {
+            slide  = linearOpMode.hardwareMap.get(DcMotor.class, "deliverySlide");
+            pitch1 = linearOpMode.hardwareMap.get(Servo.class, "deliveryPitchLeft");
+            pitch2 = linearOpMode.hardwareMap.get(Servo.class, "deliveryPitchRight");
+            claw = linearOpMode.hardwareMap.get(Servo.class, "claw");
+            wrist = linearOpMode.hardwareMap.get(Servo.class, "wrist");
+            claw.scaleRange(0.0, 1);
+            pitch1.scaleRange(0.0, 1);
+            pitch2.scaleRange(0.0, 1);
+            slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            slide.setTargetPosition(0);
+
+            if (slidesRunToPosition) {
+                slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            } else {
+                slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
+
+            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+            //slide.setDirection(DcMotor.Direction.REVERSE);
+
+        }catch(NullPointerException e){
+            initAttempts++;
+            linearOpMode.telemetry.addData("Couldn't find delivery.       Attempt: ", initAttempts);
+            isDisabled = true;
+        }
+    }
+
+    public void setSlidesTargetPosition(int clicks){
+        slideTarget = clicks;
+    }
+
+    public void setSlidesPower(double power){
+        slide.setPower(power);
+    }
+
+    public void manualMove(double power){
+        slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slide.setPower(power);
+    }
+    public void setSlidesRunToPosition(){
+        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void resetEncoder(){
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+    public void setPitch(double pitchPosition){
+        pitch1.setPosition(pitchPosition);
+        pitch2.setPosition(1-pitchPosition);
+    }
+    public void setWrist(double rollPosition){
+        wrist.setPosition(rollPosition);
+    }
+
+
+    public int getMotorPosition(){ return slide.getCurrentPosition(); }
+
+    public double getMotorPositionInches(){ return getMotorPosition() / CLICKS_PER_INCH; }
+
+
+    public DcMotor.RunMode getRunMode(){
+        return slide.getMode();
+    }
+    public void setRunMode(DcMotor.RunMode mode){ slide.setMode(mode); }
+
+
+    public void PControlPower(double powerMultiplier){
+        double error = slideTarget - slide.getCurrentPosition();
+        double power = (Math.abs(error) / TICK_LOW_POWER_DISTANCE);
+
+        power = Math.max(0.1, Math.min(1, power));
+
+        setSlidesPower(power * powerMultiplier);
+    }
+    public void setClawPosition(double p){ // 0-1
+        claw.setPosition(p);
+    }
+    public void clawClose(){
+        setClawPosition(1);
+    }
+    public void clawOpen(){
+        setClawPosition(0);
+    }
+
+    public void addServoTelemetry(){
+        linearOpMode.telemetry.addData("pitch L: ", pitch1.getPosition());
+        linearOpMode.telemetry.addData("pitch R: ", pitch2.getPosition());
+
+        linearOpMode.telemetry.addData("claw: ", claw.getPosition());
+        linearOpMode.telemetry.addData("wrist: ", wrist.getPosition());
+    }
+
+    public void addSlideTelemetry(){
+        linearOpMode.telemetry.addData("Slide Target: ", slideTarget);
+        linearOpMode.telemetry.addData("Slide Current: ", slide.getCurrentPosition());
+    }
+
+}
