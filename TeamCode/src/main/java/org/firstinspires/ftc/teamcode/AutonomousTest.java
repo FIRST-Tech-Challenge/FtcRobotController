@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.bots.FSMBot;
-import org.firstinspires.ftc.teamcode.bots.HangBot;
+//import org.firstinspires.ftc.teamcode.bots.HangBot;
 
 @Autonomous(name = "Auto Test", group = "Auto")
 public class AutonomousTest extends LinearOpMode {

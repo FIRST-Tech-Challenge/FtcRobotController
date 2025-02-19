@@ -5,9 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.bots.AutomationBot;
-import org.firstinspires.ftc.teamcode.bots.HangBot;
-import org.firstinspires.ftc.teamcode.bots.LimelightBot;
+//import org.firstinspires.ftc.teamcode.bots.HangBot;
+//import org.firstinspires.ftc.teamcode.bots.LimelightBot;
 
+import org.firstinspires.ftc.teamcode.bots.FSMBot;
 import org.firstinspires.ftc.teamcode.bots.OdometryBot;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
@@ -32,7 +33,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 public class AutonPedroSpecimens extends LinearOpMode{
     protected boolean isBlue = false;
 
-    protected HangBot robot = new HangBot(this);
+    protected FSMBot robot = new FSMBot(this);
     private int lastMotorPosition;
 
     private boolean isReadyFlag = false;
