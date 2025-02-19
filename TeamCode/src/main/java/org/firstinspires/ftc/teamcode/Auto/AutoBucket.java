@@ -3,31 +3,34 @@
 
 package org.firstinspires.ftc.teamcode.Auto;
 
+import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.EncoderDirection.FORWARD;
+import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Swerve.Swerve;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics.ChassisSpeeds;
 
 
-@Autonomous(name = "Auto Hook")
-public class AutoHook extends LinearOpMode {
-  private Swerve drivebase;
-
+@Autonomous(name = "Auto Top Bucket")
+public class AutoBucket extends LinearOpMode {
+  private AutoSwerve drivebase;
+  private GoBildaPinpointDriver odo;
   public Telemetry telemetry;
 
   @Override
   public void runOpMode() throws InterruptedException {
-    drivebase = new Swerve(this);
-    drivebase.initGyro();
+    initOdo();
+    drivebase = new AutoSwerve(this,odo);
 
     waitForStart();
     Pose2d target = new Pose2d(0, 1, new Rotation2d(0));
 
-    drivebase.alignWheels(this::opModeIsActive); // TODO: rear right wheel just spins idk why
     sleep(1000);
 
     driveWithTeleOp(target, 1);
@@ -37,10 +40,20 @@ public class AutoHook extends LinearOpMode {
     // raise arm and lower to clip back up, then park
   }
 
+  public void initOdo(){
+    odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+    odo.recalibrateIMU();
+    odo.resetPosAndIMU();
+    odo.setOffsets(110, 30);
+    odo.setEncoderResolution(goBILDA_4_BAR_POD);
+    odo.setEncoderDirections(FORWARD, FORWARD);
+    odo.resetHeading(Rotation2d.fromDegrees(120));
+  }
 
   /**
    * @param targetPos Pose2d target position relative to the field. 0,0 is where the robot first started
    * @param timeLimit Time to take to move the specified distance
+   * needs to be entirely rewriten
    */
   public void driveWithOdo(Pose2d targetPos, double timeLimit) {
 
