@@ -47,7 +47,7 @@ public class Viper {
     public DcMotorEx get_viperMotor() {
         return _viperMotor;
     }
-    public boolean getIsViperExtendFull() {return _viperMotor.getCurrentPosition() > InchConverterToTicks(fullExtend);}
+    public boolean getIsViperExtendFull() {return _viperMotor.getCurrentPosition() > InchConverterToTicks(fullExtend - 13.);}
     public boolean getIsViperRetractedShort() {return _viperMotor.getCurrentPosition() < InchConverterToTicks(shortExtend + 0.5);}
     public boolean getIsViperExtendClosed() {return _viperMotor.getCurrentPosition() < InchConverterToTicks(closedExtend + 0.5);}
     public boolean getIsVipershortExtendSub() {return _viperMotor.getCurrentPosition() > InchConverterToTicks(shortsubmersibleExtend);}

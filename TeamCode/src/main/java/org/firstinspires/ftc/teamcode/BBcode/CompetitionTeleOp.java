@@ -234,6 +234,7 @@ public class CompetitionTeleOp extends LinearOpMode{
             switch (highBasketState) {
                 case Home:
                     if (gamepad2.left_trigger > 0 && gamepad2.dpad_up) {
+                        wristClaw.WristDown();
                         arm.MoveToHighBasket();
                         highBasketState = HighBasketState.RisingArmSample;
                     }
@@ -251,6 +252,7 @@ public class CompetitionTeleOp extends LinearOpMode{
 
                 case ViperExtendFull:
                     if (viper.getIsViperExtendFull()) {
+                        wristClaw.WristUp();
 //                        wristClaw.WristDump();
 //                        highBasketState = HighBasketState.WristDump;
                         highBasketState = HighBasketState.HighBasket;
