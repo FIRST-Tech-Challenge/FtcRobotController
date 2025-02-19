@@ -10,11 +10,12 @@ public class PedroAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot.isAuto = true;
-        robot.init(hardwareMap);
+
         waitForStart();
         while (opModeIsActive()) {
+            robot.init(hardwareMap);
             robot.onLoop(10, "pedro auto");
-
+            telemetry.addData("path state", robot.getPathState());
 
             telemetry.update();
         }

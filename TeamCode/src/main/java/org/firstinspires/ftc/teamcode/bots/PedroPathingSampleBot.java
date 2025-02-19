@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
-public class PedroPathingSampleBot extends GyroBot {
+public class PedroPathingSampleBot extends FSMBot {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
 
