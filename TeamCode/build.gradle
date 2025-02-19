@@ -34,10 +34,12 @@ dependencies {
 
     implementation 'org.openftc:apriltag:2.0.0'
     implementation 'org.openftc:easyopencv:1.7.0'
+
+    implementation 'com.pedropathing:pedro:1.0.8'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.16'
 }
 
 repositories {
-    maven {
-        url = 'https://maven.brott.dev/'
-    }
+    maven { url = 'https://maven.brott.dev/' }
+    maven { url= 'https://maven.pedropathing.com/' }
 }
