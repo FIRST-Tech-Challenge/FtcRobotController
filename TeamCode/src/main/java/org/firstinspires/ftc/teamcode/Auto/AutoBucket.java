@@ -40,9 +40,9 @@ public class AutoBucket extends LinearOpMode {
     sleepWithMekUpdate(5000);
     mek.arm.setPivot(15);
     sleepWithMekUpdate(1000);
-    mek.grabber.setGrabber(-.5);
+    mek.grabber.setGrabber(-.5,-.75);
     sleepWithMekUpdate(500);
-    mek.grabber.setGrabber(0);
+    mek.grabber.setGrabber(0,0);
     mek.arm.setPivot(0);
     sleepWithMekUpdate(500);
     mek.arm.setSlide(0);
