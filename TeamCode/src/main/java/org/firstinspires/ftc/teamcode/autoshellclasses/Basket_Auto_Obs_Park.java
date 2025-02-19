@@ -2,34 +2,31 @@ package org.firstinspires.ftc.teamcode.autoshellclasses;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.RedBasketPose;
-import org.firstinspires.ftc.teamcode.BBcode.OpModeType;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.ViperArmActions;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.WristClawActions;
+import org.firstinspires.ftc.teamcode.BBcode.OpModeType;
 import org.firstinspires.ftc.teamcode.BBcode.PoseStorage;
-import org.firstinspires.ftc.teamcode.BBcode.UtilClasses.UtilActions;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
-import org.firstinspires.ftc.teamcode.R;
 
 import java.util.Locale;
 
 
 @Config
-@Autonomous(name = "Red_Basket_Auto_No_Park", group = "Autonomous")
-public class Red_Basket_Auto_No_Park extends LinearOpMode {
+@Autonomous(name = "Basket_Auto_Obs_Park", group = "Autonomous")
+public class Basket_Auto_Obs_Park extends LinearOpMode {
 
     @Override
     public void runOpMode() {
         //Initialization steps
         PoseStorage.previousOpMode = OpModeType.AUTONOMOUS;
+        PoseStorage.currentPose = RedBasketPose.basket_init_old; //This is to reset the pose te a default value that is not affected by where the auto ends so that teleop opmodes can be debugged
         //Creates instance of MechanismActionBuilders
         WristClawActions _WristClawActions = new WristClawActions(this);
         ViperArmActions _ViperArmActions = new ViperArmActions(this);
@@ -55,7 +52,7 @@ public class Red_Basket_Auto_No_Park extends LinearOpMode {
 
         //drive to drop
         Action driveToDropFromStart = drive.actionBuilder(drive.pose)
-                .strafeToLinearHeading(RedBasketPose.drop.position, RedBasketPose.drop.heading)
+                .strafeToLinearHeading(RedBasketPose.initialDrop.position, RedBasketPose.initialDrop.heading)
                 .build();
 
         Action driveToDropFromInnerSample = drive.actionBuilder(RedBasketPose.inner_sample)
@@ -84,9 +81,11 @@ public class Red_Basket_Auto_No_Park extends LinearOpMode {
                 .strafeToLinearHeading(RedBasketPose.outer_sample.position, RedBasketPose.outer_sample.heading)
                 .build();
 
-//        Action submersiblePark = drive.actionBuilder(RedBasketPose.submersiblePark)
-//                .strafeToLinearHeading(RedBasketPose.submersiblePark.position, RedBasketPose.submersiblePark.heading)
-//                .build();
+        //drive to park
+        Action driveToObservationPark = drive.actionBuilder(RedBasketPose.drop)
+                .strafeToLinearHeading(RedBasketPose.observation_park.position, RedBasketPose.observation_park.heading)
+                .build();
+
         //----------------------------------------------------------------------------------------------
         Actions.runBlocking(
                 new SequentialAction(
@@ -109,11 +108,13 @@ public class Red_Basket_Auto_No_Park extends LinearOpMode {
                         _WristClawActions.WristUp(),
                         driveToDropFromInnerSample,
                         _ViperArmActions.DumpInHighBasket(),
-                        _WristClawActions.WristUp()
+                        _WristClawActions.WristUp(),
+                        driveToObservationPark
+
                 )
         );
         odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
-        PoseStorage.currentPose = odo.getPositionRR();
+        PoseStorage.currentPose = odo.getPositionRR(); //save the pose for teleop
         telemetry.addData("Stored Pose: ", String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", PoseStorage.currentPose.position.x, PoseStorage.currentPose.position.y, Math.toDegrees(PoseStorage.currentPose.heading.toDouble())) );
         //odo.setOffsets(-84.0, -168.0); //these are tuned for 3110-0002-0001 Product Insight #1
         //odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);

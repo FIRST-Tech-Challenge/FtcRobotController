@@ -31,7 +31,7 @@ public class ActionBuilder {
                 .setReversed(true)
                 .strafeToLinearHeading(RedBasketPose.drop.position, RedBasketPose.drop.heading)
                 .waitSeconds(0.1)
-                .splineToSplineHeading(RedBasketPose.submersible_park, Math.toRadians(0))
+                .strafeToLinearHeading(RedBasketPose.observation_park.position, RedBasketPose.observation_park.heading)
                 .build();
     }
 
