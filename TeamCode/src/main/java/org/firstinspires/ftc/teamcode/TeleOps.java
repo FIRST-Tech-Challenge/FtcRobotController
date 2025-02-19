@@ -63,6 +63,20 @@ public class TeleOps extends LinearOpMode {
                 robot.roll(-1);
             }
 
+            //to take specimen and go into scoring position
+            if (gamepad1.left_bumper){
+                robot.wallIntakeDone = true;
+            } else {
+                robot.wallIntakeDone = false;
+            }
+
+            //after scoring specimen, lower back into scoring position
+            if (gamepad1.right_bumper) {
+                robot.specimenScored = true;
+            } else {
+                robot.specimenScored = false;
+            }
+
             telemetry.addData("state:",robot.currentState);
 
             if (robot.pivotOutOfRange) {

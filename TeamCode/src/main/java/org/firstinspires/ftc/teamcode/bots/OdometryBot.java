@@ -25,8 +25,6 @@ public class OdometryBot extends GyroBot {
     final double SMALL_WHEEL_TICKS_TO_ORIGINAL = SMALL_WHEEL_DIAMETER /ORIGINAL_WHEEL_DIAMETER;
     final double LARGE_WHEEL_TICKS_TO_ORIGINAL = LARGE_WHEEL_DIAMETER /ORIGINAL_WHEEL_DIAMETER;
 
-    public DcMotor horizontal = null;
-    public DcMotor verticalRight = null;
     //public Servo odometryRaise = null;
 
     String verticalLeftEncoderName = "v1", verticalRightEncoderName = "v2", horizontalEncoderName = "h";
@@ -94,16 +92,18 @@ public class OdometryBot extends GyroBot {
     }
 
     private void initDriveHardwareMap(HardwareMap ahwMap){
-
-        horizontal = ahwMap.get(DcMotorEx.class, "leftFront"); /**changed initialization because it was showing error might mess something uup idk*/
-        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        horizontal.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        verticalLeft = ahwMap.dcMotor.get(verticalLeftEncoderName);
 //        verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        verticalLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        verticalRight = ahwMap.get(DcMotorEx.class, "leftRear");
-        verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        verticalRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        horizontal = ahwMap.get(DcMotorEx.class, "leftFront"); /**changed initialization because it was showing error might mess something uup idk*/
+//        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        horizontal.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        verticalRight = ahwMap.get(DcMotorEx.class, "leftRear");
+//        verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        verticalRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        verticalLeft = ahwMap.get(DcMotorEx.class, "leftRear");
+//        verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        verticalLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         telemetry.addData("Status", "Hardware Map Init Complete");
         telemetry.update();
@@ -204,16 +204,16 @@ public class OdometryBot extends GyroBot {
         telemetry.addData("X:", xBlue);
         telemetry.addData("Y:", yBlue);
         telemetry.addData("Theta:", thetaDEG);
-        telemetry.addData("vL", leftRear.getCurrentPosition());
-        telemetry.addData("vR", rightRear.getCurrentPosition());
-        telemetry.addData("h", rightFront.getCurrentPosition());
+        telemetry.addData("vL", leftFront.getCurrentPosition());
+        telemetry.addData("vR", rightFront.getCurrentPosition());
+        telemetry.addData("h", rightRear.getCurrentPosition());
 //        telemetry.addData("h diameter", (int)((thetaDEG*360)/(horizontal.getCurrentPosition() * Math.PI)));
         telemetry.update();
 
         //outputEncoders();
         super.onTick();
         //thetaDEG = -getDeltaAngle();
-        calculateCaseThree(leftFront.getCurrentPosition() - vLOffset, rightRear.getCurrentPosition() - vROffset, rightFront.getCurrentPosition() - hOffset);
+        calculateCaseThree(leftFront.getCurrentPosition() - vLOffset, rightFront.getCurrentPosition() - vROffset, rightRear.getCurrentPosition() - hOffset);
                 /** must find a new motor encoders for the odometry pods */
         if (isCoordinateDriving) {
             driveToCoordinateUpdate(globalTargetX, globalTargetY, globalTargetTheta, globalTolerance, globalAngleTol, globalMagnitude);

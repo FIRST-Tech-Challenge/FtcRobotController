@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.bots;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -68,6 +66,8 @@ public class FSMBot extends RollerIntakeBot{
 
     public boolean slideUp = false;
     public boolean hingeDown = false;
+    public boolean wallIntakeDone = false;
+    public boolean specimenScored = false;
 
 
 
@@ -97,7 +97,134 @@ public class FSMBot extends RollerIntakeBot{
         sleep(100);
     }
 
+    protected void onTick() {
+        super.onTick();
+        switch (currentState) {
+            case INIT_READY:
+                pitchTo(0); //sets differential wrist positions
+                rollTo(0);
+                currentState = gameState.DRIVE;
+                break;
+            case SUBMERSIBLE_INTAKE_1:
+                robot.slideRunToPosition(100);
+                //
+                currentState = gameState.SUBMERSIBLE_INTAKE_2;
+                break;
+            case SUBMERSIBLE_INTAKE_2:
+                robot.pitchTo(groundIntakePitchTarget);
+                robot.rollTo(groundIntakeRollTarget);
+                robot.intake(true);
+                driveSlides(gamepad1.right_bumper,gamepad1.left_bumper);
+                retractSubIntake(gamepad1.b);
+                robot.pivotRunToPosition(0);
+                //
+                currentState = gameState.ARM_DOWN;
+                break;
+            case WALL_INTAKE_1:
+                //pivot up
+                robot.pitch(wallIntakePitchTarget);
+                robot.rollTo(wallIntakeRollTarget);
+                robot.pivotRunToPosition(0);
+                //face the right direction
+                currentState = gameState.WALL_INTAKE_2;
+                break;
+            case WALL_INTAKE_2:
+                //arm up
+                robot.slideRunToPosition(100);
+                //wait for drive
+                if (wallIntakeDone) {
+                    currentState = gameState.SPECIMEN_SCORING_HIGH;
+                }
+                break;
+            case SPECIMEN_SCORING_HIGH:
+                //pivot up
+                robot.pivotRunToPosition(-1400);
+                //wait
+                robot.rollTo(specimenHighOuttakeRollTarget);
+                //arm up
+                robot.slideRunToPosition(700);
+                //wait for drive
+                if(specimenScored) {
+                    currentState = gameState.ARM_DOWN;
+                }
+                break;
+            case SPECIMEN_SCORING_LOW:
+                //pivot up
+                //wait
+                //arm up
+                //wait for drive
+                currentState = gameState.ARM_DOWN;
+                break;
+            case SAMPLE_SCORING_HIGH_1:
+                robot.pivotRunToPosition(samplePivotDropOffPos);
+                //pivot up
+                //wait
+                raiseSlidesSample(gamepad1.a);
 
+                break;
+            case SAMPLE_SCORING_HIGH_2:
+
+                robot.slideRunToPosition(sampleSlideDropOffPos);
+                robot.pitchTo(sampleOuttakePitchTarget);
+                robot.rollTo(sampleOuttakeRollTarget);
+                if(gamepad1.a){
+                    currentState = gameState.SAMPLE_SCORING_HIGH_3;
+                }
+                //arm up
+                //wait for score
+                break;
+            case SAMPLE_SCORING_HIGH_3:
+                robot.outake(true);
+                currentState = gameState.ARM_DOWN;
+                //arm up
+                //wait for score
+                break;
+            case SAMPLE_SCORING_LOW_1:
+                //pivot up
+                //wait
+                currentState = gameState.SAMPLE_SCORING_LOW_2;
+                break;
+            case SAMPLE_SCORING_LOW_2:
+                //arm up
+                //wait for score
+                break;
+            case DRIVE:
+                robot.pivotRunToPosition(0);
+                robot.pitchTo(0);
+                robot.rollTo(0);
+                robot.stopRoller();
+                subIntake(gamepad1.b);
+                raisePivotSample(gamepad1.a);
+                //reset slide, pivot motors, close claw
+                break;
+            case HANG_UP:
+//                if(startHang) {
+//                    positionIntake(INTAKE_ARM_DRIVE, INTAKE_HINGE_DRIVE);
+//                    outtake.setPosition(OUTTAKE_DRIVE);
+//
+//                    slideTarget = 1650;
+//                    currentState = gameState.HANG_DOWN;
+//                }
+                break;
+            case HANG_DOWN:
+//                if(downHang) {
+//                    positionIntake(INTAKE_ARM_DRIVE, INTAKE_HINGE_DRIVE);
+//                    outtake.setPosition(OUTTAKE_DRIVE);
+//
+//                    slideTarget = 100;
+//                    currentState = gameState.HANG;
+//                }
+                break;
+            case ARM_DOWN:
+                robot.slideRunToPosition(0);
+                currentState = gameState.PIVOT_DOWN;
+                break;
+            case PIVOT_DOWN:
+                robot.pivotRunToPosition(0);
+                currentState = gameState.DRIVE;
+                break;
+        }
+    }
     public void subIntake (boolean button){
         if(button) {
             intakeDown = true;
@@ -254,122 +381,5 @@ public class FSMBot extends RollerIntakeBot{
 //        currentState = gameState.LINEAR_SLIDE_DOWN;
 //    }
 
-    protected void onTick() {
-        super.onTick();
-        switch (currentState) {
-            case INIT_READY:
-               pitchTo(0); //sets differential wrist positions
-               rollTo(0);
-                currentState = gameState.DRIVE;
-                break;
-            case SUBMERSIBLE_INTAKE_1:
-                robot.slideRunToPosition(100);
-                //
-                currentState = gameState.SUBMERSIBLE_INTAKE_2;
-                break;
-            case SUBMERSIBLE_INTAKE_2:
-                robot.pitchTo(groundIntakePitchTarget);
-                robot.rollTo(groundIntakeRollTarget);
-                robot.intake(true);
-                driveSlides(gamepad1.right_bumper,gamepad1.left_bumper);
-                retractSubIntake(gamepad1.b);
-                robot.pivotRunToPosition(0);
-                //
-                currentState = gameState.ARM_DOWN;
-                break;
-            case WALL_INTAKE_1:
-                //pivot up
-                //face the right direction
-                currentState = gameState.WALL_INTAKE_2;
-                break;
-            case WALL_INTAKE_2:
-                //arm up
-                //wait for drive
-                currentState = gameState.SPECIMEN_SCORING_HIGH;
-                break;
-            case SPECIMEN_SCORING_HIGH:
-                //pivot up
-                //wait
-                //arm up
-                //wait for drive
-                currentState = gameState.ARM_DOWN;
-                break;
-            case SPECIMEN_SCORING_LOW:
-                //pivot up
-                //wait
-                //arm up
-                //wait for drive
-                currentState = gameState.ARM_DOWN;
-                break;
-            case SAMPLE_SCORING_HIGH_1:
-                robot.pivotRunToPosition(samplePivotDropOffPos);
-                //pivot up
-                //wait
-                raiseSlidesSample(gamepad1.a);
-
-                break;
-            case SAMPLE_SCORING_HIGH_2:
-
-                robot.slideRunToPosition(sampleSlideDropOffPos);
-                robot.pitchTo(sampleOuttakePitchTarget);
-                robot.rollTo(sampleOuttakeRollTarget);
-                if(gamepad1.a){
-                    currentState = gameState.SAMPLE_SCORING_HIGH_3;
-                }
-                //arm up
-                //wait for score
-                break;
-            case SAMPLE_SCORING_HIGH_3:
-                robot.outake(true);
-                currentState = gameState.ARM_DOWN;
-                //arm up
-                //wait for score
-                break;
-            case SAMPLE_SCORING_LOW_1:
-                //pivot up
-                //wait
-                currentState = gameState.SAMPLE_SCORING_LOW_2;
-                break;
-            case SAMPLE_SCORING_LOW_2:
-                //arm up
-                //wait for score
-                break;
-            case DRIVE:
-                robot.pivotRunToPosition(0);
-                robot.pitchTo(0);
-                robot.rollTo(0);
-                robot.stopRoller();
-                subIntake(gamepad1.b);
-                raisePivotSample(gamepad1.a);
-                //reset slide, pivot motors, close claw
-                break;
-            case HANG_UP:
-//                if(startHang) {
-//                    positionIntake(INTAKE_ARM_DRIVE, INTAKE_HINGE_DRIVE);
-//                    outtake.setPosition(OUTTAKE_DRIVE);
-//
-//                    slideTarget = 1650;
-//                    currentState = gameState.HANG_DOWN;
-//                }
-                break;
-            case HANG_DOWN:
-//                if(downHang) {
-//                    positionIntake(INTAKE_ARM_DRIVE, INTAKE_HINGE_DRIVE);
-//                    outtake.setPosition(OUTTAKE_DRIVE);
-//
-//                    slideTarget = 100;
-//                    currentState = gameState.HANG;
-//                }
-                break;
-            case ARM_DOWN:
-                robot.slideRunToPosition(0);
-                currentState = gameState.PIVOT_DOWN;
-                break;
-            case PIVOT_DOWN:
-                robot.pivotRunToPosition(0);
-                currentState = gameState.DRIVE;
-                break;
-        }
-    }
 
 }
