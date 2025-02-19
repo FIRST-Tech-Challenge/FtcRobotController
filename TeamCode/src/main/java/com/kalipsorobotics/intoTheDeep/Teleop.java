@@ -753,10 +753,10 @@ public class Teleop extends LinearOpMode {
 
             Log.d("outtakepivot", "outtake pivotPos  " + outtake.getOuttakePivotServo().getServo().getPosition());
 
-            telemetry.addData("odometry: ", SharedData.getOdometryPosition().toString());
-            telemetry.addData("big sweep pos: ", intakeBigSweepPos);
-            telemetry.addData("small sweep pos: ", intakeSmallSweepPos);
-            telemetry.update();
+//            telemetry.addData("odometry: ", SharedData.getOdometryPosition().toString());
+//            telemetry.addData("big sweep pos: ", intakeBigSweepPos);
+//            telemetry.addData("small sweep pos: ", intakeSmallSweepPos);
+//            telemetry.update();
             Log.d("teleopforauto", "odometry " + SharedData.getOdometryPosition().toString());
             Log.d("teleopforauto", "big sweep " + intakeClaw.getIntakeBigSweepServo().getPosition());
             Log.d("teleopforauto", "small sweep " + intakeClaw.getIntakeSmallSweepServo().getPosition());

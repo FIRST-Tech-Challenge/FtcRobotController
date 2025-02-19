@@ -61,7 +61,7 @@ public class AutoSpecimenChopping extends LinearOpMode {
 
         SetAutoDelayAction setAutoDelayAction = new SetAutoDelayAction(opModeUtilities, gamepad1);
         setAutoDelayAction.setName("setAutoDelayAction");
-        setAutoDelayAction.setTelemetry(telemetry);
+        //setAutoDelayAction.setTelemetry(telemetry);
 
         while(!setAutoDelayAction.getIsDone() && opModeInInit()) {
             long timestamp = System.currentTimeMillis();
@@ -74,7 +74,7 @@ public class AutoSpecimenChopping extends LinearOpMode {
 
         FirstWallToBarHangAction firstWallToBarHangAction = new FirstWallToBarHangAction(driveTrain, wheelOdometry, outtake, 230);
         firstWallToBarHangAction.setName("wallToBarHangAction");
-        firstWallToBarHangAction.setTelemetry(telemetry);
+        //firstWallToBarHangAction.setTelemetry(telemetry);
         firstWallToBarHangAction.setDependentActions(delayBeforeStart);
         autoSpecimenChopping.addAction(firstWallToBarHangAction);
 
@@ -88,7 +88,7 @@ public class AutoSpecimenChopping extends LinearOpMode {
         PurePursuitAction moveToSample1 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSample1.setName("moveToSample1");
         moveToSample1.setMaxTimeOutMS(12000);
-        moveToSample1.setTelemetry(telemetry);
+        //moveToSample1.setTelemetry(telemetry);
         moveToSample1.setDependentActions(firstWallToBarHangAction);
         moveToSample1.addPoint(-500, -300, -145, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
         autoSpecimenChopping.addAction(moveToSample1);

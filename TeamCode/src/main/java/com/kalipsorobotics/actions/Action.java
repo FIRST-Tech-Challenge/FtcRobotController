@@ -107,10 +107,10 @@ public abstract class Action {
         this.name = name;
     }
 
-    public void setTelemetry(Telemetry telemetry) {
-        this.telemetry = telemetry;
-        telemetry.addData("action_"+this.getName(), 0);
-    }
+//    public void setTelemetry(Telemetry telemetry) {
+//        this.telemetry = telemetry;
+//        telemetry.addData("action_"+this.getName(), 0);
+//    }
 
     public void printWithDependentActions() {
         StringBuilder stringBuilder = new StringBuilder();
