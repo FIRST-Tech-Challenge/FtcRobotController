@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -17,6 +18,7 @@ public class OneFishIntake {
     private DcMotor extension = null;
     private DcMotor intake = null;
     private Servo pitch = null;
+    private TouchSensor limitSwitch = null;
 
     private LinearOpMode linearOpMode;
 
@@ -24,8 +26,9 @@ public class OneFishIntake {
     private final double CLICKS_PER_CM = 24.92788;
     private final int MM_PER_METER = 1000;
 
-    public final int MIN_EXTENSION = -10;
-    public final int MAX_EXTENSION = 1000;
+    public final int DELTA_EXTENSION = 1000;
+    public int minExtension = -999999999;
+    public int maxExtension = DELTA_EXTENSION;
     private final double MIN_PITCH = 0.5;
     private final double DOWN_PITCH = 1;
     private final double UP_PITCH = 0.5;
@@ -70,6 +73,8 @@ public class OneFishIntake {
 
             extension.setTargetPosition(extension.getCurrentPosition());
 
+            limitSwitch = linearOpMode.hardwareMap.get(TouchSensor.class, "touch");
+
         }catch(NullPointerException e){
             linearOpMode.telemetry.addLine("Couldn't find intake");
         }
@@ -78,7 +83,7 @@ public class OneFishIntake {
 
     public void setTargetLength(int ticks){
         targetLength = ticks;
-        extension.setTargetPosition(Math.max(MIN_EXTENSION, Math.min(MAX_EXTENSION, ticks)));
+        extension.setTargetPosition(Math.max(minExtension, Math.min(maxExtension, ticks)));
     }
 
     public void setExtensionPower(double power){
@@ -87,10 +92,10 @@ public class OneFishIntake {
         int current = extension.getCurrentPosition();
         extension.setPower(power);
 
-        if(current > MAX_EXTENSION/2){
-            error = (current - MAX_EXTENSION);
+        if(current > maxExtension /2){
+            error = (current - maxExtension);
         } else {
-            error = (current-MIN_EXTENSION);
+            error = (current- minExtension);
         }
 
         errorMult = error/(TICK_LOW_POWER_DISTANCE*2);
@@ -144,10 +149,14 @@ public class OneFishIntake {
 
     public void pitchToTransfer(){pitch.setPosition(TRANSFER_PITCH);}
 
-    public int getExtensionTicks(){
-        return extension.getCurrentPosition();
-    }
+    public int getExtensionTicks(){ return extension.getCurrentPosition();}
 
+    public void limitCheck() {
+        if (limitSwitch.isPressed()) {
+            minExtension = extension.getCurrentPosition();
+            maxExtension = minExtension+DELTA_EXTENSION;
+        }
+    }
 
     public class RunToLengthRR implements Action {
         private boolean initialized = false;

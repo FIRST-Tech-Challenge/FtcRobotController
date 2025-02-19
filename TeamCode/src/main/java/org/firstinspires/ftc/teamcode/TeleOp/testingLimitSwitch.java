@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleOp;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -29,12 +29,10 @@ public class testingLimitSwitch extends LinearOpMode {
         boolean stop = false;
         int basePosition = 0;
         double slidePower = 0;
-        int ticks = 0;
 
         waitForStart();
 
         while (opModeIsActive()) {
-            ticks++;
             int slidePosition = slideMotor.getCurrentPosition();
             boolean override = gamepad1.a;
 

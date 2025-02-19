@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleOp;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

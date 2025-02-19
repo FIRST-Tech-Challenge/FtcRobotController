@@ -244,12 +244,12 @@ public class OneFishTeleop extends LinearOpMode {
                         if(gamepad2.a){
                             timer.reset();
                             state = RobotState.INTAKE_EXTEND;
-                            intake.setTargetLength(intake.MIN_EXTENSION);
+                            intake.setTargetLength(intake.minExtension);
                         }
                         if(gamepad2.y){
                             timer.reset();
                             state = RobotState.INTAKE_EXTEND;
-                            intake.setTargetLength(intake.MAX_EXTENSION);
+                            intake.setTargetLength(intake.maxExtension);
                         }
                     break;
 
@@ -406,12 +406,12 @@ public class OneFishTeleop extends LinearOpMode {
                         if(gamepad2.a){
                             timer.reset();
                             state = RobotState.INTAKE_EXTEND;
-                            intake.setTargetLength(intake.MIN_EXTENSION);
+                            intake.setTargetLength(intake.minExtension);
                         }
                         if(gamepad2.y){
                             timer.reset();
                             state = RobotState.INTAKE_EXTEND;
-                            intake.setTargetLength(intake.MAX_EXTENSION);
+                            intake.setTargetLength(intake.maxExtension);
                         }
                         if(gamepad2.right_trigger > DRIVE_DEADZONE){
                             state = RobotState.INTAKE;
@@ -455,6 +455,8 @@ public class OneFishTeleop extends LinearOpMode {
                 }
             }
             runningActions = newActions;
+
+            intake.limitCheck();
 
             dash.sendTelemetryPacket(packet);
 
