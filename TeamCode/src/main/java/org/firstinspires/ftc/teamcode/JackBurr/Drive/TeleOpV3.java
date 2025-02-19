@@ -340,6 +340,21 @@ public class TeleOpV3 extends OpMode {
                 pickedUpSample = false;
                 break;
             case HOVER_OVER_SAMPLE:
+                if(limelightActivated) {
+                    telemetry.addLine("Limelight 3a");
+                    telemetry.addLine("\t FPS: " + limelightV1.getFps());
+                    telemetry.addLine("\t Sample angle: " + limelightV1.getAngle());
+                    rotateGrippersToSample();
+                }
+                else if (gamepad1.left_bumper && buttonTimer.seconds() > 0.35){
+                    wrist.moveLeft(0.1);
+                    buttonTimer.reset();
+
+                }
+                else if (gamepad1.right_bumper && buttonTimer.seconds() > 0.35){
+                    wrist.moveRight(0.1);
+                    buttonTimer.reset();
+                }
                 slowmode = true;
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.HOVER_LOW;
@@ -800,13 +815,15 @@ public class TeleOpV3 extends OpMode {
     }
 
     public boolean rotateGrippersToSample(){
+        telemetry.addLine("Limelight wrist pos: " + wrist.getPosition());
+        telemetry.addLine("Limelight sample angle:" + limelightV1.getAngle());
         if(limelightActivated) {
             if(limelightV1.getAngle() == -1){
                 return false;
             }
-            if (limelightV1.getAngle() > constants.sampleAngle) {
+            if (limelightV1.getAngle() < constants.sampleAngle) {
                 wrist.moveLeft(0.03);
-            } else if (limelightV1.getAngle() < constants.sampleAngle) {
+            } else if (limelightV1.getAngle() > constants.sampleAngle) {
                 wrist.moveRight(0.03);
             }
             else {

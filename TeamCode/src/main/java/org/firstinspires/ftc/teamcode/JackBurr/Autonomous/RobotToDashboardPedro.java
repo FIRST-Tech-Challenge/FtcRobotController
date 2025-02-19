@@ -51,12 +51,17 @@ public class RobotToDashboardPedro extends OpMode {
     private DcMotorEx rightRear;
     private List<DcMotorEx> motors;
 
-    public static Pose startPose = new Pose(9, 111, Math.toRadians(270));
+    public static int startX = 38;
+    public static int startY = 62;
+    public static int degrees = 270;
+
+    public static Pose startPose;
     /**
      * This initializes the PoseUpdater, the mecanum drive motors, and the FTC Dashboard telemetry.
      */
     @Override
     public void init() {
+        startPose = new Pose(startX, startY, Math.toRadians(degrees));
         Constants.setConstants(FConstants.class, LConstants.class);
         poseUpdater = new PoseUpdater(hardwareMap);
         poseUpdater.setPose(startPose);
