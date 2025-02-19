@@ -62,7 +62,7 @@ public class Sample extends LinearOpMode {
                         robot.intakeUp(),
                         claw.servoClaw(Claw.clawState.CLOSE),
                         arm.armNeutral(),
-                        drivetrain.goToPose(Utils.makePoseVector(-57, -31,0)),
+//                        drivetrain.goToPose(Utils.makePoseVector(-57, -31,0)),
                         drivetrain.goToPose(Utils.makePoseVector(-57, -17,-43)),
                             new ParallelAction(
                                     lift.moveToHeight(24),
@@ -84,16 +84,15 @@ public class Sample extends LinearOpMode {
                                 drivetrain.goToPose(Utils.makePoseVector(-46,-23.5,0))
                             ),
                         new SleepAction(0.3),
-                        drivetrain.goToPose(Utils.makePoseVector(-47,-24.5,5)),   //Wiggle
+                        drivetrain.goToPose(Utils.makePoseVector(-46,-24.5,5)),   //Wiggle
                         new SleepAction(0.2),
-                        drivetrain.goToPose(Utils.makePoseVector(-45,-22.5,-5)),
+                        drivetrain.goToPose(Utils.makePoseVector(-45,-22.5,-10)),
                         new SleepAction(0.1),
                         extension.servoExtension(Extension.extensionState.RETRACT),
                         new SleepAction(0.2),
                         pivot.setPosition(Intake.intakeState.STOP),
-                        new SleepAction(0.1),
-                        intake.motorIntake(Intake.intakeState.STOP),
                         new SleepAction(0.15),
+                        intake.motorIntake(Intake.intakeState.STOP),
                         arm.armRetract(),
                         new SleepAction(0.35),
                         claw.servoClaw(Claw.clawState.CLOSE),
@@ -120,18 +119,17 @@ public class Sample extends LinearOpMode {
                         drivetrain.goToPose(Utils.makePoseVector(-51,-13.5,0)),
                             new ParallelAction(
                                 robot.intakeDown(),
-                                drivetrain.goToPose(Utils.makePoseVector(-46,-13.5,0))),
+                                drivetrain.goToPose(Utils.makePoseVector(-46,-14.5,0))),
                         new SleepAction(0.3),
-                        drivetrain.goToPose(Utils.makePoseVector(-47,-14.5,5)), //wiggle
+                        drivetrain.goToPose(Utils.makePoseVector(-46,-14.5,5)), //wiggle
                         new SleepAction(0.2),
-                        drivetrain.goToPose(Utils.makePoseVector(-46.5,-12.5,-5)),
+                        drivetrain.goToPose(Utils.makePoseVector(-44,-12.5,-10)),
                         new SleepAction(0.1),
                         extension.servoExtension(Extension.extensionState.RETRACT),
                         new SleepAction(0.3),
                         pivot.setPosition(Intake.intakeState.STOP),
-                        new SleepAction(0.1),
-                        intake.motorIntake(Intake.intakeState.STOP),
                         new SleepAction(0.15),
+                        intake.motorIntake(Intake.intakeState.STOP),
                         arm.armRetract(),
                         new SleepAction(0.35),
                         claw.servoClaw(Claw.clawState.CLOSE),
@@ -157,17 +155,16 @@ public class Sample extends LinearOpMode {
 
                         //drivetrain.goToPose(Utils.makePoseVector(-42,-16.5,44)),
                             new ParallelAction(
-                                drivetrain.goToPose(Utils.makePoseVector(-42.5,-19,40)),
+                                drivetrain.goToPose(Utils.makePoseVector(-42.5,-20,40)),
                                 robot.intakeDown()),
 //                        new SleepAction(0.3),
-                        drivetrain.goToPose(Utils.makePoseVector(-44,-19,40)),
+                        drivetrain.goToPose(Utils.makePoseVector(-45,-19.5,40)),
                         new SleepAction(0.2),
                         extension.servoExtension(Extension.extensionState.RETRACT),
                         new SleepAction(0.3),
                         pivot.setPosition(Intake.intakeState.STOP),
-                        new SleepAction(0.1),
-                        intake.motorIntake(Intake.intakeState.STOP),
                         new SleepAction(0.15),
+                        intake.motorIntake(Intake.intakeState.STOP),
                         arm.armRetract(),
                         new SleepAction(0.35),
                         claw.servoClaw(Claw.clawState.CLOSE),
@@ -187,13 +184,12 @@ public class Sample extends LinearOpMode {
                         new SleepAction(0.1),
                         arm.armNeutral(),
                         new SleepAction(0.1),
-                            new ParallelAction(
                         lift.moveToHeight(12),
 
                                 //Finish Outtake 1+3
 
-                        drivetrain.goToPose(Utils.makePoseVector(-13, -33, 90)),
-                        arm.servoArmSpec()),
+                        drivetrain.goToPose(Utils.makePoseVector(-13, -37.5, 90)),
+                        arm.servoArmSpec(),
                         new SleepAction(0.3),
                         drivetrain.goToPose(Utils.makePoseVector(-13, -45, 90))
 

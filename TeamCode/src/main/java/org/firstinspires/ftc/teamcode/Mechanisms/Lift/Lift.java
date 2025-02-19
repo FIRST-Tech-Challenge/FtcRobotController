@@ -30,14 +30,14 @@ public class Lift {
     public static double kA=0.2;
     public static double kV=0.2;
     public static double kG=0.1;
-    public static double kP = 0;
+    public static double kP = 0.07;
     public static double kI = 0;
     public static double kD = 0;
-    public static double liftThreshold = 0.1;
+    public static double liftThreshold = 0.5;
     double spoolRadius =  0.702; // [in]
-    public static double maxAcceleration = 5;
-    public static double maxDeceleration = 5;
-    public static double maxVelocity = 6;
+    public static double maxAcceleration = 12;
+    public static double maxDeceleration = 12;
+    public static double maxVelocity = 14;
     private final double ticksPerRev = 384.5;
     private final double ticksPerInch = ticksPerRev / (2 * Math.PI * spoolRadius);
     boolean reverse;
