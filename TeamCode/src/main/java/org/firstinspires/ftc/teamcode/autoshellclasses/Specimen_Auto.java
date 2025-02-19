@@ -23,8 +23,8 @@ import java.util.Locale;
 
 
 @Config
-@Autonomous(name = "Red_Specimen_Auto", group = "Autonomous")
-public class Red_Specimen_Auto extends LinearOpMode {
+@Autonomous(name = "Specimen_Auto", group = "Autonomous")
+public class Specimen_Auto extends LinearOpMode {
     @Override
     public void runOpMode() {
         //Initialization steps

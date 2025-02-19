@@ -13,15 +13,14 @@ import org.firstinspires.ftc.teamcode.BBcode.OpModeType;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.ViperArmActions;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.WristClawActions;
 import org.firstinspires.ftc.teamcode.BBcode.PoseStorage;
-import org.firstinspires.ftc.teamcode.BBcode.UtilClasses.UtilActions;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 
 import java.util.Locale;
 
 
 @Config
-@Autonomous(name = "Red_Basket_Auto", group = "Autonomous")
-public class Red_Basket_Auto extends LinearOpMode {
+@Autonomous(name = "Basket_Auto_Sub_Park", group = "Autonomous")
+public class Basket_Auto_Sub_Park extends LinearOpMode {
 
     @Override
     public void runOpMode() {

@@ -22,7 +22,7 @@ import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import java.util.Locale;
 
-@TeleOp(name = "MainTeleOpWithAutoBasket")
+@TeleOp(name = "Competition TeleOp")
 public class MainTeleOpWithAutoBasket extends LinearOpMode{
     enum HighBasketState {
         Home,
