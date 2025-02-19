@@ -6,6 +6,8 @@ package org.firstinspires.ftc.teamcode.Mekanism;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
+import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 
 import android.telephony.CellIdentity;
 
@@ -50,9 +52,9 @@ public class Arm {
     slide2 = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "slide 2");
 
     // Sets rotation direction for the motors
-    pivot.setDirection(DcMotorSimple.Direction.REVERSE);
-    slide.setDirection(DcMotorSimple.Direction.FORWARD);
-    slide2.setDirection(DcMotorSimple.Direction.FORWARD);
+    pivot.setDirection(FORWARD);
+    slide.setDirection(FORWARD);
+    slide2.setDirection(FORWARD);
 
     // Reset all encoders
     pivot.setMode(STOP_AND_RESET_ENCODER);
@@ -70,9 +72,9 @@ public class Arm {
     slide2.setMode(RUN_TO_POSITION);
 
     // Makes the motor brake when no power is applied by shorting out the motor terminals
-    pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    slide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    pivot.setZeroPowerBehavior(BRAKE);
+    slide.setZeroPowerBehavior(BRAKE);
+    slide2.setZeroPowerBehavior(BRAKE);
 
     // Sets the maximum power that the motors are allowed to run at
     pivot.setPower(1);
@@ -138,7 +140,8 @@ public class Arm {
     slide2.setMode(RUN_USING_ENCODER);
 
     // Move the pivot while the limit switch is not pressed and a timer is not over its limit
-    while (!limitSwitch.getState() && pivotTimer.seconds() < 5 && myOp.opModeIsActive()) {
+    // Note: the limit switch is TRUE when it is not activated
+    while (limitSwitch.getState() && pivotTimer.seconds() < 5 && myOp.opModeIsActive()) {
       telemetry.addData("limit switch: ", limitSwitch.getState());
       pivot.setPower(-0.5);
       slide.setPower(-0.3);
@@ -218,20 +221,20 @@ public class Arm {
   /**
    * Sets the power of the pivot if it is in RUN_USING_ENCODER mode
    *
-   * @param x (-1) to 1
+   * @param power (-1) to 1
    */
-  public void setPivot(double x) {
+  public void setPivot(double power) {
     double current_Angle = pivot.getCurrentPosition();
 
-    if (current_Angle > limitPivot) {
-      x = limitPivot;
+    if (current_Angle > limitPivot && power > 0) {
+      power = 0;
       telemetry.addLine("Pivot pos over limit");
-    } else if (current_Angle < 0) {
-      x = 0;
+    } else if (current_Angle < 0 && power < 0) {
+      power = 0;
       telemetry.addLine("Pivot pos under 0");
     }
 
-    pivotPower = x;
+    pivotPower = power;
   }
 
 
@@ -266,7 +269,7 @@ public class Arm {
   public void setSlide(double power) {
 
     // Calculates the max the arm can go without going over the 40IN limit
-    double maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree));
+    double maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree)) * 1.05;
     if (maxLength < 2500)
       maxLength = 2500;
 

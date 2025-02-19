@@ -130,7 +130,6 @@ public class BlueBotTeleop extends LinearOpMode {
 
     // Does this move the robot? not anymore but you need to init the wrist or press b to get it to go to the right position
     Mekanism mek = new Mekanism(this);
-    mek.arm.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER, DcMotor.RunMode.RUN_USING_ENCODER);
 
     Init();
     waitForStart();
@@ -138,6 +137,9 @@ public class BlueBotTeleop extends LinearOpMode {
     mek.grabber.initWrist();
     odometry.resetHeading();
     odometry.resetPosAndIMU();
+
+    mek.arm.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER, DcMotor.RunMode.RUN_USING_ENCODER);
+
 
     double previous_steer_direction = 0.5;
     double previous_driving_speed = 0.0;
@@ -388,13 +390,19 @@ public class BlueBotTeleop extends LinearOpMode {
 
       double
           g2_lx = gamepad2.left_stick_x,
-          g2_ly = gamepad2.left_stick_y,
+          g2_ly = -gamepad2.left_stick_y,
           g2_rx = gamepad2.right_stick_x,
-          g2_ry = gamepad2.right_stick_y;
+          g2_ry = -gamepad2.right_stick_y;
 
       mek.arm.setSlide(g2_ly);
-      mek.arm.setPivot(g2_lx);
+      mek.arm.setPivot(g2_ry);
 
+      telemetry.addLine("G2_LY: " + g2_ly);
+      telemetry.addLine("G2_RY: " + g2_ry);
+      telemetry.addLine("Slide Power: " + mek.arm.slide.getPower());
+      telemetry.addLine("Pivot Power: " + mek.arm.pivot.getPower());
+
+      mek.update();
       telemetry.update();
 
     }

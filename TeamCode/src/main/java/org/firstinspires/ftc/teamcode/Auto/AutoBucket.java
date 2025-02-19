@@ -29,15 +29,7 @@ public class AutoBucket extends LinearOpMode {
     drivebase = new AutoSwerve(this,odo);
 
     waitForStart();
-    Pose2d target = new Pose2d(0, 1, new Rotation2d(0));
-
-    sleep(1000);
-
-    driveWithTeleOp(target, 1);
-    sleep(2000);
-    target = new Pose2d(0,2,new Rotation2d(0));
-    driveWithOdo(target,1);
-    // raise arm and lower to clip back up, then park
+    // raise arm to top bucket drop and then move out to second one
   }
 
   public void initOdo(){
@@ -51,10 +43,11 @@ public class AutoBucket extends LinearOpMode {
   }
 
   /**
-   * @param targetPos Pose2d target position relative to the field. 0,0 is where the robot first started
-   * @param timeLimit Time to take to move the specified distance
-   * needs to be entirely rewriten
+   *  targetPos Pose2d target position relative to the field. 0,0 is where the robot first started
+   *  timeLimit Time to take to move the specified distance
+   * needs to be entirely rewritten
    */
+  /*
   public void driveWithOdo(Pose2d targetPos, double timeLimit) {
 
     ElapsedTime timer = new ElapsedTime();
@@ -110,7 +103,6 @@ public class AutoBucket extends LinearOpMode {
       telemetry.addData("Current Heading", 0);
       telemetry.addData("Time Remaining", 0);
       telemetry.update();
-      */
 
       // 9. Check if its close enough to the target
       if (Math.abs(errorX) < 0.5 && Math.abs(errorY) < 0.5 && Math.abs(errorHeading) < Math.toRadians(5)) {
@@ -125,17 +117,11 @@ public class AutoBucket extends LinearOpMode {
     // Stops the robot
     drivebase.drive(new ChassisSpeeds(0, 0, 0), 0);
   }
+  */
 
 
   private double calculatePID(double error, double deltaTime, double kP, double kI, double kD, double integral, double previousError) {
     double derivative = (error - previousError) / deltaTime;
     return kP * error + kI * integral + kD * derivative;
   }
-
-
-  public void driveWithTeleOp(Pose2d targetPos, double deltaTime) {
-
-    drivebase.teleopDrive(targetPos.getX(), targetPos.getY(), targetPos.getRotation().getRadians(), deltaTime);
-  }
-
 }
