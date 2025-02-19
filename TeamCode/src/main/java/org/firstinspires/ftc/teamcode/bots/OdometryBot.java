@@ -208,7 +208,7 @@ public class OdometryBot extends GyroBot {
         telemetry.addData("vR", rightFront.getCurrentPosition());
         telemetry.addData("h", rightRear.getCurrentPosition());
 //        telemetry.addData("h diameter", (int)((thetaDEG*360)/(horizontal.getCurrentPosition() * Math.PI)));
-        telemetry.update();
+//        telemetry.update();
 
         //outputEncoders();
         super.onTick();

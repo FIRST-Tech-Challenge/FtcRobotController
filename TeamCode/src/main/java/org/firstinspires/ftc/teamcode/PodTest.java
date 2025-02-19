@@ -24,8 +24,8 @@ public class PodTest extends LinearOpMode {
             telemetry.addData("vertical right ", robot.rightFront.getCurrentPosition());
             telemetry.addData("time",test.time());
             telemetry.update();
-            robot.setLeftDifferentialWristServo(0.3);
-            robot.setRightDifferentialWristServo(0.7);
+//            robot.setLeftDifferentialWristServo(0.3);
+//            robot.setRightDifferentialWristServo(0.7);
         }
 
 

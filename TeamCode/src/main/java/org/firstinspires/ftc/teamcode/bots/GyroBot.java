@@ -72,10 +72,10 @@ public class GyroBot extends FourWheelDriveBot {
 //            telemetry.update();
             //RobotLog.d("stick button pressed");
             driveMultiplier = -0.55;
-            //telemetry.addData("FAST", driveMultiplier);
+            telemetry.addData("FAST", driveMultiplier);
         } else {
             driveMultiplier = -0.85;
-            //telemetry.addData("SLOW", driveMultiplier);
+            telemetry.addData("SLOW", driveMultiplier);
         }
 
         double angle = -getDeltaAngle() + 180;
