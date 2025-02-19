@@ -1,27 +1,27 @@
 package org.firstinspires.ftc.teamcode.BBcode;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.RedBasketPose;
+import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.SpecimenPose;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Arm;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.ChristmasLight;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Viper;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.WristClaw;
-import org.firstinspires.ftc.teamcode.BBcode.UtilClasses.Time;
-
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import java.util.Locale;
 
-@TeleOp(name = "MainTeleOp")
-public class MainTeleOp extends LinearOpMode{
-
+@TeleOp(name = "Competition TeleOp")
+public class CompetitionTeleOp extends LinearOpMode{
     enum HighBasketState {
         Home,
         RisingArmSample,
@@ -33,6 +33,18 @@ public class MainTeleOp extends LinearOpMode{
         ViperRetractedShort,
         LoweringArm,
         ArmDown
+    }
+
+    enum HangState {
+        Home,
+        RaiseArmHang,
+        ViperExtendHang,
+        WristDown,
+        Hang,
+        ViperDown,
+        ArmDown,
+        EmergencyExitViperDown,
+        EmergencyExitArmDown
     }
 
     enum SpecimenClipState {
@@ -63,12 +75,14 @@ public class MainTeleOp extends LinearOpMode{
 
 
     HighBasketState highBasketState = HighBasketState.Home;
+    HangState hangState = HangState.Home;
     SpecimenClipState specimenClipState = SpecimenClipState.Home;
     SubmersiblePickupState submersiblePickupState = SubmersiblePickupState.Home;
-
+    Limelight3A _limelight;
     ElapsedTime wristTimer = new ElapsedTime();
 
     final double wristFlipTime = 0.75;
+    Pose2d botPose = new Pose2d(0, 0, 0);
 
     private void handleGamepad1 (Viper viper, WristClaw wristClaw) {
         //Specimen Pickup Position
@@ -122,6 +136,11 @@ public class MainTeleOp extends LinearOpMode{
         odo.setEncoderDirections(xDirection, yDirection);
         odo.resetPosAndIMU();
 
+        //Init limelight
+        _limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        _limelight.pipelineSwitch(1);
+        _limelight.start();
+
         TelemetryHelper telemetryHelper = new TelemetryHelper(this);
         //Allows for telemetry to be added to without clearing previous data. This allows setting up telemetry functions to be called in the loop or adding telemetry items within a function and not having it cleared on next loop
         telemetry.setAutoClear(false);
@@ -141,7 +160,6 @@ public class MainTeleOp extends LinearOpMode{
         //Not sure if this can be before or after waitForStart
 //        if (PoseStorage.hasRolloverPose()) {
 //            _christmasLight.off();
-
 //            odo.setPosition(PoseStorage.currentPose);
 //        }
 //        else {
@@ -152,27 +170,61 @@ public class MainTeleOp extends LinearOpMode{
         boolean isDpadUpPressed = false;
         boolean isDpadDownPressed = false;
         waitForStart();
+        telemetry.addData("HasRolloverPose", PoseStorage::hasRolloverPose);
+        if (PoseStorage.hasRolloverPose()) {
+            _christmasLight.off();
+            odo.setPosition(PoseStorage.currentPose);
+            PoseStorage.hasFieldCentricDrive = true;
+        } else {
+            _christmasLight.yellow();
+            PoseStorage.hasFieldCentricDrive = false;
+            //TODO setPose to a some other likely position??
+        }
 
         arm.MoveToHome();
-   //     arm.Rest();
-
         //odo.setPosition(PoseStorage.currentPose);
         //Use the following line for measuring auto locations
-        odo.setPosition(RedBasketPose.basket_init_old);
-//        odo.setPosition(PoseStorage.currentPose);
-        telemetry.addData("PositionRR", ()-> getPinpoint(odo.getPositionRR()));
-        telemetry.addData("Position", ()-> getPinpoint(odo.getPosition()));
-       // boolean armHasReset = false;
+        //odo.setPosition(RedBasketPose.basket_init_old);
+        //odo.setPosition(PoseStorage.currentPose);
+        telemetry.addData("PoseStorage", ()-> PoseStorage.currentPose);
+        //telemetry.addData("PositionRR", ()-> getPinpoint(odo.getPositionRR()));
+
+        telemetry.addData("PositionRR", () -> String.format(Locale.US, "{X: %.2f, Y: %.2f, H: %.2f}", odo.getPositionRR().position.x, odo.getPositionRR().position.y, Math.toDegrees(odo.getPositionRR().heading.toDouble())));
+        //telemetry.addData("LimeLightPose", () -> formatLimeLight(botPose));
+        telemetry.addData("Specimen Angle (deg)", () -> arm.specimenPosition);
+        telemetry.addData("Current Clip Position", () -> SpecimenPose.current_Clip);
+        //telemetry.addData("Position", ()-> getPinpoint(odo.getPosition()));
+        boolean tagFound = false;
+        double botYaw = 0;
         while(opModeIsActive()){ //while loop for when program is active
             odo.update();
-//            if (Time.Wait(2) && !armHasReset) {
-//                arm.Reset();
-//                armHasReset = true;
-//            }
-//            else if (!armHasReset) {
-//                _christmasLight.red();
-//            }
 
+            //Manage LimeLight
+            LLResult lLResult = _limelight.getLatestResult();
+            if (lLResult != null && lLResult.isValid()) {
+
+                if (lLResult.getTa() > 0) {
+                    tagFound = true;
+                    Pose3D limeLightPose = lLResult.getBotpose();
+                    botPose = new Pose2d(limeLightPose.getPosition().x*39.3701, limeLightPose.getPosition().y*39.3701, limeLightPose.getOrientation().getYaw());
+                    botYaw = lLResult.getBotpose().getOrientation().getYaw();
+//                    _christmasLight.green();
+                    //telemetry.addData("BotPose", botPose.getPosition());
+                    //telemetry.addData("Yaw", botYaw);
+                }
+                else {
+                    tagFound = false;
+//                    _christmasLight.off();
+                    botPose = null;
+                    //telemetry.addData("Limelight", "Tag not found");
+                }
+            }
+            else {
+                tagFound = false;
+//                _christmasLight.off();
+                botPose = null;
+                //telemetry.addData("Limelight", "No data available");
+            }
             //Drive code
             drivetrain.Drive();
 
@@ -263,6 +315,82 @@ public class MainTeleOp extends LinearOpMode{
                     if (arm.getIsArmHomePosition()) {
                         highBasketState = HighBasketState.Home;
                     }
+            }
+
+            switch (hangState) {
+                case Home:
+                    if (viper.getIsViperExtendHang() && gamepad1.right_trigger > 0 && gamepad1.dpad_up) {
+                        arm.MoveToHighBasket();
+                        hangState = HangState.RaiseArmHang;
+                    }
+                    else if (gamepad1.left_trigger > 0 && gamepad1.dpad_down) {
+                        viper.ExtendClosed(0.75);
+                        hangState = HangState.EmergencyExitViperDown;
+                    }
+                    break;
+                case RaiseArmHang:
+                    if (arm.getIsArmHighBasketPosition()) {
+                        viper.ExtendFull(1);
+                        hangState = HangState.ViperExtendHang;
+                    }
+                    break;
+
+                case ViperExtendHang:
+                    if (viper.getIsViperExtendFull()) {
+                        wristClaw.WristDown();
+                        hangState = HangState.WristDown;
+                        wristTimer.reset();
+                    }
+                    break;
+
+                case WristDown:
+                    if (wristTimer.seconds() >= wristFlipTime){
+                        hangState = HangState.Hang;
+                    }
+                    break;
+
+                case Hang:
+                    if (gamepad1.right_trigger > 0 && gamepad1.dpad_down) {
+                        viper.ExtendHang(1);
+                        hangState = HangState.ViperDown;
+                    }
+                    break;
+
+                case ViperDown:
+                    if (viper.getIsViperExtendHang()) {
+                        arm.MoveToSlowDown();
+                        hangState = HangState.ArmDown;
+                    }
+                    else if (gamepad1.left_trigger > 0 && gamepad1.dpad_down) {
+                        viper.ExtendClosed(0.75);
+                        hangState = HangState.EmergencyExitViperDown;
+                    }
+                    break;
+
+                case ArmDown:
+                    if (arm.getIsArmSpecimenPosition()) {
+                        hangState = HangState.Home;
+                    }
+                    else if (gamepad1.right_trigger > 0 && gamepad1.dpad_down) {
+                        viper.ExtendClosed(1);
+                        hangState = HangState.EmergencyExitViperDown;
+                    }
+                    break;
+
+                case EmergencyExitViperDown:
+                    if (viper.getIsViperExtendClosed()) {
+                        viper.Rest();
+                        arm.MoveToHome();
+                        hangState = HangState.Home;
+                    }
+                    break;
+
+                case EmergencyExitArmDown:
+                    if (arm.getIsArmHomePosition()) {
+                        hangState = HangState.Home;
+                    }
+                    break;
+
             }
 
             switch (specimenClipState) {
@@ -364,6 +492,7 @@ public class MainTeleOp extends LinearOpMode{
                         specimenClipState = SpecimenClipState.Home;
                     }
                     break;
+
             }
 
             switch (submersiblePickupState) {
@@ -453,5 +582,12 @@ public class MainTeleOp extends LinearOpMode{
     }
     private String getPinpoint(Pose2d pos) {
         return String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.position.x, pos.position.y, Math.toDegrees(pos.heading.toDouble()));
+    }
+    private static String formatLimeLight(Pose2d botPose) {
+        if (botPose == null) {
+            return "No data available";
+        }
+        return String.format(Locale.US, "{X: %.2f, Y: %.2f, H: %.2f}", botPose.position.x, botPose.position.y, Math.toDegrees(botPose.heading.toDouble()));
+
     }
 }
