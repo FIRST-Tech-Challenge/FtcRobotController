@@ -7,12 +7,15 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 
+import android.telephony.CellIdentity;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Arm {
@@ -30,7 +33,13 @@ public class Arm {
 
   public final DigitalChannel limitSwitch;
 
-  private int pivotTarget, slideTarget;
+  private int
+      pivotTarget = 0,
+      slideTarget = 0;
+
+  private double
+      pivotPower = 0,
+      slidePower = 0;
 
 
   public Arm(LinearOpMode opMode, int limitSlide, int limitPivot, double countsPerDegree, double countsPerInch) {
@@ -94,9 +103,20 @@ public class Arm {
    * Updates pivot and slide target positions
    */
   public void update() {
-    pivot.setTargetPosition(pivotTarget);
-    slide.setTargetPosition(slideTarget);
-    slide2.setTargetPosition(slideTarget);
+
+    if (pivot.getMode() == RUN_TO_POSITION) {
+      pivot.setTargetPosition(pivotTarget);
+    } else {
+      pivot.setPower(pivotPower);
+    }
+
+    if (slide.getMode() == RUN_TO_POSITION) {
+      slide.setTargetPosition(slideTarget);
+      slide2.setTargetPosition(slideTarget);
+    } else {
+      slide.setPower(slidePower);
+      slide2.setPower(slidePower);
+    }
   }
 
 
@@ -146,15 +166,43 @@ public class Arm {
 
 
   /**
-   * Sets target position for pivot motor
+   * Used to override the default RUN_TO_POSITION mode of the slide and pivot motors
    *
-   * @param x - Target Angle in degrees
+   * @param slideMode Mode of the linear slide motors
+   * @param pivotMode Mode of the pivot motor
    */
-  public void setPivot(double x) {
+  public void setRunMode(DcMotor.RunMode slideMode, DcMotor.RunMode pivotMode) {
+
+    if (slideMode == RUN_TO_POSITION) {
+      slide.setPower(1);
+      slide2.setPower(1);
+    } else {
+      slide.setPower(0);
+      slide2.setPower(0);
+    }
+
+    if (pivotMode == RUN_TO_POSITION) {
+      pivot.setPower(1);
+    } else {
+      pivot.setPower(0);
+    }
+
+    pivot.setMode(pivotMode);
+    slide.setMode(slideMode);
+    slide2.setMode(slideMode);
+  }
+
+
+  /**
+   * Sets target position for pivot motor if it is in RUN_TO_POSITION mode
+   *
+   * @param x Target Angle in degrees
+   */
+  public void setPivot(int x) {
 
     double current_Angle = pivot.getCurrentPosition();
 
-    // Limits for
+    // Limits for the motor
     if (current_Angle > limitPivot) {
       x = limitPivot;
       telemetry.addLine("Pivot pos over limit");
@@ -168,17 +216,35 @@ public class Arm {
 
 
   /**
-   * Sets the target length of the arm
+   * Sets the power of the pivot if it is in RUN_USING_ENCODER mode
    *
-   * @param x - Target length
+   * @param x (-1) to 1
+   */
+  public void setPivot(double x) {
+    double current_Angle = pivot.getCurrentPosition();
+
+    if (current_Angle > limitPivot) {
+      x = limitPivot;
+      telemetry.addLine("Pivot pos over limit");
+    } else if (current_Angle < 0) {
+      x = 0;
+      telemetry.addLine("Pivot pos under 0");
+    }
+
+    pivotPower = x;
+  }
+
+
+  /**
+   * Sets the target length of the arm if in RUN_TO_POSITION mode
+   *
+   * @param x - Target length in encoder counts
    */
   public void setSlide(int x) {
 
     // Calculates the max the arm can go without going over the 40IN limit
     double maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree));
-    if (maxLength < 2500)
-      maxLength = 2500;
-
+    if (maxLength < 2500) maxLength = 2500;
 
     if (maxLength > limitSlide) maxLength = limitSlide;
 
@@ -189,5 +255,31 @@ public class Arm {
       x = 0;
 
     slideTarget = x;
+  }
+
+
+  /**
+   * Sets the power of the arm if it is in RUN_USING_ENCODER mode
+   *
+   * @param power (-1) to 1
+   */
+  public void setSlide(double power) {
+
+    // Calculates the max the arm can go without going over the 40IN limit
+    double maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree));
+    if (maxLength < 2500)
+      maxLength = 2500;
+
+    if (maxLength > limitSlide) maxLength = limitSlide;
+
+    if (slide.getCurrentPosition() > maxLength && power > 0) {
+      power = 0;
+      telemetry.addLine("Slide over robot length limit");
+    } else if (slide.getCurrentPosition() < 0 && power < 0) {
+      telemetry.addLine("Slide under 0");
+      power = 0;
+    }
+
+    slidePower = power;
   }
 }
