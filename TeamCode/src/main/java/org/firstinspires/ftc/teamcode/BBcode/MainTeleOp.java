@@ -130,6 +130,7 @@ public class MainTeleOp extends LinearOpMode{
         Arm arm = new Arm(this, telemetryHelper);
         Viper viper = new Viper(this);
         WristClaw wristClaw = new WristClaw(this);
+        arm.Reset();
         viper.StopAndResetEncoder();
         wristTimer.reset();
 
@@ -153,7 +154,7 @@ public class MainTeleOp extends LinearOpMode{
         waitForStart();
 
         arm.MoveToHome();
-        arm.Rest();
+   //     arm.Rest();
 
         //odo.setPosition(PoseStorage.currentPose);
         //Use the following line for measuring auto locations
@@ -161,16 +162,16 @@ public class MainTeleOp extends LinearOpMode{
 //        odo.setPosition(PoseStorage.currentPose);
         telemetry.addData("PositionRR", ()-> getPinpoint(odo.getPositionRR()));
         telemetry.addData("Position", ()-> getPinpoint(odo.getPosition()));
-        boolean armHasReset = false;
+       // boolean armHasReset = false;
         while(opModeIsActive()){ //while loop for when program is active
             odo.update();
-            if (Time.Wait(2) && !armHasReset) {
-                arm.Reset();
-                armHasReset = true;
-            }
-            else if (!armHasReset) {
-                _christmasLight.red();
-            }
+//            if (Time.Wait(2) && !armHasReset) {
+//                arm.Reset();
+//                armHasReset = true;
+//            }
+//            else if (!armHasReset) {
+//                _christmasLight.red();
+//            }
 
             //Drive code
             drivetrain.Drive();

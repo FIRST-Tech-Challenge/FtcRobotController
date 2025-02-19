@@ -110,9 +110,7 @@ public class Red_Basket_Auto extends LinearOpMode {
                         driveToDropFromInnerSample,
                         _ViperArmActions.DumpInHighBasket(),
                         _WristClawActions.WristUp(),
-                        driveToSubmersiblePark,
-                        _ViperArmActions.MoveArmToHighBasket(),
-                        UtilActions.Wait(10)
+                        driveToSubmersiblePark
 
                 )
         );
