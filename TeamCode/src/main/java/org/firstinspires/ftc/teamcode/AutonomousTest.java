@@ -16,8 +16,6 @@ public class AutonomousTest extends LinearOpMode {
         robot.isAuto = true;
         robot.init(hardwareMap);
 
-        robot.pivotTarget = 300;
-
         while (!opModeIsActive()) {
 
             telemetry.update();
