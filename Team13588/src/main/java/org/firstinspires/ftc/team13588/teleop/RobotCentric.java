@@ -40,7 +40,7 @@ public class RobotCentric extends LinearOpMode {
 
             // Combine drive, strafe, and turn for blended motion. Use RobotHardware class
             robot.driveRobotCentric(drive, strafe, turn);
-            robot.setArmPosition(arm);
+            robot.setArmPosition(4 * arm * robot.ARM_TICKS_PER_REV);
 
             if (gamepad1.right_bumper) {
                 robot.setClawPosition(robot.CLAW_CLOSE);
@@ -52,7 +52,9 @@ public class RobotCentric extends LinearOpMode {
                 robot.setWristPosition(robot.WRIST_ROTATE);
             } else if (gamepad1.left_stick_button) {
                 robot.setWristPosition(robot.WRIST_STRAIGHT);
-            } else if (gamepad1.x) {
+            }
+
+            if (gamepad1.x) {
                 robot.setShoulderPosition(robot.SHOULDER_LOW_BUCKET);
             } else if (gamepad1.b) {
                 robot.setShoulderPosition(robot.SHOULDER_HIGH_BUCKET);
@@ -66,7 +68,7 @@ public class RobotCentric extends LinearOpMode {
                 robot.setShoulderPosition(robot.SHOULDER_WINCH_ROBOT);
             } else if (gamepad1.left_trigger > 0) {
                 robot.setShoulderPosition((23 * robot.SHOULDER_TICKS_PER_DEGREE
-                        - shoulder * 11 * robot.SHOULDER_TICKS_PER_DEGREE));
+                        - shoulder * 14 * robot.SHOULDER_TICKS_PER_DEGREE));
             }
 
             telemetry.addData("Drive Power", "%.2f", drive);

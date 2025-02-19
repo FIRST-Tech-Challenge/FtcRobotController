@@ -49,26 +49,26 @@ public class RobotHardware {
     public double P_TURN_GAIN;
     public double P_DRIVE_GAIN;
 
-
     public double SHOULDER_TICKS_PER_DEGREE;
     public double ARM_TICKS_PER_REV;
     public double TOLERANCE_TICKS;
 
     public double SHOULDER_COLLAPSED_INTO_ROBOT;
     public double SHOULDER_SAMPLE_RETRACTED;
+    public double SHOULDER_WINCH_ROBOT;
     public double SHOULDER_SAMPLE_EXTENDED;
     public double SHOULDER_LOW_CHAMBER;
     public double SHOULDER_LOW_BUCKET;
     public double SHOULDER_HIGH_CHAMBER;
     public double SHOULDER_HIGH_BUCKET;
     public double SHOULDER_ATTACH_HANGING_HOOK;
-    public double SHOULDER_WINCH_ROBOT;
 
     public double ARM_RETRACTED;
     public double ARM_HIGH_CHAMBER;
     public double ARM_EXTENDED;
 
     public double WRIST_STRAIGHT;
+    public double WRIST_45;
     public double WRIST_ROTATE;
     public double WRIST_FLIP;
 
@@ -148,20 +148,21 @@ public class RobotHardware {
         set position of the arm.
         */
         SHOULDER_COLLAPSED_INTO_ROBOT = 0 * SHOULDER_TICKS_PER_DEGREE;
-        SHOULDER_SAMPLE_RETRACTED = 12 * SHOULDER_TICKS_PER_DEGREE;
+        SHOULDER_SAMPLE_RETRACTED = 11 * SHOULDER_TICKS_PER_DEGREE;
+        SHOULDER_WINCH_ROBOT =  15 * SHOULDER_TICKS_PER_DEGREE;
         SHOULDER_SAMPLE_EXTENDED = 23 * SHOULDER_TICKS_PER_DEGREE;
         SHOULDER_LOW_CHAMBER = 55 * SHOULDER_TICKS_PER_DEGREE;
         SHOULDER_LOW_BUCKET = 83  * SHOULDER_TICKS_PER_DEGREE;
         SHOULDER_HIGH_CHAMBER = 95 * SHOULDER_TICKS_PER_DEGREE;
         SHOULDER_HIGH_BUCKET = 102 * SHOULDER_TICKS_PER_DEGREE;
         SHOULDER_ATTACH_HANGING_HOOK =  130 * SHOULDER_TICKS_PER_DEGREE;
-        SHOULDER_WINCH_ROBOT =  15 * SHOULDER_TICKS_PER_DEGREE;
 
         ARM_RETRACTED = 0 * ARM_TICKS_PER_REV;
-        ARM_HIGH_CHAMBER = 1.5 * ARM_TICKS_PER_REV;
+        ARM_HIGH_CHAMBER = 1.4 * ARM_TICKS_PER_REV;
         ARM_EXTENDED = 4 * ARM_TICKS_PER_REV;
 
         WRIST_STRAIGHT = 0.05;
+        WRIST_45 = 0.25;
         WRIST_ROTATE = 0.5;
         WRIST_FLIP = 1.0;
 
