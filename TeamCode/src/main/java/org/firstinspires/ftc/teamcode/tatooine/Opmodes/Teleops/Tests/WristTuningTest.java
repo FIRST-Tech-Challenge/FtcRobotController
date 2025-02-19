@@ -45,11 +45,11 @@ public class WristTuningTest extends LinearOpMode {
             if (gamepadEx1.justPressedButton(GamepadKeys.Button.CROSS)){
                 wrist.doc();
             }
-            else if (gamepadEx1.justPressedButton(GamepadKeys.Button.CIRCLE)){
-                wrist.intakeFlat();
-            }
             else if (gamepadEx1.justPressedButton(GamepadKeys.Button.TRIANGLE)){
                 wrist.intakeFlat();
+            }
+            else if (gamepadEx1.justPressedButton(GamepadKeys.Button.CIRCLE)){
+                wrist.intakeUp();
             }
             else if (gamepadEx1.justPressedButton(GamepadKeys.Button.SQUARE)){
                 wrist.doc();

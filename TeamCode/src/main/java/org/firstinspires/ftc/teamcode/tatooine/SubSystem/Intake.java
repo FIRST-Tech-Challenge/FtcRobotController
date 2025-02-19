@@ -39,7 +39,7 @@ public class Intake {
 
     // Initialize servo directions
     public void init() {
-        intake.setDirection(CRServo.Direction.REVERSE);
+        intake.setDirection(CRServo.Direction.FORWARD);
 
         DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, "Intake", "Initialized: Left REVERSE, Right FORWARD");
     }
