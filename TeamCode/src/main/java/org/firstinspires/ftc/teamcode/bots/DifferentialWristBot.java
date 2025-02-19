@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class DifferentialWristBot extends HangBot {
+public class DifferentialWristBot extends PivotBot {
 
     private Servo leftDifferentialWristServo;
     private Servo rightDifferentialWristServo;
