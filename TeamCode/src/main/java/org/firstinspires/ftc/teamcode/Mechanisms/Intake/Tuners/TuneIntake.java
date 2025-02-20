@@ -10,24 +10,28 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 @Config
 @Autonomous(name = "Tune Intake", group = "Autonomous")
 public class TuneIntake extends LinearOpMode {
-    Drivetrain drivetrain = null;
+//    Drivetrain drivetrain = null;
     public static double speed = 1;
-    Battery battery;
+//    Battery battery;
     @Override
     public void runOpMode(){
-        battery = new Battery(hardwareMap);
-        drivetrain = new Drivetrain(hardwareMap, battery);
+//        battery = new Battery(hardwareMap);
+//        drivetrain = new Drivetrain(hardwareMap, battery);
         DcMotorEx intake = hardwareMap.get(DcMotorEx.class, "intakeMotor");
-        CRServo intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
+//        CRServo intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         waitForStart();
         while (opModeIsActive()){
-            if (gamepad1.a) {
+            if (gamepad1.cross) {
                 intake.setPower(speed);
-                intakeServo.setPower(-1);
+
+//                intakeServo.setPower(-1);
             }
-            if (gamepad1.b){
+            if (gamepad1.triangle){
                 intake.setPower(-speed*.4);
-                intakeServo.setPower(1);
+//                intakeServo.setPower(1);
+            }
+            if(gamepad1.square){
+                intake.setPower(0);
             }
         }
     }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Mechanisms.Claw.Tuners;
+package org.firstinspires.ftc.teamcode.Mechanisms.Outtake.Tuners;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 
@@ -8,23 +8,24 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.Mechanisms.Outtake.Outtake;
 
 @Config
-@Autonomous(name = "Tune Claw", group = "Autonomous")
-public class TuneClaw extends LinearOpMode {
+@Autonomous(name = "Tune Outtake", group = "Autonomous")
+public class TuneOuttake extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Claw claw = new Claw(hardwareMap);
+        Outtake outtake = new Outtake(hardwareMap);
 
         waitForStart();
 
         while (opModeIsActive()) {
-            if (gamepad2.triangle){
-                Actions.runBlocking(claw.servoClaw(Claw.clawState.CLOSE));
+            if(gamepad1.cross){
+                Actions.runBlocking(outtake.OuttakeFront());
             }
-            if(gamepad2.cross){
-                Actions.runBlocking(claw.servoClaw(Claw.clawState.OPEN));
+            if(gamepad1.square){
+                Actions.runBlocking(outtake.OuttakeRetract());
             }
         }
     }

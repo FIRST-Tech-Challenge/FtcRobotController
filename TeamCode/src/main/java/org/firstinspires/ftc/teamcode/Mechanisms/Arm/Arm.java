@@ -64,7 +64,6 @@ public class Arm {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
-
                         servoArmLeft.setPosition(armRetract);
                         servoArmRight.setPosition(armRetract);
                         servoWrist.setPosition(wristRetract);

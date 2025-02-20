@@ -4,20 +4,20 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.Mechanisms.Extension.Extension;
+import org.firstinspires.ftc.teamcode.Mechanisms.Extension.ExtensionOuttake;
 
 @Config
 @Autonomous(name = "Tune Extension", group = "Autonomous")
-public class TuneExtension extends LinearOpMode {
+public class TuneExtensionOuttake extends LinearOpMode {
     Drivetrain drivetrain = null;
 
     @Override
     public void runOpMode() {
-        Extension extension = new Extension(hardwareMap);
+        ExtensionOuttake extension = new ExtensionOuttake(hardwareMap);
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad1.x){
-                Actions.runBlocking(extension.servoExtension(Extension.extensionState.EXTEND));
+                Actions.runBlocking(extension.servoExtension(ExtensionOuttake.extensionState.EXTEND));
             }
         }
     }

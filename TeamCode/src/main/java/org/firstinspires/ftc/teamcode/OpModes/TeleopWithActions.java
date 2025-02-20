@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.Mechanisms.Extension.Extension;
+import org.firstinspires.ftc.teamcode.Mechanisms.Extension.ExtensionOuttake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
 import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
@@ -33,7 +33,7 @@ public class TeleopWithActions extends OpMode {
     Robot robot;
     Arm arm;
     Claw claw;
-    Extension extension;
+    ExtensionOuttake extension;
     Lift lift;
     Battery battery;
     Sweeper sweeper;
@@ -56,17 +56,17 @@ public class TeleopWithActions extends OpMode {
     public void loop() {
         TelemetryPacket packet = new TelemetryPacket();
         if (firstRun){
-            runningActions.put("extension", extension.servoExtension(Extension.extensionState.RETRACT));
+            runningActions.put("extension", extension.servoExtension(ExtensionOuttake.extensionState.RETRACT));
             runningActions.put("claw", claw.servoClaw(Claw.clawState.OPEN));
             runningActions.put("intake", robot.intakeMove(Intake.intakeState.STOP));
             runningActions.put("arm", arm.armRetract());
             firstRun = false;
         } else {
             if (gamepad1.right_trigger > 0.5) {
-                runningActions.put("extension", extension.servoExtension(Extension.extensionState.EXTEND));
+                runningActions.put("extension", extension.servoExtension(ExtensionOuttake.extensionState.EXTEND));
             }
             if (gamepad1.left_trigger > 0.5) {
-                runningActions.put("extension", extension.servoExtension(Extension.extensionState.RETRACT));
+                runningActions.put("extension", extension.servoExtension(ExtensionOuttake.extensionState.RETRACT));
             }
             if (gamepad2.left_bumper) {
                 runningActions.put("claw", claw.servoClaw(Claw.clawState.OPEN));

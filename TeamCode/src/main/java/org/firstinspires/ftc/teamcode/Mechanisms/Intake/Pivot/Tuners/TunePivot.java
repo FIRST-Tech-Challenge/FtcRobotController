@@ -1,16 +1,15 @@
-package org.firstinspires.ftc.teamcode.Mechanisms.Pivot.Tuners;
+package org.firstinspires.ftc.teamcode.Mechanisms.Intake.Pivot.Tuners;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
-import org.firstinspires.ftc.teamcode.Mechanisms.Pivot.Pivot;
+import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Pivot.Pivot;
 
 @Config
-@Autonomous(name = "Tune Pivot", group = "Autonomous")
+@Autonomous(name = "Tune Pivot Intake", group = "Autonomous")
 public class TunePivot extends LinearOpMode {
-    Drivetrain drivetrain = null;
 
     @Override
     public void runOpMode() {
@@ -19,7 +18,7 @@ public class TunePivot extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            if (gamepad2.y){
+            if (gamepad1.cross){
                 Actions.runBlocking(pivot.setPosition(Intake.intakeState.OUTTAKE));
             }
         }

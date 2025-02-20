@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers.FeedForward;
 import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers.PID;
 import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Planners.MotionProfile;
 
-public class Extension2 {
+public class ExtensionInttake {
     HardwareMap hardwareMap;
     FeedForward feedForward;
     PID pid;
@@ -42,7 +42,7 @@ public class Extension2 {
     public static double maxVoltage = 12.5;
 
 
-    public Extension2(HardwareMap hardwareMap, Battery battery){
+    public ExtensionInttake(HardwareMap hardwareMap, Battery battery){
         this.hardwareMap = hardwareMap;
 
         this.extensionMotor = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "extensionMotor"), battery, maxVoltage);

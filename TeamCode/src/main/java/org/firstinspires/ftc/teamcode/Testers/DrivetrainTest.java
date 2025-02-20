@@ -1,20 +1,12 @@
 package org.firstinspires.ftc.teamcode.Testers;
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
-import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
-import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.Mechanisms.Extension.Extension;
-import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
-import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
-import org.firstinspires.ftc.teamcode.Mechanisms.Sweeper.Sweeper;
 
 import java.util.HashMap;
 import java.util.Map;

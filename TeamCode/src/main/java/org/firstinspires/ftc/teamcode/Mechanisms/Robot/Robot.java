@@ -10,10 +10,10 @@ import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.Mechanisms.Extension.Extension;
+import org.firstinspires.ftc.teamcode.Mechanisms.Extension.ExtensionOuttake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
-import org.firstinspires.ftc.teamcode.Mechanisms.Pivot.Pivot;
+import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Pivot.Pivot;
 import org.firstinspires.ftc.teamcode.Mechanisms.Sweeper.Sweeper;
 
 public class Robot {
@@ -21,7 +21,7 @@ public class Robot {
     public Battery battery;
     public Pivot pivot;
     public Intake intake;
-    public Extension extension;
+    public ExtensionOuttake extension;
     public Arm arm;
     public Claw claw;
     public Lift lift;
@@ -34,7 +34,7 @@ public class Robot {
         this.arm = new Arm(hardwareMap);
         this.claw = new Claw(hardwareMap);
         this.lift = new Lift(hardwareMap, battery);
-        this.extension = new Extension(hardwareMap);
+        this.extension = new ExtensionOuttake(hardwareMap);
         this.sweeper = new Sweeper(hardwareMap);
 
     }
@@ -48,14 +48,14 @@ public class Robot {
         return new SequentialAction(
                 intake.motorIntake(Intake.intakeState.INTAKE),
                 pivot.setPosition(Intake.intakeState.INTAKE),
-                extension.servoExtension(Extension.extensionState.EXTEND)
+                extension.servoExtension(ExtensionOuttake.extensionState.EXTEND)
         );
     }
     public Action intakeUp(){
         return new SequentialAction(
                 intake.motorIntake(Intake.intakeState.STOP),
                 pivot.setPosition(Intake.intakeState.STOP),
-                extension.servoExtension(Extension.extensionState.RETRACT)
+                extension.servoExtension(ExtensionOuttake.extensionState.RETRACT)
         );
     }
     public Action sampleScore(){

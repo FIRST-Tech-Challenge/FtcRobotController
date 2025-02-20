@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Mechanisms.Pivot;
+package org.firstinspires.ftc.teamcode.Mechanisms.Intake.Pivot;
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -15,8 +15,8 @@ public class Pivot {
     ServoAdvanced pivotLeft;
     ServoAdvanced pivotRight;
 
-    public static double pivotDown = 0.48;
-    public static double pivotUp = 0.7;
+    public static double pivotDown = 0.23;
+    public static double pivotUp = 0.42;
     public Pivot(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
         this.pivotLeft = new ServoAdvanced(hardwareMap.get(Servo.class, "pivotLeft"));

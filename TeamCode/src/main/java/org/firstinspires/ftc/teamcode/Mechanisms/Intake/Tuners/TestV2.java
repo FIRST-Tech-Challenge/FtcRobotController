@@ -5,7 +5,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
-import org.firstinspires.ftc.teamcode.Mechanisms.Pivot.Pivot;
+import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Pivot.Pivot;
 @Config
 @Autonomous(name = "Test V2 Action", group = "Autonomous")
 public class TestV2 extends LinearOpMode {

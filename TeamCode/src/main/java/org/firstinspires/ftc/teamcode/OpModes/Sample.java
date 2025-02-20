@@ -14,10 +14,10 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils;
-import org.firstinspires.ftc.teamcode.Mechanisms.Extension.Extension;
+import org.firstinspires.ftc.teamcode.Mechanisms.Extension.ExtensionOuttake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
-import org.firstinspires.ftc.teamcode.Mechanisms.Pivot.Pivot;
+import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Pivot.Pivot;
 import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 
 @Config
@@ -27,7 +27,7 @@ public class Sample extends LinearOpMode {
     FtcDashboard dashboard;
     Robot robot;
     Drivetrain drivetrain;
-    Extension extension;
+    ExtensionOuttake extension;
     Intake intake;
     Arm arm;
     Claw claw;
@@ -83,7 +83,7 @@ public class Sample extends LinearOpMode {
                         drivetrain.goToPose(Utils.makePoseVector(-46,-23.5,0))),
                         new SleepAction(1),
                         pivot.setPosition(Intake.intakeState.STOP),
-                        extension.servoExtension(Extension.extensionState.RETRACT),
+                        extension.servoExtension(ExtensionOuttake.extensionState.RETRACT),
                         new SleepAction(0.5),
                         intake.motorIntake(Intake.intakeState.STOP),
                         arm.armRetract(),
@@ -109,7 +109,7 @@ public class Sample extends LinearOpMode {
                         drivetrain.goToPose(Utils.makePoseVector(-46,-13.5,0))),
                         new SleepAction(1),
                         pivot.setPosition(Intake.intakeState.STOP),
-                        extension.servoExtension(Extension.extensionState.RETRACT),
+                        extension.servoExtension(ExtensionOuttake.extensionState.RETRACT),
                         new SleepAction(0.75),
                         intake.motorIntake(Intake.intakeState.STOP),
                         arm.armRetract(),
@@ -135,7 +135,7 @@ public class Sample extends LinearOpMode {
                         robot.intakeDown(),
                         new SleepAction(1),
                         pivot.setPosition(Intake.intakeState.STOP),
-                        extension.servoExtension(Extension.extensionState.RETRACT),
+                        extension.servoExtension(ExtensionOuttake.extensionState.RETRACT),
                         new SleepAction(1),
                         intake.motorIntake(Intake.intakeState.STOP),
                         arm.armRetract(),

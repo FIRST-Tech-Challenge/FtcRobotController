@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Actuators.ServoAdvanced;
@@ -18,7 +19,7 @@ public class Intake {
     public Intake(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
         motor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
-        servo = hardwareMap.get(ServoAdvanced.class, "intakeLid");
+        this.servo = new ServoAdvanced(hardwareMap.get(Servo.class, "intakeLid"));
     }
 
     public enum intakeState {

@@ -9,14 +9,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Hardware.Actuators.ServoAdvanced;
 
 @Config
-public class Extension {
+public class ExtensionOuttake {
     HardwareMap hardwareMap;
     ServoAdvanced servoExtendLeft;
     ServoAdvanced servoExtendRight;
     public static double extendPos = 0;
     public static double retractPos = 0.27;
     public static double leftOffset = 0.025;
-    public Extension(HardwareMap hardwareMap) {
+    public ExtensionOuttake(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
         servoExtendLeft = new ServoAdvanced(hardwareMap.get(Servo.class, "leftExtension"));
         servoExtendRight = new ServoAdvanced(hardwareMap.get(Servo.class, "rightExtension"));
@@ -35,7 +35,7 @@ public class Extension {
                     if (extendoPos == extensionState.RETRACT) {
                         servoExtendLeft.setPosition(extendPos+leftOffset);
                         servoExtendRight.setPosition(extendPos);
-                    } else if (extendoPos == Extension.extensionState.EXTEND) {
+                    } else if (extendoPos == ExtensionOuttake.extensionState.EXTEND) {
                         servoExtendLeft.setPosition(retractPos+leftOffset);
                         servoExtendRight.setPosition(retractPos);
                     }
