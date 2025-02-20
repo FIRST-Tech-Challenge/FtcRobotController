@@ -18,7 +18,7 @@ public class Intake {
 
     PIDController pidController;
 
-    public static double p = 0.003, i = 0, d = 0.00001;
+    public static double p = 0.0024, i = 0, d = 0.00;
 
     Init init;
 
@@ -86,8 +86,9 @@ public class Intake {
     }
 
     public void initStatusTeleop(){
-        status = Status.TRANSFER;
-        moveIntakeToTransfer();
+        status = Status.NEUTRAL;
+        color= ITDCons.Color.unknown;
+        intakeToNeutral();
     }
 
     public void pickupSample(){
@@ -125,6 +126,7 @@ public class Intake {
         intakeMotor.setPower(EJECT_POWER);
         color = ITDCons.Color.unknown;
         elapsedTime= new ElapsedTime();
+        status=Status.EJECT;
     }
 
     public void stopIntake(){
@@ -144,16 +146,12 @@ public class Intake {
 
     public void extendSlideHalf() {
         target = ITDCons.halfExtension;
+        intakeToNeutral();
     }
 
     public void extendSlideMax(){
-        if (status==Status.TRANSFER) {
-            target = ITDCons.MaxExtension;
-        } else {
-            moveIntakeToTransfer();
-            elapsedTime = new ElapsedTime();
-            tempTarget= ITDCons.MaxExtension;
-        }
+        target= ITDCons.MaxExtension;
+        intakeToNeutral();
     }
 
     public void intakeintake(){
