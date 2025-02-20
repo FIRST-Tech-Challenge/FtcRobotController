@@ -220,6 +220,8 @@ public class Outtake implements Component{
 
         if (status== Status.Wall){
             scoreSpecimen();
+        } else if (status== Status.Transfer){
+            scoreSample();
         }
 
 

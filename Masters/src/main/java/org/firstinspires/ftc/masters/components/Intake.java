@@ -18,7 +18,7 @@ public class Intake {
 
     PIDController pidController;
 
-    public static double p = 0.04, i = 0, d = 0;
+    public static double p = 0.003, i = 0, d = 0.00001;
 
     Init init;
 
