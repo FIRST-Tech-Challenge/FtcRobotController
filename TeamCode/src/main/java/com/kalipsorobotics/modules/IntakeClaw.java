@@ -102,7 +102,7 @@ public class IntakeClaw {
     public static final double INTAKE_SMALL_PIVOT_GRAB_SAMPLE_3_POS = 0.61;
 
 
-    private OpModeUtilities opModeUtilities;
+    private final OpModeUtilities opModeUtilities;
 
     private KServo intakeLinkageServo;
 
@@ -140,7 +140,7 @@ public class IntakeClaw {
     }
 
     private static void resetHardwareMap(HardwareMap hardwareMap, IntakeClaw intakeClaw) {
-        intakeClaw.intakeLinkageServo = new KServo(hardwareMap.servo.get("intakeLinkage"), 45/1,
+        intakeClaw.intakeLinkageServo = new KServo(hardwareMap.servo.get("intakeLinkage"), 45,
                 130, 0, false);
 
         intakeClaw.intakeBigSweepServo = new KServo(hardwareMap.servo.get("intakeBigSweep"), 60/0.25,
@@ -158,7 +158,7 @@ public class IntakeClaw {
         intakeClaw.intakeClawServo = new KServo(hardwareMap.servo.get("intakeClaw"), 60/0.25,     //mini axon
                 255, 0, false);
 
-        intakeClaw.intakeRatchetServo = new KServo(hardwareMap.servo.get("intakeRatchet"), 45/1,
+        intakeClaw.intakeRatchetServo = new KServo(hardwareMap.servo.get("intakeRatchet"), 45,
                 180, 0, false);
     }
 

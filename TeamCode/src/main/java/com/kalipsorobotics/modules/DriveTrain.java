@@ -16,7 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class DriveTrain {
     private static DriveTrain single_instance = null;
 
-    private OpModeUtilities opModeUtilities;
+    private final OpModeUtilities opModeUtilities;
     //private final DcMotor testMotorDeleteLater;
     private DcMotor fLeft = null;
     private DcMotor fRight = null;

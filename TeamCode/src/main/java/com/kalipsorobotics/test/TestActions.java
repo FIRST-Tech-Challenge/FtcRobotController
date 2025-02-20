@@ -638,11 +638,7 @@ public class TestActions extends LinearOpMode {
             return true;
         }
 
-        if (!specimenWallReady.checkDoneCondition()) {
-            return true;
-        }
-
-        return false;
+        return !specimenWallReady.checkDoneCondition();
     }
 
 

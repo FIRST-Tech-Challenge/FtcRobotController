@@ -13,7 +13,7 @@ public class MoveToDistanceThreshold extends Action {
 
     double startTime;
 
-    private double timeoutMM;
+    private final double timeoutMM;
 
     public MoveToDistanceThreshold(DriveTrain driveTrain, DistanceDetectionAction distanceDetectionAction,
                                    double power, double timeoutMM) {

@@ -16,7 +16,7 @@ public class Outtake {
     private static Outtake single_instance = null;
 
     //TODO MAKE PRIVATE
-    private OpModeUtilities opModeUtilities;
+    private final OpModeUtilities opModeUtilities;
     public DcMotor linearSlide1, linearSlide2;
     public KServo outtakePivotServo;
     public KServo outtakeClawServo;

@@ -15,9 +15,9 @@ import org.opencv.core.Point;
 
 public class KalmanFilter {
     // Kalman filter parameters for x and y coordinates
-    private double q; // Process noise covariance
-    private double r; // Measurement noise covariance
-    private double t; // Heading Noise
+    private final double q; // Process noise covariance
+    private final double r; // Measurement noise covariance
+    private final double t; // Heading Noise
     private double x; // Estimated value (x)
     private double y; // Estimated value (y)
     private double h; // Estimated Value (heading)

@@ -107,7 +107,7 @@ public class AutoBasketFunnel extends LinearOpMode {
             moveToBasket1 = new PurePursuitAction(driveTrain, wheelOdometry);
             moveToBasket1.setName("moveToBasket3");
             //move sample 3 to basket
-            moveToBasket1.addPoint(SampleToBasketFunnelRoundTrip.OUTTAKE_X_POS - 300,
+            moveToBasket1.addPoint(SampleToBasketFunnelRoundTrip.OUTTAKE_X_POS - 100,
                     SampleToBasketFunnelRoundTrip.OUTTAKE_Y_POS - 125, -135,
                     PurePursuitAction.P_XY_FAST,
                     PurePursuitAction.P_ANGLE);
@@ -115,7 +115,7 @@ public class AutoBasketFunnel extends LinearOpMode {
                     -135, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
             redAutoBasket.addAction(moveToBasket1);
 
-            WaitAction waitForPurePure = new WaitAction(1000);
+            WaitAction waitForPurePure = new WaitAction(500);
             waitForPurePure.setName("waitForPurePure");
             redAutoBasket.addAction(waitForPurePure);
 
@@ -192,7 +192,7 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         SampleIntakeReady sampleIntakeReady3 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw, IntakeClaw.INTAKE_SMALL_SWEEP_VERTICAL_POS);
         sampleIntakeReady3.setName("sampleIntakeReady3");
-        sampleIntakeReady3.setDependentActions(sampleToBasketFunnelRoundTrip2);
+        sampleIntakeReady3.setDependentActions(sampleToBasketFunnelRoundTrip2, moveToSample3);
         redAutoBasket.addAction(sampleIntakeReady3);
 
         WaitAction waitAction3 = new WaitAction(300); // Make sure linkage fully extends (sample 3)
@@ -326,10 +326,10 @@ public class AutoBasketFunnel extends LinearOpMode {
             redAutoBasket.updateCheckDone();
 
         }
-        Log.d("executor service", "before shutdown" + SharedData.getOdometryPosition().toString());
+        Log.d("executor service", "before shutdown" + SharedData.getOdometryPosition());
         OpModeUtilities.shutdownExecutorService(executorService);
         Log.d("executor service",
-                "after shutdown" + SharedData.getOdometryPosition().toString() + "is shutdown " + executorService.isShutdown() + "is terminated " + executorService.isTerminated());
+                "after shutdown" + SharedData.getOdometryPosition() + "is shutdown " + executorService.isShutdown() + "is terminated " + executorService.isTerminated());
 
     }
 }

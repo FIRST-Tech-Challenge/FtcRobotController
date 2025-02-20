@@ -90,7 +90,7 @@ public class AutoSpecimen2Pre extends LinearOpMode {
 
         //================begin of first specimen=============//
         FirstWallToBarRoundTrip firstWallToBarRoundTrip = new FirstWallToBarRoundTrip(driveTrain, wheelOdometry,
-                outtake, 175);
+                outtake, 160);
         firstWallToBarRoundTrip.setName("firstWallToBarRoundTrip");
         //firstWallToBarRoundTrip.setTelemetry(telemetry);
         firstWallToBarRoundTrip.setDependentActions(delayBeforeStart);
@@ -98,7 +98,8 @@ public class AutoSpecimen2Pre extends LinearOpMode {
         //===============end of first specimen===============//
 
         //================begin of second specimen=============//
-        WallToBarMoveHang wallToBarMoveHang = new WallToBarMoveHang(driveTrain, wheelOdometry, outtake, 250);
+        WallToBarMoveHang wallToBarMoveHang = new WallToBarMoveHang(driveTrain, wheelOdometry,
+                outtake, 260);
         wallToBarMoveHang.setName("wallToBarHangRoundTripPre2");
         //wallToBarMoveHang.setTelemetry(telemetry);
         wallToBarMoveHang.setDependentActions(firstWallToBarRoundTrip);
@@ -178,7 +179,7 @@ public class AutoSpecimen2Pre extends LinearOpMode {
 
         //=============begin of third specimen=================
         WallToBarHangRoundTrip wallToBarHangRoundTrip2 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, 320); //400 //375
+                outtake, 360); //400 //375
         wallToBarHangRoundTrip2.setName("wallToBarHangRoundTrip2");
         //wallToBarHangRoundTrip2.setTelemetry(telemetry);
         wallToBarHangRoundTrip2.setDependentActions(wallPickupDistanceSensorAction, moveFloorSamples); //move to distance
@@ -187,7 +188,7 @@ public class AutoSpecimen2Pre extends LinearOpMode {
 
         //============begin of fourth================
         WallToBarHangRoundTrip wallToBarHangRoundTrip3 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake,380); //500 //450
+                outtake,460); //500 //450
         wallToBarHangRoundTrip3.setName("wallToBarHangRoundTrip3");
         //wallToBarHangRoundTrip3.setTelemetry(telemetry);
         wallToBarHangRoundTrip3.setDependentActions(wallToBarHangRoundTrip2);

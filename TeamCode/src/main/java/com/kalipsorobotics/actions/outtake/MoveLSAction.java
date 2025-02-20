@@ -161,9 +161,9 @@ public class MoveLSAction extends Action {
 
 
     public void setOverridePower(double power) {
-        Log.d("Outtake_LS", "override power is set to " + power);
+        //Log.d("Outtake_LS", "override power is set to " + power);
         overridePower = power;
-        Log.d("Outtake_LS", "override power is " + overridePower);
+        //Log.d("Outtake_LS", "override power is " + overridePower);
     }
 
     public void setOverrideOn(boolean isOverrideOn) {
@@ -171,7 +171,7 @@ public class MoveLSAction extends Action {
     }
 
     static public void setGlobalLinearSlideMaintainTicks(double pos) {
-        Log.d("Outtake_LS setGlobalLinearSlideMaintainTicks", "setGlobal " + pos);
+        //Log.d("Outtake_LS setGlobalLinearSlideMaintainTicks", "setGlobal " + pos);
         if (pos < MIN_RANGE_LS_TICKS) {
             globalLinearSlideMaintainTicks = MIN_RANGE_LS_TICKS;
         } else if (pos > MAX_RANGE_LS_TICKS) {
@@ -196,22 +196,22 @@ public class MoveLSAction extends Action {
         }
 
         if ((Math.abs(targetErrorTicks) <= ERROR_TOLERANCE_TICKS)) {
-            Log.d("Outtake_LS", String.format("action done for=%s, targetErrorTicks=%.3f, errorTolerance=%.3f, " +
-                            "targetTicks=%.3f, " +
-                            "currentTicks=%.3f, ",
-                    this.name, targetErrorTicks, ERROR_TOLERANCE_TICKS, targetTicks,
-                    currentTicks));
+            //Log.d("Outtake_LS", String.format("action done for=%s, targetErrorTicks=%.3f, errorTolerance=%.3f, " +
+//                            "targetTicks=%.3f, " +
+//                            "currentTicks=%.3f, ",
+//                    this.name, targetErrorTicks, ERROR_TOLERANCE_TICKS, targetTicks,
+//                    currentTicks));
             finish();
             return true;
         }
 
         if(velocityMMperMS < (0.0001)) {
             if(timeoutTimer.milliseconds() > 100) {
-                Log.d("Outtake_LS", String.format("action timeout =%s, targetErrorTicks=%.3f, errorTolerance=%.3f, " +
-                                "targetTicks=%.3f, " +
-                                "currentTicks=%.3f, ",
-                        this.name, targetErrorTicks, ERROR_TOLERANCE_TICKS, targetTicks,
-                        currentTicks));
+                //Log.d("Outtake_LS", String.format("action timeout =%s, targetErrorTicks=%.3f, errorTolerance=%.3f, " +
+//                                "targetTicks=%.3f, " +
+//                                "currentTicks=%.3f, ",
+//                        this.name, targetErrorTicks, ERROR_TOLERANCE_TICKS, targetTicks,
+//                        currentTicks));
                 finish();
                 return true;
             }
@@ -230,7 +230,7 @@ public class MoveLSAction extends Action {
 
         if(!hasStarted) {
             setGlobalLinearSlideMaintainTicks(targetTicks);
-            Log.d("Outtake_LS", "name " + getName() + " set global to " + globalLinearSlideMaintainTicks);
+            //Log.d("Outtake_LS", "name " + getName() + " set global to " + globalLinearSlideMaintainTicks);
             hasStarted = true;
             lastTicks = linearSlide1.getCurrentPosition();
             timeoutTimer.reset();
@@ -239,7 +239,7 @@ public class MoveLSAction extends Action {
 
         this.currentTicks = linearSlide1.getCurrentPosition();
 
-        Log.d("Outtake_LS", "global maintanance pos" + globalLinearSlideMaintainTicks);
+        //Log.d("Outtake_LS", "global maintanance pos" + globalLinearSlideMaintainTicks);
 
         //soft stop for low and high
         if (targetTicks > MAX_RANGE_LS_TICKS) {
@@ -252,14 +252,14 @@ public class MoveLSAction extends Action {
 
         double power = calculatePower(targetErrorTicks);
 
-        Log.d("Outtake_LS", String.format(
-                "Setting power, %s targetErrorTicks=%.3f, errorTolerance=%.3f, targetTicks=%.3f" +
-                        "currentTicks=%.3f, " +
-                        "power=%.3f",
-                name, targetErrorTicks, ERROR_TOLERANCE_TICKS, targetTicks,
-                currentTicks, power));
+        //Log.d("Outtake_LS", String.format(
+//                "Setting power, %s targetErrorTicks=%.3f, errorTolerance=%.3f, targetTicks=%.3f" +
+//                        "currentTicks=%.3f, " +
+//                        "power=%.3f",
+//                name, targetErrorTicks, ERROR_TOLERANCE_TICKS, targetTicks,
+//                currentTicks, power));
 
-        Log.d("Outtake_LS", "before overriding power, override power is " + overridePower);
+        //Log.d("Outtake_LS", "before overriding power, override power is " + overridePower);
         if (overrideOn){
             if (power < 0) { //goes down
                 power = overridePower * (-1);
@@ -267,7 +267,7 @@ public class MoveLSAction extends Action {
             if (power > 0){ //goes up
                 power = overridePower;
             }
-            Log.d("Outtake_LS", "override power is:" + overridePower + ", power is:" + power);
+            //Log.d("Outtake_LS", "override power is:" + overridePower + ", power is:" + power);
         }
 
         velocityMMperMS = (Math.abs(lastTicks - currentTicks)) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
@@ -282,6 +282,6 @@ public class MoveLSAction extends Action {
     private void setLSPower(double power) {
         linearSlide1.setPower(power);
         linearSlide2.setPower(power);
-        Log.d("Outtake_LS_power", name + " final power set to " + power);
+        //Log.d("Outtake_LS_power", name + " final power set to " + power);
     }
 }

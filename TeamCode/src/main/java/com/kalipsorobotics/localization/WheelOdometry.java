@@ -54,7 +54,7 @@ public class WheelOdometry {
         resetHardware(opModeUtilities, driveTrain, imuModule, this);
 
         this.currentPosition = new Position(xCoordinate, yCoordinate, Math.toRadians(thetaDeg));
-        Log.d("purepursaction_debug_odo_wheel", "init jimmeh" + currentPosition.toString());
+        ////Log.d("purepursaction_debug_odo_wheel", "init jimmeh" + currentPosition.toString());
         prevTime = SystemClock.elapsedRealtime();
         prevImuHeading = getIMUHeading();
         currentImuHeading = prevImuHeading;
@@ -132,16 +132,16 @@ public class WheelOdometry {
 //        newPosition = kalmanFilter.update(new Position(0, 0, imuDeltaTheta));
 //        newPosition = kalmanFilter.update(new Position(0, 0, encoderDeltaTheta));
 
-        Log.d("purepursaction_debug_odo_wheel_deltaTheta",
-                String.format("encoder = %.4f, imu = %.4f, arcTan = %.4f", encoderDeltaTheta, imuDeltaTheta,
-                        arcTanDeltaTheta));
+        ////Log.d("purepursaction_debug_odo_wheel_deltaTheta",
+        //        String.format("encoder = %.4f, imu = %.4f, arcTan = %.4f", encoderDeltaTheta, imuDeltaTheta,
+        //                arcTanDeltaTheta));
         //double blendedDeltaTheta = (newPosition.getTheta());
 
 //        double blendedDeltaTheta =
 //                (wheelHeadingWeight * encoderDeltaTheta) + (imuHeadingWeight * imuDeltaTheta) + (wheelHeadingWeight * arcTanDeltaTheta);
 
-        Log.d("sensor_data",
-                currentImuHeading + ", " + imuDeltaTheta + ", " + arcTanDeltaTheta + ", " + encoderDeltaTheta +  ", " + deltaTimeMS + ", " + (imuDeltaTheta / deltaTimeMS));
+        //        currentImuHeading + ", " + imuDeltaTheta + ", " + arcTanDeltaTheta + ", " + encoderDeltaTheta +  ",
+        //        " + deltaTimeMS + ", " + (imuDeltaTheta / deltaTimeMS));
 
 
         double blendedDeltaTheta = sensorFusion.getFilteredAngleDelta(imuDeltaTheta, arcTanDeltaTheta, deltaTimeMS,
@@ -165,7 +165,7 @@ public class WheelOdometry {
             return relativeDelta;
         }
 
-        Log.d("odometry", "linearDelta " + relativeDelta);
+        //Log.d("odometry", "linearDelta " + relativeDelta);
         double forwardRadius = relativeDelta.getX() / relativeDelta.getTheta();
         double strafeRadius = relativeDelta.getY() / relativeDelta.getTheta();
 
@@ -180,7 +180,7 @@ public class WheelOdometry {
 
         Velocity arcDelta = new Velocity(relDeltaX, relDeltaY, relDeltaTheta);
         if (Math.abs(arcDelta.getTheta()) > 0.01) {
-            Log.d("odometry new arc delta", "arcDelta4" + arcDelta);
+            //Log.d("odometry new arc delta", "arcDelta4" + arcDelta);
         }
         return arcDelta;
     }
@@ -204,7 +204,7 @@ public class WheelOdometry {
 
     private Position calculateGlobal(Velocity relativeDelta, Position previousGlobalPosition) {
         Velocity globalDelta = rotate(relativeDelta, previousGlobalPosition);
-        Log.d("global delta", globalDelta.toString());
+        //Log.d("global delta", globalDelta.toString());
         Position position = previousGlobalPosition.add(globalDelta);
         return position;
     }
@@ -233,21 +233,21 @@ public class WheelOdometry {
         currentImuHeading = getIMUHeading();
         currentSparkFunImuHeading = getSparkFunIMUHeading();
 
-        Log.d("updatepos", rightDistanceMM + " " + leftDistanceMM + " " + backDistanceMM);
+        //Log.d("updatepos", rightDistanceMM + " " + leftDistanceMM + " " + backDistanceMM);
 
         long currentTime = SystemClock.elapsedRealtime();
         double timeElapsedSeconds = (currentTime - prevTime) / 1000.0;
 
         Velocity relativeDelta = calculateRelativeDelta(rightDistanceMM, leftDistanceMM,
                 backDistanceMM, timeElapsedSeconds * 1000);
-        Log.d("relativeDelta", relativeDelta.toString());
+        //Log.d("relativeDelta", relativeDelta.toString());
         relativeDelta = linearToArcDelta(relativeDelta);
 
         currentVelocity = relativeDelta.divide(timeElapsedSeconds);
         prevTime = currentTime;
 
         currentPosition = calculateGlobal(relativeDelta, currentPosition);
-        Log.d("currentpos", "current pos " + currentPosition.toString());
+        //Log.d("currentpos", "current pos " + currentPosition.toString());
 
         prevRightDistanceMM = rightDistanceMM;
         prevLeftDistanceMM = leftDistanceMM;

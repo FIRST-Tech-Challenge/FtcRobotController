@@ -23,7 +23,7 @@ import java.util.Optional;
 public class PurePursuitAction extends Action {
 
     public static final double P_XY = 1.0/600.0;
-    public static final double P_ANGLE = 0.7 * 1.0 / Math.toRadians(90);
+    public static final double P_ANGLE = 0.7 / Math.toRadians(90);
     public static final double P_XY_FAST = 1.0/100.0;
     public static final double P_ANGLE_FAST = 1.0/ Math.toRadians(30);
     public static final double P_XY_SLOW = 1.0/800.0;
@@ -90,7 +90,7 @@ public class PurePursuitAction extends Action {
 
         this.prevFollow = Optional.empty();
 
-        Log.d("purepursaction", "constructed");
+        //Log.d("purepursaction", "constructed");
 
         this.dependentActions.add(new DoneStateAction());
     }
@@ -107,7 +107,7 @@ public class PurePursuitAction extends Action {
 
         this.prevFollow = Optional.empty();
 
-        Log.d("purepursaction", "constructed");
+        //Log.d("purepursaction", "constructed");
 
         this.dependentActions.add(new DoneStateAction());
     }
@@ -116,12 +116,12 @@ public class PurePursuitAction extends Action {
         double headingRad = Math.toRadians(headingDeg);
         double[] adaptiveP = calcAdaptiveP(x, y, headingRad);
         pathPoints.add(new Position(x, y, headingRad, adaptiveP[0], adaptiveP[1]));
-        Log.d("purepursaction", "added point " + x + ", " + y);
+        //Log.d("purepursaction", "added point " + x + ", " + y);
     }
 
     public void addPoint(double x, double y, double headingDeg, double pXY, double pAngle) {
         pathPoints.add(new Position(x, y, Math.toRadians(headingDeg), pXY, pAngle));
-        Log.d("purepursaction", "added point " + x + ", " + y);
+        //Log.d("purepursaction", "added point " + x + ", " + y);
     }
 
     public double[] calcAdaptiveP(double x, double y, double theta) {
@@ -151,8 +151,8 @@ public class PurePursuitAction extends Action {
             adaptiveTheta += (headingDelta - ANGLE_THRESHOLD) / (MAX_ANGLE_THRESHOLD - ANGLE_THRESHOLD) * (1 - P_ANGLE);
         }
 
-        Log.d("purepursaction_adaptiveP", String.format("action distance %f, P increased from %f to %f", actionDistance, P_XY, adaptiveXY));
-        Log.d("purepursaction_adaptiveP", String.format("heading delta %f, P increased from %f to %f", headingDelta, P_ANGLE, adaptiveTheta));
+        //Log.d("purepursaction_adaptiveP", String.format("action distance %f, P increased from %f to %f", actionDistance, P_XY, adaptiveXY));
+        //Log.d("purepursaction_adaptiveP", String.format("heading delta %f, P increased from %f to %f", headingDelta, P_ANGLE, adaptiveTheta));
         return new double[]{adaptiveXY, adaptiveTheta};
     }
 
@@ -180,19 +180,21 @@ public class PurePursuitAction extends Action {
         double powerX = target.getPidX().getPower(xError);
         double powerY = target.getPidY().getPower(yError);
 
-        Log.d("directionalpower", String.format("power x=%.4f, power y=%.5f, powertheta=%.6f", powerX, powerY,
-                powerAngle));
+        //Log.d("directionalpower", String.format("power x=%.4f, power y=%.5f, powertheta=%.6f", powerX, powerY,
+                //powerAngle));
 
         double fLeftPower = powerX + powerY + powerAngle;
         double bLeftPower = powerX - powerY + powerAngle;
         double fRightPower = powerX - powerY - powerAngle;
         double bRightPower = powerX + powerY - powerAngle;
 
-        Log.d("PurePursuit_Log", "running " + name + "set power values " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower);
+        //Log.d("PurePursuit_Log",
+                //"running " + name + "set power values " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " +
+                //bRightPower);
 
         driveTrain.setPowerWithRangeClippingMinThreshold(fLeftPower, fRightPower, bLeftPower, bRightPower, 0.4);
 //        driveTrain.setPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
-        Log.d("purepursactionlog", "target position " + target.getX() + " " + target.getY() + " " + targetAngle);
+        //Log.d("purepursactionlog", "target position " + target.getX() + " " + target.getY() + " " + targetAngle);
         prevFollow = Optional.of(target);
     }
 
@@ -228,7 +230,7 @@ public class PurePursuitAction extends Action {
 
         if (elapsedTime >= maxTimeOutMS) {
             setIsDone(true);
-            Log.d("purepursaction_debug_follow", "done timeout  " + getName());
+            //Log.d("purepursaction_debug_follow", "done timeout  " + getName());
             return;
         }
 
@@ -243,18 +245,18 @@ public class PurePursuitAction extends Action {
         follow = path.lookAhead(currentPosition, prevFollow, currentLookAheadRadius);
 
         if (follow.isPresent()) {
-            Log.d("purepursaction_debug_follow",
-                    "follow point:  " + follow.get());
-            Log.d("purepursaction_debug_follow", "current pos:    " + currentPosition.toString());
+            //Log.d("purepursaction_debug_follow",
+                    //"follow point:  " + follow.get());
+            //Log.d("purepursaction_debug_follow", "current pos:    " + currentPosition.toString());
             targetPosition(follow.get(), currentPosition);
 
         } else {
             if (Math.abs(lastPoint.getTheta() - currentPosition.getTheta()) <= Math.toRadians(1.5) ) {
                 finishedMoving();
             } else {
-                Log.d("purepursaction_debug_follow",
-                        "locking final angle:  " + lastPoint);
-                Log.d("purepursaction_debug_follow", "current pos:    " + currentPosition.toString());
+                //Log.d("purepursaction_debug_follow",
+                        //"locking final angle:  " + lastPoint);
+                //Log.d("purepursaction_debug_follow", "current pos:    " + currentPosition.toString());
                 targetPosition(lastPoint, currentPosition);
             }
         }
@@ -283,14 +285,15 @@ public class PurePursuitAction extends Action {
 
     public void finishedMoving() {
         driveTrain.setPower(0);
-        Log.d("purepursaction_debug_follow", "timeout");
-        Log.d("purepursaction_debug_follow", "current pos:    " + currentPosition.toString());
+        //Log.d("purepursaction_debug_follow", "timeout");
+        //Log.d("purepursaction_debug_follow", "current pos:    " + currentPosition.toString());
         checkDoneCounter++;
 
-        Log.d("purepursaction_debug_checkDone", "checkDoneCounter: " + checkDoneCounter + "name:" +  name);
+        //Log.d("purepursaction_debug_checkDone", "checkDoneCounter: " + checkDoneCounter + "name:" +  name);
 
         if (checkDoneCounter >= maxCheckDoneCounter) {
-            Log.d("purepursaction_debug_checkDone", "Done" + checkDoneCounter + "name:" +  name + "Pos: " + currentPosition);
+            //Log.d("purepursaction_debug_checkDone",
+                    //"Done" + checkDoneCounter + "name:" +  name + "Pos: " + currentPosition);
             isDone = true;
         }
 

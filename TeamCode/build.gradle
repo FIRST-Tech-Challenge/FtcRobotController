@@ -16,6 +16,14 @@ apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
 android {
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
     namespace = 'org.firstinspires.ftc.teamcode'
     androidResources {
         noCompress 'tflite'

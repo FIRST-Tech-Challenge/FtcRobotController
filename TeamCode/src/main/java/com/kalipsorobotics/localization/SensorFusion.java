@@ -11,7 +11,7 @@ public class SensorFusion {
 
     private final double BUFFER_SIZE = 3;
 
-    private LinkedList<Double> imuHistory = new LinkedList<>();
+    private final LinkedList<Double> imuHistory = new LinkedList<>();
 
     private double angleEstimateDelta = 0;
     private double angleVariance = 1;
