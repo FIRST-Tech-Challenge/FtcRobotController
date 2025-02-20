@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Disabled
@@ -18,6 +19,7 @@ public class TwoFishDelivery {
     private Servo pitch1 = null;
     private Servo pitch2 = null;
     private Servo wrist = null;
+    private VoltageSensor voltageSensor = null;
 
 
     private LinearOpMode linearOpMode;
@@ -45,6 +47,8 @@ public class TwoFishDelivery {
 
     private void Initialize(){//4mm
         try {
+            voltageSensor = linearOpMode.hardwareMap.get(VoltageSensor.class, "Control Hub");
+
             slide  = linearOpMode.hardwareMap.get(DcMotor.class, "deliverySlide");
             pitch1 = linearOpMode.hardwareMap.get(Servo.class, "deliveryPitchLeft");
             pitch2 = linearOpMode.hardwareMap.get(Servo.class, "deliveryPitchRight");
@@ -53,6 +57,7 @@ public class TwoFishDelivery {
             claw.scaleRange(0.0, 1);
             pitch1.scaleRange(0.0, 1);
             pitch2.scaleRange(0.0, 1);
+            pitch2.setDirection(Servo.Direction.REVERSE);
             slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             slide.setTargetPosition(0);
@@ -73,6 +78,10 @@ public class TwoFishDelivery {
             linearOpMode.telemetry.addData("Couldn't find delivery.       Attempt: ", initAttempts);
             isDisabled = true;
         }
+    }
+
+    public void resetPWM(){
+        pitch1.getController().pwmDisable();
     }
 
     public void setSlidesTargetPosition(int clicks){
@@ -97,7 +106,7 @@ public class TwoFishDelivery {
     }
     public void setPitch(double pitchPosition){
         pitch1.setPosition(pitchPosition);
-        pitch2.setPosition(1-pitchPosition);
+        pitch2.setPosition(pitchPosition);
     }
     public void setWrist(double rollPosition){
         wrist.setPosition(rollPosition);

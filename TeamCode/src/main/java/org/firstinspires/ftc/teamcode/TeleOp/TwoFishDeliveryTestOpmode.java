@@ -74,6 +74,10 @@ public class TwoFishDeliveryTestOpmode extends LinearOpMode {
                     currentServo = "wrist";
             }
 
+            if(gamepad1.a){
+                twoFishDelivery.resetPWM();
+            }
+
             twoFishDelivery.addServoTelemetry();
             telemetry.addData("Currently controlling ", currentServo + " servo.");
 
