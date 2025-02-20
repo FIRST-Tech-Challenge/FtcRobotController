@@ -30,6 +30,9 @@ public class TeleopManualV2Blue extends LinearOpMode {
     control: extendo half out
     control: extendo full out
 
+    control: to neutral
+    control to transfer
+
     2nd controller
     vertical slide reset
     extendo back in
@@ -76,8 +79,7 @@ public class TeleopManualV2Blue extends LinearOpMode {
 
         waitForStart();
 
-        intake.transferIntake();
-        intake.closeGate();
+        intake.initStatusTeleop();
 
 
         while (opModeIsActive()) {
@@ -92,7 +94,7 @@ public class TeleopManualV2Blue extends LinearOpMode {
             }
 
             if (gamepad1.right_stick_x > 0.2){
-                intake.startIntake();
+
             } else if (gamepad1.right_stick_x < -0.2) {
                 intake.ejectIntake();
             }
@@ -128,8 +130,10 @@ public class TeleopManualV2Blue extends LinearOpMode {
                 outtake.score();
             }
 
-            if (gamepad1.dpad_down) {
-                intake.transferIntake();
+            if (gamepad1.right_bumper) {
+                intake.toTransfer();
+            } else if (gamepad1.left_bumper){
+                intake.toNeutral();
             }
 
             // Controller 2 anti-fuck up code
