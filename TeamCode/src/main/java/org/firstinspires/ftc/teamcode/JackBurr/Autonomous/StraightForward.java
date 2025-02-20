@@ -20,12 +20,12 @@ import org.firstinspires.ftc.teamcode.JackBurr.Odometry.PedroPathing.constants.L
 
 @Autonomous
 @Config
-public class LeftAutoV9 extends LinearOpMode {
+public class StraightForward extends LinearOpMode {
     public Follower follower;
     public boolean traj1followed = false;
     public PathChain scorePreloadChain;
     public static Pose startPose = new Pose(38, 62, Math.toRadians(270));
-    public static Pose bucket = new Pose(50, 52, Math.toRadians(45));
+    public static Pose bucket = new Pose(38, 32, Math.toRadians(270));
 
     public Path scorePreload;
 
@@ -44,7 +44,7 @@ public class LeftAutoV9 extends LinearOpMode {
         scorePreload = new Path(new BezierLine(new Point(startPose), new Point(bucket)));
         scorePreloadChain = follower.pathBuilder()
                 .addPath(scorePreload)
-                .setLinearHeadingInterpolation(startPose.getHeading(), bucket.getHeading())
+                .setConstantHeadingInterpolation(startPose.getHeading())
                 .setPathEndTimeoutConstraint(0)
                 .addTemporalCallback(0, ()->{
                     slides.runLeftSlideToPositionPID(constants.LEFT_SLIDE_HIGH_BASKET);
@@ -57,13 +57,19 @@ public class LeftAutoV9 extends LinearOpMode {
             if (step == 1) {
                 if(!traj1followed && !follower.isBusy()) {
                     follower.followPath(scorePreloadChain, true);
+                    follower.update();
+                    traj1followed = true;
                 }
                 else if(traj1followed && !follower.isBusy()) {
                     step = 2;
+                    traj1followed = false;
                 }
             }
             if (step == 2) {
-
+                if(!follower.isBusy() && !traj1followed) {
+                    follower.turnTo(bucket.getHeading());
+                    traj1followed = true;
+                }
             }
             if (isStopRequested()) {
                 return;

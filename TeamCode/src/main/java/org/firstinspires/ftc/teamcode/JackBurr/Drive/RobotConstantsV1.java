@@ -8,9 +8,9 @@ public class RobotConstantsV1 {
     //Port 0
 
     //GRIPPERS=======================================================================================================
-    public double GRIPPERS_OPEN = 0.8;
+    public double GRIPPERS_OPEN = 0.45;
     public double GRIPPERS_CLOSE = 0;
-    public double GRIPPERS_GRAB = 0.4;
+    public double GRIPPERS_GRAB = 0.05;
     public double DELIVERY_GRIPPERS_CLOSE = 0.85;
     public double DELIVERY_GRIPPERS_GRAB = 0.58;
     public double DELIVERY_GRIPPERS_OPEN = 0.3;
@@ -34,7 +34,7 @@ public class RobotConstantsV1 {
     public double DELIVERY_DROP = 0.585; //0.64
     public double DELIVERY_HIGH_BAR = 0.575; //0.63
     public double DELIVERY_WALL_PICKUP = 0.755; //0.81
-    public double WRIST_CENTER = 0.48;
+    public double WRIST_CENTER = 0.21;
     //MOTORS=========================================================================================================
     public int INTAKE_MOTOR_IN = 3;
     public int INTAKE_MOTOR_OUT = 850;
