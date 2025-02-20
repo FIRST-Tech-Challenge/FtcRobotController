@@ -87,7 +87,7 @@ public class TeleopManualV2Blue extends LinearOpMode {
             if (gamepad1.right_stick_y > 0.5){
                 intake.retractSlide();
             } else if (gamepad1.right_stick_y < -0.5) {
-                //extends / eject to human player
+                // extends/ejects to human player
                 intake.extendSlideHumanPlayer();
             }
 
@@ -103,9 +103,7 @@ public class TeleopManualV2Blue extends LinearOpMode {
 
 
             if (gamepad1.dpad_left) {
-
                 outtake.moveToPickUpFromWall();
-
             } else if (gamepad1.dpad_up) {
                 intake.extendSlideMax();
             } else if (gamepad1.dpad_down){
@@ -129,8 +127,6 @@ public class TeleopManualV2Blue extends LinearOpMode {
             } else if (gamepad1.y){
                 outtake.score();
             }
-
-
 
             if (gamepad1.dpad_down) {
                 intake.transferIntake();
@@ -168,3 +164,5 @@ public class TeleopManualV2Blue extends LinearOpMode {
         }
     }
 }
+
+// manual transfer or neutral

@@ -223,7 +223,7 @@ public class Intake {
 
 //            telemetry.addData("extendo PID",pid);
 
-        //    extendo.setPower(pid);
+            extendo.setPower(pid);
 
 
 //            if (status == Status.MOVE_TO_TRANSFER && elapsedTime!=null && elapsedTime.milliseconds()>500){

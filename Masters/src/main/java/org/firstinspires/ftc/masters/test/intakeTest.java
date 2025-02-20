@@ -62,6 +62,12 @@ public class intakeTest extends LinearOpMode {
             if (gamepad1.dpad_down){
                 intake.setPower(ITDCons.intakeTransferSpeed);
             }
+
+            if (gamepad1.dpad_up){
+                intakeLeft.setPosition(ITDCons.intakeArmNeutral);
+                intakeRight.setPosition(ITDCons.intakeChainNeutral);
+            }
+
         }
 
 
