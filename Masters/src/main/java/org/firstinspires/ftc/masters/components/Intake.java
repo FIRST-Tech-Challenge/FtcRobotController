@@ -34,6 +34,8 @@ public class Intake {
     Servo pusher;
     Outtake outtake;
     ITDCons.Color allianceColor;
+    ITDCons.Color color;
+
 
 
     public static double RETRACT_POWER = -0.6;
@@ -42,7 +44,7 @@ public class Intake {
     public static double EJECT_POWER = 0.7;
 
     public enum Status{
-        TRANSFER(0), DROP(0), INIT(0), MOVE_TO_TRANSFER(500), EXTEND_TO_HUMAN(0), EJECT(1000), NEUTRAL(0);
+        TRANSFER(0), DROP(0), INIT(0), EJECT(1000),MOVE_TO_TRANSFER(500), EXTEND_TO_HUMAN(0), EJECT_TO_HUMAN(800), NEUTRAL(0);
         private final long time;
         Status(long time){
             this.time= time;
@@ -59,7 +61,6 @@ public class Intake {
 
     private int target;
 
-    private ITDCons.Color color;
 
     public Intake(Init init, Telemetry telemetry){
         this.telemetry = telemetry;
@@ -73,9 +74,11 @@ public class Intake {
         breakBeam = init.getBreakBeam();
         led = init.getLed();
         pusher = init.getPusherServo();
-        initializeHardware();
+
         status = Status.INIT;
         color= ITDCons.Color.unknown;
+        pidController = new PIDController(p,i,d);
+        target =0;
     }
 
     public void setAllianceColor(ITDCons.Color color){
@@ -94,25 +97,33 @@ public class Intake {
         status=Status.DROP;
     }
 
-    public void setOuttake(Outtake outtake){
-        this.outtake= outtake;
+    public void toNeutral(){
+        intakeToNeutral();
+        stopIntake();
+        if (status == Status.DROP){
+            if (target == ITDCons.MaxExtension){
+                target = ITDCons.halfExtension;
+            } else if (target == ITDCons.halfExtension){
+                target =0;
+            }
+        }
+        status = Status.NEUTRAL;
+    }
+
+    public void toTransfer(){
+        moveIntakeToTransfer();
+        color = ITDCons.Color.yellow;
     }
 
 
-    public void initializeHardware() {
-
-        pidController = new PIDController(p,i,d);
-        target =0;
-
-    }
-
-    public void startIntake (){
+    protected void startIntake (){
         intakeMotor.setPower(INTAKE_POWER);
     }
 
 
     public void ejectIntake(){
         intakeMotor.setPower(EJECT_POWER);
+        color = ITDCons.Color.unknown;
         elapsedTime= new ElapsedTime();
     }
 
@@ -121,12 +132,7 @@ public class Intake {
     }
 
     public void retractSlide() {
-
         target =0;
-    }
-
-    public void retractSlideHalf(){
-        target = ITDCons.MaxExtension/2;
     }
 
     public void extendSlideHumanPlayer(){
@@ -137,10 +143,7 @@ public class Intake {
     }
 
     public void extendSlideHalf() {
-
-        target = ITDCons.MaxExtension/2;
-//        extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        extendo.setPower(EXTEND_POWER);
+        target = ITDCons.halfExtension;
     }
 
     public void extendSlideMax(){
@@ -153,54 +156,30 @@ public class Intake {
         }
     }
 
-    public void retractExtensionFully(){
-        target = ITDCons.MinExtension;
-    }
-
-    public void stopExtendo(){
-        extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        extendo.setPower(0);
-    }
-
-//    public void extendSlide(int position){
-//            extendo.setTargetPosition(position);
-//            extendo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            extendo.setPower(EXTEND_POWER);
-//    }
-
-    public boolean extendoSlideIsBusy(){
-        return extendo.isBusy();
-    }
-
-
-    public double getExtensionPosition(){
-        return extendo.getCurrentPosition();
-    }
-
     public void intakeintake(){
         intakeLeft.setPosition(ITDCons.intakeintakearm);
         intakeRight.setPosition(ITDCons.intakeintakechain);
     }
 
 
-    public void dropIntake(){
+    protected void dropIntake(){
         intakeLeft.setPosition(ITDCons.intakeArmDrop);
         intakeRight.setPosition(ITDCons.intakeChainDrop);
     }
 
-    public void transferIntake(){
+
+    protected void transferIntake(){
         intakeLeft.setPosition(ITDCons.intakeArmTransfer);
         intakeRight.setPosition(ITDCons.intakeChainTransfer);
     }
 
-    public  void intakeToNeutral(){
+    protected void intakeToNeutral(){
         intakeLeft.setPosition(ITDCons.intakeArmNeutral);
         intakeRight.setPosition(ITDCons.intakeChainNeutral);
     }
 
-    public void moveIntakeToTransfer(){
-        intakeLeft.setPosition(ITDCons.intakeArmTransfer);
-        intakeRight.setPosition(ITDCons.intakeChainTransfer);
+    protected void moveIntakeToTransfer(){
+        transferIntake();
         status = Status.MOVE_TO_TRANSFER;
         elapsedTime = new ElapsedTime();
     }
@@ -226,29 +205,39 @@ public class Intake {
             extendo.setPower(pid);
 
 
-//            if (status == Status.MOVE_TO_TRANSFER && elapsedTime!=null && elapsedTime.milliseconds()>500){
-//                status = Status.TRANSFER;
-//                elapsedTime= null;
-//                target =0;
-//            }
-
-
             switch (status){
                 case EXTEND_TO_HUMAN:
-                    if (extendoPos>ITDCons.MaxExtension-50) {
+                    if (extendoPos>ITDCons.MaxExtension-100) {
                         intakeMotor.setPower(ITDCons.intakeEjectSpeed);
-                        status= Status.EJECT;
+                        status= Status.EJECT_TO_HUMAN;
                         elapsedTime = new ElapsedTime();
+                        color= ITDCons.Color.unknown;
                     }
                     break;
+                case EJECT_TO_HUMAN:
+                    if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
+                        intakeMotor.setPower(0);
+                        intakeToNeutral();
+                        extendSlideHalf();
+                        elapsedTime=null;
+                        color= ITDCons.Color.unknown;
+                    }
+                    break;
+
                 case EJECT:
                     if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
                         intakeMotor.setPower(0);
                         intakeToNeutral();
-                        retractSlideHalf();
                         elapsedTime=null;
+                        if (color== ITDCons.Color.yellow){
+                            target=0;
+                        } else {
+                            color= ITDCons.Color.unknown;
+                        }
+
                     }
                     break;
+
                 case DROP: //get samples from submersible
 
                     if (!breakBeam.getState()){
@@ -318,6 +307,10 @@ public class Intake {
 
     public Status getStatus(){
         return status;
+    }
+
+    public void setOuttake(Outtake outtake){
+        this.outtake= outtake;
     }
 
 

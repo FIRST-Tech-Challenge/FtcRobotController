@@ -76,7 +76,7 @@ public class Specimen extends LinearOpMode {
             switch (state){
                 case Lift:
                     if (elapsedTime.milliseconds()>500){
-                        intake.moveIntakeToTransfer();
+//                        intake.toTransfer();
                         follower.followPath(scorePreload);
                         elapsedTime= new ElapsedTime();
                         state=PathState.Start;
