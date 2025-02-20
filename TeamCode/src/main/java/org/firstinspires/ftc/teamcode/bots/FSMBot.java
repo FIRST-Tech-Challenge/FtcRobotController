@@ -1,36 +1,29 @@
 package org.firstinspires.ftc.teamcode.bots;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@Config
 public class FSMBot extends RollerIntakeBot{
     private RollerIntakeBot robot = new RollerIntakeBot(this.opMode);
 
     private ElapsedTime timeSince = new ElapsedTime();
-    public ElapsedTime timer2 = new ElapsedTime();
-    private ElapsedTime timer3 = new ElapsedTime();
-    private ElapsedTime timer4 = new ElapsedTime();
-    private ElapsedTime timer5 = new ElapsedTime();
-    private ElapsedTime timer6 = new ElapsedTime();
-    public ElapsedTime timer7 = new ElapsedTime();
+    public ElapsedTime subRetractTimer = new ElapsedTime();
+    public ElapsedTime subIntakeTimer = new ElapsedTime();
 
+    public ElapsedTime pivotUpTimer = new ElapsedTime();
 
-    public final float INTAKE_ARM_INIT = 0.60f;
-    public final float INTAKE_HINGE_INIT = 0.15f;
-    public final float OUTTAKE_INIT = 0.4f;
-    public final float INTAKE_ARM_TRANSFER = 0.58f;
-    public float INTAKE_HINGE_TRANSFER = 0.113f;
-    public final float OUTTAKE_TRANSFER = 0.4f;
-    public final float INTAKE_ARM_DOWN = 0.86f;
-    public final float INTAKE_HINGE_DOWN = 0.49f;
-    public final float OUTTAKE_DOWN = 0.4f;
-    public final float OUTTAKE_SCORING = 0.70f;
-    public final float INTAKE_ARM_DRIVE = 0.6f;
-    public final float INTAKE_HINGE_DRIVE = 0.12f;
-    public final float OUTTAKE_DRIVE = 0.72f;
+    public ElapsedTime slidesUpTimer = new ElapsedTime();
 
-    public static final int BASE_SLIDE_HEIGHT = 750;
+    public ElapsedTime slidesDownTimer = new ElapsedTime();
+    public ElapsedTime pivotDownTimer = new ElapsedTime();
+
+    public ElapsedTime outtakeTimer = new ElapsedTime();
+
+    public ElapsedTime hangTimer = new ElapsedTime();
+
 
 
     public enum gameState {
@@ -59,15 +52,18 @@ public class FSMBot extends RollerIntakeBot{
 
     public boolean auto;
     public boolean intakeDown = false;
-    public int slidePosition = 0;
-    public int slideHeight = 0;
-    public final int maxSlideHeight = 8;
 
-    public double groundIntakePitchTarget = 54;
-    public double groundIntakeRollTarget = -90;
+    public int intakeSlideMinimum = 180;
 
-    public double wallIntakePitchTarget;
-    public double wallIntakeRollTarget;
+    public double normalIntakePitchTarget = 0;
+
+    public double normalIntakeRollTarget = 0;
+
+    public static double groundIntakePitchTarget = -55;
+    public static double groundIntakeRollTarget = 0;
+
+    public static double wallIntakePitchTarget;
+    public static double wallIntakeRollTarget;
 
     public double specimenHighOuttakeRollTarget;
 
@@ -119,15 +115,17 @@ public class FSMBot extends RollerIntakeBot{
                 currentState = gameState.PRE_DRIVE;
                 break;
             case SUBMERSIBLE_INTAKE_1:
-                robot.slideRunToPosition(100);
-                robot.pivotRunToPosition(10);
+                robot.slideRunToPosition(intakeSlideMinimum);
+                robot.pivotRunToPosition(0);
                 //
-                robot.pitchTo(groundIntakePitchTarget);
-                robot.rollTo(groundIntakeRollTarget);
+                if(subIntakeTimer.milliseconds() > 140){
                 currentState = gameState.SUBMERSIBLE_INTAKE_2;
+                }
+                subRetractTimer.reset();
                 break;
             case SUBMERSIBLE_INTAKE_2:
-
+                robot.pitchTo(groundIntakePitchTarget);
+                robot.rollTo(groundIntakeRollTarget);
                 robot.intake(true);
 //                robot.slideControl(gamepad1.dpad_right, gamepad1.dpad_left);
 //                retractSubIntake(gamepad1.b);
@@ -157,7 +155,7 @@ public class FSMBot extends RollerIntakeBot{
                 //wait
                 robot.rollTo(specimenHighOuttakeRollTarget);
                 //arm up
-                robot.slideRunToPosition(700);
+                robot.slideRunToPosition(sampleSlideDropOffPos);
                 //wait for drive
                 if(specimenScored) {
                     currentState = gameState.ARM_DOWN;
@@ -190,9 +188,11 @@ public class FSMBot extends RollerIntakeBot{
                 break;
             case SAMPLE_SCORING_HIGH_3:
                 robot.outake(true);
-                currentState = gameState.ARM_DOWN;
-                //arm up
-                //wait for score
+                if(outtakeTimer.milliseconds() > 600) {
+                    currentState = gameState.ARM_DOWN;
+                }
+                //outtake
+                //wait arm down
                 break;
             case SAMPLE_SCORING_LOW_1:
                 //pivot up
@@ -204,44 +204,41 @@ public class FSMBot extends RollerIntakeBot{
                 //wait for score
                 break;
             case PRE_DRIVE:
-                robot.pivotRunToPosition(10);
-                robot.pitchTo(0);
-                robot.rollTo(-24.6);
+                robot.pitchTo(normalIntakePitchTarget);
+                robot.rollTo(normalIntakeRollTarget);
+                robot.pivotRunToPosition(0);
+                robot.slideRunToPosition(0);
                 robot.stopRoller();
                 currentState = gameState.DRIVE;
 //                subIntake(gamepad1.b);
 //                raisePivotSample(gamepad1.a);
                 //reset slide, pivot motors, close claw
                 break;
-
             case DRIVE:
 
                 break;
             case HANG_UP:
-//                if(startHang) {
-//                    positionIntake(INTAKE_ARM_DRIVE, INTAKE_HINGE_DRIVE);
-//                    outtake.setPosition(OUTTAKE_DRIVE);
-//
-//                    slideTarget = 1650;
-//                    currentState = gameState.HANG_DOWN;
-//                }
+                robot.rollTo(groundIntakeRollTarget);
+                robot.pitchTo(groundIntakePitchTarget);
+                robot.pivotRunToPosition(-2100);
                 break;
             case HANG_DOWN:
-//                if(downHang) {
-//                    positionIntake(INTAKE_ARM_DRIVE, INTAKE_HINGE_DRIVE);
-//                    outtake.setPosition(OUTTAKE_DRIVE);
-//
-//                    slideTarget = 100;
-//                    currentState = gameState.HANG;
-//                }
+                robot.pivotRunToPosition(0);
+                robot.slideRunToPosition(770);
                 break;
             case ARM_DOWN:
+                robot.pitchTo(normalIntakePitchTarget);
+                robot.rollTo(normalIntakeRollTarget);
                 robot.slideRunToPosition(0);
-                currentState = gameState.PIVOT_DOWN;
+                if(slidesDownTimer.milliseconds() > 300 && robot.getSlidePosition() < 200) {
+                    currentState = gameState.PIVOT_DOWN;
+                }
                 break;
             case PIVOT_DOWN:
-                robot.pivotRunToPosition(10);
-                currentState = gameState.PRE_DRIVE;
+                robot.pivotRunToPosition(0);
+                if(pivotDownTimer.milliseconds() > 100) {
+                    currentState = gameState.PRE_DRIVE;
+                }
                 break;
         }
     }
@@ -249,7 +246,7 @@ public class FSMBot extends RollerIntakeBot{
         if(button) {
             intakeDown = true;
             currentState = gameState.SUBMERSIBLE_INTAKE_1;
-            timer3.reset();
+            subIntakeTimer.reset();
         }
     }
     public void driveSlides (boolean up, boolean down){
@@ -265,21 +262,20 @@ public class FSMBot extends RollerIntakeBot{
         if(button) {
             intakeDown = false;
             currentState = gameState.PRE_DRIVE;
-            timer3.reset();
         }
     }
 
     public void raisePivotSample (boolean button){
         if(button){
             currentState = gameState.SAMPLE_SCORING_HIGH_1;
-            timer3.reset();
+            pivotUpTimer.reset();
         }
     }
 
     public void raiseSlidesSample (boolean button){
         if(button) {
             currentState = gameState.SAMPLE_SCORING_HIGH_2;
-            timer3.reset();
+
         }
     }
 

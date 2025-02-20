@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.bots.FSMBot;
 import org.firstinspires.ftc.teamcode.sample.Sample;
@@ -12,6 +13,8 @@ public class TeleOps extends LinearOpMode {
     private FSMBot robot = new FSMBot(this);
 
     private Sample lastSample = null;
+
+    private ElapsedTime subtimer = new ElapsedTime();
 
     private boolean blueAlliance = true;
 
@@ -37,7 +40,37 @@ robot.currentState = FSMBot.gameState.PRE_DRIVE;
         while(opModeIsActive()){
 //            if(gamepad1.y) {
 //                robot.currentState = FSMBot.gameState.DRIVE;
+            if(robot.currentState == FSMBot.gameState.DRIVE){
+                robot.subIntake(gamepad1.a);
+                robot.raisePivotSample(gamepad1.b);
+                robot.pivotUpTimer.reset();
 
+            }
+            if(robot.currentState == FSMBot.gameState.SUBMERSIBLE_INTAKE_2 && robot.subRetractTimer.milliseconds() > 130){
+                robot.retractSubIntake(gamepad1.a);
+            }
+            if(robot.currentState == FSMBot.gameState.SAMPLE_SCORING_HIGH_1 && robot.pivotUpTimer.milliseconds() > 130){
+                robot.raiseSlidesSample(gamepad1.b);
+                robot.slidesUpTimer.reset();
+            }
+            if(robot.currentState == FSMBot.gameState.SAMPLE_SCORING_HIGH_2 && robot.slidesUpTimer.milliseconds() > 130){
+                if(gamepad1.b) {
+                    robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_3;
+                    robot.outtakeTimer.reset();
+                }
+            }
+            if(robot.currentState == FSMBot.gameState.DRIVE && robot.hangTimer.milliseconds() > 500){
+                if(gamepad2.x){
+                    robot.currentState = FSMBot.gameState.HANG_UP;
+                    robot.hangTimer.reset();
+                }
+            }
+            if(robot.currentState == FSMBot.gameState.HANG_UP && robot.hangTimer.milliseconds() > 500){
+                if(gamepad2.x){
+                    robot.currentState = FSMBot.gameState.HANG_DOWN;
+                    robot.hangTimer.reset();
+                }
+            }
 
             robot.onLoop(0, "manual drive");
 
@@ -49,17 +82,16 @@ robot.currentState = FSMBot.gameState.PRE_DRIVE;
                     gamepad2.left_stick_y, gamepad2.right_stick_x, gamepad2.left_stick_button);
             robot.slideControl(gamepad1.dpad_right, gamepad1.dpad_left);
             robot.pivotControl(gamepad1.dpad_up, gamepad1.dpad_down);
-            if(gamepad1.right_bumper){
+            if(gamepad2.b){
                 robot.currentState = FSMBot.gameState.SPECIMEN_SCORING_HIGH;
             }
             if(gamepad1.left_stick_button){
                 robot.currentState = FSMBot.gameState.PRE_DRIVE;
             }
-            if(gamepad1.a){
-                robot.intake(true);
-            }
 //            robot.intake(gamepad1.a);
-            robot.outake(gamepad1.b);
+            if(robot.currentState == FSMBot.gameState.SUBMERSIBLE_INTAKE_2 || robot.currentState == FSMBot.gameState.DRIVE) {
+                robot.outake(gamepad1.x);
+            }
 
 
 
@@ -102,6 +134,8 @@ robot.currentState = FSMBot.gameState.PRE_DRIVE;
             }
             telemetry.addData("state:",robot.currentState);
             telemetry.addData("slide pos" ,robot.getSlidePosition());
+            telemetry.addData("pivot pos" ,robot.getPivotPosition());
+            telemetry.addData("pivot Target" ,robot.pivotTarget);
             telemetry.addData("Current roll", robot.getCurrentPitch());
             telemetry.addData("Current pitch", robot.getCurrentRoll());
 
