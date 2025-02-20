@@ -104,7 +104,11 @@ robot.currentState = FSMBot.gameState.PRE_DRIVE;
             }
             if(gamepad2.dpad_down){
                 robot.pitch(-1);
-            }
+ telemetry.addData("Current roll", robot.getCurrentPitch());
+            telemetry.addData("Current pitch", robot.getCurrentRoll());            }
+
+
+
             if(gamepad2.dpad_right){
                 robot.roll(1);
             }

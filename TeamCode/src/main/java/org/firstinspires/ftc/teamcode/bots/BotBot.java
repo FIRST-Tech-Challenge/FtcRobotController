@@ -111,8 +111,8 @@ public class BotBot {
 
 
     public static final String[] EVENT_NAMES = {
-            "EVENT_SAMPLE_ROLLED_IN",
-            "EVENT_SAMPLE_ROLLED_OUT",
+            "start",
+            "EVENT_PRELOAD_SCORED",
             "EVENT_PRELOAD_POSITION_ARRIVED",
             "EVENT_PRELOAD_SCORED",
             "EVENT_SAMPLE_1_PICKEDUP",
@@ -138,10 +138,10 @@ public class BotBot {
 
 
 
-    protected void triggerEvent(int type, int data){
+    public void triggerEvent(int type, int data){
         onEvent(type, data);
     }
-    protected void triggerEvent(int type){
+    public void triggerEvent(int type){
         triggerEvent(type, 0);
     }
 

@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Drawing;
  */
 @Config
 @Autonomous(name = "Lateral Localizer Tuner", group = "Autonomous Pathing Tuning")
-public class LateralTuner extends OpMode {
+public class    LateralTuner extends OpMode {
     private PoseUpdater poseUpdater;
     private DashboardPoseTracker dashboardPoseTracker;
 

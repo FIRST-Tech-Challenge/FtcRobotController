@@ -17,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class RollerIntakeBot extends DifferentialWristBot {
     private CRServo intakeRoller;
+    public boolean sampleIntaked;
     private Servo colorIndicator;
     private NormalizedColorSensor colorSensor;
 
@@ -83,12 +84,15 @@ public class RollerIntakeBot extends DifferentialWristBot {
             if (obj != NOTHING) {
                 stopRoller();
                 triggerEvent(EVENT_SAMPLE_ROLLED_IN, obj);
+                sampleIntaked = true;
             }
+
         } else if (rollerMode == ROLLER_MODE_OUTAKE) {
 //            int obj = getObjectInPlace();
             if (obj == NOTHING) {
                 stopRoller();
                 triggerEvent(EVENT_SAMPLE_ROLLED_OUT, obj);
+                sampleIntaked = false;
             }
         }
     }
@@ -201,6 +205,10 @@ public class RollerIntakeBot extends DifferentialWristBot {
 //            return 0;
 //        }
         return getColor(Color.red(color), Color.green(color), Color.blue(color));
+    }
+
+    public boolean getIsIntaked() {
+        return sampleIntaked;
     }
 }
 
