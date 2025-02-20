@@ -205,9 +205,9 @@ public class Intake {
         elapsedTime = new ElapsedTime();
     }
 
-    public void openGate(){
-        pusher.setPosition(ITDCons.gateOpen);
-    }
+//    public void openGate(){
+//        pusher.setPosition(ITDCons.gateOpen);
+//    }
 
     public void closeGate(){
         pusher.setPosition(ITDCons.gateClose);

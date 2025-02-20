@@ -46,9 +46,6 @@ public class TeleopManualV2Blue extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        double servo1pos = 0.5;
-        double servo2pos = 0.5;
-
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         Init init = new Init(hardwareMap);
@@ -61,7 +58,7 @@ public class TeleopManualV2Blue extends LinearOpMode {
         intake.setAllianceColor(ITDCons.Color.blue);
 
 
-//        outtake.initTeleopWall();
+
 
         int target=0;
 
@@ -76,8 +73,9 @@ public class TeleopManualV2Blue extends LinearOpMode {
 
         waitForStart();
 
+        outtake.initTeleopWall();
         intake.transferIntake();
-        intake.closeGate();
+       // intake.closeGate();
 
 
         while (opModeIsActive()) {

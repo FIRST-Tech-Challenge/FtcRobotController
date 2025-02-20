@@ -138,7 +138,7 @@ public class Outtake implements Component{
         position.setPosition(ITDCons.positionBack);
         angleLeft.setPosition(ITDCons.angleBack);
         angleRight.setPosition(ITDCons.angleBack);
-        claw.setPosition(ITDCons.clawClose);
+        claw.setPosition(ITDCons.clawOpen);
         status= Status.InitWall;
         //controller.setP(0.002);
         //position.getController().pwmDisable();
@@ -168,13 +168,14 @@ public class Outtake implements Component{
 
     public void openClaw() {
 
+
         if (status==Status.ScoreSpecimen){
             claw.setPosition(ITDCons.clawOpen);
             moveToPickUpFromWall();
         } else if (status == Status.Bucket){
             scoreSample();
         } else {
-            openClaw();
+           claw.setPosition(ITDCons.clawOpen);
         }
     }
 
@@ -186,7 +187,7 @@ public class Outtake implements Component{
         if (status==Status.ScoreSpecimen) {
             target = ITDCons.intermediateTarget;
             wrist.setPosition(ITDCons.wristBack);
-            openClaw();
+            claw.setPosition(ITDCons.clawOpen);
 
             position.setPosition(ITDCons.positionBack);
             setAngleServoToMiddle();
@@ -195,7 +196,7 @@ public class Outtake implements Component{
         }
         if (status == Status.InitWall){
             target = ITDCons.WallTarget;
-            openClaw();
+            claw.setPosition(ITDCons.clawOpen);
 
             status= Status.Wall;
         }
@@ -223,7 +224,6 @@ public class Outtake implements Component{
         } else if (status== Status.Transfer){
             scoreSample();
         }
-
 
     }
 
@@ -298,7 +298,7 @@ public class Outtake implements Component{
             elapsedTime = new ElapsedTime();
 
         } else {
-            openClaw();
+            claw.setPosition(ITDCons.clawOpen);
         }
     }
 

@@ -30,8 +30,9 @@ public class ITDCons {
     public static double intakeEjectSpeed =0.8;
 
     public static double gateOpen=0.6;
-    public static double gateClose=0.04;
+    public static double gateClose=0.5;
 
+    public static double clawOpenTransfer =0.3;
     public static double clawOpen = 0.35;
     public static double clawClose = 0.75;
 
@@ -43,10 +44,10 @@ public class ITDCons {
     public static double positionTransfer = 0.5;
     public static double positionFront =1;
 
-    public static double angleBack = 0.1;
+    public static double angleBack = 0;
     public static double angleFront = 1;
-    public static double angleMiddle = 0.8;
-    public static double angleScore = 1;
+    public static double angleMiddle = 0.35;
+    public static double angleScore = 0.45;
     public static double angleTipSample = 0.5;
 
     public static int wallPickupTarget = 5500;
