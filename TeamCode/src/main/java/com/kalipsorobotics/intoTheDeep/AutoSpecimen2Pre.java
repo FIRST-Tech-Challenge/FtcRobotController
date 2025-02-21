@@ -88,9 +88,13 @@ public class AutoSpecimen2Pre extends LinearOpMode {
         delayBeforeStart.setName("delayBeforeStart");
         redAutoSpecimen.addAction(delayBeforeStart);
 
+        int firstHangPos = 180;
+        int hangSpacing = 70;
+
+
         //================begin of first specimen=============//
         FirstWallToBarRoundTrip firstWallToBarRoundTrip = new FirstWallToBarRoundTrip(driveTrain, wheelOdometry,
-                outtake, 160);
+                outtake, firstHangPos);
         firstWallToBarRoundTrip.setName("firstWallToBarRoundTrip");
         //firstWallToBarRoundTrip.setTelemetry(telemetry);
         firstWallToBarRoundTrip.setDependentActions(delayBeforeStart);
@@ -99,7 +103,7 @@ public class AutoSpecimen2Pre extends LinearOpMode {
 
         //================begin of second specimen=============//
         WallToBarMoveHang wallToBarMoveHang = new WallToBarMoveHang(driveTrain, wheelOdometry,
-                outtake, 260);
+                outtake, firstHangPos + hangSpacing*1);
         wallToBarMoveHang.setName("wallToBarHangRoundTripPre2");
         //wallToBarMoveHang.setTelemetry(telemetry);
         wallToBarMoveHang.setDependentActions(firstWallToBarRoundTrip);
@@ -179,7 +183,7 @@ public class AutoSpecimen2Pre extends LinearOpMode {
 
         //=============begin of third specimen=================
         WallToBarHangRoundTrip wallToBarHangRoundTrip2 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, 360); //400 //375
+                outtake, firstHangPos + hangSpacing*2); //400 //375
         wallToBarHangRoundTrip2.setName("wallToBarHangRoundTrip2");
         //wallToBarHangRoundTrip2.setTelemetry(telemetry);
         wallToBarHangRoundTrip2.setDependentActions(wallPickupDistanceSensorAction, moveFloorSamples); //move to distance
@@ -188,7 +192,7 @@ public class AutoSpecimen2Pre extends LinearOpMode {
 
         //============begin of fourth================
         WallToBarHangRoundTrip wallToBarHangRoundTrip3 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake,460); //500 //450
+                outtake, firstHangPos + hangSpacing*3); //500 //450
         wallToBarHangRoundTrip3.setName("wallToBarHangRoundTrip3");
         //wallToBarHangRoundTrip3.setTelemetry(telemetry);
         wallToBarHangRoundTrip3.setDependentActions(wallToBarHangRoundTrip2);

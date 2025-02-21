@@ -174,11 +174,11 @@ public class Teleop extends LinearOpMode {
 
 
 
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
+//        ExecutorService executorService = Executors.newSingleThreadExecutor();
 
         waitForStart();
 
-        OpModeUtilities.runOdometryExecutorService(executorService, wheelOdometry);
+//        OpModeUtilities.runOdometryExecutorService(executorService, wheelOdometry);
 
         while (opModeIsActive()) {
             while(!initAuto.getIsDone()) {
@@ -190,9 +190,9 @@ public class Teleop extends LinearOpMode {
             hangHookUpPressed = kGamePad1.isToggleRightBumper();
             hangHookDownPressed = kGamePad1.isRightTriggerPressed();
             hangPressed = kGamePad1.isToggleButtonB();
-            moveWallTeleopPressed = kGamePad1.isToggleButtonA();
+            moveWallTeleopPressed = false/*kGamePad1.isToggleButtonA()*/;
             intakeFunnelEndToEndPressed = kGamePad1.isToggleDpadLeft();
-            wallToBarPressed = kGamePad1.isToggleButtonX();
+            wallToBarPressed = false/*kGamePad1.isToggleButtonX()*/;
 
             // GAMEPAD 2 ASSIGNMENTS ==============================================
             outtakeLSStickValue = gamepad2.right_stick_y;
@@ -766,7 +766,7 @@ public class Teleop extends LinearOpMode {
         }
 
         //Log.d("executor service", "before shutdown" + SharedData.getOdometryPosition().toString());
-        OpModeUtilities.shutdownExecutorService(executorService);
+        //OpModeUtilities.shutdownExecutorService(executorService);
         //Log.d("executor service",
         //        "after shutdown" + SharedData.getOdometryPosition().toString() + "is shutdown " + executorService
         //        .isShutdown() + "is terminated " + executorService.isTerminated());

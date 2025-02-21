@@ -10,8 +10,8 @@ public class FirstWallToBarRoundTrip extends KActionSet {
     //ASSUME ROBOT AT WALL READY FOR SPECIMEN
     public FirstWallToBarRoundTrip(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, int hangPosY) {
 
-        FirstWallToBarHangAction firstWallToBarHangAction = new FirstWallToBarHangAction(driveTrain, wheelOdometry, outtake, 230,
-                false);
+        FirstWallToBarHangAction firstWallToBarHangAction = new FirstWallToBarHangAction(driveTrain, wheelOdometry, outtake, hangPosY,
+                false); // Bar Y = 230
         firstWallToBarHangAction.setName("wallToBarHangAction");
         this.addAction(firstWallToBarHangAction);
 

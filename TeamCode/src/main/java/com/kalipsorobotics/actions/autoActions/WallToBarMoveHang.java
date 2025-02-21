@@ -64,6 +64,6 @@ public class WallToBarMoveHang extends KActionSet {
         SpecimenHang specimenHang = new SpecimenHang(outtake);
         specimenHang.setDependentActions(moveToBar1, specimenHangReady, moveToDistanceThresholdBar);
         this.addAction(specimenHang);
-    }
 
+    }
 }
