@@ -72,7 +72,7 @@ public class TwoFishTeleop extends LinearOpMode {
         INTAKE_EXTEND,
         INTAKE,
         TRANSFER,
-        DELIVERY_EXTEND,
+        SAMPLE_SCORE,
         DELIVERY_DUMP,
         SPECIMEN,
         SPECIMEN_SCORE,
@@ -183,9 +183,27 @@ public class TwoFishTeleop extends LinearOpMode {
                         //Extend once the claw is closed
                         if(delivery.CheckClawClosed()){
                             delivery.toSpecHeight();
-                            delivery.setPitch(delivery.pitchUpPosition);
-                            state = RobotState.DELIVERY_EXTEND;
+                            delivery.setPitch(delivery.pitchSampleScorePosition);
+                            state = RobotState.SAMPLE_SCORE;
                         }
+                        break;
+
+                    case SAMPLE_SCORE:
+                        delivery.PControlPower(0.75);
+
+                        //wait for "a" to score
+                        if(gamepad2.a && prevGamepad2.a){
+                            delivery.clawOpen();
+                        }
+
+                        //Pitch up if done scoring
+                        if(delivery.CheckClawOpen()){
+                            delivery.setPitch(delivery.pitchUpPosition);
+                            //delivery.homeSlides();
+                            state = RobotState.IDLE;
+                        }
+
+                        break;
                 }
 
                 telemetry.addData("STATE: ", state);

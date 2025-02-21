@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,10 +7,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 @Disabled
@@ -48,8 +40,9 @@ public class TwoFishDelivery {
     public double clawClosePosition = 1;
     public double pitchIntakePosition = 1;
     public double pitchUpPosition = 0.5;
-    public double pitchScorePosition = 0.25;
+    public double pitchScoreSpecPosition = 0.25;
     public double pitchTransferPosition = 0;
+    public double pitchSampleScorePosition = 0.75;
 
     public double wristUpPosition = 1;
     public double wristDownPosition = 0;
@@ -66,6 +59,7 @@ public class TwoFishDelivery {
 
     //action timestamps:
     private double clawCloseTimestamp = 0;
+    private double clawOpenTimestamp = 0;
 
     //action durations:
     private double CLAW_CLOSE_DURATION = 0.5;
@@ -78,7 +72,7 @@ public class TwoFishDelivery {
             pitchIntakePosition,
             pitchUpPosition,
             pitchTransferPosition,
-            pitchScorePosition,
+            pitchScoreSpecPosition,
             wristUpPosition,
             wristDownPosition
     );
@@ -215,6 +209,9 @@ public class TwoFishDelivery {
 
     public boolean CheckClawClosed(){
         return (time.seconds() - clawCloseTimestamp > CLAW_CLOSE_DURATION && clawClosed);
+    }
+    public boolean CheckClawOpen(){
+        return (time.seconds() - clawOpenTimestamp > CLAW_CLOSE_DURATION && !clawClosed);
     }
 
     public boolean checkIfHoldingSpec(){
