@@ -55,8 +55,8 @@ import com.qualcomm.robotcore.util.Range;
 public class BasicOpMode_Iterative extends OpMode
 {
     // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDrive = null;
+    private final ElapsedTime runtime   = new ElapsedTime();
+    private       DcMotor     leftDrive = null;
     private DcMotor rightDrive = null;
 
     /*

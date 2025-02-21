@@ -53,19 +53,17 @@ import com.qualcomm.robotcore.util.Range;
 public class ConceptRevSPARKMini extends LinearOpMode {
 
     // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotorSimple leftDrive = null;
-    private DcMotorSimple rightDrive = null;
+    private final ElapsedTime runtime = new ElapsedTime();
 
-    @Override
+	@Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during robot configuration.
-        leftDrive  = hardwareMap.get(DcMotorSimple.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotorSimple.class, "right_drive");
+		DcMotorSimple leftDrive  = hardwareMap.get(DcMotorSimple.class, "left_drive");
+		DcMotorSimple rightDrive = hardwareMap.get(DcMotorSimple.class, "right_drive");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backward when connected directly to the battery

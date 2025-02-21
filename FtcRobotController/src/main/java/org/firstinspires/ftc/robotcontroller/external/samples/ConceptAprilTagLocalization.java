@@ -73,20 +73,20 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
     /**
      * Variables to store the position and orientation of the camera on the robot. Setting these
      * values requires a definition of the axes of the camera and robot:
-     *
+     * <p>
      * Camera axes:
      * Origin location: Center of the lens
      * Axes orientation: +x right, +y down, +z forward (from camera's perspective)
-     *
+     * <p>
      * Robot axes (this is typical, but you can define this however you want):
      * Origin location: Center of the robot at field height
      * Axes orientation: +x right, +y forward, +z upward
-     *
+     * <p>
      * Position:
      * If all values are zero (no translation), that implies the camera is at the center of the
      * robot. Suppose your camera is positioned 5 inches to the left, 7 inches forward, and 12
      * inches above the ground - you would need to set the position to (-5, 7, 12).
-     *
+     * <p>
      * Orientation:
      * If all values are zero (no rotation), that implies the camera is pointing straight up. In
      * most cases, you'll need to set the pitch to -90 degrees (rotation about the x-axis), meaning
@@ -94,9 +94,9 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
      * it's pointing straight left, -90 degrees for straight right, etc. You can also set the roll
      * to +/-90 degrees if it's vertical, or 180 degrees if it's upside-down.
      */
-    private Position cameraPosition = new Position(DistanceUnit.INCH,
+    private final Position           cameraPosition    = new Position(DistanceUnit.INCH,
             0, 0, 0, 0);
-    private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
+    private final YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
             0, -90, 0, 0);
 
     /**

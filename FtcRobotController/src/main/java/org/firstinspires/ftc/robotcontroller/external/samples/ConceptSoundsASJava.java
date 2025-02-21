@@ -75,10 +75,7 @@ public class ConceptSoundsASJava extends LinearOpMode {
     private boolean goldFound;      // Sound file present flags
     private boolean silverFound;
 
-    private boolean isX = false;    // Gamepad button state variables
-    private boolean isB = false;
-
-    private boolean wasX = false;   // Gamepad button history variables
+	private boolean wasX = false;   // Gamepad button history variables
     private boolean WasB = false;
 
     @Override
@@ -112,14 +109,17 @@ public class ConceptSoundsASJava extends LinearOpMode {
         while (opModeIsActive()) {
 
             // say Silver each time gamepad X is pressed (This sound is a resource)
-            if (silverFound && (isX = gamepad1.x) && !wasX) {
+			// Gamepad button state variables
+			boolean isX = false;
+			if (silverFound && (isX = gamepad1.x) && !wasX) {
                 SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, silverSoundID);
                 telemetry.addData("Playing", "Resource Silver");
                 telemetry.update();
             }
 
             // say Gold each time gamepad B is pressed  (This sound is a resource)
-            if (goldFound && (isB = gamepad1.b) && !WasB) {
+			boolean isB = false;
+			if (goldFound && (isB = gamepad1.b) && !WasB) {
                 SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, goldSoundID);
                 telemetry.addData("Playing", "Resource Gold");
                 telemetry.update();

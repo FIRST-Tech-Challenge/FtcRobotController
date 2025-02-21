@@ -157,8 +157,7 @@ public class RobotHardware {
     /**
      * Send the two hand-servos to opposing (mirrored) positions, based on the passed offset.
      *
-     * @param offset
-     */
+	 */
     public void setHandPositions(double offset) {
         offset = Range.clip(offset, -0.5, 0.5);
         leftHand.setPosition(MID_SERVO + offset);

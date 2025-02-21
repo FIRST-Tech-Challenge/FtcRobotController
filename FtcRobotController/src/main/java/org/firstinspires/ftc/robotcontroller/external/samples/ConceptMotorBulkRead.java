@@ -85,11 +85,7 @@ public class ConceptMotorBulkRead extends LinearOpMode {
 
     final int       TEST_CYCLES    = 500;   // Number of control cycles to run to determine cycle times.
 
-    private DcMotorEx m1, m2, m3, m4; // Motor Objects
-    private long      e1, e2, e3, e4; // Encoder Values
-    private double    v1, v2, v3, v4; // Velocities
-
-    // Cycle Times
+	// Cycle Times
     double t1 = 0;
     double t2 = 0;
     double t3 = 0;
@@ -100,10 +96,11 @@ public class ConceptMotorBulkRead extends LinearOpMode {
         int cycles;
 
         // Important Step 1:  Make sure you use DcMotorEx when you instantiate your motors.
-        m1 = hardwareMap.get(DcMotorEx.class, "m1");  // Configure the robot to use these 4 motor names,
-        m2 = hardwareMap.get(DcMotorEx.class, "m2");  // or change these strings to match your existing Robot Configuration.
-        m3 = hardwareMap.get(DcMotorEx.class, "m3");
-        m4 = hardwareMap.get(DcMotorEx.class, "m4");
+		DcMotorEx m1 = hardwareMap.get(DcMotorEx.class, "m1");  // Configure the robot to use these 4 motor names,
+		DcMotorEx m2 = hardwareMap.get(DcMotorEx.class, "m2");  // or change these strings to match your existing Robot Configuration.
+		DcMotorEx m3 = hardwareMap.get(DcMotorEx.class, "m3");
+		// Motor Objects
+		DcMotorEx m4 = hardwareMap.get(DcMotorEx.class, "m4");
 
         // Important Step 2: Get access to a list of Expansion Hub Modules to enable changing caching methods.
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -126,7 +123,17 @@ public class ConceptMotorBulkRead extends LinearOpMode {
 
         timer.reset();
         cycles = 0;
-        while (opModeIsActive() && (cycles++ < TEST_CYCLES)) {
+		// Velocities
+		double v4;
+		double v3;
+		double v2;
+		double v1;
+		// Encoder Values
+		long e4;
+		long e3;
+		long e2;
+		long e1;
+		while (opModeIsActive() && (cycles++ < TEST_CYCLES)) {
             e1 = m1.getCurrentPosition();
             e2 = m2.getCurrentPosition();
             e3 = m3.getCurrentPosition();
