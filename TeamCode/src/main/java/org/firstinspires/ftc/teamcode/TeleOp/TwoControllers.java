@@ -186,7 +186,9 @@ public class TwoControllers extends LinearOpMode {
             if (Claw_Position < 0){
                 Claw_Position = 0;;
             }
-            double calculated_claw = Claw_Position+MIN_POSITION;
+            double calculated_claw = Claw_Position * (1-CLAW_MIN) + CLAW_MIN;
+            servo.setPosition(calculated_claw);
+
             // wheel power
             if (max > 1.0) {
                 leftFrontPower  = leftFrontPower/max;
