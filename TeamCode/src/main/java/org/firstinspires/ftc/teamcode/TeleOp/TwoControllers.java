@@ -159,7 +159,7 @@ public class TwoControllers extends LinearOpMode {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.right_stick_y;  // Note: pushing stick forward gives negative value
+            double axial   = -gamepad1.left_stick_y; // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
             double Shoulder_Forward = gamepad2.right_trigger;
@@ -186,7 +186,9 @@ public class TwoControllers extends LinearOpMode {
             if (Claw_Position < 0){
                 Claw_Position = 0;;
             }
-            double calculated_claw = Claw_Position+MIN_POSITION;
+            double calculated_claw = Claw_Position * (1-CLAW_MIN) + CLAW_MIN;
+            servo.setPosition(calculated_claw);
+
             // wheel power
             if (max > 1.0) {
                 leftFrontPower  = leftFrontPower/max;
