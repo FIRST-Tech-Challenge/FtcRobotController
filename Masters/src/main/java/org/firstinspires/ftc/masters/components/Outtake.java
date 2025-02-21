@@ -142,7 +142,6 @@ public class Outtake implements Component{
         status= Status.InitWall;
         //controller.setP(0.002);
         //position.getController().pwmDisable();
-
     }
 
     public void initAutoSpecimen(){
@@ -173,7 +172,7 @@ public class Outtake implements Component{
             claw.setPosition(ITDCons.clawOpen);
             moveToPickUpFromWall();
         } else if (status == Status.Bucket){
-            scoreSample();
+            releaseSample();
         } else {
            claw.setPosition(ITDCons.clawOpen);
         }

@@ -60,14 +60,13 @@ public class TeleopManualV2Blue extends LinearOpMode {
         intake.setOuttake(outtake);
         intake.setAllianceColor(ITDCons.Color.blue);
 
-
-
-
         int target=0;
 
         int dpadUpPressed = 0;
         int dpadDownPressed = 0;
 
+
+        boolean bPressed = false;
         boolean relased = true;
 
         telemetry.addData("Before", outtake.outtakeSlideEncoder.getCurrentPosition());
@@ -76,8 +75,8 @@ public class TeleopManualV2Blue extends LinearOpMode {
 
         waitForStart();
 
-        intake.initStatusTeleop();
-      //  outtake.initTeleopWall();
+      //  intake.initStatusTeleop();
+        outtake.initTeleopWall();
 
 
         while (opModeIsActive()) {
@@ -114,15 +113,23 @@ public class TeleopManualV2Blue extends LinearOpMode {
 
             if(gamepad1.a){
                 outtake.openClaw();
-            } else if (gamepad1.b) {
-                if (outtake.isReadyToPickUp()){
-                    outtake.closeClaw();
-                } else if (intake.getColor()== ITDCons.Color.yellow){
-                    outtake.scoreSampleLow();
-                } else {
-                    outtake.moveToPickUpFromWall();
-                }
-            } else if (gamepad1.x){
+            }
+            if (gamepad1.b) {
+               if (!bPressed) {
+                    bPressed = true;
+                   if (outtake.isReadyToPickUp()) {
+                       outtake.closeClaw();
+                   } else if (intake.getColor() == ITDCons.Color.yellow) {
+                       outtake.scoreSampleLow();
+                   } else {
+                       outtake.moveToPickUpFromWall();
+                   }
+               }
+            } else {
+                bPressed = false;
+            }
+
+            if (gamepad1.x){
                 intake.pickupSample();
             } else if (gamepad1.y){
                 outtake.score();

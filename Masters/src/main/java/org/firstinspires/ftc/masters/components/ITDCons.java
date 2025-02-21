@@ -22,10 +22,6 @@ public class ITDCons {
 
     public static double intakeArmTransfer=0.12;
     public static double intakeChainTransfer = 0.7;
-    public static double liftIntake =0.5;
-    public static double liftIntakeLeft= 0.55;
-    public static double liftIntakeRight = 0.45;
-
     public static double intakeTransferSpeed = 0.65;
     public static double intakeEjectSpeed =0.8;
 
@@ -39,7 +35,7 @@ public class ITDCons {
     public static double wristFront= 0.23;
     public static double wristBack = 0.77;
 
-    public static double positionBack = 0.03;
+    public static double positionBack = 0.05;
     public static double positionInitSpec=0.4;
     public static double positionTransfer = 0.5;
     public static double positionFront =1;
