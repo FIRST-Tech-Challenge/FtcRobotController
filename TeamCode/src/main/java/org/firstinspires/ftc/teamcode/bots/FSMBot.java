@@ -109,7 +109,6 @@ public class FSMBot extends RollerIntakeBot{
         telemetry.update();
         sleep(100);
     }
-
     protected void onTick() {
         super.onTick();
         telemetry.addData("state: ", currentState);

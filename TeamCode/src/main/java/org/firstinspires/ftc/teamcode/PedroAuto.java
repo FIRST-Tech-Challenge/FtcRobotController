@@ -158,7 +158,6 @@ public class PedroAuto extends LinearOpMode {
         setPathState(0);
         waitForStart();
         while (opModeIsActive()) {
-
             telemetry.addData("pivot pos", robot.getPivotPosition());
             telemetry.addData("slide pos", robot.getSlidePosition());
             telemetry.addData("Pivot target", robot.pivotTarget);
@@ -172,11 +171,11 @@ public class PedroAuto extends LinearOpMode {
 
 
             dashboard.getTelemetry();
+            robot.UpdateStates();
             
             telemetry.update();
             follower.update();
             autonomousPathUpdate();
-
         }
     }
     public void autonomousPathUpdate()  {
@@ -197,7 +196,7 @@ public class PedroAuto extends LinearOpMode {
                 - Robot Position: "if(follower.getPose().getX() > 36) {}"
                 */
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if (!follower.isBusy()&& robot.isArmUp) {
+                if (!follower.isBusy()) {
                     if(robot.getSlidePosition() > (780 - 40)) {
                         //check for slides in position, and outtakes
                         robot.outake(true);
