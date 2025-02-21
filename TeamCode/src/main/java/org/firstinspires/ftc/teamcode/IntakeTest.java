@@ -23,7 +23,7 @@ public class IntakeTest extends LinearOpMode {
             }
             if(gamepad1.dpad_down){
                 rollerIntakeBot.outake(true);
-//            }
+            }
             if(gamepad1.dpad_left){
                 rollerIntakeBot.stopRoller();
             }
@@ -55,4 +55,4 @@ public class IntakeTest extends LinearOpMode {
             telemetry.update();
         }
     }
-}}
+}

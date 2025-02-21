@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class RollerIntakeBot extends DifferentialWristBot {
-    private CRServo intakeRoller;
+    public CRServo intakeRoller;
     public boolean sampleIntaked;
     private Servo colorIndicator;
     private NormalizedColorSensor colorSensor;
@@ -154,7 +154,7 @@ public class RollerIntakeBot extends DifferentialWristBot {
         // Gradually reduce power before stopping
 
         setRollerPower(1);   // Briefly reverse
-        opMode.sleep(40);
+        opMode.sleep(50);
 
         setRollerPower(0);     // Fully stop
     }

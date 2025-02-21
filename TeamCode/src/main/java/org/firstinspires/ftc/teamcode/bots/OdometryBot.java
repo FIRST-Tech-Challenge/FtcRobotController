@@ -207,7 +207,7 @@ public class OdometryBot extends GyroBot {
         telemetry.addData("vL", leftFront.getCurrentPosition());
         telemetry.addData("vR", rightFront.getCurrentPosition());
         telemetry.addData("h", rightRear.getCurrentPosition());
-        telemetry.update();
+//        telemetry.update();
 //        telemetry.addData("h diameter", (int)((thetaDEG*360)/(horizontal.getCurrentPosition() * Math.PI)));
 //        telemetry.update();
 
@@ -327,6 +327,15 @@ public class OdometryBot extends GyroBot {
         while (opMode.opModeIsActive() && isCoordinateDriving) {
             sleep(0, "wait for drive");
         }
+    }
+    public void updateTelemetry(){
+        telemetry.addData("X:", xBlue);
+        telemetry.addData("Y:", yBlue);
+        telemetry.addData("Theta:", thetaDEG);
+        telemetry.addData("vL", leftFront.getCurrentPosition());
+        telemetry.addData("vR", rightFront.getCurrentPosition());
+        telemetry.addData("h", rightRear.getCurrentPosition());
+        telemetry.update();
     }
 
 //    public void savePosition() {

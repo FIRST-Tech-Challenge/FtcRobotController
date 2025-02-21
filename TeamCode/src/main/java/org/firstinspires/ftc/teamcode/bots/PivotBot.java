@@ -18,9 +18,9 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
 
     FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    public static int samplePivotDropOffPos = -2150;
+    public static int samplePivotDropOffPos = -2050; // was 2150, seems to be going too far
 
-    public static int sampleSlideDropOffPos = 770;
+    public static int sampleSlideDropOffPos = 780;// WAS 770, MADE LOWER TO AVOID CLAW GETTING CAUGHT ON BUCKET
 
     public final float ticksToDegree = 360/8192; // 8192 ticks per rotation
     public float kfAngled;

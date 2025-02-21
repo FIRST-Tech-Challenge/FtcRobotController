@@ -117,11 +117,12 @@ public class FSMBot extends RollerIntakeBot{
                 currentState = gameState.PRE_DRIVE;
                 break;
             case SUBMERSIBLE_INTAKE_1:
+
                 robot.slideRunToPosition(intakeSlideMinimum);
                 robot.pivotRunToPosition(0);
                 //
                 if(subIntakeTimer.milliseconds() > 140){
-                currentState = gameState.SUBMERSIBLE_INTAKE_2;
+                    currentState = gameState.SUBMERSIBLE_INTAKE_2;
                 }
                 subRetractTimer.reset();
                 break;
@@ -248,6 +249,7 @@ public class FSMBot extends RollerIntakeBot{
         if(button) {
             intakeDown = true;
             currentState = gameState.SUBMERSIBLE_INTAKE_1;
+
             subIntakeTimer.reset();
         }
     }
@@ -281,6 +283,9 @@ public class FSMBot extends RollerIntakeBot{
         }
     }
 
+    public void setSlidePos (int pos){
+        sampleSlideDropOffPos = pos;
+    }
 
 
 //    public void setIntake(boolean button1, boolean button2) {

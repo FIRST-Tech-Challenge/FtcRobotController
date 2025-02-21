@@ -34,7 +34,7 @@ public class TeleOps extends LinearOpMode {
             }
             telemetry.update();
         }
-robot.currentState = FSMBot.gameState.PRE_DRIVE;
+        robot.currentState = FSMBot.gameState.PRE_DRIVE;
         waitForStart();
 
         while(opModeIsActive()){
@@ -44,6 +44,9 @@ robot.currentState = FSMBot.gameState.PRE_DRIVE;
                 robot.subIntake(gamepad1.a);
                 robot.raisePivotSample(gamepad1.b);
                 robot.pivotUpTimer.reset();
+                if (gamepad1.x) {
+                    robot.intake(true);
+                }
 
             }
             if(robot.currentState == FSMBot.gameState.SUBMERSIBLE_INTAKE_2 && robot.subRetractTimer.milliseconds() > 130){
@@ -54,6 +57,9 @@ robot.currentState = FSMBot.gameState.PRE_DRIVE;
                 robot.slidesUpTimer.reset();
             }
             if(robot.currentState == FSMBot.gameState.SAMPLE_SCORING_HIGH_2 && robot.slidesUpTimer.milliseconds() > 130){
+                if(gamepad1.dpad_up){
+                    robot.setSlidePos(770);
+                }
                 if(gamepad1.b) {
                     robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_3;
                     robot.outtakeTimer.reset();
