@@ -64,16 +64,16 @@ public class Specimen_Auto extends LinearOpMode {
                 .build();
 
         clippingSpecimen1 = drive.actionBuilder(new Pose2d(0,-48,Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(0,-35),Math.toRadians(90), new TranslationalVelConstraint(20))
+                .strafeToLinearHeading(new Vector2d(0,-34),Math.toRadians(90), new TranslationalVelConstraint(20))
                 .build();
         clippingSpecimen2 = drive.actionBuilder(new Pose2d(2,-48,Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(2,-35),Math.toRadians(90), new TranslationalVelConstraint(20))
+                .strafeToLinearHeading(new Vector2d(2,-34),Math.toRadians(90), new TranslationalVelConstraint(20))
                 .build();
         clippingSpecimen3 = drive.actionBuilder(new Pose2d(4,-48,Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(4,-35),Math.toRadians(90), new TranslationalVelConstraint(20))
+                .strafeToLinearHeading(new Vector2d(4,-34),Math.toRadians(90), new TranslationalVelConstraint(20))
                 .build();
 
-        driveForSamplePush = drive.actionBuilder(new Pose2d(0,-35,Math.toRadians(90)))
+        driveForSamplePush = drive.actionBuilder(new Pose2d(0,-34,Math.toRadians(90)))
                 .setReversed(true)
                 .splineToLinearHeading(new Pose2d(38,-26, Math.toRadians(90) ), Math.toRadians(90))
                 .splineToLinearHeading(new Pose2d(46,-12,Math.toRadians(0)), Math.toRadians(0))
@@ -86,11 +86,11 @@ public class Specimen_Auto extends LinearOpMode {
 //                .turnTo(Math.toRadians(-135))
                 .build();
 
-        grabSpecimen3 = drive.actionBuilder(new Pose2d(2,-35,Math.toRadians(90)))
+        grabSpecimen3 = drive.actionBuilder(new Pose2d(2,-34,Math.toRadians(90)))
                 .strafeToLinearHeading(new Vector2d(38,-58), Math.toRadians(0))
                 .build();
 
-        driveToPark = drive.actionBuilder(new Pose2d(4,-35,Math.toRadians(90)))
+        driveToPark = drive.actionBuilder(new Pose2d(4,-34,Math.toRadians(90)))
                 .strafeToLinearHeading(new Vector2d(60,-60),Math.toRadians(90))
                 .build();
 

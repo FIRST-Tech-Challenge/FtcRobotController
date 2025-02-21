@@ -193,7 +193,7 @@ public class ViperArmActions {
                 MoveViperToHome(),
                 UtilActions.Wait(0.75),
                 MoveArmToSlowDown(),
-                UtilActions.Wait(0.5),
+                UtilActions.Wait(0.3),
                 MoveArmToHome(),
                 UtilActions.Wait(0.25),
                 _WristClawActions.WristSpecimenPickup()
