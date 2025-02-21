@@ -3,13 +3,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /**
  */
-@Autonomous(name="Autonomous Left 5 yellow", group="7592", preselectTeleOp = "Teleop")
-@Disabled
-public class AutonomousLeftSamp extends AutonomousBase {
+@Autonomous(name="Left2: 4 yellow (67 pts))", group="7592", preselectTeleOp = "Teleop")
+//@Disabled
+public class AutonomousLeft4 extends AutonomousBase {
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drivetrain.
@@ -58,7 +57,7 @@ public class AutonomousLeftSamp extends AutonomousBase {
                 }
             } //  gamepad1_r_bumper
             // Do we need to change any of the other autonomous options?
-            processAutonomousInitMenu(true);
+            processAutonomousInitMenu(false);
             // Pause briefly before looping
             idle();
         } // !isStarted
@@ -192,17 +191,34 @@ public class AutonomousLeftSamp extends AutonomousBase {
             sleep( startDelaySec * 1000 );
         }
 
-        // Score the preloaded SAMPLE from a modified starting position
-        scoreSamplePreload();
-        scoreSampleFromHuman();
-        collectSample(1);
-        scoreSample(1);
-        // Score the 2nd preload SAMPLE from human player
-//sleep(30000);
-        collectSample(2);
-        scoreSample(3); // score(2) is from human player
-        collectSample(3);
-        scoreSample(3);
+        // Score the preloaded SPECIMEN
+        if( !onlyPark && scorePreloadSpecimen ) {
+            scoreSpecimenPreload();
+        }
+
+        // Score the preloaded SAMPLE
+        if( !onlyPark && !scorePreloadSpecimen ) {
+            scoreSamplePreload();
+        }
+
+        if( !onlyPark && (spikeSamples > 0) ) {
+            if( scorePreloadSpecimen ) {
+                driveToPosition(18.5, 0.0, 0.0, DRIVE_SPEED_100, TURN_SPEED_30, DRIVE_THRU);
+                driveToPosition(14.0, -25.0, 0.0, DRIVE_SPEED_100, TURN_SPEED_30, DRIVE_THRU);
+            }
+            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_DRIVE_DEG, 0.80 );
+            autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_AUTO_READY);
+            robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
+            robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);
+            // Score starting sample
+            int samplesScored = 1;
+
+            while (samplesScored <= spikeSamples) {
+                collectSample(samplesScored);
+                scoreSample(samplesScored);
+                samplesScored++;
+            }
+        }
         // Park for 3pts (level 1 ascent)
         level1Ascent();
 
@@ -211,13 +227,56 @@ public class AutonomousLeftSamp extends AutonomousBase {
     } // mainAutonomous
 
     /*--------------------------------------------------------------------------------------------*/
-    private void scoreSamplePreload() {
-        // NOTE: This version starts with robot turned sideways to wall, and with lift up higher!
+    private void scoreSpecimenPreload() {
+        // Drive forward to submersible
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "Move to submersible");
             telemetry.update();
             // Move away from field wall (viper slide motor will hit field wall if we tilt up too soon!)
-            driveToPosition( -5.0, -5.0, 0.0, DRIVE_SPEED_100, TURN_SPEED_70, DRIVE_THRU );
+            driveToPosition( 3.00, 0.00, 0.00, DRIVE_SPEED_30, TURN_SPEED_30, DRIVE_THRU );
+            // Start tilting and extending the arm, and positioning the specimen
+            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_SPECIMEN1_DEG, 1.0);
+            autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO1);
+            // Drive to the scoring position next to the submersible
+            driveToPosition( 18.20, 7.20, 0.00, DRIVE_SPEED_40, TURN_SPEED_20, DRIVE_THRU );
+            robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR1);
+            robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR1);
+            driveToPosition( 27.80, 7.20, 0.00, DRIVE_SPEED_40, TURN_SPEED_20, DRIVE_TO );
+            robot.driveTrainMotorsZero();  // make double sure we're stopped
+            // If we drive to the submersible faster than the arm moves, wait for the arm
+            sleep(100);
+        } // opModeIsActive
+
+        // Rotate arm, viper slide, and claw down to clip the specimen
+        if( opModeIsActive() ) {
+            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_SPECIMEN2_DEG,0.80 );
+            autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO2);
+            robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR2);
+            robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR2);
+            sleep( 1000 ); //while( autoTiltMotorMoving() || autoViperMotorMoving());
+            // release the specimen
+            robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
+        } // opModeIsActive
+
+        //Prepare arm for what comes next (samples/parking)
+        if( spikeSamples > 0 ) {
+           prepareArmForSamples();
+        }
+        // Whether driving to park, or doing nothing, store the arm
+        else {
+           prepareArmForDriving();
+        }
+
+    } // scoreSpecimenPreload
+
+    /*--------------------------------------------------------------------------------------------*/
+    private void scoreSamplePreload() {
+        // Drive forward to submersible
+        if( opModeIsActive() ) {
+            telemetry.addData("Motion", "Move to submersible");
+            telemetry.update();
+            // Move away from field wall (viper slide motor will hit field wall if we tilt up too soon!)
+            driveToPosition( 8.0, -8.0, 0.0, DRIVE_SPEED_45, TURN_SPEED_30, DRIVE_THRU );
             // Move to basket and score preloaded sample
             scoreSample(0);
         } // opModeIsActive
@@ -225,32 +284,40 @@ public class AutonomousLeftSamp extends AutonomousBase {
     } // scoreSamplePreload
 
     /*--------------------------------------------------------------------------------------------*/
-    private void scoreSampleFromHuman() {
+    private void prepareArmForSamples() {
 
+        // Setup the arm for scoring samples
         if( opModeIsActive() ) {
-            telemetry.addData("Motion", "Drive to human");
-            telemetry.update();
-            // Drive over to human player to collect yellow sample)
-            robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
-            driveToPosition(43.5, -5.0, 0.0, DRIVE_SPEED_100,  TURN_SPEED_70, DRIVE_THRU);
+            autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_AUTO_COLLECT);
+            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_COLLECT1_DEG, 1.0 );
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);
-            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_SUBMERSIBLE_DEG);
-            driveToPosition(60.1, -5.0, 0.0, DRIVE_SPEED_30,  TURN_SPEED_30, DRIVE_TO);
-            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_COLLECT1_DEG);
-            sleep(700);
-            robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_CLOSED );
-            sleep(500);
-            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_SUBMERSIBLE_DEG);
-            driveToPosition(12, -8.3, 0.0, DRIVE_SPEED_100, TURN_SPEED_70, DRIVE_THRU);
+            robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
         } // opModeIsActive
 
+    } // prepareArmForSamples
+
+    /*--------------------------------------------------------------------------------------------*/
+    private void prepareArmForDriving() {
+
+        // Retract any arm extension
         if( opModeIsActive() ) {
-            // Move to basket and score sample from human
-            scoreSample(2);
+            autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_ZERO);
+//          driveToPosition( 32.60, 2.70, 52.20, DRIVE_SPEED_80, TURN_SPEED_20, DRIVE_THRU );
+        } // opModeIsActivee
+
+        // Now that we're clear from the submersible, rotate arm down and store claw
+        if( opModeIsActive() ) {
+            robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_CLOSED );
+            robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_INIT);
+            robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_INIT);
+            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_WALL_DEG, 0.80);
+//          driveToPosition( 38.40, 17.50, 90.00, DRIVE_SPEED_80, TURN_SPEED_20, DRIVE_THRU );
+//          driveToPosition( 47.40, 10.00, 180.00, DRIVE_SPEED_80, TURN_SPEED_20,
+//                                             ((spikeSamples > 0)? DRIVE_THRU : DRIVE_TO) );
         } // opModeIsActive
 
-    } // scoreSampleFromHuman
+    } // prepareArmForDriving
 
     //************************************
     // Collect sample
@@ -260,7 +327,7 @@ public class AutonomousLeftSamp extends AutonomousBase {
         switch(samplesScored) {
             case 1:
                 // Drive forward toward the wall
-                driveToPosition( -15.9, -20.5, 90.0, DRIVE_SPEED_70, TURN_SPEED_40, DRIVE_TO );
+                driveToPosition( 20.9, -31.7, 0.0, DRIVE_SPEED_100, TURN_SPEED_20, DRIVE_TO );
                 do {
                     if( !opModeIsActive() ) break;
                     // wait for lift/tilt to finish...
@@ -273,7 +340,7 @@ public class AutonomousLeftSamp extends AutonomousBase {
                 } while( autoViperMotorMoving() || autoTiltMotorMoving() ); // viper should already be in position
                 break;
             case 2:
-                driveToPosition( -25.9, -20.5, 90.0, DRIVE_SPEED_90, TURN_SPEED_40, DRIVE_TO );
+                driveToPosition( 20.9, -42.6, 0.0, DRIVE_SPEED_100, TURN_SPEED_20, DRIVE_TO );
                 do {
                     if( !opModeIsActive() ) break;
                     // wait for lift/tilt to finish...
@@ -290,7 +357,7 @@ public class AutonomousLeftSamp extends AutonomousBase {
                 autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_SAMPLE3_DEG, 1.0 );
                 robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB3);
                 // drive slow because waiting for arm to lower
-                driveToPosition( -26.4, -24.7, 90, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO );
+                driveToPosition( 24.4, -43.8, 5.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO );
                 do {
                     if( !opModeIsActive() ) break;
                     // wait for lift/tilt to finish...
@@ -301,13 +368,14 @@ public class AutonomousLeftSamp extends AutonomousBase {
 //                    telemetry.addData("Viper: ", "%d %d %d" , (autoViperMotorMoving())? 1 : 0 , robot.viperMotor.getCurrentPosition() , robot.viperMotor.getTargetPosition());
 //                    telemetry.update();
                 } while( autoViperMotorMoving() || autoTiltMotorMoving() ); // while( autoViperMotorMoving() || autoTiltMotorMoving() )
-                driveToPosition( -26.9, -24.3, 123.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO );
+                driveToPosition( 24.4, -43.8, 32.1, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO );
                 break;
             default:
         }
+
         // Close the claw on this sample
         robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_CLOSED );
-        sleep(500); // wait for claw to close on sample
+        sleep(700); // wait for claw to close on sample
     } // collectSample
 
     //************************************
@@ -316,32 +384,17 @@ public class AutonomousLeftSamp extends AutonomousBase {
     private void scoreSample(int samplesScored) {
         autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_BASKET_DEG, 1.0 );
         // drive partway there while we wait for arm to lift (before extending viper)
-        if( (samplesScored == 0) ){ // Preload
+        if( scorePreloadSpecimen || (samplesScored > 0) ){
+            driveToPosition( 11.0, -33.5, -46.6, DRIVE_SPEED_100, TURN_SPEED_30, DRIVE_THRU );
+            robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_BASKET );
+        } else {
+            robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_BASKET );
+            driveToPosition( 9.5, -20.0, -23.0, DRIVE_SPEED_30, TURN_SPEED_30, DRIVE_THRU );
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);
-            autoViperMotorMoveToTarget( 4310 ); // higher for the sample preload
-            driveToPosition( -17.7, -5.0, 44.8, DRIVE_SPEED_100, TURN_SPEED_70, DRIVE_THRU );
-            driveToPosition( -24.7, -5.4, 44.8, DRIVE_SPEED_80, TURN_SPEED_50, DRIVE_TO );
-        }  else if( samplesScored == 1 ){ // From spike mark 1
-            robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
-            robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);
-            autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_BASKET );
-            //driveToPosition( -17.2, -6.9, 44.8, DRIVE_SPEED_100, TURN_SPEED_70, DRIVE_THRU );
-            driveToPosition( -24.2, -5.9, 44.8, DRIVE_SPEED_80, TURN_SPEED_50, DRIVE_TO );
-        } else if( (samplesScored == 2) ){ // From human
-            robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
-            robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);
-            autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_BASKET );
-            driveToPosition( -5.0, -11.0, 22.8, DRIVE_SPEED_100, TURN_SPEED_70, DRIVE_THRU );
-            driveToPosition( -17.0, -8.3, 44.8, DRIVE_SPEED_80, TURN_SPEED_70, DRIVE_THRU );
-            driveToPosition( -24.2, -5.9, 44.8, DRIVE_SPEED_80, TURN_SPEED_50, DRIVE_TO );
-        } else if( samplesScored == 3 ){ // From spike marks 2 and 3
-            robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
-            robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);
-            autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_BASKET );
-            //driveToPosition( -22.2, -6.9, 44.8, DRIVE_SPEED_100, TURN_SPEED_70, DRIVE_THRU );
-            driveToPosition( -24.2, -5.9, 44.8, DRIVE_SPEED_80, TURN_SPEED_50, DRIVE_TO );
+            driveToPosition( 11.0, -33.5, -46.6, DRIVE_SPEED_30, TURN_SPEED_30, DRIVE_THRU );
         }
+        driveToPosition( 6.0, -38.5, -46.6, DRIVE_SPEED_40, TURN_SPEED_20, DRIVE_TO );
         robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BASKET);
         robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BASKET1);
         do {
@@ -358,11 +411,11 @@ public class AutonomousLeftSamp extends AutonomousBase {
         sleep(250); // wait for claw to drop sample
         robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
         robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);
-        sleep(500); // wait for claw to start moving up/back before lowering arm
+        sleep(100); // wait for claw to start moving up/back before lowering arm
         // Only retract arm if we're not going to park
-        if(samplesScored <= spikeSamples) {
+        if(samplesScored < spikeSamples) {
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_COLLECT1_DEG, 1.0);
-            autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO_COLLECT);
+            autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO_COLLECT , 0.9);
         }
         else{
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_ASCENT2_DEG, 1.0);
@@ -392,4 +445,4 @@ public class AutonomousLeftSamp extends AutonomousBase {
 
     } // level1Ascent
 
-} /* AutonomousLeftSamp */
+} /* AutonomousLeftSpec2 */

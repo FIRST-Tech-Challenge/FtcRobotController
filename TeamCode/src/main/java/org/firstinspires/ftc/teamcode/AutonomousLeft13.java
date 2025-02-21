@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 /**
  */
-@Autonomous(name="Left2: 4 yellow (67 pts))", group="7592", preselectTeleOp = "Teleop")
+@Autonomous(name="Left1: clip + 3 yellow (71 pts)", group="7592", preselectTeleOp = "Teleop")
 //@Disabled
-public class AutonomousLeftSpec2 extends AutonomousBase {
+public class AutonomousLeft13 extends AutonomousBase {
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drivetrain.
@@ -39,7 +39,7 @@ public class AutonomousLeftSpec2 extends AutonomousBase {
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         redAlliance  = true;
-        scorePreloadSpecimen = false;
+        scorePreloadSpecimen = true;
         spikeSamples = 3;
         parkLocation = PARK_SUBMERSIBLE;
 
@@ -445,4 +445,4 @@ public class AutonomousLeftSpec2 extends AutonomousBase {
 
     } // level1Ascent
 
-} /* AutonomousLeftSpec2 */
+} /* AutonomousLeftSpec */
