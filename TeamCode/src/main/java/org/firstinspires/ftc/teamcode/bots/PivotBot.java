@@ -37,6 +37,8 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
     public static int maximumSlidePos = 850;
     public static int minimumSlidePos = 0;
 
+    public static int slideTarget = 0;
+
     public boolean pivotOutOfRange = false;
     public static int pivotTarget = 0;
     public int oldPt = 0;
@@ -80,14 +82,14 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
         slideMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
         slideMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slideMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        slideMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideMotor1.setPower(0);
 
         slideMotor2 = hwMap.get(DcMotorEx.class, "slide2");
         slideMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
         slideMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slideMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        slideMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideMotor2.setPower(0);
 
 
@@ -112,13 +114,7 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
 
     protected void onTick() {
         super.onTick();
-        pivotController.setTolerance(40,30);
-        if (pivotMotor1.getCurrentPosition() > -20 && pivotTarget == 0 ) {
-            pivotMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            pivotMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            pivotMotor1.setPower(0);
-            pivotMotor2.setPower(0);
-        }
+        pivotController.setTolerance(20,30);
         //else
             if (pivotMotor1.getCurrentPosition() > -2100) {
                 kfAngled = (float) (kf * Math.cos(Math.toRadians(ticksToDegree * pivotMotor1.getCurrentPosition())));

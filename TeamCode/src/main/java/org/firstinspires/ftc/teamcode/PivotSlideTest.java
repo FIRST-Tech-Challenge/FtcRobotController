@@ -39,7 +39,6 @@ public class PivotSlideTest extends LinearOpMode {
             double lTime = LoopTime.getElapsedTimeSeconds();
             telemetry.addData("slide position", robot.getSlidePosition());
             telemetry.addData("looptime", lTime);
-            telemetry.addData("slide target pos", robot.slideTarget);
             telemetry.addData("Slide1motorpower",robot.getSlideMotor1Power());
             telemetry.addData("slide2motorpower", robot.getSlideMotor2Power());
 
