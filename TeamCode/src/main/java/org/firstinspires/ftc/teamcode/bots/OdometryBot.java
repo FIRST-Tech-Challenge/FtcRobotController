@@ -41,11 +41,11 @@ public class OdometryBot extends GyroBot {
     final int vLDirection = 1;
     final int vRDirection = -1;
     final int hDirection = -1;
-    final double diameter = 4141; // actual diameter: 239/606 = d/10500
-    final double hDiameter = 2841; //diameter of horizontal encoder: 82*2/606 = hD/10500
-    final double leftX = -(diameter/2); //135mm
-    final double rightX = (diameter/2); //170mm
-    final double hY = -(hDiameter); //135mm
+    final double diameter = 3742; // actual diameter: 216/606 = d/10500
+    final double hDiameter = 1732; //diameter of horizontal encoder: 50*2/606 = hD/10500
+    final double leftX = -(diameter/2); //130mm
+    final double rightX = (diameter/2); //130mm
+    final double hY = -(hDiameter); //50mm
 
     double vLOffset, vROffset, hOffset = 0;
 
@@ -127,7 +127,7 @@ public class OdometryBot extends GyroBot {
 
 //        angleChange = ((lC - rC) / (Math.PI * diameter * 2) * 360);
 //        angleChange = 3.7715*(lC - rC)/(rightX - leftX);
-        angleChange = (lC - rC)/(rightX - leftX);
+        angleChange = -(lC - rC)/(rightX - leftX);
 
 //        angleChange = (lC - rC)/(2 * diameter);
 //
@@ -139,7 +139,7 @@ public class OdometryBot extends GyroBot {
 
         //angleChange = angleDEG - previousThetaDEG;
 
-        hError = angleChange * hDiameter/2;
+        hError = -angleChange * hDiameter/2;
 
         double hC = h - previousH;
 
@@ -207,6 +207,7 @@ public class OdometryBot extends GyroBot {
         telemetry.addData("vL", leftFront.getCurrentPosition());
         telemetry.addData("vR", rightFront.getCurrentPosition());
         telemetry.addData("h", rightRear.getCurrentPosition());
+        telemetry.update();
 //        telemetry.addData("h diameter", (int)((thetaDEG*360)/(horizontal.getCurrentPosition() * Math.PI)));
 //        telemetry.update();
 

@@ -108,6 +108,8 @@ public class FSMBot extends RollerIntakeBot{
 
     protected void onTick() {
         super.onTick();
+        telemetry.addData("state: ", currentState);
+        telemetry.update();
         switch (currentState) {
             case INIT_READY:
                 pitchTo(0); //sets differential wrist positions

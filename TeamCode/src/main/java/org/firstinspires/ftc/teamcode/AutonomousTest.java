@@ -17,7 +17,7 @@ public class AutonomousTest extends LinearOpMode {
         robot.init(hardwareMap);
 
         while (!opModeIsActive()) {
-
+            telemetry.addData("status", "started");
             telemetry.update();
         }
 
