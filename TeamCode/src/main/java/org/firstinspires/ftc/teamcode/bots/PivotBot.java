@@ -114,13 +114,16 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
 
     protected void onTick() {
         super.onTick();
-        pivotController.setTolerance(20,30);
-        //else
+        pivotController.setTolerance(5,10);
+        pivotController.setSetPoint(pivotTarget);
+        //elseF
             if (pivotMotor1.getCurrentPosition() > -2100) {
                 kfAngled = (float) (kf * Math.cos(Math.toRadians(ticksToDegree * pivotMotor1.getCurrentPosition())));
             } else{ kfAngled = 0;}
-        pivotController.setSetPoint(pivotTarget);
-        if(!pivotController.atSetPoint()) {
+            if(pivotMotor1.getCurrentPosition() < 0 && pivotTarget == 0){
+
+            }
+            else if(!pivotController.atSetPoint()) {
                 pivotController.setPIDF(kp, ki, kd, 0);
                 double output = pivotController.calculate(pivotMotor1.getCurrentPosition());
                 pivotMotor2.setVelocity(output + kfAngled);

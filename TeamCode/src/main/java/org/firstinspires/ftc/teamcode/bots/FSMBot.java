@@ -17,6 +17,10 @@ public class FSMBot extends RollerIntakeBot{
 
     public ElapsedTime slidesUpTimer = new ElapsedTime();
 
+    public boolean isSlideUp = false;
+
+    public boolean isArmUp = false;
+
     public ElapsedTime slidesDownTimer = new ElapsedTime();
     public ElapsedTime pivotDownTimer = new ElapsedTime();
 
@@ -117,7 +121,6 @@ public class FSMBot extends RollerIntakeBot{
                 currentState = gameState.PRE_DRIVE;
                 break;
             case SUBMERSIBLE_INTAKE_1:
-
                 robot.slideRunToPosition(intakeSlideMinimum);
                 robot.pivotRunToPosition(0);
                 //
@@ -173,16 +176,19 @@ public class FSMBot extends RollerIntakeBot{
                 break;
             case SAMPLE_SCORING_HIGH_1:
                 robot.pivotRunToPosition(samplePivotDropOffPos);
+                isArmUp = true;
                 //pivot up
                 //wait
 //                raiseSlidesSample(gamepad1.a);
 
                 break;
             case SAMPLE_SCORING_HIGH_2:
-
+                isSlideUp = true;
+                robot.pivotRunToPosition(samplePivotDropOffPos);
                 robot.slideRunToPosition(sampleSlideDropOffPos);
                 robot.pitchTo(sampleOuttakePitchTarget);
                 robot.rollTo(sampleOuttakeRollTarget);
+                outtakeTimer.reset();
 //                if(gamepad1.a){
 //                    currentState = gameState.SAMPLE_SCORING_HIGH_3;
 //                }

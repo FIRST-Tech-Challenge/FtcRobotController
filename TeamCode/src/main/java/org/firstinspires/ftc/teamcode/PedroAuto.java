@@ -25,11 +25,16 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 import org.firstinspires.ftc.teamcode.sample.Sample;
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Pedro Auto", group = "Auto")
 public class PedroAuto extends LinearOpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
+
+    private boolean isReady = false;
+
+    private ElapsedTime actiontime = new ElapsedTime();
 
     /** This is the variable where we store the state of our auto.
      * It is used by the pathUpdate method. */
@@ -55,7 +60,7 @@ public class PedroAuto extends LinearOpMode {
 
     private final Pose loadSpecimenPose = new Pose(7.9, 23.6, 0);
 
-    private final Pose scoreSamplePose = new Pose(13.28500823723229, 130.24052718286654, -45);
+    private final Pose scoreSamplePose = new Pose(14.7, 122.41186161449752, Math.toRadians(-45));
 
     private final Pose sampleCurveControlPoint = new Pose(21.8, 36.7, Math.toRadians(-36));
 
@@ -154,12 +159,18 @@ public class PedroAuto extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
 
-
+            telemetry.addData("pivot pos", robot.getPivotPosition());
+            telemetry.addData("slide pos", robot.getSlidePosition());
+            telemetry.addData("Pivot target", robot.pivotTarget);
             telemetry.addData("path state", pathState);
+            telemetry.addData("follower busy", follower.isBusy());
             telemetry.addData("x", follower.getPose().getX());
             telemetry.addData("y", follower.getPose().getY());
             telemetry.addData("heading", follower.getPose().getHeading());
             telemetry.addData("Follower path", follower.getCurrentPath());
+            telemetry.addData("state", robot.currentState);
+
+
             dashboard.getTelemetry();
             
             telemetry.update();
@@ -173,8 +184,11 @@ public class PedroAuto extends LinearOpMode {
             case 0:
                 follower.followPath(scorePreload); /**not path chain, may be error */
                 telemetry.addData("Current state", "State 0, Score Preload Pose");
-                setPathState(1);
-                //Goes to submersible, in position to score preload
+                robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
+//                    robot.sleep(100);
+                setPathState(3);
+                isReady = false;
+                //Goes to bucket, in position to score preload and raises arm
                 break;
             case 1:
                 /* You could check for
@@ -182,10 +196,23 @@ public class PedroAuto extends LinearOpMode {
                 - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
                 - Robot Position: "if(follower.getPose().getX() > 36) {}"
                 */
-
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if (!follower.isBusy()||pathTimer.getElapsedTimeSeconds() > 2) {
-                    follower.followPath(pickup1);
+                if (!follower.isBusy()&& robot.isArmUp) {
+                    if(robot.getSlidePosition() > (780 - 40)) {
+                        //check for slides in position, and outtakes
+                        robot.outake(true);
+                        robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_3;
+                    }else{
+                        // if not slides in position, then raises slides
+                            actiontime.reset();
+                            robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_2;
+                    }
+                    if(actiontime.milliseconds()>2000) {
+                        //after outtaking, continue and move to intake position
+                        follower.followPath(pickup1);
+                        setPathState(2);
+                        robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
+                    }
                     /* Score Preload */
 //                    robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
 //                    //INSERT 3DOF CODE HERE TO SCORE SPECIMEN
@@ -193,27 +220,28 @@ public class PedroAuto extends LinearOpMode {
 //                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
 ////                         follower.followPath(grabPickup1,true);
 //                    robot.triggerEvent(EVENT_PRELOAD_SCORED, 2);
-                    setPathState(2);
 
+                } else{
+                    robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
                 }
                 break;
 
             case 2:
 
                 if (!follower.isBusy()) {
+                    //sweep to intake from side
                     follower.followPath(pickupSweep1, true);
-//                    robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
 //                    //pickup first sample
 //                    if(robot.getIsIntaked()) {
 //                        robot.triggerEvent(EVENT_SAMPLE_1_PICKEDUP, 3);
 //                        setPathState(EVENT_SAMPLE_1_PICKEDUP);
 //                    }
-                    setPathState(3);
+                    setPathState(4);
                 }
                 break;
 
             case 3:
-
+                robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
 //                if (!follower.isBusy()) {
 //                    follower.followPath(pickup1, true);
 //                    robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
@@ -222,14 +250,15 @@ public class PedroAuto extends LinearOpMode {
 //                        robot.triggerEvent(EVENT_SAMPLE_1_PICKEDUP, 3);
 //                        setPathState(EVENT_SAMPLE_1_PICKEDUP);
 //                    }
-                    setPathState(4);
+                    setPathState(1);
                 //}
                 break;
 
             case 4:
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 3) {
+                if (!follower.isBusy() && robot.getIsIntaked()) {
+                    //wait until intaked, then score
+                    robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
                     follower.followPath(scoreSample1, true);
-
                     //release sample with claw
 //                    robot.triggerEvent(EVENT_SAMPLE_1_SCORED , 4);
                     setPathState(5);
@@ -286,27 +315,17 @@ public class PedroAuto extends LinearOpMode {
                 }
                 break;
 
-            case 10:
-
-                if (!follower.isBusy()) {
-                    follower.followPath(pickupSweep3, true);
-                    //pickup first sample
-                    robot.triggerEvent(EVENT_SAMPLE_3_PICKEDUP, 7);
-                    setPathState(EVENT_SAMPLE_3_PICKEDUP);
-                }
-                break;
-
-            case 11:
+            case 9:
 
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 3) {
                     follower.followPath(scoreSample3, true);
                     //release sample with claw
 //                    robot.triggerEvent(EVENT_SAMPLE_3_SCORED , 8);
-                    setPathState(8);
+                    setPathState(10);
                 }
                 break;
 
-            case 12:
+            case 10:
                 if(!follower.isBusy()){
                     follower.followPath(park, true);
 //                    robot.triggerEvent(EVENT_PARKED);

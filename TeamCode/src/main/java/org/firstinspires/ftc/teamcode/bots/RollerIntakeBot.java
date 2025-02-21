@@ -69,11 +69,11 @@ public class RollerIntakeBot extends DifferentialWristBot {
         telemetry.addData("Mode", rollerMode);
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
         @ColorInt int color = colors.toColor();
-        telemetry.addData("Red", Color.red(color));
-        telemetry.addData("Green", Color.green(color));
-        telemetry.addData("Blue", Color.blue(color));
-        telemetry.addData("Gain", gain);
-        telemetry.addData("Thres", thres);
+//        telemetry.addData("Red", Color.red(color));
+//        telemetry.addData("Green", Color.green(color));
+//        telemetry.addData("Blue", Color.blue(color));
+//        telemetry.addData("Gain", gain);
+//        telemetry.addData("Thres", thres);
 
         int obj = getObjectInPlace();
 
