@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.DrivetrainFunctions;
@@ -25,6 +26,9 @@ public class TwoFishDeliveryTestOpmode extends LinearOpMode {
     private int servoIndex = 0;
     private String currentServo = "";
     private int targetHeight;
+    private boolean isSlidePowered = false;
+
+    private Gamepad prevGamepad1 = null;
 
 
 
@@ -32,11 +36,13 @@ public class TwoFishDeliveryTestOpmode extends LinearOpMode {
     private FtcDashboard dash = FtcDashboard.getInstance();
     private List<Action> runningActions = new ArrayList<>();
 
-    private ElapsedTime timer = new ElapsedTime();
+    private ElapsedTime deliveryTimer = new ElapsedTime();
     @Override
     public void runOpMode() {
 
-        twoFishDelivery = new TwoFishDelivery(this, true);
+        gamepad1.copy(prevGamepad1);
+
+        twoFishDelivery = new TwoFishDelivery(this, deliveryTimer);
 
 
         waitForStart();
@@ -44,15 +50,26 @@ public class TwoFishDeliveryTestOpmode extends LinearOpMode {
         while (opModeIsActive()){
 
             if(gamepad1.left_stick_y >= 0.1){
-                targetHeight += (int)(gamepad1.left_stick_y *= -0.01f);
+                twoFishDelivery.slideTarget += (int)(gamepad1.left_stick_y *= -0.01f);
+            }
+
+            if(isSlidePowered){
+                twoFishDelivery.PControlPower(0.5);
+            }
+
+            if(gamepad1.a && !prevGamepad1.a){
+                isSlidePowered = !isSlidePowered;
             }
 
             TelemetryPacket packet = new TelemetryPacket();
 
-            if(gamepad1.dpad_up) servoIndex = 0;
-            if(gamepad1.dpad_right) servoIndex = 1;
-            if(gamepad1.dpad_down) servoIndex = 2;
+//            if(gamepad1.dpad_up) servoIndex = 0;
+//            if(gamepad1.dpad_right) servoIndex = 1;
+//            if(gamepad1.dpad_down) servoIndex = 2;
 //            if(gamepad1.dpad_left) servoIndex = 3;
+
+            if(gamepad1.right_bumper && !prevGamepad1.right_bumper) servoIndex ++;
+            if(gamepad1.left_bumper && !prevGamepad1.left_bumper) servoIndex --;
 
             switch (servoIndex){
                 case    0:
@@ -74,7 +91,7 @@ public class TwoFishDeliveryTestOpmode extends LinearOpMode {
                     currentServo = "wrist";
             }
 
-            if(gamepad1.a){
+            if(gamepad1.b && !prevGamepad1.b){
                 twoFishDelivery.resetPWM();
             }
 

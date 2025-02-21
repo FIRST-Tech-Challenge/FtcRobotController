@@ -11,6 +11,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 @Disabled
 public class TwoFishDelivery {
     private static final double TICK_LOW_POWER_DISTANCE = 200;
@@ -35,17 +41,42 @@ public class TwoFishDelivery {
 
     private ElapsedTime time = new ElapsedTime();
 
-    private double slideTarget;
+    public double slideTarget;
 
-    public TwoFishDelivery(LinearOpMode l, Boolean slidesRunToPosition)
+
+    public double clawOpenPosition = 0;
+    public double clawClosePosition = 1;
+    public double pitchIntakePosition = 1;
+    public double pitchUpPosition = 0.5;
+    public double pitchScorePosition = 0.25;
+    public double pitchTransferPosition = 0;
+
+    public double wristUpPosition = 1;
+    public double wristDownPosition = 0;
+
+    String file = "TwoFishDeliveryValues.txt";
+    TwoFishDeliveryValues twoFishDeliveryValues = new TwoFishDeliveryValues(
+            clawOpenPosition,
+            clawClosePosition,
+            pitchIntakePosition,
+            pitchUpPosition,
+            pitchTransferPosition,
+            pitchScorePosition,
+            wristUpPosition,
+            wristDownPosition
+    );
+
+    public TwoFishDelivery(LinearOpMode l, ElapsedTime deliveryTimer)
     {
+        time = deliveryTimer;
         linearOpMode = l;
-        slidesRunToPosition = slidesRunToPosition;
         Initialize();
     }
 
 
     private void Initialize(){//4mm
+
+
         try {
             voltageSensor = linearOpMode.hardwareMap.get(VoltageSensor.class, "Control Hub");
 
@@ -69,6 +100,29 @@ public class TwoFishDelivery {
             }
 
             slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+//            FileOutputStream fileOut = new FileOutputStream(file);
+//
+//            // Creates an ObjectOutputStream
+//            ObjectOutputStream objOut = new ObjectOutputStream(fileOut);
+//
+//            // Writes objects to the output stream
+//            objOut.writeObject("Hi");
+//
+//            // Reads the object
+//            FileInputStream fileIn = new FileInputStream(file);
+//            ObjectInputStream objIn = new ObjectInputStream(fileIn);
+//
+//            // Reads the objects
+//            //Dog newDog = (Dog) objIn.readObject();
+//
+//            System.out.println("Claw Open: " + newDog.name);
+//            System.out.println("Dog Breed: " + newDog.breed);
+//
+//            objOut.close();
+//            objIn.close();
 
 
             //slide.setDirection(DcMotor.Direction.REVERSE);
@@ -155,4 +209,39 @@ public class TwoFishDelivery {
         linearOpMode.telemetry.addData("Slide Current: ", slide.getCurrentPosition());
     }
 
+}
+
+class TwoFishDeliveryValues implements Serializable {
+
+    double clawOpenPosition;
+    double clawClosePosition;
+
+    double pitchIntakePosition;
+    double pitchUpPosition;
+    double pitchTransferPosition;
+    double pitchScorePosition;
+
+    double wristUp;
+    double wristDown;
+
+    public TwoFishDeliveryValues(double clawOpenPosition,
+                                 double clawClosePosition,
+                                 double pitchIntakePosition,
+                                 double pitchUpPosition,
+                                 double pitchTransferPosition,
+                                 double pitchScorePosition,
+                                 double wristUp,
+                                 double wristDown
+    ) {
+        this.clawOpenPosition = clawOpenPosition;
+        this.clawClosePosition = clawClosePosition;
+
+        this.pitchIntakePosition = pitchIntakePosition;
+        this.pitchTransferPosition = pitchTransferPosition;
+        this.pitchUpPosition = pitchUpPosition;
+        this.pitchScorePosition = pitchScorePosition;
+
+        this.wristUp = wristUp;
+        this.wristDown = wristDown;
+    }
 }
