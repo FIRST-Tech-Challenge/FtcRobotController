@@ -42,8 +42,6 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
     public int oldPt = 0;
     public double pivotPower = 0.7;
     public boolean reachedPivotPos = false;
-    public static int slideTarget = minimumSlidePos;
-
     public DcMotorEx pivotMotor2 = null;
     public DcMotorEx pivotMotor1 = null;
     public DcMotorEx slideMotor1 = null;
