@@ -53,6 +53,23 @@ public class TwoFishDelivery {
 
     public double wristUpPosition = 1;
     public double wristDownPosition = 0;
+    private double operatingVoltage;
+    final private double DIP_FROM_HOLDING_SPEC = 0.25;
+    final private double DIP_FROM_SCORING_SPEC = 0.5;
+
+    //Slide Heights
+    final private int SPEC_HEIGHT = 350;
+
+
+    //boolean:
+    private boolean clawClosed = false;
+
+    //action timestamps:
+    private double clawCloseTimestamp = 0;
+
+    //action durations:
+    private double CLAW_CLOSE_DURATION = 0.5;
+
 
     String file = "TwoFishDeliveryValues.txt";
     TwoFishDeliveryValues twoFishDeliveryValues = new TwoFishDeliveryValues(
@@ -79,6 +96,7 @@ public class TwoFishDelivery {
 
         try {
             voltageSensor = linearOpMode.hardwareMap.get(VoltageSensor.class, "Control Hub");
+            operatingVoltage = voltageSensor.getVoltage();
 
             slide  = linearOpMode.hardwareMap.get(DcMotor.class, "deliverySlide");
             pitch1 = linearOpMode.hardwareMap.get(Servo.class, "deliveryPitchLeft");
@@ -92,15 +110,7 @@ public class TwoFishDelivery {
             slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             slide.setTargetPosition(0);
-
-            if (slidesRunToPosition) {
-                slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            } else {
-                slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            }
-
             slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
 
 
 //            FileOutputStream fileOut = new FileOutputStream(file);
@@ -186,14 +196,33 @@ public class TwoFishDelivery {
 
         setSlidesPower(power * powerMultiplier);
     }
+
+    public void toSpecHeight(){
+        setSlidesTargetPosition(SPEC_HEIGHT);
+    }
     public void setClawPosition(double p){ // 0-1
         claw.setPosition(p);
     }
     public void clawClose(){
+        clawCloseTimestamp = time.seconds();
         setClawPosition(1);
+        clawClosed = true;
     }
     public void clawOpen(){
         setClawPosition(0);
+        clawClosed = false;
+    }
+
+    public boolean CheckClawClosed(){
+        return (time.seconds() - clawCloseTimestamp > CLAW_CLOSE_DURATION && clawClosed);
+    }
+
+    public boolean checkIfHoldingSpec(){
+        return voltageSensor.getVoltage() < operatingVoltage - DIP_FROM_HOLDING_SPEC;
+    }
+
+    public boolean checkIfScoredSpec(){
+        return voltageSensor.getVoltage() < operatingVoltage - DIP_FROM_SCORING_SPEC;
     }
 
     public void addServoTelemetry(){
