@@ -11,8 +11,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.DrivetrainFunctions;
 import org.firstinspires.ftc.teamcode.OneFishIntake;
-import org.firstinspires.ftc.teamcode.OneFishSampleDelivery;
-import org.firstinspires.ftc.teamcode.OneFishSpecimenDelivery;
 import org.firstinspires.ftc.teamcode.TwoFishDelivery;
 
 import java.util.ArrayList;
@@ -69,12 +67,10 @@ public class TwoFishTeleop extends LinearOpMode {
     boolean pitched = false;
 
     private enum RobotState{
-        INTAKE_EXTEND,
         INTAKE,
         TRANSFER,
         SAMPLE_SCORE,
-        DELIVERY_DUMP,
-        SPECIMEN,
+        SPECIMEN_GRAB,
         SPECIMEN_SCORE,
         IDLE
     }
@@ -151,19 +147,26 @@ public class TwoFishTeleop extends LinearOpMode {
                     case INTAKE:
                         //intake extension
 //                        intake.slideTarget += (int) (gamepad2.right_stick_y *= 0.01f);
+                        //intake pitch
+//                        intake.pitchTarget += (int) (gamepad2.left_stick_y *= 0.01f);
 
                         //Intake spin power
                         if (gamepad2.right_trigger >= 0.01) {
                             intake.setIntakePower(gamepad2.right_trigger);
                         }
                         if (gamepad2.left_trigger >= 0.01){
-                            intake.setIntakePower(-gamepad2.left_trigger);
+                            intake.setIntakePower(-gamepad2.left_trigger*0.5f);
                         }
 
                         //confirm intake ---> transfer
-                        if(gamepad2.a && prevGamepad2.a){
+                        if(gamepad2.a && !prevGamepad2.a){
                            state = RobotState.TRANSFER;
 //                           intake.slideTarget = 0;
+                        }
+
+                        //Move to grab spec ("y")
+                        if(gamepad2.y && !prevGamepad2.y){
+                            state = RobotState.SPECIMEN_GRAB;
                         }
                         break;
 
@@ -176,7 +179,7 @@ public class TwoFishTeleop extends LinearOpMode {
 
 
                         //close claw if "a" pressed
-                        if(gamepad2.a && prevGamepad2.a){
+                        if(gamepad2.a && !prevGamepad2.a){
                             delivery.clawClose();
                         }
 
@@ -204,6 +207,61 @@ public class TwoFishTeleop extends LinearOpMode {
                         }
 
                         break;
+
+                    case SPECIMEN_GRAB:
+                        //delivery. home slides
+
+                        //pitch to intake position
+                        delivery.setPitch(delivery.pitchIntakePosition);
+
+                        //wait for "a" to grab
+                        if(gamepad2.a && !prevGamepad2.a){
+                            delivery.clawClose();
+                        }
+
+                        //Pitch up after grabbing and flip spec --- prepare to score
+                        if(delivery.CheckClawClosed()){
+                            delivery.setPitch(delivery.pitchUpPosition);
+                            delivery.setWrist(delivery.wristDownPosition);
+                            state = RobotState.SPECIMEN_SCORE;
+                        }
+                        break;
+
+                    case SPECIMEN_SCORE:
+
+                        //raise slides to spec height
+                        delivery.toSpecHeight();
+                        delivery.PControlPower(0.75);
+
+                        //Hold "a" to score, press "left bumper" to let go
+                        if(gamepad2.a){
+                            delivery.setPitch(delivery.pitchScoreSpecPosition);
+                            delivery.setWrist(delivery.wristDownPosition);
+                            if(gamepad2.left_bumper && !prevGamepad2.left_bumper){
+                                delivery.clawOpen();
+                            }
+                        } else{
+                            delivery.setPitch(delivery.pitchUpPosition);
+                        }
+
+                        //flip wrist and go to idle after confirmed score
+                        if(delivery.CheckClawOpen()){
+                            delivery.setWrist(delivery.wristUpPosition);
+                            state = RobotState.IDLE;
+                        }
+                        break;
+
+                    case IDLE:
+                        //delivery.homeslides
+                        //if left joystick or triggers are pressed, switch to intake
+                        if(Math.abs(gamepad2.left_stick_y) > 0.01f || gamepad2.right_trigger > 0.01f || gamepad2.left_trigger > 0.01f){
+                            state = RobotState.INTAKE;
+                        }
+
+                        //if "y" pressed go to grab spec
+                        if(gamepad2.y && !prevGamepad2.y){
+                            state = RobotState.SPECIMEN_GRAB;
+                        }
                 }
 
                 telemetry.addData("STATE: ", state);
