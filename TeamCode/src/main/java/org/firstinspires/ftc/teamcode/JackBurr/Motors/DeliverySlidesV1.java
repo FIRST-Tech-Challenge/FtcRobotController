@@ -56,7 +56,9 @@ public class DeliverySlidesV1 {
         double leftFF = Math.cos(Math.toRadians(target/ticks_per_rev_left)) * kF;
         double leftPID = leftController.calculate(leftSlide.getCurrentPosition(), target);
         double leftPower = leftPID + leftFF;
-        leftSlide.setPower(leftPower);
+        if(getLeftSlidePosition() != target) {
+            leftSlide.setPower(leftPower);
+        }
     }
     public void runRightSlideToPositionPID(int target){
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -66,7 +68,9 @@ public class DeliverySlidesV1 {
         double rightFF = Math.cos(Math.toRadians(target/ticks_per_rev_right)) * kF;
         double rightPID = rightController.calculate(rightSlide.getCurrentPosition(), target);
         double rightPower = rightPID + rightFF;
-        rightSlide.setPower(rightPower);
+        if(getRightSlidePosition() != target) {
+            rightSlide.setPower(rightPower);
+        }
     }
 
 

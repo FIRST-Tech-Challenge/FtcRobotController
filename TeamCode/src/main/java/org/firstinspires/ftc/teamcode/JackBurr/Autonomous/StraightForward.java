@@ -9,6 +9,7 @@ import com.pedropathing.pathgen.PathCallback;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Constants;
+import com.pedropathing.util.Drawing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.sun.tools.javac.nio.PathFileManager;
@@ -41,29 +42,32 @@ public class StraightForward extends LinearOpMode {
         Constants.setConstants(FConstants.class, LConstants.class);
         slides.init(hardwareMap);
         follower = new Follower(hardwareMap);
-        scorePreload = new Path(new BezierLine(new Point(startPose), new Point(bucket)));
+        follower.setStartingPose(startPose);
+        scorePreload = new Path(new BezierLine(new Point(startPose.getX(), startPose.getY(), Point.CARTESIAN), new Point(bucket.getX(), bucket.getY(), Point.CARTESIAN)));
         scorePreloadChain = follower.pathBuilder()
                 .addPath(scorePreload)
                 .setConstantHeadingInterpolation(startPose.getHeading())
                 .setPathEndTimeoutConstraint(0)
-                .addTemporalCallback(0, ()->{
-                    slides.runLeftSlideToPositionPID(constants.LEFT_SLIDE_HIGH_BASKET);
-                    slides.runRightSlideToPositionPID(constants.RIGHT_SLIDE_HIGH_BASKET);
-                })
+                //.addTemporalCallback(0, ()->{
+                    //slides.runLeftSlideToPositionPID(constants.LEFT_SLIDE_HIGH_BASKET);
+                    //slides.runRightSlideToPositionPID(constants.RIGHT_SLIDE_HIGH_BASKET);
+                //})
                 .build();
         waitForStart();
+        //follower.followPath(scorePreloadChain);
         while(opModeIsActive()) {
             follower.update();
             if (step == 1) {
-                if(!traj1followed && !follower.isBusy()) {
-                    follower.followPath(scorePreloadChain, true);
-                    follower.update();
+                if(!traj1followed) {
+                    follower.followPath(scorePreload, true);
                     traj1followed = true;
                 }
-                else if(traj1followed && !follower.isBusy()) {
-                    step = 2;
-                    traj1followed = false;
-                }
+                telemetry.addData("Pose: ", follower.getPose());
+                telemetry.addData("Is done: ", scorePreload.isAtParametricEnd());
+                follower.drawOnDashBoard();
+                //if(scorePreload.isAtParametricEnd()) {
+                    //step = 2;
+                //}
             }
             if (step == 2) {
                 if(!follower.isBusy() && !traj1followed) {

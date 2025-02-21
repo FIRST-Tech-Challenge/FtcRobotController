@@ -25,7 +25,7 @@ public class IntakeSlidesV1 {
 
     public void intakeIn(){
         intakeSlides.setPower(1);
-        intakeSlides.setTargetPosition(10);
+        intakeSlides.setTargetPosition(30);
         intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
@@ -37,7 +37,7 @@ public class IntakeSlidesV1 {
 
     public void intakeAllTheWayIn(){
         intakeSlides.setPower(1);
-        intakeSlides.setTargetPosition(-10);
+        intakeSlides.setTargetPosition(0);
         intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 

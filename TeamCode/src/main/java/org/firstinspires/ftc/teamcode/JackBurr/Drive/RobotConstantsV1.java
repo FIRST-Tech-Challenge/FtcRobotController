@@ -11,9 +11,9 @@ public class RobotConstantsV1 {
     public double GRIPPERS_OPEN = 0.45;
     public double GRIPPERS_CLOSE = 0;
     public double GRIPPERS_GRAB = 0.05;
-    public double DELIVERY_GRIPPERS_CLOSE = 0.85;
-    public double DELIVERY_GRIPPERS_GRAB = 0.58;
-    public double DELIVERY_GRIPPERS_OPEN = 0.3;
+    public double DELIVERY_GRIPPERS_CLOSE = 0.3;
+    public double DELIVERY_GRIPPERS_GRAB = 0.47;
+    public double DELIVERY_GRIPPERS_OPEN = 0.7;
     //===============================================================================================================
     //SERVOS=========================================================================================================
     public double FRONT_LEFT_TRANSFER = 0.9;
@@ -39,19 +39,19 @@ public class RobotConstantsV1 {
     public int INTAKE_MOTOR_IN = 3;
     public int INTAKE_MOTOR_OUT = 850;
     public int INTAKE_MOTOR_ALL_THE_WAY_IN = 0;
-    public int LEFT_SLIDE_HIGH_BASKET = -2709;
-    public int RIGHT_SLIDE_HIGH_BASKET = 2709;
-    public int LEFT_SLIDE_LOW_BASKET = -1416;
-    public int RIGHT_SLIDE_LOW_BASKET = 1416;
+    public int LEFT_SLIDE_HIGH_BASKET = -3195;
+    public int RIGHT_SLIDE_HIGH_BASKET = 3195;
+    public int LEFT_SLIDE_LOW_BASKET = -1582;
+    public int RIGHT_SLIDE_LOW_BASKET = 1582;
     public int LEFT_SLIDE_HIGH_BAR = -419;
     public int RIGHT_SLIDE_HIGH_BAR = 419;
     public int LEFT_SLIDE_HIGH_BAR_AUTO = -419;
     public int RIGHT_SLIDE_HIGH_BAR_AUTO = 419;
-    public int LEFT_SLIDE_LEVEL_TWO_ASCENT = -2709;
-    public int RIGHT_SLIDE_LEVEL_TWO_ASCENT = 2709;
+    public int LEFT_SLIDE_LEVEL_TWO_ASCENT = -3370;
+    public int RIGHT_SLIDE_LEVEL_TWO_ASCENT = 3370;
     public int LEFT_SLIDE_LEVEL_TWO_ASCENT_HOOK = -629;
     public int RIGHT_SLIDE_LEVEL_TWO_ASCENT_HOOK = 629;
     //CAMERA========================================================================================================
-    public static double sampleAngle = -90;
+    public static double sampleAngle = 0;
     //==============================================================================================================
 }
