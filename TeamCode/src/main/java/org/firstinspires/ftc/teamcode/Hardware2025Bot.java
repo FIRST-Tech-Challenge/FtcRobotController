@@ -100,11 +100,9 @@ public class Hardware2025Bot
     public ElapsedTime  snorkleTimer        = new ElapsedTime();
 
     public final static int   SNORKLE_HW_MAX   = 3328;  // encoder for max possible extension RIGHT
-    public final static int   SNORKLE_LEVEL3A  = 2750;  // encoder for snorkle above the bar
-    public final static int   SNORKLE_TOUCH    = 2400;  // encoder for robot of the floor (against lower barrier)
-    public final static int   SNORKLE_LEVEL3B  = 1650;  // encoder for robot of the floor (against lower barrier)
-    public final static int   SNORKLE_LEVEL3C  = 900;   // encoder for final ascent2 position (above the lower barrier)
-    public final static int   SNORKLE_SLOW     = 500;   // encoder for almost reset to 0
+    public final static int   SNORKLE_LEVEL2A  = 2750;  // encoder for snorkle above the bar
+    public final static int   SNORKLE_LEVEL2B  = 1650;  // encoder for robot off the floor (against lower barrier)
+    public final static int   SNORKLE_LEVEL2C  = 900;   // encoder for final ascent2 position (above the lower barrier)
     public final static int   SNORKLE_HW_MIN   = 0;     // encoder position at maximum rotation LEFT
 
     //====== Worm gear tilt MOTORS (RUN_USING_ENCODER) =====
@@ -140,7 +138,9 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_BASKET_DEG      = 90.00; // Arm at rotation back to the basket for scoring
     public final static double TILT_ANGLE_AUTO_PRE_DEG    = 83.00; // Arm almost at  basket (start to slow; avoid wobble)
     public final static double TILT_ANGLE_SUBMERSIBLE_DEG = 10.00; // Arm at rotation back to the submersible for collecting
-    public final static double TILT_ANGLE_ASCENT1_DEG     = 58.00; // Arm at rotation back to the low bar for ascent level 1 or 2
+    public final static double TILT_ANGLE_SWEEPER_DEG       = 8.00; // Arm at rotation to get into position to sweep TODO: tweak value
+    public final static double TILT_ANGLE_SWEEPER_LOWER_DEG = 6.00; // Arm rotated to actually sweep TODO: tweak value
+    public final static double TILT_ANGLE_LEVEL2A_DEG     = 58.00; // Arm at rotation back to the low bar for ascent level 2
     public final static double TILT_ANGLE_ASCENT2_DEG     = 64.25; // Arm at rotation back to the low bar for ascent level 2
     public final static double TILT_ANGLE_ASCENT3_DEG     = 56.50; // Arm at rotation back to the low bar for ascent level 2
     public final static double TILT_ANGLE_PARK_DEG        = 33.80; // Arm at rotation back to the low bar for park in auto
@@ -157,7 +157,7 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_HW_MIN_DEG      =  0.00; // Arm at maximum rotation DOWN/FWD
     public final static double TILT_ANGLE_COLLECT_DEG     =  4.00; // Arm to collect samples at ground level
     public final static double TILT_ANGLE_COLLECT1_DEG    =  3.80; // Arm to collect samples at ground level for only the first sample
-    public final static double TILT_ANGLE_SAMPLE3_DEG     =  4.00; // Arm to collect samples at ground level (3rd one against wall)
+    public final static double TILT_ANGLE_SAMPLE3_DEG     =  3.90; // Arm to collect samples at ground level (3rd one against wall)
     public final static double TILT_ANGLE_START_DEG       = 13.00; // AUTO: starting position LOW
     public final static double TILT_ANGLE_WALL_DEG        = 13.90; // AUTO: starting position HIGH (motor tilted back & touches wall)
     public final static double TILT_ANGLE_WALL0_DEG       = 21.50; // AUTO: grab specimen off wall (on approach)
@@ -193,7 +193,7 @@ public class Hardware2025Bot
     public final static int    VIPER_EXTEND_AUTO_READY   = 1177;  // extend for collecting during auto
     public final static int    VIPER_EXTEND_AUTO_COLLECT = 1177;  // extend for collecting during auto
     public final static int    VIPER_EXTEND_SAMPLE3 = 1103;   // extend for collecting during auto (3rd sample along wall)
-    public final static int    VIPER_EXTEND_HANG1   = 2207;   // extend to this to prepare for level 2 ascent
+    public final static int    VIPER_EXTEND_LEVEL2A = 2207;   // extend to this to prepare for level 2 ascent
     public final static int    VIPER_EXTEND_PARK2   = 2508;   // extend to this to park in auto
     public final static int    VIPER_EXTEND_PARK1   = 1618;   // extend to this to park in auto
     public final static int    VIPER_EXTEND_HANG2   = 2942;   // retract to this extension during level 2 ascent
@@ -213,6 +213,37 @@ public class Hardware2025Bot
     public final static int    VIPER_EXTEND_WALL0   = 19;     // AUTO: grab specimen off wall (on approach)
     public final static int    VIPER_EXTEND_WALL1   = 170;    // AUTO: grab specimen off wall (lift off)
     public final static double TILT_ANGLE_42  = Math.toDegrees(Math.acos((double)Hardware2025Bot.VIPER_EXTEND_42/(double)Hardware2025Bot.VIPER_EXTEND_BASKET)); // Minimum tilt angle needed to fully extend viper
+
+// STATE1 = approach to hang
+// tilt =
+// viper =
+// snorkel =
+
+// STATE2 = fully retract
+// tilt =
+// viper = 1546
+// snorkle = 0
+
+// STATE3 = arm extended
+// tilt = 41.6 deg
+// viper = 2823
+// snorkel = 0
+
+// STATE3 = rotate back to hook
+// tilt = 46.2 deg <====
+// viper = 2823
+// snorkel = 0
+
+// STATE4 = retract to hook
+// tilt = 46.2 deg
+// viper = 2555  <===
+// snorkel = 0
+
+// STATE5 = lift off floor
+// tilt = 59.1deg
+// viper = 1780
+// snorkel = 0
+
 //  PIDControllerLift   liftPidController;           // PID parameters for the lift motors
 //  public double       liftMotorPID_p     = -0.100; //  Raise p = proportional
 //  public double       liftMotorPID_i     =  0.000; //  Raise i = integral
@@ -279,8 +310,8 @@ public class Hardware2025Bot
     public final static double WRIST_SERVO_WALL0_ANGLE = 180.0;
     public final static double WRIST_SERVO_WALL1 = 0.519;        // AUTO: grab specimen off wall (lift off)
     public final static double WRIST_SERVO_WALL1_ANGLE = 173.0;
-    public final static double WRIST_SERVO_CLIP = 0.350;        // AAUTO: clip specimen on bar by just driving forward
-    public final static double WRIST_SERVO_ASCENT = 0.620;        // TELE: ascend level 2 position
+    public final static double WRIST_SERVO_CLIP = 0.350;         // AAUTO: clip specimen on bar by just driving forward
+    public final static double WRIST_SERVO_LEVEL2 = 0.620;       // TELE: ascend level 2 position
     // horizontal = 0.440
     // straight down = 0.710
 
@@ -292,6 +323,7 @@ public class Hardware2025Bot
     public final static double CLAW_SERVO_CLOSED  = 0.443;  // Claw closed (hold sample/specimen)
     public final static double CLAW_SERVO_INIT    = 0.500;  // Claw in init position (servo default power-on state)
     public final static double CLAW_SERVO_OPEN_N  = 0.600;  // claw opened narrow (enough to release/drop)
+    public final static double CLAW_SERVO_OPEN_S  = 0.750;  // claw opened to collect/sweep width
     public final static double CLAW_SERVO_OPEN_W  = 0.900;  // claw opened wide (fully open and above samples on floor)
 
     public enum clawStateEnum {
@@ -299,7 +331,8 @@ public class Hardware2025Bot
         CLAW_OPEN_NARROW,
         CLAW_OPEN_WIDE,
         CLAW_OPEN,       /* used to toggle between OPEN_NARROW and OPEN_WIDE */
-        CLAW_CLOSED
+        CLAW_CLOSED,
+        CLAW_OPEN_SWEEPER
     }
 
     public Hardware2025Bot.clawStateEnum clawState = Hardware2025Bot.clawStateEnum.CLAW_INIT;
@@ -483,6 +516,10 @@ public class Hardware2025Bot
                 break;
             case CLAW_OPEN_WIDE :
                 clawServo.setPosition( CLAW_SERVO_OPEN_W );
+                clawState = newClawState;
+                break;
+            case CLAW_OPEN_SWEEPER :
+                clawServo.setPosition( CLAW_SERVO_OPEN_S );
                 clawState = newClawState;
                 break;
             case CLAW_CLOSED :
@@ -921,8 +958,8 @@ public class Hardware2025Bot
         // the weight of the lift will immediately drop it back down.
         snorkleLMotor.setMode(  DcMotor.RunMode.RUN_USING_ENCODER );
         snorkleRMotor.setPower( 0.0 );
-//         liftMoveState = LiftMoveActivity.IDLE;
-//         liftStoreState = LiftStoreActivity.IDLE;
+//      liftMoveState = LiftMoveActivity.IDLE;
+//      liftStoreState = LiftStoreActivity.IDLE;
         snorkleLMotorBusy = false;
         snorkleRMotorBusy = false;
     } // abortSnorkleExtension

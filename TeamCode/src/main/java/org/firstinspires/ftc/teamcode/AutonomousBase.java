@@ -1389,7 +1389,7 @@ public abstract class AutonomousBase extends LinearOpMode {
                                 double speedMax, int driveType) {
 
         // Convert from cm to inches
-        double errorMultiplier = 0.044;  // ramp down from 100% starting at 22" from target
+        double errorMultiplier = 0.033;  // ramp down from 100% starting at 30" from target
         double speedMin = MIN_DRIVE_MAGNITUDE;
         double allowedError = (driveType == DRIVE_THRU) ? 2.50 : 0.5;
 
