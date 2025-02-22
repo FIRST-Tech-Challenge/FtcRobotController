@@ -117,7 +117,7 @@ public class BlueBotTeleop extends LinearOpMode {
    * This function is used to determine which two wheels should be the drive wheels
    * during a turn.
    */
-  private GeneralDirection get_general_direction(double steering_angle) {
+  private GeneralDirection get_general_direction(double steering_angle, boolean goingUp) {
     double north = 0.5;
     double east = 0.25;
     double west = 0.75;
@@ -127,10 +127,15 @@ public class BlueBotTeleop extends LinearOpMode {
     double southWest = (west + 1.0) / 2.0;
     double southEast = (0.0 + east) / 2.0;
 
-    if (steering_angle <= northEast && steering_angle >= southEast) {
+    if (steering_angle >= southEast && steering_angle <= northEast) {
       return GeneralDirection.RIGHT;
-    } else if (steering_angle <= northWest && steering_angle >= northEast) {
-      return GeneralDirection.UP;
+    } else if (steering_angle >= northEast && steering_angle <= northWest) {
+      if (goingUp) {
+        return GeneralDirection.UP;
+      }
+      else {
+        return GeneralDirection.DOWN;
+      }
     } else if (steering_angle >= northWest && steering_angle <= southWest) {
       return GeneralDirection.LEFT;
     } else {
@@ -334,7 +339,7 @@ public class BlueBotTeleop extends LinearOpMode {
         double cone_threshold = 0.005;
 
         // 15% of turn radius
-        double corrected_turn_radius = max_turn_radius * 0.15;
+        double corrected_turn_radius = max_turn_radius * 0.9;
 
         if (theta_angle_difference > Math.PI) {
           if (theta_angle_difference <= (2.0 * Math.PI) - cone_threshold) {
@@ -381,11 +386,34 @@ public class BlueBotTeleop extends LinearOpMode {
         // the left two wheels should steer out of the turn.
 
         // Determine the general direction of the robot
-        GeneralDirection general_direction = get_general_direction(steering_angle);
+        boolean goingUp;
+
+        if (robot_theta >= 0 && robot_theta <= Math.PI) {
+          // Robot is facing north
+          if (joy_theta >= 0.0) {
+            // Moving forward
+            goingUp = true;
+          }
+          else {
+            goingUp = false;
+          }
+        }
+        else {
+          // Robot is facing south
+          if (joy_theta < 0.0) {
+            goingUp = false;
+          }
+          else {
+            goingUp = true;
+          }
+        }
+
+        GeneralDirection general_direction = get_general_direction(steering_angle, goingUp);
 
         // Strafing up or down means the front two wheels are the driving wheels.
         // This works in reverse because of the simple direction change.
         if (general_direction == GeneralDirection.UP) {
+          telemetry.addLine("FORWARD");
           steer_wheels(
               steering_angle + right_joystick_steering_amt + applied_turn_radius,
               steering_angle + right_joystick_steering_amt + applied_turn_radius,
@@ -394,6 +422,7 @@ public class BlueBotTeleop extends LinearOpMode {
           );
         }
         else if (general_direction == GeneralDirection.DOWN) {
+          telemetry.addLine("REVERSE");
           steer_wheels(
               steering_angle + right_joystick_steering_amt,
               steering_angle + right_joystick_steering_amt,
@@ -403,6 +432,7 @@ public class BlueBotTeleop extends LinearOpMode {
         }
         // Strafing left means the left front and back wheels are now the driving wheels
         else if (general_direction == GeneralDirection.LEFT) {
+          telemetry.addLine("LEFT");
           steer_wheels(
               steering_angle + right_joystick_steering_amt + applied_turn_radius, // Front left
               steering_angle - right_joystick_steering_amt, // Front right
@@ -412,6 +442,7 @@ public class BlueBotTeleop extends LinearOpMode {
         }
         // Strafing right means the right front and back wheels are now the driving wheels
         else {
+          telemetry.addLine("RIGHT");
           steer_wheels(
               steering_angle - right_joystick_steering_amt, // Front left
               steering_angle + right_joystick_steering_amt + applied_turn_radius, // Front right
