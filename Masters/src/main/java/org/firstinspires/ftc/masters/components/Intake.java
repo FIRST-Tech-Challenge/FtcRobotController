@@ -44,7 +44,7 @@ public class Intake {
     public static double RETRACT_POWER = -0.6;
     public static double EXTEND_POWER = 0.6;
     public static double INTAKE_POWER = -1;
-    public static double EJECT_POWER = 0.8;
+    public static double EJECT_POWER = 1;
 
     public enum Status{
         TRANSFER(0), DROP(0), INIT(0), EJECT(1500),MOVE_TO_TRANSFER(500), EXTEND_TO_HUMAN(0), EJECT_TO_HUMAN(800), NEUTRAL(0);
@@ -180,18 +180,14 @@ public class Intake {
     }
 
     protected void moveIntakeToTransfer(){
-        transferIntake();
-        status = Status.MOVE_TO_TRANSFER;
-        elapsedTime = new ElapsedTime();
+//        transferIntake();
+//        status = Status.MOVE_TO_TRANSFER;
+//        elapsedTime = new ElapsedTime();
     }
 
-//    public void openGate(){
-//        pusher.setPosition(ITDCons.gateOpen);
-//    }
+    public void pushOut(){ pusher.setPosition(ITDCons.pushOut); }
 
-    public void closeGate(){
-        pusher.setPosition(ITDCons.gateClose);
-    }
+    public void pushIn(){ pusher.setPosition(ITDCons.pushIn); }
 
     public void update(){
 
@@ -245,7 +241,8 @@ public class Intake {
                         if (color!= ITDCons.Color.unknown && color!= ITDCons.Color.yellow && color!=allianceColor){
                             ejectIntake();
                         } else if (color== ITDCons.Color.yellow){
-                            moveIntakeToTransfer();
+                            //moveIntakeToTransfer();
+                            ejectIntake();
                         } else if (color == allianceColor){
                             intakeToNeutral();
                             status= Status.NEUTRAL;

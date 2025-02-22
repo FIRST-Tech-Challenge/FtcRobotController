@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.components.DriveTrain;
-import org.firstinspires.ftc.masters.components.ITDCons;
 import org.firstinspires.ftc.masters.components.Init;
 import org.firstinspires.ftc.masters.components.Intake;
 import org.firstinspires.ftc.masters.components.Outtake;
@@ -23,8 +22,8 @@ import org.firstinspires.ftc.masters.pedroPathing.constants.LConstants;
 //position are setup with pedro coordinate from blue side
 //auto can be used for blue and red
 
-@Autonomous(name="Specimen")
-public class Specimen extends LinearOpMode {
+@Autonomous(name="SpecimenSafe")
+public class SpecimenSafe extends LinearOpMode {
 
     Pose startPose = new Pose(10,66,0);
     Pose scoringPose = new Pose(40,70.5, 0);
@@ -33,14 +32,14 @@ public class Specimen extends LinearOpMode {
     Pose midPoint1 = new Pose(20,25,0);
     Pose midPoint2 = new Pose(60,36,0);
 
-    Pose pickupPose1 = new Pose(13, 40, 0);
-    Pose pickupPose = new Pose (10.75,40, 0);
+    Pose pickupPose = new Pose (10.75,38, 0);
+    Pose pickupMid = new Pose(22,38,0);
     Pose pushPose1 = new Pose(65,28,0);
-    Pose endPushPose1 = new Pose (24,28,0);
+    Pose endPushPose1 = new Pose (22,28,0);
     Pose pushPose2 = new Pose(65,17,0);
-    Pose endPushPose2 = new Pose(24,17,0);
+    Pose endPushPose2 = new Pose(22,17,0);
     Pose pushPose3 = new Pose(65,11,0);
-    Pose endPushPose3 = new Pose(23,11,0);
+    Pose endPushPose3 = new Pose(22,11,0);
 
     Path scorePreload, pickup1, score, towall, tosub;
     PathChain pushSample1, pushSample2, pushSample3, pickUp;
@@ -87,7 +86,7 @@ public class Specimen extends LinearOpMode {
                     if (elapsedTime.milliseconds()>200){
                         follower.followPath(scorePreload);
                         elapsedTime= new ElapsedTime();
-                        state=PathState.Start;
+                        state= PathState.Start;
                     }
                     break;
                 case Start:
@@ -127,7 +126,7 @@ public class Specimen extends LinearOpMode {
                 case Sample2:
                     if (!follower.isBusy()){
 //                        outtake.moveToPickUpFromWall();
-                        follower.followPath(pushSample3);
+//                        follower.followPath(pushSample3);
                         state= PathState.Sample3;
                     }
                     break;
@@ -145,7 +144,7 @@ public class Specimen extends LinearOpMode {
                             outtake.closeClaw();
                             elapsedTime= new ElapsedTime();
 
-                        } else if (elapsedTime.milliseconds()>150){
+                        } else if (elapsedTime.milliseconds()>500){
                             follower.followPath(score);
                             outtake.scoreSpecimen();
                             elapsedTime=null;
@@ -167,7 +166,7 @@ public class Specimen extends LinearOpMode {
                             cycleCount++;
                             elapsedTime= new ElapsedTime();
 
-                        } else if (elapsedTime.milliseconds()>0){
+                        } else if (elapsedTime.milliseconds()>350){
                             follower.followPath(towall);
                             outtake.closeClaw();
                             outtake.moveToPickUpFromWall();
@@ -232,17 +231,17 @@ public class Specimen extends LinearOpMode {
                 .setLinearHeadingInterpolation(pushPose3.getHeading(), endPushPose3.getHeading())
                 .build();
 
-        pickup1 = new Path(new BezierLine(new Point(endPushPose3), new Point(pickupPose)));
-        pickup1.setLinearHeadingInterpolation(endPushPose3.getHeading(), pickupPose.getHeading());
+        pickup1 = new Path(new BezierCurve(new Point(endPushPose2), new Point(pickupMid), new Point(pickupPose)));
+        pickup1.setLinearHeadingInterpolation(endPushPose2.getHeading(), pickupPose.getHeading());
 
         score = new Path(new BezierLine(new Point(pickupPose), new Point(scoringPose.getX(), scoringPose.getY()+2)));
         score.setLinearHeadingInterpolation(pickupPose.getHeading(), scoringPose.getHeading());
 
-        towall = new Path(new BezierLine(new Point(scoringPose.getX(), scoringPose.getY()+2), new Point(pickupPose1)));
-        towall.setLinearHeadingInterpolation(scoringPose.getHeading(), pickupPose1.getHeading());
+        towall = new Path(new BezierCurve(new Point(scoringPose.getX(), scoringPose.getY()+2), new Point(pickupPose)));
+        towall.setLinearHeadingInterpolation(scoringPose.getHeading(), pickupPose.getHeading());
 
         pickUp = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(scoringPose), new Point(pickupPose1), new Point(pickupPose)))
+                .addPath(new BezierCurve(new Point(scoringPose), new Point(pickupPose), new Point(pickupPose)))
                 .setLinearHeadingInterpolation(scoringPose.getHeading(), pickupPose.getHeading())
                 .build();
 

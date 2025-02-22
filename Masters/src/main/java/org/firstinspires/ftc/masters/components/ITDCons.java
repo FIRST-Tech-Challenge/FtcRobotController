@@ -25,8 +25,8 @@ public class ITDCons {
     public static double intakeTransferSpeed = 0.65;
     public static double intakeEjectSpeed =0.8;
 
-    public static double gateOpen=0.6;
-    public static double gateClose=0.5;
+    public static double pushIn=0.6;
+    public static double pushOut=0.2;
 
     public static double clawOpenTransfer =0.3;
     public static double clawOpen = 0.35;
@@ -79,10 +79,6 @@ public class ITDCons {
 
     public static double intakeintakearm = .503;
     public static double intakeintakechain = .08;
-
-    public static double pusherIn=0.5;
-    public static double pusherOut= 0.6;
-
 
 }
 
