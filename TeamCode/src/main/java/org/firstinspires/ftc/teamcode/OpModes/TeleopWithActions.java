@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
+import org.firstinspires.ftc.teamcode.Hardware.Sensors.Color;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Extension.Extension;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
@@ -33,11 +34,13 @@ public class TeleopWithActions extends OpMode {
     Robot robot;
     Arm arm;
     Claw claw;
+    Color colorSensor;
     Extension extension;
     Lift lift;
     Battery battery;
     Sweeper sweeper;
     boolean firstRun = true;
+    boolean red = false;
     public static double slowMultiplier = 0.25;
 
     @Override
@@ -48,6 +51,7 @@ public class TeleopWithActions extends OpMode {
         drivetrain = robot.drivetrain;
         arm = robot.arm;
         claw = robot.claw;
+        colorSensor = robot.colorSensor;
         extension = robot.extension;
         lift = robot.lift;
         sweeper = robot.sweeper;
@@ -63,6 +67,7 @@ public class TeleopWithActions extends OpMode {
             runningActions.put("arm", arm.armRetract());
             firstRun = false;
         } else {
+            if (gamepad1.dpad_down&&gamepad2.dpad_down) red=true;
             if (gamepad1.right_trigger > 0.5) {
                 runningActions.put("extension", extension.servoExtension(Extension.extensionState.EXTEND));
             }
@@ -76,7 +81,11 @@ public class TeleopWithActions extends OpMode {
                 runningActions.put("claw", claw.servoClaw(Claw.clawState.CLOSE));
             }
             if (gamepad1.left_bumper) {
-                runningActions.put("intake", robot.intakeMove(Intake.intakeState.INTAKE));
+                if ((red&&!colorSensor.isBlue())||(!red&&colorSensor.isRed())){
+                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.INTAKE));
+                } else {
+                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
+                }
             } else if (gamepad1.right_bumper) {
                 runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
             } else {

@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Pivot.Pivot;
 import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 
 @Config
-@Autonomous(name = "Sample Auton", group = "AAAAAAAA")
+@Autonomous(name = "Rohan and Elliot's Sample Auton", group = "AAAAAAAA")
 public class Sample extends LinearOpMode {
     // Use FTCDashboard
     FtcDashboard dashboard;
@@ -62,137 +62,102 @@ public class Sample extends LinearOpMode {
                         robot.intakeUp(),
                         claw.servoClaw(Claw.clawState.CLOSE),
                         arm.armNeutral(),
-//                        drivetrain.goToPose(Utils.makePoseVector(-57, -31,0)),
+                        drivetrain.goToPose(Utils.makePoseVector(-57, -31,0)),
                         drivetrain.goToPose(Utils.makePoseVector(-57, -17,-43)),
-                            new ParallelAction(
-                                    lift.moveToHeight(24),
-                                    new SequentialAction(
-                                            new SleepAction(.75),
-                                    arm.armExtend())),
-                        new SleepAction(.53),
-                        claw.servoClaw(Claw.clawState.OPEN),
-                        new SleepAction(0.1),
-                        arm.armNeutral(),
-                        new SleepAction(0.2),
-                        lift.moveToHeight(0),
-
-                            //Finish Preload
-
-                        drivetrain.goToPose(Utils.makePoseVector(-51,-23.5,0)),
-                            new ParallelAction(
-                                robot.intakeDown(),
-                                drivetrain.goToPose(Utils.makePoseVector(-46,-23.5,0))
-                            ),
-                        new SleepAction(0.3),
-                        drivetrain.goToPose(Utils.makePoseVector(-46,-24.5,5)),   //Wiggle
-                        new SleepAction(0.2),
-                        drivetrain.goToPose(Utils.makePoseVector(-45,-22.5,-10)),
-                        new SleepAction(0.1),
-                        extension.servoExtension(Extension.extensionState.RETRACT),
-                        new SleepAction(0.2),
-                        pivot.setPosition(Intake.intakeState.STOP),
-                        new SleepAction(0.15),
-                        intake.motorIntake(Intake.intakeState.STOP),
-                        arm.armRetract(),
-                        new SleepAction(0.35),
-                        claw.servoClaw(Claw.clawState.CLOSE),
-
-                                // Finish Intake 1+1
-
-                        drivetrain.goToPose(Utils.makePoseVector(-57, -17,-43)),
-                            new ParallelAction(
+                        new ParallelAction(
                                 lift.moveToHeight(24),
-//                                    intake.motorIntake(Intake.intakeState.OUTTAKE),
-                                    new SequentialAction(
+                                new SequentialAction(
                                         new SleepAction(.75),
-                                        arm.armExtend())
-                            ),
-                        new SleepAction(.53),
+                                        arm.armExtend()
+                                )
+                        ),
+                        new SleepAction(.6),
                         claw.servoClaw(Claw.clawState.OPEN),
-                        new SleepAction(0.1),
+                        new SleepAction(0.3),
                         arm.armNeutral(),
-                        new SleepAction(0.2),
+                        new SleepAction(0.3),
                         lift.moveToHeight(0),
-
-                                //Finish Outtake 1+1
-
-                        drivetrain.goToPose(Utils.makePoseVector(-51,-13.5,0)),
-                            new ParallelAction(
+                        drivetrain.goToPose(Utils.makePoseVector(-51,-24,0)),
+                        new ParallelAction(
                                 robot.intakeDown(),
-                                drivetrain.goToPose(Utils.makePoseVector(-46,-14.5,0))),
-                        new SleepAction(0.3),
-                        drivetrain.goToPose(Utils.makePoseVector(-46,-14.5,5)), //wiggle
-                        new SleepAction(0.2),
-                        drivetrain.goToPose(Utils.makePoseVector(-44,-12.5,-10)),
-                        new SleepAction(0.1),
-                        extension.servoExtension(Extension.extensionState.RETRACT),
-                        new SleepAction(0.3),
+                                drivetrain.goToPose(Utils.makePoseVector(-46,-24,0))),
+                        new SleepAction(0.6),
                         pivot.setPosition(Intake.intakeState.STOP),
-                        new SleepAction(0.15),
+                        extension.servoExtension(Extension.extensionState.RETRACT),
+                        new SleepAction(0.6),
                         intake.motorIntake(Intake.intakeState.STOP),
                         arm.armRetract(),
-                        new SleepAction(0.35),
+                        new SleepAction(0.3),
                         claw.servoClaw(Claw.clawState.CLOSE),
-
-                                //Finish Intake 1+2
-
                         drivetrain.goToPose(Utils.makePoseVector(-57, -17,-43)),
-                            new ParallelAction(
-                                    lift.moveToHeight(24),
-//                                    intake.motorIntake(Intake.intakeState.OUTTAKE),
-                                    new SequentialAction(
-                                            new SleepAction(.75),
-                                            arm.armExtend())
-                            ),
-                        new SleepAction(.53),
+                        new ParallelAction(
+                                lift.moveToHeight(24),
+                                new SequentialAction(
+                                        new SleepAction(.75),
+                                        arm.armExtend()
+                                )
+                        ),
+                        new SleepAction(.6),
                         claw.servoClaw(Claw.clawState.OPEN),
-                        new SleepAction(0.1),
+                        new SleepAction(0.3),
                         arm.armNeutral(),
-                        new SleepAction(0.2),
+                        new SleepAction(0.3),
                         lift.moveToHeight(0),
-
-                                //Finish Outtake 1+2
-
-                        //drivetrain.goToPose(Utils.makePoseVector(-42,-16.5,44)),
-                            new ParallelAction(
-                                drivetrain.goToPose(Utils.makePoseVector(-42.5,-20,40)),
-                                robot.intakeDown()),
-//                        new SleepAction(0.3),
-                        drivetrain.goToPose(Utils.makePoseVector(-45,-19.5,40)),
-                        new SleepAction(0.2),
-                        extension.servoExtension(Extension.extensionState.RETRACT),
-                        new SleepAction(0.3),
+                        drivetrain.goToPose(Utils.makePoseVector(-51,-13.5,0)),
+                        new ParallelAction(
+                                robot.intakeDown(),
+                                drivetrain.goToPose(Utils.makePoseVector(-46,-13.5,0))),
+                        new SleepAction(0.6),
                         pivot.setPosition(Intake.intakeState.STOP),
-                        new SleepAction(0.15),
+                        extension.servoExtension(Extension.extensionState.RETRACT),
+                        new SleepAction(0.6),
                         intake.motorIntake(Intake.intakeState.STOP),
                         arm.armRetract(),
-                        new SleepAction(0.35),
-                        claw.servoClaw(Claw.clawState.CLOSE),
-
-                                //Finish Intake 1+3
-
-                        drivetrain.goToPose(Utils.makePoseVector(-57, -17,-43)),
-                            new ParallelAction(
-                                    lift.moveToHeight(24),
-//                                    intake.motorIntake(Intake.intakeState.OUTTAKE),
-                                    new SequentialAction(
-                                            new SleepAction(.75),
-                                            arm.armExtend()
-                                    )),
-                        new SleepAction(.53),
-                        claw.servoClaw(Claw.clawState.OPEN),
-                        new SleepAction(0.1),
-                        arm.armNeutral(),
-                        new SleepAction(0.1),
-                        lift.moveToHeight(12),
-
-                                //Finish Outtake 1+3
-
-                        drivetrain.goToPose(Utils.makePoseVector(-13, -37.5, 90)),
-                        arm.servoArmSpec(),
                         new SleepAction(0.3),
+                        claw.servoClaw(Claw.clawState.CLOSE),
+                        drivetrain.goToPose(Utils.makePoseVector(-57, -17,-43)),
+                        new ParallelAction(
+                                lift.moveToHeight(24),
+                                new SequentialAction(
+                                        new SleepAction(.75),
+                                        arm.armExtend()
+                                )
+                        ),
+                        new SleepAction(.6),
+                        claw.servoClaw(Claw.clawState.OPEN),
+                        new SleepAction(0.3),
+                        arm.armNeutral(),
+                        new SleepAction(0.3),
+                        lift.moveToHeight(0),
+                        //drivetrain.goToPose(Utils.makePoseVector(-42,-16.5,44)),
+                        drivetrain.goToPose(Utils.makePoseVector(-42,-15.5,35)),
+                        robot.intakeDown(),
+                        new SleepAction(1),
+                        pivot.setPosition(Intake.intakeState.STOP),
+                        extension.servoExtension(Extension.extensionState.RETRACT),
+                        new SleepAction(0.6),
+                        intake.motorIntake(Intake.intakeState.STOP),
+                        arm.armRetract(),
+                        new SleepAction(0.3),
+                        claw.servoClaw(Claw.clawState.CLOSE),
+                        drivetrain.goToPose(Utils.makePoseVector(-57, -17,-43)),
+                        new ParallelAction(
+                                lift.moveToHeight(24),
+                                new SequentialAction(
+                                        new SleepAction(.75),
+                                        arm.armExtend()
+                                )
+                        ),
+                        new SleepAction(.6),
+                        claw.servoClaw(Claw.clawState.OPEN),
+                        new SleepAction(0.3),
+                        arm.armNeutral(),
+                        new SleepAction(0.3),
+                        lift.moveToHeight(12),
+                        new ParallelAction(
+                        drivetrain.goToPose(Utils.makePoseVector(-13, -35, 90)),
+                        arm.servoArmSpec()),
                         drivetrain.goToPose(Utils.makePoseVector(-13, -45, 90))
-
                 )
         );
     }

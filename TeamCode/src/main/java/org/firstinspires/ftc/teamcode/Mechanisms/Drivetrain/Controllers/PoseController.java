@@ -12,8 +12,8 @@ public class PoseController {
     public PID xPID;
     public PID yPID;
     public PID tPID;
-    public static double kPX = 10;
-    public static double kPY = 10;
+    public static double kPX = 10.5;
+    public static double kPY = 10.5;
     public static double kPTheta= 5;
     public static double kIX, kIY, kITheta = 0;
     public static double kDX = 0;

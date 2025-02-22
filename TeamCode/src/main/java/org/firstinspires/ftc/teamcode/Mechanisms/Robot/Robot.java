@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
+import org.firstinspires.ftc.teamcode.Hardware.Sensors.Color;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
@@ -26,6 +27,7 @@ public class Robot {
     public Claw claw;
     public Lift lift;
     public Sweeper sweeper;
+    public Color colorSensor;
     public Robot(HardwareMap hardwareMap){
         this.battery = new Battery(hardwareMap);
         this.drivetrain = new Drivetrain(hardwareMap, battery);
@@ -36,6 +38,7 @@ public class Robot {
         this.lift = new Lift(hardwareMap, battery);
         this.extension = new Extension(hardwareMap);
         this.sweeper = new Sweeper(hardwareMap);
+        this.colorSensor = new Color(hardwareMap);
 
     }
     public Action intakeMove(Intake.intakeState intakeMechState){
