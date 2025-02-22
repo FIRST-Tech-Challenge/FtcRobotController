@@ -339,7 +339,7 @@ public class BlueBotTeleop extends LinearOpMode {
         double cone_threshold = 0.005;
 
         // 15% of turn radius
-        double corrected_turn_radius = max_turn_radius * 0.9;
+        double corrected_turn_radius = max_turn_radius * 0.15;
 
         if (theta_angle_difference > Math.PI) {
           if (theta_angle_difference <= (2.0 * Math.PI) - cone_threshold) {
