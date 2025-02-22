@@ -270,7 +270,7 @@ public class Arm {
   /**
    * Sets the power of the arm if it is in RUN_USING_ENCODER mode
    *
-   * @param power (-1) to 1
+   * @param power (-1) to 1. 0 means the slide will stop, -1 pull the slide in and 1 extends it out.
    */
   public void setSlide(double power) {
 
