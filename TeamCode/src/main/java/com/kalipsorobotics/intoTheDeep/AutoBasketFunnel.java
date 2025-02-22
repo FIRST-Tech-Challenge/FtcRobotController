@@ -119,7 +119,7 @@ public class AutoBasketFunnel extends LinearOpMode {
             waitForPurePure.setName("waitForPurePure");
             redAutoBasket.addAction(waitForPurePure);
 
-            BasketReadyAction basketReady3 = new BasketReadyAction(outtake);
+            BasketReadyAction basketReady3 = new BasketReadyAction(outtake, Outtake.OUTTAKE_PIVOT_AUTO_BASKET_POS);
             basketReady3.setName("basketReady3");
             basketReady3.setDependentActions(waitForPurePure);
             redAutoBasket.addAction(basketReady3);
@@ -178,8 +178,8 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveToSample3.setDependentActions(sampleToBasketFunnelRoundTrip2);
         //move basket to sample 3
 //        moveToSample3.addPoint(-440, 1030, 180-29.6);
-        moveToSample3.addPoint(INTAKE_SAMPLE_X-80, 750, 90, PurePursuitAction.P_XY_SLOW,
-                PurePursuitAction.P_ANGLE_SLOW); //x = INtAKE_SAMPLE_X - 80, y = 760
+        moveToSample3.addPoint(INTAKE_SAMPLE_X-100, 750, 90, PurePursuitAction.P_XY_SLOW,
+                PurePursuitAction.P_ANGLE); //x = INtAKE_SAMPLE_X - 80, y = 760
 //        moveToSample3.setMaxCheckDoneCounter(15);
         redAutoBasket.addAction(moveToSample3);
 
@@ -237,7 +237,7 @@ public class AutoBasketFunnel extends LinearOpMode {
                 -135, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
         redAutoBasket.addAction(moveToBasket3);
 
-        BasketReadyAction basketReady3 = new BasketReadyAction(outtake);
+        BasketReadyAction basketReady3 = new BasketReadyAction(outtake, Outtake.OUTTAKE_PIVOT_AUTO_BASKET_POS);
         basketReady3.setName("basketReady3");
         basketReady3.setDependentActions(moveToBasket3, transferAction3);
         redAutoBasket.addAction(basketReady3);
