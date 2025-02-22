@@ -238,8 +238,9 @@ public class Arm {
     pivotPower = power;
 
     maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree));
-    if(slide.getCurrentPosition()>maxLength)
-      setSlide(maxLength);
+    if(slide.getCurrentPosition()>maxLength) {
+      setSlide(-.1);
+    }
   }
 
 

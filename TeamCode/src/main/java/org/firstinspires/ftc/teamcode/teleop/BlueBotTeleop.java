@@ -505,6 +505,8 @@ public class BlueBotTeleop extends LinearOpMode {
           g2_lt = gamepad2.left_trigger,
           g2_rt = gamepad2.right_trigger;
 
+      telemetry.addLine("G2 LY: "+g2_ly);
+      telemetry.addLine("G2 RY: "+g2_ry);
       mek.arm.setSlide(g2_ly);
       mek.arm.setPivot(g2_ry);
 
