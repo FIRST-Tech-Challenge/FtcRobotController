@@ -61,7 +61,7 @@ public class BlueBotTeleop extends LinearOpMode {
     odometry.resetHeading();
     odometry.resetPosAndIMU();
 
-    TheBestSwerve amazingSwerve = new TheBestSwerve();
+    TheBestSwerve amazingSwerve = new TheBestSwerve(this,odometry,driveBase);
 
     mek.arm.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER, DcMotor.RunMode.RUN_USING_ENCODER);
 

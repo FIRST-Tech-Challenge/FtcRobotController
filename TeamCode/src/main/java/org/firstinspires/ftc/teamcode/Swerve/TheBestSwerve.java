@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Auto.AutoSwerve;
 import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
@@ -31,12 +32,16 @@ public class TheBestSwerve {
 
     public LinearOpMode opMode;
     public Telemetry telemetry;
+		public GoBildaPinpointDriver odometry;
+		public AutoSwerve driveBase;
 
-	public TheBestSwerve() {
-		opMode = this;
+	public TheBestSwerve(LinearOpMode opMode,GoBildaPinpointDriver odometry,AutoSwerve driveBase) {
+		this. opMode = opMode;
+		this. odometry = odometry;
+		this. driveBase = driveBase;
 		telemetry = opMode.telemetry;
 
-		amazingSwerve.steer_wheels(previous_steer_direction);
+		steer_wheels(previous_steer_direction);
 	}
 
 	private double normalize_angle(double angle) {
