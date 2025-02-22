@@ -4,6 +4,8 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,10 +14,10 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Extension.Extension;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
+import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Pivot.Pivot;
 import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
 import org.firstinspires.ftc.teamcode.Mechanisms.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
-import org.firstinspires.ftc.teamcode.Mechanisms.Sweeper.Sweeper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +38,7 @@ public class TeleopWithActions extends OpMode {
     Extension extension;
     Lift lift;
     Battery battery;
-    Sweeper sweeper;
+    Pivot pivot;
     boolean firstRun = true;
     public static double slowMultiplier = 0.25;
     @Override
@@ -49,7 +51,7 @@ public class TeleopWithActions extends OpMode {
         claw = robot.claw;
         extension = robot.extension;
         lift = robot.lift;
-        sweeper = robot.sweeper;
+        pivot = robot.pivot;
     }
 
     @Override
@@ -59,11 +61,13 @@ public class TeleopWithActions extends OpMode {
             runningActions.put("extension", extension.moveToLength(0));
             runningActions.put("claw", claw.servoClaw(Claw.clawState.OPEN));
             runningActions.put("intake", robot.intakeMove(Intake.intakeState.STOP));
-            runningActions.put("outtake", outtake.sampleCollect());
+            runningActions.put("pivot", pivot.setPosition(Intake.intakeState.STOP));
+            runningActions.put("outtake", outtake.OuttakeRetract());
+            runningActions.put("clawRotation", outtake.clawRotate());
             firstRun = false;
         } else {
             if (gamepad1.right_trigger > 0.5) {
-                runningActions.put("extension", extension.moveToLength(24));
+                runningActions.put("extension", extension.moveToLength(15));
             }
             if (gamepad1.left_trigger > 0.5) {
                 runningActions.put("extension", extension.moveToLength(0));
@@ -82,27 +86,19 @@ public class TeleopWithActions extends OpMode {
                 runningActions.put("intake", robot.intakeMove(Intake.intakeState.STOP));
             }
             if (gamepad2.cross) {
-                runningActions.put("outtake", outtake.specimenCollect());
+                runningActions.put("outtake", outtake.OuttakeBackSpecimen());
             }
             if (gamepad2.triangle) {
-                runningActions.put("outtake", outtake.sampleCollect());
+                runningActions.put("outtake", outtake.OuttakeBackSample());
             }
             if (gamepad2.circle) {
-                runningActions.put("outtake", outtake.specimenDeposit());
+                runningActions.put("outtake", outtake.OuttakeFrontSpecimen());
             }
-            if (gamepad2.square) {
-                runningActions.put("outtake", outtake.sampleDeposit());
-            }
-            if (gamepad1.triangle) {
-                runningActions.put("sweep", sweeper.sweep());
-            }
-            if (!runningActions.containsKey("extension")) {
                 if (Math.abs(gamepad2.left_stick_y) > 0.2) {
                     runningActions.put("manualLift", lift.manualControl(-gamepad2.left_stick_y));
                 } else {
                     runningActions.put("manualLift", lift.manualControl(0));
                 }
-            }
         }
         if (gamepad1.cross){
         runningActions.put(

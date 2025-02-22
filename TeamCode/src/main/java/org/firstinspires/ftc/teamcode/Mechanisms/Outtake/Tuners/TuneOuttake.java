@@ -22,13 +22,13 @@ public class TuneOuttake extends LinearOpMode {
 
         while (opModeIsActive()) {
             if(gamepad1.cross){
-                Actions.runBlocking(outtake.OuttakeFront());
+                Actions.runBlocking(outtake.OuttakeFrontSpecimen());
             }
             if(gamepad1.square){
-                Actions.runBlocking(outtake.OuttakeRetract());
+                Actions.runBlocking(outtake.OuttakeBackSpecimen());
             }
             if(gamepad1.circle){
-                Actions.runBlocking(outtake.OuttakeBack());
+                Actions.runBlocking(outtake.OuttakeBackSample());
             }
         }
     }

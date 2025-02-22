@@ -26,7 +26,6 @@ public class Robot {
     public Outtake outtake;
     public Claw claw;
     public Lift lift;
-    public Sweeper sweeper;
     public Robot(HardwareMap hardwareMap){
         this.battery = new Battery(hardwareMap);
         this.drivetrain = new Drivetrain(hardwareMap, battery);
@@ -36,7 +35,7 @@ public class Robot {
         this.claw = new Claw(hardwareMap);
         this.lift = new Lift(hardwareMap, battery);
         this.extension = new Extension(hardwareMap, battery);
-        this.sweeper = new Sweeper(hardwareMap);
+
 
     }
     public Action intakeMove(Intake.intakeState intakeMechState){
@@ -66,7 +65,7 @@ public class Robot {
                 new ParallelAction(
                         lift.moveToHeight(28),
                         new SleepAction(1),
-                        outtake.OuttakeBack()
+                        outtake.OuttakeBackSample()
                 )
         );
     }
@@ -75,8 +74,9 @@ public class Robot {
                 claw.servoClaw(Claw.clawState.OPEN),
                 new ParallelAction(
                         lift.moveToHeight(0),
-                        outtake.OuttakeFront()
+                        outtake.OuttakeFrontSpecimen()
                 )
         );
     }
+
 }

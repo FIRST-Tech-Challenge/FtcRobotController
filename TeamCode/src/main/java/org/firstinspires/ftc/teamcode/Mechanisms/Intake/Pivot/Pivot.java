@@ -45,4 +45,14 @@ public class Pivot {
             }
         };
     }
+    public Action pivotUp(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                pivotLeft.setPosition(pivotUp);
+                pivotRight.setPosition(pivotUp);
+                return false;
+            }
+        };
+    }
 }
