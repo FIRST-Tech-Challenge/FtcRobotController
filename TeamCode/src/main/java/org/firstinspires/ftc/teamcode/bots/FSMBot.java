@@ -28,6 +28,12 @@ public class FSMBot extends RollerIntakeBot{
 
     public ElapsedTime hangTimer = new ElapsedTime();
 
+    public ElapsedTime wallIntakeTimer = new ElapsedTime();
+
+    public ElapsedTime submersibleTimer = new ElapsedTime();
+
+    public boolean manualOverride = false;
+
 
 
     public enum gameState {
@@ -77,11 +83,11 @@ public class FSMBot extends RollerIntakeBot{
     public static double wallIntakePitchTarget;
     public static double wallIntakeRollTarget;
 
-    public double specimenHighOuttakeRollTarget;
+    public static double specimenHighOuttakeRollTarget;
 
-    public double sampleOuttakePitchTarget;
+    public static double sampleOuttakePitchTarget;
 
-    public double sampleOuttakeRollTarget;
+    public static double sampleOuttakeRollTarget;
 
     public boolean slideUp = false;
     public boolean hingeDown = false;
@@ -294,22 +300,22 @@ public class FSMBot extends RollerIntakeBot{
 //                currentState = gameState.ARM_DOWN;
                 break;
             case WALL_INTAKE_1:
-                robot.goToAngle(180,0.7);
+                robot.goToAngle(180,0.3);
                 //pivot up
                 robot.pitch(wallIntakePitchTarget);
                 robot.rollTo(wallIntakeRollTarget);
-                robot.pivotRunToPosition(0);
+                robot.pivotRunToPosition(-200);
                 //face the right direction
-                currentState = gameState.WALL_INTAKE_2;
+//                currentState = gameState.WALL_INTAKE_2;
                 break;
-            case WALL_INTAKE_2:
-                //arm up
-                robot.slideRunToPosition(100);
-                //wait for drive
-                if (wallIntakeDone) {
-                    currentState = gameState.SPECIMEN_SCORING_HIGH_MANUAL1;
-                }
-                break;
+//            case WALL_INTAKE_2:
+//                //arm up
+//                robot.slideRunToPosition(100);
+//                //wait for drive
+//                if (wallIntakeDone) {
+//                    currentState = gameState.SPECIMEN_SCORING_HIGH_MANUAL1;
+//                }
+//                break;
             case SPECIMEN_SCORING_HIGH_DRIVE:
                 robot.goToAnglePID(180);
                 //pivot up
@@ -326,26 +332,24 @@ public class FSMBot extends RollerIntakeBot{
             case SPECIMEN_SCORING_HIGH_MANUAL1:
                 robot.goToAnglePID(180);
                 //pivot up
-                robot.pivotRunToPosition(-1400);
+                robot.pivotRunToPosition(-2050);
                 //wait
                 robot.rollTo(specimenHighOuttakeRollTarget);
                 //arm up
-                robot.slideRunToPosition(sampleSlideDropOffPos);
+                robot.slideRunToPosition(specimenSlideDropOffPos);
                 //wait for drive
-                if(specimenScored) {
-                    currentState = gameState.ARM_DOWN;
-                }
+
                 break;
             case SPECIMEN_SCORING_HIGH_MANUAL2:
                 robot.goToAnglePID(180);
                 //pivot up
-                robot.pivotRunToPosition(-1400);
+                robot.pivotRunToPosition(-2050);
                 //wait
                 robot.rollTo(specimenHighOuttakeRollTarget);
                 //arm up
-                robot.slideRunToPosition(sampleSlideDropOffPos+100);
+                robot.slideRunToPosition(specimenSlideDropOffPos+100);
                 //wait for drive
-                if(specimenScored) {
+                if(robot.getSlidePosition() > specimenSlideDropOffPos+70) {
                     currentState = gameState.ARM_DOWN;
                 }
                 break;
@@ -365,7 +369,9 @@ public class FSMBot extends RollerIntakeBot{
 
                 break;
             case SAMPLE_SCORING_HIGH_2:
-                robot.goToAngle(45,0.6); // may be robot.Math.toRadians(45); or -45 or 135 or -135
+                if ((-43 > robot.getAngle()) || (robot.getAngle() > -47) &&!manualOverride) {
+                    robot.goToAngle(-45, 0.24);
+                } // may be robot.Math.toRadians(45); or -45 or 135 or -135
                 isSlideUp = true;
                 robot.pivotRunToPosition(samplePivotDropOffPos);
                 robot.slideRunToPosition(sampleSlideDropOffPos);
@@ -379,7 +385,9 @@ public class FSMBot extends RollerIntakeBot{
                 //wait for score
                 break;
             case SAMPLE_SCORING_HIGH_3:
-                robot.goToAngle(-45,0.25);
+                if ((-43 > robot.getAngle()) || (robot.getAngle() > -47) && !manualOverride) {
+                    robot.goToAngle(-45, 0.24);
+                }
                 robot.slideRunToPosition(sampleSlideDropOffPos);
                 robot.outake(true);
                 if(outtakeTimer.milliseconds() > 600) {

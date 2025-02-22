@@ -22,6 +22,8 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
 
     public static int sampleSlideDropOffPos = 700;// WAS 770, MADE LOWER TO AVOID CLAW GETTING CAUGHT ON BUCKET
 
+    public static int specimenSlideDropOffPos = 400;// to be tested
+
     public final float ticksToDegree = 360/8192; // 8192 ticks per rotation
     public float kfAngled;
     public static double kp = 3.6;
@@ -210,24 +212,27 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
 //    }
     public void slideControl(boolean up, boolean down) {
         if (up) {
-            if (/**slideMotor1.getCurrentPosition() < maximumSlidePos*/true) {
-                slideTarget = slideMotor1.getCurrentPosition() + ((maximumSlidePos - slideMotor1.getCurrentPosition()) / 10);
+            if (slideMotor1.getCurrentPosition() < maximumSlidePos) {
+                slideTarget = slideMotor1.getCurrentPosition() + (slideMotor1.getCurrentPosition() / 3);
 //                slideMotor1.setTargetPosition(slideTarget);
 //                slideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //                slideMotor2.setTargetPosition(slideTarget);
 //                slideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
-            }
+            }else{slideTarget = maximumSlidePos;}
+
         }
         if (down) {
-            if (/**slideMotor1.getCurrentPosition() > minimumSlidePos*/ true) {
-                slideTarget = slideMotor1.getCurrentPosition() - (slideMotor1.getCurrentPosition() / 10);
+            if (slideMotor1.getCurrentPosition() > minimumSlidePos) {
+                slideTarget = slideMotor1.getCurrentPosition() - (slideMotor1.getCurrentPosition() / 3);
 //                slideMotor1.setTargetPosition(slideTarget);
 //                slideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //                slideMotor2.setTargetPosition(slideTarget);
 //                slideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+            }else{
+                slideTarget = minimumSlidePos;
             }
         }
 

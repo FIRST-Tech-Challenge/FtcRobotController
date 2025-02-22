@@ -89,6 +89,7 @@ public class TeleOps extends LinearOpMode {
                     gamepad2.left_stick_y, gamepad2.right_stick_x*-0.65, (gamepad2.right_trigger > 0.5));
             robot.slideControl(gamepad1.dpad_right, gamepad1.dpad_left);
             robot.pivotControl(gamepad1.dpad_up, gamepad1.dpad_down);
+            //specimen stuff on gamepad2
             if(gamepad2.b){
                 robot.currentState = FSMBot.gameState.SPECIMEN_SCORING_HIGH_DRIVE;
             }
@@ -99,16 +100,14 @@ public class TeleOps extends LinearOpMode {
             if(robot.currentState == FSMBot.gameState.SUBMERSIBLE_INTAKE_3 || robot.currentState == FSMBot.gameState.DRIVE) {
                 robot.outake(gamepad1.x);
             }
-
-
-
-            if(gamepad1.x){
-                robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
+            if(gamepad1.left_trigger > 0.5){
+                robot.manualOverride = true;
             }
-
             if(gamepad1.y){
                 robot.resetAngle(true);
             }
+
+
 
             if(gamepad2.dpad_up){
                 robot.pitch(1);
@@ -118,8 +117,6 @@ public class TeleOps extends LinearOpMode {
  telemetry.addData("Current roll", robot.getCurrentPitch());
             telemetry.addData("Current pitch", robot.getCurrentRoll());            }
 
-
-
             if(gamepad2.dpad_right){
                 robot.roll(1);
             }
@@ -128,18 +125,22 @@ public class TeleOps extends LinearOpMode {
             }
 
             //to take specimen and go into scoring position
-            if (gamepad2.left_bumper){
-                robot.wallIntakeDone = true;
-            } else {
-                robot.wallIntakeDone = false;
+            if (gamepad2.a && robot.currentState != FSMBot.gameState.WALL_INTAKE_1) {
+                robot.currentState = FSMBot.gameState.WALL_INTAKE_1;
+                robot.wallIntakeTimer.reset();            }
+            else if(gamepad2.a && robot.wallIntakeTimer.milliseconds() > 400){
+                robot.currentState = FSMBot.gameState.DRIVE;
             }
 
             //after scoring specimen, lower back into scoring position
-            if (gamepad2.right_bumper) {
-                robot.specimenScored = true;
-            } else {
-                robot.specimenScored = false;
+            if (gamepad2.b && robot.currentState == FSMBot.gameState.WALL_INTAKE_1) {
+                robot.currentState = FSMBot.gameState.SPECIMEN_SCORING_HIGH_MANUAL1;
+                robot.submersibleTimer.reset();
             }
+            if (gamepad2.b && robot.currentState == FSMBot.gameState.SPECIMEN_SCORING_HIGH_MANUAL1 && robot.submersibleTimer.milliseconds() > 400) {
+                robot.currentState = FSMBot.gameState.SPECIMEN_SCORING_HIGH_MANUAL2;
+            }
+
 
 
             if (robot.pivotOutOfRange) {
