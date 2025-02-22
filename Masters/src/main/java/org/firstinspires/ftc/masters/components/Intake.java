@@ -18,7 +18,10 @@ public class Intake {
 
     PIDController pidController;
 
-    public static double p = 0.002, i = 0, d = 0.00;
+    public static double p = 0.0015, i = 0, d = 0;
+    public static double f = 0.05;
+
+    public static double ticks_in_degrees = (double) 8192 / 360;
 
     Init init;
 
@@ -192,20 +195,18 @@ public class Intake {
 
     public void update(){
 
-//frontRight
-            int extendoPos = extendo.getCurrentPosition();
+            int pos = extendo.getCurrentPosition();
+            double pid = pidController.calculate(pos, target);
 
-//            telemetry.addData("extendoPos",extendoPos);
-            double pid = pidController.calculate(extendoPos, target);
+            double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
 
-//            telemetry.addData("extendo PID",pid);
+            double lift = pid + ff;
 
-            extendo.setPower(pid);
-
+            extendo.setPower(lift);
 
             switch (status){
                 case EXTEND_TO_HUMAN:
-                    if (extendoPos>ITDCons.MaxExtension-100) {
+                    if (pos>ITDCons.MaxExtension-100) {
                         intakeMotor.setPower(ITDCons.intakeEjectSpeed);
                         status= Status.EJECT_TO_HUMAN;
                         elapsedTime = new ElapsedTime();
