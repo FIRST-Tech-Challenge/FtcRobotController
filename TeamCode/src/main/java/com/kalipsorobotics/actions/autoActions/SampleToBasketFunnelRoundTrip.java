@@ -75,7 +75,7 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
         moveToBasket1.addPoint(OUTTAKE_X_POS, OUTTAKE_Y_POS, -135, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
         this.addAction(moveToBasket1);
 
-        BasketReadyAction basketReady1 = new BasketReadyAction(outtake, Outtake.OUTTAKE_PIVOT_AUTO_BASKET_POS);
+        BasketReadyAction basketReady1 = new BasketReadyAction(outtake, Outtake.OUTTAKE_PIVOT_BASKET_POS);
         basketReady1.setName("basketReady1");
         basketReady1.setDependentActions(transferAction1);
         this.addAction(basketReady1);

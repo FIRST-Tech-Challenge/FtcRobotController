@@ -119,7 +119,7 @@ public class AutoBasketFunnel extends LinearOpMode {
             waitForPurePure.setName("waitForPurePure");
             redAutoBasket.addAction(waitForPurePure);
 
-            BasketReadyAction basketReady3 = new BasketReadyAction(outtake, Outtake.OUTTAKE_PIVOT_AUTO_BASKET_POS);
+            BasketReadyAction basketReady3 = new BasketReadyAction(outtake, Outtake.OUTTAKE_PIVOT_BASKET_POS);
             basketReady3.setName("basketReady3");
             basketReady3.setDependentActions(waitForPurePure);
             redAutoBasket.addAction(basketReady3);
@@ -237,7 +237,7 @@ public class AutoBasketFunnel extends LinearOpMode {
                 -135, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
         redAutoBasket.addAction(moveToBasket3);
 
-        BasketReadyAction basketReady3 = new BasketReadyAction(outtake, Outtake.OUTTAKE_PIVOT_AUTO_BASKET_POS);
+        BasketReadyAction basketReady3 = new BasketReadyAction(outtake, Outtake.OUTTAKE_PIVOT_BASKET_POS);
         basketReady3.setName("basketReady3");
         basketReady3.setDependentActions(moveToBasket3, transferAction3);
         redAutoBasket.addAction(basketReady3);
