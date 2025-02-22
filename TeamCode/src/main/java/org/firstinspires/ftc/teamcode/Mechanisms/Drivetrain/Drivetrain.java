@@ -59,8 +59,8 @@ public class Drivetrain {
     public SimpleMatrix wheelPowerPrev = new SimpleMatrix(4, 1);
     public PoseController poseControl = new PoseController();
     public static double acceptablePowerDifference = 0.000001; // The acceptable difference between current and previous wheel power to make a hardware call
-    public static double distanceThreshold = 0.6;
-    public static double angleThreshold = 0.2;
+    public static double distanceThreshold = 0.25;
+    public static double angleThreshold = 0.05;
     public static double maxVoltage = 12.5;
     SimpleMatrix initialState = new SimpleMatrix(6,1);
     public void setInitialPose(double x, double y, double theta){
