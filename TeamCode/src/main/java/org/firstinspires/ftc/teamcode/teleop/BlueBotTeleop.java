@@ -401,12 +401,14 @@ public class BlueBotTeleop extends LinearOpMode {
         else {
           // Robot is facing south
           if (joy_theta < 0.0) {
-            goingUp = false;
-          }
-          else {
             goingUp = true;
           }
+          else {
+            goingUp = false;
+          }
         }
+
+        telemetry.addLine("Going up: " + goingUp);
 
         GeneralDirection general_direction = get_general_direction(steering_angle, goingUp);
 
