@@ -212,7 +212,7 @@ public class Arm {
 
     pivotTarget = (int) (x * countsPerDegree);
 
-    maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree));
+    maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree)) * 1.4;
     if(slide.getCurrentPosition()>maxLength)
       setSlide(maxLength);
   }
@@ -237,9 +237,9 @@ public class Arm {
 
     pivotPower = power;
 
-    maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree));
+    maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree)) * 1.4;
     if(slide.getCurrentPosition()>maxLength) {
-      setSlide(-.1);
+      setSlide(-power);
     }
   }
 
@@ -252,7 +252,7 @@ public class Arm {
   public void setSlide(int x) {
 
     // Calculates the max the arm can go without going over the 40IN limit
-    maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree));
+    maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree)) * 1.4;
     if (maxLength < 2500) maxLength = 2500;
 
     if (maxLength > limitSlide) maxLength = limitSlide;
@@ -275,12 +275,15 @@ public class Arm {
   public void setSlide(double power) {
 
     // Calculates the max the arm can go without going over the 40IN limit
-    double maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree));
+    double maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree)) * 1.4;
     if (maxLength < 2500)
       maxLength = 2500;
 
     // If the max length calculated is longer than the physical limit of the slide, set it to that
     if (maxLength > limitSlide) maxLength = limitSlide;
+
+    if(slide.getCurrentPosition()>maxLength && power < 0)
+      telemetry.addLine("Slide over want to go less: " + power);
 
     // If the slide goes over the limit, stop the movement
     if (slide.getCurrentPosition() > maxLength && power > 0) {
@@ -290,7 +293,7 @@ public class Arm {
       telemetry.addLine("Slide under 0");
       power = 0;
     }
-
+    telemetry.addLine("Power after checks: " + power);
     slidePower = power;
   }
 }
