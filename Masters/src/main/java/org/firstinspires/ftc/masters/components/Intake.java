@@ -47,7 +47,7 @@ public class Intake {
     public static double EJECT_POWER = 0.8;
 
     public enum Status{
-        TRANSFER(0), DROP(0), INIT(0), EJECT(1000),MOVE_TO_TRANSFER(500), EXTEND_TO_HUMAN(0), EJECT_TO_HUMAN(800), NEUTRAL(0);
+        TRANSFER(0), DROP(0), INIT(0), EJECT(1500),MOVE_TO_TRANSFER(500), EXTEND_TO_HUMAN(0), EJECT_TO_HUMAN(800), NEUTRAL(0);
         private final long time;
         Status(long time){
             this.time= time;

@@ -463,18 +463,22 @@ public class Outtake implements Component{
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
                     target = ITDCons.intermediateTarget;
                     wrist.setPosition(ITDCons.wristBack);
-                    position.setPosition(ITDCons.positionBack);
+
                     closeClaw();
                     setAngleServoToMiddle();
+                    status= Status.SpecimenToWall_MoveBack;
+                    elapsedTime= new ElapsedTime();
                 }
                 break;
             case SpecimenToWall_MoveBack:
-                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime() && outtakeSlideEncoder.getCurrentPosition()<ITDCons.intermediateTarget+500) {
+                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime() ) {
                     target = ITDCons.wallPickupTarget;
+
                     setAngleServoToBack();
                     openClaw();
                     status= Status.Wall;
-
+                } else if (elapsedTime!=null && elapsedTime.milliseconds()>700){
+                    position.setPosition(ITDCons.positionBack);
                 }
                 break;
 
