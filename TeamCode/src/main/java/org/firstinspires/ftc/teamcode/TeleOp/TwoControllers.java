@@ -94,7 +94,7 @@ public class TwoControllers extends LinearOpMode {
     //i hate to do this to him but i do have to comment this out
     //servo work better if it dont work like this
     // final double FINGER_INCREMENT = 0.002;
-   //  final double CLAW_MAX = 1.0;
+    final double CLAW_MAX = 1.0;
     final double CLAW_MIN = 0.8;
     // double leftFingerPosition = 0.0;
     // double rightFingerPosition = 0.0;
@@ -202,54 +202,14 @@ public class TwoControllers extends LinearOpMode {
             //Forearm Power
             forearm.setPower(Forearm_Movement);
 
-            //up
-//            if(gamepad2.right_trigger > 0){
-//                shoulderLeft.setPower(gamepad2.right_trigger*0.6);
-//                shoulderRight.setPower(gamepad2.right_trigger*0.6);
-//            }if (gamepad2.left_trigger > 0){
-//                shoulderLeft.setPower(-gamepad2.left_trigger*0.6);
-//                shoulderRight.setPower(-gamepad2.left_trigger*0.6);
-//            }
-//
-//            //down
-//            if(gamepad2.left_trigger > 0.1){
-//                shoulderLeft.setPower(-gamepad2.left_trigger*0.6);
-//                shoulderRight.setPower(gamepad2.left_trigger*0.6);
-//            }if (gamepad2.left_trigger < 0.1){
-//                shoulderLeft.setPower(0);
-//                shoulderRight.setPower(0);
-//            }
-//
-//            //lift
-//            if(gamepad2.left_stick_y > 0.1){
-//                forearm.setPower(gamepad2.left_stick_y*1.0);
-//            }if (gamepad2.left_stick_y < 0.1){
-//                forearm.setPower(0);
-//            }
-
-            //Code for the wrist
-//            if (gamepad2.right_bumper) {
-//                if (Double.compare(WRIST_MAX, servoPosition) >= 0){
-//                    servoPosition += WRIST_INCREMENT;
-//                    servo.setPosition(servoPosition);
-//                }
-//            }
-//            if (gamepad2.left_bumper) {
-//                if (Double.compare(WRIST_MIN, servoPosition) <= 0){
-//                    servoPosition -= WRIST_INCREMENT;
-//                    servo.setPosition(servoPosition);
-//                }
-//            }
-
-
-            //Code for the claw
-            if(gamepad2.b) {
-            }
-            if(gamepad2.a){
-            }
+            servoPosition = gamepad2.right_stick_y >CLAW_MIN? gamepad2.right_stick_y:CLAW_MIN;
+            servo.setPosition(servoPosition);
+            telemetry.addData("Setting claw to position", servoPosition);
+            telemetry.update();
 
             //Code for the claw
             if(gamepad2.x) {
+
             }
             if(gamepad2.y){
             }
