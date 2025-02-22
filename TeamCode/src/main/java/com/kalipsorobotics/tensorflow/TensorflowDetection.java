@@ -39,7 +39,6 @@ import java.util.List;
 import org.opencv.core.Size;
 
 @Disabled
-@TeleOp
 public class TensorflowDetection extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "robotv2_model.tflite";
     //defines webcam as constant - set to true to use

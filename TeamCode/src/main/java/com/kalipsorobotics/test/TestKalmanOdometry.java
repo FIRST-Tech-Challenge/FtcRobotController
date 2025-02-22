@@ -14,12 +14,13 @@ import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.opencv.core.Point;
 
-@TeleOp(name = "KalmanFilterTest")
+@Disabled //(name = "KalmanFilterTest")
 public class TestKalmanOdometry extends LinearOpMode {
     @Override
     public void runOpMode() {

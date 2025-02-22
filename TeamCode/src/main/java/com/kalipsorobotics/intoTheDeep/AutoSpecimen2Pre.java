@@ -88,7 +88,7 @@ public class AutoSpecimen2Pre extends LinearOpMode {
         delayBeforeStart.setName("delayBeforeStart");
         redAutoSpecimen.addAction(delayBeforeStart);
 
-        int firstHangPos = 180;
+        int firstHangPos = 200;
         int hangSpacing = 70;
 
 

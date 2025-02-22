@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @Disabled
-@TeleOp
 public class RobotDetectionTest extends LinearOpMode {
     RobotDetector robotDetector = new RobotDetector(telemetry);
 

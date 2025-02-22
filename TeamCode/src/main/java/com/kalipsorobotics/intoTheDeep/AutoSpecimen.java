@@ -23,12 +23,13 @@ import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Autonomous(name = "AutoSpecimen 3 PUSH")
+@Disabled//(name = "AutoSpecimen 3 PUSH")
 public class AutoSpecimen extends LinearOpMode {
 
     protected boolean isThirdPush = true;
