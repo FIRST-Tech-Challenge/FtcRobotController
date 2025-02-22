@@ -19,9 +19,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-
 import org.ejml.simple.SimpleMatrix;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -42,6 +42,9 @@ public class Drivetrain {
     HardwareMap hardwareMap = null;
     public SimpleMatrix state = new SimpleMatrix(6, 1);
     public TwoWheelOdometery twoWheelOdo;
+
+    public LynxModule controlHub;
+    public LynxModule expansionHub;
 
     public DrivetrainMotorController motorController;
     public GeometricController geometricController;
@@ -88,9 +91,16 @@ public class Drivetrain {
         this.motorController = new DrivetrainMotorController(hardwareMap);
         this.geometricController = new GeometricController();
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-        for (LynxModule hub : allHubs) {
-            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+    
+//        LynxConstants LynxConstants = new LynxConstants();
+        if(allHubs.get(0).isParent() && LynxConstants.isEmbeddedSerialNumber(allHubs.get(0).getSerialNumber())) {
+            controlHub = allHubs.get(0);
+            expansionHub = allHubs.get(1);
+        } else {
+            controlHub = allHubs.get(1);
+            expansionHub = allHubs.get(0);
         }
+        controlHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         this.motorLeftFront = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "lfm"), battery, maxVoltage);
         this.motorLeftBack = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "lbm"), battery, maxVoltage);
         this.motorRightBack = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "rbm"), battery, maxVoltage);

@@ -35,7 +35,7 @@ public class Extension {
     public static double maxAcceleration = 5;
     public static double maxDeceleration = 5;
     public static double maxVelocity = 6;
-    private final double ticksPerRev = 384.5;
+    private final double ticksPerRev = 4000;
     private final double ticksPerInch = ticksPerRev / (2 * Math.PI * spoolRadius);
     boolean reverse;
     public static double maxVoltage = 12.5;
@@ -45,7 +45,7 @@ public class Extension {
         this.hardwareMap = hardwareMap;
 
         this.extensionMotor = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "extensionMotor"), battery, maxVoltage);
-        this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "extensionMotor"));
+        this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rfm"));
         this.extensionMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.extensionMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -87,7 +87,7 @@ public class Extension {
                 }
                 checkLimit();
 
-                double currentPosition = ticksToInches(encoder.getCurrentPosition());
+                double currentPosition = ticksToInches(-encoder.getCurrentPosition());
                 double ffPower = feedForward.calculate(motionProfile.getVelocity(t.seconds()), motionProfile.getAcceleration(t.seconds()));
                 double pidPower = pid.calculate(initialPos + motionProfile.getPos(t.seconds()), currentPosition);
                 motorPower = pidPower + ffPower ;

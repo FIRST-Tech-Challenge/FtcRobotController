@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
@@ -22,10 +23,10 @@ public class Robot {
     public Pivot pivot;
     public Intake intake;
     public Extension extension;
+    public Outtake outtake;
     public Claw claw;
     public Lift lift;
     public Sweeper sweeper;
-    public Outtake outtake;
     public Robot(HardwareMap hardwareMap){
         this.battery = new Battery(hardwareMap);
         this.drivetrain = new Drivetrain(hardwareMap, battery);
@@ -63,8 +64,9 @@ public class Robot {
                 claw.servoClaw(Claw.clawState.CLOSE),
                 new SleepAction(0.25),
                 new ParallelAction(
-                    lift.moveToHeight(28),
-                    new SleepAction(1)
+                        lift.moveToHeight(28),
+                        new SleepAction(1),
+                        outtake.OuttakeBack()
                 )
         );
     }
@@ -72,7 +74,8 @@ public class Robot {
         return new SequentialAction(
                 claw.servoClaw(Claw.clawState.OPEN),
                 new ParallelAction(
-                        lift.moveToHeight(0)
+                        lift.moveToHeight(0),
+                        outtake.OuttakeFront()
                 )
         );
     }

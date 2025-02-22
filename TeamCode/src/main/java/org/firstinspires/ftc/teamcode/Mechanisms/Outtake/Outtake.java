@@ -21,13 +21,12 @@ public class Outtake {
     ServoAdvanced clawRotation;
     ServoAdvanced linkageLeft;
     ServoAdvanced linkageRight;
-    public static double shoulderUp = 0;
-    public static double shoulderDown = 0.15;
-    public static double shoulderFront = 0.7;
+    public static double shoulderDown = 1;
+    public static double shoulderFront = 0.9;
     public static double shoulderBack = 0;
-    public static double wristFront = 0.85;
-    public static double wristBack = 0.98;
-    public static double wristMiddle = 0.7;
+    public static double wristFront = 0.45;
+    public static double wristBack = 0;
+    public static double wristMiddle = 0.2;
     public static double clawRotationNormal = 0;
     public static double clawRotationReverse = 0.6;
     public static double linkageFront = 0.5;
@@ -79,7 +78,7 @@ public class Outtake {
             public boolean run(@NonNull TelemetryPacket Packet){
                 shoulderLeft.setPosition(shoulderBack);
                 shoulderRight.setPosition(shoulderBack);
-                armWrist.setPosition(wristFront);
+                armWrist.setPosition(wristBack);
                 clawRotation.setPosition(clawRotationNormal);
                 linkageLeft.setPosition(linkageBack);
                 linkageRight.setPosition(linkageBack);
@@ -118,8 +117,8 @@ public class Outtake {
                 new InstantAction(()->clawRotation.setPosition(clawRotationNormal)),
                 new InstantAction(()-> armWrist.setPosition(wristFront)),
                 new SleepAction(0),
-                new InstantAction(()->shoulderLeft.setPosition(shoulderUp)),
-                new InstantAction(()->shoulderRight.setPosition(shoulderUp))
+                new InstantAction(()->shoulderLeft.setPosition(shoulderFront)),
+                new InstantAction(()->shoulderRight.setPosition(shoulderFront))
         );
     }
 

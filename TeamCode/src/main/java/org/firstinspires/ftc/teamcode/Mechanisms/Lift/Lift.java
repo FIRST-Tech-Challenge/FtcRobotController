@@ -38,7 +38,7 @@ public class Lift {
     public static double maxAcceleration = 12;
     public static double maxDeceleration = 8;
     public static double maxVelocity = 16;
-    private final double ticksPerRev = 384.5;
+    private final double ticksPerRev = 145.1;
     private final double ticksPerInch = ticksPerRev / (2 * Math.PI * spoolRadius);
     boolean reverse;
     public static double maxVoltage = 12.5;
@@ -50,7 +50,7 @@ public class Lift {
 
         this.liftMotorLeft = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorLeft"), battery, maxVoltage);
         this.liftMotorRight = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorRight"), battery, maxVoltage);
-        this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "liftMotorRight"));
+        this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "lbm"));
         this.liftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         this.liftMotorRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
