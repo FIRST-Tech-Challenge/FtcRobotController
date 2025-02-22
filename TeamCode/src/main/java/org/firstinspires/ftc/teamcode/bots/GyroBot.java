@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.bots;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.stormbots.MiniPID;
+import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -71,10 +73,10 @@ public class GyroBot extends FourWheelDriveBot {
 //            }
 //            telemetry.update();
             //RobotLog.d("stick button pressed");
-            driveMultiplier = -0.55;
+            driveMultiplier = -1.0;
             telemetry.addData("FAST", driveMultiplier);
         } else {
-            driveMultiplier = -0.85;
+            driveMultiplier = -0.65;
             telemetry.addData("SLOW", driveMultiplier);
         }
 
@@ -147,7 +149,6 @@ public class GyroBot extends FourWheelDriveBot {
         rightRear.setPower(0);
 
     }
-
     public void goBacktoStartAnglePID() {
 
         MiniPID pid = new MiniPID(0.008, 0.00005, 0.0045);
@@ -206,7 +207,6 @@ public class GyroBot extends FourWheelDriveBot {
         rightRear.setPower(0);
 
     }
-
     public void goToAnglePID(double targetAngle) {
 
         MiniPID pid = new MiniPID(0.008, 0.00005, 0.0045);

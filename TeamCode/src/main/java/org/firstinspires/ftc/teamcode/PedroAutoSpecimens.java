@@ -1,19 +1,13 @@
 package org.firstinspires.ftc.teamcode;
-import static org.firstinspires.ftc.teamcode.bots.BotBot.*;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.bots.BotBot;
 import org.firstinspires.ftc.teamcode.bots.FSMBot;
-import org.firstinspires.ftc.teamcode.bots.RollerIntakeBot;
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.PoseUpdater;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
@@ -22,12 +16,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
-import org.firstinspires.ftc.teamcode.sample.Sample;
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Pedro Auto Samples", group = "Auto")
-public class PedroAuto extends LinearOpMode {
+@Autonomous(name = "Pedro Auto Specimens", group = "Auto")
+public class PedroAutoSpecimens extends LinearOpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
 

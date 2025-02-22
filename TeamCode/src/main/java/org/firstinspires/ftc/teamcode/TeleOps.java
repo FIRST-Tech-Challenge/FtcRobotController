@@ -49,14 +49,14 @@ public class TeleOps extends LinearOpMode {
                 }
 
             }
-            if(robot.currentState == FSMBot.gameState.SUBMERSIBLE_INTAKE_2 && robot.subRetractTimer.milliseconds() > 130){
+            if(robot.currentState == FSMBot.gameState.SUBMERSIBLE_INTAKE_2 && robot.subRetractTimer.milliseconds() > 400){
                 robot.retractSubIntake(gamepad1.a);
             }
-            if(robot.currentState == FSMBot.gameState.SAMPLE_SCORING_HIGH_1 && robot.pivotUpTimer.milliseconds() > 130){
+            if(robot.currentState == FSMBot.gameState.SAMPLE_SCORING_HIGH_1 && robot.pivotUpTimer.milliseconds() > 400){
                 robot.raiseSlidesSample(gamepad1.b);
                 robot.slidesUpTimer.reset();
             }
-            if(robot.currentState == FSMBot.gameState.SAMPLE_SCORING_HIGH_2 && robot.slidesUpTimer.milliseconds() > 130){
+            if(robot.currentState == FSMBot.gameState.SAMPLE_SCORING_HIGH_2 && robot.slidesUpTimer.milliseconds() > 400){
                 if(gamepad1.dpad_up){
                     robot.setSlidePos(770);
                 }
@@ -65,6 +65,7 @@ public class TeleOps extends LinearOpMode {
                     robot.outtakeTimer.reset();
                 }
             }
+            // above is all gamepad 1 and sample stuff
             if(robot.currentState == FSMBot.gameState.DRIVE && robot.hangTimer.milliseconds() > 500){
                 if(gamepad2.x){
                     robot.currentState = FSMBot.gameState.HANG_UP;
@@ -77,19 +78,19 @@ public class TeleOps extends LinearOpMode {
                     robot.hangTimer.reset();
                 }
             }
-
+            // above is hang 1 on gamepad 2
             robot.onLoop(0, "manual drive");
 
 
             telemetry.setMsTransmissionInterval(11);
-
+            //hand drive
             robot.driveByHandFieldCentric(gamepad1.left_stick_x, gamepad1.left_stick_y,
-                    gamepad1.right_stick_x*0.4, gamepad1.left_stick_button, gamepad2.left_stick_x,
-                    gamepad2.left_stick_y, gamepad2.right_stick_x, gamepad2.left_stick_button);
+                    gamepad1.right_stick_x*-0.65, (gamepad1.right_trigger > 0.5), gamepad2.left_stick_x,
+                    gamepad2.left_stick_y, gamepad2.right_stick_x*-0.65, (gamepad2.right_trigger > 0.5));
             robot.slideControl(gamepad1.dpad_right, gamepad1.dpad_left);
             robot.pivotControl(gamepad1.dpad_up, gamepad1.dpad_down);
             if(gamepad2.b){
-                robot.currentState = FSMBot.gameState.SPECIMEN_SCORING_HIGH;
+                robot.currentState = FSMBot.gameState.SPECIMEN_SCORING_HIGH_DRIVE;
             }
             if(gamepad1.left_stick_button){
                 robot.currentState = FSMBot.gameState.PRE_DRIVE;
@@ -103,6 +104,10 @@ public class TeleOps extends LinearOpMode {
 
             if(gamepad1.x){
                 robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
+            }
+
+            if(gamepad1.y){
+                robot.resetAngle(true);
             }
 
             if(gamepad2.dpad_up){
