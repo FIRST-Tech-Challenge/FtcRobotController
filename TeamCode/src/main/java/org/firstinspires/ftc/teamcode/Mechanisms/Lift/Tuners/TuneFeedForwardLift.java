@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
-import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Extension.ExtensionOuttake;
@@ -20,7 +19,6 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Pivot.Pivot;
 public class TuneFeedForwardLift  extends LinearOpMode {
 //    Encoder encoder;
     Lift lift;
-    Arm arm;
     Claw claw;
     ExtensionOuttake extension;
     Pivot pivot;
@@ -33,10 +31,6 @@ public class TuneFeedForwardLift  extends LinearOpMode {
         lift = new Lift(hardwareMap, battery);
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
-        arm = new Arm(hardwareMap);
-        claw = new Claw(hardwareMap);
-        extension = new ExtensionOuttake(hardwareMap);
-        pivot = new Pivot(hardwareMap);
         drivetrain = new Drivetrain(hardwareMap, battery);
         ElapsedTime looptime = new ElapsedTime();
         telemetry.update();

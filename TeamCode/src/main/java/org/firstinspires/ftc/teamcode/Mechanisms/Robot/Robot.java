@@ -4,16 +4,17 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
-import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Extension.ExtensionOuttake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Pivot.Pivot;
+import org.firstinspires.ftc.teamcode.Mechanisms.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Sweeper.Sweeper;
 
 public class Robot {
@@ -22,7 +23,7 @@ public class Robot {
     public Pivot pivot;
     public Intake intake;
     public ExtensionOuttake extension;
-    public Arm arm;
+    public Outtake outtake;
     public Claw claw;
     public Lift lift;
     public Sweeper sweeper;
@@ -31,7 +32,7 @@ public class Robot {
         this.drivetrain = new Drivetrain(hardwareMap, battery);
         this.pivot = new Pivot(hardwareMap);
         this.intake = new Intake(hardwareMap);
-        this.arm = new Arm(hardwareMap);
+        this.outtake = new Outtake(hardwareMap);
         this.claw = new Claw(hardwareMap);
         this.lift = new Lift(hardwareMap, battery);
         this.extension = new ExtensionOuttake(hardwareMap);
@@ -65,7 +66,7 @@ public class Robot {
                 new ParallelAction(
                     lift.moveToHeight(28),
                     new SleepAction(1),
-                    arm.armExtend()
+                    outtake.OuttakeBack()
                 )
         );
     }
@@ -74,7 +75,7 @@ public class Robot {
                 claw.servoClaw(Claw.clawState.OPEN),
                 new ParallelAction(
                         lift.moveToHeight(0),
-                        arm.armExtend()
+                        outtake.OuttakeFront()
                 )
         );
     }

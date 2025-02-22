@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
-import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Extension.ExtensionOuttake;
@@ -31,7 +30,7 @@ public class TeleopWithActions extends OpMode {
     Drivetrain drivetrain = null;
     FtcDashboard dashboard;
     Robot robot;
-    Arm arm;
+//    Arm arm;
     Claw claw;
     ExtensionOuttake extension;
     Lift lift;
@@ -45,7 +44,7 @@ public class TeleopWithActions extends OpMode {
         robot = new Robot(hardwareMap);
         battery = robot.battery;
         drivetrain = robot.drivetrain;
-        arm = robot.arm;
+//        arm = robot.arm;
         claw = robot.claw;
         extension = robot.extension;
         lift = robot.lift;
@@ -59,7 +58,7 @@ public class TeleopWithActions extends OpMode {
             runningActions.put("extension", extension.servoExtension(ExtensionOuttake.extensionState.RETRACT));
             runningActions.put("claw", claw.servoClaw(Claw.clawState.OPEN));
             runningActions.put("intake", robot.intakeMove(Intake.intakeState.STOP));
-            runningActions.put("arm", arm.armRetract());
+//            runningActions.put("arm", arm.armRetract());
             firstRun = false;
         } else {
             if (gamepad1.right_trigger > 0.5) {
@@ -81,12 +80,12 @@ public class TeleopWithActions extends OpMode {
             } else {
                 runningActions.put("intake", robot.intakeMove(Intake.intakeState.STOP));
             }
-            if (gamepad2.cross) {
-                runningActions.put("arm", arm.servoArmSpec());
-            }
-            if (gamepad2.triangle) {
-                runningActions.put("arm", arm.servoArm());
-            }
+//            if (gamepad2.cross) {
+//                runningActions.put("arm", arm.servoArmSpec());
+//            }
+//            if (gamepad2.triangle) {
+//                runningActions.put("arm", arm.servoArm());
+//            }
             if (gamepad1.triangle) {
                 runningActions.put("sweep", sweeper.sweep());
             }
