@@ -24,7 +24,7 @@ public class VoltageDebugger {
     private LinearOpMode linearOpMode;
     public boolean isDisabled = false;
     private double operatingVoltage;
-    private ArrayList<Double> actionVoltages;
+    private ArrayList<Double> actionVoltages = new ArrayList<Double>();
 
 
 

@@ -129,6 +129,9 @@ public class OneFishSampleDelivery {
     public void setPitch(double pitchPosition){
         pitch.setPosition(pitchPosition);
     }
+    public void disableServoController(){
+        pitch.getController().pwmDisable();
+    }
 
     public void pitchToTransfer(){
         setPitch(TRANSFER_PITCH);
