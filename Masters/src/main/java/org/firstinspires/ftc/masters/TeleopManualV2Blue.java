@@ -146,7 +146,6 @@ public class TeleopManualV2Blue extends LinearOpMode {
             // Controller 2 anti-fuck up code
 
             // Reset Vertical slides
-
             if (gamepad2.a){
 
             }
