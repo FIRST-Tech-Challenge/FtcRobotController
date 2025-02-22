@@ -49,7 +49,7 @@ public class TeleOps extends LinearOpMode {
                 }
 
             }
-            if(robot.currentState == FSMBot.gameState.SUBMERSIBLE_INTAKE_2 && robot.subRetractTimer.milliseconds() > 400){
+            if(robot.currentState == FSMBot.gameState.SUBMERSIBLE_INTAKE_3 && robot.subRetractTimer.milliseconds() > 400){
                 robot.retractSubIntake(gamepad1.a);
             }
             if(robot.currentState == FSMBot.gameState.SAMPLE_SCORING_HIGH_1 && robot.pivotUpTimer.milliseconds() > 400){
@@ -96,7 +96,7 @@ public class TeleOps extends LinearOpMode {
                 robot.currentState = FSMBot.gameState.PRE_DRIVE;
             }
 //            robot.intake(gamepad1.a);
-            if(robot.currentState == FSMBot.gameState.SUBMERSIBLE_INTAKE_2 || robot.currentState == FSMBot.gameState.DRIVE) {
+            if(robot.currentState == FSMBot.gameState.SUBMERSIBLE_INTAKE_3 || robot.currentState == FSMBot.gameState.DRIVE) {
                 robot.outake(gamepad1.x);
             }
 

@@ -34,6 +34,7 @@ public class FSMBot extends RollerIntakeBot{
         INIT_READY,
         SUBMERSIBLE_INTAKE_1,
         SUBMERSIBLE_INTAKE_2,
+        SUBMERSIBLE_INTAKE_3,
         WALL_INTAKE_1,
         WALL_INTAKE_2,
         SPECIMEN_SCORING_HIGH_DRIVE,
@@ -57,6 +58,8 @@ public class FSMBot extends RollerIntakeBot{
         HANG_UP,
         HANG_DOWN,
         DEFAULT;
+
+
     }
 
     public boolean auto;
@@ -284,7 +287,10 @@ public class FSMBot extends RollerIntakeBot{
 //                robot.slideControl(gamepad1.dpad_right, gamepad1.dpad_left);
 //                retractSubIntake(gamepad1.b);
                 robot.pivotRunToPosition(0);
-                //
+                currentState = gameState.SUBMERSIBLE_INTAKE_3;
+
+            case SUBMERSIBLE_INTAKE_3:
+
 //                currentState = gameState.ARM_DOWN;
                 break;
             case WALL_INTAKE_1:
