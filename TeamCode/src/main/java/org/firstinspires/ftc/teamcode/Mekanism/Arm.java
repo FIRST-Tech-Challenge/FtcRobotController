@@ -45,6 +45,7 @@ public class Arm {
       pivotPower = 0,
       slidePower = 0;
 
+  private double maxLength = 0;
 
   public Arm(LinearOpMode opMode) {
 
@@ -210,6 +211,10 @@ public class Arm {
     }
 
     pivotTarget = (int) (x * countsPerDegree);
+
+    maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree));
+    if(slide.getCurrentPosition()>maxLength)
+      setSlide(maxLength);
   }
 
 
@@ -231,6 +236,10 @@ public class Arm {
     }
 
     pivotPower = power;
+
+    maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree));
+    if(slide.getCurrentPosition()>maxLength)
+      setSlide(maxLength);
   }
 
 
@@ -242,7 +251,7 @@ public class Arm {
   public void setSlide(int x) {
 
     // Calculates the max the arm can go without going over the 40IN limit
-    double maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree));
+    maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree));
     if (maxLength < 2500) maxLength = 2500;
 
     if (maxLength > limitSlide) maxLength = limitSlide;
