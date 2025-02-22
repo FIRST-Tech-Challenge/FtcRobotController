@@ -165,6 +165,9 @@ public class BlueBotTeleop extends LinearOpMode {
     // The tolerance of the schmitt trigger from y-axis set to zero.
     double schmitt_breakpoint_tolerance = 0.05;
 
+    double intended_robot_theta = Math.PI / 2.0;
+    boolean activate_intended_robot_theta = true;
+
     while (opModeIsActive()) {
 
       // Read raw input from left joystick
@@ -174,18 +177,18 @@ public class BlueBotTeleop extends LinearOpMode {
       // Reverse joystick y-axis to ensure 1 is up and -1 is down
       left_joy_y *= -1;
 
-      //telemetry.addLine("Left joy x: " + left_joy_x);
-      //telemetry.addLine("Left joy y: " + left_joy_y);
+      telemetry.addLine("Left joy x: " + left_joy_x);
+      telemetry.addLine("Left joy y: " + left_joy_y);
 
       // Compute theta of the left joystick vector
       double joy_theta = Math.atan2(left_joy_y, left_joy_x);
 
-      //telemetry.addLine("Joy theta: " + joy_theta);
+      telemetry.addLine("Joy theta: " + joy_theta);
 
       // Compute vector magnitude, this will be the speed of the robot
       double joy_magnitude = Math.sqrt(Math.pow(left_joy_x, 2.0) + Math.pow(left_joy_y, 2.0));
 
-      //telemetry.addLine("Joy mag: " + joy_magnitude);
+      telemetry.addLine("Joy mag: " + joy_magnitude);
 
       // Read raw value from odometer (in radians)
       double robot_theta = odometry.getHeading().getRadians();
@@ -193,7 +196,7 @@ public class BlueBotTeleop extends LinearOpMode {
 
       // Normalize odometry reading to align with standard polar coordinates
       robot_theta = normalize_angle(robot_theta);
-      //telemetry.addLine("Robot theta: " + robot_theta);
+      telemetry.addLine("Robot theta: " + robot_theta);
 
       // Compute steering angle relative to field-centric movements
       double steering_angle = joy_theta - robot_theta;
@@ -202,19 +205,19 @@ public class BlueBotTeleop extends LinearOpMode {
       }
       steering_angle = steering_angle % (2.0 * Math.PI);
 
-      //telemetry.addLine("Chang in steering (from robot heading): " + steering_angle);
+      telemetry.addLine("Chang in steering (from robot heading): " + steering_angle);
 
       // Normalize steering to 0 to 1 range
       steering_angle /= Math.PI;
 
-      //telemetry.addLine("Normalized steering: " + steering_angle);
+      telemetry.addLine("Normalized steering: " + steering_angle);
 
       //set steering angle to usable servo value
       steering_angle = (steering_angle + .5) / 2 + .25;
       if (joy_magnitude < 0.01)
         steering_angle = 0.5;
 
-      //telemetry.addLine("Servo steering: " + steering_angle);
+      telemetry.addLine("Servo steering: " + steering_angle);
 
       /**
        * At this point, we have vector magnitudes and angles associated with both the 
@@ -258,9 +261,9 @@ public class BlueBotTeleop extends LinearOpMode {
       drive_direction = get_drive_direction(steering_angle, drive_direction, schmitt_breakpoint_tolerance);
 
       if (drive_direction) {
-        //telemetry.addLine("POS");
+        telemetry.addLine("POS");
       } else {
-        //telemetry.addLine("NEG");
+        telemetry.addLine("NEG");
       }
 
       // At this point we're assuming that we're moving forward. See if the schmitt direction
@@ -275,7 +278,7 @@ public class BlueBotTeleop extends LinearOpMode {
 
         joy_magnitude *= -1.0;
       }
-      //telemetry.addLine("New theta: " + steering_angle);
+      telemetry.addLine("New theta: " + steering_angle);
 
 
       // The computed vector exceeds the allowable drive speed, cap the speed where needed
@@ -308,9 +311,63 @@ public class BlueBotTeleop extends LinearOpMode {
       // Compute the turning radius
       double right_joystick_steering_amt = right_joy_x * max_turn_radius;
 
-      //telemetry.addLine("Rt joystick raw: " + right_joy_x);
-      //telemetry.addLine("Rt joystick steer: " + right_joystick_steering_amt);
-      //telemetry.addLine("Actual speed: " + actual_wheel_speed);
+      double applied_turn_radius = 0.0;
+
+      // Some motors may be stronger than others, which can lead to the robot
+      // rotating as if it's steering while strafing. This may still be present when
+      // the power of all four drive motors are equal. To migitage the rotation,
+      // try to correct by steering. This correction should only take place when
+      // the right joystick (steering) is centered at zero (no steering).
+      if (right_joy_x > -0.001 && right_joy_x < 0.001) {
+        if (activate_intended_robot_theta == false) {
+          activate_intended_robot_theta = true;
+          intended_robot_theta = odometry.getHeading().getRadians();
+          intended_robot_theta = normalize_angle(intended_robot_theta);
+        }
+
+        // See if we've deviated from the intended robot angle, if so determine by
+        // which direction and apply some steering to turn back to where we should be.
+        double rolled_over_robot_theta = robot_theta + (2.0 * Math.PI);
+        double theta_angle_difference = rolled_over_robot_theta - intended_robot_theta;
+        theta_angle_difference = theta_angle_difference % (2.0 * Math.PI);
+
+        double cone_threshold = 0.005;
+
+        // 15% of turn radius
+        double corrected_turn_radius = max_turn_radius * 0.15;
+
+        if (theta_angle_difference > Math.PI) {
+          if (theta_angle_difference <= (2.0 * Math.PI) - cone_threshold) {
+            // Apply some left steering to go back to where we should be
+            applied_turn_radius = corrected_turn_radius;
+            telemetry.addLine("DETECTED: TURN DRIFTED RIGHT .. " + applied_turn_radius);
+          }
+          else {
+            telemetry.addLine("DETECTED: TURN AMT GOOD");
+          }
+        }
+        else {
+          if (theta_angle_difference >= cone_threshold) {
+            // Apply some right steering to go back to where we should be
+            applied_turn_radius = -1.0 * corrected_turn_radius;
+            telemetry.addLine("DETECTED: TURN DRIFTED LEFT .. " + applied_turn_radius);
+          }
+          else {
+            telemetry.addLine("DETECTED: TURN AMT GOOD");
+          }
+        }
+
+        telemetry.addLine("Rolled over theta: " + rolled_over_robot_theta);
+        telemetry.addLine("Intended robot theta: " + intended_robot_theta);
+        telemetry.addLine("ANGLE DIFF: " + theta_angle_difference);
+      }
+      else {
+        activate_intended_robot_theta = false;
+      }
+
+      telemetry.addLine("Rt joystick raw: " + right_joy_x);
+      telemetry.addLine("Rt joystick steer: " + right_joystick_steering_amt);
+      telemetry.addLine("Actual speed: " + actual_wheel_speed);
 
       if ((actual_wheel_speed > 0.001) || (actual_wheel_speed < -0.001)) {
         // Here we're moving the robot in some direction. The heading can be simplified
@@ -328,20 +385,28 @@ public class BlueBotTeleop extends LinearOpMode {
 
         // Strafing up or down means the front two wheels are the driving wheels.
         // This works in reverse because of the simple direction change.
-        if (general_direction == GeneralDirection.UP || general_direction == GeneralDirection.DOWN) {
+        if (general_direction == GeneralDirection.UP) {
+          steer_wheels(
+              steering_angle + right_joystick_steering_amt + applied_turn_radius,
+              steering_angle + right_joystick_steering_amt + applied_turn_radius,
+              steering_angle - right_joystick_steering_amt,
+              steering_angle - right_joystick_steering_amt
+          );
+        }
+        else if (general_direction == GeneralDirection.DOWN) {
           steer_wheels(
               steering_angle + right_joystick_steering_amt,
               steering_angle + right_joystick_steering_amt,
-              steering_angle - right_joystick_steering_amt,
-              steering_angle - right_joystick_steering_amt
+              steering_angle - right_joystick_steering_amt + applied_turn_radius,
+              steering_angle - right_joystick_steering_amt + applied_turn_radius
           );
         }
         // Strafing left means the left front and back wheels are now the driving wheels
         else if (general_direction == GeneralDirection.LEFT) {
           steer_wheels(
-              steering_angle + right_joystick_steering_amt, // Front left
+              steering_angle + right_joystick_steering_amt + applied_turn_radius, // Front left
               steering_angle - right_joystick_steering_amt, // Front right
-              steering_angle + right_joystick_steering_amt, // Back left
+              steering_angle + right_joystick_steering_amt + applied_turn_radius, // Back left
               steering_angle - right_joystick_steering_amt  // Back right
           );
         }
@@ -349,9 +414,9 @@ public class BlueBotTeleop extends LinearOpMode {
         else {
           steer_wheels(
               steering_angle - right_joystick_steering_amt, // Front left
-              steering_angle + right_joystick_steering_amt, // Front right
+              steering_angle + right_joystick_steering_amt + applied_turn_radius, // Front right
               steering_angle - right_joystick_steering_amt, // Back left
-              steering_angle + right_joystick_steering_amt  // Back right
+              steering_angle + right_joystick_steering_amt + applied_turn_radius  // Back right
           );
         }
 
@@ -424,9 +489,6 @@ public class BlueBotTeleop extends LinearOpMode {
       // Grabber power
       double grabberSpeed = g2_lt - g2_rt;
       mek.grabber.setGrabber(grabberSpeed, grabberSpeed);
-
-
-      telemetry.addLine("");
 
       mek.update();
       telemetry.update();

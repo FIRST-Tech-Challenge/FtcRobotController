@@ -274,7 +274,7 @@ public class Arm {
 
     // If the slide goes over the limit, stop the movement
     if (slide.getCurrentPosition() > maxLength && power > 0) {
-      power = 0.3;
+      power = 0.0;
       telemetry.addLine("Slide over robot length limit");
     } else if (slide.getCurrentPosition() < 0 && power < 0) {
       telemetry.addLine("Slide under 0");
