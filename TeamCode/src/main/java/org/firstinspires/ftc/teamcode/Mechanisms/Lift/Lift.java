@@ -29,15 +29,15 @@ public class Lift {
     TouchSensor limiter;
     public static double kA=0.2;
     public static double kV=0.2;
-    public static double kG=0.1;
+    public static double kG=0.25;
     public static double kP = 0;
     public static double kI = 0;
     public static double kD = 0;
     public static double liftThreshold = 0.1;
-    double spoolRadius =  0.702; // [in]
-    public static double maxAcceleration = 5;
-    public static double maxDeceleration = 5;
-    public static double maxVelocity = 6;
+    double spoolRadius =  (56/25.4) / Math.PI; // [in]
+    public static double maxAcceleration = 12;
+    public static double maxDeceleration = 8;
+    public static double maxVelocity = 16;
     private final double ticksPerRev = 384.5;
     private final double ticksPerInch = ticksPerRev / (2 * Math.PI * spoolRadius);
     boolean reverse;

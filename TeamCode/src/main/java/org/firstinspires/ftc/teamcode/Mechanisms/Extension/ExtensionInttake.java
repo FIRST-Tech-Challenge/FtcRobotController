@@ -25,14 +25,14 @@ public class ExtensionInttake {
     public int currentPosition = 0;
     public DcMotorAdvanced extensionMotor;
     public Encoder encoder;
-    TouchSensor limiter;
+//    TouchSensor limiter;
     public static double kA=0.2;
     public static double kV=0.2;
     public static double kP = 0;
     public static double kI = 0;
     public static double kD = 0;
     public static double extensionThreshold = 0.1;
-    double spoolRadius =  0.702; // [in]
+    double spoolRadius =  (56/25.4) / Math.PI; // [in]
     public static double maxAcceleration = 5;
     public static double maxDeceleration = 5;
     public static double maxVelocity = 6;
@@ -56,12 +56,12 @@ public class ExtensionInttake {
         this.currentPosition = 0;
         this.feedForward = new FeedForward(kV, kA, 0);
         this.pid = new PID(kP, kI, kD, PID.functionType.LINEAR);
-        this.limiter = hardwareMap.get(TouchSensor.class, "extensionTouch");
+//        this.limiter = hardwareMap.get(TouchSensor.class, "extensionTouch");
     }
     private void checkLimit(){
-        if (limiter.isPressed()){
-            encoder.reset();
-        }
+//        if (limiter.isPressed()){
+//            encoder.reset();
+//        }
     }
 
     public double ticksToInches(double ticks){
@@ -69,7 +69,7 @@ public class ExtensionInttake {
     }
 
     // See above but rename the parameter to targetHeight
-    public Action moveToHeight(double targetHeight) {
+    public Action moveToLength(double targetHeight) {
 
         return new Action() {
             private double initialPos;
@@ -113,13 +113,13 @@ public class ExtensionInttake {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                if (limiter.isPressed()){
-                    extensionMotor.setPower(0);
-                    packet.put("Motor Power", power);
-                } else {
+//                if (limiter.isPressed()){
+//                    extensionMotor.setPower(0);
+//                    packet.put("Motor Power", power); }
+//                 else {
                     extensionMotor.setPower(power);
                     packet.put("Motor Power", power);
-                }
+//                }
                 return false;
             }
         };

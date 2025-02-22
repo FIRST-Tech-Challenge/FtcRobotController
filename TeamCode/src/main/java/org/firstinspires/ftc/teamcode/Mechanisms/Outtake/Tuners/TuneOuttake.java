@@ -27,6 +27,9 @@ public class TuneOuttake extends LinearOpMode {
             if(gamepad1.square){
                 Actions.runBlocking(outtake.OuttakeRetract());
             }
+            if(gamepad1.circle){
+                Actions.runBlocking(outtake.OuttakeBack());
+            }
         }
     }
 }

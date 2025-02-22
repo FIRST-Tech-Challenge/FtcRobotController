@@ -22,17 +22,17 @@ public class Outtake {
     ServoAdvanced linkageLeft;
     ServoAdvanced linkageRight;
     public static double shoulderUp = 0;
-    public static double shoulderDown = 0.2;
-    public static double shoulderFront = 0.1;
+    public static double shoulderDown = 0.15;
+    public static double shoulderFront = 0.7;
     public static double shoulderBack = 0;
-    public static double wristUp = 0.3;
-    public static double wristDown = 0.1;
-    public static double wristNeutral = 0;
+    public static double wristFront = 0.85;
+    public static double wristBack = 0.98;
+    public static double wristMiddle = 0.7;
     public static double clawRotationNormal = 0;
     public static double clawRotationReverse = 0.6;
-    public static double linkageFront = 0.1;
-    public static double linkageBack = 0;
-    public static double linkageMid = 0.2;
+    public static double linkageFront = 0.5;
+    public static double linkageBack = 0.28;
+
 
     public Outtake(HardwareMap hardwareMap) {
         this.shoulderLeft = new ServoAdvanced(hardwareMap.get(Servo.class, "shoulderLeft"));
@@ -49,10 +49,10 @@ public class Outtake {
             public boolean run(@NonNull TelemetryPacket Packet) {
                 shoulderLeft.setPosition(shoulderDown);
                 shoulderRight.setPosition(shoulderDown);
-                armWrist.setPosition(wristDown);
+                armWrist.setPosition(wristMiddle);
                 clawRotation.setPosition(clawRotationNormal);
-                linkageLeft.setPosition(linkageMid);
-                linkageRight.setPosition(linkageMid);
+                linkageLeft.setPosition(linkageBack);
+                linkageRight.setPosition(linkageBack);
                 return false;
             }
         };
@@ -64,14 +64,30 @@ public class Outtake {
             public boolean run(@NonNull TelemetryPacket Packet){
                 shoulderLeft.setPosition(shoulderFront);
                 shoulderRight.setPosition(shoulderFront);
-                armWrist.setPosition(wristUp);
-                clawRotation.setPosition(clawRotationNormal);
+                armWrist.setPosition(wristFront);
+                clawRotation.setPosition(clawRotationReverse);
                 linkageLeft.setPosition(linkageFront);
                 linkageRight.setPosition(linkageFront);
                 return false;
             }
         };
     }
+
+    public Action OuttakeBack(){
+        return new Action(){
+            @Override
+            public boolean run(@NonNull TelemetryPacket Packet){
+                shoulderLeft.setPosition(shoulderBack);
+                shoulderRight.setPosition(shoulderBack);
+                armWrist.setPosition(wristFront);
+                clawRotation.setPosition(clawRotationNormal);
+                linkageLeft.setPosition(linkageBack);
+                linkageRight.setPosition(linkageBack);
+                return false;
+            }
+        };
+    }
+
 
 
 
@@ -85,10 +101,10 @@ public class Outtake {
 
     public Action sampleCollect() {
         return new SequentialAction(
-            new InstantAction(() -> linkageLeft.setPosition(linkageMid)),
-            new InstantAction(() -> linkageRight.setPosition(linkageMid)),
+            new InstantAction(() -> linkageLeft.setPosition(linkageBack)),
+            new InstantAction(() -> linkageRight.setPosition(linkageBack)),
             new InstantAction(() -> clawRotation.setPosition(clawRotationNormal)),
-            new InstantAction(() -> armWrist.setPosition(wristDown)),
+            new InstantAction(() -> armWrist.setPosition(wristBack)),
             new SleepAction(0),
             new InstantAction(() -> shoulderLeft.setPosition(shoulderDown)),
             new InstantAction(() -> shoulderRight.setPosition(shoulderDown))
@@ -100,7 +116,7 @@ public class Outtake {
                 new InstantAction(()->linkageLeft.setPosition(linkageBack)),
                 new InstantAction(()->linkageRight.setPosition(linkageBack)),
                 new InstantAction(()->clawRotation.setPosition(clawRotationNormal)),
-                new InstantAction(()-> armWrist.setPosition(wristUp)),
+                new InstantAction(()-> armWrist.setPosition(wristFront)),
                 new SleepAction(0),
                 new InstantAction(()->shoulderLeft.setPosition(shoulderUp)),
                 new InstantAction(()->shoulderRight.setPosition(shoulderUp))
@@ -112,7 +128,7 @@ public class Outtake {
                 new InstantAction(()->linkageLeft.setPosition(linkageFront)),
                 new InstantAction(()->linkageRight.setPosition(linkageFront)),
                 new InstantAction(()->clawRotation.setPosition(clawRotationNormal)),
-                new InstantAction(()-> armWrist.setPosition(wristNeutral)),
+                new InstantAction(()-> armWrist.setPosition(wristMiddle)),
                 new SleepAction(0),
                 new InstantAction(()->shoulderLeft.setPosition(shoulderFront)),
                 new InstantAction(()->shoulderRight.setPosition(shoulderFront))
@@ -124,7 +140,7 @@ public class Outtake {
                 new InstantAction(()->linkageLeft.setPosition(linkageBack)),
                 new InstantAction(()->linkageRight.setPosition(linkageBack)),
                 new InstantAction(()->clawRotation.setPosition(clawRotationReverse)),
-                new InstantAction(()-> armWrist.setPosition(wristNeutral)),
+                new InstantAction(()-> armWrist.setPosition(wristMiddle)),
                 new SleepAction(0),
                 new InstantAction(()->shoulderLeft.setPosition(shoulderBack)),
                 new InstantAction(()->shoulderRight.setPosition(shoulderBack))
