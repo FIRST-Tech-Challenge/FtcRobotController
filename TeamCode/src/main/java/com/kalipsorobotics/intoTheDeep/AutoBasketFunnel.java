@@ -115,7 +115,7 @@ public class AutoBasketFunnel extends LinearOpMode {
                     -135, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
             redAutoBasket.addAction(moveToBasket1);
 
-            WaitAction waitForPurePure = new WaitAction(500);
+            WaitAction waitForPurePure = new WaitAction(150);
             waitForPurePure.setName("waitForPurePure");
             redAutoBasket.addAction(waitForPurePure);
 
