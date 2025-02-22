@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.Utils;
+import org.firstinspires.ftc.teamcode.Swerve.TheBestSwerve;
 
 
 @Autonomous(name = "Auto Top Bucket")
@@ -19,6 +20,7 @@ public class AutoBucket extends LinearOpMode {
   private AutoSwerve drivebase;
   private GoBildaPinpointDriver odo;
   private Mekanism mek;
+  TheBestSwerve amazingSwerve;
 
   @Override
   public void runOpMode() throws InterruptedException {
@@ -26,6 +28,7 @@ public class AutoBucket extends LinearOpMode {
     drivebase = new AutoSwerve(this, odo);
     mek = new Mekanism(this);
     mek.grabber.initWrist();
+    amazingSwerve = new TheBestSwerve(this,odo,driveBase);
 
     waitForStart();
     mek.arm.homeArm();
@@ -41,6 +44,7 @@ public class AutoBucket extends LinearOpMode {
     sleepWithMekUpdate(500);
     mek.arm.setSlide(0);
     sleepWithMekUpdate(5000);
+    moveRobot(1.0, 1.0, 0.0);
   }
 
   public void sleepWithMekUpdate(int timeInMS) {
@@ -67,6 +71,20 @@ public class AutoBucket extends LinearOpMode {
     odo.setEncoderResolution(goBILDA_4_BAR_POD);
     odo.setEncoderDirections(FORWARD, FORWARD);
     odo.resetHeading(Rotation2d.fromDegrees(120));
+  }
+
+  public void moveRobot(double strafe_x, double strafe_y, double steer_amt) {
+    double current_x = odometry.getPosX();
+    double current_y = odometry.getPosY();
+
+    while (current_x != strafe_x || current_y != strafe_y) {
+      amazingSwerve.swerveTheThing(strafe_x, strafe_y, 0.0);
+
+      current_x = odometry.getPosX();
+      current_y = odometry.getPosY();
+      odometry.update();
+    }
+
   }
 
   /**
