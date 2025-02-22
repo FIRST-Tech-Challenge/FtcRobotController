@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.hardware.AscentProxy;
 import org.firstinspires.ftc.teamcode.hardware.HClawProxy;
 import org.firstinspires.ftc.teamcode.hardware.HSlideProxy;
 import org.firstinspires.ftc.teamcode.hardware.VLiftProxy;
@@ -39,7 +40,7 @@ public class LeftAuto extends LinearOpMode {
     // power biases
     public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.0, 1.0); // Calibration factors for strafe, forward, and turn.
     private static final RuntimeException NOT_IMPLEMENTED = new RuntimeException("This operation is not implemented");
-    final Pose SCORE_HIGH_BASKET = new Pose(10.6286797, 17.3713203, Math.toRadians(-45));
+    final Pose SCORE_HIGH_BASKET = new Pose(9.9216797, 18.0783203, Math.toRadians(-45));
     final Pose PARK_BAD = new Pose(10.6286797, 17.3713203, Math.toRadians(0));
     final Pose PARK1 = new Pose(57.5, 0, Math.toRadians(0));
     final Pose PARK2 = new Pose(55.5, -11, Math.toRadians(0));
@@ -49,6 +50,7 @@ public class LeftAuto extends LinearOpMode {
     private VLiftProxy vLiftProxy;
     private HSlideProxy hSlideProxy;
     private HClawProxy hClawProxy;
+    private AscentProxy ascentProxy;
     private Ramps ramps;
     private LoopStopwatch loopTimer;
     private Speed2Power speed2Power;
@@ -152,7 +154,6 @@ public class LeftAuto extends LinearOpMode {
                         .then(await(100))
                         .then(run(() -> hardware.wrist.setPosition(0.28)))
                         .then(run(() -> hardware.arm.setTargetPosition(0)))
-                        .then(vLiftProxy.moveTo(0, 5, 2.0))
         );
     }
 
@@ -180,63 +181,61 @@ public class LeftAuto extends LinearOpMode {
         vLiftProxy = scheduler.add(new VLiftProxy(scheduler, hardware.verticalLift));
         hSlideProxy = scheduler.add(new HSlideProxy(scheduler, hardware));
         hClawProxy = scheduler.add(new HClawProxy(scheduler, hardware));
+        ascentProxy = scheduler.add(new AscentProxy(scheduler, hardware.ascent));
+
+        hardware.ascent.calibrate(Hardware.ASCENT_INIT_POS);
 
         ElapsedTime finalizeTimer = new ElapsedTime();
         double doneIn = 0;
 
+        hardware.ascent.setTargetPosition(Hardware.ASCENT_INIT_POS);
+
         scheduler.add(new BackgroundTasks(
                 scheduler, tracker, loopTimer
         ));
+        scheduler.add(ascentProxy.target(Hardware.ASCENT_UP_POS));
         scheduler
                 .add(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
                 .then(groupOf(a -> {
-                    a.add(moveTo(new Pose(16.5, 13.5, Math.toRadians(0))));
+                    a.add(moveTo(new Pose(18.0, 13.5, Math.toRadians(0))));
                     a.add(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
                         .then(hSlideProxy.moveOut());
+                    a.add(vLiftProxy.moveTo(0, 5, 1.0));
                 }))
                 .then(pickUpYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
                 .then(groupOf(a -> {
-                    a.add(moveTo(new Pose(16.5, 23.75, Math.toRadians(0))));
+                    a.add(moveTo(new Pose(18.0, 23.75, Math.toRadians(0))));
                     a.add(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
                             .then(hSlideProxy.moveOut());
+                    a.add(vLiftProxy.moveTo(0, 5, 1.0));
                 }))
                 .then(pickUpYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
-                .then(moveTo(new Pose(30.75, 12.75, Math.toRadians(75))))
+                // 30.75 + sin(15 deg) * 2.0
+                // 12.75 + cos(15 deg) * 2.0
+                .then(groupOf(a -> {
+                    a.add(moveTo(new Pose(31.26763809, 14.68185165, Math.toRadians(75))));
+                    a.add(vLiftProxy.moveTo(0, 5, 1.0));
+                }))
                 .then(fourthYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
-                .then(moveTo(PARK_BAD))
-////                .then(moveTo(PARK2))
-//                .then(run(() -> {
-//                    hardware.frontLeft.setPower(0.6);
-//                    hardware.frontRight.setPower(-0.6);
-//                    hardware.backLeft.setPower(-0.6);
-//                    hardware.backRight.setPower(0.6);
-//                }))
-//                .then(wait(0.5))
-//                .then(run(() -> {
-//                    hardware.frontLeft.setPower(0.3);
-//                    hardware.frontRight.setPower(-0.3);
-//                    hardware.backLeft.setPower(-0.3);
-//                    hardware.backRight.setPower(0.3);
-//                }))
-//                .then(wait(0.5))
+                .then(groupOf(a -> {
+                    a.add(moveTo(PARK_BAD));
+                    a.add(vLiftProxy.moveTo(0, 5, 1.0));
+                }))
                 .then(run(() -> hardware.driveMotors.setAll(0)));
-//                .then(moveTo(scheduler,
-//                        new Pose(65, -12, Math.toRadians(0))))*/
         ;
-        // park
 
         telemetry.addLine("Initialized.");
         telemetry.addLine(String.format("%d in queue.", scheduler.taskCount()));
         telemetry.update();
 
-        waitForStart(); // Wait for start button
+        while (!isStarted() && !isStopRequested()) hardware.ascent.update();
 
         telemetry.update();
         finalizeTimer.reset();

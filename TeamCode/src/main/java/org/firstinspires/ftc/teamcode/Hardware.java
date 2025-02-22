@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -26,8 +26,9 @@ import dev.aether.collaborative_multitasking.SharedResource;
 
 public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final int ARM_TRANSFER_POS = -40;
+    public static final double SCORE_SPECIMEN_ARM_DEG =-100;
     public static final double spinTickPerRev = 751.8;
-    public static final double RIGHT_SLIDE_OUT = 0.69;
+    public static final double RIGHT_SLIDE_OUT = 0.60;
     @Deprecated public static final double LEFT_SLIDE_OUT = 1.05 - RIGHT_SLIDE_OUT;
     public static final double RIGHT_SLIDE_IN = 0.38;
     @Deprecated public static final double LEFT_SLIDE_IN = 1.05 - RIGHT_SLIDE_IN;
@@ -50,12 +51,13 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final double LAMP_ORANGE = 0.333;
     public static final double LAMP_YELLOW = 0.36;
     public static final double LAMP_PURPLE = 0.700;
+    public static final double LAMP_GREEN = 0.440;
     public static final int VLIFT_MAX_HEIGHT = 825;
     public static final int VLIFT_SCORE_HIGH = 790;
     public static final int VLIFT_SCORE_SPECIMEN = 283;
     public static final double VLIFT_CLOSENESS = 50.0;
     public static final int VLIFT_POWEROFF_HEIGHT = 30;
-    public static final int ASCENT_INIT_POS = -420;
+    public static final int ASCENT_INIT_POS = -500;
     public static final int ASCENT_UP_POS = -1742;
     public static final int ASCENT_PREPARE_POS = -2995;
     public static final int ASCENT_FINISH_POS = -50;
@@ -85,6 +87,12 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
         public static final SharedResource HSlideClaw = new SharedResource("HSlideClaw");
 
         public static final SharedResource Ascent = new SharedResource("Ascent");
+
+        /// The two lights on the top of the robot.
+        public static final SharedResource Signals = new SharedResource("Signals");
+
+        /// Limelight 3A.
+        public static final SharedResource Limelight = new SharedResource("Limelight");
     }
 
     public static final double TRACK_WIDTH = 11.375;
@@ -178,6 +186,9 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     @HardwareName("lightRight")
     public Servo lightRight;
 
+    @HardwareName("limelightlight")
+    public Servo limelightLight;
+
     @HardwareName("clawColor")
     public ColorSensor clawColor;
 
@@ -198,6 +209,9 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public CRServo rightAscent;
 
     public Ascent ascent;
+
+    @HardwareName("limelight")
+    public Limelight3A limelight;
 
     @Override
     public Encoder getLeftEncoder() {
@@ -260,6 +274,8 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
 
         lightLeft.setPosition(Hardware.LAMP_PURPLE);
         lightRight.setPosition(Hardware.LAMP_PURPLE);
+
+        limelight.stop();
     }
 
     public Hardware(HardwareMap hwMap) {

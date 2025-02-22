@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.utilities
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION
@@ -13,6 +14,7 @@ import dev.aether.collaborative_multitasking.ext.Pause
 import org.firstinspires.ftc.teamcode.Hardware
 
 @TeleOp
+@Disabled
 class RunIntoTheWall : LinearOpMode() {
     lateinit var scheduler: MultitaskScheduler
     lateinit var hardware: Hardware

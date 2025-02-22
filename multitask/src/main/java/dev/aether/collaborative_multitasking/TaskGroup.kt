@@ -2,7 +2,7 @@ package dev.aether.collaborative_multitasking
 
 import java.util.function.Consumer
 
-internal class TaskGroupScheduler : MultitaskScheduler() {
+class TaskGroupScheduler : MultitaskScheduler() {
     val subtaskRequirements: MutableSet<SharedResource> = mutableSetOf()
 
     override fun register(task: ITask): Int {
@@ -11,8 +11,8 @@ internal class TaskGroupScheduler : MultitaskScheduler() {
     }
 }
 
-class TaskGroup(outerScheduler: Scheduler) : TaskTemplate(outerScheduler) {
-    private val innerScheduler = TaskGroupScheduler()
+open class TaskGroup(outerScheduler: Scheduler) : TaskTemplate(outerScheduler) {
+    protected val innerScheduler = TaskGroupScheduler()
 
     /**
      * Access the inner scheduler, cast to a generic Scheduler. Not recommended for general use.
@@ -29,7 +29,7 @@ class TaskGroup(outerScheduler: Scheduler) : TaskTemplate(outerScheduler) {
         return this
     }
 
-    private val extraDeps: MutableSet<SharedResource> = mutableSetOf()
+    protected val extraDeps: MutableSet<SharedResource> = mutableSetOf()
 
     fun extraDepends(vararg with: SharedResource): TaskGroup {
         extraDeps.addAll(with)

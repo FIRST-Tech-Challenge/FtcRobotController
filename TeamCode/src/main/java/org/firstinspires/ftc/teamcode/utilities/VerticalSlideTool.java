@@ -88,8 +88,9 @@ public class VerticalSlideTool extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         scheduler = new MultitaskScheduler();
         h = new Hardware(hardwareMap);
-        h.verticalLift.disable();
-//        vLiftProxy = scheduler.add(new VLiftProxy(scheduler, h.verticalLift));
+//        h.verticalLift.disable();
+        vLiftProxy = scheduler.add(new VLiftProxy(scheduler, h.verticalLift));
+        h.verticalLift.useInstrumentation = true;
 //        hardwareInit();
         waitForStart();
 //        scheduler.add(scoreHighBasket());
@@ -100,11 +101,12 @@ public class VerticalSlideTool extends LinearOpMode {
 //            telemetry.addData("target", h.verticalLift.getTargetPosition());
 //            telemetry.addData("eTotal", h.verticalLift.getETotal());
             telemetry.addLine();
-//            if (gamepad1.y) h.verticalLift.setTargetPosition(Hardware.VLIFT_SCORE_HIGH);
-//            else if (gamepad1.b) h.verticalLift.setTargetPosition(300);
-//            else if (gamepad1.a) h.verticalLift.setTargetPosition(0);
-//            else h.verticalLift.setPower(0);
+            if (gamepad1.y) scheduler.add(vLiftProxy.target(Hardware.VLIFT_SCORE_HIGH));
+            else if (gamepad1.b) scheduler.add(vLiftProxy.target(Hardware.VLIFT_SCORE_SPECIMEN));
+            else if (gamepad1.a) scheduler.add(vLiftProxy.target(0));
+//            else h.verticalLift.stop();
             scheduler.tick();
+            h.verticalLift.writeInstrumentation(telemetry);
             scheduler.displayStatus(true, true,
                     str -> {
                         telemetry.addLine(str);

@@ -43,7 +43,6 @@ import kotlin.jvm.functions.Function0;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
-
 public class FixStuffTeleOp extends LinearOpMode {
 
     private Hardware hardware;
