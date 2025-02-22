@@ -162,9 +162,9 @@ public class TwoControllers extends LinearOpMode {
             double axial   = gamepad1.left_stick_y; // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
-            double Shoulder_Forward = gamepad2.right_trigger;
-            double Shoulder_Backward = -gamepad2.left_trigger;
-            double Forearm_Movement = gamepad2.right_stick_y*-1;
+            double Shoulder_Forward = gamepad2.right_trigger / 2;
+            double Shoulder_Backward = -gamepad2.left_trigger / 2;
+            double Forearm_Movement = (gamepad2.right_stick_y*-1) / 2;
             double  Claw_Position = gamepad2.left_stick_x;
 
 
