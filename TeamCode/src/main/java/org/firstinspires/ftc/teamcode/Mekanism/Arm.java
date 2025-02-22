@@ -220,7 +220,7 @@ public class Arm {
    * @param power (-1) to 1
    */
   public void setPivot(double power) {
-    double current_Angle = pivot.getCurrentPosition();
+    double current_Angle = pivot.getCurrentPosition() * countsPerDegree;
 
     if (current_Angle > limitPivot && power > 0) {
       power = 0;

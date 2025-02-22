@@ -5,10 +5,11 @@ package org.firstinspires.ftc.teamcode.Debug;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 
 @TeleOp
-public class ClawTest extends LinearOpMode {
+public class AutoClipTest extends LinearOpMode {
 
 
   public void runOpMode() throws InterruptedException {
@@ -26,6 +27,8 @@ public class ClawTest extends LinearOpMode {
         game2Y = false;
 
     waitForStart();
+
+    mek.arm.homeArm();
     while (opModeIsActive()) {
 
       if (gamepad2.a && !is2A) {
@@ -54,10 +57,19 @@ public class ClawTest extends LinearOpMode {
         mek.grabber.setWrist(1);
       else mek.grabber.setWrist(0);
 
+      if (gamepad2.dpad_up) {
+        mek.clipStage = 1;
+      }
 
       mek.grabber.setGrabber(-gamepad2.left_stick_y, -gamepad2.left_stick_y);
 
+      mek.autoClip();
 
+      telemetry.addLine("Auto Clip Stage: " + mek.clipStage);
+      telemetry.addData("pivot current pos", mek.arm.pivot.getCurrentPosition());
+      telemetry.addData("slide current pos", mek.arm.slide.getCurrentPosition());
+
+      telemetry.update();
       mek.update();
 
     }
