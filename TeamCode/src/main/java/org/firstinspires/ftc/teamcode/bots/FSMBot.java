@@ -109,6 +109,150 @@ public class FSMBot extends RollerIntakeBot{
         telemetry.update();
         sleep(100);
     }
+    public void updateStates(){
+        super.onTick();
+        telemetry.addData("state: ", currentState);
+        telemetry.update();
+        switch (currentState) {
+            case INIT_READY:
+                pitchTo(0); //sets differential wrist positions
+                rollTo(0);
+                currentState = gameState.PRE_DRIVE;
+                break;
+            case SUBMERSIBLE_INTAKE_1:
+                robot.slideRunToPosition(intakeSlideMinimum);
+                robot.pivotRunToPosition(0);
+                //
+                if(subIntakeTimer.milliseconds() > 140){
+                    currentState = gameState.SUBMERSIBLE_INTAKE_2;
+                }
+                subRetractTimer.reset();
+                break;
+            case SUBMERSIBLE_INTAKE_2:
+                robot.pitchTo(groundIntakePitchTarget);
+                robot.rollTo(groundIntakeRollTarget);
+                robot.intake(true);
+//                robot.slideControl(gamepad1.dpad_right, gamepad1.dpad_left);
+//                retractSubIntake(gamepad1.b);
+                robot.pivotRunToPosition(0);
+                //
+//                currentState = gameState.ARM_DOWN;
+                break;
+            case WALL_INTAKE_1:
+                //pivot up
+                robot.pitch(wallIntakePitchTarget);
+                robot.rollTo(wallIntakeRollTarget);
+                robot.pivotRunToPosition(0);
+                //face the right direction
+                currentState = gameState.WALL_INTAKE_2;
+                break;
+            case WALL_INTAKE_2:
+                //arm up
+                robot.slideRunToPosition(100);
+                //wait for drive
+                if (wallIntakeDone) {
+                    currentState = gameState.SPECIMEN_SCORING_HIGH;
+                }
+                break;
+            case SPECIMEN_SCORING_HIGH:
+                //pivot up
+                robot.pivotRunToPosition(-1400);
+                //wait
+                robot.rollTo(specimenHighOuttakeRollTarget);
+                //arm up
+                robot.slideRunToPosition(sampleSlideDropOffPos);
+                //wait for drive
+                if(specimenScored) {
+                    currentState = gameState.ARM_DOWN;
+                }
+                break;
+            case SPECIMEN_SCORING_LOW:
+                //pivot up
+                //wait
+                //arm up
+                //wait for drive
+                currentState = gameState.ARM_DOWN;
+                break;
+            case SAMPLE_SCORING_HIGH_1:
+                robot.pivotRunToPosition(samplePivotDropOffPos);
+                isArmUp = true;
+                //pivot up
+                //wait
+//                raiseSlidesSample(gamepad1.a);
+
+                break;
+            case SAMPLE_SCORING_HIGH_2:
+                isSlideUp = true;
+                robot.pivotRunToPosition(samplePivotDropOffPos);
+                robot.slideRunToPosition(sampleSlideDropOffPos);
+                robot.pitchTo(sampleOuttakePitchTarget);
+                robot.rollTo(sampleOuttakeRollTarget);
+                outtakeTimer.reset();
+//                if(gamepad1.a){
+//                    currentState = gameState.SAMPLE_SCORING_HIGH_3;
+//                }
+                //arm up
+                //wait for score
+                break;
+            case SAMPLE_SCORING_HIGH_3:
+                robot.outake(true);
+                if(outtakeTimer.milliseconds() > 600) {
+                    currentState = gameState.ARM_DOWN;
+                }
+                //outtake
+                //wait arm down
+                break;
+            case SAMPLE_SCORING_LOW_1:
+                //pivot up
+                //wait
+                currentState = gameState.SAMPLE_SCORING_LOW_2;
+                break;
+            case SAMPLE_SCORING_LOW_2:
+                //arm up
+                //wait for score
+                break;
+            case PRE_DRIVE:
+                robot.pitchTo(normalIntakePitchTarget);
+                robot.rollTo(normalIntakeRollTarget);
+                robot.pivotRunToPosition(0);
+                robot.slideRunToPosition(0);
+                robot.stopRoller();
+                currentState = gameState.DRIVE;
+//                subIntake(gamepad1.b);
+//                raisePivotSample(gamepad1.a);
+                //reset slide, pivot motors, close claw
+                break;
+            case DRIVE:
+                robot.pitchTo(normalIntakePitchTarget);
+                robot.rollTo(normalIntakeRollTarget);
+                robot.pivotRunToPosition(0);
+                robot.slideRunToPosition(0);
+                break;
+            case HANG_UP:
+                robot.rollTo(groundIntakeRollTarget);
+                robot.pitchTo(groundIntakePitchTarget);
+                robot.pivotRunToPosition(-2100);
+                break;
+            case HANG_DOWN:
+                robot.pivotRunToPosition(0);
+                robot.slideRunToPosition(770);
+                break;
+            case ARM_DOWN:
+                robot.pitchTo(normalIntakePitchTarget);
+                robot.rollTo(normalIntakeRollTarget);
+                robot.slideRunToPosition(0);
+                if(slidesDownTimer.milliseconds() > 300 && robot.getSlidePosition() < 200) {
+                    currentState = gameState.PIVOT_DOWN;
+                }
+                break;
+            case PIVOT_DOWN:
+                robot.pivotRunToPosition(0);
+                if(pivotDownTimer.milliseconds() > 100) {
+                    currentState = gameState.PRE_DRIVE;
+                }
+                break;
+        }
+    }
     protected void onTick() {
         super.onTick();
         telemetry.addData("state: ", currentState);
@@ -223,7 +367,10 @@ public class FSMBot extends RollerIntakeBot{
                 //reset slide, pivot motors, close claw
                 break;
             case DRIVE:
-
+                robot.pitchTo(normalIntakePitchTarget);
+                robot.rollTo(normalIntakeRollTarget);
+                robot.pivotRunToPosition(0);
+                robot.slideRunToPosition(0);
                 break;
             case HANG_UP:
                 robot.rollTo(groundIntakeRollTarget);

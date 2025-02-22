@@ -20,7 +20,7 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
 
     public static int samplePivotDropOffPos = -2050; // was 2150, seems to be going too far
 
-    public static int sampleSlideDropOffPos = 780;// WAS 770, MADE LOWER TO AVOID CLAW GETTING CAUGHT ON BUCKET
+    public static int sampleSlideDropOffPos = 700;// WAS 770, MADE LOWER TO AVOID CLAW GETTING CAUGHT ON BUCKET
 
     public final float ticksToDegree = 360/8192; // 8192 ticks per rotation
     public float kfAngled;
@@ -120,8 +120,11 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
             if (pivotMotor1.getCurrentPosition() > -2100) {
                 kfAngled = (float) (kf * Math.cos(Math.toRadians(ticksToDegree * pivotMotor1.getCurrentPosition())));
             } else{ kfAngled = 0;}
-            if(pivotMotor1.getCurrentPosition() < 0 && pivotTarget == 0){
-
+            if(pivotMotor1.getCurrentPosition() > 1 && pivotTarget == 0){
+                pivotMotor1.setPower(0);
+                pivotMotor2.setPower(0);
+                pivotMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                pivotMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             }
             else if(!pivotController.atSetPoint()) {
                 pivotController.setPIDF(kp, ki, kd, 0);

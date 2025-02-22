@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.sample.Sample;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Pedro Auto", group = "Auto")
+@Autonomous(name = "Pedro Auto Samples", group = "Auto")
 public class PedroAuto extends LinearOpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -40,27 +40,24 @@ public class PedroAuto extends LinearOpMode {
      * It is used by the pathUpdate method. */
     private int pathState;
 
-    private final Pose startPose = new Pose(7.591433278418451, 114.1, Math.toRadians(0));// starting position of robot
+    private final Pose startPose = new Pose(7.591433278418451, 114.82042833607908, Math.toRadians(0));// starting position of robot
 //    private final Pose scoreSpecimenPose = new Pose(12.7, 30, Math.toRadians(0));// position where specimen is scored on submersible, robot is aligned to submerisble with back facing it
 
     //    private final Pose sample1 = new Pose(35, 23,0); //these three poses are just behind the samples
     private final Pose samplePivotPose = new Pose(35, 12.7,0); //pivot from one point to grab all 3 samples
 
-    private final Pose SamplePickupPose1 = new Pose(28, 124.30971993410215, Math.toRadians(30));
-    private final Pose samplePickupPoseSweep1 = new Pose(26,124.30971993410215, Math.toRadians(0));
+    private final Pose samplePickupPose1 = new Pose(20, 134.7479406919275, Math.toRadians(-40));
 
-    private final Pose SamplePickupPose2 = new Pose(28, 132.61285008237232, Math.toRadians(-30));
-    private final Pose samplePickupPoseSweep2 = new Pose(26,132.61285008237232, Math.toRadians(0));
+    private final Pose samplePickupPose2 = new Pose(26.5, 117.667215815486, Math.toRadians(45));
 
-    private final Pose SamplePickupPose3 = new Pose(28, 1374.35749588138387, Math.toRadians(0));
-    private final Pose samplePickupPoseSweep3 = new Pose(26, 134.35749588138387, Math.toRadians(30));
+    private final Pose samplePickupPose3 = new Pose(26.5, 124.7841845140033, Math.toRadians(45));
 //    private final Pose sample3 = new Pose(35, 6,0);
 
 //    private final Pose dropSamplePose = new Pose(28, 136, Math.toRadians(180));
 
     private final Pose loadSpecimenPose = new Pose(7.9, 23.6, 0);
 
-    private final Pose scoreSamplePose = new Pose(14.7, 122.41186161449752, Math.toRadians(-45));
+    private final Pose scoreSamplePose = new Pose(12.7, 128.8, Math.toRadians(-45));
 
     private final Pose sampleCurveControlPoint = new Pose(21.8, 36.7, Math.toRadians(-36));
 
@@ -77,35 +74,25 @@ public class PedroAuto extends LinearOpMode {
 
     private Path scorePreload, park;
 
-    private PathChain pickup1, pickupSweep1, pickup2, pickupSweep2, pickup3, pickupSweep3, dropoff, loadSpecimen, scoreSpecimen,scoreSample1,scoreSample2,scoreSample3;
+    private PathChain pickup1, pickup2, pickup3, dropoff, loadSpecimen, scoreSpecimen,scoreSample1,scoreSample2,scoreSample3;
 
     public void buildPaths(){
         scorePreload = new Path(new BezierLine(new Point(startPose), new Point(scoreSamplePose)));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scoreSamplePose.getHeading());
 
         pickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(scoreSamplePose), new Point (samplePickupPoseSweep1)))
-                .setLinearHeadingInterpolation(scoreSamplePose.getHeading(), samplePickupPoseSweep1.getHeading())
+                .addPath(new BezierLine(new Point(scoreSamplePose), new Point (samplePickupPose1)))
+                .setLinearHeadingInterpolation(scoreSamplePose.getHeading(), samplePickupPose1.getHeading())
                 .build();
-        pickupSweep1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(samplePickupPoseSweep1), new Point (SamplePickupPose1)))
-                .setLinearHeadingInterpolation(samplePickupPoseSweep1.getHeading(), SamplePickupPose1.getHeading())
-                .build();
+
         pickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(scoreSamplePose), new Point(samplePickupPoseSweep2)))
-                .setLinearHeadingInterpolation(scoreSamplePose.getHeading(), samplePickupPoseSweep2.getHeading())
+                .addPath(new BezierLine(new Point(scoreSamplePose), new Point(samplePickupPose2)))
+                .setLinearHeadingInterpolation(scoreSamplePose.getHeading(), samplePickupPose2.getHeading())
                 .build();
-        pickupSweep2 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(samplePickupPoseSweep2), new Point (SamplePickupPose2)))
-                .setLinearHeadingInterpolation(samplePickupPoseSweep2.getHeading(), SamplePickupPose2.getHeading())
-                .build();
+
         pickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(scoreSamplePose), new Point(samplePickupPoseSweep3)))
-                .setLinearHeadingInterpolation(scoreSamplePose.getHeading(), samplePickupPoseSweep3.getHeading())
-                .build();
-        pickupSweep3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(samplePickupPoseSweep3), new Point (SamplePickupPose3)))
-                .setLinearHeadingInterpolation(samplePickupPoseSweep3.getHeading(), SamplePickupPose3.getHeading())
+                .addPath(new BezierLine(new Point(scoreSamplePose), new Point(samplePickupPose3)))
+                .setLinearHeadingInterpolation(scoreSamplePose.getHeading(), samplePickupPose3.getHeading())
                 .build();
         dropoff = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(samplePivotPose), new Point(scoreSamplePose)))
@@ -126,20 +113,20 @@ public class PedroAuto extends LinearOpMode {
         park.setLinearHeadingInterpolation(scoreSamplePose.getHeading(), parkPose.getHeading());
 
         scoreSample1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(SamplePickupPose1), new Point(scoreSamplePose)))
-                .setLinearHeadingInterpolation(SamplePickupPose1.getHeading(), scoreSamplePose.getHeading())
+                .addPath(new BezierLine(new Point(samplePickupPose1), new Point(scoreSamplePose)))
+                .setLinearHeadingInterpolation(samplePickupPose1.getHeading(), scoreSamplePose.getHeading())
                 .build();
         scoreSample2 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(SamplePickupPose2), new Point(scoreSamplePose)))
-                .setLinearHeadingInterpolation(SamplePickupPose2.getHeading(), scoreSamplePose.getHeading())
+                .addPath(new BezierLine(new Point(samplePickupPose2), new Point(scoreSamplePose)))
+                .setLinearHeadingInterpolation(samplePickupPose2.getHeading(), scoreSamplePose.getHeading())
                 .build();
         scoreSample3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(SamplePickupPose3), new Point(scoreSamplePose)))
-                .setLinearHeadingInterpolation(SamplePickupPose3.getHeading(), scoreSamplePose.getHeading())
+                .addPath(new BezierLine(new Point(samplePickupPose3), new Point(scoreSamplePose)))
+                .setLinearHeadingInterpolation(samplePickupPose3.getHeading(), scoreSamplePose.getHeading())
                 .build();
     }
 
-    protected FSMBot robot = new FSMBot(this);
+    protected AutonBot robot = new AutonBot(this);
 //    private PoseUpdater poseUpdater = new PoseUpdater(hardwareMap);
     @Override
     public void runOpMode() throws InterruptedException {
@@ -152,7 +139,7 @@ public class PedroAuto extends LinearOpMode {
         opmodeTimer.resetTimer();
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
-        robot.currentState = FSMBot.gameState.PRE_DRIVE;
+        robot.currentState = FSMBot.gameState.DRIVE;
         buildPaths();
         opmodeTimer.resetTimer();
         setPathState(0);
@@ -168,10 +155,11 @@ public class PedroAuto extends LinearOpMode {
             telemetry.addData("heading", follower.getPose().getHeading());
             telemetry.addData("Follower path", follower.getCurrentPath());
             telemetry.addData("state", robot.currentState);
+            telemetry.addData("action time", actiontime.milliseconds());
 
 
             dashboard.getTelemetry();
-            robot.UpdateStates();
+            robot.updateStates();
             
             telemetry.update();
             follower.update();
@@ -183,9 +171,9 @@ public class PedroAuto extends LinearOpMode {
             case 0:
                 follower.followPath(scorePreload); /**not path chain, may be error */
                 telemetry.addData("Current state", "State 0, Score Preload Pose");
-                robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
 //                    robot.sleep(100);
-                setPathState(3);
+                setPathState(1);
+                actiontime.reset();
                 isReady = false;
                 //Goes to bucket, in position to score preload and raises arm
                 break;
@@ -197,21 +185,34 @@ public class PedroAuto extends LinearOpMode {
                 */
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
-                    if(robot.getSlidePosition() > (780 - 40)) {
-                        //check for slides in position, and outtakes
-                        robot.outake(true);
+                    if(isReady == false) {
+                    if (actiontime.milliseconds() > 1000) {
+                        robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_2;
+                    } else{
+                        robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
+                    }
+                    if (robot.getSlidePosition() > 700-40) {
                         robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_3;
-                    }else{
-                        // if not slides in position, then raises slides
-                            actiontime.reset();
-                            robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_2;
+                        robot.outake(true);
+                        isReady = true;
+                        actiontime.reset();
+                    }}
+                    else {
+                        if(actiontime.milliseconds() > 1000) {
+                            robot.slideRunToPosition(0);
+                        }
+                        if(actiontime.milliseconds() > 2000) {
+                            robot.pivotRunToPosition(0);
+                            robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
+                            follower.followPath(pickup1, true);
+                            isReady = false;
+                            setPathState(2);
+                        }
                     }
-                    if(actiontime.milliseconds()>2000) {
-                        //after outtaking, continue and move to intake position
-                        follower.followPath(pickup1);
-                        setPathState(2);
-                        robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
-                    }
+
+                }else{
+                    actiontime.reset();
+                }
                     /* Score Preload */
 //                    robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
 //                    //INSERT 3DOF CODE HERE TO SCORE SPECIMEN
@@ -220,111 +221,205 @@ public class PedroAuto extends LinearOpMode {
 ////                         follower.followPath(grabPickup1,true);
 //                    robot.triggerEvent(EVENT_PRELOAD_SCORED, 2);
 
-                } else{
-                    robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
-                }
                 break;
 
             case 2:
-
-                if (!follower.isBusy()) {
-                    //sweep to intake from side
-                    follower.followPath(pickupSweep1, true);
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 2) {
+                    if (robot.currentState != FSMBot.gameState.SUBMERSIBLE_INTAKE_2) {
+                        robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
+                        actiontime.reset();
+                    }
+                    //extend slide out to intake
+                    robot.slideRunToPosition(550);
+                    if(robot.getSlidePosition() > 500 || robot.getIsIntaked()) {
+                        robot.currentState = FSMBot.gameState.DRIVE;
+                        if(actiontime.milliseconds() > 2000){
+                        //go to score
+                        follower.followPath(scoreSample1, true);
+                        isReady = false;
+                        setPathState(3);
+                        }
+                    }
 //                    //pickup first sample
 //                    if(robot.getIsIntaked()) {
 //                        robot.triggerEvent(EVENT_SAMPLE_1_PICKEDUP, 3);
 //                        setPathState(EVENT_SAMPLE_1_PICKEDUP);
 //                    }
-                    setPathState(4);
+                    actiontime.reset();
+                    setPathState(3);
                 }
                 break;
+
 
             case 3:
-                robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
-//                if (!follower.isBusy()) {
-//                    follower.followPath(pickup1, true);
-//                    robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
-//                    //pickup first sample
-//                    if(robot.getIsIntaked()) {
-//                        robot.triggerEvent(EVENT_SAMPLE_1_PICKEDUP, 3);
-//                        setPathState(EVENT_SAMPLE_1_PICKEDUP);
-//                    }
-                    setPathState(1);
-                //}
-                break;
+                if (!follower.isBusy()) {
+                    if(isReady == false) {
+                        if (actiontime.milliseconds() > 1000) {
+                            robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_2;
+                        } else{
+                            robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
+                        }
+                        if (robot.getSlidePosition() > 700-40) {
+                            robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_3;
+                            robot.outake(true);
+                            isReady = true;
+                            actiontime.reset();
+                        }}
+                    else {
+                        if(actiontime.milliseconds() > 1000) {
+                            robot.slideRunToPosition(0);
+                        }
+                        if(actiontime.milliseconds() > 2000) {
+                            robot.pivotRunToPosition(0);
+                            robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
+                            follower.followPath(pickup2, true);
+                            isReady = false;
+                            setPathState(4);
+                        }
+                    }
 
+                }else{
+                    actiontime.reset();
+                }
+                break;
             case 4:
-                if (!follower.isBusy() && robot.getIsIntaked()) {
-                    //wait until intaked, then score
-                    robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
-                    follower.followPath(scoreSample1, true);
-                    //release sample with claw
-//                    robot.triggerEvent(EVENT_SAMPLE_1_SCORED , 4);
-                    setPathState(5);
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 2) {
+                    if (robot.currentState != FSMBot.gameState.SUBMERSIBLE_INTAKE_2) {
+                        robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
+                    }
+                    //extend slide out to intake
+                    robot.slideRunToPosition(550);
+                    if(robot.getSlidePosition() > 500 || robot.getIsIntaked()) {
+                        robot.currentState = FSMBot.gameState.DRIVE;
+                        if(actiontime.milliseconds() > 2000){
+                            //go to score
+                            follower.followPath(scoreSample2, true);
+                            isReady = false;
+                            setPathState(5);
+                        }
+                    }
+//                    //pickup first sample
+//                    if(robot.getIsIntaked()) {
+//                        robot.triggerEvent(EVENT_SAMPLE_1_PICKEDUP, 3);
+//                        setPathState(EVENT_SAMPLE_1_PICKEDUP);
+//                    }
                 }
                 break;
+
             case 5:
-
                 if (!follower.isBusy()) {
-                    follower.followPath(pickup2, true);
-//                    robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
-//                    //pickup first sample
-//                    if(robot.getIsIntaked()) {
-//                        robot.triggerEvent(EVENT_SAMPLE_1_PICKEDUP, 3);
-//                        setPathState(EVENT_SAMPLE_1_PICKEDUP);
-//                    }
-                    setPathState(6);
+                    if(isReady == false) {
+                        if (actiontime.milliseconds() > 1000) {
+                            robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_2;
+                        } else{
+                            robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
+                        }
+                        if (robot.getSlidePosition() > 700-40) {
+                            robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_3;
+                            robot.outake(true);
+                            isReady = true;
+                            actiontime.reset();
+                        }}
+                    else {
+                        if(actiontime.milliseconds() > 1000) {
+                            robot.slideRunToPosition(0);
+                        }
+                        if(actiontime.milliseconds() > 2000) {
+                            robot.pivotRunToPosition(0);
+                            robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
+                            follower.followPath(pickup3, true);
+                            isReady = false;
+                            setPathState(6);
+                        }
+                    }
+
+                }else{
+                    actiontime.reset();
                 }
-                break;
-
-            case 6:
-
-                if (!follower.isBusy()) {
-                    follower.followPath(pickupSweep2, true);
-                    //pickup first sample
-//                    robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
-//                    if(robot.getIsIntaked()) {
-//                        robot.triggerEvent(EVENT_SAMPLE_2_PICKEDUP, 5);
-                        setPathState(7);
-//                    }
-                }
-                break;
-
-            case 7:
-
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 3) {
-                    follower.followPath(scoreSample2, true);
+                    /* Score Preload */
 //                    robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
-//                    //release sample with claw
-//                    robot.triggerEvent(EVENT_SAMPLE_2_SCORED , 6);
-                    setPathState(8);
-                }
-                break;
-            case 8:
+//                    //INSERT 3DOF CODE HERE TO SCORE SPECIMEN
+//
+//                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+////                         follower.followPath(grabPickup1,true);
+//                    robot.triggerEvent(EVENT_PRELOAD_SCORED, 2);
 
-                if (!follower.isBusy()) {
-                    follower.followPath(pickup3, true);
-//                    robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
+                break;
+            case 6:
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 2) {
+                    if (robot.currentState != FSMBot.gameState.SUBMERSIBLE_INTAKE_2) {
+                        robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
+                    }
+                    //extend slide out to intake
+                    robot.slideRunToPosition(550);
+                    if(robot.getSlidePosition() > 500 || robot.getIsIntaked()) {
+                        robot.currentState = FSMBot.gameState.DRIVE;
+                        if(actiontime.milliseconds() > 2000){
+                            //go to score
+                            follower.followPath(scoreSample3, true);
+                            isReady = false;2.
+                            setPathState(3);
+                        }
+                    }
 //                    //pickup first sample
 //                    if(robot.getIsIntaked()) {
 //                        robot.triggerEvent(EVENT_SAMPLE_1_PICKEDUP, 3);
 //                        setPathState(EVENT_SAMPLE_1_PICKEDUP);
 //                    }
-                    setPathState(9);
+                    setPathState(7);
                 }
                 break;
+            case 7:
+                if (!follower.isBusy()) {
+                    if(isReady == false) {
+                        if (actiontime.milliseconds() > 1000) {
+                            robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_2;
+                        } else{
+                            robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
+                        }
+                        if (robot.getSlidePosition() > 700-40) {
+                            robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_3;
+                            robot.outake(true);
+                            isReady = true;
+                            actiontime.reset();
+                        }}
+                    else {
+                        if(actiontime.milliseconds() > 1000) {
+                            robot.slideRunToPosition(0);
+                        }
+                        if(actiontime.milliseconds() > 2000) {
+                            robot.pivotRunToPosition(0);
+                            robot.currentState = FSMBot.gameState.DRIVE;
+                            isReady = false;
+                            setPathState(-1);
+                        }
+                    }
 
-            case 9:
+                }else{
+                    actiontime.reset();
+                }
+                    /* Score Preload */
+//                    robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
+//                    //INSERT 3DOF CODE HERE TO SCORE SPECIMEN
+//
+//                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+////                         follower.followPath(grabPickup1,true);
+//                    robot.triggerEvent(EVENT_PRELOAD_SCORED, 2);
+
+
+                break;
+
+            case 8:
 
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 3) {
                     follower.followPath(scoreSample3, true);
                     //release sample with claw
 //                    robot.triggerEvent(EVENT_SAMPLE_3_SCORED , 8);
-                    setPathState(10);
+                    setPathState(9);
                 }
                 break;
 
-            case 10:
+            case 9:
                 if(!follower.isBusy()){
                     follower.followPath(park, true);
 //                    robot.triggerEvent(EVENT_PARKED);
