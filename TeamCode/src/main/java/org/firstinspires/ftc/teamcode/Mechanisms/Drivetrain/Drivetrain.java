@@ -55,7 +55,7 @@ public class Drivetrain {
     public DcMotorAdvanced motorLeftBack = null;
     public DcMotorAdvanced motorRightBack = null;
     public DcMotorAdvanced motorRightFront = null;
-//    public DcMotorEx motorLeftFront = null;
+    //    public DcMotorEx motorLeftFront = null;
 //    public DcMotorEx motorLeftBack = null;
 //    public DcMotorEx motorRightBack = null;
 //    public DcMotorEx motorRightFront = null;
@@ -91,7 +91,7 @@ public class Drivetrain {
         this.motorController = new DrivetrainMotorController(hardwareMap);
         this.geometricController = new GeometricController();
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-    
+
 //        LynxConstants LynxConstants = new LynxConstants();
         if(allHubs.get(0).isParent() && LynxConstants.isEmbeddedSerialNumber(allHubs.get(0).getSerialNumber())) {
             controlHub = allHubs.get(0);
