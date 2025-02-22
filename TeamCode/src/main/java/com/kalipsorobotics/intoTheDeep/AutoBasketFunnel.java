@@ -110,9 +110,9 @@ public class AutoBasketFunnel extends LinearOpMode {
             moveToBasket1.addPoint(SampleToBasketFunnelRoundTrip.OUTTAKE_X_POS - 100,
                     SampleToBasketFunnelRoundTrip.OUTTAKE_Y_POS - 125, -135,
                     PurePursuitAction.P_XY_FAST,
-                    PurePursuitAction.P_ANGLE);
+                    PurePursuitAction.P_ANGLE_FAST);
             moveToBasket1.addPoint(SampleToBasketFunnelRoundTrip.OUTTAKE_X_POS, SampleToBasketFunnelRoundTrip.OUTTAKE_Y_POS,
-                    -135, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
+                    -135, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
             redAutoBasket.addAction(moveToBasket1);
 
             WaitAction waitForPurePure = new WaitAction(500);
@@ -178,7 +178,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveToSample3.setDependentActions(sampleToBasketFunnelRoundTrip2);
         //move basket to sample 3
 //        moveToSample3.addPoint(-440, 1030, 180-29.6);
-        moveToSample3.addPoint(INTAKE_SAMPLE_X-70, 750, 90, PurePursuitAction.P_XY_SLOW,
+        moveToSample3.addPoint(INTAKE_SAMPLE_X-80, 750, 90, PurePursuitAction.P_XY_SLOW,
                 PurePursuitAction.P_ANGLE_SLOW); //x = INtAKE_SAMPLE_X - 80, y = 760
 //        moveToSample3.setMaxCheckDoneCounter(15);
         redAutoBasket.addAction(moveToSample3);
