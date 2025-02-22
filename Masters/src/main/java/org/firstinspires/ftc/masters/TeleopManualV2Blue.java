@@ -75,7 +75,7 @@ public class TeleopManualV2Blue extends LinearOpMode {
 
         waitForStart();
 
-      //  intake.initStatusTeleop();
+        intake.initStatusTeleop();
         outtake.initTeleopWall();
 
 
@@ -100,10 +100,11 @@ public class TeleopManualV2Blue extends LinearOpMode {
                 intake.stopIntake();
             }
 
+            if (gamepad1.touchpad){
+                intake.toTransfer();
+            }
 
-            if (gamepad1.dpad_left) {
-                outtake.moveToPickUpFromWall();
-            } else if (gamepad1.dpad_up) {
+           if (gamepad1.dpad_up) {
                 intake.extendSlideMax();
             } else if (gamepad1.dpad_down){
                 intake.extendSlideHalf();
@@ -136,7 +137,8 @@ public class TeleopManualV2Blue extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                intake.toTransfer();
+
+                outtake.moveToTransfer();
             } else if (gamepad1.left_bumper){
                 intake.toNeutral();
             }

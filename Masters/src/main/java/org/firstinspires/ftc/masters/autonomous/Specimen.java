@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.masters.components.DriveTrain;
 import org.firstinspires.ftc.masters.components.ITDCons;
 import org.firstinspires.ftc.masters.components.Init;
 import org.firstinspires.ftc.masters.components.Intake;
@@ -26,8 +27,8 @@ import org.firstinspires.ftc.masters.pedroPathing.constants.LConstants;
 public class Specimen extends LinearOpMode {
 
     Pose startPose = new Pose(10,66,0);
-    Pose scoringPose = new Pose(45,65, 0);
-    Pose midPoint1 = new Pose(20,34,0);
+    Pose scoringPose = new Pose(40,65, 0);
+    Pose midPoint1 = new Pose(20,25,0);
     Pose midPoint2 = new Pose(60,36,0);
     Pose pickupPose = new Pose (10,31, 0);
     Pose pushPose1 = new Pose(65,24,0);
@@ -40,20 +41,19 @@ public class Specimen extends LinearOpMode {
     Path scorePreload, pickup1, score, pickUp;
     PathChain pushSample1, pushSample2, pushSample3;
 
-    enum PathState {Lift,Start,ScorePreload,Sample1,PushSample1, Sample2, PushSample2, Sample3, PushSample3, PickUpSpec, Score, End}
+    enum PathState {Lift,Start,ToSub, ScorePreload,Sample1,PushSample1, Sample2, PushSample2, Sample3, PushSample3, PickUpSpec, Score, End}
 
     Follower follower;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        //TODO: put the actual start pose
-
         ElapsedTime elapsedTime = null;
 
         Init init = new Init(hardwareMap);
         Outtake outtake = new Outtake(init, telemetry);
         Intake intake = new Intake(init, telemetry);
+        DriveTrain driveTrain = new DriveTrain(init, telemetry);
 
 
         Constants.setConstants(FConstants.class, LConstants.class);
@@ -67,6 +67,8 @@ public class Specimen extends LinearOpMode {
         waitForStart();
 
         outtake.scoreSpecimen();
+        intake.toNeutral();
+        intake.retractSlide();
         elapsedTime = new ElapsedTime();
 
 
@@ -86,10 +88,18 @@ public class Specimen extends LinearOpMode {
                     if (!follower.isBusy() || elapsedTime.milliseconds()>3000){
                         outtake.openClaw();
                         elapsedTime = new ElapsedTime();
-                        state = PathState.ScorePreload;
+                        state = PathState.ToSub;
+                        driveTrain.drive(0.9);
 
                     }
                     break;
+                case ToSub:
+                    if (elapsedTime!=null && elapsedTime.milliseconds()>500){
+                        driveTrain.drive(0);
+                        state = PathState.ScorePreload;
+                    }
+                    break;
+
                 case ScorePreload:
                     if (elapsedTime!=null && elapsedTime.milliseconds()>150){
                         follower.followPath(pushSample1);

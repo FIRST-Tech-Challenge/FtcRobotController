@@ -21,7 +21,7 @@ public class WristTest extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         wristServo = hardwareMap.servo.get("wrist");
-        wristServo.setPosition(ITDCons.wristFront);
+        wristServo.setPosition(ITDCons.wristBack);
 
         waitForStart();
 

@@ -18,7 +18,7 @@ public class Intake {
 
     PIDController pidController;
 
-    public static double p = 0.0024, i = 0, d = 0.00;
+    public static double p = 0.002, i = 0, d = 0.00;
 
     Init init;
 
@@ -232,7 +232,6 @@ public class Intake {
                         } else {
                             color= ITDCons.Color.unknown;
                         }
-
                     }
                     break;
 
@@ -263,8 +262,9 @@ public class Intake {
                     break;
                 case MOVE_TO_TRANSFER:
                     if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
-                        ejectIntake();
+                        intakeMotor.setPower(EJECT_POWER);
                         status = Status.EJECT;
+                        elapsedTime = new ElapsedTime();
                     }
                     break;
             }
@@ -309,6 +309,10 @@ public class Intake {
 
     public void setOuttake(Outtake outtake){
         this.outtake= outtake;
+    }
+
+    public boolean readyToTransfer(){
+        return (color == ITDCons.Color.yellow && extendo.getCurrentPosition()<200 && status==Status.EJECT);
     }
 
 

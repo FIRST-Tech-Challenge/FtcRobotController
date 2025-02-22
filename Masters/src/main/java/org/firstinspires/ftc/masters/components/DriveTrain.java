@@ -221,4 +221,11 @@ public class DriveTrain implements Component{
     public void polarDrive(double theta, double t){
         cartesianDrive(Math.cos(theta), Math.sin(theta), t);
     }
+
+    public void drive (double power){
+        leftFrontMotor.setPower(power);
+        leftRearMotor.setPower(power);
+        rightFrontMotor.setPower(power);
+        rightRearMotor.setPower(power);
+    }
 }

@@ -22,6 +22,8 @@ public class Outtake implements Component{
 
     public int target = 0;
 
+    public int offset =0;
+
     Servo led;
     private final Servo claw;
     public final Servo wrist, angleLeft, angleRight, position;
@@ -42,6 +44,7 @@ public class Outtake implements Component{
     protected boolean isScoringDone = false;
 
     public Intake intake;
+    public DriveTrain driveTrain;
 
 
     Telemetry telemetry;
@@ -53,7 +56,9 @@ public class Outtake implements Component{
     }
 
     public enum Status {
-        Transfer(0),
+        TransferReady(300),
+        TransferWait(0),
+
         ScoreSpecimen(0),
         Wall (0),
         Bucket(0),
@@ -66,6 +71,7 @@ public class Outtake implements Component{
         TransferToBucket_Move(600),
         AutoLiftToBucket(0),
         ScoreSample(100),
+        ScoreSampleOpenClaw(200),
         ScoringSampleDone(100),
 
         TransferToWall_Up(200),
@@ -80,8 +86,13 @@ public class Outtake implements Component{
         WallToFront_move(450),
         WallToFront3 (300),
 
+        WallToTransfer1(500), WallToTransfer(300),
+
+
         SpecimenToWall_MoveBack(1300),
         SpecimenToWall_Final(200),
+
+        TransferReadyManual(400),
 
         Front(400);
 
@@ -122,6 +133,10 @@ public class Outtake implements Component{
         this.intake= intake;
     }
 
+    public void setDriveTrain(DriveTrain driveTrain){
+        this.driveTrain = driveTrain;
+    }
+
 
     public void initializeHardware() {
 
@@ -140,8 +155,6 @@ public class Outtake implements Component{
         angleRight.setPosition(ITDCons.angleBack);
         claw.setPosition(ITDCons.clawOpen);
         status= Status.InitWall;
-        //controller.setP(0.002);
-        //position.getController().pwmDisable();
     }
 
     public void initAutoSpecimen(){
@@ -161,12 +174,7 @@ public class Outtake implements Component{
 
     }
 
-    //public void setPID(double p){
-    //    controller.setP(p);
-    //}
-
     public void openClaw() {
-
 
         if (status==Status.ScoreSpecimen){
             claw.setPosition(ITDCons.clawOpen);
@@ -199,15 +207,36 @@ public class Outtake implements Component{
 
             status= Status.Wall;
         }
-
+        if (status==Status.TransferWait || status==Status.TransferReady){
+            target = ITDCons.WallTarget;
+            closeClaw();
+            position.setPosition(ITDCons.positionBack);
+            setAngleServoToMiddle();
+            status= Status.SpecimenToWall_MoveBack;
+            wrist.setPosition(ITDCons.wristBack);
+            elapsedTime = new ElapsedTime();
+        }
     }
 
     public void moveToTransfer(){
 
-        target = ITDCons.intermediateTarget;
-        position.setPosition(ITDCons.positionTransfer);
-        setAngleServoScore();
-        status = Status.BucketToTransfer_Down;
+        if (status==Status.Wall || status == Status.InitWall){
+            position.setPosition(ITDCons.positionTransfer);
+            target = ITDCons.TransferWaitTarget;
+            closeClaw();
+            setAngleServoScore();
+            wrist.setPosition(ITDCons.wristFront);
+            status = Status.WallToTransfer1;
+            elapsedTime = new ElapsedTime();
+
+
+        } else if (status==Status.ScoringSampleDone) {
+            closeClaw();
+            target = ITDCons.intermediateTarget;
+            position.setPosition(ITDCons.positionTransfer);
+            setAngleServoScore();
+            status = Status.BucketToTransfer_Down;
+        }
 
     }
 
@@ -220,7 +249,7 @@ public class Outtake implements Component{
 
         if (status== Status.Wall){
             scoreSpecimen();
-        } else if (status== Status.Transfer){
+        } else if (status== Status.TransferReady){
             scoreSample();
         }
 
@@ -245,8 +274,8 @@ public class Outtake implements Component{
             setAngleServoScore();
             status = Status.AutoLiftToBucket;
         } else{
-            closeClaw(); //should already be closed but just in case
-            status = Status.TransferToBucket_CloseClaw;
+            target= ITDCons.TransferPickupTarget;
+            status = Status.TransferReadyManual;
         }
 
         elapsedTime = new ElapsedTime();
@@ -268,7 +297,7 @@ public class Outtake implements Component{
         int rotatePos = -outtakeSlideEncoder.getCurrentPosition();
 
 //        telemetry.addData("rotatePos",rotatePos);
-        double lift = controller.calculate(rotatePos, target);
+        double lift = controller.calculate(rotatePos, target-offset);
        // double lift = pid + f;
 
 //        telemetry.addData("lift", lift);
@@ -292,7 +321,7 @@ public class Outtake implements Component{
 
     public void releaseSample(){
         if (isLiftReady){
-            setAngleServoTipSample();
+            setAngleServoScoreSample();
             status=Status.ScoreSample;
             elapsedTime = new ElapsedTime();
 
@@ -305,7 +334,8 @@ public class Outtake implements Component{
     public void update(){
         moveSlide();
 
-//        telemetry.addData("status", status);
+        telemetry.addData("status", status);
+        telemetry.addData("target", target);
 
         switch (status){
             case WallToFront_lift:
@@ -338,6 +368,7 @@ public class Outtake implements Component{
                     status= Status.ScoreSpecimen;
                 }
                 break;
+
             case TransferToBucket_CloseClaw:
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
                     target = ITDCons.BucketTarget;
@@ -351,7 +382,7 @@ public class Outtake implements Component{
             case TransferToBucket_Lift:
 
                //TODO: change from time to vertical slide position
-                if (getLiftPos()>ITDCons.BucketTarget-500){
+                if (getLiftPos()>ITDCons.BucketTarget-30000){
                     elapsedTime = new ElapsedTime();
 
                     setAngleServoToMiddle();
@@ -377,15 +408,35 @@ public class Outtake implements Component{
 
             case ScoreSample:
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
-                    elapsedTime=null;
-                    status = Status.ScoringSampleDone;
+                    elapsedTime=new ElapsedTime();
+                    status = Status.ScoreSampleOpenClaw;
                     openClaw();
                 }
                 break;
+            case ScoreSampleOpenClaw:
+                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+                    driveTrain.drive(0.5);
+                    elapsedTime = new ElapsedTime();
+                    status= Status.ScoringSampleDone;
+                }
+
+                break;
+
             case ScoringSampleDone:
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
                     isScoringDone = true;
+                    driveTrain.drive(0);
                     moveToTransfer();
+                }
+
+                break;
+
+            case WallToTransfer1:
+                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+                    setAngleServoToTransfer();
+                    openClaw();
+                    status = Status.TransferReady;
+                    elapsedTime= new ElapsedTime();
                 }
 
                 break;
@@ -395,7 +446,7 @@ public class Outtake implements Component{
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime() && outtakeSlideEncoder.getCurrentPosition()<ITDCons.intermediateTarget+500){
                     elapsedTime = new ElapsedTime();
                     status = Status.BucketToTransfer_Open;
-                    openClaw();
+
                     wrist.setPosition(ITDCons.wristFront);
                     target = ITDCons.transferPickupTarget;
                 }
@@ -403,16 +454,35 @@ public class Outtake implements Component{
             case BucketToTransfer_Final:
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
                     elapsedTime = new ElapsedTime();
-                    status= Status.Transfer;
-                    setAngleServoToFront();
+                    openClaw();
+                    status= Status.TransferReady;
+                    setAngleServoToTransfer();
                 }
                 break;
             case SpecimenToWall_MoveBack:
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime() && outtakeSlideEncoder.getCurrentPosition()<ITDCons.intermediateTarget+500) {
                     target = ITDCons.wallPickupTarget;
                     setAngleServoToBack();
+                    openClaw();
                     status= Status.Wall;
 
+                }
+                break;
+
+            case TransferReady:
+                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+                    if (intake.readyToTransfer()){
+                        target= ITDCons.transferPickupTarget;
+                        closeClaw();
+                        elapsedTime = new ElapsedTime();
+                    }
+                }
+                break;
+            case TransferReadyManual:
+                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+                        closeClaw();
+                    status = Status.TransferToBucket_CloseClaw;
+                    elapsedTime= new ElapsedTime();
                 }
                 break;
 
@@ -420,9 +490,9 @@ public class Outtake implements Component{
         }
     }
 
-    private void setAngleServoToFront(){
-        angleLeft.setPosition(ITDCons.angleFront);
-        angleRight.setPosition(ITDCons.angleFront);
+    private void setAngleServoToTransfer(){
+        angleLeft.setPosition(ITDCons.angleTransfer);
+        angleRight.setPosition(ITDCons.angleTransfer);
     }
 
     private void setAngleServoToMiddle(){
@@ -436,13 +506,13 @@ public class Outtake implements Component{
     }
 
     private void setAngleServoScore(){
-        angleLeft.setPosition(ITDCons.angleScore);
-        angleRight.setPosition(ITDCons.angleScore);
+        angleLeft.setPosition(ITDCons.angleScoreSpec);
+        angleRight.setPosition(ITDCons.angleScoreSpec);
     }
 
-    private void setAngleServoTipSample(){
-        angleLeft.setPosition(ITDCons.angleTipSample);
-        angleRight.setPosition(ITDCons.angleTipSample);
+    private void setAngleServoScoreSample(){
+        angleLeft.setPosition(ITDCons.angleScoreSample);
+        angleRight.setPosition(ITDCons.angleScoreSample);
     }
 
     private void resetSlides(){
@@ -480,6 +550,14 @@ public class Outtake implements Component{
 
     public boolean isReadyToPickUp(){
         return  status== Status.Wall;
+    }
+
+    public void setLiftReady(boolean liftReady) {
+        isLiftReady = liftReady;
+    }
+
+    public boolean isReadyForTransfer(){
+        return status==Status.TransferWait;
     }
 
     public Status getStatus(){

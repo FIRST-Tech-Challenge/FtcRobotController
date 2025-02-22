@@ -26,8 +26,8 @@ public class AngleTest extends LinearOpMode {
         while (opModeIsActive()) {
 
             if (gamepad1.a) {
-                angleServoLeft.setPosition(ITDCons.angleFront);
-                angleServoRight.setPosition(ITDCons.angleFront);
+                angleServoLeft.setPosition(ITDCons.angleTransfer);
+                angleServoRight.setPosition(ITDCons.angleTransfer);
             }
 
             if (gamepad1.b) {

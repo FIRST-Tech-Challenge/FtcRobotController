@@ -14,13 +14,13 @@ public class ITDCons {
     public static double intakeInit = 0.5;
     public static double intakeInitLeft = 0;
     public static double intakeInitRight = 1;
-    public static double intakeArmDrop =0.75;
+    public static double intakeArmDrop =0.78;
     public static double intakeChainDrop = 0.32;
 
-    public static double intakeArmNeutral= 0.75;
+    public static double intakeArmNeutral= 0.78;
     public static double intakeChainNeutral=0.58;
 
-    public static double intakeArmTransfer=0.12;
+    public static double intakeArmTransfer=0.15;
     public static double intakeChainTransfer = 0.7;
     public static double intakeTransferSpeed = 0.65;
     public static double intakeEjectSpeed =0.8;
@@ -32,37 +32,32 @@ public class ITDCons {
     public static double clawOpen = 0.35;
     public static double clawClose = 0.75;
 
-    public static double wristFront= 0.23;
-    public static double wristBack = 0.77;
+    public static double wristFront= 0.77;
+    public static double wristBack = 0.21;
 
-    public static double positionBack = 0.05;
+    public static double positionBack = 0.09;
     public static double positionInitSpec=0.4;
-    public static double positionTransfer = 0.5;
+    public static double positionTransfer = 0.25;
     public static double positionFront =1;
 
-    public static double angleBack = 0;
-    public static double angleFront = 1;
+    public static double angleBack = 0.05;
+    public static double angleTransfer = 0.95;
     public static double angleMiddle = 0.35;
-    public static double angleScore = 0.45;
-    public static double angleTipSample = 0.5;
+    public static double angleScoreSpec = 0.45;
+    public static double angleScoreSample = 0.2;
 
     public static int wallPickupTarget = 5500;
     public static int transferPickupTarget = 0;
 
-    public static double slideInit = 0.5;
-    public static double slideOut=0.4;
-    public static double slideIn =0.5;
-    public static double liftInit = 0.9;
-    public static double liftUp = 0.9;
-    public static double liftDown = 0.1;
-
-
     public static int BucketTarget = 50000;
     public static int LowBucketTarget = 30000;
-    public static int SpecimenTarget = 23000;
+    public static int SpecimenTarget = 21500;
+
+    public static int TransferPickupTarget = 4800;
+    public static int TransferWaitTarget = 5000;
 
     public static int intermediateTarget = 20000;
-    public static int WallTarget = 6000;
+    public static int WallTarget = 4800;
 
     public static int MaxExtension = 31000;
     public static int halfExtension= 15000;

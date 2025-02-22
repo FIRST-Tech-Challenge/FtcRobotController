@@ -34,6 +34,8 @@ public class PidTune extends OpMode {
         rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         outtakeSlideRight = hardwareMap.dcMotor.get("vertSlideRight");
+        outtakeSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        outtakeSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //outtakeSlideRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         outtakeSlideLeft= hardwareMap.dcMotor.get("vertSlideLeft");
@@ -43,7 +45,7 @@ public class PidTune extends OpMode {
 
     public void loop(){
         controller.setPID(p,i,d);
-        int rotatePos = -(rightFrontMotor.getCurrentPosition());
+        int rotatePos = -(outtakeSlideRight.getCurrentPosition());
         double pid = controller.calculate(rotatePos, target);
 
         double lift = pid + f;
