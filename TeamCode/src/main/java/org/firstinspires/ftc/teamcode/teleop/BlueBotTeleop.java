@@ -6,9 +6,12 @@ package org.firstinspires.ftc.teamcode.teleop;
 import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.EncoderDirection.FORWARD;
 import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD;
 
+import androidx.lifecycle.GenericLifecycleObserver;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
 import org.firstinspires.ftc.teamcode.Auto.AutoSwerve;
 import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
@@ -21,6 +24,16 @@ public class BlueBotTeleop extends LinearOpMode {
   GoBildaPinpointDriver odometry;
 
   AutoSwerve driveBase;
+
+  boolean
+      is2A = false,
+      is2B = false,
+      is2X = false,
+      is2Y = false,
+      game2A = false,
+      game2B = false,
+      game2X = false,
+      game2Y = false;
 
   // TODO: Does this need to be here
   public double frOffset = -0.125;
@@ -67,7 +80,7 @@ public class BlueBotTeleop extends LinearOpMode {
     SteerDirection steer_direction = get_steer_direction(steering_angle);
 
     if (steer_direction == SteerDirection.left) {
-      telemetry.addLine("Steer dir: LEFT");
+      //telemetry.addLine("Steer dir: LEFT");
       // Check if steering_angle is above the top threshold to result in a shift to drive forward
       if (steering_angle < (0.75 - schmitt_breakpoint_tolerance)) {
         updated_drive_direction = true;
@@ -77,7 +90,7 @@ public class BlueBotTeleop extends LinearOpMode {
         updated_drive_direction = false;
       }
     } else {
-      telemetry.addLine("Steer dir: RIGHT");
+      //telemetry.addLine("Steer dir: RIGHT");
       // Check if steering_angle is above the top threshold to result in a shift to drive forward
       if (steering_angle > (0.25 + schmitt_breakpoint_tolerance)) {
         updated_drive_direction = true;
@@ -161,18 +174,18 @@ public class BlueBotTeleop extends LinearOpMode {
       // Reverse joystick y-axis to ensure 1 is up and -1 is down
       left_joy_y *= -1;
 
-      telemetry.addLine("Left joy x: " + left_joy_x);
-      telemetry.addLine("Left joy y: " + left_joy_y);
+      //telemetry.addLine("Left joy x: " + left_joy_x);
+      //telemetry.addLine("Left joy y: " + left_joy_y);
 
       // Compute theta of the left joystick vector
       double joy_theta = Math.atan2(left_joy_y, left_joy_x);
 
-      telemetry.addLine("Joy theta: " + joy_theta);
+      //telemetry.addLine("Joy theta: " + joy_theta);
 
       // Compute vector magnitude, this will be the speed of the robot
       double joy_magnitude = Math.sqrt(Math.pow(left_joy_x, 2.0) + Math.pow(left_joy_y, 2.0));
 
-      telemetry.addLine("Joy mag: " + joy_magnitude);
+      //telemetry.addLine("Joy mag: " + joy_magnitude);
 
       // Read raw value from odometer (in radians)
       double robot_theta = odometry.getHeading().getRadians();
@@ -180,7 +193,7 @@ public class BlueBotTeleop extends LinearOpMode {
 
       // Normalize odometry reading to align with standard polar coordinates
       robot_theta = normalize_angle(robot_theta);
-      telemetry.addLine("Robot theta: " + robot_theta);
+      //telemetry.addLine("Robot theta: " + robot_theta);
 
       // Compute steering angle relative to field-centric movements
       double steering_angle = joy_theta - robot_theta;
@@ -189,19 +202,19 @@ public class BlueBotTeleop extends LinearOpMode {
       }
       steering_angle = steering_angle % (2.0 * Math.PI);
 
-      telemetry.addLine("Chang in steering (from robot heading): " + steering_angle);
+      //telemetry.addLine("Chang in steering (from robot heading): " + steering_angle);
 
       // Normalize steering to 0 to 1 range
       steering_angle /= Math.PI;
 
-      telemetry.addLine("Normalized steering: " + steering_angle);
+      //telemetry.addLine("Normalized steering: " + steering_angle);
 
       //set steering angle to usable servo value
       steering_angle = (steering_angle + .5) / 2 + .25;
       if (joy_magnitude < 0.01)
         steering_angle = 0.5;
 
-      telemetry.addLine("Servo steering: " + steering_angle);
+      //telemetry.addLine("Servo steering: " + steering_angle);
 
       /**
        * At this point, we have vector magnitudes and angles associated with both the 
@@ -245,9 +258,9 @@ public class BlueBotTeleop extends LinearOpMode {
       drive_direction = get_drive_direction(steering_angle, drive_direction, schmitt_breakpoint_tolerance);
 
       if (drive_direction) {
-        telemetry.addLine("POS");
+        //telemetry.addLine("POS");
       } else {
-        telemetry.addLine("NEG");
+        //telemetry.addLine("NEG");
       }
 
       // At this point we're assuming that we're moving forward. See if the schmitt direction
@@ -262,7 +275,7 @@ public class BlueBotTeleop extends LinearOpMode {
 
         joy_magnitude *= -1.0;
       }
-      telemetry.addLine("New theta: " + steering_angle);
+      //telemetry.addLine("New theta: " + steering_angle);
 
 
       // The computed vector exceeds the allowable drive speed, cap the speed where needed
@@ -295,9 +308,9 @@ public class BlueBotTeleop extends LinearOpMode {
       // Compute the turning radius
       double right_joystick_steering_amt = right_joy_x * max_turn_radius;
 
-      telemetry.addLine("Rt joystick raw: " + right_joy_x);
-      telemetry.addLine("Rt joystick steer: " + right_joystick_steering_amt);
-      telemetry.addLine("Actual speed: " + actual_wheel_speed);
+      //telemetry.addLine("Rt joystick raw: " + right_joy_x);
+      //telemetry.addLine("Rt joystick steer: " + right_joystick_steering_amt);
+      //telemetry.addLine("Actual speed: " + actual_wheel_speed);
 
       if ((actual_wheel_speed > 0.001) || (actual_wheel_speed < -0.001)) {
         // Here we're moving the robot in some direction. The heading can be simplified
@@ -392,15 +405,28 @@ public class BlueBotTeleop extends LinearOpMode {
           g2_lx = gamepad2.left_stick_x,
           g2_ly = -gamepad2.left_stick_y,
           g2_rx = gamepad2.right_stick_x,
-          g2_ry = -gamepad2.right_stick_y;
+          g2_ry = -gamepad2.right_stick_y,
+          g2_lt = gamepad2.left_trigger,
+          g2_rt = gamepad2.right_trigger;
 
       mek.arm.setSlide(g2_ly);
       mek.arm.setPivot(g2_ry);
 
-      telemetry.addLine("G2_LY: " + g2_ly);
-      telemetry.addLine("G2_RY: " + g2_ry);
-      telemetry.addLine("Slide Power: " + mek.arm.slide.getPower());
-      telemetry.addLine("Pivot Power: " + mek.arm.pivot.getPower());
+      // This block handles making the gamepad.b toggle the wrist position
+      if (gamepad2.b && !is2B) {
+        game2B = !game2B;
+        is2B = true;
+      } else if (!gamepad2.b) is2B = false;
+      if (game2B)
+        mek.grabber.setWrist(1.0);
+      else mek.grabber.setWrist(-1.0);
+
+      // Grabber power
+      double grabberSpeed = g2_lt - g2_rt;
+      mek.grabber.setGrabber(grabberSpeed, grabberSpeed);
+
+
+      telemetry.addLine("");
 
       mek.update();
       telemetry.update();

@@ -30,8 +30,8 @@ public class Grabber {
     intake2 = opMode.hardwareMap.get(Servo.class, "intake2");
     wrist = opMode.hardwareMap.get(Servo.class, "wrist");
 
-    intake1.setDirection(REVERSE);
-    intake2.setDirection(FORWARD);
+    intake1.setDirection(FORWARD);
+    intake2.setDirection(REVERSE);
     wrist.setDirection(REVERSE);
 
     wrist.scaleRange(0.65, 1.0);

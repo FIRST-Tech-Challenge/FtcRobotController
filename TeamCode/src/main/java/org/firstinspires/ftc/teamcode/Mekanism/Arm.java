@@ -22,14 +22,20 @@ public class Arm {
 
   ElapsedTime pivotTimer = new ElapsedTime();
 
-  private final int limitSlide, limitPivot;
-  private final double countsPerDegree, countsPerInch;
-  private final Telemetry telemetry;
+  private final int
+      limitSlide = 4200,
+      limitPivot = 75;
+
+  private final double
+      countsPerDegree = 41.855,
+      countsPerInch = 120.88;
 
   public final DcMotorEx pivot;
   public final DcMotorEx slide, slide2;
 
   public final DigitalChannel limitSwitch;
+
+  private final Telemetry telemetry;
 
   private int
       pivotTarget = 0,
@@ -40,7 +46,7 @@ public class Arm {
       slidePower = 0;
 
 
-  public Arm(LinearOpMode opMode, int limitSlide, int limitPivot, double countsPerDegree, double countsPerInch) {
+  public Arm(LinearOpMode opMode) {
 
     // Init slaw, claw, and pivot
     pivot = (DcMotorEx) opMode.hardwareMap.dcMotor.get("pivot");
@@ -81,13 +87,6 @@ public class Arm {
     // Mapping limit switch
     limitSwitch = opMode.hardwareMap.get(DigitalChannel.class, "limit switch");
     limitSwitch.setMode(DigitalChannel.Mode.INPUT);
-
-
-    // Maps local variables
-    this.limitSlide = limitSlide;
-    this.limitPivot = limitPivot;
-    this.countsPerDegree = countsPerDegree;
-    this.countsPerInch = countsPerInch;
 
     // Telemetry
     this.telemetry = opMode.telemetry;
@@ -199,7 +198,7 @@ public class Arm {
    */
   public void setPivot(int x) {
 
-    double current_Angle = countsPerDegree * pivot.getCurrentPosition();
+    double current_Angle = pivot.getCurrentPosition() / countsPerDegree;
 
     // Limits for the motor
     if (current_Angle > limitPivot) {
@@ -220,7 +219,8 @@ public class Arm {
    * @param power (-1) to 1
    */
   public void setPivot(double power) {
-    double current_Angle = pivot.getCurrentPosition() * countsPerDegree;
+
+    double current_Angle = pivot.getCurrentPosition() / countsPerDegree;
 
     if (current_Angle > limitPivot && power > 0) {
       power = 0;
@@ -265,14 +265,16 @@ public class Arm {
   public void setSlide(double power) {
 
     // Calculates the max the arm can go without going over the 40IN limit
-    double maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree)) * 1.05;
+    double maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree));
     if (maxLength < 2500)
       maxLength = 2500;
 
+    // If the max length calculated is longer than the physical limit of the slide, set it to that
     if (maxLength > limitSlide) maxLength = limitSlide;
 
+    // If the slide goes over the limit, stop the movement
     if (slide.getCurrentPosition() > maxLength && power > 0) {
-      power = -0.5;
+      power = 0.3;
       telemetry.addLine("Slide over robot length limit");
     } else if (slide.getCurrentPosition() < 0 && power < 0) {
       telemetry.addLine("Slide under 0");

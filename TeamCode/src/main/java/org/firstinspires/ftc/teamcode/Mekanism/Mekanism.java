@@ -25,7 +25,7 @@ public class Mekanism {
 
   public Mekanism(LinearOpMode opMode) {
 
-    arm = new Arm(opMode, limitSlide, limitPivot, countsPerDegree, countsPerInch);
+    arm = new Arm(opMode);
     clip = new Clip(opMode);
     grabber = new Grabber(opMode);
 
