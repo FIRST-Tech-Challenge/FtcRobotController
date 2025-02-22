@@ -90,6 +90,8 @@ public class Outtake implements Component{
 
 
         SpecimenToWall_MoveBack(1300),
+
+        SpecimenToWall_OpenCLaw(350),
         SpecimenToWall_Final(200),
 
         TransferReadyManual(400),
@@ -192,13 +194,10 @@ public class Outtake implements Component{
 
     public void moveToPickUpFromWall(){
         if (status==Status.ScoreSpecimen) {
-            target = ITDCons.intermediateTarget;
-            wrist.setPosition(ITDCons.wristBack);
+
             claw.setPosition(ITDCons.clawOpen);
 
-            position.setPosition(ITDCons.positionBack);
-            setAngleServoToMiddle();
-            status= Status.SpecimenToWall_MoveBack;
+            status= Status.SpecimenToWall_OpenCLaw;
             elapsedTime = new ElapsedTime();
         }
         if (status == Status.InitWall){
@@ -457,6 +456,16 @@ public class Outtake implements Component{
                     openClaw();
                     status= Status.TransferReady;
                     setAngleServoToTransfer();
+                }
+                break;
+
+            case SpecimenToWall_OpenCLaw:
+                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+                    target = ITDCons.intermediateTarget;
+                    wrist.setPosition(ITDCons.wristBack);
+                    position.setPosition(ITDCons.positionBack);
+                    closeClaw();
+                    setAngleServoToMiddle();
                 }
                 break;
             case SpecimenToWall_MoveBack:

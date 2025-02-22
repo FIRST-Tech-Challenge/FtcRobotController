@@ -27,16 +27,18 @@ import org.firstinspires.ftc.masters.pedroPathing.constants.LConstants;
 public class Specimen extends LinearOpMode {
 
     Pose startPose = new Pose(10,66,0);
-    Pose scoringPose = new Pose(40,65, 0);
+    Pose scoringPose = new Pose(40,70, 0);
     Pose midPoint1 = new Pose(20,25,0);
     Pose midPoint2 = new Pose(60,36,0);
     Pose pickupPose = new Pose (10,31, 0);
-    Pose pushPose1 = new Pose(65,24,0);
-    Pose endPushPose1 = new Pose (15,24,0);
-    Pose pushPose2 = new Pose(65,13,0);
-    Pose endPushPose2 = new Pose(15,13,0);
-    Pose pushPose3 = new Pose(65,8,0);
-    Pose endPushPose3 = new Pose(15,8,0);
+    Pose pushPose1 = new Pose(65,28,0);
+    Pose endPushPose1 = new Pose (15,28,0);
+    Pose pushPose2 = new Pose(65,17,0);
+    Pose endPushPose2 = new Pose(15,17,0);
+    Pose pushPose3 = new Pose(65,11,0);
+    Pose endPushPose3 = new Pose(15,11,0);
+
+
 
     Path scorePreload, pickup1, score, pickUp;
     PathChain pushSample1, pushSample2, pushSample3;
@@ -63,12 +65,13 @@ public class Specimen extends LinearOpMode {
 
         PathState state = PathState.Lift;
         outtake.initAutoSpecimen();
+        intake.retractSlide();
 
         waitForStart();
 
         outtake.scoreSpecimen();
         intake.toNeutral();
-        intake.retractSlide();
+
         elapsedTime = new ElapsedTime();
 
 
@@ -85,62 +88,66 @@ public class Specimen extends LinearOpMode {
                     }
                     break;
                 case Start:
-                    if (!follower.isBusy() || elapsedTime.milliseconds()>3000){
-                        outtake.openClaw();
+                    if (!follower.isBusy() || elapsedTime.milliseconds()>3500){
+
                         elapsedTime = new ElapsedTime();
                         state = PathState.ToSub;
-                        driveTrain.drive(0.9);
+                        driveTrain.drive(1);
 
                     }
                     break;
                 case ToSub:
-                    if (elapsedTime!=null && elapsedTime.milliseconds()>500){
+                    if (elapsedTime!=null && elapsedTime.milliseconds()>1000){
                         driveTrain.drive(0);
+                        outtake.openClaw();
                         state = PathState.ScorePreload;
                     }
                     break;
 
                 case ScorePreload:
-                    if (elapsedTime!=null && elapsedTime.milliseconds()>150){
+                    if (elapsedTime!=null && elapsedTime.milliseconds()>350){
                         follower.followPath(pushSample1);
                         state = PathState.Sample1;
-                        outtake.setTarget(0);
-                        //outtake.moveToPickUpFromWall();
+                        outtake.closeClaw();
+
                         elapsedTime = null;
                     }
                     break;
                 case Sample1:
                     if (!follower.isBusy()){
+                        outtake.moveToPickUpFromWall();
                         follower.followPath(pushSample2);
                         state= PathState.Sample2;
                     }
                     break;
                 case Sample2:
                     if (!follower.isBusy()){
+
                         follower.followPath(pushSample3);
                         state= PathState.Sample3;
                     }
                     break;
-//                case Sample3:
-//                    if (!follower.isBusy()){
-//                        follower.followPath(pickup1);
-//                        state= PathState.PickUpSpec;
-//                    }
-//                    break;
-//                case PickUpSpec:
-//                    if (!follower.isBusy()){
-//                        if (elapsedTime==null) {
-//                            //outtake.closeClaw();
-//                            elapsedTime= new ElapsedTime();
-//
-//                        } else if (elapsedTime.milliseconds()>150){
-//                            follower.followPath(score);
-//                            //outtake.scoreSpecimen();
-//                            elapsedTime=null;
-//                            state= PathState.Score;
-//                        }
-//                    }
-//                    break;
+                case Sample3:
+                    if (!follower.isBusy()){
+                        follower.followPath(pickup1);
+                        state= PathState.PickUpSpec;
+                        elapsedTime = null;
+                    }
+                    break;
+                case PickUpSpec:
+                    if (!follower.isBusy()){
+                        if (elapsedTime==null) {
+                            outtake.closeClaw();
+                            elapsedTime= new ElapsedTime();
+
+                        } else if (elapsedTime.milliseconds()>150){
+                            follower.followPath(score);
+                            outtake.scoreSpecimen();
+                            elapsedTime=null;
+                            state= PathState.Score;
+                        }
+                    }
+                    break;
 //                case Score:
 //                    if (!follower.isBusy()){
 //                        if (elapsedTime==null) {

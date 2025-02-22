@@ -41,7 +41,7 @@ public class Intake {
     public static double RETRACT_POWER = -0.6;
     public static double EXTEND_POWER = 0.6;
     public static double INTAKE_POWER = -1;
-    public static double EJECT_POWER = 0.7;
+    public static double EJECT_POWER = 0.8;
 
     public enum Status{
         TRANSFER(0), DROP(0), INIT(0), EJECT(1000),MOVE_TO_TRANSFER(500), EXTEND_TO_HUMAN(0), EJECT_TO_HUMAN(800), NEUTRAL(0);
