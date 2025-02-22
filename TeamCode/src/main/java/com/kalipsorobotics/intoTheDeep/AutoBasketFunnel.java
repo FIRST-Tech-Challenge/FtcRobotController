@@ -112,7 +112,7 @@ public class AutoBasketFunnel extends LinearOpMode {
                     PurePursuitAction.P_XY_FAST,
                     PurePursuitAction.P_ANGLE_FAST);
             moveToBasket1.addPoint(SampleToBasketFunnelRoundTrip.OUTTAKE_X_POS, SampleToBasketFunnelRoundTrip.OUTTAKE_Y_POS,
-                    -135, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
+                    -135, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
             redAutoBasket.addAction(moveToBasket1);
 
             WaitAction waitForPurePure = new WaitAction(150);
@@ -227,13 +227,13 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         PurePursuitAction moveToBasket3 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToBasket3.setName("moveToBasket3");
-        moveToBasket3.setDependentActions(sampleIntakeAction3);
+        moveToBasket3.setDependentActions(sampleIntakeAction3, transferAction3);
         //move sample 3 to basket
         moveToBasket3.addPoint(SampleToBasketFunnelRoundTrip.OUTTAKE_X_POS - 250,
                 SampleToBasketFunnelRoundTrip.OUTTAKE_Y_POS - 125, -135,
                 PurePursuitAction.P_XY_FAST,
                 PurePursuitAction.P_ANGLE);
-        moveToBasket3.addPoint(SampleToBasketFunnelRoundTrip.OUTTAKE_X_POS, SampleToBasketFunnelRoundTrip.OUTTAKE_Y_POS+50,
+        moveToBasket3.addPoint(SampleToBasketFunnelRoundTrip.OUTTAKE_X_POS, SampleToBasketFunnelRoundTrip.OUTTAKE_Y_POS,
                 -135, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
         redAutoBasket.addAction(moveToBasket3);
 
@@ -274,8 +274,9 @@ public class AutoBasketFunnel extends LinearOpMode {
         PurePursuitAction park = new PurePursuitAction(driveTrain, wheelOdometry);
         park.setName("park");
         park.setDependentActions(moveOutBasket3);
-        park.addPoint(-1225, 700, 45, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE); // 610
-        park.addPoint(-1325, 190, 90, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE);
+        park.setFinalSearchRadius(40);
+        park.addPoint(-1225, 700, 45, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST); // 610
+        park.addPoint(-1325, 190, 90, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE_FAST);
         redAutoBasket.addAction(park);
 
         KServoAutoAction pivotOuttakeToBar = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_TOUCH_BAR_POS);
