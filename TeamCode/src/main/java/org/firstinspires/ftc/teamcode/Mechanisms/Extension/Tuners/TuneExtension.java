@@ -5,16 +5,16 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
-import org.firstinspires.ftc.teamcode.Mechanisms.Extension.ExtensionInttake;
+import org.firstinspires.ftc.teamcode.Mechanisms.Extension.Extension;
 
 @Config
 @Autonomous(name = "Tune Extension (Manual)", group = "Autonomous")
-public class TuneExtensionIntake extends LinearOpMode {
+public class TuneExtension extends LinearOpMode {
     private FtcDashboard dash = FtcDashboard.getInstance();
     @Override
     public void runOpMode() {
         Battery battery = new Battery(hardwareMap);
-        ExtensionInttake extensionIntake = new ExtensionInttake(hardwareMap, battery);
+        Extension extensionIntake = new Extension(hardwareMap, battery);
         waitForStart();
         while (opModeIsActive()) {
             TelemetryPacket packet = new TelemetryPacket();

@@ -7,7 +7,6 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Actuators.DcMotorAdvanced;
@@ -17,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers.FeedForward;
 import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers.PID;
 import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Planners.MotionProfile;
 
-public class ExtensionInttake {
+public class Extension {
     HardwareMap hardwareMap;
     FeedForward feedForward;
     PID pid;
@@ -42,7 +41,7 @@ public class ExtensionInttake {
     public static double maxVoltage = 12.5;
 
 
-    public ExtensionInttake(HardwareMap hardwareMap, Battery battery){
+    public Extension(HardwareMap hardwareMap, Battery battery){
         this.hardwareMap = hardwareMap;
 
         this.extensionMotor = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "extensionMotor"), battery, maxVoltage);

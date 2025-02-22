@@ -7,13 +7,13 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
-import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.Mechanisms.Extension.ExtensionOuttake;
+import org.firstinspires.ftc.teamcode.Mechanisms.Extension.Extension;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Pivot.Pivot;
+import org.firstinspires.ftc.teamcode.Mechanisms.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Sweeper.Sweeper;
 
 public class Robot {
@@ -21,20 +21,20 @@ public class Robot {
     public Battery battery;
     public Pivot pivot;
     public Intake intake;
-    public ExtensionOuttake extension;
-    public Arm arm;
+    public Extension extension;
     public Claw claw;
     public Lift lift;
     public Sweeper sweeper;
+    public Outtake outtake;
     public Robot(HardwareMap hardwareMap){
         this.battery = new Battery(hardwareMap);
         this.drivetrain = new Drivetrain(hardwareMap, battery);
         this.pivot = new Pivot(hardwareMap);
         this.intake = new Intake(hardwareMap);
-        this.arm = new Arm(hardwareMap);
+        this.outtake = new Outtake(hardwareMap);
         this.claw = new Claw(hardwareMap);
         this.lift = new Lift(hardwareMap, battery);
-        this.extension = new ExtensionOuttake(hardwareMap);
+        this.extension = new Extension(hardwareMap, battery);
         this.sweeper = new Sweeper(hardwareMap);
 
     }
@@ -48,14 +48,14 @@ public class Robot {
         return new SequentialAction(
                 intake.motorIntake(Intake.intakeState.INTAKE),
                 pivot.setPosition(Intake.intakeState.INTAKE),
-                extension.servoExtension(ExtensionOuttake.extensionState.EXTEND)
+                extension.moveToLength(24)
         );
     }
     public Action intakeUp(){
         return new SequentialAction(
                 intake.motorIntake(Intake.intakeState.STOP),
                 pivot.setPosition(Intake.intakeState.STOP),
-                extension.servoExtension(ExtensionOuttake.extensionState.RETRACT)
+                extension.moveToLength(24)
         );
     }
     public Action sampleScore(){
@@ -64,8 +64,7 @@ public class Robot {
                 new SleepAction(0.25),
                 new ParallelAction(
                     lift.moveToHeight(28),
-                    new SleepAction(1),
-                    arm.armExtend()
+                    new SleepAction(1)
                 )
         );
     }
@@ -73,8 +72,7 @@ public class Robot {
         return new SequentialAction(
                 claw.servoClaw(Claw.clawState.OPEN),
                 new ParallelAction(
-                        lift.moveToHeight(0),
-                        arm.armExtend()
+                        lift.moveToHeight(0)
                 )
         );
     }
