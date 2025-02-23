@@ -20,7 +20,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 @TeleOp(name = "ServoSteper", group = "Concept")
-@Disabled
 public class ServoSteper extends LinearOpMode {
 
     static final double INCREMENT = 0.01;     // amount to slew servo each CYCLE_MS cycle
@@ -74,7 +73,8 @@ public class ServoSteper extends LinearOpMode {
             // Set the servo to the new position and pause;
             sleep(CYCLE_MS);
             idle();
-            hardware.clawFront.setPosition(position);
+            hardware.clawFlip.setPosition(position);
+            hardware.leftFlip.setPosition(1-(position));
 
         }
 

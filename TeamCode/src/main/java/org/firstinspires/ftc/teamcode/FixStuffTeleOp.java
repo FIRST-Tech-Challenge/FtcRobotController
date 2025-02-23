@@ -254,16 +254,16 @@ public class FixStuffTeleOp extends LinearOpMode {
         double error = 100;
         while (error > 0.5){
             double kp = 0.15;
-            double LeftDistance = hardware.distanceFrontLeft.getDistance(DistanceUnit.INCH);
-            double RightDistance = hardware.distanceFrontRight.getDistance(DistanceUnit.INCH);
-            double ADistance = (RightDistance+LeftDistance)/2;
-            error = ADistance - target;
+            //double LeftDistance = hardware.distanceFrontLeft.getDistance(DistanceUnit.INCH);
+           // double RightDistance = hardware.distanceFrontRight.getDistance(DistanceUnit.INCH);
+            //double ADistance = (RightDistance+LeftDistance)/2;
+           // error = ADistance - target;
             double power = Math.min(0.3, error * kp);
             hardware.frontRight.setPower(power);
             hardware.frontLeft.setPower(power);
             hardware.backRight.setPower(power);
             hardware.backLeft.setPower(power);
-            telemetry.addData("distance", ADistance);
+            //telemetry.addData("distance", ADistance);
             telemetry.addData("error", error);
             telemetry.update();
         }

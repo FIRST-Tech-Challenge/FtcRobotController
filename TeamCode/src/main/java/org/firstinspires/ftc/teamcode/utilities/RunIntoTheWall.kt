@@ -44,9 +44,7 @@ class RunIntoTheWall : LinearOpMode() {
         hardware.clawFront.position = Hardware.FRONT_OPEN
         hardware.clawTwist.position = Hardware.CLAW_TWIST_INIT
 
-        hardware.arm.targetPosition = 0
-        hardware.arm.mode = RUN_TO_POSITION
-        hardware.arm.power = 0.3
+
         hardware.wrist.position = 0.28
         hardware.claw.position = Hardware.CLAW_CLOSE
 
