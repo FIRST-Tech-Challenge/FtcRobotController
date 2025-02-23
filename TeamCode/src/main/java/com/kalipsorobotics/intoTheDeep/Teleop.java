@@ -626,7 +626,7 @@ public class Teleop extends LinearOpMode {
 
             if(basketReadyPressed) {
                 if (basketReadyAction == null || basketReadyAction.getIsDone()){
-                    basketReadyAction = new BasketReadyAction(outtake);
+                    basketReadyAction = new BasketReadyAction(outtake, Outtake.OUTTAKE_PIVOT_BASKET_POS + 0.02);
                     basketReadyAction.setName("basketReadyAction");
 
                     setLastOuttakeAction(basketReadyAction);

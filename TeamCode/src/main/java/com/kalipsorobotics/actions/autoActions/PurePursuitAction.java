@@ -1,7 +1,5 @@
 package com.kalipsorobotics.actions.autoActions;
 
-import android.util.Log;
-
 import com.kalipsorobotics.PID.PidNav;
 import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.actions.Action;
@@ -28,6 +26,8 @@ public class PurePursuitAction extends Action {
     public static final double P_ANGLE_FAST = 1.0/ Math.toRadians(30);
     public static final double P_XY_SLOW = 1.0/800.0;
     public static final double P_ANGLE_SLOW = 1.0/ Math.toRadians(130);
+
+    public static final double P_ANGLE_SLOW_FOREAL_BASKET_THIRD_SAMPLE_AUTO = 1.0 / Math.toRadians(180);
 
 
     private double lastSearchRadius = LAST_RADIUS_MM;
@@ -56,6 +56,8 @@ public class PurePursuitAction extends Action {
     private long sleepTimeMS = 0;
 
     private double maxTimeOutMS = 1000000000;
+
+    private double finalAngleLockingThreshholdDeg = 1.5;
 
     private double startTimeMS = System.currentTimeMillis();
 
@@ -251,7 +253,7 @@ public class PurePursuitAction extends Action {
             targetPosition(follow.get(), currentPosition);
 
         } else {
-            if (Math.abs(lastPoint.getTheta() - currentPosition.getTheta()) <= Math.toRadians(1.5) ) {
+            if (Math.abs(lastPoint.getTheta() - currentPosition.getTheta()) <= Math.toRadians(finalAngleLockingThreshholdDeg) ) {
                 finishedMoving();
             } else {
                 //Log.d("purepursaction_debug_follow",
@@ -316,6 +318,10 @@ public class PurePursuitAction extends Action {
 
     public void setMaxTimeOutMS(double maxTimeOutMS) {
         this.maxTimeOutMS = maxTimeOutMS;
+    }
+
+    public void setFinalAngleLockingThreshholdDeg(double threshholdDeg) {
+        finalAngleLockingThreshholdDeg = threshholdDeg;
     }
 
     public WheelOdometry getOdometry() {

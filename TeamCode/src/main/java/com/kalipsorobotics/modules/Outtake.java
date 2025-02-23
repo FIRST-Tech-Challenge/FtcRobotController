@@ -34,7 +34,7 @@ public class Outtake {
     public static final double HOOK1_DOWN_POS = 0.5;
     public static final double HOOK2_DOWN_POS = 0.5;
     public static final double OUTTAKE_PIVOT_TOUCH_BAR_POS = 0.88-0.02;
-    public static final double OUTTAKE_PIVOT_BASKET_POS = 0.95;
+    public static final double OUTTAKE_PIVOT_BASKET_POS = 0.93; //increase to lower decrease to go higher
     public static final double OUTTAKE_PIVOT_HALFWAY_BASKET_POS = 0.65-0.02;
     public static final double OUTTAKE_PIVOT_PARKING_READY_POS = 0.8-0.02;
     public static final double OUTTAKE_PIVOT_DOWN_POS = 0.16-0.02;

@@ -151,8 +151,8 @@ public class AutoSpecimen2Pre extends LinearOpMode {
         //second sample to depot
         moveFloorSamples.addPoint(-1000, -675, -180, PurePursuitAction.P_XY_FAST, PurePursuitAction.P_ANGLE); //y
         moveFloorSamples.addPoint(-1400, -675, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE); //y
-        moveFloorSamples.addPoint(-1400, WALL_PICKUP_Y, -180, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);//
-        moveFloorSamples.addPoint(-600,WALL_PICKUP_Y,-180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
+        moveFloorSamples.addPoint(-1400, WALL_PICKUP_Y, -180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);//
+        moveFloorSamples.addPoint(-300,WALL_PICKUP_Y,-180, PurePursuitAction.P_XY, PurePursuitAction.P_ANGLE_SLOW);
         moveFloorSamples.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X + 25, WALL_PICKUP_Y, -180,
                     PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
         redAutoSpecimen.addAction(moveFloorSamples);
