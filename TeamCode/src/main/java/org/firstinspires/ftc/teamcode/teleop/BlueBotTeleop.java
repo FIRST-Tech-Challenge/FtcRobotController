@@ -95,8 +95,14 @@ public class BlueBotTeleop extends LinearOpMode {
 
       telemetry.addLine("G2 LY: "+g2_ly);
       telemetry.addLine("G2 RY: "+g2_ry);
-      mek.arm.setSlide(g2_ly);
-      mek.arm.setPivot(g2_ry);
+      if(gamepad2.right_bumper){
+        mek.arm.hang();
+        sleep(1000);
+      }
+      else {
+        mek.arm.setSlide(g2_ly);
+        mek.arm.setPivot(g2_ry);
+      }
       telemetry.addLine("Slide current pos: "+mek.arm.slide.getPower());
       telemetry.addLine("Slider current pos: " + mek.arm.slide.getCurrentPosition() + "Slide goal pos: "+mek.arm.slide.getTargetPosition());
 

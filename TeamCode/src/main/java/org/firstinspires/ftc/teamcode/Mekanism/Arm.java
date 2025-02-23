@@ -299,4 +299,9 @@ public class Arm {
     telemetry.addLine("Power after checks: " + power);
     slidePower = power;
   }
+
+  public void hang(){
+    setSlide(-1);
+    setSlide(-10);
+  }
 }
