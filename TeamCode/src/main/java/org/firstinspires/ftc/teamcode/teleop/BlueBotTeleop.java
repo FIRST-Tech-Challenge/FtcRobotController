@@ -97,6 +97,8 @@ public class BlueBotTeleop extends LinearOpMode {
       telemetry.addLine("G2 RY: "+g2_ry);
       mek.arm.setSlide(g2_ly);
       mek.arm.setPivot(g2_ry);
+      telemetry.addLine("Slide current pos: "+mek.arm.slide.getCurrentPosition());
+      telemetry.addLine("Slide goal pos: "+mek.arm.slide.getTargetPosition());
 
       // This block handles making the gamepad.b toggle the wrist position
       if (gamepad2.b && !is2B) {
@@ -110,8 +112,11 @@ public class BlueBotTeleop extends LinearOpMode {
       // Grabber power
       double grabberSpeed = g2_lt - g2_rt;
       mek.grabber.setGrabber(grabberSpeed, grabberSpeed);
-
       mek.update();
+      telemetry.addLine("Grabber speed: " + grabberSpeed);
+      telemetry.addLine("intake 1 power: " + mek.grabber.intake1.getPosition());
+      telemetry.addLine("intake 2 power: " + mek.grabber.intake2.getPosition());
+
       telemetry.update();
       odometry.update();
     }

@@ -239,7 +239,7 @@ public class Arm {
 
     maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree)) * 1.4;
     if(slide.getCurrentPosition()>maxLength) {
-      setSlide(-power);
+      setSlide(-power * 1.45);
     }
   }
 

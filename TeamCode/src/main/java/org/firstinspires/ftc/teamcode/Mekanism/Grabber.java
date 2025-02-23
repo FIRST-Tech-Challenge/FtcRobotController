@@ -13,7 +13,7 @@ public class Grabber {
 
   LinearOpMode myOp;
 
-  Servo
+  public Servo
       intake1,
       intake2,
       wrist;
@@ -45,7 +45,13 @@ public class Grabber {
    */
   public void update() {
     intake1.setPosition((intake1Power + 1) / 2);
-    intake2.setPosition((intake2Power + 1) / 2);
+    double temp = (intake2Power + 1) / 2;
+    if(temp<0.5) {
+      temp += .25;
+      if(temp>0.5)
+        temp=.45;
+    }
+    intake2.setPosition(temp);
 
     wrist.setPosition(wristPos);
   }
