@@ -149,10 +149,16 @@ public class PedroAutoSpecimens extends LinearOpMode {
                 follower.followPath(scorePreload);
                 setPathState(1);
             case 1:
-                if(!follower.isBusy()){
-                    robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_2;
-                    follower.followPath(pickupSample1);
-                    setPathState(2);
+                //score specimenPreload
+                if (!follower.isBusy()) {
+                    if(actiontime.milliseconds() < 1000)
+                            robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_2;
+                            robot.slideRunToPosition(400);
+                            follower.followPath(pickupSample1);
+                            isReady = false;
+                            setPathState(2);
+                    } else {
+                    actiontime.reset();
                 }
             case 2:
                 if(!follower.isBusy()){

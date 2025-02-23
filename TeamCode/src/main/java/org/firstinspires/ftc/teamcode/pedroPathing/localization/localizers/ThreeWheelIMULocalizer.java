@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.localization.localizers;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -99,7 +100,6 @@ public class ThreeWheelIMULocalizer extends Localizer {
 
         // TODO: replace this with your IMU's orientation
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP)));
-
         // TODO: replace these with your encoder positions
         leftEncoderPose = new Pose(-1.9, 4.5, 0);
         rightEncoderPose = new Pose(-1.9, -4.5, 0);

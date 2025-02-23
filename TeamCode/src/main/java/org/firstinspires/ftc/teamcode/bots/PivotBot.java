@@ -18,9 +18,11 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
 
     FtcDashboard dashboard = FtcDashboard.getInstance();
 
+    public double slidePower = 1;
+
     public static int samplePivotDropOffPos = -2050; // was 2150, seems to be going too far
 
-    public static int sampleSlideDropOffPos = 700;// WAS 770, MADE LOWER TO AVOID CLAW GETTING CAUGHT ON BUCKET
+    public static int sampleSlideDropOffPos = 660;// WAS 770, MADE LOWER TO AVOID CLAW GETTING CAUGHT ON BUCKET
 
     public static int specimenSlideDropOffPos = 400;// to be tested
 
@@ -36,7 +38,7 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
     public static int maximumPivotPos = -1901;//1000; changed value to test climb
     public static int minumimPivotPos = 0;
 
-    public static int maximumSlidePos = 850;
+    public static int maximumSlidePos = 550; // change back if it doesn't work
     public static int minimumSlidePos = 0;
 
     public static int slideTarget = 0;
@@ -101,7 +103,6 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
     public int getSlidePosition() {
         return slideMotor1.getCurrentPosition();
     }
-
     public int getPivotPosition() {
         return pivotMotor1.getCurrentPosition();
     }
@@ -131,8 +132,8 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
             else if(!pivotController.atSetPoint()) {
                 pivotController.setPIDF(kp, ki, kd, 0);
                 double output = pivotController.calculate(pivotMotor1.getCurrentPosition());
-                pivotMotor2.setVelocity(output + kfAngled);
-                pivotMotor1.setVelocity(output + kfAngled);
+                pivotMotor2.setVelocity((output + kfAngled)*0.7);
+                pivotMotor1.setVelocity((output + kfAngled)*0.7);
                 telemetry.addData("output velocity", output);
                 packet.put("position", pivotMotor1.getCurrentPosition());
                 packet.put("target position", pivotTarget);
@@ -192,17 +193,17 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
             slideMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             slideMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
-        else if (slideTarget > -1 && slideTarget < maximumSlidePos){
+        /*else*/ if (slideTarget > -1 && slideTarget <= sampleSlideDropOffPos+130){
             slideMotor1.setTargetPosition(slideTarget);
             slideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             slideMotor2.setTargetPosition(slideTarget);
             slideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             // TODO : PID control for the slide motor
-            slideMotor1.setPower(1);
-            slideMotor2.setPower(1);
+            slideMotor1.setPower(slidePower);
+            slideMotor2.setPower(slidePower);
 
         }
-        else if (slideMotor1.getCurrentPosition() < 0){
+        else if (slideMotor1.getCurrentPosition() < 0 && slideTarget == 0){
             slideRunToPosition(0);
         }
 
@@ -238,6 +239,29 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
 
         //make pivot same
     }
+    public void slideControlVert(boolean up, boolean down) {
+        if (up) {
+            if (slideMotor1.getCurrentPosition() < sampleSlideDropOffPos + 40) {
+                slideTarget = slideMotor1.getCurrentPosition() + (slideMotor1.getCurrentPosition() / 3);
+                telemetry.addData("slide target", slideTarget);
+
+
+            } else {
+                slideTarget = sampleSlideDropOffPos +40;
+            }
+
+        }
+        if (down) {
+            if (slideMotor1.getCurrentPosition() > minimumSlidePos) {
+                slideTarget = slideMotor1.getCurrentPosition() - (slideMotor1.getCurrentPosition() / 3);
+//
+
+            } else {
+                slideTarget = minimumSlidePos;
+            }
+        }
+        telemetry.addData("slide target", slideTarget);
+    }
 
     public void slidePosition(int position){
         slideTarget = position;
@@ -255,6 +279,12 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
         slideTarget = targetPos;
     }
     public void pivotControl(boolean up, boolean down){
+        if(up){
+            pivotRunToPosition(pivotTarget+2);
+        }
+        if(down){
+            pivotRunToPosition(pivotTarget+2);
+        }
         pivotController.setTolerance(40,30);
         if (pivotMotor1.getCurrentPosition() > -20 && pivotTarget == 0 ){
             pivotMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

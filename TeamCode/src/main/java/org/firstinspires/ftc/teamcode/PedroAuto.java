@@ -31,7 +31,10 @@ public class PedroAuto extends LinearOpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
 
+    private ElapsedTime initTimer;
+
     private boolean isReady = false;
+
 
     private ElapsedTime actiontime = new ElapsedTime();
 
@@ -39,24 +42,24 @@ public class PedroAuto extends LinearOpMode {
      * It is used by the pathUpdate method. */
     private int pathState;
 
-    private final Pose startPose = new Pose(7.591433278418451, 114.82042833607908, Math.toRadians(0));// starting position of robot
+    private final Pose startPose = new Pose(7.591433278418451, 113.39703459637562, Math.toRadians(0));// starting position of robot
 //    private final Pose scoreSpecimenPose = new Pose(12.7, 30, Math.toRadians(0));// position where specimen is scored on submersible, robot is aligned to submerisble with back facing it
 
     //    private final Pose sample1 = new Pose(35, 23,0); //these three poses are just behind the samples
-    private final Pose samplePivotPose = new Pose(35, 12.7,0); //pivot from one point to grab all 3 samples
+//    private final Pose samplePivotPose = new Pose(35, 12.7,0); //pivot from one point to grab all 3 samples
 
-    private final Pose samplePickupPose1 = new Pose(20, 134.7479406919275, Math.toRadians(-40));
+    private final Pose samplePickupPose1 = new Pose(28.3, 134.7479406919275, Math.toRadians(-43));
 
-    private final Pose samplePickupPose2 = new Pose(26.5, 117.667215815486, Math.toRadians(45));
+    private final Pose samplePickupPose2 = new Pose(30.75, 107.70345963756178, Math.toRadians(55));
 
-    private final Pose samplePickupPose3 = new Pose(26.5, 124.7841845140033, Math.toRadians(45));
+    private final Pose samplePickupPose3 = new Pose(29.8, 120.667215815486, Math.toRadians(55));
 //    private final Pose sample3 = new Pose(35, 6,0);
 
 //    private final Pose dropSamplePose = new Pose(28, 136, Math.toRadians(180));
 
     private final Pose loadSpecimenPose = new Pose(7.9, 23.6, 0);
 
-    private final Pose scoreSamplePose = new Pose(12.7, 128.8, Math.toRadians(-45));
+    private final Pose scoreSamplePose = new Pose(10.2, 124.1, Math.toRadians(-45));
 
     private final Pose sampleCurveControlPoint = new Pose(21.8, 36.7, Math.toRadians(-36));
 
@@ -69,13 +72,12 @@ public class PedroAuto extends LinearOpMode {
     public FtcDashboard dashboard = FtcDashboard.getInstance();
     public Telemetry telemetryA;
 
-
-
     private Path scorePreload, park;
 
     private PathChain pickup1, pickup2, pickup3, dropoff, loadSpecimen, scoreSpecimen,scoreSample1,scoreSample2,scoreSample3;
 
     public void buildPaths(){
+
         scorePreload = new Path(new BezierLine(new Point(startPose), new Point(scoreSamplePose)));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scoreSamplePose.getHeading());
 
@@ -93,11 +95,6 @@ public class PedroAuto extends LinearOpMode {
                 .addPath(new BezierLine(new Point(scoreSamplePose), new Point(samplePickupPose3)))
                 .setLinearHeadingInterpolation(scoreSamplePose.getHeading(), samplePickupPose3.getHeading())
                 .build();
-        dropoff = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(samplePivotPose), new Point(scoreSamplePose)))
-                .setLinearHeadingInterpolation(samplePivotPose.getHeading(), scoreSamplePose.getHeading())
-                .build();
-//
 //        loadSpecimen = follower.pathBuilder()
 //                .addPath(new BezierLine(new Point(scoreSamplePose), new Point(loadSpecimenPose)))
 //                .setLinearHeadingInterpolation(scoreSamplePose.getHeading(), loadSpecimenPose.getHeading())
@@ -132,18 +129,37 @@ public class PedroAuto extends LinearOpMode {
         telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
         robot.isAuto = true;
+//        robot.init(hardwareMap);
+//        pathTimer = new Timer();
+//        opmodeTimer = new Timer();
+//        opmodeTimer.resetTimer();
+//        initTimer = new Timer();
+//
+//        follower = new Follower(hardwareMap);
+//        follower.setStartingPose(startPose);
+//        robot.currentState = FSMBot.gameState.DRIVE;
+//        buildPaths();
+//        opmodeTimer.resetTimer();
+//        setPathState(0);
+        waitForStart();
+
         robot.init(hardwareMap);
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
+        initTimer = new ElapsedTime();
+        initTimer.reset();
+
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
         robot.currentState = FSMBot.gameState.DRIVE;
         buildPaths();
         opmodeTimer.resetTimer();
         setPathState(0);
-        waitForStart();
-        while (opModeIsActive()) {
+
+
+
+        while (opModeIsActive()&&initTimer.milliseconds()>100) {
             telemetry.addData("pivot pos", robot.getPivotPosition());
             telemetry.addData("slide pos", robot.getSlidePosition());
             telemetry.addData("Pivot target", robot.pivotTarget);
@@ -185,25 +201,25 @@ public class PedroAuto extends LinearOpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
                     if(isReady == false) {
-                    if (actiontime.milliseconds() > 1000) {
-                        robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_2;
-                    } else{
-                        robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
+                        if (actiontime.milliseconds() > 2000) {
+                            robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_2;
+                        } else{
+                            robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
+                        }
+                        if (robot.getSlidePosition() > 680-25) {
+                            robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_3;
+                            robot.outake(true);
+                            isReady = true;
+                            actiontime.reset();
+                        }
                     }
-                    if (robot.getSlidePosition() > 700-40) {
-                        robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_3;
-                        robot.outake(true);
-                        isReady = true;
-                        actiontime.reset();
-                    }}
                     else {
                         if(actiontime.milliseconds() > 1000) {
                             robot.slideRunToPosition(0);
                         }
-                        if(actiontime.milliseconds() > 2000) {
-                            robot.pivotRunToPosition(0);
-                            robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
+                        if(actiontime.milliseconds() > 1500) {
                             follower.followPath(pickup1, true);
+                            actiontime.reset();
                             isReady = false;
                             setPathState(2);
                         }
@@ -224,28 +240,28 @@ public class PedroAuto extends LinearOpMode {
 
             case 2:
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 2) {
-                    if (robot.currentState != FSMBot.gameState.SUBMERSIBLE_INTAKE_2) {
-                        robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
-                        actiontime.reset();
+                    robot.pivotRunToPosition(0);
+                    robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_2;
+                    robot.intake(true);
+                    if(robot.getPivotPosition() < 100) {
+                        robot.slidePower = 0.6;
+                        //extend slide out to intake
+                        robot.slideRunToPosition(650);
                     }
-                    //extend slide out to intake
-                    robot.slideRunToPosition(550);
-                    if(robot.getSlidePosition() > 500 || robot.getIsIntaked()) {
+                    if(robot.getSlidePosition() > 630 ){
                         robot.currentState = FSMBot.gameState.DRIVE;
-                        if(actiontime.milliseconds() > 2000){
+                        robot.slidePower = 1;
                         //go to score
-                        follower.followPath(scoreSample1, true);
-                        isReady = false;
-                        setPathState(3);
-                        }
+                            follower.followPath(scoreSample1, true);
+                            isReady = false;
+                            setPathState(3);
                     }
 //                    //pickup first sample
 //                    if(robot.getIsIntaked()) {
 //                        robot.triggerEvent(EVENT_SAMPLE_1_PICKEDUP, 3);
 //                        setPathState(EVENT_SAMPLE_1_PICKEDUP);
 //                    }
-                    actiontime.reset();
-                    setPathState(3);
+
                 }
                 break;
 
@@ -253,12 +269,12 @@ public class PedroAuto extends LinearOpMode {
             case 3:
                 if (!follower.isBusy()) {
                     if(isReady == false) {
-                        if (actiontime.milliseconds() > 1000) {
+                        if (actiontime.milliseconds() > 2000) {
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_2;
                         } else{
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
                         }
-                        if (robot.getSlidePosition() > 700-40) {
+                        if (robot.getSlidePosition() > 680-25) {
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_3;
                             robot.outake(true);
                             isReady = true;
@@ -268,7 +284,7 @@ public class PedroAuto extends LinearOpMode {
                         if(actiontime.milliseconds() > 1000) {
                             robot.slideRunToPosition(0);
                         }
-                        if(actiontime.milliseconds() > 2000) {
+                        if(actiontime.milliseconds() > 1500) {
                             robot.pivotRunToPosition(0);
                             robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
                             follower.followPath(pickup2, true);
@@ -284,13 +300,19 @@ public class PedroAuto extends LinearOpMode {
             case 4:
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 2) {
                     if (robot.currentState != FSMBot.gameState.SUBMERSIBLE_INTAKE_2) {
+                        robot.intake(true);
                         robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
                     }
-                    //extend slide out to intake
-                    robot.slideRunToPosition(550);
-                    if(robot.getSlidePosition() > 500 || robot.getIsIntaked()) {
+                    else {
+                        robot.slidePower = 0.6;
+                        robot.intake(true);
+                        //extend slide out to intake
+                        robot.slideRunToPosition(650);
+                    }
+                    if(robot.getSlidePosition() > 630 || robot.getIsIntaked()) {
                         robot.currentState = FSMBot.gameState.DRIVE;
                         if(actiontime.milliseconds() > 2000){
+                            robot.slidePower = 1;
                             //go to score
                             follower.followPath(scoreSample2, true);
                             isReady = false;
@@ -308,12 +330,12 @@ public class PedroAuto extends LinearOpMode {
             case 5:
                 if (!follower.isBusy()) {
                     if(isReady == false) {
-                        if (actiontime.milliseconds() > 1000) {
+                        if (actiontime.milliseconds() > 2000) {
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_2;
                         } else{
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
                         }
-                        if (robot.getSlidePosition() > 700-40) {
+                        if (robot.getSlidePosition() > 680-25) {
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_3;
                             robot.outake(true);
                             isReady = true;
@@ -347,25 +369,31 @@ public class PedroAuto extends LinearOpMode {
             case 6:
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 2) {
                     if (robot.currentState != FSMBot.gameState.SUBMERSIBLE_INTAKE_2) {
+                        robot.intake(true);
+
                         robot.currentState = FSMBot.gameState.SUBMERSIBLE_INTAKE_1;
                     }
-                    //extend slide out to intake
-                    robot.slideRunToPosition(550);
-                    if(robot.getSlidePosition() > 500 || robot.getIsIntaked()) {
+                    else {
+                        robot.slidePower = 0.6;
+                        robot.intake(true);
+                        //extend slide out to intake
+                        robot.slideRunToPosition(400);
+                    }
+                    if(robot.getSlidePosition() > 390 || robot.getIsIntaked()) {
+                        robot.slidePower = 1.0;
                         robot.currentState = FSMBot.gameState.DRIVE;
                         if(actiontime.milliseconds() > 2000){
                             //go to score
                             follower.followPath(scoreSample3, true);
                             isReady = false;
-                            setPathState(3);
+                            setPathState(-1); // end here
                         }
-                    }
+                }
 //                    //pickup first sample
 //                    if(robot.getIsIntaked()) {
 //                        robot.triggerEvent(EVENT_SAMPLE_1_PICKEDUP, 3);
 //                        setPathState(EVENT_SAMPLE_1_PICKEDUP);
 //                    }
-                    setPathState(7);
                 }
                 break;
             case 7:
@@ -376,7 +404,7 @@ public class PedroAuto extends LinearOpMode {
                         } else{
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
                         }
-                        if (robot.getSlidePosition() > 700-40) {
+                        if (robot.getSlidePosition() > 700-25) {
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_3;
                             robot.outake(true);
                             isReady = true;
