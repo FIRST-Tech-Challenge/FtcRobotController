@@ -97,7 +97,7 @@ public class BlueBotTeleop extends LinearOpMode {
       telemetry.addLine("G2 RY: "+g2_ry);
       if(gamepad2.right_bumper){
         mek.arm.hang();
-        sleep(1000);
+        sleep(5000);
       }
       else {
         mek.arm.setSlide(g2_ly);
