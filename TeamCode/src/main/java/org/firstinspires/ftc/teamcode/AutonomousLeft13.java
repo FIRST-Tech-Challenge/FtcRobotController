@@ -57,7 +57,7 @@ public class AutonomousLeft13 extends AutonomousBase {
                 }
             } //  gamepad1_r_bumper
             // Do we need to change any of the other autonomous options?
-            processAutonomousInitMenu(false);
+            processAutonomousInitMenu(false);  // not auto5 start position
             // Pause briefly before looping
             idle();
         } // !isStarted
@@ -192,19 +192,12 @@ public class AutonomousLeft13 extends AutonomousBase {
         }
 
         // Score the preloaded SPECIMEN
-        if( !onlyPark && scorePreloadSpecimen ) {
-            scoreSpecimenPreload();
-        }
-
-        // Score the preloaded SAMPLE
-        if( !onlyPark && !scorePreloadSpecimen ) {
-            scoreSamplePreload();
-        }
+        scoreSpecimenPreload();
 
         if( !onlyPark && (spikeSamples > 0) ) {
             if( scorePreloadSpecimen ) {
-                driveToPosition(18.5, 0.0, 0.0, DRIVE_SPEED_100, TURN_SPEED_30, DRIVE_THRU);
-                driveToPosition(14.0, -25.0, 0.0, DRIVE_SPEED_100, TURN_SPEED_30, DRIVE_THRU);
+                driveToPosition(16.0, 0.0, 0.0, DRIVE_SPEED_100, TURN_SPEED_30, DRIVE_THRU);
+                driveToPosition(13.0, -25.0, 0.0, DRIVE_SPEED_100, TURN_SPEED_30, DRIVE_THRU);
             }
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_DRIVE_DEG, 0.80 );
             autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_AUTO_READY);
@@ -289,7 +282,7 @@ public class AutonomousLeft13 extends AutonomousBase {
         // Setup the arm for scoring samples
         if( opModeIsActive() ) {
             autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_AUTO_COLLECT);
-            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_COLLECT1_DEG, 1.0 );
+            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_COLLECT1_DEG, 0.8 );
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);
             robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
@@ -334,9 +327,6 @@ public class AutonomousLeft13 extends AutonomousBase {
                     sleep( 50 );
                     // update all our status
                     performEveryLoop();
-//                    telemetry.addData("Tilt timeout: ", "%d" , (autoTiltMotorMoving())? 1 : 0);
-//                    telemetry.addData("Viper: ", "%d %d %d" , (autoViperMotorMoving())? 1 : 0 , robot.viperMotor.getCurrentPosition() , robot.viperMotor.getTargetPosition());
-//                    telemetry.update();
                 } while( autoViperMotorMoving() || autoTiltMotorMoving() ); // viper should already be in position
                 break;
             case 2:
@@ -347,9 +337,6 @@ public class AutonomousLeft13 extends AutonomousBase {
                     sleep( 50 );
                     // update all our status
                     performEveryLoop();
-//                    telemetry.addData("Tilt timeout: ", "%d" , (autoTiltMotorMoving())? 1 : 0);
-//                    telemetry.addData("Viper: ", "%d %d %d" , (autoViperMotorMoving())? 1 : 0 , robot.viperMotor.getCurrentPosition() , robot.viperMotor.getTargetPosition());
-//                    telemetry.update();
                 } while( autoViperMotorMoving() || autoTiltMotorMoving() );  // wait for viper to fully retract
                 break;
             case 3:
@@ -364,10 +351,7 @@ public class AutonomousLeft13 extends AutonomousBase {
                     sleep( 50 );
                     // update all our status
                     performEveryLoop();
-//                    telemetry.addData("Tilt timeout: ", "%d" , (autoTiltMotorMoving())? 1 : 0);
-//                    telemetry.addData("Viper: ", "%d %d %d" , (autoViperMotorMoving())? 1 : 0 , robot.viperMotor.getCurrentPosition() , robot.viperMotor.getTargetPosition());
-//                    telemetry.update();
-                } while( autoViperMotorMoving() || autoTiltMotorMoving() ); // while( autoViperMotorMoving() || autoTiltMotorMoving() )
+                } while( autoViperMotorMoving() || autoTiltMotorMoving() );
                 driveToPosition( 24.4, -43.8, 32.1, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO );
                 break;
             default:
@@ -385,7 +369,7 @@ public class AutonomousLeft13 extends AutonomousBase {
         autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_BASKET_DEG, 1.0 );
         // drive partway there while we wait for arm to lift (before extending viper)
         if( scorePreloadSpecimen || (samplesScored > 0) ){
-            driveToPosition( 11.0, -33.5, -46.6, DRIVE_SPEED_100, TURN_SPEED_30, DRIVE_THRU );
+            driveToPosition( 11.0, -35.5, -46.6, DRIVE_SPEED_100, TURN_SPEED_30, DRIVE_THRU );
             robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_BASKET );
         } else {
             robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_BASKET );
@@ -415,7 +399,7 @@ public class AutonomousLeft13 extends AutonomousBase {
         // Only retract arm if we're not going to park
         if(samplesScored < spikeSamples) {
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_COLLECT1_DEG, 1.0);
-            autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO_COLLECT , 0.9);
+            autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO_COLLECT, 0.9);
         }
         else{
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_ASCENT2_DEG, 1.0);
@@ -427,7 +411,7 @@ public class AutonomousLeft13 extends AutonomousBase {
 
     private void level1Ascent() {
         if( opModeIsActive() && (spikeSamples < 1)) {
-            // Back up from submersible TODO OLD ODOMETRY VALUES NEEDS TO BE UPDATED
+            // Back up from submersible
             driveToPosition( 32.0, 6.0, 90.0, DRIVE_SPEED_50, TURN_SPEED_50, DRIVE_THRU );
             // Drive forward toward the wall
             driveToPosition( 38.0, -27.0, 90.0, DRIVE_SPEED_50, TURN_SPEED_30, DRIVE_TO );

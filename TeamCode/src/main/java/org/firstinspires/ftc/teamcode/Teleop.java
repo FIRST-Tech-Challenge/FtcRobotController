@@ -273,7 +273,7 @@ public abstract class Teleop extends LinearOpMode {
         processSecureArm();
         processScoreArm();
         processScoreArmSpec();
-//      processSweeper();
+        processSweeper();
     } // performEveryLoopTeleop
 
     /*---------------------------------------------------------------------------------*/
@@ -715,7 +715,7 @@ public abstract class Teleop extends LinearOpMode {
         // Check for ON-to-OFF toggle of the gamepad2 CROSS
         else if( gamepad2_cross_now && !gamepad2_cross_last )
         {
-//          startSweeper();
+            startSweeper();
         }
         //===================================================================
         else if( manual_lift_control || liftTweaked ) {
@@ -1169,9 +1169,11 @@ public abstract class Teleop extends LinearOpMode {
     public enum Sweeper_Steps {
         IDLE,
         SWEEPING,
+        OPENING_CLAW,
         LIFT_ARM,
         CLOSE_CLAW_LOWER_ARM,
-        WIGGLE_CLAW;
+        WIGGLE_CLAW_1,
+        COLLECT_SAMPLE;
     };
     public Sweeper_Steps sweeperState = Sweeper_Steps.IDLE;
     protected ElapsedTime sweeperTimer = new ElapsedTime();
@@ -1181,7 +1183,7 @@ public abstract class Teleop extends LinearOpMode {
             //Set robot into position to sweep
             terminateAutoArmMovements();
             robot.clawStateSet(Hardware2025Bot.clawStateEnum.CLAW_OPEN_SWEEPER);
-            //robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_SWEEPER_DEG);
+            robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_SWEEPER_DEG);
             sweeperState = Sweeper_Steps.SWEEPING;
             sweeperTimer.reset();
         }
@@ -1189,24 +1191,33 @@ public abstract class Teleop extends LinearOpMode {
 
     public void processSweeper() {
         double elapsedSweeperTime = sweeperTimer.milliseconds();
-        //double tiltError = Math.abs( robot.armTiltAngle - Hardware2025Bot.TILT_ANGLE_SWEEPER_DEG);
+//        double tiltError = Math.abs( robot.armTiltAngle - Hardware2025Bot.TILT_ANGLE_SWEEPER_DEG);
         double tiltError = 0;
         boolean tiltReady = (tiltError < 0.25);
         boolean clawReady, movementTimeout;
         switch( sweeperState ) {
             case SWEEPING:
-                clawReady = (elapsedSweeperTime > 400);
+                clawReady = (elapsedSweeperTime > 800);
                 movementTimeout = (elapsedSweeperTime > 1500);
                 if( (clawReady && tiltReady) || movementTimeout ) {
                     //Bring arm down and open claw to clear samples
                     robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_SWEEPER_LOWER_DEG);
+                    sweeperState = Sweeper_Steps.OPENING_CLAW;
+                    sweeperTimer.reset();
+                }
+                break;
+            case OPENING_CLAW:
+                clawReady = (elapsedSweeperTime > 800);
+                movementTimeout = (elapsedSweeperTime > 1500);
+                if( (clawReady && tiltReady) || movementTimeout ) {
+                    //Bring arm down and open claw to clear samples
                     robot.clawStateSet(Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE);
                     sweeperState = Sweeper_Steps.LIFT_ARM;
                     sweeperTimer.reset();
                 }
                 break;
             case LIFT_ARM:
-                clawReady = (elapsedSweeperTime > 400);
+                clawReady = (elapsedSweeperTime > 800);
                 movementTimeout = (elapsedSweeperTime > 1500);
                 if( (clawReady && tiltReady) || movementTimeout ) {
                     //Lift arm up then close claw to get ready to collect
@@ -1221,20 +1232,30 @@ public abstract class Teleop extends LinearOpMode {
                     //Close claw to narrow position and lower arm to collect position and wiggle claw
                     robot.clawStateSet(Hardware2025Bot.clawStateEnum.CLAW_OPEN_NARROW);
                     robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_COLLECT_DEG);
-                    sweeperState = Sweeper_Steps.WIGGLE_CLAW;
+                    sweeperState = Sweeper_Steps.WIGGLE_CLAW_1;
                     sweeperTimer.reset();
                 }
                 break;
-            case WIGGLE_CLAW:
-                clawReady = (elapsedSweeperTime > 400);
+            case WIGGLE_CLAW_1:
+                clawReady = (elapsedSweeperTime > 800);
                 movementTimeout = (elapsedSweeperTime > 1500);
                 if( (clawReady && tiltReady) || movementTimeout ) {
                     //Wiggle claw to clear unwanted samples
                     //robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRABL2);
-                    //robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRABR2);
+                    //robot.elbowSa ervo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRABR2);
                     robot.clawStateSet(Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE);
+                    sweeperState = Sweeper_Steps.COLLECT_SAMPLE;
+                    sweeperTimer.reset();
+                }
+                break;
+            case COLLECT_SAMPLE:
+                clawReady = (elapsedSweeperTime > 800);
+                movementTimeout = (elapsedSweeperTime > 1500);
+                if( (clawReady && tiltReady) || movementTimeout ) {
+                    //Wiggle claw to clear collect sample
                     robot.clawStateSet(Hardware2025Bot.clawStateEnum.CLAW_CLOSED);
                     sweeperState = Sweeper_Steps.IDLE;
+                    sweeperTimer.reset();
                 }
                 break;
             case IDLE:

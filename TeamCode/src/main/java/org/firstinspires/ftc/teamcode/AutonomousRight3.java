@@ -178,7 +178,7 @@ public class AutonomousRight3 extends AutonomousBase {
 
         // Score the preloaded SPECIMEN
         if( !onlyPark && scorePreloadSpecimen ) {
-            hookSpecimenOnBar( specimensHooked++ );
+            hookSpecimenOnBarFWD( specimensHooked++ );
         }
 
         if( !onlyPark && (spikeSamples > 0) ) {
@@ -187,12 +187,12 @@ public class AutonomousRight3 extends AutonomousBase {
 
         if( !onlyPark && (spikeSamples > 0) ) {
             grabSpecimenFromWall( specimensGrabbed++ );
-            hookSpecimenOnBar( specimensHooked++ );
+            hookSpecimenOnBarFWD( specimensHooked++ );
         }
 
         if( !onlyPark && (spikeSamples > 1) ) {
             grabSpecimenFromWall( specimensGrabbed++ );
-            hookSpecimenOnBar( specimensHooked++ );
+            hookSpecimenOnBarFWD( specimensHooked++ );
         }
 
         // Park for 3pts (observation zone)
@@ -204,7 +204,7 @@ public class AutonomousRight3 extends AutonomousBase {
     } // mainAutonomous
 
     /*--------------------------------------------------------------------------------------------*/
-    private void hookSpecimenOnBar( int specimenNumber ) {
+    private void hookSpecimenOnBarFWD(int specimenNumber ) {
 
         telemetry.addData("Motion", "Move to submersible");
         telemetry.update();
@@ -231,7 +231,7 @@ public class AutonomousRight3 extends AutonomousBase {
             driveToPosition( 18.2, (pos_x+2.2), 0.00, DRIVE_SPEED_60, TURN_SPEED_50, DRIVE_THRU );
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR1);
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR1);
-            pos_y = 27.60 + (specimenNumber * 0.50);
+            pos_y = 27.40 + (specimenNumber * 0.25);
             driveToPosition( pos_y, pos_x, 0.00, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
             robot.driveTrainMotorsZero();  // make double sure we're stopped
             // If we drive to the submersible faster than the arm moves, wait for the arm
@@ -347,7 +347,7 @@ public class AutonomousRight3 extends AutonomousBase {
 
         // Drive to the final wall-collect position (slowly)
         if( opModeIsActive() ) {
-            driveToPosition( 5.1, 18.6, 180, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO );
+            driveToPosition( 4.6, 18.6, 180, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO );
             robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_CLOSED );
             sleep(350); // allow claw to close (350msec)
         } // opModeIsActive

@@ -138,8 +138,8 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_BASKET_DEG      = 90.00; // Arm at rotation back to the basket for scoring
     public final static double TILT_ANGLE_AUTO_PRE_DEG    = 83.00; // Arm almost at  basket (start to slow; avoid wobble)
     public final static double TILT_ANGLE_SUBMERSIBLE_DEG = 10.00; // Arm at rotation back to the submersible for collecting
-    public final static double TILT_ANGLE_SWEEPER_DEG       = 8.00; // Arm at rotation to get into position to sweep TODO: tweak value
-    public final static double TILT_ANGLE_SWEEPER_LOWER_DEG = 6.00; // Arm rotated to actually sweep TODO: tweak value
+    public final static double TILT_ANGLE_SWEEPER_DEG       = 6.00; // Arm at rotation to get into position to sweep TODO: tweak value
+    public final static double TILT_ANGLE_SWEEPER_LOWER_DEG = 4.00; // Arm rotated to actually sweep TODO: tweak value
     public final static double TILT_ANGLE_LEVEL2A_DEG     = 58.00; // Arm at rotation back to the low bar for ascent level 2
     public final static double TILT_ANGLE_ASCENT2_DEG     = 64.25; // Arm at rotation back to the low bar for ascent level 2
     public final static double TILT_ANGLE_ASCENT3_DEG     = 56.50; // Arm at rotation back to the low bar for ascent level 2
@@ -323,7 +323,7 @@ public class Hardware2025Bot
     public final static double CLAW_SERVO_CLOSED  = 0.443;  // Claw closed (hold sample/specimen)
     public final static double CLAW_SERVO_INIT    = 0.500;  // Claw in init position (servo default power-on state)
     public final static double CLAW_SERVO_OPEN_N  = 0.600;  // claw opened narrow (enough to release/drop)
-    public final static double CLAW_SERVO_OPEN_S  = 0.750;  // claw opened to collect/sweep width
+    public final static double CLAW_SERVO_OPEN_S  = 0.550;  // claw opened to collect/sweep width
     public final static double CLAW_SERVO_OPEN_W  = 0.900;  // claw opened wide (fully open and above samples on floor)
 
     public enum clawStateEnum {

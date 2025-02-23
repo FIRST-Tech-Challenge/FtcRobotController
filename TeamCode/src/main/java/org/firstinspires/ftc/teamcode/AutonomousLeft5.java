@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /**
  */
-@Autonomous(name="Autonomous Left 5 yellow", group="7592", preselectTeleOp = "Teleop")
+@Autonomous(name="Left3: 5 yellow (80 pts)", group="7592", preselectTeleOp = "Teleop")
 //@Disabled
 public class AutonomousLeft5 extends AutonomousBase {
 
@@ -58,7 +58,7 @@ public class AutonomousLeft5 extends AutonomousBase {
                 }
             } //  gamepad1_r_bumper
             // Do we need to change any of the other autonomous options?
-            processAutonomousInitMenu(true);
+            processAutonomousInitMenu(true);  // yes, use auto5 start position
             // Pause briefly before looping
             idle();
         } // !isStarted

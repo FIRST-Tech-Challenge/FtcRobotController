@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 /**
  */
-@Autonomous(name="Left2: 4 yellow (67 pts))", group="7592", preselectTeleOp = "Teleop")
+@Autonomous(name="Left2: 4 yellow (67 pts)", group="7592", preselectTeleOp = "Teleop")
 //@Disabled
 public class AutonomousLeft4 extends AutonomousBase {
 
@@ -57,7 +57,7 @@ public class AutonomousLeft4 extends AutonomousBase {
                 }
             } //  gamepad1_r_bumper
             // Do we need to change any of the other autonomous options?
-            processAutonomousInitMenu(false);
+            processAutonomousInitMenu(false);  // not auto5 start position
             // Pause briefly before looping
             idle();
         } // !isStarted
@@ -191,20 +191,13 @@ public class AutonomousLeft4 extends AutonomousBase {
             sleep( startDelaySec * 1000 );
         }
 
-        // Score the preloaded SPECIMEN
-        if( !onlyPark && scorePreloadSpecimen ) {
-            scoreSpecimenPreload();
-        }
-
         // Score the preloaded SAMPLE
-        if( !onlyPark && !scorePreloadSpecimen ) {
-            scoreSamplePreload();
-        }
+        scoreSamplePreload();
 
         if( !onlyPark && (spikeSamples > 0) ) {
             if( scorePreloadSpecimen ) {
-                driveToPosition(18.5, 0.0, 0.0, DRIVE_SPEED_100, TURN_SPEED_30, DRIVE_THRU);
-                driveToPosition(14.0, -25.0, 0.0, DRIVE_SPEED_100, TURN_SPEED_30, DRIVE_THRU);
+                driveToPosition(16.0, 0.0, 0.0, DRIVE_SPEED_100, TURN_SPEED_30, DRIVE_THRU);
+                driveToPosition(13.0, -25.0, 0.0, DRIVE_SPEED_100, TURN_SPEED_30, DRIVE_THRU);
             }
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_DRIVE_DEG, 0.80 );
             autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_AUTO_READY);
