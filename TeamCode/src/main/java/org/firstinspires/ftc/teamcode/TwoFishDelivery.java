@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,6 +9,9 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 @Disabled
 public class TwoFishDelivery {
@@ -18,6 +22,7 @@ public class TwoFishDelivery {
     private Servo pitch2 = null;
     private Servo wrist = null;
     private VoltageSensor voltageSensor = null;
+    //    private TouchSensor limitSwitch = null;
 
 
     private LinearOpMode linearOpMode;
@@ -34,7 +39,6 @@ public class TwoFishDelivery {
     private ElapsedTime time = new ElapsedTime();
 
     public double slideTarget;
-
 
     public double clawOpenPosition = 0;
     public double clawClosePosition = 1;
@@ -97,6 +101,8 @@ public class TwoFishDelivery {
             pitch2 = linearOpMode.hardwareMap.get(Servo.class, "deliveryPitchRight");
             claw = linearOpMode.hardwareMap.get(Servo.class, "claw");
             wrist = linearOpMode.hardwareMap.get(Servo.class, "wrist");
+//          limitSwitch = linearOpMode.hardwareMap.get(TouchSensor.class, "deliveryTouch");
+
             claw.scaleRange(0.0, 1);
             pitch1.scaleRange(0.0, 1);
             pitch2.scaleRange(0.0, 1);
@@ -221,6 +227,13 @@ public class TwoFishDelivery {
     public boolean checkIfScoredSpec(){
         return voltageSensor.getVoltage() < operatingVoltage - DIP_FROM_SCORING_SPEC;
     }
+
+//    public void limitCheck() {
+//        if (limitSwitch.isPressed()) {
+//            minExtension = extension.getCurrentPosition();
+//            maxExtension = minExtension+DELTA_EXTENSION;
+//        }
+//    }
 
     public void addServoTelemetry(){
         linearOpMode.telemetry.addData("pitch L: ", pitch1.getPosition());

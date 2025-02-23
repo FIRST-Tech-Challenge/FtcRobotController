@@ -127,6 +127,10 @@ public class TwoFishTeleop extends LinearOpMode {
                 } else {
                     drivetrainFunctions.Stop();
                 }
+
+//                if (gamepad1.x) {
+//                    drivetrainFunctions.Move(0, intake.getCenterBlockDistance("yellow")[1], 0, speedScalar);
+//                }
             }
 
             //driver 2

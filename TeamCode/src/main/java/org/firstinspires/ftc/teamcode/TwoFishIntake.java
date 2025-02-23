@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -15,7 +16,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 @Disabled
@@ -24,6 +28,8 @@ public class TwoFishIntake {
     private DcMotor intake = null;
     private Servo pitch = null;
     private Servo transfer = null;
+//    private TouchSensor limitSwitch = null;
+//    private HuskyLens huskyLens = null;
 
     private LinearOpMode linearOpMode;
 
@@ -95,7 +101,10 @@ public class TwoFishIntake {
 
             extension.setTargetPosition(extension.getCurrentPosition());
 
-//            limitSwitch = linearOpMode.hardwareMap.get(TouchSensor.class, "touch");
+//            limitSwitch = linearOpMode.hardwareMap.get(TouchSensor.class, "intakeTouch");
+
+//            huskyLens = linearOpMode.hardwareMap.get(HuskyLens.class, "husky");
+//            huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
 
         }catch(NullPointerException e){
             linearOpMode.telemetry.addLine("Couldn't find intake");
@@ -178,6 +187,45 @@ public class TwoFishIntake {
 //            minExtension = extension.getCurrentPosition();
 //            maxExtension = minExtension+DELTA_EXTENSION;
 //        }
+//    }
+
+//    ArrayList<ArrayList<HuskyLens.Block>> blocks = new ArrayList<ArrayList<HuskyLens.Block>>(4);
+//    //yellow blocks -> get(1)
+//    //red blocks    -> get(2)
+//    //blue blocks   -> get(3)
+//
+//    final int centerX = 160;
+//    final int centerY = 120;
+//    public void getHuskyDetections() {
+//        HuskyLens.Block[] huskyBlocks = huskyLens.blocks();
+//        linearOpMode.telemetry.addData("Block count", huskyBlocks.length);
+//        for (HuskyLens.Block sample : huskyBlocks) {
+//            blocks.get(sample.id).add(sample);
+//        }
+//    }
+//
+//    int distanceToCenter (HuskyLens.Block block) {
+//        return (int) Math.sqrt(Math.pow(block.x - centerX,2) + Math.pow(block.y - centerY,2));
+//    }
+//    public int[] getCenterBlockDistance(String color) {
+//        int blockColor = -1;
+//        if (color == "yellow") {
+//            blockColor = 1;
+//        } else if (color == "red") {
+//            blockColor = 2;
+//        } else if (color == "blue") {
+//            blockColor = 3;
+//        }
+//        Collections.sort(blocks.get(blockColor), new Comparator<HuskyLens.Block>(){
+//            public int compare(HuskyLens.Block a, HuskyLens.Block b){
+//                return distanceToCenter(a) - distanceToCenter(b);
+//            }
+//        });
+//
+//        int deltaX = blocks.get(blockColor).get(0).x-centerX;
+//        int deltaY = blocks.get(blockColor).get(0).y-centerY;
+//
+//        return new int[] {deltaX/320, deltaY/240};
 //    }
 
     public class RunToLengthRR implements Action {
