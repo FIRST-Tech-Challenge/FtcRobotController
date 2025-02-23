@@ -51,9 +51,9 @@ public abstract class Teleop extends LinearOpMode {
 
     final int DRIVER_MODE_STANDARD     = 2;
     final int DRIVER_MODE_DRV_CENTRIC  = 3;
-    int       driverMode               = DRIVER_MODE_STANDARD;
-//  int       driverMode               = DRIVER_MODE_DRV_CENTRIC;
-    double    driverAngle              = 0.0;  /* for DRIVER_MODE_DRV_CENTRIC */
+//  int       driverMode               = DRIVER_MODE_STANDARD;
+    int       driverMode               = DRIVER_MODE_DRV_CENTRIC;
+    double    driverAngle              = 180.0;  /* for DRIVER_MODE_DRV_CENTRIC */
 
     boolean   batteryVoltsEnabled = false;  // enable only during testing (takes time!)
 
@@ -71,15 +71,13 @@ public abstract class Teleop extends LinearOpMode {
     int     aprilTagStart  = 12;  // overriden in setAllianceSpecificBehavior() Default to Blue Alliance
     int     aprilTagBasket = 13;  // overriden in setAllianceSpecificBehavior() Default to Blue Alliance
 
-    boolean geckoServoCollecting = false; // Is the collector servo currently intaking (true) or OFF (false);
-    boolean geckoServoEjecting   = false; // Is the collector servo currently ejecting (true) or OFF (false);
-    boolean snorkleTweaked = false; // Reminder to zero power when PAN  input stops
+    boolean snorkleTweaked       = false; // Reminder to zero power when PAN  input stops
     boolean tiltAngleTweaked     = false; // Reminder to zero power when TILT input stops
     boolean liftTweaked          = false; // Reminder to zero power when LIFT input stops
     boolean enableOdometry       = true; // Process/report odometry updates?
-    int grabLState               = 2;
-    int grabRState               = 2;
-    int submersibleCollectState  = 2;
+    int     grabLState               = 2;
+    int     grabRState               = 2;
+    int     submersibleCollectState  = 2;
 
     double    clawServoPosAdj = 0.500;
 
@@ -189,7 +187,7 @@ public abstract class Teleop extends LinearOpMode {
             }
 
             // Check for an OFF-to-ON toggle of the gamepad1 CIRCLE button (toggles STANDARD/BACKWARD drive control)
-            if( gamepad1_circle_now && !gamepad1_circle_last)
+/*          if( gamepad1_circle_now && !gamepad1_circle_last)
             {
                 // If currently in DRIVER-CENTRIC mode, switch to STANDARD (robot-centric) mode
                 if( driverMode != DRIVER_MODE_STANDARD ) {
@@ -201,7 +199,7 @@ public abstract class Teleop extends LinearOpMode {
                     backwardDriveControl = !backwardDriveControl; // reverses which end of robot is "FRONT"
                 }
             }
-
+*/
 //          telemetry.addData("circle","Robot-centric (fwd/back modes)");
 //          telemetry.addData("square","Driver-centric (set joystick!)");
 //          telemetry.addData("d-pad","Fine control (30%)");
@@ -256,6 +254,7 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Elbow", "%.2f (%.1f deg)", robot.getElbowServoPos(), robot.getElbowServoAngle() );
             telemetry.addData("Wrist", "%.2f (%.1f deg)", robot.getWristServoPos(), robot.getElbowServoAngle() );
             telemetry.addData("Snorkle Ascent State", ascent2state);
+            telemetry.addData("Angles", "IMU %.2f, Pinpoint %.2f deg)", robot.headingIMU(), curAngle );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", cycleTimeElapsed, cycleTimeHz);
             telemetry.update();
 
