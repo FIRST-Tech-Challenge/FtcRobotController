@@ -37,7 +37,7 @@ public class FourWheelDriveBot extends BotBot{
 
     long timeSinceToggle5 = 0;
     long lastToggleDone5 = 0;
-    double driveMultiplier = 0.75;
+    double driveMultiplier = 1.0;
 
     //HardwareMap hwMap = null;
     private ElapsedTime runtime = new ElapsedTime();
@@ -95,11 +95,11 @@ public class FourWheelDriveBot extends BotBot{
 //            }
 //            telemetry.update();
             //RobotLog.d("stick button pressed");
-            driveMultiplier = 1.0;
-            telemetry.addData("FAST", driveMultiplier);
-        } else {
             driveMultiplier = 0.75;
             telemetry.addData("SLOW", driveMultiplier);
+        } else {
+            driveMultiplier = 1.0;
+            telemetry.addData("FAST", driveMultiplier);
         }
         telemetry.update();
         driveByVector(drive, strafe, twist, driveMultiplier);

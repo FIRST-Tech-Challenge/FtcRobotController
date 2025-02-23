@@ -18,7 +18,7 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
 
     FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    public double slidePower = 1;
+    public double slidePower = 0.8;
 
     public static int samplePivotDropOffPos = -2050; // was 2150, seems to be going too far
 
@@ -132,8 +132,8 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
             else if(!pivotController.atSetPoint()) {
                 pivotController.setPIDF(kp, ki, kd, 0);
                 double output = pivotController.calculate(pivotMotor1.getCurrentPosition());
-                pivotMotor2.setVelocity((output + kfAngled)*0.7);
-                pivotMotor1.setVelocity((output + kfAngled)*0.7);
+                pivotMotor2.setVelocity((output + kfAngled)*0.5);
+                pivotMotor1.setVelocity((output + kfAngled)*0.5);
                 telemetry.addData("output velocity", output);
                 packet.put("position", pivotMotor1.getCurrentPosition());
                 packet.put("target position", pivotTarget);

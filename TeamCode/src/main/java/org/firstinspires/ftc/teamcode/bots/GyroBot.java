@@ -59,13 +59,13 @@ public class GyroBot extends FourWheelDriveBot {
         timeSinceToggle5 = System.currentTimeMillis() - lastToggleDone5;
         if (button1 || button2) {
             if (isSlow) {
-                driveMultiplier = 0.85;
+                driveMultiplier = 1.0;
                 isSlow = false;
                 telemetry.addData("SLOW", driveMultiplier);
                 lastToggleDone5 = System.currentTimeMillis();
                 //RobotLog.d("robot not slow");
             } else if (!isSlow) {
-                driveMultiplier = 0.95;
+                driveMultiplier = 0.85;
                 isSlow = true;
                 telemetry.addData("FAST", driveMultiplier);
                 lastToggleDone5 = System.currentTimeMillis();
