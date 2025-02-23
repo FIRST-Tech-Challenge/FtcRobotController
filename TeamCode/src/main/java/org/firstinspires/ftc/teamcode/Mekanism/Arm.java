@@ -235,11 +235,14 @@ public class Arm {
       telemetry.addLine("Pivot pos under 0");
     }
 
-    pivotPower = power;
+    pivotPower = power / 2;
 
-    maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree)) * 1.4;
-    if(slide.getCurrentPosition()>maxLength) {
-      setSlide(-power * 1.45);
+    maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree)) * 1;
+    if(maxLength < 2500)
+      maxLength = 2500;
+    if(slide.getCurrentPosition()>maxLength && power > 0) {
+      setSlide(-power * 3);
+      telemetry.addLine("auto in slide");
     }
   }
 
@@ -275,7 +278,7 @@ public class Arm {
   public void setSlide(double power) {
 
     // Calculates the max the arm can go without going over the 40IN limit
-    double maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree)) * 1.4;
+    double maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree)) * 1.2;
     if (maxLength < 2500)
       maxLength = 2500;
 
