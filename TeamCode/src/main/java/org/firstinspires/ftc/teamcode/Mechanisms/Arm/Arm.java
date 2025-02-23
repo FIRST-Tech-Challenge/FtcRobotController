@@ -20,9 +20,9 @@ public class Arm {
     public static double wristExtend = 1;
     public static double wristRetract = 0.5;
     public static double wristSpecimenExtend = 0.66;
-    public static double armNeutral = 0.75;
-    public static double armAuton = 0.75;
-    public static double wristAuton = 0;
+    public static double armNeutral = 0.65;
+    public static double armAuton = 0.5;
+    public static double wristAuton = 0.5;
     public ElapsedTime timer = new ElapsedTime();
     public Arm(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
@@ -38,7 +38,7 @@ public class Arm {
     }
     armState armPos = armState.RETRACT;
     ElapsedTime armTimer = new ElapsedTime();
-    public Action servoArm(){
+    public Action armSample(){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
@@ -96,7 +96,7 @@ public class Arm {
             }
         };
     }
-    public Action servoArmSpec(){
+    public Action armSpecimen(){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
@@ -120,7 +120,7 @@ public class Arm {
             }
         };
     }
-    public Action servoSpecimenAuton(){
+    public Action specimenAuton(){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {

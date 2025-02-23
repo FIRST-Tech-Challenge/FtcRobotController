@@ -25,7 +25,7 @@ import java.util.Map;
 
 @Config
 @TeleOp
-public class TeleopWithActions extends OpMode {
+public class TeleopWithActionsBlue extends OpMode {
 
     private FtcDashboard dash = FtcDashboard.getInstance();
     private Map<String, Action> runningActions = new HashMap<>();
@@ -70,6 +70,13 @@ public class TeleopWithActions extends OpMode {
             firstRun = false;
         }
         else {
+            if (reject){
+                if (timer.seconds()<.5){
+                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
+                } else {
+                    reject = false;
+                }
+            }
             if (gamepad1.right_trigger > 0.5) {
                 runningActions.put("extension", extension.servoExtension(Extension.extensionState.EXTEND));
             }
@@ -83,7 +90,11 @@ public class TeleopWithActions extends OpMode {
                 runningActions.put("claw", claw.servoClaw(Claw.clawState.CLOSE));
             }
             if (gamepad1.left_bumper) {
-                runningActions.put("intake", robot.intakeMove(Intake.intakeState.INTAKE));
+                if ((red&&!colorSensor.isBlue())||(!red&&!colorSensor.isRed())){
+                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.INTAKE));
+                } else {
+                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
+                }
             } else if (gamepad1.right_bumper) {
                 runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
             } else {

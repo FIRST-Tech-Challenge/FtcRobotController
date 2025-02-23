@@ -15,6 +15,7 @@ public class Extension {
     ServoAdvanced servoExtendRight;
     public static double extendPos = 0;
     public static double retractPos = 0.27;
+    public static double midPos = 0.1;
     public static double leftOffset = 0.025;
     public Extension(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
@@ -39,6 +40,16 @@ public class Extension {
                         servoExtendLeft.setPosition(retractPos+leftOffset);
                         servoExtendRight.setPosition(retractPos);
                     }
+                return false;
+            }
+        };
+    }
+    public Action midPos() {
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket Packet) {
+                    servoExtendLeft.setPosition(midPos+leftOffset);
+                    servoExtendRight.setPosition(midPos);
                 return false;
             }
         };

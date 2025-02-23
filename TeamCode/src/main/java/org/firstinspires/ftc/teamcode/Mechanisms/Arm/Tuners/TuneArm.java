@@ -19,13 +19,13 @@ public class TuneArm extends LinearOpMode {
 
         while (opModeIsActive()) {
             if (gamepad1.triangle){
-                Actions.runBlocking(arm.servoArm());
+                Actions.runBlocking(arm.armSample());
             }
             if(gamepad1.cross){
-                Actions.runBlocking(arm.servoSpecimenAuton());
+                Actions.runBlocking(arm.armSpecimen());
             }
             if(gamepad1.square){
-                Actions.runBlocking(arm.servoArmSpec());
+                Actions.runBlocking(arm.armSpecimen());
             }
         }
     }

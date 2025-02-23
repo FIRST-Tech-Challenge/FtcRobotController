@@ -18,9 +18,9 @@ public class Color extends ColorSensorComposition {
        final int colorTolerance = 180;
    }
    public boolean isRed(){
-       return colorSensor.red() > 0.5;
+       return colorSensor.red() > 100 && colorSensor.green()<50 && colorSensor.blue() < 50;
    }
    public boolean isBlue(){
-       return colorSensor.blue() > 0.5;
+       return colorSensor.blue() > 80 && colorSensor.red() < 50 && colorSensor.green()<70;
    }
 }
