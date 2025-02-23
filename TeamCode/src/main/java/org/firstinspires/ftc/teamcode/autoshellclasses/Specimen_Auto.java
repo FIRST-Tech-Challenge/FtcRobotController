@@ -41,7 +41,7 @@ public class Specimen_Auto extends LinearOpMode {
         //closes claw on init
         Actions.runBlocking(_WristClawActions.CloseClaw());
         //raises wrist on init
-        Actions.runBlocking(_WristClawActions.WristUp());
+        Actions.runBlocking(_WristClawActions.WristDown());
 
         telemetry.update();
         waitForStart();
@@ -103,6 +103,7 @@ public class Specimen_Auto extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
+                        _WristClawActions.WristUp(),
                         driveToClip1,
                         _ViperArmActions.RaiseToClip(),
                         clippingSpecimen1,

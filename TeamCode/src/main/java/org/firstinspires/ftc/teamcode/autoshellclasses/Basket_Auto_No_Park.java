@@ -20,7 +20,7 @@ import java.util.Locale;
 
 
 @Config
-@Disabled
+//@Disabled
 @Autonomous(name = "Basket_Auto_No_Park", group = "Autonomous")
 public class Basket_Auto_No_Park extends LinearOpMode {
 
@@ -39,7 +39,7 @@ public class Basket_Auto_No_Park extends LinearOpMode {
 
         //closes claw on init
         Actions.runBlocking(_WristClawActions.CloseClaw());
-        Actions.runBlocking(_WristClawActions.WristUp());
+        Actions.runBlocking(_WristClawActions.WristDown());
 
         telemetry.update();
         waitForStart();
@@ -88,6 +88,7 @@ public class Basket_Auto_No_Park extends LinearOpMode {
         //----------------------------------------------------------------------------------------------
         Actions.runBlocking(
                 new SequentialAction(
+                        _WristClawActions.WristUp(),
                         _ViperArmActions.MoveViperHalfExtend(),
                         driveToDropFromStart,
                         _ViperArmActions.DumpInHighBasketHalfExtend(),
