@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Swerve.TheBestSwerve;
 
 @Autonomous(name = "Auto Top Bucket")
 public class AutoBucket extends LinearOpMode {
-  private AutoSwerve drivebase;
+  private AutoSwerve driveBase;
   private GoBildaPinpointDriver odo;
   private Mekanism mek;
   TheBestSwerve amazingSwerve;
@@ -25,7 +25,7 @@ public class AutoBucket extends LinearOpMode {
   @Override
   public void runOpMode() throws InterruptedException {
     initOdo();
-    drivebase = new AutoSwerve(this, odo);
+    driveBase = new AutoSwerve(this, odo);
     mek = new Mekanism(this);
     mek.grabber.initWrist();
     amazingSwerve = new TheBestSwerve(this,odo,driveBase);
@@ -74,15 +74,15 @@ public class AutoBucket extends LinearOpMode {
   }
 
   public void moveRobot(double strafe_x, double strafe_y, double steer_amt) {
-    double current_x = odometry.getPosX();
-    double current_y = odometry.getPosY();
+    double current_x = odo.getPosX();
+    double current_y = odo.getPosY();
 
     while (current_x != strafe_x || current_y != strafe_y) {
       amazingSwerve.swerveTheThing(strafe_x, strafe_y, 0.0);
 
-      current_x = odometry.getPosX();
-      current_y = odometry.getPosY();
-      odometry.update();
+      current_x = odo.getPosX();
+      current_y = odo.getPosY();
+      odo.update();
     }
 
   }

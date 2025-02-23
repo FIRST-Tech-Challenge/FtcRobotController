@@ -113,7 +113,7 @@ public class BlueBotTeleop extends LinearOpMode {
 
       mek.update();
       telemetry.update();
-
+      odometry.update();
     }
   }
 
