@@ -13,8 +13,8 @@ import org.firstinspires.ftc.masters.components.Intake;
 import org.firstinspires.ftc.masters.components.Outtake;
 
 @Config // Enables FTC Dashboard
-@TeleOp(name = "V2 Manual Teleop BLue")
-public class TeleopManualV2Blue extends LinearOpMode {
+@TeleOp(name = "V2 Manual Teleop Red")
+public class TeleopManualV2Red extends LinearOpMode {
 
 
 /*   controls:
@@ -58,7 +58,7 @@ public class TeleopManualV2Blue extends LinearOpMode {
 
         outtake.setIntake(intake);
         intake.setOuttake(outtake);
-        intake.setAllianceColor(ITDCons.Color.blue);
+        intake.setAllianceColor(ITDCons.Color.red);
 
         int target=0;
 

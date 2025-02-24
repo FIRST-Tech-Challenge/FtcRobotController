@@ -188,6 +188,20 @@ public class Outtake implements Component{
         }
     }
 
+    public void openClawAuto() {
+
+            claw.setPosition(ITDCons.clawOpen);
+
+    }
+
+    public void wallGrabAuto() {
+
+        if (status==Status.ScoreSpecimen) {
+            claw.setPosition(ITDCons.clawOpen);
+            moveToPickUpFromWall();
+        }
+    }
+
     public void closeClaw() {
         claw.setPosition(ITDCons.clawClose);
     }
@@ -219,23 +233,23 @@ public class Outtake implements Component{
 
     public void moveToTransfer(){
 
-        if (status==Status.Wall || status == Status.InitWall){
-            position.setPosition(ITDCons.positionTransfer);
-            target = ITDCons.TransferWaitTarget;
-            closeClaw();
-            setAngleServoScore();
-            wrist.setPosition(ITDCons.wristFront);
-            status = Status.WallToTransfer1;
-            elapsedTime = new ElapsedTime();
-
-
-        } else if (status==Status.ScoringSampleDone) {
-            closeClaw();
-            target = ITDCons.intermediateTarget;
-            position.setPosition(ITDCons.positionTransfer);
-            setAngleServoScore();
-            status = Status.BucketToTransfer_Down;
-        }
+//        if (status==Status.Wall || status == Status.InitWall){
+//            position.setPosition(ITDCons.positionTransfer);
+//            target = ITDCons.TransferWaitTarget;
+//            closeClaw();
+//            setAngleServoScore();
+//            wrist.setPosition(ITDCons.wristFront);
+//            status = Status.WallToTransfer1;
+//            elapsedTime = new ElapsedTime();
+//
+//
+//        } else if (status==Status.ScoringSampleDone) {
+//            closeClaw();
+//            target = ITDCons.intermediateTarget;
+//            position.setPosition(ITDCons.positionTransfer);
+//            setAngleServoScore();
+//            status = Status.BucketToTransfer_Down;
+//        }
 
     }
 
