@@ -5,6 +5,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.masters.components.DriveTrain;
@@ -13,12 +15,18 @@ import org.firstinspires.ftc.masters.components.Intake;
 import org.firstinspires.ftc.masters.components.Outtake;
 
 @Config // Enables FTC Dashboard
-@TeleOp(name = "Bot Kill")
+@TeleOp(name = "Bot Killer 3000")
 public class KillingTheBot extends LinearOpMode {
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    public static double Blank = 0;
+    public static int offset = 0;
+    public static boolean isReseting = false;
+
+    Servo led;
+    DcMotor outtakeSlideLeft;
+    DcMotor outtakeSlideRight;
+    VoltageSensor voltageSensor;
 
     public void runOpMode() throws InterruptedException {
 
@@ -27,7 +35,9 @@ public class KillingTheBot extends LinearOpMode {
         Init init = new Init(hardwareMap);
         Outtake outtake = new Outtake(init, telemetry);
 
-        VoltageSensor voltageSensor;
+        led = init.getLed();
+        outtakeSlideLeft = init.getOuttakeSlideLeft();
+        outtakeSlideRight = init.getOuttakeSlideRight();
         voltageSensor = init.getVoltageSensor();
 
         telemetry.update();
@@ -37,18 +47,29 @@ public class KillingTheBot extends LinearOpMode {
         while (opModeIsActive()) {
 
             if (gamepad1.a){
-                outtake.setTarget(-400);
+                isReseting = true;
+                outtakeSlideLeft.setPower(-1);
+                outtakeSlideRight.setPower(-1);
             }
 
-            if (voltageSensor.getVoltage() < 10){
-                outtake.setTarget(2500);
+            if (gamepad1.b){
+                outtake.setTarget(7000 - offset);
             }
 
-            telemetry.addData("Volt", voltageSensor.getVoltage());
+            if (voltageSensor.getVoltage() < 10 && isReseting){
+                outtakeSlideLeft.setPower(0);
+                outtakeSlideRight.setPower(0);
+                led.setPosition(1);
+                offset = outtakeSlideRight.getCurrentPosition();
+                isReseting = false;
+            }
+
+            if (!isReseting) {
+                outtake.update();
+            }
+
+            telemetry.addData("Voltage", voltageSensor.getVoltage());
             telemetry.update();
-
-            outtake.update();
-
 
         }
     }

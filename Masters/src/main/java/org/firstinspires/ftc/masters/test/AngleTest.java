@@ -38,6 +38,10 @@ public class AngleTest extends LinearOpMode {
                 angleServoLeft.setPosition(ITDCons.angleMiddle);
                 angleServoRight.setPosition(ITDCons.angleMiddle);
             }
+            if (gamepad1.y){
+                angleServoLeft.setPosition(ITDCons.angleScoreSpec);
+                angleServoRight.setPosition(ITDCons.angleScoreSpec);
+            }
 
         }
     }

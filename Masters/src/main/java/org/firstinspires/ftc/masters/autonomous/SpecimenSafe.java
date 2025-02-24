@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.masters.autonomous;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.GoBildaPinpointDriver;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
@@ -10,9 +11,11 @@ import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.components.DriveTrain;
+import org.firstinspires.ftc.masters.components.ITDCons;
 import org.firstinspires.ftc.masters.components.Init;
 import org.firstinspires.ftc.masters.components.Intake;
 import org.firstinspires.ftc.masters.components.Outtake;
@@ -50,6 +53,9 @@ public class SpecimenSafe extends LinearOpMode {
 
     Follower follower;
 
+    GoBildaPinpointDriver pinpoint;
+    Servo led;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -60,6 +66,8 @@ public class SpecimenSafe extends LinearOpMode {
         Intake intake = new Intake(init, telemetry);
         DriveTrain driveTrain = new DriveTrain(init, telemetry);
 
+        pinpoint = init.getPinpoint();
+        led = init.getLed();
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
@@ -69,6 +77,23 @@ public class SpecimenSafe extends LinearOpMode {
         PathState state = PathState.Lift;
         outtake.initAutoSpecimen();
         intake.retractSlide();
+
+        pinpoint.update();
+        telemetry.addData("Pinpoint Status", pinpoint.getDeviceStatus());
+        telemetry.update();
+
+        while (pinpoint.getDeviceStatus() != GoBildaPinpointDriver.DeviceStatus.READY){
+            pinpoint.update();
+            telemetry.addData("Pinpoint Status", pinpoint.getDeviceStatus());
+            telemetry.update();
+            led.setPosition(ITDCons.red);
+            sleep(500);
+        } if (pinpoint.getDeviceStatus() == GoBildaPinpointDriver.DeviceStatus.READY){
+            pinpoint.update();
+            telemetry.addData("Pinpoint Status", pinpoint.getDeviceStatus());
+            telemetry.update();
+            led.setPosition(ITDCons.blue);
+        }
 
         waitForStart();
 

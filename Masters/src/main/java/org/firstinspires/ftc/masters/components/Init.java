@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.masters.components;
 
+import com.pedropathing.localization.GoBildaPinpointDriver;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,6 +17,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Init {
 
     private final VoltageSensor voltageSensor;
+
+    GoBildaPinpointDriver pinpoint;
 
     private final DcMotorEx leftFrontMotor;
     private final DcMotorEx rightFrontMotor;
@@ -43,8 +46,6 @@ public class Init {
         rightFrontMotor = hardwareMap.get(DcMotorEx.class, "frontRight");
         leftRearMotor = hardwareMap.get(DcMotorEx.class, "backLeft");
         rightRearMotor = hardwareMap.get(DcMotorEx.class, "backRight");
-
-        voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         // Set the drive motor direction:
         leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -92,7 +93,10 @@ public class Init {
         breakBeam = hardwareMap.digitalChannel.get("breakBeam");
         pusherServo = hardwareMap.servo.get("pusher");
 
+        // Strange and evil devices
         led = hardwareMap.servo.get("led");
+        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
     }
 
@@ -123,10 +127,6 @@ public class Init {
 
     public DcMotor getOuttakeSlideRight() {
         return outtakeSlideRight;
-    }
-
-    public Servo getLed() {
-        return led;
     }
 
     public Servo getClaw() {
@@ -165,5 +165,12 @@ public class Init {
         return breakBeam;
     }
 
+    public Servo getLed() {
+        return led;
+    }
+
+    public GoBildaPinpointDriver getPinpoint() { return pinpoint; }
+
     public VoltageSensor getVoltageSensor() { return voltageSensor; }
+
 }

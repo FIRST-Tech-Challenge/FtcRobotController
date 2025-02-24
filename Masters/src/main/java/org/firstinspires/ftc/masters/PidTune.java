@@ -16,8 +16,8 @@ public class PidTune extends OpMode {
 
     private PIDController controller;
 
-    public static double p = 0.0045, i = 0.007, d = 0.00001;
-    public static double f = 0.09;
+    public static double p = 0.0015, i = 0, d = 0;
+    public static double f = 0;
 
     public static int target = 0;
 
