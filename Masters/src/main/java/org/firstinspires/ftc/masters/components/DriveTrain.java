@@ -228,4 +228,11 @@ public class DriveTrain implements Component{
         rightFrontMotor.setPower(power);
         rightRearMotor.setPower(power);
     }
+
+    public void turn (double power){
+        leftFrontMotor.setPower(power);
+        leftRearMotor.setPower(power);
+        rightFrontMotor.setPower(-power);
+        rightRearMotor.setPower(-power);
+    }
 }

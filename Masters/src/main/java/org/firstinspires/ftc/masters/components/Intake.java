@@ -163,11 +163,10 @@ public class Intake {
     }
 
 
-    protected void dropIntake(){
+    public void dropIntake(){
         intakeLeft.setPosition(ITDCons.intakeArmDrop);
         intakeRight.setPosition(ITDCons.intakeChainDrop);
     }
-
 
     protected void transferIntake(){
         intakeLeft.setPosition(ITDCons.intakeArmTransfer);
