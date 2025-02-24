@@ -33,12 +33,14 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final double RIGHT_SLIDE_IN = 0.38;
     @Deprecated public static final double LEFT_SLIDE_IN = 1.05 - RIGHT_SLIDE_IN;
     public static final double CLAW_TWIST_INIT = 0.48;
+    public static final double CLAW_TWIST_MAX = 0.82;
+    public static final double CLAW_TWIST_MIN = 0.13;
     public static final double SLIDE_INWARD_TIME = 0.75; // seconds
     public static final double SLIDE_OUTWARD_TIME = 0.45; // seconds
     public static final double SLIDE_OVERSHOOT = 0.28;
-    public static final double FLIP_DOWN = 0.19;
+    public static final double FLIP_DOWN = 0.2;
     public static final double FRONT_OPEN = 0.66;
-    public static final double FRONT_CLOSE = 0.35;
+    public static final double FRONT_CLOSE = 0.37;
     public static final double FLIP_UP = 0.8;
     public static final double FLIP_ONE_THIRD = 0.33;
     public static final double CLAW_CLOSE = 0.28;
@@ -61,6 +63,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final int ASCENT_UP_POS = -1742;
     public static final int ASCENT_PREPARE_POS = -2995;
     public static final int ASCENT_FINISH_POS = -50;
+
 
     public static int deg2arm(double degrees) {
         return (int) (degrees / 360.0 * spinTickPerRev);
@@ -201,16 +204,16 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     @AutoClearEncoder
     public Encoder leftAscentEnc;
 
-    @HardwareName("leftAscent")
-    public CRServo leftAscent;
+    //@HardwareName("leftAscent")
+    //public CRServo leftAscent;
 
     @EncoderFor("verticalSlide2")
     @AutoClearEncoder
     public Encoder rightAscentEnc;
 
-    @HardwareName("rightAscent")
-    @Reversed
-    public CRServo rightAscent;
+    //@HardwareName("rightAscent")
+    //@Reversed
+    //public CRServo rightAscent;
 
     public Ascent ascent;
 
@@ -291,7 +294,8 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
                 backRight
         );
         verticalLift = new Lift(verticalSlide, verticalSlide2);
-        ascent = new Ascent(leftAscent, leftAscentEnc, rightAscent, rightAscentEnc);
+//        ascent = new Ascent(leftAscent, leftAscentEnc, rightAscent, rightAscentEnc);
+        ascent = null;
     }
 
 }

@@ -66,21 +66,20 @@ public class FixStuffTeleOp extends LinearOpMode {
     private TaskGroup groupOf(Consumer<Scheduler> contents) {
         return new TaskGroup(scheduler).with(contents);
     }
+    private void hardwareInit() {
 
-    /*private void hardwareInit() {
-
-        hardware.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.clawFlip.setPosition(Hardware.FLIP_UP);
-        hardware.clawFront.setPosition(Hardware.FRONT_CLOSE);
-
-        hardware.arm.setTargetPosition(0);
-        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.arm.setPower(0.3);
-       // hardware.wrist.setPosition(Hardware.WRIST_BACK);
-        hardware.claw.setPosition(Hardware.CLAW_CLOSE);
+//        hardware.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        hardware.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        hardware.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        hardware.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        hardware.clawFlip.setPosition(Hardware.FLIP_UP);
+//        hardware.clawFront.setPosition(Hardware.FRONT_CLOSE);
+//
+//        hardware.arm.setTargetPosition(0);
+//        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        hardware.arm.setPower(0.3);
+//       // hardware.wrist.setPosition(Hardware.WRIST_BACK);
+//        hardware.claw.setPosition(Hardware.CLAW_CLOSE);
         hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
         // we don't have the proxy object to handle this for us
         // so manually implement the inversion
@@ -91,11 +90,11 @@ public class FixStuffTeleOp extends LinearOpMode {
         hardware.lightRight.setPosition(Hardware.LAMP_PURPLE);
 
     }
-*/
+
     public void runOpMode() {
         scheduler = new MultitaskScheduler();
         hardware = new Hardware(hardwareMap);
-        //hardwareInit();
+        hardwareInit();
 
         vLiftProxy = scheduler.add(new VLiftProxy(scheduler, hardware.verticalLift));
         hSlideProxy = scheduler.add(new HSlideProxy(scheduler, hardware));
@@ -134,15 +133,21 @@ public class FixStuffTeleOp extends LinearOpMode {
             if (gamepad1.left_bumper){
                 FourthSample2();
             }
-            if (gamepad2.left_bumper){
+            if (gamepad2.dpad_down){
                 flipDown();
             }
-            if (gamepad2.right_bumper){
+            if (gamepad2.dpad_up){
                 flipUp();
+            }
+            if (gamepad2.b){
+                close();
             }
             telemetry.addData("slidePos", hardware.horizontalLeft.getPosition());
             telemetry.addData("slidePos2", hardware.horizontalSlide.getPosition());
             telemetry.addData("armPos", hardware.arm.getCurrentPosition());
+            telemetry.addData("leftFlip",hardware.leftFlip.getPosition());
+            telemetry.addData("rightFlip",hardware.clawFlip.getPosition());
+
             telemetry.update();
             scheduler.tick();
         }
@@ -300,11 +305,17 @@ public class FixStuffTeleOp extends LinearOpMode {
         }
     }
     public void flipDown(){
+        hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_OUT);
+        hardware.horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_OUT);
+        sleep(100);
         hardware.clawFlip.setPosition(Hardware.FLIP_DOWN);
         hardware.leftFlip.setPosition(1-Hardware.FLIP_DOWN);
     }
     public void flipUp(){
         hardware.clawFlip.setPosition(Hardware.FLIP_UP);
         hardware.leftFlip.setPosition(1-Hardware.FLIP_UP);
+    }
+    public void close(){
+        hardware.clawFront.setPosition(Hardware.FRONT_CLOSE);
     }
 }
