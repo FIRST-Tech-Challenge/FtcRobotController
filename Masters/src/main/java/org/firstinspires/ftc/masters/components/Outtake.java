@@ -66,7 +66,7 @@ public class Outtake implements Component{
         InitAutoSpec(0),
         InitAutoSample(0),
 
-        TransferToBucket_CloseClaw(200),
+        TransferToBucket_Back(200),
         TransferToBucket_Lift(0),
         TransferToBucket_Move(600),
         AutoLiftToBucket(0),
@@ -86,7 +86,7 @@ public class Outtake implements Component{
         WallToFront_move(450),
         WallToFront3 (300),
 
-        WallToTransfer1(500), WallToTransfer(300), WallToTransfer2(0),
+        WallToTransfer1(1000), WallToTransfer(300), WallToTransfer2(1000),
 
 
         SpecimenToWall_MoveBack(1300),
@@ -94,7 +94,7 @@ public class Outtake implements Component{
         SpecimenToWall_OpenCLaw(350),
         SpecimenToWall_Final(200),
 
-        TransferReadyManual(400),
+        ToBucketClose(400),
 
         Front(400);
 
@@ -235,13 +235,13 @@ public class Outtake implements Component{
 
         if (status==Status.Wall || status == Status.InitWall){
 
-            setAngleServoToMiddle();
+            setAngleServoScore();
             closeClaw();
             target = ITDCons.TransferTarget;
             elapsedTime = new ElapsedTime();
             status = Status.WallToTransfer1;
 
-//            position.setPosition(ITDCons.positionTransfer);
+           position.setPosition(ITDCons.positionTransfer);
 //
 //
 //            setAngleServoScore();
@@ -275,7 +275,7 @@ public class Outtake implements Component{
 
     public void moveToBucket(){
         closeClaw();
-        status = Status.TransferToBucket_CloseClaw;
+        status = Status.TransferToBucket_Back;
     }
 
     public void score(){
@@ -307,8 +307,10 @@ public class Outtake implements Component{
             setAngleServoScore();
             status = Status.AutoLiftToBucket;
         } else{
-            target= ITDCons.TransferPickupTarget;
-            status = Status.TransferReadyManual;
+            closeClaw();
+            setAngleServoScore();
+
+            status = Status.ToBucketClose;
         }
 
         elapsedTime = new ElapsedTime();
@@ -317,7 +319,7 @@ public class Outtake implements Component{
 
     public void scoreSampleLow(){
         closeClaw(); //should already be closed but just in case
-        status = Status.TransferToBucket_CloseClaw;
+        status = Status.TransferToBucket_Back;
         elapsedTime = new ElapsedTime();
         target = ITDCons.LowBucketTarget;
 
@@ -402,9 +404,10 @@ public class Outtake implements Component{
                 }
                 break;
 
-            case TransferToBucket_CloseClaw:
+            case TransferToBucket_Back:
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
                     target = ITDCons.BucketTarget;
+                    setAngleServoToMiddle();
                     elapsedTime= new ElapsedTime();
                     status = Status.TransferToBucket_Lift;
                     isScoringDone= false;
@@ -417,9 +420,6 @@ public class Outtake implements Component{
                //TODO: change from time to vertical slide position
                 if (getLiftPos()>ITDCons.BucketTarget-30000){
                     elapsedTime = new ElapsedTime();
-
-                    setAngleServoToMiddle();
-                    position.setPosition(ITDCons.positionBack);
 
                     status = Status.TransferToBucket_Move;
                     isLiftReady = true;
@@ -470,17 +470,17 @@ public class Outtake implements Component{
                     position.setPosition(ITDCons.positionTransfer);
                     wrist.setPosition(ITDCons.wristFront);
 
-                    setAngleServoToTransfer();
+
                     status = Status.WallToTransfer2;
                     elapsedTime= new ElapsedTime();
                 }
 
             case WallToTransfer2:
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()) {
+                    setAngleServoToTransfer();
                     openClaw();
                     status = Status.TransferReady;
                 }
-
 
                 break;
 
@@ -535,10 +535,10 @@ public class Outtake implements Component{
                     }
                 }
                 break;
-            case TransferReadyManual:
+            case ToBucketClose:
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
-                        closeClaw();
-                    status = Status.TransferToBucket_CloseClaw;
+                        setOuttakeBack();
+                    status = Status.TransferToBucket_Back;
                     elapsedTime= new ElapsedTime();
                 }
                 break;

@@ -122,6 +122,7 @@ public class Intake {
     }
 
     public void toTransfer(){
+        stopIntake();
         moveIntakeToTransfer();
         color = ITDCons.Color.yellow;
     }

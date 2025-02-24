@@ -37,14 +37,14 @@ public class ITDCons {
 
     public static double positionBack = 0.09;
     public static double positionInitSpec=0.4;
-    public static double positionTransfer = 0.33;
+    public static double positionTransfer = 0.36;
     public static double positionFront =1;
 
-    public static double angleBack = 0.05;
-    public static double angleTransfer = 0.7;
+    public static double angleBack = 0.08;
+    public static double angleTransfer = 0.85;
 
-    public static double angleMiddle = 0.35;
-    public static double angleScoreSpec = 0.45;
+    public static double angleMiddle = 0.37;
+    public static double angleScoreSpec = 0.63;
     public static double angleScoreSample = 0.2;
 
     public static int wallPickupTarget = 5500;

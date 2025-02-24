@@ -151,6 +151,7 @@ public class TeleopManualV2Blue extends LinearOpMode {
             //intake.toNeutral();
 
             if (gamepad1.x){
+                intake.toNeutral();
 
             } else if (gamepad1.y){
                 outtake.score();
