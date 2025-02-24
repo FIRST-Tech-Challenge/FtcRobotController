@@ -36,10 +36,10 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final double SLIDE_INWARD_TIME = 0.75; // seconds
     public static final double SLIDE_OUTWARD_TIME = 0.45; // seconds
     public static final double SLIDE_OVERSHOOT = 0.28;
-    public static final double FLIP_DOWN = 0.00;
+    public static final double FLIP_DOWN = 0.19;
     public static final double FRONT_OPEN = 0.66;
     public static final double FRONT_CLOSE = 0.35;
-    public static final double FLIP_UP = 0.95;
+    public static final double FLIP_UP = 0.8;
     public static final double FLIP_ONE_THIRD = 0.33;
     public static final double CLAW_CLOSE = 0.28;
     public static final double CLAW_OPEN = 0.5;
@@ -186,8 +186,8 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     @HardwareName("lightRight")
     public Servo lightRight;
 
-    //@HardwareName("limelightlight")
-    //public Servo limelightLight;
+    //@HardwareName("lightRight")
+    //public Servo lightRight;
 
     @HardwareName("leftFlip")
     public Servo leftFlip;
@@ -268,7 +268,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
         arm.setTargetPosition(0);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(0.3);
-        wrist.setPosition(0.28);
+        //wrist.setPosition(0.28);
         claw.setPosition(Hardware.CLAW_CLOSE);
 
         // we don't have the proxy object to handle this for us

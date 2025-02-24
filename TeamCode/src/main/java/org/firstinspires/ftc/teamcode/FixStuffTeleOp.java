@@ -67,7 +67,7 @@ public class FixStuffTeleOp extends LinearOpMode {
         return new TaskGroup(scheduler).with(contents);
     }
 
-    private void hardwareInit() {
+    /*private void hardwareInit() {
 
         hardware.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -79,7 +79,7 @@ public class FixStuffTeleOp extends LinearOpMode {
         hardware.arm.setTargetPosition(0);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.3);
-        hardware.wrist.setPosition(Hardware.WRIST_BACK);
+       // hardware.wrist.setPosition(Hardware.WRIST_BACK);
         hardware.claw.setPosition(Hardware.CLAW_CLOSE);
         hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
         // we don't have the proxy object to handle this for us
@@ -91,11 +91,11 @@ public class FixStuffTeleOp extends LinearOpMode {
         hardware.lightRight.setPosition(Hardware.LAMP_PURPLE);
 
     }
-
+*/
     public void runOpMode() {
         scheduler = new MultitaskScheduler();
         hardware = new Hardware(hardwareMap);
-        hardwareInit();
+        //hardwareInit();
 
         vLiftProxy = scheduler.add(new VLiftProxy(scheduler, hardware.verticalLift));
         hSlideProxy = scheduler.add(new HSlideProxy(scheduler, hardware));
@@ -123,6 +123,10 @@ public class FixStuffTeleOp extends LinearOpMode {
                 transfer();
             }
 
+            if(gamepad2.y){
+                Vtransfer();
+            }
+
             if (gamepad1.right_bumper){
                 FourthSample();
             }
@@ -130,10 +134,15 @@ public class FixStuffTeleOp extends LinearOpMode {
             if (gamepad1.left_bumper){
                 FourthSample2();
             }
-            DriveToDistance(6);
-
+            if (gamepad2.left_bumper){
+                flipDown();
+            }
+            if (gamepad2.right_bumper){
+                flipUp();
+            }
             telemetry.addData("slidePos", hardware.horizontalLeft.getPosition());
             telemetry.addData("slidePos2", hardware.horizontalSlide.getPosition());
+            telemetry.addData("armPos", hardware.arm.getCurrentPosition());
             telemetry.update();
             scheduler.tick();
         }
@@ -267,5 +276,35 @@ public class FixStuffTeleOp extends LinearOpMode {
             telemetry.addData("error", error);
             telemetry.update();
         }
+    }
+
+        public void Vtransfer () {
+            hardware.clawFlip.setPosition(0.32);
+            sleep(500);
+            hardware.arm.setTargetPosition(-195);
+            sleep(500);
+            hardware.claw.setPosition(0.5);
+            sleep(500);
+            hardware.wrist.setPosition(0.6);
+            sleep(500);
+            hardware.clawFlip.setPosition(0.62);
+            sleep(500);
+            hardware.claw.setPosition(0.28);
+
+
+        }
+    public void motor (){
+        if (gamepad2.a) {
+            hardware.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            hardware.arm.setPower(0.3);
+        }
+    }
+    public void flipDown(){
+        hardware.clawFlip.setPosition(Hardware.FLIP_DOWN);
+        hardware.leftFlip.setPosition(1-Hardware.FLIP_DOWN);
+    }
+    public void flipUp(){
+        hardware.clawFlip.setPosition(Hardware.FLIP_UP);
+        hardware.leftFlip.setPosition(1-Hardware.FLIP_UP);
     }
 }

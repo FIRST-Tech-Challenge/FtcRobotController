@@ -133,7 +133,7 @@ class LimelightSearch @JvmOverloads constructor(
     }
 
     private val limelight = hardware.limelight
-    private val limelightLight = hardware.limelightLight
+    //private val lightRight = hardware.lightRight
     private val lightLeft = hardware.lightLeft
     private val lightRight = hardware.lightRight
 
@@ -168,7 +168,7 @@ class LimelightSearch @JvmOverloads constructor(
         limelight.start()
         lightLeft.position = 0.0
         lightRight.position = 0.0
-        limelightLight.position = 1.0 // white
+        lightRight.position = 1.0 // white
         hSlideProxy.moveOutSync()
         hClawProxy.setClaw(Hardware.FRONT_OPEN)
     }
@@ -218,7 +218,7 @@ class LimelightSearch @JvmOverloads constructor(
     override fun invokeIsCompleted() = done
 
     override fun invokeOnFinish() {
-        limelightLight.position = 0.0
+        lightRight.position = 0.0
         lightLeft.position = 0.0
         lightRight.position = 0.0
         limelight.stop()

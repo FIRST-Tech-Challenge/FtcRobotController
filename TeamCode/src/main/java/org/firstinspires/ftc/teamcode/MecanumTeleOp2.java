@@ -44,6 +44,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 
 
+@TeleOp
 public abstract class MecanumTeleOp2 extends LinearOpMode {
     /**
      * How much you need to push the joysticks to stop autonomous code.
@@ -61,13 +62,9 @@ public abstract class MecanumTeleOp2 extends LinearOpMode {
     private EncoderTracking tracker;
     private Ramps ramps;
     private LoopStopwatch loopTimer;
-    private ElapsedTime endgameTimer = new ElapsedTime();
     private Speed2Power speed2Power;
     private org.firstinspires.ftc.teamcode.hardware.VLiftProxy vLiftProxy;
     private double heading = 0.0;
-    private boolean useDetectYellow = true;
-
-    protected abstract boolean isRed();
 
     /**
      * Forces any tasks using this lock to be stopped immediately.
@@ -121,7 +118,6 @@ public abstract class MecanumTeleOp2 extends LinearOpMode {
 
     /////////////////////////////////////////////
 
-    @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode() {
         // this scheduler will only be used in init
@@ -162,7 +158,6 @@ public abstract class MecanumTeleOp2 extends LinearOpMode {
 
         waitForStart();
         if (isStopRequested()) return;
-        endgameTimer.reset();
 
         boolean isFlipIn = false;
         boolean isFlipOut = false;
@@ -175,15 +170,9 @@ public abstract class MecanumTeleOp2 extends LinearOpMode {
         boolean isClearArmPos = false;
         boolean isResetVL = false;
         boolean isAutodetect = false;
-        boolean isToggleYellow = false;
 
         double yaw_offset = 0.0;
         while (opModeIsActive()) {
-            // this is at the top of the list so it's below all of the spam
-            telemetry.addData("Yellow enabled?", useDetectYellow);
-            boolean isEndgame = endgameTimer.time() >= (60 + 30); // 1 m 30 s
-            telemetry.addData("Endgame?", isEndgame ? "YES!!!" : String.format("Not yet... %.2fs to go", 90 - endgameTimer.time()));
-            telemetry.addLine();
 
             Orientation angles = navxMicro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
             if (gamepad1.back) {
@@ -261,7 +250,7 @@ public abstract class MecanumTeleOp2 extends LinearOpMode {
             if (shouldTx && !isTx) {
                 transfer();
             }
-            boolean shouldTxDump = gamepad2.y;
+            boolean shouldTxDump = gamepad1.x;
             if (shouldTxDump && !isTxDump) {
                 transferAndDrop();
             }
@@ -280,10 +269,10 @@ public abstract class MecanumTeleOp2 extends LinearOpMode {
                 if (untwist90) hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
             }
 
-            if (gamepad1.b && isEndgame) {
+            if (gamepad1.b) {
                 hardware.ascent.setTargetPosition(Hardware.ASCENT_PREPARE_POS);
             }
-            if (gamepad1.right_bumper && isEndgame) {
+            if (gamepad1.right_bumper) {
                 hardware.ascent.setTargetPosition(Hardware.ASCENT_FINISH_POS);
             }
 
@@ -297,14 +286,9 @@ public abstract class MecanumTeleOp2 extends LinearOpMode {
                 resetAll();
             }
 
-            boolean shouldAutodetect = gamepad1.x; // previously TransferDrop
+            boolean shouldAutodetect = gamepad2.y;
             if (shouldAutodetect && !isAutodetect) {
                 autodetect();
-            }
-
-            boolean shouldToggleYellow = gamepad2.dpad_right;
-            if (shouldToggleYellow && !isToggleYellow) {
-                useDetectYellow = !useDetectYellow;
             }
 
             isSpecimenPick = shouldSpecimenPick;
@@ -317,7 +301,6 @@ public abstract class MecanumTeleOp2 extends LinearOpMode {
             isTxDump = shouldTxDump;
             isResetVL = shouldResetVL;
             isAutodetect = shouldAutodetect;
-            isToggleYellow = shouldToggleYellow;
 
             int verticalPosition = hardware.verticalLift.getCurrentPosition();
 
@@ -692,8 +675,10 @@ public abstract class MecanumTeleOp2 extends LinearOpMode {
             activeSearchTask.proceed();
             return;
         }
-        int myColor = isRed() ? LimelightDetectionMode.RED : LimelightDetectionMode.BLUE;
-        if (useDetectYellow) myColor |= LimelightDetectionMode.YELLOW;
-        activeSearchTask = scheduler.add(new LimelightSearch(scheduler, hardware, hSlideProxy, hClawProxy, myColor, telemetry));
+        int enabled = LimelightDetectionMode.RED | LimelightDetectionMode.YELLOW;
+        activeSearchTask = scheduler.add(new LimelightSearch(scheduler, hardware, hSlideProxy, hClawProxy, enabled, telemetry));
     }
+
+    // go to MecanumTeleOp2 for functionality
+    protected abstract boolean isRed();
 }
