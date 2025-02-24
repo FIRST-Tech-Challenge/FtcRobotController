@@ -86,7 +86,7 @@ public class Outtake implements Component{
         WallToFront_move(450),
         WallToFront3 (300),
 
-        WallToTransfer1(500), WallToTransfer(300),
+        WallToTransfer1(500), WallToTransfer(300), WallToTransfer2(0),
 
 
         SpecimenToWall_MoveBack(1300),
@@ -234,13 +234,20 @@ public class Outtake implements Component{
     public void moveToTransfer(){
 
         if (status==Status.Wall || status == Status.InitWall){
-            position.setPosition(ITDCons.positionTransfer);
-            target = ITDCons.TransferTarget;
+
+            setAngleServoToMiddle();
             closeClaw();
-            setAngleServoScore();
-            wrist.setPosition(ITDCons.wristFront);
-            status = Status.WallToTransfer1;
+            target = ITDCons.TransferTarget;
             elapsedTime = new ElapsedTime();
+            status = Status.WallToTransfer1;
+
+//            position.setPosition(ITDCons.positionTransfer);
+//
+//
+//            setAngleServoScore();
+//            wrist.setPosition(ITDCons.wristFront);
+
+
 
 
         } else if (status==Status.ScoringSampleDone) {
@@ -459,11 +466,21 @@ public class Outtake implements Component{
 
             case WallToTransfer1:
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+
+                    position.setPosition(ITDCons.positionTransfer);
+                    wrist.setPosition(ITDCons.wristFront);
+
                     setAngleServoToTransfer();
-                    openClaw();
-                    status = Status.TransferReady;
+                    status = Status.WallToTransfer2;
                     elapsedTime= new ElapsedTime();
                 }
+
+            case WallToTransfer2:
+                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()) {
+                    openClaw();
+                    status = Status.TransferReady;
+                }
+
 
                 break;
 
@@ -597,7 +614,7 @@ public class Outtake implements Component{
     }
 
     public boolean isReadyForTransfer(){
-        return status==Status.TransferWait;
+        return status==Status.TransferReady;
     }
 
     public Status getStatus(){

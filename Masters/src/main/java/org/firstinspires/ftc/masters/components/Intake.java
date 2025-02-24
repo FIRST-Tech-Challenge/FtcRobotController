@@ -109,7 +109,9 @@ public class Intake {
     public void toNeutral(){
         intakeToNeutral();
         stopIntake();
-        if (status == Status.PICKUP_ALLIANCE || status == Status.PICKUP_YELLOW){
+        if (status== Status.PICKUP_YELLOW){
+            target =0;
+        } else if (status == Status.PICKUP_ALLIANCE ){
             if (target == ITDCons.MaxExtension){
                 target = ITDCons.halfExtension;
             } else if (target == ITDCons.halfExtension){
@@ -241,16 +243,11 @@ public class Intake {
                         if (color!= ITDCons.Color.unknown && color!= ITDCons.Color.yellow && color!=allianceColor){
                             ejectIntake();
                         } else if (color== ITDCons.Color.yellow){
-                            //moveIntakeToTransfer();
-                            ejectIntake();
+                            toTransfer();
+
+                            status = Status.NEUTRAL;
                         } else if (color == allianceColor){
-                            intakeToNeutral();
-                            status= Status.NEUTRAL;
-                            if (target<ITDCons.MaxExtension){
-                                target = 0;
-                            } else {
-                                target = ITDCons.MaxExtension/2;
-                            }
+                           toTransfer();
                         }
 
                     } else{
@@ -265,17 +262,8 @@ public class Intake {
                         intakeMotor.setPower(0);
                         if (color!= ITDCons.Color.unknown && (color== ITDCons.Color.yellow || color!=allianceColor)){
                             ejectIntake();
-                        } else if (color== ITDCons.Color.yellow){
-                            //moveIntakeToTransfer();
-                            ejectIntake();
-                        } else if (color == allianceColor){
-                            intakeToNeutral();
-                            status= Status.NEUTRAL;
-                            if (target<ITDCons.MaxExtension){
-                                target = 0;
-                            } else {
-                                target = ITDCons.MaxExtension/2;
-                            }
+                        }  else if (color == allianceColor){
+                            toNeutral();
                         }
 
                     } else{
