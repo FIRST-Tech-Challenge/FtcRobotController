@@ -263,9 +263,9 @@ public class Intake {
                     break;
                 case MOVE_TO_TRANSFER:
                     if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
-                        intakeMotor.setPower(EJECT_POWER);
-                        status = Status.EJECT;
-                        elapsedTime = new ElapsedTime();
+//                        intakeMotor.setPower(EJECT_POWER);
+                       // status = Status.EJECT;
+                      //  elapsedTime = new ElapsedTime();
                     }
                     break;
             }

@@ -20,8 +20,8 @@ public class ITDCons {
     public static double intakeArmNeutral= 0.78;
     public static double intakeChainNeutral=0.58;
 
-    public static double intakeArmTransfer=0.15;
-    public static double intakeChainTransfer = 0.7;
+    public static double intakeArmTransfer=0.24;
+    public static double intakeChainTransfer = 0.6;
     public static double intakeTransferSpeed = 0.65;
     public static double intakeEjectSpeed =0.8;
 
@@ -37,11 +37,12 @@ public class ITDCons {
 
     public static double positionBack = 0.09;
     public static double positionInitSpec=0.4;
-    public static double positionTransfer = 0.25;
+    public static double positionTransfer = 0.33;
     public static double positionFront =1;
 
     public static double angleBack = 0.05;
-    public static double angleTransfer = 0.95;
+    public static double angleTransfer = 0.7;
+
     public static double angleMiddle = 0.35;
     public static double angleScoreSpec = 0.45;
     public static double angleScoreSample = 0.2;
@@ -58,6 +59,8 @@ public class ITDCons {
 
     public static int intermediateTarget = 20000;
     public static int WallTarget = 4800;
+
+    public static int TransferTarget = 7000;
 
     public static int MaxExtension = 31000;
     public static int halfExtension= 15000;
