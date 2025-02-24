@@ -60,7 +60,7 @@ public class ITDCons {
     public static int intermediateTarget = 20000;
     public static int WallTarget = 4800;
 
-    public static int TransferTarget = 7000;
+    public static int TransferTarget = 7500;
 
     public static int MaxExtension = 31000;
     public static int halfExtension= 15000;

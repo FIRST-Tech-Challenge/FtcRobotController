@@ -78,7 +78,7 @@ public class TeleopManualV2Blue extends LinearOpMode {
         waitForStart();
 
         intake.initStatusTeleop();
-        outtake.initTeleopWall();
+      //  outtake.initTeleopWall();
 
 
         while (opModeIsActive()) {
@@ -118,16 +118,17 @@ public class TeleopManualV2Blue extends LinearOpMode {
                 outtake.openClaw();
             }
             if (gamepad1.b) {
-               if (!bPressed) {
-                    bPressed = true;
-                   if (outtake.isReadyToPickUp()) {
-                       outtake.closeClaw();
-                   } else if (intake.getColor() == ITDCons.Color.yellow) {
-                       outtake.scoreSampleLow();
-                   } else {
-                       outtake.moveToPickUpFromWall();
-                   }
-               }
+//               if (!bPressed) {
+//                    bPressed = true;
+//                   if (outtake.isReadyToPickUp()) {
+//                       outtake.closeClaw();
+//                   } else if (intake.getColor() == ITDCons.Color.yellow) {
+//                       outtake.scoreSampleLow();
+//                   } else {
+//                       outtake.moveToPickUpFromWall();
+//                   }
+//               }
+                outtake.closeClaw();
             } else {
                 bPressed = false;
             }
@@ -140,7 +141,7 @@ public class TeleopManualV2Blue extends LinearOpMode {
 
             if (gamepad1.right_bumper) {
 
-                outtake.moveToTransfer();
+                outtake.moveToTransferTest();
             } else if (gamepad1.left_bumper){
                 intake.toNeutral();
             }

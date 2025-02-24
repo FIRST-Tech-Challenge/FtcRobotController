@@ -233,25 +233,38 @@ public class Outtake implements Component{
 
     public void moveToTransfer(){
 
-//        if (status==Status.Wall || status == Status.InitWall){
-//            position.setPosition(ITDCons.positionTransfer);
-//            target = ITDCons.TransferWaitTarget;
-//            closeClaw();
-//            setAngleServoScore();
-//            wrist.setPosition(ITDCons.wristFront);
-//            status = Status.WallToTransfer1;
-//            elapsedTime = new ElapsedTime();
-//
-//
-//        } else if (status==Status.ScoringSampleDone) {
-//            closeClaw();
-//            target = ITDCons.intermediateTarget;
-//            position.setPosition(ITDCons.positionTransfer);
-//            setAngleServoScore();
-//            status = Status.BucketToTransfer_Down;
-//        }
+        if (status==Status.Wall || status == Status.InitWall){
+            position.setPosition(ITDCons.positionTransfer);
+            target = ITDCons.TransferTarget;
+            closeClaw();
+            setAngleServoScore();
+            wrist.setPosition(ITDCons.wristFront);
+            status = Status.WallToTransfer1;
+            elapsedTime = new ElapsedTime();
+
+
+        } else if (status==Status.ScoringSampleDone) {
+            closeClaw();
+            target = ITDCons.intermediateTarget;
+            position.setPosition(ITDCons.positionTransfer);
+            setAngleServoScore();
+            status = Status.BucketToTransfer_Down;
+        }
 
     }
+
+    public void moveToTransferTest(){
+
+
+            position.setPosition(ITDCons.positionTransfer);
+            wrist.setPosition(ITDCons.wristFront);
+            angleLeft.setPosition(ITDCons.angleTransfer);
+            angleRight.setPosition(ITDCons.angleTransfer);
+            claw.setPosition(ITDCons.clawOpen);
+            target=ITDCons.TransferTarget;
+
+    }
+
 
     public void moveToBucket(){
         closeClaw();

@@ -172,6 +172,7 @@ public class Intake {
     protected void transferIntake(){
         intakeLeft.setPosition(ITDCons.intakeArmTransfer);
         intakeRight.setPosition(ITDCons.intakeChainTransfer);
+        target=0;
     }
 
     protected void intakeToNeutral(){
@@ -180,9 +181,9 @@ public class Intake {
     }
 
     protected void moveIntakeToTransfer(){
-//        transferIntake();
-//        status = Status.MOVE_TO_TRANSFER;
-//        elapsedTime = new ElapsedTime();
+        transferIntake();
+        status = Status.MOVE_TO_TRANSFER;
+        elapsedTime = new ElapsedTime();
     }
 
     public void pushOut(){ pusher.setPosition(ITDCons.pushOut); }
