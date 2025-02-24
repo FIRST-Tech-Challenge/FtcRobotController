@@ -1,92 +1,96 @@
 package org.firstinspires.ftc.teamcode.subsystems.driveTrain.commands.mecanumDrive;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PController;
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.controller.PIDFController;
+import com.arcrobotics.ftclib.geometry.Vector2d;
 
 import org.firstinspires.ftc.teamcode.subsystems.driveTrain.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.util.drivetrain.MecanumChassisUtils;
 
+@Config
 public class StrafeInAngleMecanumCommand extends CommandBase {
-    private final double angle;
+    public static double Kp = 1;
+    public static double Kd = 0.3;
+    public static double Kf = 0.65;
+    public static double Ki = 0;
+
+    public static double rotationKp = 0.02;
+
+    private double angle;
     private final double meters;
+    private double invert;
 
     private double STARTING_FORWARD_DIST = 0;
     private double STARTING_SIDE_DIST = 0;
-    private PController pController;
+    private PIDFController pidfController;
+
+    private PIDController rotationController;
 
     private final MecanumDriveSubsystem subsystem;
+
+    private static double angleFix = 0;
+
+    public static void updateAngle(double angle) {
+        angleFix = angle;
+    }
 
     public StrafeInAngleMecanumCommand(MecanumDriveSubsystem subsystem, double angle, double meters) {
         this.subsystem = subsystem;
         addRequirements(subsystem);
 
-        this.angle = angle + 90;
+        this.angle = angle;
         this.meters = meters;
     }
 
     @Override
     public void initialize() {
         super.initialize();
+        this.invert = Math.signum(meters);
+        this.angle -= 90 - angleFix;
+
         this.STARTING_FORWARD_DIST = this.subsystem.getForwardDistanceDriven();
         this.STARTING_SIDE_DIST = this.subsystem.getSideDistanceDriven();
 
-        this.pController = new PController(0.8);
-        this.pController.setTolerance(0.02);
-        this.pController.setSetPoint(this.meters);
+        this.pidfController = new PIDFController(Kp, Ki, Kd, Kf);
+        this.pidfController.setTolerance(0.0185);
+        this.pidfController.setSetPoint(this.meters);
+
+        this.rotationController = new PIDController(rotationKp, 0, 0);
+        this.rotationController.setSetPoint(this.subsystem.getHeading());
+        this.rotationController.setTolerance(0);
     }
 
     @Override
     public void execute() {
-        double hSpeed = Math.cos(Math.toRadians(angle)) * meters;
-        double vSpeed = Math.sin(Math.toRadians(angle)) * meters;
+        double hSpeed = Math.cos(Math.toRadians(angle));
+        double vSpeed = Math.sin(Math.toRadians(angle));
+        Vector2d vector2d = new Vector2d(hSpeed, vSpeed);
 
+        double rotationSpeed = this.rotationController.calculate(this.subsystem.getHeading());
 
         double forwardDistanceMoved = this.subsystem.getForwardDistanceDriven() - this.STARTING_FORWARD_DIST;
         double sideDistanceMoved = this.subsystem.getSideDistanceDriven() - this.STARTING_SIDE_DIST;
 
-        double currentDist = Math.hypot(forwardDistanceMoved, sideDistanceMoved); // => √x*x + y*y
-        double powerMultiplier = this.pController.calculate(currentDist);
+        double currentDist = invert * Math.hypot(forwardDistanceMoved, sideDistanceMoved); // => √x*x + y*y
+        double powerMultiplier = this.pidfController.calculate(currentDist);
 
-        double rawFrontRightSpeed = (vSpeed + hSpeed) * powerMultiplier;
-        double rawBackRightSpeed = (vSpeed - hSpeed) * powerMultiplier;
-        double rawFrontLeftSpeed = (vSpeed - hSpeed) * powerMultiplier;
-        double rawBackLeftSpeed = (vSpeed + hSpeed) * powerMultiplier;
+        MecanumChassisUtils.MecanumWheelSpeeds mecanumWheelSpeeds = MecanumChassisUtils.chassisSpeedToWheelSpeeds(vector2d, rotationSpeed)
+                .mul(powerMultiplier);
 
-        double normalizedFrontRightSpeed = rawFrontRightSpeed;
-        double normalizedBackRightSpeed = rawBackRightSpeed;
-        double normalizedFrontLeftSpeed = rawFrontLeftSpeed;
-        double normalizedBackLeftSpeed = rawBackLeftSpeed;
-
-        double absFrontRightSpeed = Math.abs(rawFrontRightSpeed);
-        double absBackRightSpeed = Math.abs(rawBackRightSpeed);
-        double absFrontLeftSpeed = Math.abs(rawFrontLeftSpeed);
-        double absBackLeftSpeed = Math.abs(rawBackLeftSpeed);
-
-        double maxSpeed = Math.max(absFrontRightSpeed, Math.max(absBackRightSpeed, Math.max(absFrontLeftSpeed, absBackLeftSpeed)));
-
-        if (maxSpeed > 1) {
-            normalizedFrontRightSpeed /= maxSpeed;
-            normalizedBackRightSpeed /= maxSpeed;
-            normalizedFrontLeftSpeed /= maxSpeed;
-            normalizedBackLeftSpeed /= maxSpeed;
-        }
-
-        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.FRONT_RIGHT, normalizedFrontRightSpeed);
-        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.BACK_RIGHT, normalizedBackRightSpeed);
-        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.FRONT_LEFT, normalizedFrontLeftSpeed);
-        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.BACK_LEFT, normalizedBackLeftSpeed);
+        this.subsystem.moveMotors(mecanumWheelSpeeds);
     }
 
     @Override
     public void end(boolean interrupted) {
-        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.FRONT_RIGHT, 0);
-        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.BACK_RIGHT, 0);
-        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.FRONT_LEFT, 0);
-        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.BACK_LEFT, 0);
+        this.subsystem.setAllChassisPower(0);
         super.end(interrupted);
     }
 
     @Override
     public boolean isFinished() {
-        return this.pController.atSetPoint();
+        return this.pidfController.atSetPoint();
     }
 }

@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.subsystems.driveTrain.commands.mecanumDri
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.geometry.Vector2d;
 
 import org.firstinspires.ftc.teamcode.subsystems.driveTrain.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.util.drivetrain.MecanumChassisUtils;
 
 public class MecanumArcadeDriveCommand extends CommandBase {
     private final GamepadEx gamepad;
@@ -19,46 +21,22 @@ public class MecanumArcadeDriveCommand extends CommandBase {
 
     @Override
     public void execute() {
-        double vSpeed = this.gamepad.getLeftY();
-        double hSpeed = this.gamepad.getLeftX();
-        double rotationSpeed = this.gamepad.getRightX();
+        double vSpeed = -this.gamepad.getLeftY();
+        double hSpeed = -this.gamepad.getLeftX();
+        double rotationSpeed = -this.gamepad.getRightX();
 
-        double rawFrontRightSpeed = vSpeed + rotationSpeed + hSpeed;
-        double rawBackRightSpeed = vSpeed + rotationSpeed - hSpeed;
-        double rawFrontLeftSpeed = vSpeed - rotationSpeed - hSpeed;
-        double rawBackLeftSpeed = vSpeed - rotationSpeed + hSpeed;
+        Vector2d vector = new Vector2d(hSpeed, vSpeed)
+                .rotateBy(-this.subsystem.getHeading())
+                .times(this.subsystem.getDriveSpeedModifier().getSpeedModifier());
 
-        double normalizedFrontRightSpeed = rawFrontRightSpeed;
-        double normalizedBackRightSpeed = rawBackRightSpeed;
-        double normalizedFrontLeftSpeed = rawFrontLeftSpeed;
-        double normalizedBackLeftSpeed = rawBackLeftSpeed;
+        MecanumChassisUtils.MecanumWheelSpeeds mecanumWheelSpeeds = MecanumChassisUtils.chassisSpeedToWheelSpeeds(vector, rotationSpeed);
 
-        double absFrontRightSpeed = Math.abs(rawFrontRightSpeed);
-        double absBackRightSpeed = Math.abs(rawBackRightSpeed);
-        double absFrontLeftSpeed = Math.abs(rawFrontLeftSpeed);
-        double absBackLeftSpeed = Math.abs(rawBackLeftSpeed);
-
-        double maxSpeed = Math.max(absFrontRightSpeed, Math.max(absBackRightSpeed, Math.max(absFrontLeftSpeed, absBackLeftSpeed)));
-
-        if(maxSpeed > 1) {
-            normalizedFrontRightSpeed /= maxSpeed;
-            normalizedBackRightSpeed /= maxSpeed;
-            normalizedFrontLeftSpeed /= maxSpeed;
-            normalizedBackLeftSpeed /= maxSpeed;
-        }
-
-        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.FRONT_RIGHT, normalizedFrontRightSpeed);
-        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.BACK_RIGHT, normalizedBackRightSpeed);
-        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.FRONT_LEFT, normalizedFrontLeftSpeed);
-        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.BACK_LEFT, normalizedBackLeftSpeed);
+        this.subsystem.moveMotors(mecanumWheelSpeeds);
     }
 
     @Override
     public void end(boolean interrupted) {
-        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.FRONT_RIGHT, 0);
-        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.BACK_RIGHT, 0);
-        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.FRONT_LEFT, 0);
-        this.subsystem.moveMotor(MecanumDriveSubsystem.MotorNames.BACK_LEFT, 0);
+        this.subsystem.setAllChassisPower(0);
         super.end(interrupted);
     }
 }
