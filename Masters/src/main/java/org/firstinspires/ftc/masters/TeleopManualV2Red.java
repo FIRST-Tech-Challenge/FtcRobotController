@@ -133,7 +133,7 @@ public class TeleopManualV2Red extends LinearOpMode {
             }
 
             if (gamepad1.x){
-                intake.pickupSample();
+
             } else if (gamepad1.y){
                 outtake.score();
             }

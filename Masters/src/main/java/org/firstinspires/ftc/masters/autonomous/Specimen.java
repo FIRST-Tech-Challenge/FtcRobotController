@@ -8,6 +8,7 @@ import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Constants;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -19,6 +20,8 @@ import org.firstinspires.ftc.masters.components.Intake;
 import org.firstinspires.ftc.masters.components.Outtake;
 import org.firstinspires.ftc.masters.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.masters.pedroPathing.constants.LConstants;
+
+import java.util.List;
 
 //position are setup with pedro coordinate from blue side
 //auto can be used for blue and red
@@ -54,6 +57,12 @@ public class Specimen extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
+
         ElapsedTime elapsedTime = null;
 
         Init init = new Init(hardwareMap);
@@ -81,6 +90,9 @@ public class Specimen extends LinearOpMode {
 
         while (opModeIsActive() && !isStopRequested()) {
 
+            for (LynxModule hub : allHubs) {
+                hub.clearBulkCache();
+            }
 
             switch (state){
                 case Lift:

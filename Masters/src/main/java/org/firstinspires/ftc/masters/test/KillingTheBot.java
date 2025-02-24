@@ -15,7 +15,7 @@ import org.firstinspires.ftc.masters.components.Intake;
 import org.firstinspires.ftc.masters.components.Outtake;
 
 @Config // Enables FTC Dashboard
-@TeleOp(name = "Bot Killer 3000")
+@TeleOp(name = "Bot Killer 3000", group ="Test")
 public class KillingTheBot extends LinearOpMode {
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();

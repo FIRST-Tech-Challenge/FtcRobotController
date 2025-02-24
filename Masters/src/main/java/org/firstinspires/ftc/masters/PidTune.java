@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp
+@TeleOp ()
 @Config
 public class PidTune extends OpMode {
 
@@ -30,8 +30,8 @@ public class PidTune extends OpMode {
         controller = new PIDController(p, i, d);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        rightFrontMotor = hardwareMap.get(DcMotorEx.class, "frontRight");
-        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rightFrontMotor = hardwareMap.get(DcMotorEx.class, "frontRight");
+//        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         outtakeSlideRight = hardwareMap.dcMotor.get("vertSlideRight");
         outtakeSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

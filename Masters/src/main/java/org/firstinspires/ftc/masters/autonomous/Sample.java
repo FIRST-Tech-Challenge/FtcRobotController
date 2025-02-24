@@ -4,6 +4,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.Path;
 import com.pedropathing.util.Constants;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -13,6 +14,8 @@ import org.firstinspires.ftc.masters.components.Intake;
 import org.firstinspires.ftc.masters.components.Outtake;
 import org.firstinspires.ftc.masters.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.masters.pedroPathing.constants.LConstants;
+
+import java.util.List;
 
 @Autonomous(name="Sample")
 public class Sample extends LinearOpMode {
@@ -34,6 +37,12 @@ public class Sample extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
 
         ElapsedTime elapsedTime = null;
 
@@ -60,6 +69,11 @@ public class Sample extends LinearOpMode {
 
 
         while (opModeIsActive() && !isStopRequested()) {
+
+            for (LynxModule hub : allHubs) {
+                hub.clearBulkCache();
+            }
+
             switch (pathState){
                 case ToBucket:
                     if (!follower.isBusy() && outtake.isLiftReady() && !outtake.isScoringDone()){

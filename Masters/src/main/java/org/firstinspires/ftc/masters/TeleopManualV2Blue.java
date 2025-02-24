@@ -3,6 +3,7 @@ package org.firstinspires.ftc.masters;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,6 +12,8 @@ import org.firstinspires.ftc.masters.components.ITDCons;
 import org.firstinspires.ftc.masters.components.Init;
 import org.firstinspires.ftc.masters.components.Intake;
 import org.firstinspires.ftc.masters.components.Outtake;
+
+import java.util.List;
 
 @Config // Enables FTC Dashboard
 @TeleOp(name = "V2 Manual Teleop BLue")
@@ -48,6 +51,12 @@ public class TeleopManualV2Blue extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
 
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
+
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -78,10 +87,14 @@ public class TeleopManualV2Blue extends LinearOpMode {
         waitForStart();
 
         intake.initStatusTeleop();
-      //  outtake.initTeleopWall();
+        outtake.initTeleopWall();
 
 
         while (opModeIsActive()) {
+
+            for (LynxModule hub : allHubs) {
+                hub.clearBulkCache();
+            }
 
             driveTrain.driveNoMultiplier(gamepad1, DriveTrain.RestrictTo.XYT);
 
@@ -133,17 +146,22 @@ public class TeleopManualV2Blue extends LinearOpMode {
                 bPressed = false;
             }
 
+            //change to right/left bumper pick up yellow or alliance color
+
+            //outtake.moveToTransfer();
+            //intake.toNeutral();
+
             if (gamepad1.x){
-                intake.pickupSample();
+
             } else if (gamepad1.y){
                 outtake.score();
             }
 
             if (gamepad1.right_bumper) {
+                intake.pickupSampleYellow();
 
-                outtake.moveToTransferTest();
             } else if (gamepad1.left_bumper){
-                intake.toNeutral();
+                intake.pickupSampleAlliance();
             }
 
             if (gamepad1.dpad_left && !leftDown) {

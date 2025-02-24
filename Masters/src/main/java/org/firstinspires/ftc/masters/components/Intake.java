@@ -40,14 +40,11 @@ public class Intake {
     ITDCons.Color color;
 
 
-
-    public static double RETRACT_POWER = -0.6;
-    public static double EXTEND_POWER = 0.6;
     public static double INTAKE_POWER = -1;
     public static double EJECT_POWER = 1;
 
     public enum Status{
-        TRANSFER(0), DROP(0), INIT(0), EJECT(1500),MOVE_TO_TRANSFER(500), EXTEND_TO_HUMAN(0), EJECT_TO_HUMAN(800), NEUTRAL(0);
+        TRANSFER(0), PICKUP_YELLOW(0), PICKUP_ALLIANCE(0), INIT(0), EJECT(1500),MOVE_TO_TRANSFER(500), EXTEND_TO_HUMAN(0), EJECT_TO_HUMAN(800), NEUTRAL(0);
         private final long time;
         Status(long time){
             this.time= time;
@@ -58,7 +55,6 @@ public class Intake {
     }
 
     ElapsedTime elapsedTime = null;
-    int tempTarget =-1;
 
     public  Status status;
 
@@ -94,17 +90,26 @@ public class Intake {
         intakeToNeutral();
     }
 
-    public void pickupSample(){
+    protected void pickupSample(){
         color= ITDCons.Color.unknown;
         dropIntake();
         startIntake();
-        status=Status.DROP;
+
+    }
+    public  void pickupSampleYellow(){
+        pickupSample();
+        status = Status.PICKUP_YELLOW;
+    }
+
+    public void pickupSampleAlliance(){
+        pickupSample();
+        status = Status.PICKUP_ALLIANCE;
     }
 
     public void toNeutral(){
         intakeToNeutral();
         stopIntake();
-        if (status == Status.DROP){
+        if (status == Status.PICKUP_ALLIANCE || status == Status.PICKUP_YELLOW){
             if (target == ITDCons.MaxExtension){
                 target = ITDCons.halfExtension;
             } else if (target == ITDCons.halfExtension){
@@ -124,6 +129,9 @@ public class Intake {
         intakeMotor.setPower(INTAKE_POWER);
     }
 
+    public void stopIntake(){
+        intakeMotor.setPower(0);
+    }
 
     public void ejectIntake(){
         intakeMotor.setPower(EJECT_POWER);
@@ -132,9 +140,6 @@ public class Intake {
         status=Status.EJECT;
     }
 
-    public void stopIntake(){
-        intakeMotor.setPower(0);
-    }
 
     public void retractSlide() {
         target =0;
@@ -155,11 +160,6 @@ public class Intake {
     public void extendSlideMax(){
         target= ITDCons.MaxExtension;
         intakeToNeutral();
-    }
-
-    public void intakeintake(){
-        intakeLeft.setPosition(ITDCons.intakeintakearm);
-        intakeRight.setPosition(ITDCons.intakeintakechain);
     }
 
 
@@ -232,13 +232,38 @@ public class Intake {
                     }
                     break;
 
-                case DROP: //get samples from submersible
+                case PICKUP_YELLOW: //get samples from submersible
 
                     if (!breakBeam.getState()){
                         //read color
                         checkColor();
                         intakeMotor.setPower(0);
                         if (color!= ITDCons.Color.unknown && color!= ITDCons.Color.yellow && color!=allianceColor){
+                            ejectIntake();
+                        } else if (color== ITDCons.Color.yellow){
+                            //moveIntakeToTransfer();
+                            ejectIntake();
+                        } else if (color == allianceColor){
+                            intakeToNeutral();
+                            status= Status.NEUTRAL;
+                            if (target<ITDCons.MaxExtension){
+                                target = 0;
+                            } else {
+                                target = ITDCons.MaxExtension/2;
+                            }
+                        }
+
+                    } else{
+                        led.setPosition(ITDCons.off);
+                        color = ITDCons.Color.unknown;
+                    }
+                    break;
+                case PICKUP_ALLIANCE:
+                    if (!breakBeam.getState()){
+                        //read color
+                        checkColor();
+                        intakeMotor.setPower(0);
+                        if (color!= ITDCons.Color.unknown && (color== ITDCons.Color.yellow || color!=allianceColor)){
                             ejectIntake();
                         } else if (color== ITDCons.Color.yellow){
                             //moveIntakeToTransfer();
@@ -311,6 +336,11 @@ public class Intake {
 
     public boolean readyToTransfer(){
         return (color == ITDCons.Color.yellow && extendo.getCurrentPosition()<200 && status==Status.EJECT);
+    }
+
+    public void intakeintake(){
+        intakeLeft.setPosition(ITDCons.intakeintakearm);
+        intakeRight.setPosition(ITDCons.intakeintakechain);
     }
 
 

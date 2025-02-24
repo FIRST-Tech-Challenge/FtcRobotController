@@ -10,7 +10,7 @@ import org.firstinspires.ftc.masters.components.Init;
 import org.firstinspires.ftc.masters.components.Intake;
 
 @Config // Enables FTC Dashboard
-@TeleOp(name = "LegolandIntake")
+@TeleOp(name = "LegolandIntake", group ="Test")
 public class LegolandIntake extends LinearOpMode {
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
