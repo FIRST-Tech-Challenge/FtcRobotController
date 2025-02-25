@@ -3,6 +3,7 @@ package org.firstinspires.ftc.masters;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,6 +12,8 @@ import org.firstinspires.ftc.masters.components.ITDCons;
 import org.firstinspires.ftc.masters.components.Init;
 import org.firstinspires.ftc.masters.components.Intake;
 import org.firstinspires.ftc.masters.components.Outtake;
+
+import java.util.List;
 
 @Config // Enables FTC Dashboard
 @TeleOp(name = "V2 Manual Teleop Red")
@@ -48,6 +51,12 @@ public class TeleopManualV2Red extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
 
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
+
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -57,6 +66,7 @@ public class TeleopManualV2Red extends LinearOpMode {
         Intake intake = new Intake(init, telemetry);
 
         outtake.setIntake(intake);
+        outtake.setDriveTrain(driveTrain);
         intake.setOuttake(outtake);
         intake.setAllianceColor(ITDCons.Color.red);
 
@@ -83,6 +93,10 @@ public class TeleopManualV2Red extends LinearOpMode {
 
         while (opModeIsActive()) {
 
+            for (LynxModule hub : allHubs) {
+                hub.clearBulkCache();
+            }
+
             driveTrain.driveNoMultiplier(gamepad1, DriveTrain.RestrictTo.XYT);
 
             if (gamepad1.right_stick_y > 0.5){
@@ -106,7 +120,7 @@ public class TeleopManualV2Red extends LinearOpMode {
                 intake.toTransfer();
             }
 
-           if (gamepad1.dpad_up) {
+            if (gamepad1.dpad_up) {
                 intake.extendSlideMax();
             } else if (gamepad1.dpad_down){
                 intake.extendSlideHalf();
@@ -118,31 +132,41 @@ public class TeleopManualV2Red extends LinearOpMode {
                 outtake.openClaw();
             }
             if (gamepad1.b) {
-               if (!bPressed) {
+                if (!bPressed) {
                     bPressed = true;
-                   if (outtake.isReadyToPickUp()) {
-                       outtake.closeClaw();
-                   } else if (intake.getColor() == ITDCons.Color.yellow) {
-                       outtake.scoreSampleLow();
-                   } else {
-                       outtake.moveToPickUpFromWall();
-                   }
-               }
+                    if (outtake.isReadyToPickUp() || outtake.isReadyForTransfer()) {
+                        outtake.closeClaw();
+                    } else if (intake.getColor() == ITDCons.Color.yellow) {
+                        outtake.scoreSampleLow();
+                    } else {
+                        outtake.moveToPickUpFromWall();
+                    }
+                }
             } else {
                 bPressed = false;
             }
 
+            //change to right/left bumper pick up yellow or alliance color
+
+            //outtake.moveToTransfer();
+            //intake.toNeutral();
+
             if (gamepad1.x){
+                intake.toNeutral();
 
             } else if (gamepad1.y){
                 outtake.score();
             }
 
             if (gamepad1.right_bumper) {
+                intake.pickupSampleYellow();
+                if (!outtake.isReadyForTransfer()){
+                    outtake.moveToTransfer();
+                }
 
-                outtake.moveToTransfer();
             } else if (gamepad1.left_bumper){
-                intake.toNeutral();
+                intake.pickupSampleAlliance();
+                outtake.moveToPickUpFromWall();
             }
 
             if (gamepad1.dpad_left && !leftDown) {
@@ -183,6 +207,7 @@ public class TeleopManualV2Red extends LinearOpMode {
 //            telemetry.addData("Slide Servo Pos", intake.getExtensionPosition());
 //            telemetry.addData("Diffy Servo1 Pos", servo1pos);
 //            telemetry.addData("Diffy Servo2 Pos", servo2pos);
+
             telemetry.addData("intake color", intake.getColor());
             telemetry.addData("intake status", intake.getStatus());
             telemetry.addData("Outtake status", outtake.getStatus());
