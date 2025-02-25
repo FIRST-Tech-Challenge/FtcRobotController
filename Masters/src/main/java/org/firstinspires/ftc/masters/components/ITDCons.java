@@ -20,8 +20,8 @@ public class ITDCons {
     public static double intakeArmNeutral= 0.78;
     public static double intakeChainNeutral=0.58;
 
-    public static double intakeArmTransfer=0.24;
-    public static double intakeChainTransfer = 0.6;
+    public static double intakeArmTransfer=0.20;
+    public static double intakeChainTransfer = 0.64;
     public static double intakeTransferSpeed = 0.65;
     public static double intakeEjectSpeed =0.8;
 
@@ -32,25 +32,25 @@ public class ITDCons {
     public static double clawOpen = 0.35;
     public static double clawClose = 0.75;
 
-    public static double wristFront= 0.77;
-    public static double wristBack = 0.21;
+    public static double wristFront= 0.06;
+    public static double wristBack = 0.75;
 
     public static double positionBack = 0.09;
     public static double positionInitSpec=0.4;
     public static double positionTransfer = 0.36;
     public static double positionFront =1;
 
-    public static double angleBack = 0.08;
-    public static double angleTransfer = 0.85;
+    public static double angleBack = 0.04;
+    public static double angleTransfer = 0.69;
 
-    public static double angleMiddle = 0.37;
-    public static double angleScoreSpec = 0.63;
-    public static double angleScoreSample = 0.2;
+    public static double angleMiddle = 0.35;
+    public static double angleScoreSpec = 0.45;
+    public static double angleScoreSample = 0.15;
 
     public static int wallPickupTarget = 5500;
     public static int transferPickupTarget = 0;
 
-    public static int BucketTarget = 50000;
+    public static int BucketTarget = 60000;
     public static int LowBucketTarget = 30000;
     public static int SpecimenTarget = 21500;
 
@@ -64,15 +64,10 @@ public class ITDCons {
 
     public static int MaxExtension = 31000;
     public static int halfExtension= 15000;
+
+    public static int TransferExtension = 5000;
     public static int MinExtension = 500;
 
-    //color threshold
-    public static int blueMin =0;
-    public static int blueMax =100;
-    public static int redMin = 0;
-    public static int redMax =100;
-    public static int yellowMin =0;
-    public static int yellowMax =100;
 
     //led values
     public static double yellow = 0.388;

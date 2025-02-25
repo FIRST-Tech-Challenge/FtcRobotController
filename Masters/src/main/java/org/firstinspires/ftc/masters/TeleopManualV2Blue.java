@@ -66,6 +66,7 @@ public class TeleopManualV2Blue extends LinearOpMode {
         Intake intake = new Intake(init, telemetry);
 
         outtake.setIntake(intake);
+        outtake.setDriveTrain(driveTrain);
         intake.setOuttake(outtake);
         intake.setAllianceColor(ITDCons.Color.blue);
 
@@ -165,6 +166,7 @@ public class TeleopManualV2Blue extends LinearOpMode {
 
             } else if (gamepad1.left_bumper){
                 intake.pickupSampleAlliance();
+                outtake.moveToPickUpFromWall();
             }
 
             if (gamepad1.dpad_left && !leftDown) {
@@ -205,6 +207,7 @@ public class TeleopManualV2Blue extends LinearOpMode {
 //            telemetry.addData("Slide Servo Pos", intake.getExtensionPosition());
 //            telemetry.addData("Diffy Servo1 Pos", servo1pos);
 //            telemetry.addData("Diffy Servo2 Pos", servo2pos);
+
             telemetry.addData("intake color", intake.getColor());
             telemetry.addData("intake status", intake.getStatus());
             telemetry.addData("Outtake status", outtake.getStatus());

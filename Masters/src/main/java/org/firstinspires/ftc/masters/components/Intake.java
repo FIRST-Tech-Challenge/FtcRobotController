@@ -44,7 +44,7 @@ public class Intake {
     public static double EJECT_POWER = 1;
 
     public enum Status{
-        TRANSFER(0), PICKUP_YELLOW(0), PICKUP_ALLIANCE(0), INIT(0), EJECT(1500),MOVE_TO_TRANSFER(500), EXTEND_TO_HUMAN(0), EJECT_TO_HUMAN(800), NEUTRAL(0);
+        TRANSFER(0), PICKUP_YELLOW(0), PICKUP_ALLIANCE(0), INIT(0), EJECT(1500), WAIT_TO_RETRACT(2000), EXTEND_TO_HUMAN(0), EJECT_TO_HUMAN(800), NEUTRAL(0);
         private final long time;
         Status(long time){
             this.time= time;
@@ -165,6 +165,10 @@ public class Intake {
         intakeToNeutral();
     }
 
+    public void extendForTransfer(){
+        target = ITDCons.TransferExtension;
+    }
+
 
     public void dropIntake(){
         intakeLeft.setPosition(ITDCons.intakeArmDrop);
@@ -174,7 +178,6 @@ public class Intake {
     protected void transferIntake(){
         intakeLeft.setPosition(ITDCons.intakeArmTransfer);
         intakeRight.setPosition(ITDCons.intakeChainTransfer);
-        target=0;
     }
 
     protected void intakeToNeutral(){
@@ -183,8 +186,11 @@ public class Intake {
     }
 
     protected void moveIntakeToTransfer(){
+        if (target==0){
+            target = ITDCons.TransferExtension;
+        }
         transferIntake();
-        status = Status.MOVE_TO_TRANSFER;
+        status = Status.WAIT_TO_RETRACT;
         elapsedTime = new ElapsedTime();
     }
 
@@ -237,33 +243,34 @@ public class Intake {
 
                 case PICKUP_YELLOW: //get samples from submersible
 
-                    if (!breakBeam.getState()){
+                    if (colorSensor.rawOptical()>175) {
                         //read color
                         checkColor();
                         intakeMotor.setPower(0);
-                        if (color!= ITDCons.Color.unknown && color!= ITDCons.Color.yellow && color!=allianceColor){
+                        if (color != ITDCons.Color.unknown && color != ITDCons.Color.yellow && color != allianceColor) {
                             ejectIntake();
-                        } else if (color== ITDCons.Color.yellow){
+                        } else if (color == ITDCons.Color.yellow) {
                             toTransfer();
 
                             status = Status.NEUTRAL;
-                        } else if (color == allianceColor){
-                           toTransfer();
+                        } else if (color == allianceColor) {
+                            toTransfer();
                         }
 
                     } else{
                         led.setPosition(ITDCons.off);
                         color = ITDCons.Color.unknown;
                     }
+
                     break;
                 case PICKUP_ALLIANCE:
-                    if (!breakBeam.getState()){
+                    if (colorSensor.rawOptical()>175) {
                         //read color
                         checkColor();
                         intakeMotor.setPower(0);
-                        if (color!= ITDCons.Color.unknown && (color== ITDCons.Color.yellow || color!=allianceColor)){
+                        if (color != ITDCons.Color.unknown && (color == ITDCons.Color.yellow || color != allianceColor)) {
                             ejectIntake();
-                        }  else if (color == allianceColor){
+                        } else if (color == allianceColor) {
                             toNeutral();
                         }
 
@@ -272,11 +279,11 @@ public class Intake {
                         color = ITDCons.Color.unknown;
                     }
                     break;
-                case MOVE_TO_TRANSFER:
+
+                case WAIT_TO_RETRACT:
                     if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
-//                        intakeMotor.setPower(EJECT_POWER);
-                       // status = Status.EJECT;
-                      //  elapsedTime = new ElapsedTime();
+                        target=0;
+                        status= Status.TRANSFER;
                     }
                     break;
             }
