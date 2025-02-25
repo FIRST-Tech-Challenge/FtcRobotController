@@ -105,7 +105,7 @@ public class SpecimenSweep extends LinearOpMode {
         waitForStart();
 
         outtake.scoreSpecimen();
-        intake.toNeutral();
+        intake.servoToNeutral();
 
         elapsedTime = new ElapsedTime();
 
@@ -150,7 +150,7 @@ public class SpecimenSweep extends LinearOpMode {
                 case Sample1:
                     if (!follower.isBusy()){
                         intake.extendSlideMax();
-                        intake.dropIntake();
+                        intake.servoToDrop();
                         state= PathState.Sample2;
                         elapsedTime = new ElapsedTime();
 
@@ -174,7 +174,7 @@ public class SpecimenSweep extends LinearOpMode {
                 case Sample3:
                     if (!follower.isBusy()){
                         follower.followPath(toSweep2);
-                        intake.toNeutral();
+                        intake.servoToNeutral();
                     }
                     break;
                 case PickUpSpec:

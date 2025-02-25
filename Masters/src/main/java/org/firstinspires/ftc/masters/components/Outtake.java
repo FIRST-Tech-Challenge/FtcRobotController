@@ -43,6 +43,8 @@ public class Outtake implements Component{
     protected boolean isLiftReady = false;
     protected boolean isScoringDone = false;
 
+    public boolean drivetrainOverride = false;
+
     public Intake intake;
     public DriveTrain driveTrain;
 
@@ -53,6 +55,24 @@ public class Outtake implements Component{
     enum Mode {
         Sample,
         Specimen
+    }
+
+    enum WaitTime{
+        Open_Claw (400), CLose_Claw(400)
+        , Turn_Wrist(1200), BackUp_Robot(400),
+        Servo_To_Transfer(300),
+        Move_Position(500)
+        ;
+
+        private final long time;
+
+        private WaitTime(long time){
+            this.time= time;
+        }
+
+        public long getTime() {
+            return time;
+        }
     }
 
     public enum Status {
@@ -70,17 +90,17 @@ public class Outtake implements Component{
         TransferToBucket_Lift(0),
         TransferToBucket_Move(600),
         AutoLiftToBucket(0),
-        ScoreSample(100),
-        ScoreSampleOpenClaw(200),
-        ScoringSampleDone(100),
+//        ScoreSample(100),
+//        ScoreSampleOpenClaw(200),
+        ScoringSampleDone(300),
 
         TransferToWall_Up(200),
         TransferToWall_Back(600),
         TransferToWall_Final(200),
 
-        BucketToTransfer_Down(500),
-        BucketToTransfer_Open(200),
-        BucketToTransfer_Final(200),
+//        BucketToTransfer_Down(500),
+//        BucketToTransfer_Open(200),
+        BucketToTransfer_Final(400),
 
         WallToFront_lift(400),
         WallToFront_move(450),
@@ -89,14 +109,12 @@ public class Outtake implements Component{
         WallToTransfer1(1000), WallToTransfer(300), WallToTransfer2(1000),
         CloseClawTransfer(400),
 
+        Specimen_To_Wall(350),
         SpecimenToWall_MoveBack(1300),
 
-        SpecimenToWall_OpenCLaw(350),
-        SpecimenToWall_Final(200),
+        Transfer_To_Wall(500),
+        ToBucketClose(400);
 
-        ToBucketClose(400),
-
-        Front(400);
 
         private final long time;
 
@@ -127,7 +145,6 @@ public class Outtake implements Component{
         position = init.getPosition();
         led = init.getLed();
         initializeHardware();
-        status = Status.Front;
 
     }
 
@@ -179,10 +196,12 @@ public class Outtake implements Component{
     public void openClaw() {
 
         if (status==Status.ScoreSpecimen){
-            claw.setPosition(ITDCons.clawOpen);
-            moveToPickUpFromWall();
+            status= Status.Specimen_To_Wall;
+            elapsedTime = null;
+
         } else if (status == Status.Bucket){
-            releaseSample();
+            elapsedTime= null;
+            status = Status.ScoringSampleDone;
         } else {
            claw.setPosition(ITDCons.clawOpen);
         }
@@ -190,7 +209,7 @@ public class Outtake implements Component{
 
     public void openClawAuto() {
 
-            claw.setPosition(ITDCons.clawOpen);
+        claw.setPosition(ITDCons.clawOpen);
 
     }
 
@@ -213,9 +232,7 @@ public class Outtake implements Component{
     public void moveToPickUpFromWall(){
         if (status==Status.ScoreSpecimen) {
 
-            claw.setPosition(ITDCons.clawOpen);
-
-            status= Status.SpecimenToWall_OpenCLaw;
+            status= Status.Specimen_To_Wall;
             elapsedTime = new ElapsedTime();
         }
         if (status == Status.InitWall){
@@ -224,14 +241,11 @@ public class Outtake implements Component{
 
             status= Status.Wall;
         }
-        if (status==Status.TransferWait || status==Status.TransferReady){
-            target = ITDCons.WallTarget;
-            closeClaw();
-            position.setPosition(ITDCons.positionBack);
-            setAngleServoToMiddle();
-            status= Status.SpecimenToWall_MoveBack;
-            wrist.setPosition(ITDCons.wristBack);
-            elapsedTime = new ElapsedTime();
+        if (status==Status.TransferReady){
+
+            elapsedTime = null;
+            status= Status.Transfer_To_Wall;
+
         }
     }
 
@@ -248,17 +262,16 @@ public class Outtake implements Component{
            position.setPosition(ITDCons.positionTransfer);
 
         } else if (status==Status.ScoringSampleDone) {
-            closeClaw();
-            target = ITDCons.intermediateTarget;
-            position.setPosition(ITDCons.positionTransfer);
-            setAngleServoScore();
-            status = Status.BucketToTransfer_Down;
+//            closeClaw();
+//            target = ITDCons.intermediateTarget;
+//            position.setPosition(ITDCons.positionTransfer);
+//            setAngleServoScore();
+            status = Status.BucketToTransfer_Final;
         }
 
     }
 
     public void moveToTransferTest(){
-
 
             position.setPosition(ITDCons.positionTransfer);
             wrist.setPosition(ITDCons.wristFront);
@@ -289,8 +302,10 @@ public class Outtake implements Component{
     public void scoreSpecimen(){
         if (status==Status.InitAutoSpec){
             status= Status.WallToFront_move;
+            elapsedTime = new ElapsedTime();
         } else {
             status = Status.WallToFront_lift;
+            elapsedTime = null;
         }
 
         target = ITDCons.SpecimenTarget;
@@ -352,14 +367,9 @@ public class Outtake implements Component{
     }
 
     public void releaseSample(){
-        if (isLiftReady){
-            setAngleServoScoreSample();
-            status=Status.ScoreSample;
-            elapsedTime = new ElapsedTime();
 
-        } else {
-            claw.setPosition(ITDCons.clawOpen);
-        }
+        claw.setPosition(ITDCons.clawOpen);
+
     }
 
 
@@ -371,35 +381,38 @@ public class Outtake implements Component{
 
         switch (status){
             case WallToFront_lift:
-                if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
-                    //
-                   setAngleServoToMiddle();
+                if (elapsedTime ==null) {
+                    target = ITDCons.SpecimenTarget;
+                    setAngleServoToMiddle();
                     elapsedTime = new ElapsedTime();
-                    status = Status.WallToFront_move;
                 }
-                break;
-            case WallToFront_move:
-                if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
+                if (elapsedTime.milliseconds()> status.getTime() && elapsedTime.milliseconds()< status.getTime()+WaitTime.Move_Position.getTime()){
                     position.setPosition(ITDCons.positionFront);
-
-                    elapsedTime = new ElapsedTime();
-                    status = Status.WallToFront3;
                 }
-                break;
-            case WallToFront3:
-                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+                if (elapsedTime.milliseconds()> status.getTime()+WaitTime.Move_Position.getTime()){
                     wrist.setPosition(ITDCons.wristFront);
                     setAngleServoScore();
-                    elapsedTime = new ElapsedTime();
-                    status = Status.Front;
+                    elapsedTime = null;
+                    status = Status.ScoreSpecimen;
                 }
+
                 break;
-            case Front:
-                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
-                    elapsedTime=null;
-                    status= Status.ScoreSpecimen;
-                }
-                break;
+//            case WallToFront_move:
+//                if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
+//                    position.setPosition(ITDCons.positionFront);
+//
+//                    elapsedTime = new ElapsedTime();
+//                    status = Status.WallToFront3;
+//                }
+//                break;
+//            case WallToFront3:
+//                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+//                    wrist.setPosition(ITDCons.wristFront);
+//                    setAngleServoScore();
+//                    elapsedTime = null;
+//                    status = Status.ScoreSpecimen;
+//                }
+//                break;
 
             case TransferToBucket_Back:
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
@@ -438,29 +451,56 @@ public class Outtake implements Component{
                 }
                 break;
 
-            case ScoreSample:
-                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
-                    elapsedTime=new ElapsedTime();
-                    status = Status.ScoreSampleOpenClaw;
-                    openClaw();
-                }
-                break;
-            case ScoreSampleOpenClaw:
-                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
-                    driveTrain.drive(0.5);
-                    elapsedTime = new ElapsedTime();
-                    status= Status.ScoringSampleDone;
-                }
-
-                break;
+//            case ScoreSample:
+//                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+//                    elapsedTime=new ElapsedTime();
+//                    status = Status.ScoreSampleOpenClaw;
+//                    openClaw();
+//                }
+//                break;
+//            case ScoreSampleOpenClaw:
+//                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+//                    driveTrain.drive(0.5);
+//                    elapsedTime = new ElapsedTime();
+//                    status= Status.ScoringSampleDone;
+//                }
+//
+//                break;
 
             case ScoringSampleDone:
-                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
-                    isScoringDone = true;
+                if (elapsedTime== null){
+                    claw.setPosition(ITDCons.clawOpen);
+                    elapsedTime = new ElapsedTime();
+                }
+                if ( elapsedTime.milliseconds()>WaitTime.Open_Claw.getTime() && elapsedTime.milliseconds()<WaitTime.Open_Claw.getTime()+WaitTime.BackUp_Robot.getTime() ){
+                    driveTrain.drive(0.5);
+                    drivetrainOverride = true;
+                }
+                if (elapsedTime.milliseconds()>WaitTime.Open_Claw.getTime()+WaitTime.BackUp_Robot.getTime()){
+                    drivetrainOverride= false;
                     driveTrain.drive(0);
-                    moveToTransfer();
+                    elapsedTime = null;
                 }
 
+                break;
+
+            case BucketToTransfer_Final:
+                if (elapsedTime==null){
+                    closeClaw();
+                    target = ITDCons.TransferTarget;
+                    position.setPosition(ITDCons.positionTransfer);
+                    setAngleServoToMiddle();
+                    elapsedTime = new ElapsedTime();
+                }
+                if (elapsedTime.milliseconds()>status.getTime() && elapsedTime.milliseconds()<WaitTime.Servo_To_Transfer.getTime()){
+                    wrist.setPosition(ITDCons.wristFront);
+                    setAngleServoToTransfer();
+                }
+                if (elapsedTime.milliseconds()>WaitTime.Servo_To_Transfer.getTime()){
+                    openClaw();
+                    status= Status.TransferReady;
+                    elapsedTime = null;
+                }
                 break;
 
             case WallToTransfer1:
@@ -483,37 +523,38 @@ public class Outtake implements Component{
 
                 break;
 
-            case BucketToTransfer_Down:
+//            case BucketToTransfer_Down:
+//
+//                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime() && outtakeSlideEncoder.getCurrentPosition()<ITDCons.intermediateTarget+500){
+//                    elapsedTime = new ElapsedTime();
+//                    status = Status.BucketToTransfer_Open;
+//
+//                    wrist.setPosition(ITDCons.wristFront);
+//                    target = ITDCons.TransferTarget;
+//                }
+//                break;
+//
 
-                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime() && outtakeSlideEncoder.getCurrentPosition()<ITDCons.intermediateTarget+500){
-                    elapsedTime = new ElapsedTime();
-                    status = Status.BucketToTransfer_Open;
-
-                    wrist.setPosition(ITDCons.wristFront);
-                    target = ITDCons.transferPickupTarget;
-                }
-                break;
-            case BucketToTransfer_Final:
-                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+            case Specimen_To_Wall:
+                if (elapsedTime ==null){
                     elapsedTime = new ElapsedTime();
                     openClaw();
-                    status= Status.TransferReady;
-                    setAngleServoToTransfer();
                 }
-                break;
-
-            case SpecimenToWall_OpenCLaw:
-                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+                if (elapsedTime.milliseconds()>WaitTime.Open_Claw.getTime() && elapsedTime.milliseconds()<WaitTime.Turn_Wrist.getTime()){
                     target = ITDCons.intermediateTarget;
                     wrist.setPosition(ITDCons.wristBack);
-
                     closeClaw();
                     setAngleServoToMiddle();
-                    status= Status.SpecimenToWall_MoveBack;
-                    elapsedTime= new ElapsedTime();
                 }
-                break;
+                if (elapsedTime.milliseconds()>WaitTime.Turn_Wrist.getTime()){
+                    elapsedTime =new ElapsedTime();
+                    status = Status.SpecimenToWall_MoveBack;
+                }
+
+               break;
+
             case SpecimenToWall_MoveBack:
+
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime() ) {
                     target = ITDCons.wallPickupTarget;
 
@@ -522,6 +563,21 @@ public class Outtake implements Component{
                     status= Status.Wall;
                 } else if (elapsedTime!=null && elapsedTime.milliseconds()>700){
                     position.setPosition(ITDCons.positionBack);
+                }
+                break;
+
+            case Transfer_To_Wall:
+                if (elapsedTime == null){
+                    target = ITDCons.WallTarget;
+                    closeClaw();
+                    elapsedTime = new ElapsedTime();
+
+                }
+                if (elapsedTime.milliseconds()>WaitTime.CLose_Claw.getTime()){
+                    setAngleServoToMiddle();
+                    wrist.setPosition(ITDCons.wristBack);
+                    status = Status.SpecimenToWall_MoveBack;
+                    elapsedTime = new ElapsedTime();
                 }
                 break;
 
@@ -548,6 +604,8 @@ public class Outtake implements Component{
                     elapsedTime= new ElapsedTime();
                 }
                 break;
+
+
 
 
         }

@@ -26,7 +26,7 @@ public class RobotLocation extends LinearOpMode {
         while (opModeIsActive()){
             if (gamepad1.a){
                 intake.extendSlideMax();
-                intake.dropIntake();
+                intake.servoToDrop();
 
             }
             if (gamepad1.b){

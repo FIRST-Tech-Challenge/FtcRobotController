@@ -48,14 +48,14 @@ public class ITDCons {
     public static double angleScoreSample = 0.15;
 
     public static int wallPickupTarget = 5500;
-    public static int transferPickupTarget = 0;
+//    public static int transferPickupTarget = 0;
 
     public static int BucketTarget = 60000;
     public static int LowBucketTarget = 30000;
     public static int SpecimenTarget = 21500;
 
-    public static int TransferPickupTarget = 4800;
-    public static int TransferWaitTarget = 5000;
+//    public static int TransferPickupTarget = 4800;
+//    public static int TransferWaitTarget = 5000;
 
     public static int intermediateTarget = 20000;
     public static int WallTarget = 4800;

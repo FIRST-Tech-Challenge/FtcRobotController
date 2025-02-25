@@ -44,7 +44,16 @@ public class Intake {
     public static double EJECT_POWER = 1;
 
     public enum Status{
-        TRANSFER(0), PICKUP_YELLOW(0), PICKUP_ALLIANCE(0), INIT(0), EJECT(1500), WAIT_TO_RETRACT(2000), EXTEND_TO_HUMAN(0), EJECT_TO_HUMAN(800), NEUTRAL(0);
+        TRANSFER(0),
+        PICKUP_YELLOW(0),
+        PICKUP_ALLIANCE(0),
+        INIT(0),
+        EJECT(1500),
+        TO_TRANSFER(1000),
+        TO_NEUTRAL(0),
+        EXTEND_TO_HUMAN(0),
+        EJECT_TO_HUMAN(800),
+        NEUTRAL(0);
         private final long time;
         Status(long time){
             this.time= time;
@@ -87,18 +96,20 @@ public class Intake {
     public void initStatusTeleop(){
         status = Status.NEUTRAL;
         color= ITDCons.Color.unknown;
-        intakeToNeutral();
+        servoToNeutral();
     }
 
     protected void pickupSample(){
-        color= ITDCons.Color.unknown;
-        dropIntake();
+        status= Status.PICKUP_YELLOW;
+
+        servoToDrop();
         startIntake();
 
     }
     public  void pickupSampleYellow(){
-        pickupSample();
+        elapsedTime = null;
         status = Status.PICKUP_YELLOW;
+        color= ITDCons.Color.unknown;
     }
 
     public void pickupSampleAlliance(){
@@ -106,25 +117,21 @@ public class Intake {
         status = Status.PICKUP_ALLIANCE;
     }
 
-    public void toNeutral(){
-        intakeToNeutral();
-        stopIntake();
-        if (status== Status.PICKUP_YELLOW){
-            target =0;
-        } else if (status == Status.PICKUP_ALLIANCE ){
-            if (target == ITDCons.MaxExtension){
-                target = ITDCons.halfExtension;
-            } else if (target == ITDCons.halfExtension){
-                target =0;
-            }
+    public void stopPickup(){
+        if (status == Status.PICKUP_YELLOW){
+            status= Status.TO_TRANSFER;
+            elapsedTime =null;
         }
-        status = Status.NEUTRAL;
+        if (status== Status.PICKUP_ALLIANCE){
+            elapsedTime =null;
+            status = Status.TO_NEUTRAL;
+        }
     }
 
     public void toTransfer(){
-        stopIntake();
-        moveIntakeToTransfer();
-        color = ITDCons.Color.yellow;
+
+        status = Status.TO_TRANSFER;
+        elapsedTime = null;
     }
 
 
@@ -137,10 +144,9 @@ public class Intake {
     }
 
     public void ejectIntake(){
-        intakeMotor.setPower(EJECT_POWER);
-        color = ITDCons.Color.unknown;
-        elapsedTime= new ElapsedTime();
+
         status=Status.EJECT;
+        elapsedTime = null;
     }
 
 
@@ -149,20 +155,18 @@ public class Intake {
     }
 
     public void extendSlideHumanPlayer(){
-        target = ITDCons.MaxExtension;
-        dropIntake();
         status= Status.EXTEND_TO_HUMAN;
 
     }
 
     public void extendSlideHalf() {
         target = ITDCons.halfExtension;
-        intakeToNeutral();
+        servoToNeutral();
     }
 
     public void extendSlideMax(){
         target= ITDCons.MaxExtension;
-        intakeToNeutral();
+        servoToNeutral();
     }
 
     public void extendForTransfer(){
@@ -170,29 +174,6 @@ public class Intake {
     }
 
 
-    public void dropIntake(){
-        intakeLeft.setPosition(ITDCons.intakeArmDrop);
-        intakeRight.setPosition(ITDCons.intakeChainDrop);
-    }
-
-    protected void transferIntake(){
-        intakeLeft.setPosition(ITDCons.intakeArmTransfer);
-        intakeRight.setPosition(ITDCons.intakeChainTransfer);
-    }
-
-    protected void intakeToNeutral(){
-        intakeLeft.setPosition(ITDCons.intakeArmNeutral);
-        intakeRight.setPosition(ITDCons.intakeChainNeutral);
-    }
-
-    protected void moveIntakeToTransfer(){
-        if (target==0){
-            target = ITDCons.TransferExtension;
-        }
-        transferIntake();
-        status = Status.WAIT_TO_RETRACT;
-        elapsedTime = new ElapsedTime();
-    }
 
     public void pushOut(){ pusher.setPosition(ITDCons.pushOut); }
 
@@ -211,7 +192,10 @@ public class Intake {
 
             switch (status){
                 case EXTEND_TO_HUMAN:
-                    if (pos>ITDCons.MaxExtension-100) {
+                    if (pos <ITDCons.MaxExtension-100) {
+                        target = ITDCons.MaxExtension;
+                        servoToDrop();
+                    } else  {
                         intakeMotor.setPower(ITDCons.intakeEjectSpeed);
                         status= Status.EJECT_TO_HUMAN;
                         elapsedTime = new ElapsedTime();
@@ -221,27 +205,38 @@ public class Intake {
                 case EJECT_TO_HUMAN:
                     if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
                         intakeMotor.setPower(0);
-                        intakeToNeutral();
-                        extendSlideHalf();
+                        servoToNeutral();
+                        target = ITDCons.halfExtension;;
                         elapsedTime=null;
                         color= ITDCons.Color.unknown;
+                        status = Status.NEUTRAL;
                     }
                     break;
 
                 case EJECT:
-                    if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
+                    if (elapsedTime==null ){
+                        elapsedTime= new ElapsedTime();
+                        intakeMotor.setPower(EJECT_POWER);
+                        color = ITDCons.Color.unknown;
+                    }
+
+                    if ( elapsedTime.milliseconds()> status.getTime()){
                         intakeMotor.setPower(0);
-                        intakeToNeutral();
+                        servoToNeutral();
                         elapsedTime=null;
-                        if (color== ITDCons.Color.yellow){
-                            target=0;
-                        } else {
-                            color= ITDCons.Color.unknown;
-                        }
+                        color= ITDCons.Color.unknown;
+                        status= Status.NEUTRAL;
+
                     }
                     break;
 
                 case PICKUP_YELLOW: //get samples from submersible
+                    if (elapsedTime == null) {
+                        servoToDrop();
+                        startIntake();
+                        color = ITDCons.Color.unknown;
+                        elapsedTime = new ElapsedTime();
+                    }
 
                     if (colorSensor.rawOptical()>175) {
                         //read color
@@ -250,11 +245,12 @@ public class Intake {
                         if (color != ITDCons.Color.unknown && color != ITDCons.Color.yellow && color != allianceColor) {
                             ejectIntake();
                         } else if (color == ITDCons.Color.yellow) {
-                            toTransfer();
+                            status = Status.TO_TRANSFER;
+                            elapsedTime = null;
 
-                            status = Status.NEUTRAL;
                         } else if (color == allianceColor) {
-                            toTransfer();
+                            status = Status.TO_TRANSFER;
+                            elapsedTime = null;
                         }
 
                     } else{
@@ -264,6 +260,12 @@ public class Intake {
 
                     break;
                 case PICKUP_ALLIANCE:
+                    if (elapsedTime == null) {
+                        servoToDrop();
+                        startIntake();
+                        color = ITDCons.Color.unknown;
+                        elapsedTime = new ElapsedTime();
+                    }
                     if (colorSensor.rawOptical()>175) {
                         //read color
                         checkColor();
@@ -271,7 +273,8 @@ public class Intake {
                         if (color != ITDCons.Color.unknown && (color == ITDCons.Color.yellow || color != allianceColor)) {
                             ejectIntake();
                         } else if (color == allianceColor) {
-                            toNeutral();
+                            elapsedTime =null;
+                            status = Status.TO_NEUTRAL;
                         }
 
                     } else{
@@ -280,12 +283,44 @@ public class Intake {
                     }
                     break;
 
-                case WAIT_TO_RETRACT:
-                    if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
-                        target=0;
+                case TO_TRANSFER:
+                    if (elapsedTime ==null){
+                        stopIntake();
+                        if (target==0){
+                            target = ITDCons.TransferExtension;
+                        } else {
+                            servoToTransfer();
+                        }
+                        elapsedTime = new ElapsedTime();
+                    }
+                    if (elapsedTime.milliseconds()>status.getTime() && elapsedTime.milliseconds()< status.getTime()*2){
+                        if (target == ITDCons.TransferExtension){
+                            servoToTransfer();
+                        }
+                        if (target>ITDCons.TransferExtension){
+                            target = ITDCons.TransferExtension;
+                        }
+                    }
+                    if (elapsedTime.milliseconds()>2* status.getTime()){
+                        elapsedTime =null;
                         status= Status.TRANSFER;
                     }
+
                     break;
+
+                case TO_NEUTRAL:
+                    if (elapsedTime==null){
+                        stopIntake();
+                        servoToNeutral();
+                        if (target == ITDCons.MaxExtension){
+                            target = ITDCons.halfExtension;
+                        } else if (target == ITDCons.halfExtension){
+                            target =0;
+                        }
+                        status = Status.NEUTRAL;
+                    }
+                    break;
+
             }
 
     }
@@ -331,12 +366,27 @@ public class Intake {
     }
 
     public boolean readyToTransfer(){
-        return (color == ITDCons.Color.yellow && extendo.getCurrentPosition()<200 && status==Status.EJECT);
+        return status == Status.TRANSFER;
     }
 
     public void intakeintake(){
         intakeLeft.setPosition(ITDCons.intakeintakearm);
         intakeRight.setPosition(ITDCons.intakeintakechain);
+    }
+
+    public void servoToDrop(){
+        intakeLeft.setPosition(ITDCons.intakeArmDrop);
+        intakeRight.setPosition(ITDCons.intakeChainDrop);
+    }
+
+    protected void servoToTransfer(){
+        intakeLeft.setPosition(ITDCons.intakeArmTransfer);
+        intakeRight.setPosition(ITDCons.intakeChainTransfer);
+    }
+
+    public void servoToNeutral(){
+        intakeLeft.setPosition(ITDCons.intakeArmNeutral);
+        intakeRight.setPosition(ITDCons.intakeChainNeutral);
     }
 
 
