@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
@@ -42,6 +43,8 @@ public class TeleopWithActionsRed extends OpMode {
     boolean firstRun = true;
     boolean red = true;
     public static double slowMultiplier = 0.25;
+    public ElapsedTime timer = new ElapsedTime();
+    boolean forceOuttake = false;
 
     @Override
     public void init() {
@@ -67,6 +70,14 @@ public class TeleopWithActionsRed extends OpMode {
             runningActions.put("arm", arm.armRetract());
             firstRun = false;
         } else {
+            if (forceOuttake){
+                if (timer.seconds()>.75){
+                    timer.reset();
+                    forceOuttake = false;
+                } else {
+                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
+                }
+            }
             if (gamepad1.right_trigger > 0.5) {
                 runningActions.put("extension", extension.servoExtension(Extension.extensionState.EXTEND));
             }
@@ -83,7 +94,8 @@ public class TeleopWithActionsRed extends OpMode {
                 if ((red&&!colorSensor.isBlue())||(!red&&!colorSensor.isRed())){
                     runningActions.put("intake", robot.intakeMove(Intake.intakeState.INTAKE));
                 } else {
-                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
+                    forceOuttake = true;
+                    timer.reset();
                 }
             } else if (gamepad1.right_bumper) {
                 runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
