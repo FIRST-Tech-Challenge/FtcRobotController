@@ -69,6 +69,13 @@ public class Intake {
 
     private int target;
 
+    public int checkColorCount=0;
+    public int MAX_COUNT=5;
+    public int redTotal =0;
+    public int blueTotal =0;
+    public int greenTotal=0;
+
+
 
     public Intake(Init init, Telemetry telemetry){
         this.telemetry = telemetry;
@@ -238,9 +245,12 @@ public class Intake {
                         elapsedTime = new ElapsedTime();
                     }
 
-                    if (colorSensor.rawOptical()>175) {
-                        //read color
+                    if (colorSensor.rawOptical()>175 && checkColorCount<MAX_COUNT){
                         checkColor();
+                    }
+                    if (checkColorCount==MAX_COUNT) {
+                        checkColor();
+
                         intakeMotor.setPower(0);
                         if (color != ITDCons.Color.unknown && color != ITDCons.Color.yellow && color != allianceColor) {
                             ejectIntake();
@@ -252,6 +262,7 @@ public class Intake {
                             status = Status.TO_TRANSFER;
                             elapsedTime = null;
                         }
+                        resetColorDetection();
 
                     } else{
                         led.setPosition(ITDCons.off);
@@ -266,9 +277,13 @@ public class Intake {
                         color = ITDCons.Color.unknown;
                         elapsedTime = new ElapsedTime();
                     }
-                    if (colorSensor.rawOptical()>175) {
-                        //read color
+                    if (colorSensor.rawOptical()>175 && checkColorCount<MAX_COUNT){
                         checkColor();
+                    }
+                    if (checkColorCount==MAX_COUNT) {
+                        checkColor();
+
+                        //read color
                         intakeMotor.setPower(0);
                         if (color != ITDCons.Color.unknown && (color == ITDCons.Color.yellow || color != allianceColor)) {
                             ejectIntake();
@@ -276,6 +291,7 @@ public class Intake {
                             elapsedTime =null;
                             status = Status.TO_NEUTRAL;
                         }
+                        resetColorDetection();
 
                     } else{
                         led.setPosition(ITDCons.off);
@@ -335,21 +351,35 @@ public class Intake {
 
 
     public void checkColor(){
+        if (checkColorCount<MAX_COUNT){
+            redTotal+=colorSensor.red();
+            blueTotal+=colorSensor.blue();
+            greenTotal+=colorSensor.green();
+            checkColorCount++;
 
-        if (colorSensor.red()>colorSensor.blue() && colorSensor.red()> colorSensor.green()){
-            led.setPosition(ITDCons.red);
-            color = ITDCons.Color.red;
-        }
-        else if (colorSensor.green()>colorSensor.blue() && colorSensor.green()>colorSensor.red()){
-            led.setPosition(ITDCons.yellow);
-            color = ITDCons.Color.yellow;
-        } else if (colorSensor.blue()>colorSensor.green() && colorSensor.blue()>colorSensor.red()){
-            led.setPosition(ITDCons.blue);
-            color = ITDCons.Color.blue;
+            telemetry.addData("red", redTotal);
+            telemetry.addData("green", greenTotal);
+            telemetry.addData("blue", blueTotal);
+            telemetry.addData("count", checkColorCount);
         } else {
-            led.setPosition(ITDCons.off);
-            color = ITDCons.Color.unknown;
+
+            if (redTotal>blueTotal && redTotal> greenTotal){
+                led.setPosition(ITDCons.red);
+                color = ITDCons.Color.red;
+            }
+            else if (greenTotal>blueTotal && greenTotal>redTotal){
+                led.setPosition(ITDCons.yellow);
+                color = ITDCons.Color.yellow;
+            } else if (blueTotal>greenTotal && blueTotal>redTotal){
+                led.setPosition(ITDCons.blue);
+                color = ITDCons.Color.blue;
+            } else {
+                led.setPosition(ITDCons.off);
+                color = ITDCons.Color.unknown;
+            }
         }
+
+
 
     }
 
@@ -387,6 +417,13 @@ public class Intake {
     public void servoToNeutral(){
         intakeLeft.setPosition(ITDCons.intakeArmNeutral);
         intakeRight.setPosition(ITDCons.intakeChainNeutral);
+    }
+
+    protected void resetColorDetection(){
+        checkColorCount=0;
+        redTotal=0;
+        blueTotal=0;
+        greenTotal=0;
     }
 
 

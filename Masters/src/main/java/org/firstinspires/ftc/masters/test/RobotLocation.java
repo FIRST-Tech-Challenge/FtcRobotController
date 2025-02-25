@@ -34,7 +34,7 @@ public class RobotLocation extends LinearOpMode {
             }
 
             if (gamepad1.x){
-                intake.toNeutral();
+                intake.servoToNeutral();
             }
 
             telemetry.addData("x", poseUpdater.getPose().getX());

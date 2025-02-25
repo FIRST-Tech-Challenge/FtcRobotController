@@ -87,6 +87,7 @@ public class TeleopManualV2Blue extends LinearOpMode {
 
         waitForStart();
 
+        int outtakePosition = outtake.outtakeSlideEncoder.getCurrentPosition();
         intake.initStatusTeleop();
         outtake.initTeleopWall();
 

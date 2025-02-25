@@ -31,7 +31,7 @@ public class intakeExtendo extends LinearOpMode {
 
         telemetry.update();
 
-        intake.toNeutral();
+        intake.servoToNeutral();
 
         waitForStart();
 

@@ -98,7 +98,7 @@ public class SpecimenSafe extends LinearOpMode {
         waitForStart();
 
         outtake.scoreSpecimen();
-        intake.toNeutral();
+        intake.servoToNeutral();
 
         elapsedTime = new ElapsedTime();
 

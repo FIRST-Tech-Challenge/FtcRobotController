@@ -96,8 +96,10 @@ public class TeleopManualV2Red extends LinearOpMode {
             for (LynxModule hub : allHubs) {
                 hub.clearBulkCache();
             }
+            if (!outtake.drivetrainOverride) {
 
-            driveTrain.driveNoMultiplier(gamepad1, DriveTrain.RestrictTo.XYT);
+                driveTrain.driveNoMultiplier(gamepad1, DriveTrain.RestrictTo.XYT);
+            }
 
             if (gamepad1.right_stick_y > 0.5){
                 intake.retractSlide();
@@ -117,7 +119,7 @@ public class TeleopManualV2Red extends LinearOpMode {
             }
 
             if (gamepad1.touchpad){
-                intake.toTransfer();
+                intake.stopPickup(); // to neutral or transfer
             }
 
             if (gamepad1.dpad_up) {
@@ -125,7 +127,6 @@ public class TeleopManualV2Red extends LinearOpMode {
             } else if (gamepad1.dpad_down){
                 intake.extendSlideHalf();
             }
-
 
 
             if(gamepad1.a){
@@ -152,7 +153,7 @@ public class TeleopManualV2Red extends LinearOpMode {
             //intake.toNeutral();
 
             if (gamepad1.x){
-                intake.toNeutral();
+
 
             } else if (gamepad1.y){
                 outtake.score();

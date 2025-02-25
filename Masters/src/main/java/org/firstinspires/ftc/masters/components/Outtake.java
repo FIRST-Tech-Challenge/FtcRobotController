@@ -59,9 +59,9 @@ public class Outtake implements Component{
 
     enum WaitTime{
         Open_Claw (400), CLose_Claw(400)
-        , Turn_Wrist(1200), BackUp_Robot(400),
+        , Turn_Wrist(600), BackUp_Robot(400),
         Servo_To_Transfer(300),
-        Move_Position(500)
+        Move_Position(450)
         ;
 
         private final long time;
@@ -102,7 +102,7 @@ public class Outtake implements Component{
 //        BucketToTransfer_Open(200),
         BucketToTransfer_Final(400),
 
-        WallToFront_lift(400),
+        WallToFront_lift(600),
         WallToFront_move(450),
         WallToFront3 (300),
 
@@ -301,7 +301,7 @@ public class Outtake implements Component{
 
     public void scoreSpecimen(){
         if (status==Status.InitAutoSpec){
-            status= Status.WallToFront_move;
+            status= Status.WallToFront_lift;
             elapsedTime = new ElapsedTime();
         } else {
             status = Status.WallToFront_lift;
@@ -310,7 +310,6 @@ public class Outtake implements Component{
 
         target = ITDCons.SpecimenTarget;
 
-        elapsedTime = new ElapsedTime();
     }
 
     public void scoreSample(){
@@ -473,12 +472,13 @@ public class Outtake implements Component{
                     elapsedTime = new ElapsedTime();
                 }
                 if ( elapsedTime.milliseconds()>WaitTime.Open_Claw.getTime() && elapsedTime.milliseconds()<WaitTime.Open_Claw.getTime()+WaitTime.BackUp_Robot.getTime() ){
-                    driveTrain.drive(0.5);
+                    driveTrain.drive(0.6);
                     drivetrainOverride = true;
                 }
                 if (elapsedTime.milliseconds()>WaitTime.Open_Claw.getTime()+WaitTime.BackUp_Robot.getTime()){
                     drivetrainOverride= false;
                     driveTrain.drive(0);
+                    status= Status.BucketToTransfer_Final;
                     elapsedTime = null;
                 }
 
@@ -492,12 +492,12 @@ public class Outtake implements Component{
                     setAngleServoToMiddle();
                     elapsedTime = new ElapsedTime();
                 }
-                if (elapsedTime.milliseconds()>status.getTime() && elapsedTime.milliseconds()<WaitTime.Servo_To_Transfer.getTime()){
+                if (elapsedTime.milliseconds()>status.getTime() && elapsedTime.milliseconds()<WaitTime.Servo_To_Transfer.getTime()+ status.getTime()){
                     wrist.setPosition(ITDCons.wristFront);
                     setAngleServoToTransfer();
                 }
-                if (elapsedTime.milliseconds()>WaitTime.Servo_To_Transfer.getTime()){
-                    openClaw();
+                if (elapsedTime.milliseconds()>WaitTime.Servo_To_Transfer.getTime()+status.getTime()){
+                    openClawAuto();
                     status= Status.TransferReady;
                     elapsedTime = null;
                 }
@@ -517,7 +517,7 @@ public class Outtake implements Component{
             case WallToTransfer2:
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()) {
                     setAngleServoToTransfer();
-                    openClaw();
+                    openClawAuto();
                     status = Status.TransferReady;
                 }
 
@@ -538,7 +538,7 @@ public class Outtake implements Component{
             case Specimen_To_Wall:
                 if (elapsedTime ==null){
                     elapsedTime = new ElapsedTime();
-                    openClaw();
+                    openClawAuto();
                 }
                 if (elapsedTime.milliseconds()>WaitTime.Open_Claw.getTime() && elapsedTime.milliseconds()<WaitTime.Turn_Wrist.getTime()){
                     target = ITDCons.intermediateTarget;
@@ -582,14 +582,16 @@ public class Outtake implements Component{
                 break;
 
             case TransferReady:
-                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
-                    if (intake.readyToTransfer()){
-                        //target= ITDCons.transferPickupTarget;
-                        closeClaw();
-                        status= Status.CloseClawTransfer;
-                        elapsedTime = new ElapsedTime();
-                    }
-                }
+
+                //put back code when position is consistent
+//                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+//                    if (intake.readyToTransfer()){
+//                        //target= ITDCons.transferPickupTarget;
+//                        closeClaw();
+//                        status= Status.CloseClawTransfer;
+//                        elapsedTime = new ElapsedTime();
+//                    }
+//                }
                 break;
             case CloseClawTransfer:
                 if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
