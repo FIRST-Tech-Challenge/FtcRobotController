@@ -71,7 +71,7 @@ public class TeleopWithActionsRed extends OpMode {
             firstRun = false;
         } else {
             if (forceOuttake){
-                if (timer.seconds()>.75){
+                if (timer.seconds()>.5){
                     timer.reset();
                     forceOuttake = false;
                 } else {
