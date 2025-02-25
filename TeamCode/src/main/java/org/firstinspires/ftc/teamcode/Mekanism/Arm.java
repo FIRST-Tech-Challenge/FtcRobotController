@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Arm {
@@ -213,7 +214,7 @@ public class Arm {
     pivotTarget = (int) (x * countsPerDegree);
 
     maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree)) * 1.4;
-    if(slide.getCurrentPosition()>maxLength)
+    if (slide.getCurrentPosition() > maxLength)
       setSlide(maxLength);
   }
 
@@ -238,9 +239,9 @@ public class Arm {
     pivotPower = power / 2;
 
     maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree)) * 1;
-    if(maxLength < 2500)
+    if (maxLength < 2500)
       maxLength = 2500;
-    if(slide.getCurrentPosition()>maxLength && power > 0) {
+    if (slide.getCurrentPosition() > maxLength && power > 0) {
       setSlide(-power * 3);
       telemetry.addLine("auto in slide");
     }
@@ -285,7 +286,7 @@ public class Arm {
     // If the max length calculated is longer than the physical limit of the slide, set it to that
     if (maxLength > limitSlide) maxLength = limitSlide;
 
-    if(slide.getCurrentPosition()>maxLength && power < 0)
+    if (slide.getCurrentPosition() > maxLength && power < 0)
       telemetry.addLine("Slide over want to go less: " + power);
 
     // If the slide goes over the limit, stop the movement
@@ -300,8 +301,8 @@ public class Arm {
     slidePower = power;
   }
 
-  public void hang(){
+  public void hang() {
     setSlide(-1);
-    setSlide(-10);
+    setSlide(-1.);
   }
 }
