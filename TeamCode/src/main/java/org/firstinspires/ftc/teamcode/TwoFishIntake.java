@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
@@ -332,13 +331,13 @@ public class TwoFishIntake {
     public String getSampleColor(){
         double[] hues = new double[COLOR_SAMPLE_REPETITIONS];
         int i = 0;
-        hues = getColorHueRecursive(hues, i, COLOR_SAMPLE_REPETITIONS);
+        hues = getHueRecursive(hues, i, COLOR_SAMPLE_REPETITIONS);
         Arrays.sort(hues);
         double median = hues[COLOR_SAMPLE_REPETITIONS/2];
         return getClosestHue(median);
     }
-
-    private double[] getColorHueRecursive(double[] huesCopy, int index, int numReps){
+    
+    private double[] getHueRecursive(double[] huesCopy, int index, int numReps){
         if(index >= numReps-1){
             return huesCopy;
         } else{
@@ -348,8 +347,21 @@ public class TwoFishIntake {
                 Color.RGBToHSV(colorSens.red(), colorSens.green(), colorSens.blue(), hsv);
                 huesCopy[index] = hsv[0];
             }
-            return getColorHueRecursive(huesCopy, index, numReps);
+            return getHueRecursive(huesCopy, index, numReps);
         }
+    }
+
+    private double[] getHue(int numReps){
+        double[] huesTemp = new double[numReps];
+        for(int i = 0; i < numReps; i++){
+            if(colorTimer.milliseconds() < 10){
+                i--;
+            } else{
+                Color.RGBToHSV(colorSens.red(), colorSens.green(), colorSens.blue(), hsv);
+                huesTemp[i] = hsv[0];
+            }
+        }
+        return huesTemp;
     }
 }
 
