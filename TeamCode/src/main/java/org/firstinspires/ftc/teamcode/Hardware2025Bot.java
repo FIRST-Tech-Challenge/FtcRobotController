@@ -100,9 +100,8 @@ public class Hardware2025Bot
     public ElapsedTime  snorkleTimer        = new ElapsedTime();
 
     public final static int   SNORKLE_HW_MAX   = 3328;  // encoder for max possible extension RIGHT
-    public final static int   SNORKLE_LEVEL2A  = 2750;  // encoder for snorkle above the bar
-    public final static int   SNORKLE_LEVEL2B  = 1650;  // encoder for robot off the floor (against lower barrier)
-    public final static int   SNORKLE_LEVEL2C  = 900;   // encoder for final ascent2 position (above the lower barrier)
+    public final static int   SNORKLE_LEVEL2A  = 2750;  // encoder for snorkel above the bar
+    public final static int   SNORKLE_LEVEL2B  = 50;    // encoder for snorkel fully retracted (with margin)
     public final static int   SNORKLE_HW_MIN   = 0;     // encoder position at maximum rotation LEFT
 
     //====== Worm gear tilt MOTORS (RUN_USING_ENCODER) =====
@@ -140,9 +139,13 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_SUBMERSIBLE_DEG = 10.00; // Arm at rotation back to the submersible for collecting
     public final static double TILT_ANGLE_SWEEPER_DEG       = 6.00; // Arm at rotation to get into position to sweep TODO: tweak value
     public final static double TILT_ANGLE_SWEEPER_LOWER_DEG = 4.00; // Arm rotated to actually sweep TODO: tweak value
-    public final static double TILT_ANGLE_LEVEL2A_DEG     = 58.00; // Arm at rotation back to the low bar for ascent level 2
-    public final static double TILT_ANGLE_ASCENT2_DEG     = 64.25; // Arm at rotation back to the low bar for ascent level 2
-    public final static double TILT_ANGLE_ASCENT3_DEG     = 56.50; // Arm at rotation back to the low bar for ascent level 2
+    public final static double TILT_ANGLE_PARK1_DEG       = 64.25; // Arm at rotation for parking during left-side auto
+    public final static double TILT_ANGLE_LEVEL2A_DEG     = 58.00; // Arm at rotation #1 for level 2 ascent
+    public final static double TILT_ANGLE_LEVEL2B_DEG     = 49.00; // Arm at rotation #2 for level 2 ascent
+    public final static double TILT_ANGLE_LEVEL2C_DEG     = 41.60; // Arm at rotation #3 for level 2 ascent
+    public final static double TILT_ANGLE_LEVEL2D_DEG     = 46.20; // Arm at rotation #4 for level 2 ascent
+    public final static double TILT_ANGLE_LEVEL2E_DEG     = 46.20; // Arm at rotation #5 for level 2 ascent
+    public final static double TILT_ANGLE_LEVEL2F_DEG     = 59.10; // Arm at rotation #6 for level 2 ascent
     public final static double TILT_ANGLE_PARK_DEG        = 33.80; // Arm at rotation back to the low bar for park in auto
     public final static double TILE_ANGLE_BASKET_SAFE_DEG = 90.00; // Arm safe to rotate intake from basket
     public final static double TILT_ANGLE_VERTICAL_DEG    = 54.50; // Straight up vertical (safe to start retracting viper)
@@ -193,12 +196,14 @@ public class Hardware2025Bot
     public final static int    VIPER_EXTEND_AUTO_READY   = 1177;  // extend for collecting during auto
     public final static int    VIPER_EXTEND_AUTO_COLLECT = 1177;  // extend for collecting during auto
     public final static int    VIPER_EXTEND_SAMPLE3 = 1103;   // extend for collecting during auto (3rd sample along wall)
-    public final static int    VIPER_EXTEND_LEVEL2A = 2207;   // extend to this to prepare for level 2 ascent
     public final static int    VIPER_EXTEND_PARK2   = 2508;   // extend to this to park in auto
     public final static int    VIPER_EXTEND_PARK1   = 1618;   // extend to this to park in auto
-    public final static int    VIPER_EXTEND_HANG2   = 2942;   // retract to this extension during level 2 ascent
-    public final static int    VIPER_EXTEND_HANG3   = 2501;   // retract to this extension during level 2 ascent
-    public final static int    VIPER_EXTEND_HANG4   = 2501;   // retract to this extension during level 2 ascent
+    public final static int    VIPER_EXTEND_LEVEL2A = 1546;   // extend to this to prepare for level 2 ascent
+    public final static int    VIPER_EXTEND_LEVEL2B = 1546;   // retract to this extension during level 2 ascent
+    public final static int    VIPER_EXTEND_LEVEL2C = 2820;   // extend to this extension during level 2 ascent
+    public final static int    VIPER_EXTEND_LEVEL2D = 2820;   // retract to this extension during level 2 ascent
+    public final static int    VIPER_EXTEND_LEVEL2E = 2555;   // retract to this extension during level 2 ascent
+    public final static int    VIPER_EXTEND_LEVEL2F = 2150;   // retract to this extension during level 2 ascent
     public final static int    VIPER_EXTEND_GRAB    = 1177;   // extend for collection from submersible
     public final static int    VIPER_EXTEND_SECURE  =  360;   // Intake is tucked into robot to be safe
     public final static int    VIPER_EXTEND_SAFE    =  809;   // Intake is far enough out to safely rotate down and rotate up
@@ -213,36 +218,6 @@ public class Hardware2025Bot
     public final static int    VIPER_EXTEND_WALL0   = 19;     // AUTO: grab specimen off wall (on approach)
     public final static int    VIPER_EXTEND_WALL1   = 170;    // AUTO: grab specimen off wall (lift off)
     public final static double TILT_ANGLE_42  = Math.toDegrees(Math.acos((double)Hardware2025Bot.VIPER_EXTEND_42/(double)Hardware2025Bot.VIPER_EXTEND_BASKET)); // Minimum tilt angle needed to fully extend viper
-
-// STATE1 = approach to hang
-// tilt =
-// viper =
-// snorkel =
-
-// STATE2 = fully retract
-// tilt =
-// viper = 1546
-// snorkle = 0
-
-// STATE3 = arm extended
-// tilt = 41.6 deg
-// viper = 2823
-// snorkel = 0
-
-// STATE3 = rotate back to hook
-// tilt = 46.2 deg <====
-// viper = 2823
-// snorkel = 0
-
-// STATE4 = retract to hook
-// tilt = 46.2 deg
-// viper = 2555  <===
-// snorkel = 0
-
-// STATE5 = lift off floor
-// tilt = 59.1deg
-// viper = 1780
-// snorkel = 0
 
 //  PIDControllerLift   liftPidController;           // PID parameters for the lift motors
 //  public double       liftMotorPID_p     = -0.100; //  Raise p = proportional

@@ -56,6 +56,7 @@ public abstract class Teleop extends LinearOpMode {
     double    driverAngle              = 180.0;  /* for DRIVER_MODE_DRV_CENTRIC */
 
     boolean   batteryVoltsEnabled = false;  // enable only during testing (takes time!)
+    boolean   robotCentricDriveEnabled = false;  // DON'T LET STUDENTS USE THIS!
 
     double    viperPower = 0.0;
     long      nanoTimeCurr=0, nanoTimePrev=0;
@@ -84,14 +85,15 @@ public abstract class Teleop extends LinearOpMode {
     double   curX, curY, curAngle;
     double   minX=0.0, maxX=0.0, minY=0.0, maxY=0.0;
 
-    final int   ASCENT_STATE_IDLE   = 0;
-    final int   ASCENT_STATE_SETUP  = 1;
-    final int   ASCENT_STATE_MOVING = 2;
-    final int   ASCENT_STATE_READY  = 3;
-    final int   ASCENT_STATE_LEVEL2 = 4;
-    final int   ASCENT_STATE_LIFT   = 5;
-    final int   ASCENT_STATE_MOVING2 = 6;
-    final int   ASCENT_STATE_RETRACT = 7;
+    final int ASCENT_STATE_IDLE   = 0;
+    final int ASCENT_STATE_SETUP  = 1;
+    final int ASCENT_STATE_SETUP_MOVING = 2;
+    final int ASCENT_STATE_SETUP_READY = 3;
+    final int ASCENT_STATE_SNOKEL_LIFTING = 4;
+    final int ASCENT_STATE_ARM_PREP = 5;
+    final int ASCENT_STATE_HOOKING  = 6;
+    final int ASCENT_STATE_LIFTING  = 7;
+    final int ASCENT_STATE_HANGING  = 8;
 
     int         ascent2state = ASCENT_STATE_IDLE;
 	boolean     ascent2telem = false;
@@ -187,19 +189,21 @@ public abstract class Teleop extends LinearOpMode {
             }
 
             // Check for an OFF-to-ON toggle of the gamepad1 CIRCLE button (toggles STANDARD/BACKWARD drive control)
-/*          if( gamepad1_circle_now && !gamepad1_circle_last)
-            {
-                // If currently in DRIVER-CENTRIC mode, switch to STANDARD (robot-centric) mode
-                if( driverMode != DRIVER_MODE_STANDARD ) {
-                    driverMode = DRIVER_MODE_STANDARD;
-                    backwardDriveControl = true;  // start with phone-end as front of robot
+            if( robotCentricDriveEnabled ) {
+                if( gamepad1_circle_now && !gamepad1_circle_last)
+                {
+                    // If currently in DRIVER-CENTRIC mode, switch to STANDARD (robot-centric) mode
+                    if( driverMode != DRIVER_MODE_STANDARD ) {
+                        driverMode = DRIVER_MODE_STANDARD;
+                        backwardDriveControl = true;  // start with phone-end as front of robot
+                    }
+                    // Already in STANDARD mode; Just toggle forward/backward mode
+                    else {
+                        backwardDriveControl = !backwardDriveControl; // reverses which end of robot is "FRONT"
+                    }
                 }
-                // Already in STANDARD mode; Just toggle forward/backward mode
-                else {
-                    backwardDriveControl = !backwardDriveControl; // reverses which end of robot is "FRONT"
-                }
-            }
-*/
+            } // robotCentricDriveEnabled
+
 //          telemetry.addData("circle","Robot-centric (fwd/back modes)");
 //          telemetry.addData("square","Driver-centric (set joystick!)");
 //          telemetry.addData("d-pad","Fine control (30%)");
@@ -604,11 +608,6 @@ public abstract class Teleop extends LinearOpMode {
         {
             // robot.turretPIDPosInit( robot.PAN_ANGLE_CENTER );
         }
-        //===================================================================
-        // Check for an OFF-to-ON toggle of the gamepad1 LEFT BUMPER
-        else if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last )
-        {
-        }
 
         //===================================================================
         else if( manual_tilt_control || tiltAngleTweaked) {
@@ -794,7 +793,9 @@ public abstract class Teleop extends LinearOpMode {
         // DRIVER 2 controls initiate the actual hang
 
         // Check for emergency ASCENT ABORT button
-        if( gamepad1_touchpad_now && !gamepad1_touchpad_last ) {
+        boolean player1abort = gamepad1_touchpad_now && !gamepad1_touchpad_last;
+        boolean player2abort = gamepad2_touchpad_now && !gamepad2_touchpad_last;
+        if( player1abort || player2abort ) {
             robot.viperMotor.setPower( 0.0 );
             robot.wormTiltMotor.setPower( 0.0 );
             robot.snorkleLMotor.setPower( 0.0 );
@@ -814,77 +815,92 @@ public abstract class Teleop extends LinearOpMode {
                     ascent2state = ASCENT_STATE_SETUP;
                 }
                 break;
+
             case ASCENT_STATE_SETUP:
-                // Send Snorkle motor to raise position
+                // Send Snorkel motors to raised position
                 robot.startSnorkleExtension(Hardware2025Bot.SNORKLE_LEVEL2A, 1.0 );
                 // Send TILT motor to hang position
                 robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_LEVEL2A_DEG);
                 // Send LIFT motor to hang position
                 robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_LEVEL2A);
                 robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
+                // bumpers may be changed the tilt the claw wrist/elbow... reset to desired angle
                 robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_LEVEL2);
                 robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
-                ascent2state = ASCENT_STATE_MOVING;
+                ascent2state = ASCENT_STATE_SETUP_MOVING;
                 break;
-
-            case ASCENT_STATE_MOVING :
+            case ASCENT_STATE_SETUP_MOVING:
                 robot.processSnorkleExtension();
-                if( !robot.snorkleLMotorBusy && !robot.snorkleRMotorBusy && !robot.viperMotorBusy && !robot.wormTiltMotorBusy ) {
+                motorsFinished = !robot.snorkleLMotorBusy && !robot.snorkleRMotorBusy &&
+                                 !robot.viperMotorBusy && !robot.wormTiltMotorBusy;
+                if( motorsFinished ) {
                     // Ready for phase 2
                     gamepad2.runRumbleEffect(rumbleAscentReady);
-                    ascent2state = ASCENT_STATE_READY;
+                    ascent2state = ASCENT_STATE_SETUP_READY;
                 }
                 break;
-
-            case ASCENT_STATE_READY :
+            case ASCENT_STATE_SETUP_READY:
                 if( gamepad2_l_bumper_now && gamepad2_r_bumper_now ) {
-                    // Send Snorkle motor to lift position
+                    // Fully retract snorkels
                     robot.startSnorkleExtension(Hardware2025Bot.SNORKLE_LEVEL2B, 1.0 );
+                    robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_LEVEL2B_DEG);
+                    robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_LEVEL2B, 1.0, 1.0 );
                     robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );  // we accidentally open the claw
-                    robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_HANG2, 1.0, 1.0 );
-                    ascent2state = ASCENT_STATE_LEVEL2;
+                    ascent2state = ASCENT_STATE_SNOKEL_LIFTING;
                     ascent2Timer.reset();
                 }
                 break;
 
-            case ASCENT_STATE_LEVEL2 :
+            case ASCENT_STATE_SNOKEL_LIFTING:
                 robot.processSnorkleExtension();
-                motorsFinished = !robot.viperMotorBusy && !robot.snorkleLMotorBusy && !robot.snorkleRMotorBusy;
-                if( motorsFinished || (ascent2Timer.milliseconds() > 3000.0) ) {
-                    // Once viper is extended and snorkle has lifted us, rotate up to bar
-                    robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_ASCENT2_DEG);
-                    ascent2state = ASCENT_STATE_RETRACT;
+                motorsFinished = !robot.wormTiltMotorBusy && !robot.viperMotorBusy &&
+                                 !robot.snorkleLMotorBusy && !robot.snorkleRMotorBusy;
+                if( motorsFinished || (ascent2Timer.milliseconds() > 2500.0) ) {
+                    // Robot should now be hanging on snorkels, but butt is now resting on floor
+                    // Reposition arm (tilt/extension) so grab upper bar to pull our butt off the floor
+                    robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_LEVEL2C_DEG);
+                    robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_LEVEL2C, 1.0, 1.0 );
+                    ascent2state = ASCENT_STATE_ARM_PREP;
                     ascent2Timer.reset();
                 }
                 break;
 
-            case ASCENT_STATE_RETRACT :
+            case ASCENT_STATE_ARM_PREP:
+                motorsFinished = !robot.viperMotorBusy && !robot.wormTiltMotorBusy;
+                if( motorsFinished || (ascent2Timer.milliseconds() > 3000.0) ) {
+                    // Rotate arm back against top bar in preparation for hooking
+                    robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_LEVEL2D_DEG);
+                    ascent2state = ASCENT_STATE_HOOKING;
+                }
+                break;
+
+            case ASCENT_STATE_HOOKING:
                 motorsFinished = !robot.wormTiltMotorBusy;
                 if( motorsFinished || (ascent2Timer.milliseconds() > 3000.0) ) {
-                    // Once arm is up against the bar, retract the hook
-                    robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_HANG3, 1.0, 1.0);
-                    ascent2state = ASCENT_STATE_LIFT;
+                    // Retract arm to ensure the hook engages
+                    robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_LEVEL2E, 1.0, 1.0);
+                    ascent2state = ASCENT_STATE_LIFTING;
                 }
                 break;
 
-            case ASCENT_STATE_LIFT :
+            case ASCENT_STATE_LIFTING:
                 motorsFinished = !robot.viperMotorBusy;
                 if( motorsFinished || (ascent2Timer.milliseconds() > 3000.0) ) {
-                    // Once hooked, tilt down to reduce stress on tilt-angle worm gear
-                    robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_ASCENT3_DEG);
-                    robot.startSnorkleExtension(Hardware2025Bot.SNORKLE_LEVEL2C, 0.8 );
-//                  robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_HANG4, 1.0, 1.0);
-                    ascent2state = ASCENT_STATE_MOVING2;
+                    // Retract the arm and rotate it to lift the robot off the floor
+                    robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_LEVEL2F, 1.0, 1.0);
+                    robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_LEVEL2F_DEG);
+                    ascent2state = ASCENT_STATE_HANGING;
                 }
                 break;
 
-            case ASCENT_STATE_MOVING2:
-                robot.processSnorkleExtension();
-                if( !robot.snorkleLMotorBusy && !robot.snorkleRMotorBusy  && !robot.wormTiltMotorBusy ) {
-                    // Once snorkel is retracted and tilt has finished, we're done!
+            case ASCENT_STATE_HANGING:
+                motorsFinished = !robot.viperMotorBusy && !robot.wormTiltMotorBusy;
+                if( motorsFinished ) {
+                    // Once snorkel is retracted and tilt has finished, we're DONE!
                     ascent2state = ASCENT_STATE_IDLE;
                 }
                 break;
+
         } // switch()
 
         if(ascent2telem) {
