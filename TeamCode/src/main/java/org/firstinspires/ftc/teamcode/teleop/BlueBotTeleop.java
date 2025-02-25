@@ -36,16 +36,6 @@ public class BlueBotTeleop extends LinearOpMode {
       game2X = false,
       game2Y = false;
 
-  // TODO: Does this need to be here
-  public double frOffset = -0.125;
-  public double brOffset = -0.125;
-  public double blOffset = -0.25;
-  public double flOffset = -0.25;
-  public double frRotationOffset = -0.125;
-  public double brRotationOffset = -0.125;
-  public double blRotationOffset = -0.25;
-  public double flRotationOffset = -0.25;
-
   public final double change_In_Offset = .025;
 
   @Override
@@ -61,7 +51,7 @@ public class BlueBotTeleop extends LinearOpMode {
     odometry.resetHeading();
     odometry.resetPosAndIMU();
 
-    TheBestSwerve amazingSwerve = new TheBestSwerve(this,odometry,driveBase);
+    TheBestSwerve amazingSwerve = new TheBestSwerve(this, odometry, driveBase);
 
     mek.arm.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER, DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -93,18 +83,18 @@ public class BlueBotTeleop extends LinearOpMode {
           g2_lt = gamepad2.left_trigger,
           g2_rt = gamepad2.right_trigger;
 
-      telemetry.addLine("G2 LY: "+g2_ly);
-      telemetry.addLine("G2 RY: "+g2_ry);
-      if(gamepad2.right_bumper){
+      telemetry.addLine("G2 LY: " + g2_ly);
+      telemetry.addLine("G2 RY: " + g2_ry);
+      if (gamepad2.right_bumper) {
         mek.arm.hang();
+        mek.grabber.setGrabber(0, 0);
         sleep(5000);
-      }
-      else {
+      } else {
         mek.arm.setSlide(g2_ly);
         mek.arm.setPivot(g2_ry);
       }
-      telemetry.addLine("Slide current pos: "+mek.arm.slide.getPower());
-      telemetry.addLine("Slider current pos: " + mek.arm.slide.getCurrentPosition() + "Slide goal pos: "+mek.arm.slide.getTargetPosition());
+      telemetry.addLine("Slide current pos: " + mek.arm.slide.getPower());
+      telemetry.addLine("Slider current pos: " + mek.arm.slide.getCurrentPosition() + "Slide goal pos: " + mek.arm.slide.getTargetPosition());
 
       // This block handles making the gamepad.b toggle the wrist position
       if (gamepad2.b && !is2B) {
