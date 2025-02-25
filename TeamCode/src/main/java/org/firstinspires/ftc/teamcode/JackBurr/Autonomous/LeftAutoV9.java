@@ -55,15 +55,17 @@ public class LeftAutoV9 extends LinearOpMode {
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), bucket.getHeading());
         scorePreloadChain = follower.pathBuilder()
                 .addPath(scorePreload)
-                .setPathEndTimeoutConstraint(20)
                 .addTemporalCallback(0, ()->{
-                    slides.runLeftSlideToPositionPID(constants.LEFT_SLIDE_HIGH_BASKET);
-                    slides.runRightSlideToPositionPID(constants.RIGHT_SLIDE_HIGH_BASKET);
+                    slides.runBothSlidesToNegatedPositions(constants.RIGHT_SLIDE_HIGH_BASKET);
                     telemetry.addData("Follower Busy: ", follower.isBusy());
                     telemetry.addData("At End: ", follower.atParametricEnd());
                 })
                 .addTemporalCallback(200, ()->{
                     deliveryAxon.setPosition(constants.DELIVERY_UP);
+                })
+                .addTemporalCallback(5000, ()->{
+                    deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
+                    follower.breakFollowing();
                 })
 
                 .build();
@@ -71,8 +73,12 @@ public class LeftAutoV9 extends LinearOpMode {
         stepTimer.reset();
         //follower.followPath(scorePreloadChain);
         while(opModeIsActive()) {
+            if (isStopRequested()) {
+                return;
+            }
             follower.update();
             telemetry.update();
+            follower.drawOnDashBoard();
             telemetry.addLine("Step: " + step);
             if (step == 1) {
                 if(!traj1followed) {
@@ -81,23 +87,39 @@ public class LeftAutoV9 extends LinearOpMode {
                 }
                 telemetry.addData("Pose: ", follower.getPose());
                 telemetry.addData("Is done: ", follower.atParametricEnd());
-                follower.drawOnDashBoard();
-                if(!follower.isBusy()){
+                if(stepTimer.seconds() > 5){
                     follower.breakFollowing();
                     stepTimer.reset();
                     step = 2;
                 }
             }
             if (step == 2) {
-                while (stepTimer.seconds() > 3){
+                while (stepTimer.seconds() < 5){
                     deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
+                    if (isStopRequested()) {
+                        return;
+                    }
                 }
-                if(stepTimer.seconds() > 10){
+                if(stepTimer.seconds() > 5){
+                    stepTimer.reset();
                     step = 3;
                 }
             }
-            if (isStopRequested()) {
-                return;
+            if(step == 3){
+                deliveryAxon.setPosition(constants.DELIVERY_GRAB);
+                if(stepTimer.seconds() > 3){
+                    stepTimer.reset();
+                    step = 4;
+                }
+            }
+            if(step == 4){
+                if(stepTimer.seconds() < 2) {
+                    slides.runBothSlidesToNegatedPositions(0);
+                }
+                else {
+                    step = 5;
+                }
+
             }
         }
 

@@ -73,6 +73,39 @@ public class DeliverySlidesV1 {
         }
     }
 
+    public void runBothSlidesToNegatedPositions(double rightPosition){
+        leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftController = new PIDController(kP, kI, kD);
+        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightController = new PIDController(kP, kI, kD);
+        double ticks_per_rev = leftSlide.getMotorType().getTicksPerRev();
+        leftController.setPID(kP, kI, kD);
+        rightController.setPID(kP, kI, kD);
+        double leftCurrentPos = leftSlide.getCurrentPosition();
+        double rightCurrentPos = rightSlide.getCurrentPosition();
+        double leftPID = leftController.calculate(leftCurrentPos, -rightPosition);
+        double rightPID = rightController.calculate(rightCurrentPos, rightPosition);
+        double leftFF = Math.cos(Math.toRadians(-rightPosition/ticks_per_rev)) * kF;
+        double rightFF = Math.cos(Math.toRadians(rightPosition/ticks_per_rev)) * kF;
+        double leftPower = leftPID + leftFF;
+        double rightPower = rightPID + rightFF;
+        double positionError = Math.abs(leftCurrentPos + rightCurrentPos); // Ensure they are opposites
+        double correctionFactor = 1.0 - (positionError * 0.005);
+        correctionFactor = Math.max(0.6, correctionFactor); // Prevent overcorrection
+        if (Math.abs(leftCurrentPos) > Math.abs(rightCurrentPos)) {
+            leftPower  = leftPower * correctionFactor;
+        } else if (Math.abs(rightCurrentPos) > Math.abs(leftCurrentPos)) {
+            rightPower = rightPower * correctionFactor;
+        }
+        if(getLeftSlidePosition() != -rightPosition) {
+            leftSlide.setPower(leftPower);
+        }
+        if(getRightSlidePosition() != rightPosition) {
+            rightSlide.setPower(rightPower);
+        }
+    }
+
+
 
     public int getLeftSlidePosition(){
         return leftSlide.getCurrentPosition();

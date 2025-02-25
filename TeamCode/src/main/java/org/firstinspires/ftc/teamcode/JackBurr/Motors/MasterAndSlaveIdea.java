@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @TeleOp
 @Config
-public class DeliveryPID extends OpMode {
+public class MasterAndSlaveIdea extends OpMode {
     public DcMotorEx leftMotor;
     public DcMotorEx rightMotor;
     public RobotConstantsV1 constantsV1 = new RobotConstantsV1();
@@ -25,14 +25,11 @@ public class DeliveryPID extends OpMode {
     public static double kI = 0;
     public static double kD = 0.0001;
     public static double kF = 0;
-    public static double correctionFactor = 1.1;
-    public static double choice = 0;
-    public static double correction = 0.005;
+    public static double correctionFactor = 0.0038;
     public static int leftTarget = 0;
     public static int rightTarget = 0;
     public static double ticks_per_rev;
-    public PIDController leftController;
-    public PIDController rightController;
+    public PIDController controller;
     public ElapsedTime timer = new ElapsedTime();
     @Override
     public void init() {
@@ -44,8 +41,7 @@ public class DeliveryPID extends OpMode {
         rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftTarget = constantsV1.LEFT_SLIDE_HIGH_BASKET;
         rightTarget = constantsV1.RIGHT_SLIDE_HIGH_BASKET;
-        leftController = new PIDController(kP, kI, kD);
-        rightController = new PIDController(kP, kI, kD);
+        controller = new PIDController(kP, kI, kD);
         ticks_per_rev = leftMotor.getMotorType().getTicksPerRev();
         multipleTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
@@ -56,27 +52,23 @@ public class DeliveryPID extends OpMode {
 
     @Override
     public void loop() {
-        leftController.setPID(kP, kI, kD);
-        rightController.setPID(kP, kI, kD);
+        controller.setPID(kP, kI, kD);
         double leftCurrentPos = leftMotor.getCurrentPosition();
         double rightCurrentPos = rightMotor.getCurrentPosition();
-        double leftPID = leftController.calculate(leftCurrentPos, leftTarget);
-        double rightPID = rightController.calculate(rightCurrentPos, rightTarget);
+        double average = (-leftCurrentPos + rightCurrentPos) / 2;
+        double pid = controller.calculate(average, leftTarget);
         double leftFF = Math.cos(Math.toRadians(leftTarget/ticks_per_rev)) * kF;
         double rightFF = Math.cos(Math.toRadians(rightTarget/ticks_per_rev)) * kF;
-        double leftPower = leftPID + leftFF;
-        double rightPower = rightPID + rightFF;
-        double targetError = leftTarget + rightTarget;
+        double leftPower = -pid - leftFF;
+        double rightPower = pid + rightFF;
+        double targetError = 0;
         double error = leftCurrentPos + rightCurrentPos;
-        if (error > 0) {
-            leftPower  = leftPower * correctionFactor;
-        } else if (error < 0) {
-            rightPower = rightPower * correctionFactor;
-        }
+        double correction = (leftCurrentPos - rightCurrentPos) * correctionFactor;
 
-        leftMotor.setPower(leftPower);
-        rightMotor.setPower(rightPower);
+        leftMotor.setPower(leftPower - correction);
+        rightMotor.setPower(rightPower + correction);
 
+        multipleTelemetry.addData("Average: ", average + "\n" );
         multipleTelemetry.addData("Left Position", leftCurrentPos);
         multipleTelemetry.addData("Left Target", leftTarget);
         multipleTelemetry.addData("Right Position", rightCurrentPos);
@@ -87,7 +79,6 @@ public class DeliveryPID extends OpMode {
         if(timer.seconds() > 5){
             timer.reset();
             leftTarget = leftTarget - 50;
-            rightTarget = rightTarget + 50;
         }
     }
 }

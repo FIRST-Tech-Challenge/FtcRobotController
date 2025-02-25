@@ -12,7 +12,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-@Disabled
+import java.util.Random;
+
 @TeleOp
 @Config
 public class PIDTutorial extends OpMode {
@@ -23,13 +24,14 @@ public class PIDTutorial extends OpMode {
     public static double kD = 0.0001;
     public static double kF = 0;
     public static double choice = 0;
-    public static int target = 500;
+    public static int target = 0;
     public static double ticks_per_rev;
     public PIDController controller;
+    public Random random = new Random();
     public ElapsedTime timer = new ElapsedTime();
     @Override
     public void init() {
-        motor = hardwareMap.get(DcMotorEx.class, "intakeSlides");
+        motor = hardwareMap.get(DcMotorEx.class, "deliverySlideL");
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         controller = new PIDController(kP, kI, kD);
@@ -53,8 +55,17 @@ public class PIDTutorial extends OpMode {
         multipleTelemetry.addData("Target", target);
         multipleTelemetry.update();
         if(timer.seconds() > 4){
-            target = target + 1100;
+            choice = getRandomNumber(0, 1);
+            if(choice == 0) {
+                target = target + 50;
+            }
+            else {
+                target = target - 50;
+            }
             timer.reset();
         }
+    }
+    public int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
     }
 }

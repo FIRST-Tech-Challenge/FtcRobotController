@@ -73,6 +73,12 @@ public class LimelightV1 {
         return limelight.deleteSnapshot(snapshotName);
     }
 
+    public void restart(int pipelineToSet){
+        limelight.close();
+        startStreaming();
+        setPipeline(pipelineToSet);
+    }
+
     public double getFps(){
         return getStatus().getFps();
     }
@@ -92,11 +98,23 @@ public class LimelightV1 {
         return list.get(index);
     }
     public double getAngle(){
-        if(getLatestResult() != null) {
-            return getLatestResult().getTy();
+        if(!getColorResults().isEmpty()) {
+            List<List<Double>> corners = getColorResults().get(getColorResults().size()-1).getTargetCorners();
+            if (corners.size() >= 4) { // Ensure at least 4 corners exist
+                double x1 = corners.get(0).get(0); // Top-left corner X
+                double y1 = corners.get(0).get(1); // Top-left corner Y
+                double x2 = corners.get(1).get(0); // Top-right corner X
+                double y2 = corners.get(1).get(1); // Top-right corner Y
+                double angleRadians = Math.atan2(y2 - y1, x2 - x1);
+                return Math.toDegrees(angleRadians);
+            }
+            else {
+                return 0.0;
+            }
+
         }
         else {
-            return -1;
+            return 0.0;
         }
     }
 }
