@@ -43,8 +43,9 @@ public class TeleopWithActionsBlue extends OpMode {
     boolean firstRun = true;
     boolean red = false;
     public static double slowMultiplier = 0.25;
-    ElapsedTime timer = new ElapsedTime();
-    public boolean reject = false;
+    public ElapsedTime timer = new ElapsedTime();
+    boolean forceOuttake = false;
+
     @Override
     public void init() {
         dashboard = FtcDashboard.getInstance();
@@ -68,13 +69,13 @@ public class TeleopWithActionsBlue extends OpMode {
             runningActions.put("intake", robot.intakeMove(Intake.intakeState.STOP));
             runningActions.put("arm", arm.armRetract());
             firstRun = false;
-        }
-        else {
-            if (reject){
-                if (timer.seconds()<.5){
-                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
+        } else {
+            if (forceOuttake){
+                if (timer.seconds()>.5){
+                    timer.reset();
+                    forceOuttake = false;
                 } else {
-                    reject = false;
+                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
                 }
             }
             if (gamepad1.right_trigger > 0.5) {
@@ -93,7 +94,8 @@ public class TeleopWithActionsBlue extends OpMode {
                 if ((red&&!colorSensor.isBlue())||(!red&&!colorSensor.isRed())){
                     runningActions.put("intake", robot.intakeMove(Intake.intakeState.INTAKE));
                 } else {
-                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
+                    forceOuttake = true;
+                    timer.reset();
                 }
             } else if (gamepad1.right_bumper) {
                 runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
