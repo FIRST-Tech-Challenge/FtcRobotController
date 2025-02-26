@@ -1,31 +1,13 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-/**
- * This file illustrates the concept of driving a path based on time.
- * The code is structured as a LinearOpMode
- * The code assumes that you do NOT have encoders on the wheels,
- *   otherwise you would use: RobotAutoDriveByEncoder;
- *   The desired path in this example is:
- *   - Drive forward for 3 seconds
- *   - Spin right for 1.3 seconds
- *   - Drive Backward for 1 Second
- *  The code is written in a simple form with no optimizations.
- *  However, there are several ways that this type of sequence could be streamlined,
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
- */
+@Autonomous(name="Turn Test", group="Robot") // ITD stands for Into the Deep
 
-// I couldn't remember how to push stuff into Git, so after I googled a bit I gave up.
-// Git is weird and I don't like it. -paige
-@Autonomous(name="BETTER_itd_auto", group="Robot") // ITD stands for Into the Deep
-public class BETTER_itd_auto extends LinearOpMode {
+public class TurnTest extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor leftFrontDrive = null; //motor 0
@@ -97,12 +79,12 @@ public class BETTER_itd_auto extends LinearOpMode {
         }
 
         //step 3: Strafe Right for 2.05 Seconds
-        rightFrontDrive.setPower(-FORWARD_SPEED);
+        rightFrontDrive.setPower(FORWARD_SPEED);
         rightBackDrive.setPower(FORWARD_SPEED);
-        leftFrontDrive.setPower(FORWARD_SPEED);
-        leftBackDrive.setPower(-FORWARD_SPEED);
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2.05)) {
+        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
             telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
@@ -136,7 +118,7 @@ public class BETTER_itd_auto extends LinearOpMode {
         }
 
         // Step 7:  Stop
-       shoulder_right.setPower(0);
+        shoulder_right.setPower(0);
         shoulder_left.setPower(0);
 
         telemetry.addData("Path", "Complete");

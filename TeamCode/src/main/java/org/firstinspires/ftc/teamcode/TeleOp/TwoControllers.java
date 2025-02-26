@@ -32,11 +32,8 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-//import org.firstinspires.ftc.teamcode.HardwareMechanum;
-
 
 /**
  * This file contains an example of a Linear "OpMode".
@@ -81,29 +78,9 @@ public class TwoControllers extends LinearOpMode {
     private DcMotor forearm = null;
     private Servo servo = null;
 
-
-    //Wrist stuff
-    final double WRIST_INCREMENT = 0.001;
-    final double WRIST_MAX = 1.0;
-    final double WRIST_MIN = 0.25;
     double servoPosition = 0.0;
 
-    //Finger stuff
-    //bro i didn't know that's what he was saying to me as i was
-    //going to my room bc i was cold :skull:
-    //i hate to do this to him but i do have to comment this out
-    //servo work better if it dont work like this
-    // final double FINGER_INCREMENT = 0.002;
-    final double CLAW_MAX = 1.0;
-    final double CLAW_MIN = 0.8;
-    // double leftFingerPosition = 0.0;
-    // double rightFingerPosition = 0.0;
-
-    double armPosition;
-    double MIN_POSITION = 0;
-    double MAX_POSITION = 1;
-    double armOffset = 0;
-    double ARM_SPEED = 0.02;
+    final double CLAW_MAX = 0.25;
 
     @Override
     public void runOpMode() {
@@ -159,7 +136,7 @@ public class TwoControllers extends LinearOpMode {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = gamepad1.left_stick_y; // Note: pushing stick forward gives negative value
+            double axial   = -gamepad1.left_stick_y; // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
             double Shoulder_Forward = gamepad2.right_trigger / 2;
@@ -186,8 +163,11 @@ public class TwoControllers extends LinearOpMode {
             if (Claw_Position < 0){
                 Claw_Position = 0;;
             }
-            double calculated_claw = Claw_Position * (1-CLAW_MIN) + CLAW_MIN;
+            double calculated_claw = Claw_Position * (1 - CLAW_MAX) + CLAW_MAX;
             servo.setPosition(calculated_claw);
+            telemetry.addData("gamepad2.left_stick_x", gamepad2.left_stick_x);
+            telemetry.addData("Setting claw to position", calculated_claw);
+
 
             // wheel power
             if (max > 1.0) {
@@ -202,60 +182,12 @@ public class TwoControllers extends LinearOpMode {
             //Forearm Power
             forearm.setPower(Forearm_Movement);
 
-            servoPosition = gamepad2.right_stick_y >CLAW_MIN? gamepad2.right_stick_y:CLAW_MIN;
-            servo.setPosition(servoPosition);
-            telemetry.addData("Setting claw to position", servoPosition);
-            telemetry.update();
-
-            //Code for the claw
-            if(gamepad2.x) {
-
-            }
-            if(gamepad2.y){
-            }
-
-            // //Code for the fingers
-            // if(gamepad2.y) {
-            //     //yeah yeah yeah don't copy-paste code
-            //     //but you should also not stay up until 5 am on a school night working on code
-            //     //and yet here we are
-
-            //sorry conner
-
-            //     if (Double.compare(FINGER_MAX, leftFingerPosition) >= 0){
-            //         leftFingerPosition += FINGER_INCREMENT;
-            //         leftFinger.setPosition(leftFingerPosition);
-            //     }
-            // }
-
-            // if(gamepad2.x){
-            //     if (Double.compare(FINGER_MIN, leftFingerPosition) <= 0){
-            //         leftFingerPosition -= FINGER_INCREMENT;
-            //         leftFinger.setPosition(leftFingerPosition);
-            //     }
-            // }
-
-            // if(gamepad1.b) {
-            //     if (Double.compare(FINGER_MAX, rightFingerPosition) >= 0){
-            //         rightFingerPosition += FINGER_INCREMENT;
-            //         rightFinger.setPosition(rightFingerPosition);
-            //     }
-            // }
-            // if(gamepad2.a){
-            //     if (Double.compare(FINGER_MIN, rightFingerPosition) <= 0){
-            //         rightFingerPosition -= FINGER_INCREMENT;
-            //         rightFinger.setPosition(rightFingerPosition);
-            //     }
-            // }
-
-
-
             // Send calculated power to wheels
-            leftFrontDrive.setPower(leftFrontPower / 2);
-            rightFrontDrive.setPower(rightFrontPower / 2);
-            leftBackDrive.setPower(leftBackPower / 2);
-            rightBackDrive.setPower(rightBackPower / 2);
-//
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
+
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
@@ -263,11 +195,9 @@ public class TwoControllers extends LinearOpMode {
             telemetry.addData("shoulderPower ", "%4.2f", upperArmPower);
             telemetry.addData("Wrist position", "%4.2f", servoPosition);
             telemetry.addData("Forearm Movement ", "%4.2f", Forearm_Movement);
-            // telemetry.addData("Left finger position", "%4.2f", leftFingerPosition);
-            // telemetry.addData("Right finger position", "%4.2f", rightFingerPosition);
+
             telemetry.update();
 
-            //sleep(50);
         }
 
 
