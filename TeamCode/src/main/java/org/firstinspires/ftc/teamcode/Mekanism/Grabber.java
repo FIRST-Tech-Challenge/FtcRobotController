@@ -45,13 +45,13 @@ public class Grabber {
    */
   public void update() {
     intake1.setPosition((intake1Power + 1) / 2);
-    double temp = (intake2Power + 1) / 2;
-    if(temp<0.5) {
-      temp += .25;
-      if(temp>0.5)
-        temp=.45;
+    intake2Power = (intake2Power + 1) / 2;
+    if(intake2Power<0.5) {
+      intake2Power += .25;
+      if(intake2Power>0.5)
+        intake2Power=.45;
     }
-    intake2.setPosition(temp);
+    intake2.setPosition(intake2Power);
 
     wrist.setPosition(wristPos);
   }
