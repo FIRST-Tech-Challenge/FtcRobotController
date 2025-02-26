@@ -277,7 +277,7 @@ public class CompBotAuto extends LinearOpMode {
 //         setIMUOffset();
 //         break;
 //       }
-//       telemetry.addLine("out of Loop");
+       telemetry.addLine("out of Loop");
     }
 
     telem();

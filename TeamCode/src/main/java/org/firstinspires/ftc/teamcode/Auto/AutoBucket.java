@@ -38,6 +38,16 @@ public class AutoBucket extends LinearOpMode {
     mek.update();
 
     // raise arm to top bucket
+    //topBucket();
+
+    //Move robot to pick up second block
+    //moveRobot(1.0, 1.0, 0.0);
+    amazingSwerve.swerveTheThing(-1,-1,0);
+    sleepWithAmazingSwerve(500);
+    sleep(500);
+  }
+
+  public void topBucket(){
     mek.arm.setSlide(4100);
     sleepWithMekUpdate(2500);
     mek.arm.setPivot(15);
@@ -49,7 +59,6 @@ public class AutoBucket extends LinearOpMode {
     sleepWithMekUpdate(500);
     mek.arm.setSlide(0);
     sleepWithMekUpdate(2500);
-    //moveRobot(1.0, 1.0, 0.0);
   }
 
   public void sleepWithMekUpdate(int timeInMS) {
@@ -73,6 +82,15 @@ public class AutoBucket extends LinearOpMode {
     }
   }
 
+  public void sleepWithAmazingSwerve(double timeInMS){
+    double currentTime = Utils.getTimeMiliSeconds();
+    double endTime = Utils.getTimeMiliSeconds() + timeInMS;
+    while (currentTime < endTime && opModeIsActive()) {
+      odo.update();
+      currentTime = Utils.getTimeMiliSeconds();
+    }
+  }
+
   public void initOdo() {
     odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
     odo.recalibrateIMU();
@@ -84,17 +102,41 @@ public class AutoBucket extends LinearOpMode {
   }
 
   public void moveRobot(double strafe_x, double strafe_y, double steer_amt) {
-    double current_x = odo.getPosX();
-    double current_y = odo.getPosY();
+    double odo_multiplier = 5;
+    double change_x = strafe_x + odo.getPosX() * odo_multiplier;
+    double change_y = strafe_y - odo.getPosY() * odo_multiplier;
+    boolean y_was_0 = false;
 
-    while (current_x != strafe_x || current_y != strafe_y) {
-      amazingSwerve.swerveTheThing(strafe_x, strafe_y, 0.0);
+    while (!(change_x > 0.05) || !(change_x < 0.05)   ||   !(change_y > 0.05) || !(change_y < 0.05)) {
 
-      current_x = odo.getPosX();
-      current_y = odo.getPosY();
+      //reduce input to swerve
+      double limit = 0.45;
+      if(change_x > limit)
+        change_x = limit;
+      if(change_x < -limit)
+        change_x = -limit;
+      if(change_y > limit)
+        change_y = limit;
+      if(change_y < -limit)
+        change_y = -limit;
+      amazingSwerve.swerveTheThing(-change_x, change_y, 0.0);
+
+      //reset input and print input
+      change_x = strafe_x - odo.getPosX() * odo_multiplier;
+      change_y = strafe_y - odo.getPosY() * odo_multiplier;
+      change_y *= -1;
+      outputPosition();
+      telemetry.addLine("change x: " + change_x);
+      telemetry.addLine("change y: " + -change_y);
+      telemetry.update();
       odo.update();
     }
+  }
 
+  public void outputPosition(){
+    telemetry.addLine("x pos: " + odo.getPosX() * 3);
+    telemetry.addLine("y pos: " + odo.getPosY() * 3);
+    telemetry.addLine("heading: " + odo.getHeading().getDegrees());
   }
 
   /**
