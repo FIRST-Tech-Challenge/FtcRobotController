@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -15,10 +14,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 
 
 @Disabled
@@ -32,19 +29,13 @@ public class TwoFishIntake {
 
     private LinearOpMode linearOpMode;
 
-    public final double CLICKS_PER_DEGREE = 3.5;
     private final double CLICKS_PER_CM = 24.92788;
-    private final int MM_PER_METER = 1000;
 
     public final int DELTA_EXTENSION = 1000;
     public int minExtension = -999999999;
     public int maxExtension = DELTA_EXTENSION;
-    private final double MIN_PITCH = 0.5;
-    private final double DOWN_PITCH = 1;
-    private final double UP_PITCH = 0.5;
-    private final double AWAY_PITCH = 0.0;
-    private final double TRANSFER_PITCH = 0.09;
-    private final double MAX_PITCH = 1.0;
+    private double downPitch = 0.0;
+    private double upPitch = 0.0;
 
     private final int TICK_LOW_POWER_DISTANCE = 50;
 
@@ -57,6 +48,24 @@ public class TwoFishIntake {
     private ElapsedTime time = new ElapsedTime();
 
 
+    class TwoFishIntakeValues implements Serializable {
+
+        double downPitch;
+        double upPitch;
+
+        public TwoFishIntakeValues( double downPitch,
+                                    double upPitch
+        ) {
+            this.downPitch = downPitch;
+            this.upPitch = upPitch;
+        }
+    }
+
+    String file = "TwoFishDeliveryValues.txt";
+    TwoFishIntakeValues twoFishIntakeValues = new TwoFishIntakeValues(
+            downPitch,
+            upPitch
+    );
 
 
     //Color Sensor variables
@@ -74,7 +83,6 @@ public class TwoFishIntake {
     ElapsedTime colorTimer;
 
 
-
     public TwoFishIntake(LinearOpMode l)
     {
         linearOpMode = l;
@@ -85,18 +93,18 @@ public class TwoFishIntake {
     private void Initialize(){//4mm
         try {
             extension = linearOpMode.hardwareMap.get(DcMotor.class, "extension");
-            extension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            extension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            extension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
             intake = linearOpMode.hardwareMap.get(DcMotor.class, "intake");
+            pitch = linearOpMode.hardwareMap.get(Servo.class, "intakePitch");
+            transfer = linearOpMode.hardwareMap.get(Servo.class, "intakeTransfer");
+
             intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            extension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            extension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            pitch = linearOpMode.hardwareMap.get(Servo.class, "intakePitch");
-            pitch.scaleRange(0.5, 0.815);
+            pitch.scaleRange(0.0, 1.0);
 
             extension.setTargetPosition(extension.getCurrentPosition());
 
@@ -111,12 +119,12 @@ public class TwoFishIntake {
     }
 
 
-    public void setTargetLength(int ticks){
+    public void setSlidesTargetPosition(int ticks){
         targetLength = ticks;
         extension.setTargetPosition(Math.max(minExtension, Math.min(maxExtension, ticks)));
     }
 
-    public void setExtensionPower(double power){
+    public void setSlidesPower(double power){
         int error = 0;
         int errorMult = 0;
         int current = extension.getCurrentPosition();
@@ -158,27 +166,13 @@ public class TwoFishIntake {
             extension.setPower(0);
         }
     }
-
-
-    public void setIntakePower(float power){
-        intake.setPower(power);
-    }
-
-    public void setPitch(float position){
-        pitch.setPosition(position);
-    }
+    
+    public void setIntakePower(float power){intake.setPower(power);}
+    public void setTransferPower(float power){transfer.setPosition(power);}
+    public void setPitch(float position){pitch.setPosition(position);}
+    public void pitchUp(){pitch.setPosition(upPitch);}
+    public void pitchDown(){pitch.setPosition(downPitch);}
     public double getPitch(){return pitch.getPosition();}
-
-    public void pitchUp(){
-        pitch.setPosition(UP_PITCH);
-    }
-    public void pitchDown(){
-        pitch.setPosition(DOWN_PITCH);
-    }
-    public void pitchAway(){pitch.setPosition(AWAY_PITCH);}
-
-    public void pitchToTransfer(){pitch.setPosition(TRANSFER_PITCH);}
-
     public int getExtensionTicks(){ return extension.getCurrentPosition();}
 
 //    public void limitCheck() {
@@ -226,81 +220,6 @@ public class TwoFishIntake {
 //
 //        return new int[] {deltaX/320, deltaY/240};
 //    }
-
-    public class RunToLengthRR implements Action {
-        private boolean initialized = false;
-        private int target = 0;
-        //timeout in MILLISECONDS
-        private double timeout = 0.0;
-
-        private ElapsedTime timer = new ElapsedTime();
-
-        public RunToLengthRR(int targetLength, double timeoutTime) {
-            target = targetLength;
-            timeout = timeoutTime;
-        }
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-            if (!initialized) {
-                initialized = true;
-                setTargetLength(target);
-                timer.reset();
-            }
-
-            packet.addLine("In RR action");
-            packet.addLine("Drive For Time");
-            packet.put("Time Elapsed", timer.milliseconds());
-            if (Math.abs(extension.getCurrentPosition() - target) > 10 && timer.milliseconds() < timeout) {
-                updateLength();
-                return true;
-            } else {
-                setTargetLength(extension.getCurrentPosition());
-                return false;
-            }
-        }
-    }
-    public Action RunToLengthAction(int targetLength, double timeoutTime) {
-        return new TwoFishIntake.RunToLengthRR(targetLength, timeoutTime);
-    }
-
-
-    public class SpinIntakeRR implements Action {
-        private boolean initialized = false;
-        //timeout in MILLISECONDS
-        private double timeout = 0.0;
-
-        private double power = 0.0;
-
-        private ElapsedTime timer = new ElapsedTime();
-
-        public SpinIntakeRR(double spinPower, double timeoutTime) {
-            timeout = timeoutTime;
-            power = spinPower;
-        }
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-            if (!initialized) {
-                initialized = true;
-                setIntakePower((float)power);
-                timer.reset();
-            }
-
-            packet.addLine("In RR action");
-            packet.addLine("Drive For Time");
-            packet.put("Time Elapsed", timer.milliseconds());
-            if (timer.milliseconds() < timeout) {
-                return true;
-            } else {
-                setIntakePower(0);
-                return false;
-            }
-        }
-    }
-    public Action SpinIntakeAction(double spinPower, double timeoutTime) {
-        return new TwoFishIntake.SpinIntakeRR(spinPower, timeoutTime);
-    }
 
 
     private String getClosestHue(double measuredHue){
