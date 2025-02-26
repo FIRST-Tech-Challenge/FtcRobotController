@@ -73,6 +73,7 @@ public class ITDCons {
     public static double yellow = 0.388;
     public static double blue = 0.611;
     public static double red = 0.279;
+    public static double green = 0.500;
     public static double off =0;
 
     public static double intakeintakearm = .503;

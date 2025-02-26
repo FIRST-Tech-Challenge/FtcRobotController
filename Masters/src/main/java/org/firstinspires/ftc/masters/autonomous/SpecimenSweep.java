@@ -28,22 +28,24 @@ import org.firstinspires.ftc.masters.pedroPathing.constants.LConstants;
 @Autonomous(name="SpecimenSweep")
 public class SpecimenSweep extends LinearOpMode {
 
-    Pose startPose = new Pose(10,66,0);
+    Pose startPose = new Pose(10,45,0);
     Pose scoringPose = new Pose(40,70.5, 0);
 
-    Pose startSweepPose1 = new Pose (34, 48, Math.toRadians(-35));
+    Pose startSweepPose1 = new Pose (19+10,-3+45, Math.toRadians(332-360));
+    Pose endSweepPose1 = new Pose (23+10, -14+45,  Math.toRadians(255-360));
 
-    Pose endSweepPose1 = new Pose (35, 47,  Math.toRadians(-115));
+    Pose startSweep2 = new Pose (27+10, -9+45,Math.toRadians(318-360));
+    Pose getEndSweep2 = new Pose(27+10, -18+45, Math.toRadians(243-360));
 
-    Pose startSweep2 = new Pose (36, 48,Math.toRadians(-60));
-    Pose getEndSweep2 = new Pose(36, 48, Math.toRadians(-115));
+    Pose startSweepPose3 = new Pose (29+10,-18+45, Math.toRadians(314-360));
+    Pose endSweepPose3 = new Pose (28+10, -24+45,  Math.toRadians(243-360));
 
     Pose midPoint0 = new Pose(30, 60, 0);
     Pose midPoint1 = new Pose(20,25,0);
     Pose midPoint2 = new Pose(60,36,0);
 
-    Pose pickupPose = new Pose (10.75,38, 0);
-    Pose pickupMid = new Pose(22,38,0);
+    Pose pickupPose = new Pose (0+10,-13+45, 0);
+    Pose pickupMid = new Pose(23+10,26+45,0);
     Pose pushPose1 = new Pose(65,28,0);
     Pose endPushPose1 = new Pose (22,28,0);
     Pose pushPose2 = new Pose(65,17,0);
@@ -81,7 +83,7 @@ public class SpecimenSweep extends LinearOpMode {
         follower.setStartingPose(startPose);
         buildPaths();
 
-        PathState state = PathState.Lift;
+        PathState state = PathState.Start;
         outtake.initAutoSpecimen();
         intake.retractSlide();
 
@@ -99,61 +101,33 @@ public class SpecimenSweep extends LinearOpMode {
             pinpoint.update();
             telemetry.addData("Pinpoint Status", pinpoint.getDeviceStatus());
             telemetry.update();
-            led.setPosition(ITDCons.blue);
+            led.setPosition(ITDCons.green);
         }
 
         waitForStart();
 
-        outtake.scoreSpecimen();
-        intake.servoToNeutral();
+        intake.servoToDrop();
+        intake.extendSlideMax();
+
+        follower.followPath(toSweep1);
 
         elapsedTime = new ElapsedTime();
 
-
         while (opModeIsActive() && !isStopRequested()) {
 
-
             switch (state){
-                case Lift:
-                    if (elapsedTime.milliseconds()>200){
-                        follower.followPath(scorePreload);
-                        elapsedTime= new ElapsedTime();
-                        state= PathState.Start;
-                    }
-                    break;
                 case Start:
-                    if (!follower.isBusy() || elapsedTime.milliseconds()>2000){
+                    if (!follower.isBusy()){
+                        follower.followPath(sweep1);
+                        state= PathState.Sample1;
+                    }
+                    break;
 
-                        elapsedTime = new ElapsedTime();
-                        state = PathState.ToSub;
-                        driveTrain.drive(1);
-
-                    }
-                    break;
-                case ToSub:
-                    if (elapsedTime!=null && elapsedTime.milliseconds()>0){
-                        driveTrain.drive(0);
-                        outtake.openClawAuto();
-                        state = PathState.ScorePreload;
-                        elapsedTime = new ElapsedTime();
-                    }
-                    break;
-                case ScorePreload:
-                    if (elapsedTime!=null && elapsedTime.milliseconds()>100){
-                        follower.followPath(toSweep1);
-                        outtake.closeClaw();
-                        outtake.moveToPickUpFromWall();
-                        state = PathState.Sample1;
-                        elapsedTime = null;
-                    }
-                    break;
                 case Sample1:
                     if (!follower.isBusy()){
-                        intake.extendSlideMax();
-                        intake.servoToDrop();
-                        state= PathState.Sample2;
-                        elapsedTime = new ElapsedTime();
-
+                        follower.followPath(toSweep2);
+                        intake.servoToNeutral();
+                        state = PathState.Sample2;
                     }
                     break;
                 case Sample2:
@@ -166,77 +140,69 @@ public class SpecimenSweep extends LinearOpMode {
 //                            driveTrain.turn(0.7);
 //                        } else {
 //                            driveTrain.drive(0);
-//
 //                        }
 //                    }
-//
                     break;
-                case Sample3:
-                    if (!follower.isBusy()){
-                        follower.followPath(toSweep2);
-                        intake.servoToNeutral();
-                    }
-                    break;
-                case PickUpSpec:
-                    if (!follower.isBusy()){
-                        if (elapsedTime==null) {
-                            outtake.closeClaw();
-                            elapsedTime= new ElapsedTime();
-
-                        } else if (elapsedTime.milliseconds()>500){
-                            follower.followPath(score);
-                            outtake.scoreSpecimen();
-                            elapsedTime=null;
-                            if(cycleCount <= 4) {
-                                state = PathState.ScoreSpec3;
-                            }
-                            if(cycleCount > 4) {
-                                state = PathState.Score;
-                            }
-
-                        }
-
-                    }
-                    break;
-                case ScoreSpec3:
-                    if (!follower.isBusy()){
-                        if (elapsedTime==null) {
-                            outtake.openClawAuto();
-                            cycleCount++;
-                            elapsedTime= new ElapsedTime();
-
-                        } else if (elapsedTime.milliseconds()>350){
-                            follower.followPath(towall);
-                            outtake.closeClaw();
-                            outtake.moveToPickUpFromWall();
-                            elapsedTime = null;
-                            state = PathState.PickUpSpec;
-
-                        }
-                    }
-                    break;
-
-//                case Score:
+//                case Sample3:
+//                    if (!follower.isBusy()){
+//                        follower.followPath(toSweep2);
+//                        intake.servoToNeutral();
+//                    }
+//                    break;
+//                case PickUpSpec:
 //                    if (!follower.isBusy()){
 //                        if (elapsedTime==null) {
-//                            //outtake.openClaw();
+//                            outtake.closeClaw();
 //                            elapsedTime= new ElapsedTime();
-//
-//                        } else if (elapsedTime.milliseconds()>150){
-//                            follower.followPath(pickUp);
-//                            //outtake.moveToPickUpFromWall();
+//                        } else if (elapsedTime.milliseconds()>500){
+//                            follower.followPath(score);
+//                            outtake.scoreSpecimen();
 //                            elapsedTime=null;
-//                            state= PathState.End;
+//                            if(cycleCount <= 4) {
+//                                state = PathState.ScoreSpec3;
+//                            }
+//                            if(cycleCount > 4) {
+//                                state = PathState.Score;
+//                            }
 //                        }
 //                    }
 //                    break;
-//                case End:
+//                case ScoreSpec3:
 //                    if (!follower.isBusy()){
-//                        //outtake.setTarget(0);
+//                        if (elapsedTime==null) {
+//                            outtake.openClawAuto();
+//                            cycleCount++;
+//                            elapsedTime= new ElapsedTime();
+//                        } else if (elapsedTime.milliseconds()>350){
+//                            follower.followPath(towall);
+//                            outtake.closeClaw();
+//                            outtake.moveToPickUpFromWall();
+//                            elapsedTime = null;
+//                            state = PathState.PickUpSpec;
+//                        }
 //                    }
 //                    break;
+//
+////                case Score:
+////                    if (!follower.isBusy()){
+////                        if (elapsedTime==null) {
+////                            //outtake.openClaw();
+////                            elapsedTime= new ElapsedTime();
+////
+////                        } else if (elapsedTime.milliseconds()>150){
+////                            follower.followPath(pickUp);
+////                            //outtake.moveToPickUpFromWall();
+////                            elapsedTime=null;
+////                            state= PathState.End;
+////                        }
+////                    }
+////                    break;
+////                case End:
+////                    if (!follower.isBusy()){
+////                        //outtake.setTarget(0);
+////                    }
+////                    break;
             }
-
 
             outtake.update();
             intake.update();
@@ -246,11 +212,7 @@ public class SpecimenSweep extends LinearOpMode {
 
     protected void buildPaths(){
 
-        scorePreload = new Path(new BezierLine(new Point(startPose), new Point(scoringPose)));
-        scorePreload.setConstantHeadingInterpolation(startPose.getHeading());
-
-
-        toSweep1 = new Path(new BezierLine(new Point(scoringPose),new Point(startSweepPose1) ));
+        toSweep1 = new Path(new BezierLine(new Point(startPose),new Point(startSweepPose1) ));
         toSweep1.setLinearHeadingInterpolation(0, startSweepPose1.getHeading());
 
         sweep1 = new Path(new BezierCurve(new Point(startSweepPose1), new Point(endSweepPose1)));
@@ -258,28 +220,6 @@ public class SpecimenSweep extends LinearOpMode {
 
         toSweep2 = new Path(new BezierCurve(new Point(endSweepPose1), new Point(startSweep2)));
         toSweep2.setLinearHeadingInterpolation(endSweepPose1.getHeading(), startSweep2.getHeading());
-
-
-        pushSample1 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(scoringPose),new Point(midPoint0), new Point(midPoint1), new Point(midPoint2), new Point(pushPose1)))
-                .setLinearHeadingInterpolation(scoringPose.getHeading(), pushPose1.getHeading())
-                .addPath(new BezierLine(new Point(pushPose1),new Point(endPushPose1)))
-                .setLinearHeadingInterpolation(pushPose1.getHeading(), endPushPose1.getHeading())
-                .build();
-
-        pushSample2 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(endPushPose1),new Point(pushPose1),new Point (pushPose2)))
-                .setLinearHeadingInterpolation(endPushPose1.getHeading(), pushPose2.getHeading())
-                .addPath(new BezierLine(new Point(pushPose2), new Point(endPushPose2)))
-                .setLinearHeadingInterpolation(pushPose2.getHeading(), endPushPose2.getHeading())
-                .build();
-
-        pushSample3 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(endPushPose2),new Point(pushPose2),new Point (pushPose3)))
-                .setLinearHeadingInterpolation(endPushPose2.getHeading(), pushPose3.getHeading())
-                .addPath(new BezierLine(new Point(pushPose3), new Point(endPushPose3)))
-                .setLinearHeadingInterpolation(pushPose3.getHeading(), endPushPose3.getHeading())
-                .build();
 
         pickup1 = new Path(new BezierCurve(new Point(endPushPose2), new Point(pickupMid), new Point(pickupPose)));
         pickup1.setLinearHeadingInterpolation(endPushPose2.getHeading(), pickupPose.getHeading());
@@ -294,9 +234,6 @@ public class SpecimenSweep extends LinearOpMode {
                 .addPath(new BezierCurve(new Point(scoringPose), new Point(pickupPose), new Point(pickupPose)))
                 .setLinearHeadingInterpolation(scoringPose.getHeading(), pickupPose.getHeading())
                 .build();
-
-
-
 
     }
 }

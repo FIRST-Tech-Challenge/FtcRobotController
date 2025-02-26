@@ -92,7 +92,7 @@ public class SpecimenSafe extends LinearOpMode {
             pinpoint.update();
             telemetry.addData("Pinpoint Status", pinpoint.getDeviceStatus());
             telemetry.update();
-            led.setPosition(ITDCons.blue);
+            led.setPosition(ITDCons.green);
         }
 
         waitForStart();
