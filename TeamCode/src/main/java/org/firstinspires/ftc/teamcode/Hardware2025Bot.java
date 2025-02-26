@@ -102,6 +102,7 @@ public class Hardware2025Bot
     public final static int   SNORKLE_HW_MAX   = 3328;  // encoder for max possible extension RIGHT
     public final static int   SNORKLE_LEVEL2A  = 2750;  // encoder for snorkel above the bar
     public final static int   SNORKLE_LEVEL2B  = 50;    // encoder for snorkel fully retracted (with margin)
+    public final static int   SNORKLE_LOW_BAR  = 1300;  // encoder for snorkel where fully retracted (with margin)
     public final static int   SNORKLE_HW_MIN   = 0;     // encoder position at maximum rotation LEFT
 
     //====== Worm gear tilt MOTORS (RUN_USING_ENCODER) =====
@@ -180,10 +181,12 @@ public class Hardware2025Bot
     public ElapsedTime  viperSlideTimer  = new ElapsedTime();
     public ElapsedTime  wormTiltTimer    = new ElapsedTime();
 
-    public boolean      viperMotorAutoMove = false;    // have we commanded an automatic extension movement?
-    public boolean      viperMotorBusy     = false;
+    public boolean      viperMotorAutoMove    = false; // have we commanded an automatic extension movement?
     public boolean      wormTiltMotorAutoMove = false; // have we commanded an automatic tilt movement?
+
+    public boolean      viperMotorBusy        = false;
     public boolean      wormTiltMotorBusy     = false;
+
     public double       VIPER_RAISE_POWER  =  1.000; // Motor power used to EXTEND viper slide
     public double       VIPER_HOLD_POWER   =  0.001; // Motor power used to HOLD viper slide at current extension
     public double       VIPER_LOWER_POWER  = -0.500; // Motor power used to RETRACT viper slide

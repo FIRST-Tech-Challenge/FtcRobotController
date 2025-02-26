@@ -233,10 +233,10 @@ public class AutonomousRight4 extends AutonomousBase {
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_SPECIMEN1_DEG, 1.0);
             autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO1);
             // Drive to the scoring position next to the submersible
-            driveToPosition( 18.2, (pos_x+3.5), 0.00, DRIVE_SPEED_60, TURN_SPEED_50, DRIVE_THRU );
+            driveToPosition( 18.2, (pos_x+2.2), 0.00, DRIVE_SPEED_55, TURN_SPEED_40, DRIVE_THRU );
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR1);
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR1);
-            pos_y = 27.50 + (specimenNumber * 0.25);
+            pos_y = 27.60 + (specimenNumber * 0.25);
             driveToPosition( pos_y, pos_x, 0.00, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
             robot.driveTrainMotorsZero();  // make double sure we're stopped
             // If we drive to the submersible faster than the arm moves, wait for the arm
@@ -300,13 +300,13 @@ public class AutonomousRight4 extends AutonomousBase {
             // Start tilting and extending the arm, and positioning the specimen
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_SPECIMEN3_DEG, 1.0);
             autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO3);
-            // Drive partway toward the scoring position next to the submersible
-            driveToPosition( 18.2, (pos_x+3.5), 180.0, DRIVE_SPEED_45, TURN_SPEED_40, DRIVE_THRU );
+            // Drive partway in Y and X toward the scoring position next to the submersible
+            driveToPosition( 18.2, (pos_x+10.0), 180.0, DRIVE_SPEED_70, TURN_SPEED_50, DRIVE_THRU );
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR3);
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR3);
-            // Finish the drive
+            // Finish the drive to the submersible bar
             pos_y = 28.40 + (specimenNumber * 0.15);
-            driveToPosition( pos_y, pos_x, 180.0, DRIVE_SPEED_45, TURN_SPEED_40, DRIVE_TO );
+            driveToPosition( pos_y, pos_x, 180.0, DRIVE_SPEED_50, TURN_SPEED_50, DRIVE_TO );
             robot.driveTrainMotorsZero();  // make double sure we're stopped
         } // opModeIsActive
 
@@ -354,8 +354,9 @@ public class AutonomousRight4 extends AutonomousBase {
             driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_100, TURN_SPEED_70, DRIVE_THRU );
             pos_x+=7.0; // 7" toward wall/samples
             driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_100, TURN_SPEED_70, DRIVE_THRU );
-            pos_y-=29.0; // 31" back toward observation zone
+            pos_y-=27.5; // 27.5" back toward observation zone
             driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_100, TURN_SPEED_70, DRIVE_THRU );
+//          herdForwardQuickly( pos_y, pos_x, pos_angle, DRIVE_SPEED_100 );
             if( samplesToHerd == 1 ) { robot.driveTrainMotorsZero(); } // go there fast, but stop
         } // opModeIsActive
         // What about the 2nd sample?
@@ -364,8 +365,9 @@ public class AutonomousRight4 extends AutonomousBase {
             driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_100, TURN_SPEED_50, DRIVE_THRU );
             pos_x+=7.0; // 7" toward wall/samples
             driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_100, TURN_SPEED_50, DRIVE_THRU );
-            pos_y-=29.0; // 29" back toward observation zone
+            pos_y-=27.5; // 27.5" back toward observation zone
             driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_100, TURN_SPEED_50, DRIVE_THRU );
+//          herdForwardQuickly( pos_y, pos_x, pos_angle, DRIVE_SPEED_100 );
             if( samplesToHerd == 2 ) { robot.driveTrainMotorsZero(); } // go there fast, but stop
         } // opModeIsActive
         // What about the 3rd one against the wall?

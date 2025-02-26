@@ -228,10 +228,10 @@ public class AutonomousRight3 extends AutonomousBase {
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_SPECIMEN1_DEG, 1.0);
             autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO1);
             // Drive to the scoring position next to the submersible
-            driveToPosition( 18.2, (pos_x+2.2), 0.00, DRIVE_SPEED_60, TURN_SPEED_50, DRIVE_THRU );
+            driveToPosition( 18.2, (pos_x+2.2), 0.00, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR1);
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR1);
-            pos_y = 27.40 + (specimenNumber * 0.25);
+            pos_y = 27.60 + (specimenNumber * 0.25);
             driveToPosition( pos_y, pos_x, 0.00, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
             robot.driveTrainMotorsZero();  // make double sure we're stopped
             // If we drive to the submersible faster than the arm moves, wait for the arm

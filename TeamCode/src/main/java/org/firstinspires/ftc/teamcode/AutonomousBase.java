@@ -1215,6 +1215,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         }
     }
 
+    /*---------------------------------------------------------------------------------*/
     /**
      * @param angleTarget  - The angle the robot should try to face when reaching destination.
      * @param turnMax - Highest value to use for turn speed.
@@ -1231,6 +1232,20 @@ public abstract class AutonomousBase extends LinearOpMode {
         }
     }
 
+    /*---------------------------------------------------------------------------------*/
+    public void herdForwardQuickly(double yTarget, double xTarget, double angleTarget, double speedMax ) {
+        double errorMultiplier = 0.04;
+        double speedMin = MIN_DRIVE_MAGNITUDE;
+        double allowedError = 1.5;
+        performEveryLoop();
+        // Loop until we get to destination.
+        while(!driveToXY(yTarget, xTarget, angleTarget, speedMin, speedMax, errorMultiplier, allowedError, DRIVE_TO)
+                && opModeIsActive()) {
+            performEveryLoop();
+        }
+    } // herdForwardQuickly
+
+    /*---------------------------------------------------------------------------------*/
     /**
      * @param angleTarget  - The angle the robot should try to face when reaching destination.
      * @param resetDriveAngle - When we start a new drive, need to reset the starting drive angle.

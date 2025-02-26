@@ -787,7 +787,7 @@ public abstract class Teleop extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void processLevel2Ascent() {
-        boolean motorsFinished;
+        boolean motorsFinished, tiltArmFinished;
 
         // DRIVER 1 controls position the arm for hanging
         // DRIVER 2 controls initiate the actual hang
@@ -815,7 +815,7 @@ public abstract class Teleop extends LinearOpMode {
                     ascent2state = ASCENT_STATE_SETUP;
                 }
                 break;
-
+            //===============================================================================================
             case ASCENT_STATE_SETUP:
                 // Send Snorkel motors to raised position
                 robot.startSnorkleExtension(Hardware2025Bot.SNORKLE_LEVEL2A, 1.0 );
@@ -839,6 +839,7 @@ public abstract class Teleop extends LinearOpMode {
                     ascent2state = ASCENT_STATE_SETUP_READY;
                 }
                 break;
+            //===============================================================================================
             case ASCENT_STATE_SETUP_READY:
                 if( gamepad2_l_bumper_now && gamepad2_r_bumper_now ) {
                     // Fully retract snorkels
@@ -850,10 +851,11 @@ public abstract class Teleop extends LinearOpMode {
                     ascent2Timer.reset();
                 }
                 break;
-
             case ASCENT_STATE_SNOKEL_LIFTING:
                 robot.processSnorkleExtension();
-                motorsFinished = !robot.wormTiltMotorBusy && !robot.viperMotorBusy &&
+                tiltArmFinished = tiltAngleCloseEnough( Hardware2025Bot.TILT_ANGLE_LEVEL2B_DEG, 1.0 );
+                // we actually can start the next motion when snorkels hit SNORKLE_LOW_BAR because the robot will have already tilted
+                motorsFinished = tiltArmFinished && !robot.viperMotorBusy &&
                                  !robot.snorkleLMotorBusy && !robot.snorkleRMotorBusy;
                 if( motorsFinished || (ascent2Timer.milliseconds() > 2500.0) ) {
                     // Robot should now be hanging on snorkels, but butt is now resting on floor
@@ -916,6 +918,13 @@ public abstract class Teleop extends LinearOpMode {
         } // ascent2started
 
     }  // processLevel2Ascent
+
+    /*---------------------------------------------------------------------------------*/
+    boolean tiltAngleCloseEnough( double tiltAngleTargetDegrees, double degreeTolerance ) {
+      double tiltAngleError = robot.armTiltAngle - tiltAngleTargetDegrees;
+      boolean closeEnough = (Math.abs( tiltAngleError ) <= degreeTolerance);
+      return closeEnough;
+    } /* tiltAngleCloseEnough */
 
     //************************************************************************************
     // Activity functions
