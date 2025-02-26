@@ -94,6 +94,7 @@ public class TeleopWithActionsBlue extends OpMode {
                 if ((red&&!colorSensor.isBlue())||(!red&&!colorSensor.isRed())){
                     runningActions.put("intake", robot.intakeMove(Intake.intakeState.INTAKE));
                 } else {
+                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
                     forceOuttake = true;
                     timer.reset();
                 }
