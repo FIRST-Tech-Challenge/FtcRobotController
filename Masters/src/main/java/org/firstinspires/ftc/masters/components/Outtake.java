@@ -585,14 +585,13 @@ public class Outtake implements Component{
             case TransferReady:
 
                 //put back code when position is consistent
-//                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
-//                    if (intake.readyToTransfer()){
-//                        //target= ITDCons.transferPickupTarget;
-//                        closeClaw();
-//                        status= Status.CloseClawTransfer;
-//                        elapsedTime = new ElapsedTime();
-//                    }
-//                }
+                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+                    if (intake.readyToTransfer()){
+                        closeClaw();
+                        status= Status.CloseClawTransfer;
+                        elapsedTime = new ElapsedTime();
+                    }
+                }
                 break;
             case CloseClawTransfer:
                 if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){

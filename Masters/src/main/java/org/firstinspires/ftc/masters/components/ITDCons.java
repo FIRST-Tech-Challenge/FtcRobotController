@@ -65,7 +65,7 @@ public class ITDCons {
     public static int MaxExtension = 31000;
     public static int halfExtension= 15000;
 
-    public static int TransferExtension = 5000;
+    public static int TransferExtension = 0;
     public static int MinExtension = 500;
 
 
@@ -78,6 +78,9 @@ public class ITDCons {
 
     public static double intakeintakearm = .503;
     public static double intakeintakechain = .08;
+
+    public static int clawOpenWaitTime = 300;
+    public static int clawCloseWaitTime= 400;
 
 }
 
