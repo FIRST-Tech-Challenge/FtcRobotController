@@ -158,6 +158,11 @@ public class Arm {
     slide.setMode(RUN_TO_POSITION);
     slide2.setMode(RUN_TO_POSITION);
 
+    // Sets target pos to 0
+    pivot.setTargetPosition(0);
+    slide.setTargetPosition(0);
+    slide2.setTargetPosition(0);
+
     // Resets max power for motor to use
     pivot.setPower(1.0);
     slide.setPower(1.0);
@@ -213,9 +218,14 @@ public class Arm {
 
     pivotTarget = (int) (x * countsPerDegree);
 
-    maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree)) * 1.4;
-    if (slide.getCurrentPosition() > maxLength)
-      setSlide(maxLength);
+    // TODO: figure this out (but shouldn't be needed because it would only be used in auto anyways)
+//    maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree)) * 1;
+//    if(maxLength < 2500)
+//      maxLength = 2500;
+//    if (slide.getCurrentPosition() > maxLength && x > 0) {
+//      setSlide(-x * 3);
+//      telemetry.addLine("auto in slide");
+//    }
   }
 
 

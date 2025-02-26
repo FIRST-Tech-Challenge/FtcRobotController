@@ -8,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.GoBildaOd
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
@@ -27,35 +28,44 @@ public class AutoBucket extends LinearOpMode {
     initOdo();
     driveBase = new AutoSwerve(this, odo);
     mek = new Mekanism(this);
-    mek.grabber.initWrist();
-    amazingSwerve = new TheBestSwerve(this,odo,driveBase);
+    amazingSwerve = new TheBestSwerve(this, odo, driveBase);
 
     waitForStart();
     mek.arm.homeArm();
-    // raise arm to top bucket drop and then move out to second one
+    mek.grabber.initWrist();
+    mek.grabber.setWrist(-1.0);
+    mek.grabber.setGrabber(0, 0);
+    mek.update();
+
+    // raise arm to top bucket
     mek.arm.setSlide(4100);
-    sleepWithMekUpdate(5000);
+    sleepWithMekUpdate(2500);
     mek.arm.setPivot(15);
+    sleepWithMekUpdate(1500);
+    mek.grabber.setGrabber(1, .75);
     sleepWithMekUpdate(1000);
-    mek.grabber.setGrabber(-.5,-.75);
-    sleepWithMekUpdate(500);
-    mek.grabber.setGrabber(0,0);
+    mek.grabber.setGrabber(0, 0);
     mek.arm.setPivot(0);
     sleepWithMekUpdate(500);
     mek.arm.setSlide(0);
-    sleepWithMekUpdate(5000);
-    moveRobot(1.0, 1.0, 0.0);
+    sleepWithMekUpdate(2500);
+    //moveRobot(1.0, 1.0, 0.0);
   }
 
   public void sleepWithMekUpdate(int timeInMS) {
     double currentTime = Utils.getTimeMiliSeconds();
-    double startTime = Utils.getTimeMiliSeconds() + timeInMS;
-    while (currentTime < startTime && opModeIsActive()) {
-      mek.arm.update();
+    double endTime = Utils.getTimeMiliSeconds() + timeInMS;
+    while (currentTime < endTime && opModeIsActive()) {
+      mek.update();
       currentTime = Utils.getTimeMiliSeconds();
       try {
         telemetry.addData("Slide pos: ", mek.arm.slide.getCurrentPosition());
         telemetry.addData("Pivot pos: ", mek.arm.pivot.getCurrentPosition());
+        telemetry.addLine("grabber1 power: "+mek.grabber.intake1.getPosition());
+        telemetry.addLine("grabber2 power: "+mek.grabber.intake2.getPosition());
+        telemetry.addLine("pivot target pos: "+mek.arm.pivot.getTargetPosition());
+        telemetry.addLine("pivot current pos: "+mek.arm.pivot.getCurrentPosition());
+        telemetry.addLine("pivot power: "+mek.arm.pivot.getPower());
       } catch (Exception e) {
         telemetry.addLine("error");
       }
