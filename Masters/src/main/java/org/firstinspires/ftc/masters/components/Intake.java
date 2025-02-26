@@ -409,7 +409,7 @@ public class Intake {
         intakeRight.setPosition(ITDCons.intakeChainDrop);
     }
 
-    protected void servoToTransfer(){
+    public void servoToTransfer(){
         intakeLeft.setPosition(ITDCons.intakeArmTransfer);
         intakeRight.setPosition(ITDCons.intakeChainTransfer);
     }

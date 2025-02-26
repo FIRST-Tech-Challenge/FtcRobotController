@@ -145,6 +145,7 @@ public class Outtake implements Component{
         position = init.getPosition();
         led = init.getLed();
         initializeHardware();
+        status= Status.InitWall;
 
     }
 
@@ -623,7 +624,7 @@ public class Outtake implements Component{
         angleRight.setPosition(ITDCons.angleMiddle);
     }
 
-    private void setAngleServoToBack(){
+    public void setAngleServoToBack(){
         angleLeft.setPosition(ITDCons.angleBack);
         angleRight.setPosition(ITDCons.angleBack);
     }
