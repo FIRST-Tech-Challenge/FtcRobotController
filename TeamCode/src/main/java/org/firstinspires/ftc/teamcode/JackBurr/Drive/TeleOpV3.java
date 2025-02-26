@@ -139,6 +139,8 @@ public class TeleOpV3 extends OpMode {
         wrist.setPosition(constants.WRIST_CENTER);
         deliverySlides.init(hardwareMap);
         slidesState = SlidesState.IN;
+        limelightV1.setPipeline(0);
+        limelightV1.startStreaming();
         //===========================================================================================================
     }
 
@@ -149,8 +151,7 @@ public class TeleOpV3 extends OpMode {
         deliveryGrippersTimer.reset();
         diffTimer.reset();
         wrist.setPosition(constants.WRIST_CENTER);
-        limelightV1.setPipeline(0);
-        limelightV1.startStreaming();
+        limelightV1.limelight.start();
         //TODO: Try telemetry.setAutoClear(false);
     }
 
@@ -160,8 +161,7 @@ public class TeleOpV3 extends OpMode {
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = -gamepad1.left_stick_x; // Counteract imperfect strafing, if the back motors are facing downwards this should be negative
         double rx = -gamepad1.right_stick_x; //This is reversed for our turning
-        telemetry.addLine("Limelight status: " + limelightV1.getStatus().getName());
-        telemetry.update();
+        //telemetry.addLine("Limelight status: " + limelightV1.getStatus().getName());
         if(!slowmode) {
             drive(y, x, rx);
         }
@@ -722,6 +722,7 @@ public class TeleOpV3 extends OpMode {
 
         }
         telemetry.addLine("STATE: " + state.name());
+        telemetry.addLine("LIMELIGHT ANGLE: " + limelightV1.getAngle());
         telemetry.addLine("\t Intake grippers position: " + grippers.getPosition());
         telemetry.addLine("\t Intake slides power: " + intakeSlides.getPower());
         telemetry.addLine("\t Intake slides position: " + intakeSlides.getCurrentPosition());

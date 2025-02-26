@@ -21,10 +21,14 @@ public class DeliveryPID extends OpMode {
     public DcMotorEx rightMotor;
     public RobotConstantsV1 constantsV1 = new RobotConstantsV1();
     public MultipleTelemetry multipleTelemetry;
-    public static double kP = 0.002;
-    public static double kI = 0;
-    public static double kD = 0.0001;
-    public static double kF = 0;
+    public static double leftkP = 0.002;
+    public static double leftkI = 0;
+    public static double leftkD = 0.0001;
+    public static double leftkF = 0;
+
+    public static double rightkP = 0.002;
+    public static double rightkI = 0;
+    public static double rightkD = 0.0001;
     public static double correctionFactor = 1.1;
     public static double choice = 0;
     public static double correction = 0.005;
@@ -44,8 +48,8 @@ public class DeliveryPID extends OpMode {
         rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftTarget = constantsV1.LEFT_SLIDE_HIGH_BASKET;
         rightTarget = constantsV1.RIGHT_SLIDE_HIGH_BASKET;
-        leftController = new PIDController(kP, kI, kD);
-        rightController = new PIDController(kP, kI, kD);
+        leftController = new PIDController(leftkP, leftkI, leftkD);
+        rightController = new PIDController(rightkP, rightkI, rightkD);
         ticks_per_rev = leftMotor.getMotorType().getTicksPerRev();
         multipleTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
@@ -56,23 +60,23 @@ public class DeliveryPID extends OpMode {
 
     @Override
     public void loop() {
-        leftController.setPID(kP, kI, kD);
-        rightController.setPID(kP, kI, kD);
+        leftController.setPID(leftkP, leftkI, leftkD);
+        rightController.setPID(rightkP, rightkI, rightkD);
         double leftCurrentPos = leftMotor.getCurrentPosition();
         double rightCurrentPos = rightMotor.getCurrentPosition();
         double leftPID = leftController.calculate(leftCurrentPos, leftTarget);
-        double rightPID = rightController.calculate(rightCurrentPos, rightTarget);
-        double leftFF = Math.cos(Math.toRadians(leftTarget/ticks_per_rev)) * kF;
-        double rightFF = Math.cos(Math.toRadians(rightTarget/ticks_per_rev)) * kF;
+        double rightPID = rightController.calculate(rightCurrentPos, -leftCurrentPos);
+        double leftFF = Math.cos(Math.toRadians(leftTarget/ticks_per_rev)) * leftkF;
+        double rightFF = Math.cos(Math.toRadians(rightTarget/ticks_per_rev)) * leftkF;
         double leftPower = leftPID + leftFF;
         double rightPower = rightPID + rightFF;
-        double targetError = leftTarget + rightTarget;
+        double targetError = 0;
         double error = leftCurrentPos + rightCurrentPos;
-        if (error > 0) {
-            leftPower  = leftPower * correctionFactor;
-        } else if (error < 0) {
-            rightPower = rightPower * correctionFactor;
-        }
+        //if (error > 0) {
+           // leftPower  = leftPower * correctionFactor;
+        //} else if (error < 0) {
+            //rightPower = rightPower * correctionFactor;
+        //}
 
         leftMotor.setPower(leftPower);
         rightMotor.setPower(rightPower);
@@ -87,7 +91,6 @@ public class DeliveryPID extends OpMode {
         if(timer.seconds() > 5){
             timer.reset();
             leftTarget = leftTarget - 50;
-            rightTarget = rightTarget + 50;
         }
     }
 }

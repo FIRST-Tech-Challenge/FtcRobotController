@@ -55,8 +55,8 @@ public class MasterAndSlaveIdea extends OpMode {
         controller.setPID(kP, kI, kD);
         double leftCurrentPos = leftMotor.getCurrentPosition();
         double rightCurrentPos = rightMotor.getCurrentPosition();
-        double average = (-leftCurrentPos + rightCurrentPos) / 2;
-        double pid = controller.calculate(average, leftTarget);
+        double average = (Math.abs(leftCurrentPos) + Math.abs(rightCurrentPos)) / 2;
+        double pid = controller.calculate(average, -leftTarget);
         double leftFF = Math.cos(Math.toRadians(leftTarget/ticks_per_rev)) * kF;
         double rightFF = Math.cos(Math.toRadians(rightTarget/ticks_per_rev)) * kF;
         double leftPower = -pid - leftFF;
@@ -64,9 +64,18 @@ public class MasterAndSlaveIdea extends OpMode {
         double targetError = 0;
         double error = leftCurrentPos + rightCurrentPos;
         double correction = (leftCurrentPos - rightCurrentPos) * correctionFactor;
-
-        leftMotor.setPower(leftPower - correction);
-        rightMotor.setPower(rightPower + correction);
+        if(error < 0) {
+            leftMotor.setPower(leftPower + correction);
+            rightMotor.setPower(rightPower);
+        }
+        else if(error > 0){
+            rightMotor.setPower(rightPower + correction);
+            leftMotor.setPower(leftPower);
+        }
+        else {
+            rightMotor.setPower(rightPower);
+            leftMotor.setPower(leftPower);
+        }
 
         multipleTelemetry.addData("Average: ", average + "\n" );
         multipleTelemetry.addData("Left Position", leftCurrentPos);

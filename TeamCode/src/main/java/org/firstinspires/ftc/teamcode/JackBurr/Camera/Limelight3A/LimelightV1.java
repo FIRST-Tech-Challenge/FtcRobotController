@@ -100,7 +100,7 @@ public class LimelightV1 {
     public double getAngle(){
         if(!getColorResults().isEmpty()) {
             List<List<Double>> corners = getColorResults().get(getColorResults().size()-1).getTargetCorners();
-            if (corners.size() >= 4) { // Ensure at least 4 corners exist
+            if (corners.size() >= 4) {
                 double x1 = corners.get(0).get(0); // Top-left corner X
                 double y1 = corners.get(0).get(1); // Top-left corner Y
                 double x2 = corners.get(1).get(0); // Top-right corner X
