@@ -40,6 +40,7 @@ public class Intake {
     ITDCons.Color allianceColor;
     ITDCons.Color color;
 
+    public double multiplier =1;
 
     public static double INTAKE_POWER = -1;
     public static double EJECT_POWER = 1;
@@ -72,7 +73,7 @@ public class Intake {
     private int target;
 
     public int checkColorCount=0;
-    public int MAX_COUNT=5;
+    public int MAX_COUNT=10;
     public int redTotal =0;
     public int blueTotal =0;
     public int greenTotal=0;
@@ -174,12 +175,24 @@ public class Intake {
 
     public void extendSlideHalf() {
         target = ITDCons.halfExtension;
+        multiplier=1;
         servoToNeutral();
+    }
+
+    public void extendSlideHalfAuto(){
+        target= ITDCons.halfExtension;
+        multiplier=1;
     }
 
     public void extendSlideMax(){
         target= ITDCons.MaxExtension;
+        multiplier =1;
         servoToNeutral();
+    }
+
+    public void extendSlideMAxAuto(){
+        target= ITDCons.MaxExtension-3000;
+        multiplier =0.3;
     }
 
     public void transferDone(){
@@ -204,7 +217,7 @@ public class Intake {
 
             double lift = pid + ff;
 
-            extendo.setPower(lift);
+            extendo.setPower(lift*multiplier);
 
             switch (status){
                 case EXTEND_TO_HUMAN:
@@ -265,12 +278,16 @@ public class Intake {
                         } else if (color == ITDCons.Color.yellow) {
                             status = Status.TO_TRANSFER;
                             elapsedTime = null;
-                            gamepad1.rumble(2000);
+//                            if (gamepad1!=null) {
+//                                gamepad1.rumble(2000);
+//                            }
 
                         } else if (color == allianceColor) {
                             status = Status.TO_TRANSFER;
                             elapsedTime = null;
-                            gamepad1.rumble(2000);
+//                            if (gamepad1!=null) {
+//                                gamepad1.rumble(2000);
+//                            }
                         }
                         resetColorDetection();
 
@@ -351,6 +368,7 @@ public class Intake {
                     break;
 
             }
+            telemetry.addData("intake status", status);
 
     }
 
@@ -391,9 +409,6 @@ public class Intake {
                 color = ITDCons.Color.unknown;
             }
         }
-
-
-
     }
 
     public ITDCons.Color getColor(){

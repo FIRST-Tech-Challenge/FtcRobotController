@@ -383,15 +383,15 @@ public class Outtake implements Component{
     }
 
     public int getLiftPos(){
-        return outtakeSlideEncoder.getCurrentPosition();
+        return -outtakeSlideEncoder.getCurrentPosition();
     }
 
-    public void releaseSample(){
-
-        claw.setPosition(ITDCons.clawOpen);
-        isScoringDone=true;
-
-    }
+//    public void releaseSample(){
+//
+//        claw.setPosition(ITDCons.clawOpen);
+//        isScoringDone=true;
+//
+//    }
 
 
     public void update(){
@@ -439,8 +439,6 @@ public class Outtake implements Component{
                //TODO: change from time to vertical slide position
                 if (getLiftPos()>ITDCons.BucketTarget-30000){
                     elapsedTime = new ElapsedTime();
-
-//                    status = Status.TransferToBucket_Move;
                     isLiftReady = true;
                 }
                 break;
@@ -455,6 +453,7 @@ public class Outtake implements Component{
 
                 if (getLiftPos()>ITDCons.BucketTarget-500) {
                     isLiftReady = true;
+                    status=Status.Bucket;
                 }
                 break;
 
@@ -576,7 +575,9 @@ public class Outtake implements Component{
 
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()+300){
                     status= Status.TransferDone;
-                    gamepad1.rumble(2000);
+                    if (gamepad1!=null) {
+                        gamepad1.rumble(1500);
+                    }
                     intake.transferDone();
                 }
                 break;

@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.masters.components.DriveTrain;
 import org.firstinspires.ftc.masters.components.ITDCons;
 import org.firstinspires.ftc.masters.components.Init;
 import org.firstinspires.ftc.masters.components.Intake;
@@ -29,10 +30,10 @@ public class Sample extends LinearOpMode {
 
 
     Pose startPose = new Pose(10,110,0);
-    Pose bucketPose = new Pose (14,128, Math.toRadians(-45));
-    Pose sample1 = new Pose(14,128,Math.toRadians(-14));
-    Pose sample2 = new Pose(14,128,Math.toRadians(-5));
-    Pose sample3 = new Pose(14, 128, Math.toRadians(23));
+    Pose bucketPose = new Pose (19,124, Math.toRadians(-45));
+    Pose sample1 = new Pose(20,128,Math.toRadians(-11));
+    Pose sample2 = new Pose(20,128,Math.toRadians(-5));
+    Pose sample3 = new Pose(20, 128, Math.toRadians(23));
 
     PathChain scorePreload, pickupSample1, pickupSample2, pickupSample3, scoreSample1, scoreSample2, scoreSample3;
 
@@ -58,6 +59,10 @@ public class Sample extends LinearOpMode {
         Init init = new Init(hardwareMap);
         Outtake outtake = new Outtake(init, telemetry);
         Intake intake = new Intake(init, telemetry);
+        DriveTrain driveTrain = new DriveTrain(init, telemetry);
+        outtake.setDriveTrain(driveTrain);
+        outtake.setIntake(intake);
+        intake.setOuttake(outtake);
 
         pinpoint = init.getPinpoint();
         led = init.getLed();
@@ -88,7 +93,7 @@ public class Sample extends LinearOpMode {
 
         waitForStart();
 
-        elapsedTime = new ElapsedTime();
+        elapsedTime = null;
         PathState pathState =PathState.ToBucket;
         follower.followPath(scorePreload);
         outtake.scoreSample();
@@ -102,11 +107,12 @@ public class Sample extends LinearOpMode {
 
             switch (pathState){
                 case ToBucket:
-                    if (!follower.isBusy() && outtake.isLiftReady() && !outtake.isScoringDone()){
-                        outtake.releaseSample();
-                        intake.extendSlideHalf();
+                    telemetry.addData("ready?", outtake.isLiftReady());
+                    if (!follower.isBusy() && outtake.isLiftReady() && elapsedTime==null){
+                        outtake.openClaw();
+                        intake.extendSlideHalfAuto();
                         elapsedTime = new ElapsedTime();
-                    } else if (!follower.isBusy() && outtake.isScoringDone() && elapsedTime.milliseconds()> 400){
+                    } else if (!follower.isBusy()  && elapsedTime!=null && elapsedTime.milliseconds()> 400){
                         intake.pickupSampleYellow();
                         follower.followPath(pickupSample1);
                         pathState = PathState.Sample1;
@@ -118,17 +124,21 @@ public class Sample extends LinearOpMode {
                     if (!follower.isBusy() && outtake.isTransferDone() && !outtake.isScoringDone()){
                         outtake.scoreSample();
                         follower.followPath(scoreSample1);
-                        intake.extendSlideHalf();
+                        intake.extendSlideHalfAuto();
                         pathState= PathState.Score1;
+                        elapsedTime= null;
 
+                    } else if (!follower.isBusy() && !outtake.isTransferDone() && elapsedTime==null){
+                        intake.extendSlideMAxAuto();
+                        elapsedTime= new ElapsedTime();
                     }
                     break;
                 case Score1:
-                    if (!follower.isBusy() && outtake.isLiftReady() && !outtake.isScoringDone()) {
-                        outtake.releaseSample();
-                        intake.extendSlideHalf();
+                    if (!follower.isBusy() && outtake.isLiftReady() && elapsedTime==null){
+                        outtake.openClaw();
+                        intake.extendSlideHalfAuto();
                         elapsedTime = new ElapsedTime();
-                    } else if (!follower.isBusy() && outtake.isScoringDone() && elapsedTime.milliseconds()> 400){
+                    } else if (!follower.isBusy() && elapsedTime==null && elapsedTime.milliseconds()> 400){
                         intake.pickupSampleYellow();
                         follower.followPath(pickupSample2);
                         pathState = PathState.Sample2;
@@ -139,15 +149,19 @@ public class Sample extends LinearOpMode {
                     if (!follower.isBusy() && outtake.isTransferDone() && !outtake.isScoringDone()){
                         outtake.scoreSample();
                         follower.followPath(scoreSample2);
-                        intake.extendSlideHalf();
+                        intake.extendSlideHalfAuto();
                         pathState= PathState.Score2;
 
+                    }
+                    else if (!follower.isBusy() && !outtake.isTransferDone() && elapsedTime==null){
+                        intake.extendSlideMAxAuto();
+                        elapsedTime= new ElapsedTime();
                     }
                     break;
                 case Score2:
                     if (!follower.isBusy() && outtake.isLiftReady() && !outtake.isScoringDone()) {
-                        outtake.releaseSample();
-                        intake.extendSlideHalf();
+                        outtake.openClaw();
+                        intake.extendSlideHalfAuto();
                         elapsedTime = new ElapsedTime();
                     } else if (!follower.isBusy() && outtake.isScoringDone() && elapsedTime.milliseconds()> 400){
                         intake.pickupSampleYellow();
@@ -160,15 +174,18 @@ public class Sample extends LinearOpMode {
                     if (!follower.isBusy() && outtake.isTransferDone() && !outtake.isScoringDone()){
                         outtake.scoreSample();
                         follower.followPath(scoreSample3);
-                        intake.extendSlideHalf();
+                        intake.extendSlideHalfAuto();
                         pathState= PathState.Score3;
 
+                    }
+                    else if (!follower.isBusy() && !outtake.isTransferDone() && elapsedTime==null){
+                        intake.extendSlideMAxAuto();
+                        elapsedTime= new ElapsedTime();
                     }
                     break;
                 case Score3:
                     if (!follower.isBusy() && outtake.isLiftReady() && !outtake.isScoringDone()) {
-                        outtake.releaseSample();
-                        intake.extendSlideHalf();
+                        outtake.openClaw();
                         elapsedTime = new ElapsedTime();
                     } else if (!follower.isBusy() && outtake.isScoringDone() && elapsedTime.milliseconds()> 400){
 //                        intake.pickupSampleYellow();
@@ -183,6 +200,8 @@ public class Sample extends LinearOpMode {
             outtake.update();
             intake.update();
             follower.update();
+            telemetry.addData("State", pathState);
+            telemetry.update();
         }
 
     }
@@ -202,7 +221,8 @@ public class Sample extends LinearOpMode {
 
         scoreSample1 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(sample1), new Point(bucketPose)))
-                .setLinearHeadingInterpolation(sample1.getHeading(), bucketPose.getHeading())
+                .setTangentHeadingInterpolation()
+                .setReversed(true)
                 .build();
 
         pickupSample2 = follower.pathBuilder()

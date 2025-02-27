@@ -70,6 +70,10 @@ public class TeleopManualV2Red extends LinearOpMode {
         intake.setOuttake(outtake);
         intake.setAllianceColor(ITDCons.Color.red);
 
+
+        intake.setGamepad1(gamepad1);
+        outtake.setGamepad(gamepad1);
+
         int target=0;
 
         int dpadUpPressed = 0;
