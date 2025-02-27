@@ -137,7 +137,7 @@ public class TeleopManualV2Red extends LinearOpMode {
                     bPressed = true;
                     if (outtake.isReadyToPickUp() || outtake.isReadyForTransfer()) {
                         outtake.closeClaw();
-                    } else if (intake.getColor() == ITDCons.Color.yellow) {
+                    } else if (outtake.isTransferDone()) {
                         outtake.scoreSampleLow();
                     } else {
                         outtake.moveToPickUpFromWall();

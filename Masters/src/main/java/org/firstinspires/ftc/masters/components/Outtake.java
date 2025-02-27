@@ -17,10 +17,10 @@ public class Outtake implements Component{
     private PIDController controller;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    public static double p = 0.0015, i = 0, d = 0;
+    public static double p = 0.0015, i = 0, d = 0.00003;
     public static double f = 0;
 
-    public int target = 0;
+    public static int target = 0;
 
     public int offset =0;
 
@@ -653,4 +653,9 @@ public class Outtake implements Component{
     public Status getStatus(){
         return status;
     }
+
+    public  boolean isTransferDone() {
+        return status == Status.TransferDone;
+    }
+
 }

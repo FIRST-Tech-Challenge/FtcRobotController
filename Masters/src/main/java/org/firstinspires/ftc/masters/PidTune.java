@@ -17,26 +17,19 @@ public class PidTune extends OpMode {
     private PIDController controller;
 
     public static double p = 0.0015, i = 0, d = 0;
-    public static double f = 0;
 
     public static int target = 0;
 
-    //
-
-    DcMotor rightFrontMotor, outtakeSlideRight, outtakeSlideLeft;
+    DcMotor outtakeSlideRight, outtakeSlideLeft;
 
     @Override
     public void init() {
         controller = new PIDController(p, i, d);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-//        rightFrontMotor = hardwareMap.get(DcMotorEx.class, "frontRight");
-//        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         outtakeSlideRight = hardwareMap.dcMotor.get("vertSlideRight");
         outtakeSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outtakeSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //outtakeSlideRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         outtakeSlideLeft= hardwareMap.dcMotor.get("vertSlideLeft");
         outtakeSlideLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -48,10 +41,8 @@ public class PidTune extends OpMode {
         int rotatePos = -(outtakeSlideRight.getCurrentPosition());
         double pid = controller.calculate(rotatePos, target);
 
-        double lift = pid + f;
-
-        outtakeSlideLeft.setPower(lift);
-        outtakeSlideRight.setPower(lift);
+        outtakeSlideLeft.setPower(pid);
+        outtakeSlideRight.setPower(pid);
 
         telemetry.addData("ArmPos", rotatePos);
         telemetry.addData("Target", target);
