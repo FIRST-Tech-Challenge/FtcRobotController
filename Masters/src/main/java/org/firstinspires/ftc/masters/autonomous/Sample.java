@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.masters.components.ITDCons;
 import org.firstinspires.ftc.masters.components.Init;
 import org.firstinspires.ftc.masters.components.Intake;
 import org.firstinspires.ftc.masters.components.Outtake;
@@ -50,9 +51,6 @@ public class Sample extends LinearOpMode {
         Outtake outtake = new Outtake(init, telemetry);
         Intake intake = new Intake(init, telemetry);
 
-
-
-
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
@@ -62,10 +60,10 @@ public class Sample extends LinearOpMode {
 
         waitForStart();
 
-        outtake.scoreSample();
         elapsedTime = new ElapsedTime();
         PathState pathState =PathState.ToBucket;
         follower.followPath(scorePreload);
+        outtake.scoreSample();
 
 
         while (opModeIsActive() && !isStopRequested()) {
@@ -78,9 +76,11 @@ public class Sample extends LinearOpMode {
                 case ToBucket:
                     if (!follower.isBusy() && outtake.isLiftReady() && !outtake.isScoringDone()){
                         outtake.releaseSample();
-                    } else if (!follower.isBusy() && outtake.isScoringDone()){
+                        elapsedTime = new ElapsedTime();
+                    } else if (!follower.isBusy() && outtake.isScoringDone() && elapsedTime.milliseconds()> 400){
 
                     }
+
 
                     break;
             }

@@ -36,14 +36,15 @@ public class Specimen extends LinearOpMode {
     Pose midPoint1 = new Pose(20,25,0);
     Pose midPoint2 = new Pose(60,36,0);
 
-    Pose pickupPose1 = new Pose(13, 40, 0);
-    Pose pickupPose = new Pose (10.75,40, 0);
-    Pose pushPose1 = new Pose(65,28,0);
-    Pose endPushPose1 = new Pose (24,28,0);
-    Pose pushPose2 = new Pose(65,17,0);
-    Pose endPushPose2 = new Pose(24,17,0);
-    Pose pushPose3 = new Pose(65,11,0);
-    Pose endPushPose3 = new Pose(23,11,0);
+    Pose pickupPose1 = new Pose(12, 39, 0);
+    Pose pickupPose = new Pose (10.75,39, 0);
+    Pose pushPose1 = new Pose(60,28,0);
+    Pose endPushPose1 = new Pose (29,28,0);
+    Pose pushPose2 = new Pose(60,17,0);
+    Pose endPushPose2 = new Pose(29,17,0);
+    Pose pushPose3 = new Pose(60,10,0);
+    Pose endPushPose3 = new Pose(29,10,0);
+    Pose pickupMid = new Pose(36,38,0);
 
     Path scorePreload, pickup1, score, towall, tosub;
     PathChain pushSample1, pushSample2, pushSample3, pickUp;
@@ -116,34 +117,41 @@ public class Specimen extends LinearOpMode {
                         driveTrain.drive(0);
                         outtake.openClawAuto();
                         state = PathState.ScorePreload;
+                        follower.followPath(pushSample1);
                         elapsedTime = new ElapsedTime();
                     }
                     break;
                 case ScorePreload:
-                    if (elapsedTime!=null && elapsedTime.milliseconds()>100){
-                        follower.followPath(pushSample1);
+                    if (elapsedTime!=null && elapsedTime.milliseconds()>400){
+
                         outtake.closeClaw();
                         outtake.moveToPickUpFromWall();
                         state = PathState.Sample3;
-                        elapsedTime = null;
+                        elapsedTime = new ElapsedTime();
                     }
                     break;
 
                 case Sample3:
                     if (!follower.isBusy()){
-                        outtake.openClaw();
-                        follower.followPath(pickup1);
+
+//                        follower.followPath(pickup1);
                         state= PathState.PickUpSpec;
-                        elapsedTime = null;
+                        outtake.closeClaw();
+                        elapsedTime= new ElapsedTime();
+                    }
+                    if (elapsedTime!=null && elapsedTime.milliseconds()>5000){
+                        outtake.openClaw();
                     }
                     break;
                 case PickUpSpec:
                     if (!follower.isBusy()){
-                        if (elapsedTime==null) {
+                        if (elapsedTime==null){
+                            elapsedTime = new ElapsedTime();
+                        }
+                        if (elapsedTime!=null && elapsedTime.milliseconds()>100 ){
                             outtake.closeClaw();
-                            elapsedTime= new ElapsedTime();
-
-                        } else if (elapsedTime.milliseconds()>150){
+                        }
+                      if (elapsedTime!=null && elapsedTime.milliseconds()>350){
                             follower.followPath(score);
                             outtake.scoreSpecimen();
                             elapsedTime=null;
@@ -167,7 +175,6 @@ public class Specimen extends LinearOpMode {
 
                         } else if (elapsedTime.milliseconds()>0){
                             follower.followPath(towall);
-                            outtake.closeClaw();
                             outtake.moveToPickUpFromWall();
                             elapsedTime = null;
                             state = PathState.PickUpSpec;
@@ -222,6 +229,8 @@ public class Specimen extends LinearOpMode {
                 .setLinearHeadingInterpolation(endPushPose2.getHeading(), pushPose3.getHeading())
                 .addPath(new BezierLine(new Point(pushPose3), new Point(endPushPose3)))
                 .setLinearHeadingInterpolation(pushPose3.getHeading(), endPushPose3.getHeading())
+                .addPath(new BezierCurve(new Point(endPushPose3), new Point(pickupMid), new Point(pickupPose)))
+                .setLinearHeadingInterpolation(endPushPose3.getHeading(), pickupPose.getHeading())
                 .build();
 
 //        pushSample2 = follower.pathBuilder()
@@ -244,10 +253,10 @@ public class Specimen extends LinearOpMode {
         towall = new Path(new BezierLine(new Point(scoringPose.getX(), scoringPose.getY()+2), new Point(pickupPose1)));
         towall.setLinearHeadingInterpolation(scoringPose.getHeading(), pickupPose1.getHeading());
 
-        pickUp = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(scoringPose), new Point(pickupPose1), new Point(pickupPose)))
-                .setLinearHeadingInterpolation(scoringPose.getHeading(), pickupPose.getHeading())
-                .build();
+//        pickUp = follower.pathBuilder()
+//                .addPath(new BezierCurve(new Point(scoringPose), new Point(pickupPose1), new Point(pickupPose)))
+//                .setLinearHeadingInterpolation(scoringPose.getHeading(), pickupPose.getHeading())
+//                .build();
 
 
 

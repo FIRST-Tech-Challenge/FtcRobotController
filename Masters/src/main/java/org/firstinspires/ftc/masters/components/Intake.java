@@ -7,6 +7,7 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -66,6 +67,7 @@ public class Intake {
     ElapsedTime elapsedTime = null;
 
     public  Status status;
+    Gamepad gamepad1;
 
     private int target;
 
@@ -98,6 +100,10 @@ public class Intake {
 
     public void setAllianceColor(ITDCons.Color color){
         allianceColor = color;
+    }
+
+    public void setGamepad1(Gamepad gamepad){
+        this.gamepad1= gamepad;
     }
 
     public void initStatusTeleop(){
@@ -259,10 +265,12 @@ public class Intake {
                         } else if (color == ITDCons.Color.yellow) {
                             status = Status.TO_TRANSFER;
                             elapsedTime = null;
+                            gamepad1.rumble(2000);
 
                         } else if (color == allianceColor) {
                             status = Status.TO_TRANSFER;
                             elapsedTime = null;
+                            gamepad1.rumble(2000);
                         }
                         resetColorDetection();
 
@@ -307,6 +315,9 @@ public class Intake {
                             target = ITDCons.TransferExtensionOut;
                         } else {
                             servoToTransfer();
+                            if (target==ITDCons.MaxExtension){
+                                target= ITDCons.TransferExtensionIn;
+                            }
                         }
                         elapsedTime = new ElapsedTime();
                     }
@@ -318,7 +329,7 @@ public class Intake {
                             target = ITDCons.TransferExtensionIn;
                         }
                     }
-                    if (elapsedTime.milliseconds()>2* status.getTime()){
+                    if (extendo.getCurrentPosition()<250){
                         elapsedTime =null;
                         stopIntake();
                         status= Status.TRANSFER;

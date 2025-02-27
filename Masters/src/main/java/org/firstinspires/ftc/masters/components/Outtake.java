@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -51,6 +52,7 @@ public class Outtake implements Component{
 
     Telemetry telemetry;
     Init init;
+    Gamepad gamepad1;
 
     enum Mode {
         Sample,
@@ -111,10 +113,13 @@ public class Outtake implements Component{
         CloseClawTransfer(400),
 
         Specimen_To_Wall(350),
-        SpecimenToWall_MoveBack(1300),
+        SpecimenToWall_MoveBack(1000),
 
         Transfer_To_Wall(500),
-        ToBucketClose(400);
+        ToBucketClose(400),
+
+        CloseClawSpec(400);
+
 
 
         private final long time;
@@ -148,6 +153,10 @@ public class Outtake implements Component{
         initializeHardware();
         status= Status.InitWall;
 
+    }
+
+    public void setGamepad(Gamepad gamepad){
+        this.gamepad1 = gamepad;
     }
 
     public void setIntake(Intake intake){
@@ -188,11 +197,11 @@ public class Outtake implements Component{
 
     public void initAutoSample(){
         position.setPosition(ITDCons.positionBack);
-        angleLeft.setPosition(ITDCons.angleMiddle);
-        angleRight.setPosition(ITDCons.angleMiddle);
+        angleLeft.setPosition(ITDCons.angleScoreSample);
+        angleRight.setPosition(ITDCons.angleScoreSample);
+        wrist.setPosition(ITDCons.wristFront);
         closeClaw();
         status= Status.InitAutoSample;
-
     }
 
     public void openClaw() {
@@ -228,6 +237,9 @@ public class Outtake implements Component{
         if(status == Status.TransferReady){
             status = Status.CloseClawTransfer;
             elapsedTime = new ElapsedTime();
+        } else if (status==Status.Wall){
+            status = Status.CloseClawSpec;
+            elapsedTime= new ElapsedTime();
         }
     }
 
@@ -332,11 +344,11 @@ public class Outtake implements Component{
     public void scoreSampleLow(){
         if (status == Status.InitAutoSample){
             setOuttakeBack();
-            setAngleServoScore();
+            setAngleServoScoreSample();
             status = Status.AutoLiftToBucket;
         } else{
             closeClaw();
-            setAngleServoScore();
+            setAngleServoScoreSample();
 
             status = Status.ToBucketClose;
         }
@@ -377,6 +389,7 @@ public class Outtake implements Component{
     public void releaseSample(){
 
         claw.setPosition(ITDCons.clawOpen);
+        isScoringDone=true;
 
     }
 
@@ -506,9 +519,8 @@ public class Outtake implements Component{
                     openClawAuto();
                 }
                 if (elapsedTime.milliseconds()>WaitTime.Open_Claw.getTime() && elapsedTime.milliseconds()<WaitTime.Turn_Wrist.getTime()){
-                    target = ITDCons.intermediateTarget;
+                    target = ITDCons.wallPickupTarget;
                     wrist.setPosition(ITDCons.wristBack);
-                    closeClaw();
                     setAngleServoToMiddle();
                 }
                 if (elapsedTime.milliseconds()>WaitTime.Turn_Wrist.getTime()){
@@ -526,7 +538,7 @@ public class Outtake implements Component{
                     setAngleServoToBack();
                     openClaw();
                     status= Status.Wall;
-                } else if (elapsedTime!=null && elapsedTime.milliseconds()>700){
+                } else if (elapsedTime!=null && elapsedTime.milliseconds()>200){
                     position.setPosition(ITDCons.positionBack);
                 }
                 break;
@@ -564,10 +576,16 @@ public class Outtake implements Component{
 
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()+300){
                     status= Status.TransferDone;
+                    gamepad1.rumble(2000);
                     intake.transferDone();
                 }
                 break;
 
+            case CloseClawSpec:
+                if (elapsedTime!=null && elapsedTime.milliseconds()>WaitTime.CLose_Claw.getTime()){
+                    scoreSpecimen();
+                }
+                break;
 
             case ToBucketClose:
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
