@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp(name="Field Oriented Drive", group="TeleOp")
-public class FieldCentricDrive extends OpMode {
+public class FieldOrientedDrive extends OpMode {
 
     // Motor declarations
     private DcMotor frontLeft, frontRight, backLeft, backRight;

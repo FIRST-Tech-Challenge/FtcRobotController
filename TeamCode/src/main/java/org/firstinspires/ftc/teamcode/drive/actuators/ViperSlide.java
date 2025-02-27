@@ -27,29 +27,37 @@ public class ViperSlide extends OpMode{
     @Override
     public void loop(){
         if (gamepad1.dpad_down){
-            viperslidesDown();
+            viperslide1Down();
+            viperslide2Down();
             sleep(2000);
+            polialeft.setPower(0);
             poliaright.setPower(0);
         }
         if (gamepad1.dpad_up){
-            viperslidesUp(1);
+            viperslide1Up(-1);
+            viperslide2Up(1);
         }
     }
-    public void viperslidesUp(int turnage) {
+    public void viperslide1Up(int turnage) {
         newTarget = ticks / turnage;
         poliaright.setTargetPosition((int) newTarget);
         poliaright.setPower(1);
         poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+    public void viperslide2Up(int turnage) {
+        newTarget = ticks / turnage;
         polialeft.setTargetPosition((int) newTarget);
-        polialeft.setPower(-1);
+        polialeft.setPower(1);
         polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-    public void viperslidesDown() {
+    public void viperslide1Down() {
         poliaright.setTargetPosition(0);
         poliaright.setPower(1);
         poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+    public void viperslide2Down() {
         polialeft.setTargetPosition(0);
-        polialeft.setPower(-1);
+        polialeft.setPower(1);
         polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }
