@@ -58,7 +58,12 @@ public class LimelightV1 {
     }
 
     public LLResult getLatestResult(){
-        return limelight.getLatestResult();
+        if(limelight.getLatestResult() != null) {
+            return limelight.getLatestResult();
+        }
+        else {
+            return null;
+        }
     }
 
     public LLStatus getStatus(){
@@ -109,11 +114,13 @@ public class LimelightV1 {
                 return Math.toDegrees(angleRadians);
             }
             else {
+                telemetry.addLine("Not enough results.");
                 return 0.0;
             }
 
         }
         else {
+            telemetry.addLine("No results.");
             return 0.0;
         }
     }

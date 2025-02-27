@@ -723,6 +723,8 @@ public class TeleOpV3 extends OpMode {
         }
         telemetry.addLine("STATE: " + state.name());
         telemetry.addLine("LIMELIGHT ANGLE: " + limelightV1.getAngle());
+        telemetry.addLine("LIMELIGHT STATUS: " + limelightV1.getStatus().getName());
+        telemetry.addLine("LIMELIGHT FPS: " + limelightV1.getStatus().getFps());
         telemetry.addLine("\t Intake grippers position: " + grippers.getPosition());
         telemetry.addLine("\t Intake slides power: " + intakeSlides.getPower());
         telemetry.addLine("\t Intake slides position: " + intakeSlides.getCurrentPosition());
@@ -731,6 +733,11 @@ public class TeleOpV3 extends OpMode {
         telemetry.addLine("\t Right Delivery Slide: " +  deliverySlides.getRightSlidePosition());
         telemetry.addLine("\t Left Delivery Slide Down Position: " +  leftSlideDown);
         telemetry.addLine("\t Right Delivery Slide Down Position: " +  rightSlideDown);
+        if(limelightV1.getLatestResult() != null) {
+            if (!limelightV1.getLatestResult().getColorResults().isEmpty()) {
+                telemetry.addLine("LIMELIGHT COLOR RESULTS: " + limelightV1.getColorResults().get(limelightV1.getColorResults().size() - 1).toString());
+            }
+        }
 
 
     }
