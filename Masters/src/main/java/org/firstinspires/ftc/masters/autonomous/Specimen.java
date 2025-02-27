@@ -124,25 +124,11 @@ public class Specimen extends LinearOpMode {
                         follower.followPath(pushSample1);
                         outtake.closeClaw();
                         outtake.moveToPickUpFromWall();
-                        state = PathState.Sample1;
+                        state = PathState.Sample3;
                         elapsedTime = null;
                     }
                     break;
-                case Sample1:
-                    if (!follower.isBusy()){
 
-
-                        follower.followPath(pushSample2);
-                        state= PathState.Sample2;
-                    }
-                    break;
-                case Sample2:
-                    if (!follower.isBusy()){
-//                        outtake.moveToPickUpFromWall();
-                        follower.followPath(pushSample3);
-                        state= PathState.Sample3;
-                    }
-                    break;
                 case Sample3:
                     if (!follower.isBusy()){
                         outtake.openClaw();
@@ -228,21 +214,26 @@ public class Specimen extends LinearOpMode {
                 .setLinearHeadingInterpolation(scoringPose.getHeading(), pushPose1.getHeading())
                 .addPath(new BezierLine(new Point(pushPose1),new Point(endPushPose1)))
                 .setLinearHeadingInterpolation(pushPose1.getHeading(), endPushPose1.getHeading())
-                .build();
-
-        pushSample2 = follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(endPushPose1),new Point(pushPose1),new Point (pushPose2)))
                 .setLinearHeadingInterpolation(endPushPose1.getHeading(), pushPose2.getHeading())
                 .addPath(new BezierLine(new Point(pushPose2), new Point(endPushPose2)))
                 .setLinearHeadingInterpolation(pushPose2.getHeading(), endPushPose2.getHeading())
-                .build();
-
-        pushSample3 = follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(endPushPose2),new Point(pushPose2),new Point (pushPose3)))
                 .setLinearHeadingInterpolation(endPushPose2.getHeading(), pushPose3.getHeading())
                 .addPath(new BezierLine(new Point(pushPose3), new Point(endPushPose3)))
                 .setLinearHeadingInterpolation(pushPose3.getHeading(), endPushPose3.getHeading())
                 .build();
+
+//        pushSample2 = follower.pathBuilder()
+//                .addPath(new BezierCurve(new Point(endPushPose1),new Point(pushPose1),new Point (pushPose2)))
+//                .setLinearHeadingInterpolation(endPushPose1.getHeading(), pushPose2.getHeading())
+//                .addPath(new BezierLine(new Point(pushPose2), new Point(endPushPose2)))
+//                .setLinearHeadingInterpolation(pushPose2.getHeading(), endPushPose2.getHeading())
+//                .build();
+//
+//        pushSample3 = follower.pathBuilder()
+//
+//                .build();
 
         pickup1 = new Path(new BezierLine(new Point(endPushPose3), new Point(pickupPose)));
         pickup1.setLinearHeadingInterpolation(endPushPose3.getHeading(), pickupPose.getHeading());

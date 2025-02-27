@@ -14,14 +14,14 @@ public class ITDCons {
     public static double intakeInit = 0.5;
     public static double intakeInitLeft = 0;
     public static double intakeInitRight = 1;
-    public static double intakeArmDrop =0.80;
+    public static double intakeArmDrop =0.78;
     public static double intakeChainDrop = 0.32;
 
-    public static double intakeArmNeutral= 0.80;
+    public static double intakeArmNeutral= 0.78;
     public static double intakeChainNeutral=0.58;
 
-    public static double intakeArmTransfer=0.25;
-    public static double intakeChainTransfer = 0.64;
+    public static double intakeArmTransfer=0.23;
+    public static double intakeChainTransfer = 0.60;
     public static double intakeTransferSpeed = 0.65;
     public static double intakeEjectSpeed =0.8;
 
@@ -40,12 +40,12 @@ public class ITDCons {
     public static double positionTransfer = 0.36;
     public static double positionFront =1;
 
-    public static double angleBack = 0.04;
-    public static double angleTransfer = 0.69;
+    public static double angleBack = 0.07;
+    public static double angleTransfer = 0.72;
 
-    public static double angleMiddle = 0.35;
-    public static double angleScoreSpec = 0.45;
-    public static double angleScoreSample = 0.15;
+    public static double angleMiddle = 0.38;
+    public static double angleScoreSpec = 0.48;
+    public static double angleScoreSample = 0.18;
 
     public static int wallPickupTarget = 5500;
 //    public static int transferPickupTarget = 0;
@@ -65,7 +65,8 @@ public class ITDCons {
     public static int MaxExtension = 31000;
     public static int halfExtension= 15000;
 
-    public static int TransferExtension = 0;
+    public static int TransferExtensionIn = 0;
+    public static int TransferExtensionOut = 7000;
     public static int MinExtension = 500;
 
 

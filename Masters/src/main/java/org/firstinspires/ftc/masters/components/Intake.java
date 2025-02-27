@@ -176,11 +176,14 @@ public class Intake {
         servoToNeutral();
     }
 
-    public void extendForTransfer(){
-        target = ITDCons.TransferExtension;
+    public void transferDone(){
+        status= Status.NEUTRAL;
+        servoToNeutral();
     }
 
-
+    public void extendForTransfer(){
+        target = ITDCons.TransferExtensionOut;
+    }
 
     public void pushOut(){ pusher.setPosition(ITDCons.pushOut); }
 
@@ -251,7 +254,6 @@ public class Intake {
                     if (checkColorCount==MAX_COUNT) {
                         checkColor();
 
-                        intakeMotor.setPower(0);
                         if (color != ITDCons.Color.unknown && color != ITDCons.Color.yellow && color != allianceColor) {
                             ejectIntake();
                         } else if (color == ITDCons.Color.yellow) {
@@ -284,7 +286,6 @@ public class Intake {
                         checkColor();
 
                         //read color
-                        intakeMotor.setPower(0);
                         if (color != ITDCons.Color.unknown && (color == ITDCons.Color.yellow || color != allianceColor)) {
                             ejectIntake();
                         } else if (color == allianceColor) {
@@ -301,24 +302,25 @@ public class Intake {
 
                 case TO_TRANSFER:
                     if (elapsedTime ==null){
-                        stopIntake();
+
                         if (target==0){
-                            target = ITDCons.TransferExtension;
+                            target = ITDCons.TransferExtensionOut;
                         } else {
                             servoToTransfer();
                         }
                         elapsedTime = new ElapsedTime();
                     }
                     if (elapsedTime.milliseconds()>status.getTime() && elapsedTime.milliseconds()< status.getTime()*2){
-                        if (target == ITDCons.TransferExtension){
+                        if (target == ITDCons.TransferExtensionOut){
                             servoToTransfer();
                         }
-                        if (target>ITDCons.TransferExtension){
-                            target = ITDCons.TransferExtension;
+                        if (target>ITDCons.TransferExtensionIn){
+                            target = ITDCons.TransferExtensionIn;
                         }
                     }
                     if (elapsedTime.milliseconds()>2* status.getTime()){
                         elapsedTime =null;
+                        stopIntake();
                         status= Status.TRANSFER;
                     }
 
