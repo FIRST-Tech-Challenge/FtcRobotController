@@ -220,10 +220,10 @@ public class AutonomousRight4 extends AutonomousBase {
             if( specimenNumber == 0 ) {
               // Move away from field wall (viper slide motor will hit field wall if we tilt up too soon!)
               driveToPosition( 3.00, 0.00, 0.00, DRIVE_SPEED_30, TURN_SPEED_30, DRIVE_THRU );
-              pos_x = -6.80; // hang initial specimen 6.8 inches to the left of starting position
+              pos_x = -6.25; // hang initial specimen 6.8 inches to the left of starting position
             }
             else { // NEVER USED SINCE WE REVERSE-SCORE ALL OTHER SPECIMENS
-              pos_x = -6.80 - (3.0 * specimenNumber); // shift left 3" each time
+              pos_x = -6.25 - (3.0 * specimenNumber); // shift left 3" each time
             }
         } // opModeIsActive
 
@@ -236,7 +236,7 @@ public class AutonomousRight4 extends AutonomousBase {
             driveToPosition( 18.2, (pos_x+2.2), 0.00, DRIVE_SPEED_55, TURN_SPEED_40, DRIVE_THRU );
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR1);
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR1);
-            pos_y = 27.60 + (specimenNumber * 0.25);
+            pos_y = 27.80 + (specimenNumber * 0.25);  // specimenNumber doesn't matter, as only use once
             driveToPosition( pos_y, pos_x, 0.00, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
             robot.driveTrainMotorsZero();  // make double sure we're stopped
             // If we drive to the submersible faster than the arm moves, wait for the arm
@@ -249,7 +249,7 @@ public class AutonomousRight4 extends AutonomousBase {
             autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO2);
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR2);
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR2);
-            sleep( 850 ); //while( autoTiltMotorMoving() || autoViperMotorMoving());
+            sleep( 1000 ); //while( autoTiltMotorMoving() || autoViperMotorMoving());
             // release the specimen
             robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
         } // opModeIsActive
@@ -439,10 +439,8 @@ public class AutonomousRight4 extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     private void parkInObservation() {
         if( opModeIsActive() ) {
-            // Rotate 90deg to face wall (protect collector from alliance partner damage)
-            driveToPosition(11.0, 23.0, 45.0, DRIVE_SPEED_100, TURN_SPEED_80, DRIVE_THRU);
             // Park in far corner of observation zone
-            driveToPosition(8.0, 30.0,  90.0, DRIVE_SPEED_50, TURN_SPEED_30, DRIVE_TO);
+            driveToPosition(8.0, 30.0,  90.0, DRIVE_SPEED_100, TURN_SPEED_80, DRIVE_TO);
         }
     } // parkInObservation
 

@@ -147,6 +147,7 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_LEVEL2D_DEG     = 46.20; // Arm at rotation #4 for level 2 ascent
     public final static double TILT_ANGLE_LEVEL2E_DEG     = 46.20; // Arm at rotation #5 for level 2 ascent
     public final static double TILT_ANGLE_LEVEL2F_DEG     = 59.10; // Arm at rotation #6 for level 2 ascent
+    public final static double TILT_ANGLE_LEVEL2G_DEG     = 45.00; // Arm at rotation #7 to drop robot to floor
     public final static double TILT_ANGLE_PARK_DEG        = 33.80; // Arm at rotation back to the low bar for park in auto
     public final static double TILE_ANGLE_BASKET_SAFE_DEG = 90.00; // Arm safe to rotate intake from basket
     public final static double TILT_ANGLE_VERTICAL_DEG    = 54.50; // Straight up vertical (safe to start retracting viper)
@@ -160,8 +161,8 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_CLIP_DEG        = 45.00; // AUTO: clip specimen on bar by just driving forward
     public final static double TILT_ANGLE_HW_MIN_DEG      =  0.00; // Arm at maximum rotation DOWN/FWD
     public final static double TILT_ANGLE_COLLECT_DEG     =  4.00; // Arm to collect samples at ground level
-    public final static double TILT_ANGLE_COLLECT1_DEG    =  3.80; // Arm to collect samples at ground level for only the first sample
-    public final static double TILT_ANGLE_SAMPLE3_DEG     =  3.90; // Arm to collect samples at ground level (3rd one against wall)
+    public final static double TILT_ANGLE_COLLECT1_DEG    =  2.90; // Arm to collect samples at ground level for only the first sample
+    public final static double TILT_ANGLE_SAMPLE3_DEG     =  3.00; // Arm to collect samples at ground level (3rd one against wall)
     public final static double TILT_ANGLE_START_DEG       = 13.00; // AUTO: starting position LOW
     public final static double TILT_ANGLE_WALL_DEG        = 13.90; // AUTO: starting position HIGH (motor tilted back & touches wall)
     public final static double TILT_ANGLE_WALL0_DEG       = 21.50; // AUTO: grab specimen off wall (on approach)
@@ -207,6 +208,7 @@ public class Hardware2025Bot
     public final static int    VIPER_EXTEND_LEVEL2D = 2820;   // retract to this extension during level 2 ascent
     public final static int    VIPER_EXTEND_LEVEL2E = 2555;   // retract to this extension during level 2 ascent
     public final static int    VIPER_EXTEND_LEVEL2F = 2150;   // retract to this extension during level 2 ascent
+    public final static int    VIPER_EXTEND_LEVEL2G = 2580;   // extend to this position at stop to drop L2 to floor
     public final static int    VIPER_EXTEND_GRAB    = 1177;   // extend for collection from submersible
     public final static int    VIPER_EXTEND_SECURE  =  360;   // Intake is tucked into robot to be safe
     public final static int    VIPER_EXTEND_SAFE    =  809;   // Intake is far enough out to safely rotate down and rotate up

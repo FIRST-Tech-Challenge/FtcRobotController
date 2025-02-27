@@ -258,7 +258,7 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Elbow", "%.2f (%.1f deg)", robot.getElbowServoPos(), robot.getElbowServoAngle() );
             telemetry.addData("Wrist", "%.2f (%.1f deg)", robot.getWristServoPos(), robot.getElbowServoAngle() );
             telemetry.addData("Snorkle Ascent State", ascent2state);
-            telemetry.addData("Angles", "IMU %.2f, Pinpoint %.2f deg)", robot.headingIMU(), curAngle );
+//          telemetry.addData("Angles", "IMU %.2f, Pinpoint %.2f deg)", robot.headingIMU(), curAngle );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", cycleTimeElapsed, cycleTimeHz);
             telemetry.update();
 
@@ -276,7 +276,7 @@ public abstract class Teleop extends LinearOpMode {
         processSecureArm();
         processScoreArm();
         processScoreArmSpec();
-        processSweeper();
+        //processSweeper();
     } // performEveryLoopTeleop
 
     /*---------------------------------------------------------------------------------*/
@@ -713,7 +713,7 @@ public abstract class Teleop extends LinearOpMode {
         // Check for ON-to-OFF toggle of the gamepad2 CROSS
         else if( gamepad2_cross_now && !gamepad2_cross_last )
         {
-            startSweeper();
+            //startSweeper();
         }
         //===================================================================
         else if( manual_lift_control || liftTweaked ) {
@@ -787,7 +787,7 @@ public abstract class Teleop extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void processLevel2Ascent() {
-        boolean motorsFinished, tiltArmFinished;
+        boolean motorsFinished, tiltArmFinished, snokelsFarEnough;
 
         // DRIVER 1 controls position the arm for hanging
         // DRIVER 2 controls initiate the actual hang
@@ -854,9 +854,10 @@ public abstract class Teleop extends LinearOpMode {
             case ASCENT_STATE_SNOKEL_LIFTING:
                 robot.processSnorkleExtension();
                 tiltArmFinished = tiltAngleCloseEnough( Hardware2025Bot.TILT_ANGLE_LEVEL2B_DEG, 1.0 );
-                // we actually can start the next motion when snorkels hit SNORKLE_LOW_BAR because the robot will have already tilted
-                motorsFinished = tiltArmFinished && !robot.viperMotorBusy &&
-                                 !robot.snorkleLMotorBusy && !robot.snorkleRMotorBusy;
+                // We can start the next motion when snorkels raise enough for robot to swing forward
+                snokelsFarEnough = (robot.snorkleLMotorPos <= Hardware2025Bot.SNORKLE_LOW_BAR) &&
+                                   (robot.snorkleRMotorPos <= Hardware2025Bot.SNORKLE_LOW_BAR);
+                motorsFinished = tiltArmFinished && snokelsFarEnough && !robot.viperMotorBusy;
                 if( motorsFinished || (ascent2Timer.milliseconds() > 2500.0) ) {
                     // Robot should now be hanging on snorkels, but butt is now resting on floor
                     // Reposition arm (tilt/extension) so grab upper bar to pull our butt off the floor
@@ -899,7 +900,12 @@ public abstract class Teleop extends LinearOpMode {
                 motorsFinished = !robot.viperMotorBusy && !robot.wormTiltMotorBusy;
                 if( motorsFinished ) {
                     // Once snorkel is retracted and tilt has finished, we're DONE!
-                    ascent2state = ASCENT_STATE_IDLE;
+                    // Wait for command to safely lower
+                    if(gamepad1_triangle_now && !gamepad1_triangle_last){
+                        robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_LEVEL2G, 1.0, 1.0);
+                        robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_LEVEL2G_DEG);
+                        ascent2state = ASCENT_STATE_IDLE;
+                    }
                 }
                 break;
 

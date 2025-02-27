@@ -289,7 +289,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     // All our autonomous requires the viper arm is fully retracted at the start
     public void ensureViperArmFullyRetracted(){
         int startViperMotorPos, endViperMotorPos, deltaViperMotorPos;
-        for( int i=0; i<10; i++) {
+        for( int i=0; i<16; i++) {
             // Retract viper arm at low power for 1 second
             startViperMotorPos = robot.viperMotorPos;
             robot.viperMotor.setPower(-0.10);
