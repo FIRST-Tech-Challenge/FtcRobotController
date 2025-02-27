@@ -26,4 +26,15 @@ public class Limelight {
             return null;
         }
     }
+    public static void setPipeline(int pipelineNumber) {
+        try {
+            URL url = new URL("http://limelight.local:5801/set_pipeline?p=" + pipelineNumber);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.getInputStream().close(); // Fecha a conexão
+        } catch (Exception e) {
+            System.out.println("Erro ao definir pipeline: " + e.getMessage());
+        }
+    }
+
 }

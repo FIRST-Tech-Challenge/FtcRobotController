@@ -6,39 +6,50 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-//@TeleOp
+@TeleOp
 public class ViperSlide extends OpMode{
-    DcMotor viperslide;
+    DcMotor poliaright;
+    DcMotor polialeft;
     double ticks = 2800.5;
     double newTarget;
     @Override
     public void init(){
-        viperslide = hardwareMap.get(DcMotor.class, "viperslide");
+        poliaright = hardwareMap.get(DcMotor.class, "poliaright");
         telemetry.addData("Hardware: ", "Initialized");
-        viperslide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        viperslide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        poliaright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        poliaright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        polialeft = hardwareMap.get(DcMotor.class, "polialeft");
+        poliaright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        polialeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     @Override
     public void loop(){
         if (gamepad1.dpad_down){
-            viperslideDown();
+            viperslidesDown();
             sleep(2000);
-            viperslide.setPower(0);
+            poliaright.setPower(0);
         }
         if (gamepad1.dpad_up){
-            viperslideUp(1);
+            viperslidesUp(1);
         }
     }
-    public void viperslideUp(int turnage) {
+    public void viperslidesUp(int turnage) {
         newTarget = ticks / turnage;
-        viperslide.setTargetPosition((int) newTarget);
-        viperslide.setPower(0.8);
-        viperslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        poliaright.setTargetPosition((int) newTarget);
+        poliaright.setPower(1);
+        poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        polialeft.setTargetPosition((int) newTarget);
+        polialeft.setPower(-1);
+        polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-    public void viperslideDown() {
-        viperslide.setTargetPosition(0);
-        viperslide.setPower(0.8);
-        viperslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    public void viperslidesDown() {
+        poliaright.setTargetPosition(0);
+        poliaright.setPower(1);
+        poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        polialeft.setTargetPosition(0);
+        polialeft.setPower(-1);
+        polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }
