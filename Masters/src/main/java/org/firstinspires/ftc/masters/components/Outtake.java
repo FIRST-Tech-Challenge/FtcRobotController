@@ -113,7 +113,7 @@ public class Outtake implements Component{
         CloseClawTransfer(400),
 
         Specimen_To_Wall(350),
-        SpecimenToWall_MoveBack(1000),
+        SpecimenToWall_MoveBack(800),
 
         Transfer_To_Wall(500),
         ToBucketClose(400),
@@ -519,7 +519,7 @@ public class Outtake implements Component{
                     openClawAuto();
                 }
                 if (elapsedTime.milliseconds()>WaitTime.Open_Claw.getTime() && elapsedTime.milliseconds()<WaitTime.Turn_Wrist.getTime()){
-                    target = ITDCons.wallPickupTarget;
+                    target = ITDCons.intermediateTarget;
                     wrist.setPosition(ITDCons.wristBack);
                     setAngleServoToMiddle();
                 }

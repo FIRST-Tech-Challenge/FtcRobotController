@@ -57,7 +57,7 @@ public class ITDCons {
 //    public static int TransferPickupTarget = 4800;
 //    public static int TransferWaitTarget = 5000;
 
-    public static int intermediateTarget = 20000;
+    public static int intermediateTarget = 10000;
     public static int WallTarget = 4800;
 
     public static int TransferTarget = 7500;
