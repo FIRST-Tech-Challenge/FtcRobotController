@@ -56,6 +56,7 @@ public class TwoFishDelivery {
 
     //Slide Heights
     final private int SPEC_HEIGHT = 350;
+    final private int SAMPLE_HEIGHT = 350;
 
 
     //boolean:
@@ -199,6 +200,9 @@ public class TwoFishDelivery {
 
     public void toSpecHeight(){
         setSlidesTargetPosition(SPEC_HEIGHT);
+    }
+    public void toSampleHeight(){
+        setSlidesTargetPosition(SAMPLE_HEIGHT);
     }
     public void setClawPosition(double p){ // 0-1
         claw.setPosition(p);

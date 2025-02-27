@@ -125,6 +125,7 @@ public class TwoFishIntake {
     }
 
     public void setSlidesPower(double power){
+        runPower();
         int error = 0;
         int errorMult = 0;
         int current = extension.getCurrentPosition();
@@ -158,6 +159,7 @@ public class TwoFishIntake {
         extension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public void updateLength(){
+        runToPosition();
         linearOpMode.telemetry.addData("Intake Length: ", targetLength);
         linearOpMode.telemetry.addData("Intake Current: ", extension.getCurrentPosition());
         if(Math.abs(extension.getCurrentPosition() - extension.getTargetPosition()) > TICK_STOP_THRESHOLD){
