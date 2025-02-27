@@ -50,14 +50,14 @@ public class VerticalSlideTool extends LinearOpMode {
     private ITask scoreHighBasket() {
         return groupOf(inner -> inner.add(groupOf(a -> {
                             a.add(vLiftProxy.moveTo(Hardware.VLIFT_SCORE_HIGH, 5, 2.0));
-                            a.add(run(() -> h.arm.setTargetPosition(252)));
+                            //a.add(run(() -> h.arm.setTargetPosition(252)));
                         }))
                         .then(run(() -> h.wrist.setPosition(0.94)))
                         .then(await(200))
                         .then(run(() -> h.claw.setPosition(Hardware.CLAW_OPEN)))
                         .then(await(100))
                         .then(run(() -> h.wrist.setPosition(0.28)))
-                        .then(run(() -> h.arm.setTargetPosition(0)))
+                        //.then(run(() -> h.arm.setTargetPosition(0)))
                         .then(vLiftProxy.moveTo(0, 5, 2.0))
         );
     }
@@ -66,22 +66,22 @@ public class VerticalSlideTool extends LinearOpMode {
         h.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         h.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         h.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        h.clawFlip.setPosition(Hardware.FLIP_UP);
+        h.rightFlip.setPosition(Hardware.FLIP_UP);
         h.clawFront.setPosition(Hardware.FRONT_OPEN);
 
-        h.arm.setTargetPosition(0);
-        h.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        h.arm.setPower(0.3);
+        //h.arm.setTargetPosition(0);
+        //h.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //h.arm.setPower(0.3);
         h.wrist.setPosition(0.28);
         h.claw.setPosition(Hardware.CLAW_CLOSE);
 
         // we don't have the proxy object to handle this for us
         // so manually implement the inversion
-        h.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
+        h.horizontalRight.setPosition(Hardware.RIGHT_SLIDE_IN);
         h.horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_IN);
 
-        h.lightLeft.setPosition(Hardware.LAMP_PURPLE);
-        h.lightRight.setPosition(Hardware.LAMP_PURPLE);
+        h.colorLeft.setPosition(Hardware.LAMP_PURPLE);
+        h.colorRight.setPosition(Hardware.LAMP_PURPLE);
     }
 
     @Override

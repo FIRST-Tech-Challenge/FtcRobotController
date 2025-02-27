@@ -24,10 +24,10 @@ public class ColorSensorTeleOp
         DcMotor backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         DcMotor frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         DcMotor frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        Servo lightLeft = hardwareMap.get(Servo.class, "lightLeft");
-        Servo lightRight = hardwareMap.get(Servo.class, "lightRight");
-        lightRight.setPosition(0);
-        lightLeft.setPosition(0);
+        Servo colorLeft = hardwareMap.get(Servo.class, "colorLeft");
+        Servo colorRight = hardwareMap.get(Servo.class, "colorRight");
+        colorRight.setPosition(0);
+        colorLeft.setPosition(0);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -64,23 +64,23 @@ public class ColorSensorTeleOp
             double green = clawColor.green();
 
             if (blue - green > 100 && blue - red > 100) {
-                lightRight.setPosition(Hardware.LAMP_BLUE);
-                lightLeft.setPosition(Hardware.LAMP_BLUE);
+                colorRight.setPosition(Hardware.LAMP_BLUE);
+                colorLeft.setPosition(Hardware.LAMP_BLUE);
                 telemetry.addLine("blue");
             }
             else if (red - blue > 100 && red - green > 100) {
                 telemetry.addLine("red");
-                lightRight.setPosition(Hardware.LAMP_RED);
-                lightLeft.setPosition(Hardware.LAMP_RED);
+                colorRight.setPosition(Hardware.LAMP_RED);
+                colorLeft.setPosition(Hardware.LAMP_RED);
             }
             else if (green - blue > 100 && green - red > 100 && red >= 350) {
                 telemetry.addLine("yellow");
-                lightRight.setPosition(Hardware.LAMP_YELLOW);
-                lightLeft.setPosition(Hardware.LAMP_YELLOW);
+                colorRight.setPosition(Hardware.LAMP_YELLOW);
+                colorLeft.setPosition(Hardware.LAMP_YELLOW);
             }
             else{
-            lightLeft.setPosition(0);
-            lightRight.setPosition(0);
+            colorLeft.setPosition(0);
+            colorRight.setPosition(0);
             }
 
 

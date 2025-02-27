@@ -43,7 +43,7 @@ public class HClawProxy extends TaskTemplate {
     }
 
     private void update() {
-        hardware.clawFlip.setPosition(flipPosition);
+        hardware.rightFlip.setPosition(flipPosition);
         hardware.clawFront.setPosition(clawPosition);
     }
 

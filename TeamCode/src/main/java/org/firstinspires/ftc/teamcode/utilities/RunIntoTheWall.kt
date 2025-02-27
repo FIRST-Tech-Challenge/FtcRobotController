@@ -40,7 +40,6 @@ class RunIntoTheWall : LinearOpMode() {
         hardware.frontLeft.mode = RUN_WITHOUT_ENCODER
         hardware.backRight.mode = RUN_WITHOUT_ENCODER
         hardware.frontRight.mode = RUN_WITHOUT_ENCODER
-        hardware.clawFlip.position = Hardware.FLIP_UP
         hardware.clawFront.position = Hardware.FRONT_OPEN
         hardware.clawTwist.position = Hardware.CLAW_TWIST_INIT
 

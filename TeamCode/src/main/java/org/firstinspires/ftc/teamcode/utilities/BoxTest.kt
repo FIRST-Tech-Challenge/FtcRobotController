@@ -43,12 +43,12 @@ class BoxTest : LinearOpMode() {
         hardware.frontLeft.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
         hardware.backRight.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
         hardware.frontRight.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
-        hardware.clawFlip.position = Hardware.FLIP_UP;
+        hardware.rightFlip.position = Hardware.FLIP_UP;
         hardware.clawFront.position = Hardware.FRONT_OPEN;
 
-        hardware.arm.targetPosition = 0;
-        hardware.arm.mode = DcMotor.RunMode.RUN_TO_POSITION;
-        hardware.arm.power = 0.3;
+       // hardware.arm.targetPosition = 0;
+        //hardware.arm.mode = DcMotor.RunMode.RUN_TO_POSITION;
+        //hardware.arm.power = 0.3;
         hardware.wrist.position = 0.28;
         hardware.claw.position = Hardware.CLAW_CLOSE;
 

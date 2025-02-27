@@ -37,8 +37,8 @@ public class BlinkLightsTask extends TaskTemplate {
     private void update() {
         double leftCol = left ? color1 : color2;
         double rightCol = right ? color1 : color2;
-        hardware.lightLeft.setPosition(leftCol);
-        hardware.lightRight.setPosition(rightCol);
+        hardware.colorLeft.setPosition(leftCol);
+        hardware.colorRight.setPosition(rightCol);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class BlinkLightsTask extends TaskTemplate {
 
     @Override
     public void invokeOnFinish() {
-        hardware.lightLeft.setPosition(colorFinal);
-        hardware.lightRight.setPosition(colorFinal);
+        hardware.colorLeft.setPosition(colorFinal);
+        hardware.colorRight.setPosition(colorFinal);
     }
 }

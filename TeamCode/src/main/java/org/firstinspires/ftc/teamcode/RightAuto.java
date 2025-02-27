@@ -51,9 +51,9 @@ public class RightAuto extends LinearOpMode {
     private final Runnable setup = () -> {
         hardware.claw.setPosition(CLAW_CLOSE);
         hardware.wrist.setPosition(0.28);
-        hardware.arm.setTargetPosition(0);
-        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.arm.setPower(0.2);
+//        hardware.arm.setTargetPosition(0);
+//        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        hardware.arm.setPower(0.2);
     };
     EncoderTracking tracker;
     private VLiftProxy vLiftProxy;
@@ -158,7 +158,7 @@ public class RightAuto extends LinearOpMode {
                             hardware.claw.setPosition(Hardware.CLAW_OPEN);
                             hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
                             hardware.wrist.setPosition(0);
-                            hardware.arm.setTargetPosition(Hardware.ARM_TRANSFER_POS);
+//                            hardware.arm.setTargetPosition(Hardware.ARM_TRANSFER_POS);
                         }))
 //                        .then(await(250))
 //                        .then(run(() -> {
@@ -168,7 +168,7 @@ public class RightAuto extends LinearOpMode {
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
                         .then(await(150))
                         .then(run(() -> {
-                            hardware.arm.setTargetPosition(0);
+//                            hardware.arm.setTargetPosition(0);
                             hClawProxy.setClaw(Hardware.FRONT_OPEN);
                         }))
                         .then(await(100))
@@ -180,29 +180,29 @@ public class RightAuto extends LinearOpMode {
         );
     }
 
-    private ITask drop() {
-        return groupOf(it -> it.add(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(10))))
-                .then(run(() -> hardware.wrist.setPosition(0.75)))
-                .then(await(200))
-                .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
-                .then(await(200))
-                .then(run(() -> {
-                    hardware.wrist.setPosition(Hardware.WRIST_BACK);
-                    hardware.arm.setTargetPosition(0);
-                }))
-        );
-    }
+//    private ITask drop() {
+//        return groupOf(it -> it.add(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(10))))
+//                .then(run(() -> hardware.wrist.setPosition(0.75)))
+//                .then(await(200))
+//                .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
+//                .then(await(200))
+//                .then(run(() -> {
+//                    hardware.wrist.setPosition(Hardware.WRIST_BACK);
+//                    hardware.arm.setTargetPosition(0);
+//                }))
+//        );
+//    }
 
     private ITask preScoreSpecimen() {
         return groupOf(it -> it.add(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
-                .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(-99))))
+//                .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(-99))))
                 .then(vLiftProxy.moveTo(Hardware.VLIFT_SCORE_SPECIMEN, 5, 1.0)));
     }
 
     private ITask postScoreSpecimen() {
         return groupOf(it -> it.add(run(() -> {
                     hardware.wrist.setPosition(0.28);
-                    hardware.arm.setTargetPosition(Hardware.deg2arm(0));
+//                    hardware.arm.setTargetPosition(Hardware.deg2arm(0));
                 }))
                 .then(await(450))
                 .then(vLiftProxy.moveTo(0, 5, .25)));
@@ -222,14 +222,14 @@ public class RightAuto extends LinearOpMode {
                         .then(await(200))
                         .then(run(() -> hardware.wrist.setPosition(Hardware.WRIST_UP)))
                         .then(await(200))
-                        .then(run(() -> hardware.arm.setTargetPosition(65)))
+//                        .then(run(() -> hardware.arm.setTargetPosition(65)))
                         .then(await(500))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
                         .then(await(200))
                         .then(vLiftProxy.moveTo(50, 3, 0.4))
                         .then(run(() -> hardware.wrist.setPosition(Hardware.WRIST_BACK)))
 //                        .then(await(200))
-                        .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(10))))
+//                        .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(10))))
                         .then(await(200))
                         .then(vLiftProxy.moveTo(0, 5, 0))
         );
@@ -248,8 +248,8 @@ public class RightAuto extends LinearOpMode {
                 }))
                 .then(grab())
                 .then(groupOf(a -> {
-                    a.add(transfer())
-                            .then(drop());
+//                    a.add(transfer())
+//                            .then(drop());
                     a.add(moveTo(new Pose(11.5, -36, Math.toRadians(30))));
                 }))
 //                .then(moveTo(new Pose(15.5, -46.25, 0)))
