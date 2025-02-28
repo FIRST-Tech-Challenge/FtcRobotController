@@ -96,18 +96,32 @@ public class BETTER_itd_auto extends LinearOpMode {
             telemetry.update();
         }
 
-        //step 3: Strafe Right for 2.2 Seconds
+        //step 3: Strafe Right for 2.3 Seconds
         rightFrontDrive.setPower(FORWARD_SPEED);
         rightBackDrive.setPower(-FORWARD_SPEED);
         leftFrontDrive.setPower(-FORWARD_SPEED);
         leftBackDrive.setPower(FORWARD_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2.2)) {
+        while (opModeIsActive() && (runtime.seconds() < 2.3)) {
             telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
 
-        //step 4: Go to observation zone for 0.5 seconds
+        //Step 4: Lift Arm
+        shoulder_left.setPower(ARM_SPEED);
+        shoulder_right.setPower(ARM_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 6.0)) {
+            telemetry.addData("Arm Moved", "Leg 5: %4.1f S Elapsed", runtime.seconds());
+            telemetry.update();
+
+            //Step 5: Pause
+            leftFrontDrive.setPower(0);
+            leftBackDrive.setPower(0);
+            rightFrontDrive.setPower(0);
+            rightBackDrive.setPower(0);
+        }
+        //step 6: Go to observation zone for 0.5 seconds
         rightFrontDrive.setPower(FORWARD_SPEED);
         rightBackDrive.setPower(FORWARD_SPEED);
         leftFrontDrive.setPower(FORWARD_SPEED);
@@ -118,24 +132,15 @@ public class BETTER_itd_auto extends LinearOpMode {
             telemetry.update();
         }
 
-        //Step 5: Pause
-        leftFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        rightBackDrive.setPower(0);
-
-
-        //Step 6: Touch Bar
-        shoulder_left.setPower(ARM_SPEED);
-        shoulder_right.setPower(ARM_SPEED);
+        //Step 7: Drop Arm
+        shoulder_right.setPower(-ARM_SPEED);
+        shoulder_left.setPower(-ARM_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 10.0)) {
+        while (opModeIsActive() && (runtime.seconds() < 6.0)) {
             telemetry.addData("Arm Moved", "Leg 5: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
 
-        }
-
-        // Step 7:  Stop
+        // Step 8:  Stop
        shoulder_right.setPower(0);
         shoulder_left.setPower(0);
 
@@ -143,4 +148,4 @@ public class BETTER_itd_auto extends LinearOpMode {
         telemetry.update();
         sleep(1000);
     }
-}
+}}
