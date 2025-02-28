@@ -65,6 +65,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="TwoControllers", group="Linear Opmode")
 public class TwoControllers extends LinearOpMode {
+    private double precise_movement(double joystick_numb) {
+        double sign = 1;
+        if(joystick_numb<0) {
+            sign = -1;
+        }
+        joystick_numb = joystick_numb * joystick_numb;
+        joystick_numb = joystick_numb * sign;
+        return joystick_numb;
+    }
+
     //HardwareMechanum robot = new HardwareMechanum();
 
     // Declare OpMode members for each of the 4 motors.
@@ -80,7 +90,7 @@ public class TwoControllers extends LinearOpMode {
 
     double servoPosition = 0.0;
 
-    final double CLAW_MAX = 0.25;
+    final double CLAW_MIN = 0.8;
 
     @Override
     public void runOpMode() {
@@ -139,9 +149,11 @@ public class TwoControllers extends LinearOpMode {
             double axial   = -gamepad1.left_stick_y; // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
-            double Shoulder_Forward = gamepad2.right_trigger / 2;
-            double Shoulder_Backward = -gamepad2.left_trigger / 2;
-            double Forearm_Movement = (gamepad2.right_stick_y*-1) / 2;
+            yaw = precise_movement(yaw);
+
+            double Shoulder_Forward = gamepad2.right_trigger / 1.5;
+            double Shoulder_Backward = -gamepad2.left_trigger / 1.5;
+            double Forearm_Movement = (gamepad2.right_stick_y*-1) / 1.5;
             double  Claw_Position = gamepad2.left_stick_x;
 
 
@@ -163,7 +175,7 @@ public class TwoControllers extends LinearOpMode {
             if (Claw_Position < 0){
                 Claw_Position = 0;;
             }
-            double calculated_claw = Claw_Position * (1 - CLAW_MAX) + CLAW_MAX;
+            double calculated_claw = Claw_Position * (1 - CLAW_MIN) + CLAW_MIN;
             servo.setPosition(calculated_claw);
             telemetry.addData("gamepad2.left_stick_x", gamepad2.left_stick_x);
             telemetry.addData("Setting claw to position", calculated_claw);
@@ -199,6 +211,4 @@ public class TwoControllers extends LinearOpMode {
             telemetry.update();
 
         }
-
-
     }}
