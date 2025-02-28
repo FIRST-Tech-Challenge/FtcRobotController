@@ -219,7 +219,7 @@ public class Hardware2025Bot
     public final static int    VIPER_EXTEND_AUTO4   =  337;   // retract to clip the specimen to the bar REVERSE
     public final static int    VIPER_EXTEND_CLIP    = 1162;   // AUTO: clip specimen on bar by just driving forward
     public final static int    VIPER_EXTEND_BASKET  = 2980;   // raised to basket-scoring height
-    public final static int    VIPER_EXTEND_42      = 2501;   // max forward extension for 42" limit
+    public final static int    VIPER_EXTEND_42      = 2475;   // max forward extension for 42" limit
     public final static int    VIPER_EXTEND_FULL2   = 2975;   // hardware fully extended (never exceed this count!)
     public final static int    VIPER_EXTEND_WALL0   = 19;     // AUTO: grab specimen off wall (on approach)
     public final static int    VIPER_EXTEND_WALL1   = 170;    // AUTO: grab specimen off wall (lift off)

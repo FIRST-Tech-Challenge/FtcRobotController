@@ -308,15 +308,15 @@ public class AutonomousLeft5 extends AutonomousBase {
     // Score Sample
     //************************************
     private void scoreSample(int samplesScored) {
-        int viperError;
-        boolean viperMotorStillTooFar;
+        int viperMinTarget;
+        boolean viperMotorNotThereYet;
         autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_BASKET_DEG, 1.0 );
         // drive partway there while we wait for arm to lift (before extending viper)
-        if( samplesScored == 0 ){ // Preload
+        if( samplesScored == 0 ) {  // different logic for the first preload path
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);
             autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_BASKET );
-            driveToPosition( -23.5, -6.0, 44.8, DRIVE_SPEED_80, TURN_SPEED_50, DRIVE_TO );
+            driveToPosition( -23.5, -6.0, 44.8, DRIVE_SPEED_60, TURN_SPEED_50, DRIVE_TO );
             robot.driveTrainMotorsZero();  // make double sure we're stopped
         }  else if( samplesScored == 1 ){ // From spike mark 1
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
@@ -346,17 +346,19 @@ public class AutonomousLeft5 extends AutonomousBase {
             // update all our status
             performEveryLoop();
             // We get a big pause because of viper overshoot (from 22 too high to 22 too low)
-            viperError = ( robot.viperMotorPos - Hardware2025Bot.VIPER_EXTEND_BASKET );
-            viperMotorStillTooFar = Math.abs(viperError) > 27;  // normal targetPositionTolerance is 10 cts
-        } while( viperMotorStillTooFar || autoTiltMotorMoving() );
+            // The normal targetPositionTolerance is -10 to +10 counts
+            // Overshoot too high is fine; we only care about a large undershoot (-10 to +whatever)
+            viperMinTarget = Hardware2025Bot.VIPER_EXTEND_BASKET - 10;
+            viperMotorNotThereYet = robot.viperMotorPos < viperMinTarget;
+        } while( viperMotorNotThereYet || autoTiltMotorMoving() );
         robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BASKET);
         robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BASKET2);
-        sleep(250); // wait for wrist/elbow to move
+        sleep(275); // wait for wrist/elbow to move
         robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
-        sleep(250); // wait for claw to drop sample
+        sleep(275); // wait for claw to drop sample
         robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
         robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);
-        sleep(250); // wait for claw to start moving up/back before lowering arm
+        sleep(275); // wait for claw to start moving up/back before lowering arm
         // Prepare arm for the next collect (lower a bit slower so it doesn't bounce down onto samples)
         autoTiltMotorMoveToTarget( (Hardware2025Bot.TILT_ANGLE_SAMPLE3_DEG + 0.1), 0.9);
         autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO_COLLECT);
