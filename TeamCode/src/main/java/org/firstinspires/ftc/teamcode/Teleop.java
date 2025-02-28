@@ -131,6 +131,9 @@ public abstract class Teleop extends LinearOpMode {
 
         setAllianceSpecificBehavior();
 
+        // Get the default start angle (set during Autonomous)
+        driverAngle = robot.rcStartAngleGet();
+
         // Send telemetry message to signify robot waiting;
         telemetry.addData("State", "Ready");
         telemetry.addLine("Press X (cross) to reset encoders");

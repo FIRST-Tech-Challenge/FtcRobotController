@@ -35,6 +35,7 @@ public class Hardware2025Bot
     protected BNO055IMU imu    = null;
     public double imuHeadingAngle = 0.0;
     public double imuTiltAngle    = 0.0;
+    public double rcStartAngle    = 180.0;
 
     //====== GOBILDA PINPOINT ODOMETRY COMPUTER ======
     GoBildaPinpointDriver odom;
@@ -469,6 +470,16 @@ public class Hardware2025Bot
         clawServo.setPosition(CLAW_SERVO_INIT);
 
     } // resetEncoders
+
+    /*--------------------------------------------------------------------------------------------*/
+    // Allow autonomous to define the correct Robot-Centric reference angle for the robot
+    public void rcStartAngleSet( double startAngle ) {
+        rcStartAngle = startAngle;
+    } // rcStartAngleSet
+
+    public double rcStartAngleGet() {
+        return rcStartAngle;
+    } // rcStartAngleGet
 
     /*--------------------------------------------------------------------------------------------*/
     public void clawStateSet( Hardware2025Bot.clawStateEnum newClawState )

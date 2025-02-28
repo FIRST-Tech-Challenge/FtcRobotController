@@ -28,6 +28,9 @@ public class AutonomousRight3 extends AutonomousBase {
         // Initialize robot hardware (autonomous mode)
         robot.init(hardwareMap,true);
 
+        // Robot starts facing straight away from driver
+        robot.rcStartAngleSet( 180.0 );
+
         // Initialize webcams using OpenCV
         telemetry.addData("State", "Initializing (please wait)");
         telemetry.update();
