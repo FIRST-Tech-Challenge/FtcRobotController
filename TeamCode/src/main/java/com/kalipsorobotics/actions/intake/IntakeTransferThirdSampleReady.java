@@ -16,7 +16,7 @@ public class IntakeTransferThirdSampleReady extends KActionSet {
 
         KServoAutoAction lockRatchet = new KServoAutoAction(intake.getIntakeRatchetServo(), IntakeClaw.INTAKE_RATCHET_LOCK_POS);
         lockRatchet.setName("lockRatchet");
-        //lockRatchet.setDependentActions(linkageToMid);
+        lockRatchet.setDependentActions(linkageToMid);
         this.addAction(lockRatchet);
 
         KServoAutoAction moveBigSweep = new KServoAutoAction(intake.getIntakeBigSweepServo(), IntakeClaw.INTAKE_BIG_SWEEP_TRANSFER_READY_POS);
@@ -29,12 +29,12 @@ public class IntakeTransferThirdSampleReady extends KActionSet {
 
         KServoAutoAction moveBigPivot = new KServoAutoAction(intake.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_TRANSFER_READY_POS);
         moveBigPivot.setName("moveBigPivot");
-        //moveBigPivot.setDependentActions(linkageToMid);
+        moveBigPivot.setDependentActions(linkageToMid);
         this.addAction(moveBigPivot);
 
         KServoAutoAction moveSmallPivot = new KServoAutoAction(intake.getIntakeSmallPivotServo(), IntakeClaw.INTAKE_SMALL_PIVOT_TRANSFER_READY_POS);
         moveSmallPivot.setName("moveSmallPivot");
-        //moveSmallPivot.setDependentActions(linkageToMid);
+        moveSmallPivot.setDependentActions(linkageToMid);
         this.addAction(moveSmallPivot);
 
         KServoAutoAction linkageRetract = new KServoAutoAction(intake.getIntakeLinkageServo(), IntakeClaw.INTAKE_LINKAGE_IN_POS);

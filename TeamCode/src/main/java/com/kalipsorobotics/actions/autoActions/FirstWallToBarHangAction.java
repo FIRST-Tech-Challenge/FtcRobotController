@@ -1,23 +1,23 @@
-package com.kalipsorobotics.actions;
+package com.kalipsorobotics.actions.autoActions;
 
-import com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip;
-import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
+import com.kalipsorobotics.actions.KActionSet;
+import com.kalipsorobotics.actions.MoveToDistanceThreshold;
+import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.outtake.DistanceDetectionAction;
-import com.kalipsorobotics.actions.outtake.PurePursuitDistanceSensorCorrection;
 import com.kalipsorobotics.actions.outtake.SpecimenHang;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.Outtake;
 
-public class WallToBarHangAction extends KActionSet {
+public class FirstWallToBarHangAction extends KActionSet {
 
-    public WallToBarHangAction(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, int barY) {
+    public FirstWallToBarHangAction(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, int barY) {
         this(driveTrain, wheelOdometry, outtake, barY, false);
     }
 
-    public WallToBarHangAction(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, int barY,
-                               boolean isSlow) {
+    public FirstWallToBarHangAction(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, int barY,
+                                    boolean isSlow) {
 
         WaitAction waitAtStart = new WaitAction(50);
         waitAtStart.setName("waitAtStart");
@@ -25,7 +25,7 @@ public class WallToBarHangAction extends KActionSet {
 
         PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSpecimenBar.setName("moveToSpecimenBar");
-        moveToSpecimenBar.addPoint(0, 0, 0);
+        moveToSpecimenBar.setMaxTimeOutMS(4300);
             moveToSpecimenBar.addPoint(-450, barY/2.0 + 50, 0,
                     isSlow?PurePursuitAction.P_XY : PurePursuitAction.P_XY_FAST,
                     PurePursuitAction.P_ANGLE);
@@ -50,7 +50,7 @@ public class WallToBarHangAction extends KActionSet {
         this.addAction(distanceDetectionAction);
 
         MoveToDistanceThreshold moveToDistanceThreshold = new MoveToDistanceThreshold(driveTrain,
-                distanceDetectionAction, -0.3);
+                distanceDetectionAction, -0.3, 1000);
         moveToDistanceThreshold.setName("moveToDistanceThreshold");
         moveToDistanceThreshold.setDependentActions(moveToSpecimenBar);
         this.addAction(moveToDistanceThreshold);

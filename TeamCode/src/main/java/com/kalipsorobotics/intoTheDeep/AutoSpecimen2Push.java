@@ -2,8 +2,9 @@ package com.kalipsorobotics.intoTheDeep;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-@Autonomous(name = "AutoSpecimen 2 PUSH")
+@Disabled //(name = "AutoSpecimen 2 PUSH")
 public class AutoSpecimen2Push extends AutoSpecimen {
 
     public AutoSpecimen2Push() {

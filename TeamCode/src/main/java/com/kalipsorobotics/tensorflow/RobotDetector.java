@@ -25,7 +25,7 @@ import java.nio.channels.FileChannel;
 public class RobotDetector {
     private OpenCvCamera webcam;
     private Interpreter tfliteInterpreter;
-    private Telemetry telemetry;
+    private final Telemetry telemetry;
 
     private static final String MODEL_NAME = "robotv2_model.tflite";
     private static final int IMAGE_SIZE = 224; // TensorFlow Lite model input size

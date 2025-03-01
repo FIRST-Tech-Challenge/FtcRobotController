@@ -3,10 +3,11 @@ package com.kalipsorobotics.test;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.utilities.OpModeUtilities;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp
+@Disabled
 public class OtherRobotTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

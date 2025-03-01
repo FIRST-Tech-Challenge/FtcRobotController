@@ -32,7 +32,7 @@ public class KServo {
         this.lastPosition = servo.getPosition();
     }
 
-    private int counter = 0;
+    private final int counter = 0;
 
     public double estimateTimeMs(double currentPosition, double targetPosition) {
         double deltaPosition = Math.abs(targetPosition - currentPosition);

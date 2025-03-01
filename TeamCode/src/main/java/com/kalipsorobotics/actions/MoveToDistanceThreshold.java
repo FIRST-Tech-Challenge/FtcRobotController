@@ -11,12 +11,17 @@ public class MoveToDistanceThreshold extends Action {
     private final DistanceDetectionAction distanceDetectionAction;
     private final double power;
 
+    double startTime;
+
+    private final double timeoutMM;
+
     public MoveToDistanceThreshold(DriveTrain driveTrain, DistanceDetectionAction distanceDetectionAction,
-                                   double power) {
+                                   double power, double timeoutMM) {
 
         this.driveTrain = driveTrain;
         this.distanceDetectionAction = distanceDetectionAction;
         this.power = power;
+        this.timeoutMM = timeoutMM;
 
     }
 
@@ -35,12 +40,24 @@ public class MoveToDistanceThreshold extends Action {
         if (isDone) {
             return;
         }
+        if (!hasStarted) {
+            startTime = System.currentTimeMillis();
+            hasStarted = true;
+        }
+        double elapsedTime = System.currentTimeMillis() - startTime;
+
+        if(elapsedTime > timeoutMM) {
+            finishedMoving();
+            return;
+        }
 
         if (distanceDetectionAction.checkDistance()) {
             finishedMoving();
-        } else {
-            driveTrain.setPower(power);
+            return;
         }
+
+        driveTrain.setPower(power);
+
 
 
     }

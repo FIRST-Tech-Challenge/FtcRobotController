@@ -48,7 +48,7 @@ public class BarHangDistanceSensorAction extends Action {
                 if (purePursuitAction.getIsDone()) {
                     closeClaw.setIsDone(isDone);
                     Log.d("distanceForceStop", "Wall Distance:" + revDistance.getDistance(DistanceUnit.MM) +
-                            "Pos: " + SharedData.getOdometryPosition().toString());
+                            "Pos: " + SharedData.getOdometryPosition());
                 }
             } else {
                 purePursuitAction.finishedMoving();

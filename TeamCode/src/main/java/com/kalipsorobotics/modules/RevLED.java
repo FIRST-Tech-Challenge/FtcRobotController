@@ -4,14 +4,14 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class RevLED {
-    private DigitalChannel redLed;
-    private DigitalChannel greenLed;
-    private DigitalChannel redLed2;
-    private DigitalChannel greenLed2;
-    private DigitalChannel redLed3;
-    private DigitalChannel greenLed3;
-    private DigitalChannel redLed4;
-    private DigitalChannel greenLed4;
+    private final DigitalChannel redLed;
+    private final DigitalChannel greenLed;
+    private final DigitalChannel redLed2;
+    private final DigitalChannel greenLed2;
+    private final DigitalChannel redLed3;
+    private final DigitalChannel greenLed3;
+    private final DigitalChannel redLed4;
+    private final DigitalChannel greenLed4;
 
     public RevLED(HardwareMap hardwareMap, String redPort, String greenPort, String redPort2, String greenPort2, String redPort3, String greenPort3, String redPort4, String greenPort4) {
         redLed = hardwareMap.get(DigitalChannel.class, redPort);

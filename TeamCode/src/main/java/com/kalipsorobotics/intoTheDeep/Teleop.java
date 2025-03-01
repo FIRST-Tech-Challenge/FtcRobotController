@@ -9,7 +9,6 @@ import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.WallToBarAction;
 import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.AutoRobotHangAction;
-import com.kalipsorobotics.actions.Init;
 import com.kalipsorobotics.actions.SampleEndToEndSequence;
 import com.kalipsorobotics.actions.TrussSpecimenEndToEndSequence;
 import com.kalipsorobotics.actions.TransferAction;
@@ -175,11 +174,11 @@ public class Teleop extends LinearOpMode {
 
 
 
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
+//        ExecutorService executorService = Executors.newSingleThreadExecutor();
 
         waitForStart();
 
-        OpModeUtilities.runOdometryExecutorService(executorService, wheelOdometry);
+//        OpModeUtilities.runOdometryExecutorService(executorService, wheelOdometry);
 
         while (opModeIsActive()) {
             while(!initAuto.getIsDone()) {
@@ -191,9 +190,9 @@ public class Teleop extends LinearOpMode {
             hangHookUpPressed = kGamePad1.isToggleRightBumper();
             hangHookDownPressed = kGamePad1.isRightTriggerPressed();
             hangPressed = kGamePad1.isToggleButtonB();
-            moveWallTeleopPressed = kGamePad1.isToggleButtonA();
+            moveWallTeleopPressed = false/*kGamePad1.isToggleButtonA()*/;
             intakeFunnelEndToEndPressed = kGamePad1.isToggleDpadLeft();
-            wallToBarPressed = kGamePad1.isToggleButtonX();
+            wallToBarPressed = false/*kGamePad1.isToggleButtonX()*/;
 
             // GAMEPAD 2 ASSIGNMENTS ==============================================
             outtakeLSStickValue = gamepad2.right_stick_y;
@@ -217,12 +216,12 @@ public class Teleop extends LinearOpMode {
             trussSpecimenEndToEndSequencePressed = kGamePad2.isLeftTriggerPressed() && kGamePad2.isStartButtonPressed();
             specimenEndToEndSequencePressed = kGamePad2.isStartButtonPressed();
 
-            if(kGamePad2.isLeftBumperPressed()){
-                Log.d ("backButton", " Gamepad" + gamepad2.left_bumper);
-                Log.d ("backButton ", " isLeftBumperPressed" + kGamePad2.isLeftBumperPressed());
-                Log.d ("backButton ", " isBackButtonPressed" + kGamePad2.isBackButtonPressed());
-                Log.d ("backButton ", " sampleEndToEndSequence " + trussSpecimenEndToEndSequencePressed);
-            }
+//            if(kGamePad2.isLeftBumperPressed()){
+//                Log.d ("backButton", " Gamepad" + gamepad2.left_bumper);
+//                Log.d ("backButton ", " isLeftBumperPressed" + kGamePad2.isLeftBumperPressed());
+//                Log.d ("backButton ", " isBackButtonPressed" + kGamePad2.isBackButtonPressed());
+//                Log.d ("backButton ", " sampleEndToEndSequence " + trussSpecimenEndToEndSequencePressed);
+//            }
 
             //RESET POSITIONS TO CURRENT
             intakeLinkagePos = intakeClaw.getIntakeLinkageServo().getServo().getPosition();
@@ -456,20 +455,20 @@ public class Teleop extends LinearOpMode {
 //                intakeSmallSweepPos += 0.025;
 //                intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
                 intakeClaw.getIntakeSmallSweepServo().setPosition(IntakeClaw.INTAKE_SMALL_SWEEP_VERTICAL_POS);
-                Log.d("sweeping",  "" + intakeSmallSweepPos);
+                //Log.d("sweeping",  "" + intakeSmallSweepPos);
             } else if ((-sweepStickValue < -0.5) && !intakeOverrideOn) {
                 setLastIntakeAction(null);
 //                intakeSmallSweepPos -= 0.025;
 //                intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
                 intakeClaw.getIntakeSmallSweepServo().setPosition(IntakeClaw.INTAKE_SMALL_SWEEP_TRANSFER_READY_POS);
-                Log.d("sweeping",  "" + intakeSmallSweepPos);
+                //Log.d("sweeping",  "" + intakeSmallSweepPos);
             }
 
             if(intakeReadyPressed) {
                 if(sampleIntakeReady != null) {
-                    Log.d("teleop", "sample intake ready done: " + sampleIntakeReady.getIsDone());
+                    //Log.d("teleop", "sample intake ready done: " + sampleIntakeReady.getIsDone());
                 } else {
-                    Log.d("teleop", "sample intake ready null");
+                    //Log.d("teleop", "sample intake ready null");
                 }
 
                 if (sampleIntakeReady == null || sampleIntakeReady.getIsDone()){
@@ -484,7 +483,7 @@ public class Teleop extends LinearOpMode {
 
                     sampleIntakeReady = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw,
                             IntakeClaw.INTAKE_SMALL_SWEEP_VERTICAL_POS, intakeClawPos);
-                    Log.d("teleop", "made new sample intake  ready");
+                    //Log.d("teleop", "made new sample intake  ready");
                     sampleIntakeReady.setName("sampleIntakeReady");
 
                     setLastIntakeAction(sampleIntakeReady);
@@ -505,14 +504,14 @@ public class Teleop extends LinearOpMode {
 
             if (intakeTransferReadyPressed){
                 if(intakeTransferReady != null) {
-                    Log.d("teleop", "intake transfer ready done: " + intakeTransferReady.getIsDone());
+                    //Log.d("teleop", "intake transfer ready done: " + intakeTransferReady.getIsDone());
                 } else {
-                    Log.d("teleop", "intake transfer ready null");
+                    //Log.d("teleop", "intake transfer ready null");
                 }
 
                 if (intakeTransferReady == null || intakeTransferReady.getIsDone()){
                     intakeTransferReady = new IntakeTransferReady(intakeClaw);
-                    Log.d("teleop", "made new intake transfer ready");
+                    //Log.d("teleop", "made new intake transfer ready");
                     intakeTransferReady.setName("intakeTransferReady");
                     setLastIntakeAction(intakeTransferReady);
                 }
@@ -540,7 +539,9 @@ public class Teleop extends LinearOpMode {
                 double targetLsMM = outtake.getCurrentPosMm() + (-90.0 * outtakeLSStickValue);
                 moveLS = new MoveLSAction(outtake, targetLsMM);
                 moveLS.setName("moveLS");
-                Log.d("ls_debug", "joystick: " + outtakeLSStickValue + " motor pos: "+ CalculateTickPer.ticksToMmLS(outtake.getLinearSlide1().getCurrentPosition()) + " setting LS target to: " + targetLsMM);
+                //Log.d("ls_debug",
+                        //"joystick: " + outtakeLSStickValue + " motor pos: "+ CalculateTickPer.ticksToMmLS(outtake
+                // .getLinearSlide1().getCurrentPosition()) + " setting LS target to: " + targetLsMM);
 
                 setLastOuttakeAction(moveLS);
 //                MoveOuttakeLSAction.setNeedMaintenance(true)
@@ -613,7 +614,7 @@ public class Teleop extends LinearOpMode {
 
                     savedHangPosition = new Position(SharedData.getOdometryPosition().getX(),
                             SharedData.getOdometryPosition().getY(), SharedData.getOdometryPosition().getTheta());
-                    Log.d("savedPositions", "hang position  " + savedHangPosition.toString());
+                    //Log.d("savedPositions", "hang position  " + savedHangPosition.toString());
                    //wheelOdometry.setCurrentPosition(WallToBarAction.HANG_POS, wheelOdometry.getCurrentPosition()
                     // .getY(), wheelOdometry.getCurrentPosition().getTheta());
 //
@@ -625,7 +626,7 @@ public class Teleop extends LinearOpMode {
 
             if(basketReadyPressed) {
                 if (basketReadyAction == null || basketReadyAction.getIsDone()){
-                    basketReadyAction = new BasketReadyAction(outtake);
+                    basketReadyAction = new BasketReadyAction(outtake, Outtake.OUTTAKE_PIVOT_BASKET_POS + 0.02);
                     basketReadyAction.setName("basketReadyAction");
 
                     setLastOuttakeAction(basketReadyAction);
@@ -688,11 +689,11 @@ public class Teleop extends LinearOpMode {
             }
 
             if(trussSpecimenEndToEndSequencePressed) {
-                Log.d("backButton", " " + trussSpecimenEndToEndSequencePressed);
+                //Log.d("backButton", " " + trussSpecimenEndToEndSequencePressed);
                 if(trussSpecimenEndToEndSequence == null || trussSpecimenEndToEndSequence.getIsDone()){
                     trussSpecimenEndToEndSequence = new TrussSpecimenEndToEndSequence(intakeClaw, outtake);
                     trussSpecimenEndToEndSequence.setName("trussSpecimenEndToEndSequence");
-                    Log.d("backButton", "Creating sequence " + trussSpecimenEndToEndSequence);
+                    //Log.d("backButton", "Creating sequence " + trussSpecimenEndToEndSequence);
 
                     setLastOuttakeAction(trussSpecimenEndToEndSequence);
                     setLastIntakeAction(trussSpecimenEndToEndSequence);
@@ -752,22 +753,23 @@ public class Teleop extends LinearOpMode {
                 }
             }
 
-            Log.d("outtakepivot", "outtake pivotPos  " + outtake.getOuttakePivotServo().getServo().getPosition());
+            //Log.d("outtakepivot", "outtake pivotPos  " + outtake.getOuttakePivotServo().getServo().getPosition());
 
-            telemetry.addData("odometry: ", SharedData.getOdometryPosition().toString());
-            telemetry.addData("big sweep pos: ", intakeBigSweepPos);
-            telemetry.addData("small sweep pos: ", intakeSmallSweepPos);
-            telemetry.update();
-            Log.d("teleopforauto", "odometry " + SharedData.getOdometryPosition().toString());
-            Log.d("teleopforauto", "big sweep " + intakeClaw.getIntakeBigSweepServo().getPosition());
-            Log.d("teleopforauto", "small sweep " + intakeClaw.getIntakeSmallSweepServo().getPosition());
+//            telemetry.addData("odometry: ", SharedData.getOdometryPosition().toString());
+//            telemetry.addData("big sweep pos: ", intakeBigSweepPos);
+//            telemetry.addData("small sweep pos: ", intakeSmallSweepPos);
+//            telemetry.update();
+//            Log.d("teleopforauto", "odometry " + SharedData.getOdometryPosition().toString());
+//            Log.d("teleopforauto", "big sweep " + intakeClaw.getIntakeBigSweepServo().getPosition());
+//            Log.d("teleopforauto", "small sweep " + intakeClaw.getIntakeSmallSweepServo().getPosition());
 
         }
 
-        Log.d("executor service", "before shutdown" + SharedData.getOdometryPosition().toString());
-        OpModeUtilities.shutdownExecutorService(executorService);
-        Log.d("executor service",
-                "after shutdown" + SharedData.getOdometryPosition().toString() + "is shutdown " + executorService.isShutdown() + "is terminated " + executorService.isTerminated());
+        //Log.d("executor service", "before shutdown" + SharedData.getOdometryPosition().toString());
+        //OpModeUtilities.shutdownExecutorService(executorService);
+        //Log.d("executor service",
+        //        "after shutdown" + SharedData.getOdometryPosition().toString() + "is shutdown " + executorService
+        //        .isShutdown() + "is terminated " + executorService.isTerminated());
 
     }
 
@@ -818,11 +820,7 @@ public class Teleop extends LinearOpMode {
             return true;
         }
 
-        if (!specimenWallReady.checkDoneCondition()) {
-            return true;
-        }
-
-        return false;
+        return !specimenWallReady.checkDoneCondition();
     }
 
     private boolean isGamePadDriveJoystickZero() {

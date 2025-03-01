@@ -6,13 +6,14 @@ import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
-@TeleOp
+@Disabled
 public class RevDistanceSensorTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

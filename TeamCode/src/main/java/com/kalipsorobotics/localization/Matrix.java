@@ -132,9 +132,7 @@ public class Matrix {
         // Extract the inverse matrix from the augmented matrix
         Matrix inverse = new Matrix(n, n);
         for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                inverse.data[i][j] = augmented.data[i][j + n];
-            }
+            System.arraycopy(augmented.data[i], n, inverse.data[i], 0, n);
         }
 
         return inverse;

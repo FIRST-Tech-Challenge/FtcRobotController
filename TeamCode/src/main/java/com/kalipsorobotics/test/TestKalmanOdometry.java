@@ -14,12 +14,13 @@ import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.opencv.core.Point;
 
-@TeleOp(name = "KalmanFilterTest")
+@Disabled //(name = "KalmanFilterTest")
 public class TestKalmanOdometry extends LinearOpMode {
     @Override
     public void runOpMode() {
@@ -45,9 +46,9 @@ public class TestKalmanOdometry extends LinearOpMode {
             //TODO fuse with wheel odo
             //TODO add kalman filter with heading
             telemetry.addLine("Noisy data");
-            telemetry.addLine(String.format("x: %.3f y: %.3f", noisyMeasurement1.x, noisyMeasurement1.y) + "");
+            telemetry.addLine(String.format("x: %.3f y: %.3f", noisyMeasurement1.x, noisyMeasurement1.y));
             telemetry.addLine("filtered data");
-            telemetry.addLine(String.format("x: %.3f y: %.3f", filteredPoint1.x, filteredPoint1.y) + "");
+            telemetry.addLine(String.format("x: %.3f y: %.3f", filteredPoint1.x, filteredPoint1.y));
             Log.d("kalmanFilter", noisyMeasurement1.x + noisyMeasurement1.y + "  " + filteredPoint1.x + filteredPoint1.y);
             if (gamepad1.a) {
                 odometrySpark.sparkResetData(true, odometrySpark.headingUpdateData("right", 0, 0));

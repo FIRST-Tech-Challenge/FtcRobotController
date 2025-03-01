@@ -11,7 +11,7 @@ import com.kalipsorobotics.utilities.OpModeUtilities;
 public class IMUModule {
     private static IMUModule single_instance = null;
 
-    private OpModeUtilities opModeUtilities;
+    private final OpModeUtilities opModeUtilities;
     public IMU imu;
 
     private IMUModule(OpModeUtilities opModeUtilities) {

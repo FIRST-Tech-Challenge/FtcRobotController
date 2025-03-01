@@ -16,7 +16,7 @@ public class Outtake {
     private static Outtake single_instance = null;
 
     //TODO MAKE PRIVATE
-    private OpModeUtilities opModeUtilities;
+    private final OpModeUtilities opModeUtilities;
     public DcMotor linearSlide1, linearSlide2;
     public KServo outtakePivotServo;
     public KServo outtakeClawServo;
@@ -34,7 +34,7 @@ public class Outtake {
     public static final double HOOK1_DOWN_POS = 0.5;
     public static final double HOOK2_DOWN_POS = 0.5;
     public static final double OUTTAKE_PIVOT_TOUCH_BAR_POS = 0.88-0.02;
-    public static final double OUTTAKE_PIVOT_BASKET_POS = 0.93-0.02;
+    public static final double OUTTAKE_PIVOT_BASKET_POS = 0.93; //increase to lower decrease to go higher
     public static final double OUTTAKE_PIVOT_HALFWAY_BASKET_POS = 0.65-0.02;
     public static final double OUTTAKE_PIVOT_PARKING_READY_POS = 0.8-0.02;
     public static final double OUTTAKE_PIVOT_DOWN_POS = 0.16-0.02;
@@ -43,9 +43,10 @@ public class Outtake {
     public static final double OUTTAKE_PIVOT_SPECIMEN_HANG_READY_POS = 1-0.02;
 
     public static final double OUTTAKE_PIVOT_WALL_READY_POS = 0.99;
+
     //decrease to go towards robot, increase to do away from robot
 //    public static final double OUTTAKE_PIVOT_SPECIMAN_HANG_POS = 0.8;   //decrease to go towards robot, increase to do away from robot
-    public static final double LS_SPECIMEN_HANG_READY_MM = 375; //385
+    public static final double LS_SPECIMEN_HANG_READY_MM = 380; //385
     public static final double LS_SPECIMEN_PARK_MM = 121;
     public static final double LS_DOWN_POS = -3;
     public static final double LS_SPECIMEN_HANG_DONE_MM = 30;

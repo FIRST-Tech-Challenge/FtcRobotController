@@ -1,10 +1,9 @@
 package com.kalipsorobotics.intoTheDeep;
 
 import com.kalipsorobotics.actions.KActionSet;
-import com.kalipsorobotics.actions.SampleSweepingReady;
 import com.kalipsorobotics.actions.SetAutoDelayAction;
 import com.kalipsorobotics.actions.WaitAction;
-import com.kalipsorobotics.actions.WallToBarHangAction;
+import com.kalipsorobotics.actions.autoActions.FirstWallToBarHangAction;
 import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeAction;
@@ -18,7 +17,6 @@ import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.kalipsorobotics.utilities.SharedData;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -63,7 +61,7 @@ public class AutoSpecimenChopping extends LinearOpMode {
 
         SetAutoDelayAction setAutoDelayAction = new SetAutoDelayAction(opModeUtilities, gamepad1);
         setAutoDelayAction.setName("setAutoDelayAction");
-        setAutoDelayAction.setTelemetry(telemetry);
+        //setAutoDelayAction.setTelemetry(telemetry);
 
         while(!setAutoDelayAction.getIsDone() && opModeInInit()) {
             long timestamp = System.currentTimeMillis();
@@ -74,15 +72,15 @@ public class AutoSpecimenChopping extends LinearOpMode {
         delayBeforeStart.setName("delayBeforeStart");
         autoSpecimenChopping.addAction(delayBeforeStart);
 
-        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, 230);
-        wallToBarHangAction.setName("wallToBarHangAction");
-        wallToBarHangAction.setTelemetry(telemetry);
-        wallToBarHangAction.setDependentActions(delayBeforeStart);
-        autoSpecimenChopping.addAction(wallToBarHangAction);
+        FirstWallToBarHangAction firstWallToBarHangAction = new FirstWallToBarHangAction(driveTrain, wheelOdometry, outtake, 230);
+        firstWallToBarHangAction.setName("wallToBarHangAction");
+        //firstWallToBarHangAction.setTelemetry(telemetry);
+        firstWallToBarHangAction.setDependentActions(delayBeforeStart);
+        autoSpecimenChopping.addAction(firstWallToBarHangAction);
 
         OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
         outtakeTransferReady.setName("outtakeTransferReady");
-        outtakeTransferReady.setDependentActions(wallToBarHangAction);
+        outtakeTransferReady.setDependentActions(firstWallToBarHangAction);
         autoSpecimenChopping.addAction(outtakeTransferReady);
 //
 //        WaitAction waitBeforeSweepReady = new WaitAction();
@@ -90,13 +88,13 @@ public class AutoSpecimenChopping extends LinearOpMode {
         PurePursuitAction moveToSample1 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSample1.setName("moveToSample1");
         moveToSample1.setMaxTimeOutMS(12000);
-        moveToSample1.setTelemetry(telemetry);
-        moveToSample1.setDependentActions(wallToBarHangAction);
+        //moveToSample1.setTelemetry(telemetry);
+        moveToSample1.setDependentActions(firstWallToBarHangAction);
         moveToSample1.addPoint(-500, -300, -145, PurePursuitAction.P_XY_SLOW, PurePursuitAction.P_ANGLE_SLOW);
         autoSpecimenChopping.addAction(moveToSample1);
 
         SampleIntakeReady sampleIntakeReady = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw);
-        sampleIntakeReady.setDependentActions(wallToBarHangAction);
+        sampleIntakeReady.setDependentActions(firstWallToBarHangAction);
         autoSpecimenChopping.addAction(sampleIntakeReady);
 
         SampleIntakeAction sampleIntakeAction = new SampleIntakeAction(intakeClaw);
