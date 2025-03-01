@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
 
 @Config
-@Autonomous(name = "Tune Lift (TeleOp)", group = "Autonomous")
-public class TuneManualControl extends LinearOpMode {
+@Autonomous(name = "Tune Touch Sensor", group = "Autonomous")
+public class TuneTouch extends LinearOpMode {
     private FtcDashboard dash = FtcDashboard.getInstance();
 //    private List<Action> runningActions = new ArrayList<>();
 
@@ -27,7 +27,12 @@ public class TuneManualControl extends LinearOpMode {
 //            }
             //Actions.runBlocking(lift.manualControl(gamepad1.left_stick_y));
             TelemetryPacket packet = new TelemetryPacket();
-            lift.manualControl(gamepad1.left_stick_y);
+            lift.manualControl(gamepad1.left_stick_y).run(packet);
+            if (lift.limiter.isPressed()){
+                packet.put("touch sensor", "pressed");
+            } else {
+                packet.put("touch sensor", "not pressed");
+            }
             dash.sendTelemetryPacket(packet);
         }
     }

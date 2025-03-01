@@ -92,6 +92,7 @@ public class SampleNewNew extends LinearOpMode {
                         arm.armRetract(),
                         new SleepAction(0.3),
                         claw.servoClaw(Claw.clawState.CLOSE),
+                        new SleepAction(0.25),
                         new ParallelAction(
                                 drivetrain.goToPose(Utils.makePoseVector(-57, -17,-43)),
                                 lift.moveToHeight(24),
@@ -121,6 +122,7 @@ public class SampleNewNew extends LinearOpMode {
                         arm.armRetract(),
                         new SleepAction(0.3),
                         claw.servoClaw(Claw.clawState.CLOSE),
+                        new SleepAction(0.25),
                         new ParallelAction(
                                 drivetrain.goToPose(Utils.makePoseVector(-57, -17,-43)),
                                 lift.moveToHeight(24),
@@ -142,11 +144,12 @@ public class SampleNewNew extends LinearOpMode {
                         new SleepAction(0.5),
                         pivot.setPosition(Intake.intakeState.STOP),
                         extension.servoExtension(Extension.extensionState.RETRACT),
-                        new SleepAction(0.6),
+                        new SleepAction(0.75),
                         intake.motorIntake(Intake.intakeState.STOP),
                         arm.armRetract(),
                         new SleepAction(0.3),
                         claw.servoClaw(Claw.clawState.CLOSE),
+                        new SleepAction(0.25),
                         new ParallelAction(
                                 drivetrain.goToPose(Utils.makePoseVector(-57, -17,-43)),
                                 lift.moveToHeight(24),
