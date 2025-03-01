@@ -156,7 +156,7 @@ class HWTest : LinearOpMode() {
                 testEncoderA(hw.encoderCenter, "encCenter")
                 testEncoderA(hw.encoderRight, "encRight")
                 testEncoderA(hw.encoderVerticalSlide, "encVerticalSlide")
-                testEncoderB(hw.arm, "encArm")
+//                testEncoderB(hw.arm, "encArm")
             }
             if (yesno("Test lift?")) {
 //                hw.verticalLift.setTargetPosition(Hardware.VLIFT_SCORE_SPECIMEN)
