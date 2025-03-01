@@ -203,6 +203,41 @@ public class Drivetrain {
             }
         };
     }
+    public Action goToPoseImpresice(SimpleMatrix desiredPose) {
+        return new Action() {
+            //private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                //if (!initialized) {
+                //    initialized = true;
+                //}
+                localize();
+                packet.put("Done", "no");
+                SimpleMatrix pose = state.extractMatrix(0,3,0,1);
+                SimpleMatrix wheelSpeeds = poseControl.calculate(pose, desiredPose);
+//                SimpleMatrix wheelAccelerations = wheelSpeeds.minus(prevWheelSpeeds).scale(1/deltaT.seconds());
+                SimpleMatrix wheelAccelerations = new SimpleMatrix(4, 1);
+                deltaT.reset();
+                setWheelSpeedAcceleration(wheelSpeeds, wheelAccelerations);
+                prevWheelSpeeds = wheelSpeeds;
+                packet.put("X", state.get(0,0));
+                packet.put("Y", state.get(1,0));
+                packet.put("Theta", Math.toDegrees(state.get(2,0)));
+                packet.put("X Velocity", state.get(3,0));
+                packet.put("Y Velocity", state.get(4,0));
+                packet.put("Theta Velocity", state.get(5,0));
+                packet.put("PID X", wheelSpeeds.get(0,0));
+                packet.put("PID Y", wheelSpeeds.get(1,0));
+                packet.put("PID Theta", wheelSpeeds.get(2,0));
+                if (Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))<distanceThreshold*10&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))<angleThreshold){
+                    setPower(stopMatrix);
+                    packet.put("Done", "done");
+                }
+                return !(Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))<distanceThreshold*10&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))<angleThreshold);
+            }
+        };
+    }
     public InstantAction stopMotors() {
         return new InstantAction(()->setPower(stopMatrix));
     }

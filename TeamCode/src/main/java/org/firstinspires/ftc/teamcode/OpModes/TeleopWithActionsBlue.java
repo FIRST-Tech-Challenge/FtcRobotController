@@ -41,7 +41,6 @@ public class TeleopWithActionsBlue extends OpMode {
     Battery battery;
     Sweeper sweeper;
     boolean firstRun = true;
-    boolean red = false;
     public static double slowMultiplier = 0.25;
     public ElapsedTime timer = new ElapsedTime();
     boolean forceOuttake = false;
@@ -71,11 +70,10 @@ public class TeleopWithActionsBlue extends OpMode {
             firstRun = false;
         } else {
             if (forceOuttake){
-                if (timer.seconds()>2){
+                runningActions.put("intake", robot.outtake());
+                if (timer.seconds()>.5){
                     timer.reset();
                     forceOuttake = false;
-                } else {
-                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
                 }
             }
             if (gamepad1.right_trigger > 0.5) {
@@ -90,18 +88,20 @@ public class TeleopWithActionsBlue extends OpMode {
             if (gamepad2.right_bumper) {
                 runningActions.put("claw", claw.servoClaw(Claw.clawState.CLOSE));
             }
-            if (gamepad1.left_bumper) {
-                if ((red&&!colorSensor.isBlue())||(!red&&!colorSensor.isRed())){
-                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.INTAKE));
-                } else {
+            if (!forceOuttake) {
+                if (gamepad1.left_bumper) {
+                    if (!colorSensor.isRed()) {
+                        runningActions.put("intake", robot.intakeMove(Intake.intakeState.INTAKE));
+                    } else {
+                        runningActions.put("intake", robot.outtake());
+                        forceOuttake = true;
+                        timer.reset();
+                    }
+                } else if (gamepad1.right_bumper) {
                     runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
-                    forceOuttake = true;
-                    timer.reset();
+                } else {
+                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.STOP));
                 }
-            } else if (gamepad1.right_bumper) {
-                runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
-            } else {
-                runningActions.put("intake", robot.intakeMove(Intake.intakeState.STOP));
             }
             if (gamepad2.cross) {
                 runningActions.put("arm", arm.armSpecimen());

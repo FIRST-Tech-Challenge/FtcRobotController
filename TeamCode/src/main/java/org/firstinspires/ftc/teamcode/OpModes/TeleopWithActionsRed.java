@@ -41,7 +41,6 @@ public class TeleopWithActionsRed extends OpMode {
     Battery battery;
     Sweeper sweeper;
     boolean firstRun = true;
-    boolean red = true;
     public static double slowMultiplier = 0.25;
     public ElapsedTime timer = new ElapsedTime();
     boolean forceOuttake = false;
@@ -71,11 +70,10 @@ public class TeleopWithActionsRed extends OpMode {
             firstRun = false;
         } else {
             if (forceOuttake){
+                runningActions.put("intake", robot.outtake());
                 if (timer.seconds()>.5){
                     timer.reset();
                     forceOuttake = false;
-                } else {
-                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
                 }
             }
             if (gamepad1.right_trigger > 0.5) {
@@ -90,17 +88,20 @@ public class TeleopWithActionsRed extends OpMode {
             if (gamepad2.right_bumper) {
                 runningActions.put("claw", claw.servoClaw(Claw.clawState.CLOSE));
             }
-            if (gamepad1.left_bumper) {
-                if ((red&&!colorSensor.isBlue())||(!red&&!colorSensor.isRed())){
-                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.INTAKE));
+            if (!forceOuttake) {
+                if (gamepad1.left_bumper) {
+                    if (!colorSensor.isBlue()) {
+                        runningActions.put("intake", robot.intakeMove(Intake.intakeState.INTAKE));
+                    } else {
+                        runningActions.put("intake", robot.outtake());
+                        forceOuttake = true;
+                        timer.reset();
+                    }
+                } else if (gamepad1.right_bumper) {
+                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
                 } else {
-                    forceOuttake = true;
-                    timer.reset();
+                    runningActions.put("intake", robot.intakeMove(Intake.intakeState.STOP));
                 }
-            } else if (gamepad1.right_bumper) {
-                runningActions.put("intake", robot.intakeMove(Intake.intakeState.OUTTAKE));
-            } else {
-                runningActions.put("intake", robot.intakeMove(Intake.intakeState.STOP));
             }
             if (gamepad2.cross) {
                 runningActions.put("arm", arm.armSpecimen());
@@ -116,28 +117,28 @@ public class TeleopWithActionsRed extends OpMode {
             } else {
                 runningActions.put("manualLift", lift.manualControl(0));
             }
-                if (gamepad1.cross) {
-                    runningActions.put(
-                            "manualDrive",
-                            drivetrain.manualControl(-gamepad1.left_stick_x * slowMultiplier, gamepad1.left_stick_y * slowMultiplier, gamepad1.right_stick_x * slowMultiplier)
-                    );
-                } else {
-                    runningActions.put(
-                            "manualDrive",
-                            drivetrain.manualControl(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x)
-                    );
-                }
-                // update running actions
-                HashMap<String, Action> newActions = new HashMap<>();
-                for (Map.Entry<String, Action> entry : runningActions.entrySet()) {
-                    entry.getValue().preview(packet.fieldOverlay());
-                    if (entry.getValue().run(packet)) {
-                        newActions.put(entry.getKey(), entry.getValue());
-                    }
-                }
-                runningActions = newActions;
-
-                dash.sendTelemetryPacket(packet);
+            if (gamepad1.cross) {
+                runningActions.put(
+                        "manualDrive",
+                        drivetrain.manualControl(-gamepad1.left_stick_x * slowMultiplier, gamepad1.left_stick_y * slowMultiplier, gamepad1.right_stick_x * slowMultiplier)
+                );
+            } else {
+                runningActions.put(
+                        "manualDrive",
+                        drivetrain.manualControl(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x)
+                );
             }
+            // update running actions
+            HashMap<String, Action> newActions = new HashMap<>();
+            for (Map.Entry<String, Action> entry : runningActions.entrySet()) {
+                entry.getValue().preview(packet.fieldOverlay());
+                if (entry.getValue().run(packet)) {
+                    newActions.put(entry.getKey(), entry.getValue());
+                }
+            }
+            runningActions = newActions;
+
+            dash.sendTelemetryPacket(packet);
         }
     }
+}

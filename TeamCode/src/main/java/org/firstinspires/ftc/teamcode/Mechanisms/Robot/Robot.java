@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.Mechanisms.Robot;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Color;
@@ -16,6 +20,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
 import org.firstinspires.ftc.teamcode.Mechanisms.Pivot.Pivot;
 import org.firstinspires.ftc.teamcode.Mechanisms.Sweeper.Sweeper;
+import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Planners.MotionProfile;
 
 public class Robot {
     public Drivetrain drivetrain;
@@ -45,6 +50,12 @@ public class Robot {
         return new SequentialAction(
                 pivot.setPosition(intakeMechState),
                 intake.motorIntake(intakeMechState)
+        );
+    }
+    public Action outtake(){
+        return new SequentialAction(
+                pivot.setPosition(Intake.intakeState.STOP),
+                intake.motorIntake(Intake.intakeState.OUTTAKE)
         );
     }
     public Action intakeDown(){
@@ -81,5 +92,41 @@ public class Robot {
                         arm.armExtend()
                 )
         );
+    }
+    public Action stopIfBlue(){
+        return new Action() {
+        private ElapsedTime t;
+        private boolean initialized = false;
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if(!initialized){
+                t = new ElapsedTime();
+                initialized = true;
+            }
+                if (colorSensor.isBlue()){
+                    pivot.setPosition(Intake.intakeState.STOP);
+                    intake.motorIntake(Intake.intakeState.OUTTAKE);
+                }
+                return t.seconds()>1;
+            }
+        };
+    }
+    public Action stopIfRed(){
+        return new Action() {
+            private ElapsedTime t;
+            private boolean initialized = false;
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                if(!initialized){
+                    t = new ElapsedTime();
+                    initialized = true;
+                }
+                if (colorSensor.isRed()){
+                    pivot.setPosition(Intake.intakeState.STOP);
+                    intake.motorIntake(Intake.intakeState.OUTTAKE);
+                }
+                return t.seconds()>1;
+            }
+        };
     }
 }

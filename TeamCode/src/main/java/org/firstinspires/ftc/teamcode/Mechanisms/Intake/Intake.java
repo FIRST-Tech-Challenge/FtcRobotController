@@ -27,7 +27,6 @@ public class Intake {
         return new Action(){
             @Override
             public boolean run(@NonNull TelemetryPacket packet){
-                double timeLastUpdate = timer.seconds();
                     if(intakePos == intakeState.INTAKE){
                         motor.setPower(0.75);
                         intakeServo.setPower(-1);
