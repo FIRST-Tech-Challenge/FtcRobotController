@@ -24,8 +24,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 // I couldn't remember how to push stuff into Git, so after I googled a bit I gave up.
 // Git is weird and I don't like it. -paige
-@Autonomous(name="BETTER_itd_auto", group="Robot") // ITD stands for Into the Deep
-public class BETTER_itd_auto extends LinearOpMode {
+@Autonomous(name="L1_Auto", group="Robot") // L1 stands for "Level 1 Hang"
+public class L1_Auto extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor leftFrontDrive = null; //motor 0
