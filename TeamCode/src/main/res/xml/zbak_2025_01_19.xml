@@ -9,7 +9,7 @@
             <Servo name="lightLeft" port="0" />
             <Servo name="leftAscent" port="1" />
             <Servo name="horizontalLeft" port="2" />
-            <Servo name="lightRight" port="3" />
+            <Servo name="limelightlight" port="3" />
             <Servo name="claw" port="4" />
             <Servo name="wrist" port="5" />
             <REV_VL53L0X_RANGE_SENSOR name="distancebackLeft" port="0" bus="0" />
