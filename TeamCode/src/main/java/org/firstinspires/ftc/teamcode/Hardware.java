@@ -29,7 +29,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final double SCORE_SPECIMEN_ARM_DEG =-100;
     public static final double LEFT_ARM_SCORE = 0.44;
     public static final double RIGHT_ARM_SCORE = 1 - LEFT_ARM_SCORE;
-    public static final double LEFT_ARM_TRANSFER = 0.04;
+    public static final double LEFT_ARM_TRANSFER = 0.05;
     public static final double RIGHT_ARM_TRANSFER = 1 - LEFT_ARM_TRANSFER;
     public static final double spinTickPerRev = 751.8;
     public static final double RIGHT_SLIDE_OUT = 0.65;
@@ -48,7 +48,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final double FRONT_OPEN = 0.66;
     public static final double FRONT_CLOSE = 0.37;
     public static final double FLIP_UP = 0.8;
-    public static final double FLIP_ONE_THIRD = 0.33;
+    public static final double FLIP_ONE_THIRD = 0.4;
     public static final double CLAW_CLOSE = 0.8;
     public static final double CLAW_OPEN = 0.46;
     public static final double WRIST_BACK = 0.3;

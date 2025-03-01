@@ -217,7 +217,9 @@ public class FixStuffTeleOp extends LinearOpMode {
     }
 
     public void transfer() {
-        hardware.clawFront.setPosition(Hardware.FRONT_CLOSE);
+        hardware.armLeft.setPosition(Hardware.LEFT_ARM_TRANSFER);
+        hardware.armRight.setPosition(Hardware.RIGHT_ARM_TRANSFER);
+        sleep(700);
         hardware.claw.setPosition(Hardware.CLAW_OPEN);
         hardware.wrist.setPosition(Hardware.WRIST_TRANSFER);
         sleep(500);
@@ -226,10 +228,7 @@ public class FixStuffTeleOp extends LinearOpMode {
         sleep(500);
         hardware.horizontalRight.setPosition(Hardware.RIGHT_SLIDE_TRANSFER);
         hardware.horizontalLeft.setPosition(Hardware.LEFT_SLIDE_TRANSFER);
-        sleep(500);
-        hardware.armLeft.setPosition(Hardware.LEFT_ARM_TRANSFER);
-        hardware.armRight.setPosition(Hardware.RIGHT_ARM_TRANSFER);
-        sleep(700);
+        sleep(600);
         hardware.claw.setPosition(Hardware.CLAW_CLOSE);
         sleep(200);
         hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
@@ -305,6 +304,10 @@ public class FixStuffTeleOp extends LinearOpMode {
         hardware.leftFlip.setPosition(1-Hardware.FLIP_DOWN);
     }
     public void flipUp(){
+        hardware.rightFlip.setPosition(Hardware.FLIP_ONE_THIRD);
+        hardware.leftFlip.setPosition(1-Hardware.FLIP_ONE_THIRD);
+        sleep(350);
+        hardware.clawFront.setPosition(Hardware.FRONT_CLOSE-0.07);
         hardware.rightFlip.setPosition(Hardware.FLIP_UP);
         hardware.leftFlip.setPosition(1-Hardware.FLIP_UP);
     }
