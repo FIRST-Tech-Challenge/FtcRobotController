@@ -26,6 +26,10 @@ public class ViperSlide extends OpMode{
 
     @Override
     public void loop(){
+        double power = gamepad1.left_stick_y;
+        polialeft.setPower(power);
+        poliaright.setPower(-power);
+
         if (gamepad1.dpad_down){
             viperslide1Down();
             viperslide2Down();
@@ -36,6 +40,10 @@ public class ViperSlide extends OpMode{
         if (gamepad1.dpad_up){
             viperslide1Up(-1);
             viperslide2Up(1);
+        }
+        if (gamepad1.dpad_up){
+            viperslide1Up(-4);
+            viperslide2Up(4);
         }
     }
     public void viperslide1Up(int turnage) {
