@@ -15,14 +15,14 @@ class AscentTool : LinearOpMode() {
         waitForStart()
 
         while (opModeIsActive()) {
-            hardware.rightAscent.power =
-                if (gamepad1.y) 0.5 // up (towards vertical)
-                else if (gamepad1.a) -0.5 // down (towards folded)
-                else 0.0
-            hardware.leftAscent.power =
-                if (gamepad1.dpad_up) 0.5 // down (towards folded)
-                else if (gamepad1.dpad_down) -0.5 // up (towards vertical)
-                else 0.0
+//            hardware.rightAscent.power =
+//                if (gamepad1.y) 0.5 // up (towards vertical)
+//                else if (gamepad1.a) -0.5 // down (towards folded)
+//                else 0.0
+//            hardware.leftAscent.power =
+//                if (gamepad1.dpad_up) 0.5 // down (towards folded)
+//                else if (gamepad1.dpad_down) -0.5 // up (towards vertical)
+//                else 0.0
 
             tele.addData("left ascent encoder", hardware.leftAscentEnc.getCurrentPosition())
             tele.addData("right ascent encoder", hardware.rightAscentEnc.getCurrentPosition())

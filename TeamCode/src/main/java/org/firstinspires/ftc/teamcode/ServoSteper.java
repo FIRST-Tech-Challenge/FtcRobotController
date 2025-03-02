@@ -20,7 +20,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 @TeleOp(name = "ServoSteper", group = "Concept")
-@Disabled
 public class ServoSteper extends LinearOpMode {
 
     static final double INCREMENT = 0.01;     // amount to slew servo each CYCLE_MS cycle
@@ -48,6 +47,9 @@ public class ServoSteper extends LinearOpMode {
 
         // Scan servo till stop pressed.
         while (opModeIsActive()) {
+            hardware.lightLeft.setPosition(1);
+            hardware.lightRight.setPosition(1);
+
 
             if (gamepad1.y) {
                 // Keep stepping up until we hit the max value.
@@ -74,7 +76,8 @@ public class ServoSteper extends LinearOpMode {
             // Set the servo to the new position and pause;
             sleep(CYCLE_MS);
             idle();
-            hardware.clawFront.setPosition(position);
+            hardware.claw.setPosition(position);
+            //hardware.horizontalLeft.setPosition(1.05-position);
 
         }
 
@@ -82,6 +85,6 @@ public class ServoSteper extends LinearOpMode {
         telemetry.addData(">", "Done");
         telemetry.addData("position", position);
         telemetry.update();
-      //  hardware.horizontalSlide.setPosition(position);
+      //  hardware.horizontalRight.setPosition(position);
     }
 }

@@ -43,18 +43,18 @@ class BoxTest : LinearOpMode() {
         hardware.frontLeft.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
         hardware.backRight.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
         hardware.frontRight.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
-        hardware.clawFlip.position = Hardware.FLIP_UP;
+        hardware.rightFlip.position = Hardware.FLIP_UP;
         hardware.clawFront.position = Hardware.FRONT_OPEN;
 
-        hardware.arm.targetPosition = 0;
-        hardware.arm.mode = DcMotor.RunMode.RUN_TO_POSITION;
-        hardware.arm.power = 0.3;
+       // hardware.arm.targetPosition = 0;
+        //hardware.arm.mode = DcMotor.RunMode.RUN_TO_POSITION;
+        //hardware.arm.power = 0.3;
         hardware.wrist.position = 0.28;
         hardware.claw.position = Hardware.CLAW_CLOSE;
 
         // we don't have the proxy object to handle this for us
         // so manually implement the inversion
-        hardware.horizontalSlide.position = Hardware.RIGHT_SLIDE_IN;
+//        hardware.horizontalSlide.position = Hardware.RIGHT_SLIDE_IN;
         hardware.horizontalLeft.position = 1.05 - Hardware.RIGHT_SLIDE_IN;
 
         hardware.lightLeft.position = Hardware.LAMP_PURPLE;

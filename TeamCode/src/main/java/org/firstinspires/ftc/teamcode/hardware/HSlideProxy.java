@@ -13,7 +13,7 @@ import dev.aether.collaborative_multitasking.SharedResource;
 import dev.aether.collaborative_multitasking.TaskTemplate;
 
 public class HSlideProxy extends TaskTemplate {
-    private static final Set<SharedResource> requires = Set.of(Hardware.Locks.HorizontalSlide);
+    private static final Set<SharedResource> requires = Set.of(Hardware.Locks.horizontalRight);
     private static int INSTANCE_COUNT = 0;
     public final SharedResource CONTROL = new SharedResource("HSlideProxy" + (++INSTANCE_COUNT));
     private final Hardware hardware;
@@ -48,7 +48,7 @@ public class HSlideProxy extends TaskTemplate {
     }
 
     public void update() {
-        hardware.horizontalSlide.setPosition(position);
+        hardware.horizontalRight.setPosition(position);
         hardware.horizontalLeft.setPosition(1.05 - position);
     }
 
