@@ -1,3 +1,16 @@
+# Best Practices:
+- Do not make changes to software in the FtcRobotController directory within the repository. SDK updates will be much easier if you do not change anything within the FtcRobotController directory.
+
+- Limit the use of long-lived branches. Branches should implement a feature. Branches should not track milestones. For example a branch named ‘league-meet-1’ is tracking a milestone. It is much better if your branches track smaller units of development. ‘detect-target’, ‘drive-to-parking’, ‘drop-game-element’. Break your software down into tasks for the robot to do, and use branches to implement those tasks. This will allow for much easier collaborative development, much smaller change sets when merging, and much easier fetches and merges.
+
+- Try to keep your git index clean. This will make fetches and merges easier. git status is your best friend here. Use git status often to see what has changed in your local workspace. Commit often in logical chunks so that it is easy to see the most recent changes.
+
+- Use short, meaningful, commit messages. Do not use slang, offensive, or personal messaging in a commit message. When you push your software to GitHub, those commit messages will be public. If you plan to eventually become a professional software developer, and you retain your existing GitHub account any potential employer will be able to review your commit messages. Tread lightly here.
+
+
+---
+
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the INTO THE DEEP (2024-2025) competition season.
