@@ -29,12 +29,14 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+// import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+// import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.robotcore.external.JavaUtil;
 
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -56,8 +58,29 @@ public class TeleOp_Main extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
+
+    // Declare hardware variables
+        // Declare drive motors
+        private DcMotor driveFL = null;
+        private DcMotor driveFR = null;
+        private DcMotor driveBL = null;
+        private DcMotor driveBR = null;
+
+        // Declare slide motors
+        private DcMotor slideL = null;
+        private DcMotor slideR = null;
+
+        // Declare winch motors
+        private DcMotor winch1 = null;
+        private DcMotor winch2 = null;
+
+    // Declare code data variables
+        double Y  = 0;
+        double X  = 0;
+        double rX = 0;
+        double d = 0;
+
+        int speedPercent = 65;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -69,14 +92,32 @@ public class TeleOp_Main extends OpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        // ---------------------------------------------------------------------------------------
+        // Initialize drive motors
+            driveFL  = hardwareMap.get(DcMotor.class, "FL");
+            driveFR  = hardwareMap.get(DcMotor.class, "FR");
+            driveBL  = hardwareMap.get(DcMotor.class, "BL");
+            driveBR  = hardwareMap.get(DcMotor.class, "BR");
+        // Initialize slide motors
+            slideL   = hardwareMap.get(DcMotor.class, "slideL");
+            slideR   = hardwareMap.get(DcMotor.class, "slideR");
+        // Initialize winch motors
+            winch1   = hardwareMap.get(DcMotor.class, "winch1");
+            winch2   = hardwareMap.get(DcMotor.class, "winch2");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        driveFL.setDirection(DcMotor.Direction.REVERSE);
+        driveFR.setDirection(DcMotor.Direction.FORWARD);
+        driveBL.setDirection(DcMotor.Direction.REVERSE);
+        driveBR.setDirection(DcMotor.Direction.FORWARD);
+
+        // Define the directions of the slide and winch motors
+        slideL.setDirection(DcMotor.Direction.FORWARD);
+        slideR.setDirection(DcMotor.Direction.FORWARD);
+        winch1.setDirection(DcMotor.Direction.FORWARD);
+        winch2.setDirection(DcMotor.Direction.FORWARD);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -102,32 +143,12 @@ public class TeleOp_Main extends OpMode
      */
     @Override
     public void loop() {
-        // Setup a variable for each drive wheel to save power level for telemetry
-        double leftPower;
-        double rightPower;
 
-        // Choose to drive using either Tank Mode, or POV Mode
-        // Comment out the method that's not used.  The default below is POV.
+        UpdateDrivetrain();
 
-        // POV Mode uses left stick to go forward, and right stick to turn.
-        // - This uses basic math to combine motions and is easier to drive straight.
-        double drive = -gamepad1.left_stick_y;
-        double turn  =  gamepad1.right_stick_x;
-        leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-        rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-
-        // Tank Mode uses one stick to control each wheel.
-        // - This requires no math, but it is hard to drive forward slowly and keep straight.
-        // leftPower  = -gamepad1.left_stick_y ;
-        // rightPower = -gamepad1.right_stick_y ;
-
-        // Send calculated power to wheels
-        leftDrive.setPower(leftPower);
-        rightDrive.setPower(rightPower);
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
     }
 
     /*
@@ -135,6 +156,38 @@ public class TeleOp_Main extends OpMode
      */
     @Override
     public void stop() {
+    }
+
+    /**
+     * This function handles the math for the mecanum drivetrain
+     */
+    private void UpdateDrivetrain() {
+
+        UpdateSpeedLimiter();
+
+        Y = gamepad1.left_stick_y;
+        X = -(gamepad1.left_stick_x * 1.1);
+        rX = -gamepad1.right_stick_x;
+        d = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(Y), Math.abs(X), Math.abs(rX))), 1));
+
+        driveFL.setPower(((Y + X + rX) / d) * ((double) speedPercent / 100));
+        driveBL.setPower(((Y - X + rX) / d) * ((double) speedPercent / 100));
+        driveFR.setPower(((Y - X - rX) / d) * ((double) speedPercent / 100));
+        driveBR.setPower(((Y + X - rX) / d) * ((double) speedPercent / 100));
+    }
+
+    /**
+     * This function handles the speed limiting for the drivetrain
+     */
+    private void UpdateSpeedLimiter() {
+        if (gamepad1.right_trigger > 0.1) {
+            speedPercent = 100;
+        } else if (gamepad1.left_trigger > 0.1) {
+            speedPercent = 33;
+        } else {
+            speedPercent = 66;
+        }
+        telemetry.addData("Speed Percentage", speedPercent);
     }
 
 }

@@ -103,7 +103,7 @@ public class Main_TeleOp extends LinearOpMode {
    * LEFT: NEGATIVE
    */
   private void AutoDrive(double Speed_, double Distance_) {
-    // TODO: Change unit to distance instead of degrees
+    // TO-DO: Change unit to distance instead of degrees
     // 360deg/0.14m
     // 2571.4deg/1m
     DegreesToMetresConstant = 1700;
@@ -318,7 +318,7 @@ public class Main_TeleOp extends LinearOpMode {
    * Describe this function...
    */
   private void AutoStrafe(double Speed_, double Distance_) {
-    // TODO: Change unit to distance instead of degrees
+    // TO-DO: Change unit to distance instead of degrees
     // 360deg/0.14m
     // 2571.4deg/1m
     DegreesToMetresConstant = 1700;
@@ -391,7 +391,7 @@ public class Main_TeleOp extends LinearOpMode {
    * Describe this function...
    */
   private void AutoTurn(double Speed_, double Degrees_) {
-    // TODO: Change unit to distance instead of degrees
+    // TO-DO: Change unit to distance instead of degrees
     // 360deg/0.14m
     // 2571.4deg/1m
     DegreesToMetresConstant = 10.36;
