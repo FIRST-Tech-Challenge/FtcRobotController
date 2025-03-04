@@ -67,6 +67,7 @@ public class LateralTuner extends OpMode {
         telemetryA.addData("distance moved", poseUpdater.getPose().getY());
         telemetryA.addLine("The multiplier will display what your strafe ticks to inches should be to scale your current distance to " + DISTANCE + " inches.");
         telemetryA.addData("multiplier", DISTANCE / (poseUpdater.getPose().getY() / poseUpdater.getLocalizer().getLateralMultiplier()));
+        telemetryA.addLine(Double.toString(DISTANCE / (poseUpdater.getPose().getY() / poseUpdater.getLocalizer().getLateralMultiplier())));
         telemetryA.update();
 
         Drawing.drawPoseHistory(dashboardPoseTracker, "#4CAF50");
