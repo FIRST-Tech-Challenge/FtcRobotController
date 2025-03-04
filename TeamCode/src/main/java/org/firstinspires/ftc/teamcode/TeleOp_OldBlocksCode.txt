@@ -1,0 +1,681 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
+import org.firstinspires.ftc.robotcore.external.JavaUtil;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
+@TeleOp(name = "Main_TeleOp (Blocks to Java)", group = "Main Programs")
+public class Main_TeleOp extends LinearOpMode {
+
+  private Servo HangingArm;
+  private DigitalChannel RightLimitSwitch;
+  private DigitalChannel LeftLimitSwitch;
+  private DcMotor Winch2;
+  private Servo SlideGripper;
+  private Servo FrontArmGripper;
+  private DcMotor Winch1;
+  private DcMotor FL;
+  private DcMotor FR;
+  private DcMotor BL;
+  private DcMotor BR;
+  private DcMotor Lslide;
+  private DcMotor Rslide;
+  private VoltageSensor ControlHub_VoltageSensor;
+  private IMU imu;
+  private Servo FrontArm;
+  private Servo CHEEZBURGER;
+
+  double TopHangingArmPos;
+  int SteeringMode;
+  double ArmPos;
+  boolean IsAutoHanging;
+  float Y;
+  float SlidePos;
+  boolean GripperState;
+  double X;
+  float rX;
+  boolean GoToHeight;
+  long OldTime;
+  int SlideGripperPos;
+  int FrontArmGripperPos;
+  double DegreesToMetresConstant;
+  int speedPercent;
+  double d;
+  long SteeringTimeOld;
+  double robotInitialOrientation;
+
+  /**
+   * Describe this function...
+   */
+  private void AutoHangLvl2() {
+    IsAutoHanging = true;
+    HangingArm.setPosition(Math.abs(100 - 300) / 300);
+    sleep(500);
+    // Get the current time in milliseconds. The value returned represents
+    // the number of milliseconds since midnight, January 1, 1970 UTC.
+    OldTime = System.currentTimeMillis() + 3000;
+    while (opModeIsActive() && !(RightLimitSwitch.getState() || LeftLimitSwitch.getState())) {
+      Winch2.setPower(0.5);
+      Winch2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      // Get the current time in milliseconds. The value returned represents
+      // the number of milliseconds since midnight, January 1, 1970 UTC.
+      if (System.currentTimeMillis() >= OldTime) {
+        HangingArm.setPosition(Math.abs(40 - 300) / 300);
+        IsAutoHanging = true;
+      }
+      telemetry.update();
+    }
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void ToggleGrippers3() {
+    if (GripperState == true) {
+      GripperState = false;
+      // When B is pressed, close the bottom gripper and open the top gripper
+      SlideGripperPos = 35;
+      SlideGripper.setPosition(SlideGripperPos / 180);
+      FrontArmGripperPos = 100;
+      FrontArmGripper.setPosition(FrontArmGripperPos / 180);
+    } else {
+      GripperState = true;
+      // When B is not pressed, open the bottom gripper and close the top gripper
+      SlideGripperPos = 140;
+      SlideGripper.setPosition(SlideGripperPos / 180);
+      sleep(750);
+      FrontArmGripperPos = 160;
+      FrontArmGripper.setPosition(FrontArmGripperPos / 180);
+    }
+  }
+
+  /**
+   * RIGHT: POSITIVE
+   * LEFT: NEGATIVE
+   */
+  private void AutoDrive(double Speed_, double Distance_) {
+    // TODO: Change unit to distance instead of degrees
+    // 360deg/0.14m
+    // 2571.4deg/1m
+    DegreesToMetresConstant = 1700;
+    FL.setTargetPosition((int) (FL.getCurrentPosition() - DegreesToMetresConstant * Distance_));
+    FR.setTargetPosition((int) (FR.getCurrentPosition() - DegreesToMetresConstant * Distance_));
+    BL.setTargetPosition((int) (BL.getCurrentPosition() - DegreesToMetresConstant * Distance_));
+    BR.setTargetPosition((int) (BR.getCurrentPosition() - DegreesToMetresConstant * Distance_));
+    FL.setPower(Speed_);
+    FR.setPower(Speed_);
+    BL.setPower(Speed_);
+    BR.setPower(Speed_);
+    InitializeForAuto();
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void UpdateDriving() {
+    UpdateDrivetrainMotors();
+    UpdateSpeedLimiter();
+    UpdateSteeringMode();
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void UpdateSpeedLimiter() {
+    boolean AutoSlideSpeedLimiter;
+
+    AutoSlideSpeedLimiter = false;
+    if (AutoSlideSpeedLimiter) {
+      if (Math.abs(Lslide.getCurrentPosition()) < 1000 && Math.abs(Rslide.getCurrentPosition()) < 1000) {
+        if (gamepad1.right_trigger > 0.1) {
+          speedPercent = 100;
+        } else if (gamepad1.left_trigger > 0.1) {
+          speedPercent = 33;
+        } else {
+          speedPercent = 66;
+        }
+      } else if (Math.abs(Lslide.getCurrentPosition()) < 4000 && Math.abs(Rslide.getCurrentPosition()) < 4000) {
+        if (gamepad1.right_trigger > 0.1) {
+          speedPercent = 66;
+        } else if (gamepad1.left_trigger > 0.1) {
+          speedPercent = 33;
+        } else {
+          speedPercent = 66;
+        }
+      } else {
+        if (gamepad1.right_trigger > 0.1) {
+          speedPercent = 33;
+        } else if (gamepad1.left_trigger > 0.1) {
+          speedPercent = 33;
+        } else {
+          speedPercent = 33;
+        }
+      }
+    } else {
+      if (gamepad1.right_trigger > 0.1) {
+        speedPercent = 100;
+      } else if (gamepad1.left_trigger > 0.1) {
+        speedPercent = 33;
+      } else {
+        speedPercent = 66;
+      }
+    }
+    telemetry.addData("Speed Percentage", speedPercent);
+  }
+
+  /**
+   * This sample contains the bare minimum Blocks for any regular OpMode. The 3 blue
+   * Comment Blocks show where to place Initialization code (runs once, after touching the
+   * DS INIT button, and before touching the DS Start arrow), Run code (runs once, after
+   * touching Start), and Loop code (runs repeatedly while the OpMode is active, namely not
+   * Stopped).
+   */
+  @Override
+  public void runOpMode() {
+    boolean GrabRunning;
+    boolean HasSetPos;
+    double MaxRecordedVoltage;
+    double MinimumRecordedVoltage;
+
+    HangingArm = hardwareMap.get(Servo.class, "Hanging Arm");
+    RightLimitSwitch = hardwareMap.get(DigitalChannel.class, "Right Limit Switch");
+    LeftLimitSwitch = hardwareMap.get(DigitalChannel.class, "Left Limit Switch");
+    Winch2 = hardwareMap.get(DcMotor.class, "Winch2");
+    SlideGripper = hardwareMap.get(Servo.class, "Slide Gripper");
+    FrontArmGripper = hardwareMap.get(Servo.class, "Front Arm Gripper");
+    Winch1 = hardwareMap.get(DcMotor.class, "Winch1");
+    FL = hardwareMap.get(DcMotor.class, "FL");
+    FR = hardwareMap.get(DcMotor.class, "FR");
+    BL = hardwareMap.get(DcMotor.class, "BL");
+    BR = hardwareMap.get(DcMotor.class, "BR");
+    Lslide = hardwareMap.get(DcMotor.class, "Lslide");
+    Rslide = hardwareMap.get(DcMotor.class, "Rslide");
+    ControlHub_VoltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
+    imu = hardwareMap.get(IMU.class, "imu");
+    FrontArm = hardwareMap.get(Servo.class, "Front Arm");
+    CHEEZBURGER = hardwareMap.get(Servo.class, "CHEEZBURGER");
+
+    // Put initialization blocks here.
+    sleep(0);
+    RightLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
+    LeftLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
+    Winch1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    ((DcMotorEx) Winch1).setTargetPositionTolerance(50);
+    Winch1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    Winch2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    ((DcMotorEx) Winch2).setTargetPositionTolerance(50);
+    Winch2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    Rslide.setDirection(DcMotor.Direction.REVERSE);
+    Rslide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    Rslide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    ((DcMotorEx) Rslide).setTargetPositionTolerance(30);
+    Lslide.setDirection(DcMotor.Direction.FORWARD);
+    Lslide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    Lslide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    ((DcMotorEx) Lslide).setTargetPositionTolerance(30);
+    HasSetPos = false;
+    OldTime = 0;
+    FrontArmGripperPos = 180;
+    ArmPos = 0;
+    TopHangingArmPos = 0;
+    SlidePos = 0;
+    SteeringMode = -1;
+    // Get the current time in milliseconds. The value returned represents
+    // the number of milliseconds since midnight, January 1, 1970 UTC.
+    SteeringTimeOld = System.currentTimeMillis();
+    GrabRunning = false;
+    GripperState = true;
+    MaxRecordedVoltage = ControlHub_VoltageSensor.getVoltage();
+    MinimumRecordedVoltage = ControlHub_VoltageSensor.getVoltage();
+    IsAutoHanging = false;
+    // Initialize the IMU with non-default settings. To use this block,
+    // plug one of the "new IMU.Parameters" blocks into the parameters socket.
+    // Create a Parameters object for use with an IMU in a REV Robotics Control Hub or
+    // Expansion Hub, specifying the hub's orientation on the robot via the direction that
+    // the REV Robotics logo is facing and the direction that the USB ports are facing.
+    imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
+    robotInitialOrientation = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+    FR.setDirection(DcMotor.Direction.REVERSE);
+    BR.setDirection(DcMotor.Direction.REVERSE);
+    speedPercent = 50;
+    waitForStart();
+    if (opModeIsActive()) {
+      // Put run blocks here.
+      while (opModeIsActive()) {
+        telemetry.addData("MainLoopActive", 0);
+        // Put loop blocks here.
+        if (ControlHub_VoltageSensor.getVoltage() >= MaxRecordedVoltage) {
+          MaxRecordedVoltage = ControlHub_VoltageSensor.getVoltage();
+        }
+        if (ControlHub_VoltageSensor.getVoltage() <= MinimumRecordedVoltage) {
+          MinimumRecordedVoltage = ControlHub_VoltageSensor.getVoltage();
+        }
+        telemetry.addData("MaxRecordedVoltage", MaxRecordedVoltage);
+        telemetry.addData("MinimumRecordedVoltage", MinimumRecordedVoltage);
+        telemetry.addData("CurrentVoltage", ControlHub_VoltageSensor.getVoltage());
+        UpdateMiscTelemetry();
+        if (!IsAutoHanging) {
+          UpdateDriving();
+        }
+        UpdateArmServo();
+        UpdateHangingServo();
+        UpdateSlides();
+        UpdateWinches();
+        UpdateQuickerPickerUpper();
+        if (gamepad2.left_stick_button) {
+          GrabSampleOffWall();
+        }
+        if (gamepad2.right_stick_button) {
+          GoToHeight = true;
+        } else {
+          GoToHeight = false;
+        }
+        telemetry.update();
+      }
+    }
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void RobotCentricSteering() {
+    Y = gamepad1.left_stick_y;
+    X = -(gamepad1.left_stick_x * 1.1);
+    rX = -gamepad1.right_stick_x;
+    d = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(Y), Math.abs(X), Math.abs(rX))), 1));
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void FieldCentricSteering() {
+    double robotCurrentOrientation;
+    double stickAngle;
+    double Magnitude;
+    double adjustedStickAngle;
+
+    robotCurrentOrientation = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+    stickAngle = Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) / Math.PI * 180;
+    Magnitude = Math.sqrt(Math.pow(gamepad1.left_stick_x, 2) + Math.pow(gamepad1.left_stick_y, 2));
+    rX = -gamepad1.right_stick_x;
+    adjustedStickAngle = stickAngle - (robotCurrentOrientation - robotInitialOrientation);
+    // Enter your comment here!
+    X = Math.cos(adjustedStickAngle / 180 * Math.PI) * Magnitude;
+    Y = (float) (Math.sin(adjustedStickAngle / 180 * Math.PI) * Magnitude);
+    d = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(X), Math.abs(Y), Math.abs(rX))), 1));
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void AutoStrafe(double Speed_, double Distance_) {
+    // TODO: Change unit to distance instead of degrees
+    // 360deg/0.14m
+    // 2571.4deg/1m
+    DegreesToMetresConstant = 1700;
+    FL.setTargetPosition((int) (FL.getCurrentPosition() + DegreesToMetresConstant * Distance_));
+    FR.setTargetPosition((int) (FR.getCurrentPosition() - DegreesToMetresConstant * Distance_));
+    BL.setTargetPosition((int) (BL.getCurrentPosition() - DegreesToMetresConstant * Distance_));
+    BR.setTargetPosition((int) (BR.getCurrentPosition() + DegreesToMetresConstant * Distance_));
+    FL.setPower(Speed_);
+    FR.setPower(Speed_);
+    BL.setPower(Speed_);
+    BR.setPower(Speed_);
+    InitializeForAuto();
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void UpdateSlides() {
+    SlidePos = Math.abs(gamepad2.right_stick_y * 1);
+    if (GoToHeight) {
+      Lslide.setTargetPosition(-1545);
+      Rslide.setTargetPosition(-1545);
+      Lslide.setPower(1);
+      Rslide.setPower(1);
+      Lslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      Rslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    } else {
+      if (gamepad2.right_stick_y > 0.05) {
+        Lslide.setTargetPosition(0);
+        Rslide.setTargetPosition(0);
+        Lslide.setPower(SlidePos);
+        Rslide.setPower(SlidePos);
+        Lslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Rslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      } else if (gamepad2.right_stick_y < -0.05) {
+        Lslide.setTargetPosition(-5000);
+        Rslide.setTargetPosition(-5000);
+        Lslide.setPower(SlidePos);
+        Rslide.setPower(SlidePos);
+        Lslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Rslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      } else {
+        Rslide.setTargetPosition(Rslide.getCurrentPosition());
+        Lslide.setTargetPosition(Lslide.getCurrentPosition());
+        Rslide.setPower(1);
+        Lslide.setPower(1);
+        Rslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Lslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      }
+      if (Rslide.getCurrentPosition() > -25 && !(gamepad2.right_stick_y < -0.05)) {
+        ((DcMotorEx) Lslide).setMotorDisable();
+        ((DcMotorEx) Rslide).setMotorDisable();
+      } else {
+        ((DcMotorEx) Lslide).setMotorEnable();
+        ((DcMotorEx) Rslide).setMotorEnable();
+      }
+    }
+    telemetry.addData("Slide Power", SlidePos);
+    telemetry.addData("Left Slide Power", Lslide.getPower());
+    telemetry.addData("Current Left Slide Position", Lslide.getCurrentPosition());
+    telemetry.addData("Current Left Slide Target", Lslide.getTargetPosition());
+    telemetry.addData("Left Slide Current", ((DcMotorEx) Lslide).getCurrent(CurrentUnit.AMPS));
+    telemetry.addData("Right Slide Power", Rslide.getPower());
+    telemetry.addData("Current Right Slide Position", Rslide.getCurrentPosition());
+    telemetry.addData("Current Right Slide Target", Rslide.getTargetPosition());
+    telemetry.addData("Right Slide Current", ((DcMotorEx) Rslide).getCurrent(CurrentUnit.AMPS));
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void AutoTurn(double Speed_, double Degrees_) {
+    // TODO: Change unit to distance instead of degrees
+    // 360deg/0.14m
+    // 2571.4deg/1m
+    DegreesToMetresConstant = 10.36;
+    FL.setTargetPosition((int) (FL.getCurrentPosition() + DegreesToMetresConstant * Degrees_));
+    FR.setTargetPosition((int) (FR.getCurrentPosition() + DegreesToMetresConstant * Degrees_ * -1));
+    BL.setTargetPosition((int) (BL.getCurrentPosition() + DegreesToMetresConstant * Degrees_));
+    BR.setTargetPosition((int) (BR.getCurrentPosition() + DegreesToMetresConstant * Degrees_ * -1));
+    FL.setPower(Speed_);
+    FR.setPower(Speed_);
+    BL.setPower(Speed_);
+    BR.setPower(Speed_);
+    InitializeForAuto();
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void UpdateDrivetrainMotors() {
+    FL.setPower(((Y + X + rX) / d) * (speedPercent / 100));
+    BL.setPower((((Y - X) + rX) / d) * (speedPercent / 100));
+    FR.setPower((((Y - X) - rX) / d) * (speedPercent / 100));
+    BR.setPower((((Y + X) - rX) / d) * (speedPercent / 100));
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void UpdateArmServo() {
+    if (Math.abs(gamepad2.left_stick_y) >= 0.05) {
+      // When the stick exits the dead zone, change the arm pos based on the angle of the stick
+      ArmPos += -(gamepad2.left_stick_y * 5);
+    }
+    // Constrain the arm position to prevent it from breaking
+    // 0 -> 38
+    ArmPos = Math.min(Math.max(ArmPos, 7), 47);
+    // Set the position of the servo
+    FrontArm.setPosition(ArmPos / 180);
+    // Telemetry
+    telemetry.addData("Front Arm Intended Position", ArmPos);
+    telemetry.addData("Front Arm Actual Position", FrontArm.getPosition() * 180);
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void SetSlidePos(int TargetPos_, double SlidePower_) {
+    Lslide.setTargetPosition(-TargetPos_);
+    Rslide.setTargetPosition(-TargetPos_);
+    Lslide.setPower(SlidePower_);
+    Rslide.setPower(SlidePower_);
+    Lslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    Rslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void ToggleGrippers() {
+    if (GripperState == true) {
+      GripperState = false;
+      // When B is pressed, close the bottom gripper and open the top gripper
+      SlideGripperPos = 35;
+      SlideGripper.setPosition(SlideGripperPos / 180);
+      FrontArmGripperPos = 100;
+      FrontArmGripper.setPosition(FrontArmGripperPos / 180);
+    } else {
+      GripperState = true;
+      // When B is not pressed, open the bottom gripper and close the top gripper
+      SlideGripperPos = 140;
+      SlideGripper.setPosition(SlideGripperPos / 180);
+      sleep(750);
+      FrontArmGripperPos = 160;
+      FrontArmGripper.setPosition(FrontArmGripperPos / 180);
+    }
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void UpdateHangingServo() {
+    if (gamepad2.left_bumper) {
+      // When the left bumper is pressed, move the hanging arm in one direction
+      TopHangingArmPos += 6;
+    } else if (gamepad2.right_bumper) {
+      // When the right bumper is pressed, move the hanging arm in the other direction
+      TopHangingArmPos += -6;
+    }
+    // Constrain the arm position to prevent it from breaking
+    TopHangingArmPos = Math.min(Math.max(TopHangingArmPos, 110), 200);
+    // Set the position of the servo
+    HangingArm.setPosition(Math.abs(TopHangingArmPos - 300) / 300);
+    // Telemetry
+    telemetry.addData("Hanging Arm Intended Position", TopHangingArmPos);
+    telemetry.addData("Hanging Arm Actual Position", Math.abs(HangingArm.getPosition() * 300 - 300));
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void UpdateQuickerPickerUpper() {
+    if (gamepad2.b) {
+      CHEEZBURGER.setPosition(1);
+    } else {
+      CHEEZBURGER.setPosition(0.5);
+    }
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void HighBarAuto() {
+    AutoDrive(0.25, -0.15);
+    SetSlidePos(1700, 0.75);
+    sleep(Seconds(1));
+    AutoDrive(0.25, 0.075);
+    sleep(Seconds(1));
+    SetSlidePos(750, 0.75);
+    sleep(Seconds(1));
+    SetSlidePos(1000, 0.5);
+    sleep(Seconds(1));
+    ToggleGrippers();
+    DeInitializeForAuto();
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void UpdateWinches() {
+    int Winch2Pos;
+    int WinchSpeed;
+    int Winch1Pos;
+    int MaxWinchPos;
+
+    WinchSpeed = 300;
+    if (gamepad2.a) {
+      Winch1Pos += WinchSpeed;
+    }
+    if (!(RightLimitSwitch.getState() || LeftLimitSwitch.getState())) {
+      // Wind Winch 1 In
+      if (gamepad2.dpad_down) {
+        Winch2Pos += WinchSpeed;
+      }
+    } else {
+      MaxWinchPos = Winch2.getCurrentPosition() + 2;
+      if (gamepad2.dpad_down && MaxWinchPos < Winch2.getCurrentPosition()) {
+        Winch2Pos += WinchSpeed;
+      }
+    }
+    Winch1.setTargetPosition(Winch1Pos);
+    Winch1.setPower(0.5);
+    Winch1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    Winch2.setTargetPosition(Winch2Pos);
+    Winch2.setPower(0.7);
+    Winch2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    telemetry.addData("Right Limit Switch State", RightLimitSwitch.getState());
+    telemetry.addData("Left Limit Switch State", LeftLimitSwitch.getState());
+    telemetry.addData("IntendedWinch1Pos", Winch1.getTargetPosition());
+    telemetry.addData("ActualWinch1Pos", Winch1.getCurrentPosition());
+    telemetry.addData("IntendedWinch2Pos", Winch2.getTargetPosition());
+    telemetry.addData("ActualWinch2Pos", Winch2.getCurrentPosition());
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void UpdateGrippers() {
+    if (gamepad2.b) {
+      // When B is pressed, close the bottom gripper and open the top gripper
+      // Get the current time in milliseconds. The value returned represents
+      // the number of milliseconds since midnight, January 1, 1970 UTC.
+      OldTime = System.currentTimeMillis() + 500;
+      FrontArmGripperPos = 100;
+      SlideGripperPos = 50;
+    } else {
+      // When B is not pressed, open the bottom gripper and close the top gripper
+      SlideGripperPos = 120;
+      // Get the current time in milliseconds. The value returned represents
+      // the number of milliseconds since midnight, January 1, 1970 UTC.
+      if (OldTime <= System.currentTimeMillis()) {
+        FrontArmGripperPos = 160;
+      }
+    }
+    if (!((Lslide.getCurrentPosition() + Rslide.getCurrentPosition()) / 2 >= -250)) {
+      FrontArmGripperPos = 160;
+    }
+    // Set the positions of the servos
+    FrontArmGripper.setPosition(FrontArmGripperPos / 180);
+    SlideGripper.setPosition(SlideGripperPos / 180);
+    // Telemetry
+    // Telemetry
+    telemetry.addData("Front Arm Gripper Intended Position", FrontArmGripperPos);
+    telemetry.addData("Front Arm Gripper Actual Position", FrontArmGripper.getPosition() * 180);
+    telemetry.addData("Slide Gripper Intended Position", SlideGripperPos);
+    telemetry.addData("Slide Gripper Actual Position", SlideGripper.getPosition() * 180);
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void GrabSampleOffWall() {
+    ArmPos = Math.min(Math.max(27, 5), 46);
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void UpdateSteeringMode() {
+    if (SteeringMode == 1) {
+      FieldCentricSteering();
+    } else {
+      RobotCentricSteering();
+    }
+    if (SteeringMode == 1) {
+      telemetry.addData("Driving Mode", "Field Centric");
+    } else {
+      telemetry.addData("Driving Mode", "Robot Centric");
+    }
+    // Get the current time in milliseconds. The value returned represents
+    // the number of milliseconds since midnight, January 1, 1970 UTC.
+    if (gamepad1.left_stick_button && SteeringTimeOld + 1000 < System.currentTimeMillis()) {
+      // Toggle the steering mode
+      // Get the current time in milliseconds. The value returned represents
+      // the number of milliseconds since midnight, January 1, 1970 UTC.
+      SteeringTimeOld = System.currentTimeMillis();
+    }
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void InitializeForAuto() {
+    FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+  }
+
+  /**
+   * Describe this function...
+   */
+  private int Seconds(int Seconds2) {
+    return Seconds2 * 1000;
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void DeInitializeForAuto() {
+    FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void TESTAUTO() {
+    boolean IsRunningAuto;
+
+    IsRunningAuto = true;
+    ToggleGrippers();
+    sleep(500);
+    IsRunningAuto = false;
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void EMERGENCY_SAVECODE() {
+    long Distance_;
+
+    sleep(Distance_);
+    // Stop the robot and move the slides up
+    BL.setTargetPosition(0);
+    BR.setTargetPosition(0);
+    FL.setTargetPosition(0);
+    FR.setTargetPosition(0);
+  }
+
+  /**
+   * Describe this function...
+   */
+  private void UpdateMiscTelemetry() {
+    telemetry.addData("TargetPos", BL.getTargetPosition());
+  }
+}
