@@ -34,9 +34,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 // import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -81,6 +83,8 @@ public class TeleOp_Main extends OpMode
         double d = 0;
 
         int speedPercent = 65;
+        
+        float SlidePow = 0;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -99,11 +103,11 @@ public class TeleOp_Main extends OpMode
             driveBL  = hardwareMap.get(DcMotor.class, "BL");
             driveBR  = hardwareMap.get(DcMotor.class, "BR");
         // Initialize slide motors
-            slideL   = hardwareMap.get(DcMotor.class, "slideL");
-            slideR   = hardwareMap.get(DcMotor.class, "slideR");
+            slideL   = hardwareMap.get(DcMotor.class, "Lslide");
+            slideR   = hardwareMap.get(DcMotor.class, "Rslide");
         // Initialize winch motors
-            winch1   = hardwareMap.get(DcMotor.class, "winch1");
-            winch2   = hardwareMap.get(DcMotor.class, "winch2");
+            winch1   = hardwareMap.get(DcMotor.class, "Winch1");
+            winch2   = hardwareMap.get(DcMotor.class, "Winch2");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -145,10 +149,8 @@ public class TeleOp_Main extends OpMode
     public void loop() {
 
         UpdateDrivetrain();
-
-
-        // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        UpdateSlides();
+        
     }
 
     /*
@@ -165,9 +167,9 @@ public class TeleOp_Main extends OpMode
 
         UpdateSpeedLimiter();
 
-        Y = gamepad1.left_stick_y;
-        X = -(gamepad1.left_stick_x * 1.1);
-        rX = -gamepad1.right_stick_x;
+        Y = -gamepad1.left_stick_y;
+        X = (gamepad1.left_stick_x * 1.1);
+        rX = gamepad1.right_stick_x;
         d = JavaUtil.maxOfList(JavaUtil.createListWith(JavaUtil.sumOfList(JavaUtil.createListWith(Math.abs(Y), Math.abs(X), Math.abs(rX))), 1));
 
         driveFL.setPower(((Y + X + rX) / d) * ((double) speedPercent / 100));
@@ -188,6 +190,60 @@ public class TeleOp_Main extends OpMode
             speedPercent = 66;
         }
         telemetry.addData("Speed Percentage", speedPercent);
+    }
+
+    /**
+     * Describe this function...
+     */
+    private void UpdateSlides() {
+        SlidePow = Math.abs(gamepad2.right_stick_y * 1);
+        if (gamepad2.right_stick_button) {
+            slideL.setTargetPosition(-1545);
+            slideR.setTargetPosition(-1545);
+            slideL.setPower(1);
+            slideR.setPower(1);
+            slideL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            slideR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        } else {
+            if (gamepad2.right_stick_y > 0.05) {
+                slideL.setTargetPosition(0);
+                slideR.setTargetPosition(0);
+                slideL.setPower(SlidePow);
+                slideR.setPower(SlidePow);
+                slideL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                slideR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            } else if (gamepad2.right_stick_y < -0.05) {
+                slideL.setTargetPosition(-5000);
+                slideR.setTargetPosition(-5000);
+                slideL.setPower(SlidePow);
+                slideR.setPower(SlidePow);
+                slideL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                slideR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            } else {
+                slideR.setTargetPosition(slideR.getCurrentPosition());
+                slideL.setTargetPosition(slideL.getCurrentPosition());
+                slideR.setPower(1);
+                slideL.setPower(1);
+                slideR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                slideL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
+            if (slideR.getCurrentPosition() > -25 && !(gamepad2.right_stick_y < -0.05)) {
+                ((DcMotorEx) slideL).setMotorDisable();
+                ((DcMotorEx) slideR).setMotorDisable();
+            } else {
+                ((DcMotorEx) slideL).setMotorEnable();
+                ((DcMotorEx) slideR).setMotorEnable();
+            }
+        }
+        telemetry.addData("Slide Power", SlidePow);
+        telemetry.addData("Left Slide Power", slideL.getPower());
+        telemetry.addData("Current Left Slide Position", slideL.getCurrentPosition());
+        telemetry.addData("Current Left Slide Target", slideL.getTargetPosition());
+        telemetry.addData("Left Slide Current", ((DcMotorEx) slideL).getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("Right Slide Power", slideR.getPower());
+        telemetry.addData("Current Right Slide Position", slideR.getCurrentPosition());
+        telemetry.addData("Current Right Slide Target", slideR.getTargetPosition());
+        telemetry.addData("Right Slide Current", ((DcMotorEx) slideR).getCurrent(CurrentUnit.AMPS));
     }
 
 }
