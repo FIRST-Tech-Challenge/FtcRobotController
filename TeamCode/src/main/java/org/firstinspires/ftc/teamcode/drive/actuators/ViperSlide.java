@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.actuators;
 
-import static android.os.SystemClock.sleep;
+import static com.qualcomm.robotcore.hardware.Servo.MIN_POSITION;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,8 +12,7 @@ public class ViperSlide extends OpMode{
     DcMotor polialeft;
     double ticks = 2800.5;
     double newTarget;
-    private boolean isPoliaMoving = false;
-    private long poliaStartTime = 0;
+
     @Override
     public void init(){
         poliaright = hardwareMap.get(DcMotor.class, "poliaright");
@@ -36,24 +35,18 @@ public class ViperSlide extends OpMode{
             viperslide1Up(-3);
             viperslide2Up(3);
         }
-        if (gamepad1.dpad_right){
-            viperslide1Down();
-            viperslide2Down();
-        }
-        // HANDLING POLIA TIMING
-        if (isPoliaMoving) {
-            if (System.currentTimeMillis() - poliaStartTime > 300) {
-            }
-            if (System.currentTimeMillis() - poliaStartTime > 1550) {
-                poliaright.setPower(0);
-                polialeft.setPower(0);
-                isPoliaMoving = false; // Reset flag when done
-            }
-        }
-        // OTHER CONTROLS
-        if (gamepad2.dpad_down && !isPoliaMoving) {
+        if (gamepad2.dpad_down) {
             viperslide2Down();
             viperslide1Down();
+        }
+        int currentPosition1 = poliaright.getCurrentPosition();
+        int currentPosition2 = polialeft.getCurrentPosition();
+
+        if (currentPosition1 <= MIN_POSITION) {
+            poliaright.setPower(0);
+        }
+        if (currentPosition2 <= MIN_POSITION){
+            polialeft.setPower(0);
         }
     }
     public void viperslide1Up(int turnage) {
@@ -72,16 +65,10 @@ public class ViperSlide extends OpMode{
         poliaright.setTargetPosition(0);
         poliaright.setPower(1);
         poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        isPoliaMoving = true; // Flag to indicate polia movement
-        poliaStartTime = System.currentTimeMillis(); // Store start time
     }
     public void viperslide2Down() {
         polialeft.setTargetPosition(0);
         polialeft.setPower(1);
         polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        isPoliaMoving = true; // Flag to indicate polia movement
-        poliaStartTime = System.currentTimeMillis(); // Store start time
     }
 }
