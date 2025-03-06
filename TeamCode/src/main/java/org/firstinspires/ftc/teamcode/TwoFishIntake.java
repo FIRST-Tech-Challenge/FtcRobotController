@@ -249,6 +249,13 @@ public class TwoFishIntake {
 
     }
 
+    public boolean verifyColor(String target){
+        if(getSampleColor().equals(target)){
+            return true;
+        }
+        return false;
+    }
+
     public String getSampleColor(){
         double[] hues = new double[COLOR_SAMPLE_REPETITIONS];
         int i = 0;

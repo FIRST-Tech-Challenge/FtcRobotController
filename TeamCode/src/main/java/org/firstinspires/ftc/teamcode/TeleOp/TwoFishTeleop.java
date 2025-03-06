@@ -59,10 +59,13 @@ public class TwoFishTeleop extends LinearOpMode {
     private final double DUMP_TIME = 0.25;
     private final double DELIVERY_EXTENSION_TIME = DELIVER_PITCH_TIME + 1;
     private final double SPECIMEN_SCORE_TIME = 0.75;
+    private final double COLOR_SENS_CYCLE_TIME = 0.2;
     boolean transfered = false;
     boolean dumped = false;
     boolean retracted = false;
     boolean pitched = false;
+
+    String targetSampleColor = "NONE";
 
     private float intakePitchTarget = 0;
 
@@ -85,6 +88,9 @@ public class TwoFishTeleop extends LinearOpMode {
     private ElapsedTime transferTimer = new ElapsedTime();
     private ElapsedTime dumpTimer = new ElapsedTime();
     private ElapsedTime deliveryTimer = new ElapsedTime();
+    private ElapsedTime intakeTimer = new ElapsedTime();
+
+    private double colorSensSampleTimestamp = 0.0;
 
     private Gamepad prevGamepad2;
     @Override
@@ -128,9 +134,18 @@ public class TwoFishTeleop extends LinearOpMode {
                     drivetrainFunctions.Stop();
                 }
 
-//                if (gamepad1.x) {
+//                if (gamepad1.y) {
 //                    drivetrainFunctions.Move(0, intake.getCenterBlockDistance("yellow")[1], 0, speedScalar);
 //                }
+                if(gamepad1.x){
+                    targetSampleColor = "RED";
+                }
+                if(gamepad1.b){
+                    targetSampleColor = "BLUE";
+                }
+                if(gamepad1.a){
+                    targetSampleColor = "YELLOW";
+                }
             }
 
             //driver 2
@@ -155,6 +170,13 @@ public class TwoFishTeleop extends LinearOpMode {
                         intakePitchTarget += (int) (gamepad2.left_stick_y * 0.01f);
                         intake.setPitch(intakePitchTarget);
 
+                        //Color sensor
+                        if(intakeTimer.seconds() - colorSensSampleTimestamp > COLOR_SENS_CYCLE_TIME){
+                            colorSensSampleTimestamp = intakeTimer.seconds();
+                            if(intake.verifyColor(targetSampleColor)){
+                                intake.pitchUp();
+                            }
+                        }
                         //Intake spin power
                         if (gamepad2.right_trigger >= 0.01) {
                             intake.setIntakePower(gamepad2.right_trigger);
