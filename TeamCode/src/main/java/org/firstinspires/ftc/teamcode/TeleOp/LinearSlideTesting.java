@@ -29,13 +29,14 @@
 
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Delivery;
 import org.firstinspires.ftc.teamcode.DeliveryFunctions;
 import org.firstinspires.ftc.teamcode.RoboMom;
 
-
+@Disabled
 @TeleOp(name="Linear Slide Testing", group="A")
 
 

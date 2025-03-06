@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.DeliveryFunctions;
 import org.firstinspires.ftc.teamcode.IntakeFunctions;
 
+@Disabled
 @TeleOp(name="Arm Test Teleop", group="A")
 public class ArmTestTeleop extends LinearOpMode {
     private DeliveryFunctions deliveryFunctions;

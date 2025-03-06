@@ -28,7 +28,7 @@ public class TwoFishDeliveryTestOpmode extends LinearOpMode {
     private int targetHeight;
     private boolean isSlidePowered = false;
 
-    private Gamepad prevGamepad1 = null;
+    private Gamepad prevGamepad1 = new Gamepad();
 
 
 
@@ -40,11 +40,10 @@ public class TwoFishDeliveryTestOpmode extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        gamepad1.copy(prevGamepad1);
-
         twoFishDelivery = new TwoFishDelivery(this, deliveryTimer);
 
 
+        prevGamepad1.copy(gamepad1);
         waitForStart();
 
         while (opModeIsActive()){
@@ -96,11 +95,15 @@ public class TwoFishDeliveryTestOpmode extends LinearOpMode {
             }
 
             twoFishDelivery.addServoTelemetry();
-            telemetry.addData("Currently controlling ", currentServo + " servo.");
+            telemetry.addData("Currently controlling ", currentServo + " servo." + "index: " + servoIndex);
 
             twoFishDelivery.addSlideTelemetry();
 
+            telemetry.addData("Right bumper: ", gamepad1.right_bumper);
+
             telemetry.update();
+
+            prevGamepad1.copy(gamepad1);
 
         }
     }

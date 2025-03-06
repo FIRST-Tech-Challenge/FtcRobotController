@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,9 +8,6 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 @Disabled
 public class TwoFishDelivery {
@@ -40,16 +36,16 @@ public class TwoFishDelivery {
 
     public double slideTarget;
 
-    public double clawOpenPosition = 0;
-    public double clawClosePosition = 1;
+    public double clawOpenPosition = 0.345;
+    public double clawClosePosition = 0.5;
     public double pitchIntakePosition = 1;
-    public double pitchUpPosition = 0.5;
-    public double pitchScoreSpecPosition = 0.25;
+    public double pitchUpPosition = 0.45;
+    public double pitchScoreSpecPosition = 0.05;
     public double pitchTransferPosition = 0;
     public double pitchSampleScorePosition = 0.75;
 
-    public double wristUpPosition = 1;
-    public double wristDownPosition = 0;
+    public double wristUpPosition = 0.9722;
+    public double wristDownPosition = 0.3094;
     private double operatingVoltage;
     final private double DIP_FROM_HOLDING_SPEC = 0.25;
     final private double DIP_FROM_SCORING_SPEC = 0.5;
@@ -61,10 +57,12 @@ public class TwoFishDelivery {
 
     //boolean:
     private boolean clawClosed = false;
+    private boolean isPitching = false;
 
     //action timestamps:
     private double clawCloseTimestamp = 0;
     private double clawOpenTimestamp = 0;
+    private double clawClearTimestamp = 0;
 
     //action durations:
     private double CLAW_CLOSE_DURATION = 0.5;
@@ -151,6 +149,7 @@ public class TwoFishDelivery {
 
     public void setSlidesTargetPosition(int clicks){
         slideTarget = clicks;
+        slide.setTargetPosition(clicks);
     }
 
     public void setSlidesPower(double power){
@@ -170,8 +169,18 @@ public class TwoFishDelivery {
         slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public void setPitch(double pitchPosition){
+        clawClearTimestamp = time.seconds();
         pitch1.setPosition(pitchPosition);
-        pitch2.setPosition(pitchPosition);
+       //pitch2.setPosition(pitchPosition);
+
+        isPitching = true;
+    }
+
+    public boolean CheckIfDonePitching(){
+        if(time.seconds() - clawClearTimestamp > 0.5 && isPitching){
+            isPitching = false;
+        }
+        return (time.seconds() - clawCloseTimestamp > CLAW_CLOSE_DURATION && isPitching);
     }
     public void setWrist(double rollPosition){
         wrist.setPosition(rollPosition);
@@ -197,6 +206,9 @@ public class TwoFishDelivery {
 
         setSlidesPower(power * powerMultiplier);
     }
+    public int getSlideHeight(){
+        return slide.getCurrentPosition();
+    }
 
     public void toSpecHeight(){
         setSlidesTargetPosition(SPEC_HEIGHT);
@@ -209,11 +221,12 @@ public class TwoFishDelivery {
     }
     public void clawClose(){
         clawCloseTimestamp = time.seconds();
-        setClawPosition(1);
+        setClawPosition(clawClosePosition);
         clawClosed = true;
     }
     public void clawOpen(){
-        setClawPosition(0);
+        clawOpenTimestamp = time.seconds();
+        setClawPosition(clawOpenPosition);
         clawClosed = false;
     }
 

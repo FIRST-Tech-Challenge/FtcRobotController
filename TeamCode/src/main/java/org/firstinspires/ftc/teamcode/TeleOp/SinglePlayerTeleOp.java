@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -40,7 +41,7 @@ import org.firstinspires.ftc.teamcode.IntakeFunctions;
 import org.firstinspires.ftc.teamcode.RoboMom;
 import org.firstinspires.ftc.teamcode.VisionFunctions;
 
-
+@Disabled
 @TeleOp(name="Single Player Teleop", group="AAA")
 
 

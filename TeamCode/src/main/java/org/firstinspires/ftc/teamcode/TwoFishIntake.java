@@ -34,8 +34,8 @@ public class TwoFishIntake {
     public final int DELTA_EXTENSION = 1000;
     public int minExtension = -999999999;
     public int maxExtension = DELTA_EXTENSION;
-    private double downPitch = 0.0;
-    private double upPitch = 0.0;
+    public double downPitch = 0.5353;
+    public double upPitch = 0.4506;
 
     private final int TICK_LOW_POWER_DISTANCE = 50;
 
@@ -97,6 +97,8 @@ public class TwoFishIntake {
             pitch = linearOpMode.hardwareMap.get(Servo.class, "intakePitch");
             transfer = linearOpMode.hardwareMap.get(Servo.class, "intakeTransfer");
 
+            extension.setTargetPosition(extension.getCurrentPosition());
+
             intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -105,8 +107,6 @@ public class TwoFishIntake {
             extension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             pitch.scaleRange(0.0, 1.0);
-
-            extension.setTargetPosition(extension.getCurrentPosition());
 
 //            limitSwitch = linearOpMode.hardwareMap.get(TouchSensor.class, "intakeTouch");
 
