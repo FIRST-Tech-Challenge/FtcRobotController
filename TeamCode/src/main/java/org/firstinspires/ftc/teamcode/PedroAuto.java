@@ -206,7 +206,7 @@ public class PedroAuto extends LinearOpMode {
                         } else{
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
                         }
-                        if (robot.getSlidePosition() > 680-25) {
+                        if (robot.getSlidePosition() > 660-25) {
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_3;
                             robot.outake(true);
                             isReady = true;
@@ -274,7 +274,7 @@ public class PedroAuto extends LinearOpMode {
                         } else{
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
                         }
-                        if (robot.getSlidePosition() > 680-25) {
+                        if (robot.getSlidePosition() > 660-25) {
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_3;
                             robot.outake(true);
                             isReady = true;
@@ -335,7 +335,7 @@ public class PedroAuto extends LinearOpMode {
                         } else{
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
                         }
-                        if (robot.getSlidePosition() > 680-25) {
+                        if (robot.getSlidePosition() > 660-25) {
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_3;
                             robot.outake(true);
                             isReady = true;

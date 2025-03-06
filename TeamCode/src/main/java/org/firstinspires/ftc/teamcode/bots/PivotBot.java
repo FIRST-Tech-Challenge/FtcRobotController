@@ -22,7 +22,7 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
 
     public static int samplePivotDropOffPos = -2050; // was 2150, seems to be going too far
 
-    public static int sampleSlideDropOffPos = 660;// WAS 770, MADE LOWER TO AVOID CLAW GETTING CAUGHT ON BUCKET
+    public static int sampleSlideDropOffPos = 690;// WAS 770, MADE LOWER TO AVOID CLAW GETTING CAUGHT ON BUCKET
 
     public static int specimenSlideDropOffPos = 400;// to be tested
 
@@ -120,7 +120,7 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
         pivotController.setTolerance(5,10);
         pivotController.setSetPoint(pivotTarget);
         //elseF
-            if (pivotMotor1.getCurrentPosition() > -2100) {
+            if (pivotMotor1.getCurrentPosition() > -2050) {
                 kfAngled = (float) (kf * Math.cos(Math.toRadians(ticksToDegree * pivotMotor1.getCurrentPosition())));
             } else{ kfAngled = 0;}
             if(pivotMotor1.getCurrentPosition() > 1 && pivotTarget == 0){
@@ -128,6 +128,10 @@ public class PivotBot extends OdometryBot { //change back to odometry bot later
                 pivotMotor2.setPower(0);
                 pivotMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 pivotMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            }
+            else if(pivotMotor1.getCurrentPosition() < -2050 && pivotTarget <-2000){
+                pivotMotor1.setPower(-0.0004);
+                pivotMotor2.setPower(-0.0004);
             }
             else if(!pivotController.atSetPoint()) {
                 pivotController.setPIDF(kp, ki, kd, 0);

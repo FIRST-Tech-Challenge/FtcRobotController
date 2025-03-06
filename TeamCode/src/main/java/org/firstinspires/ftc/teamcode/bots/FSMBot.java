@@ -87,9 +87,9 @@ public class FSMBot extends RollerIntakeBot{
 
     public static double specimenHighOuttakeRollTarget;
 
-    public static double sampleOuttakePitchTarget;
+    public static double sampleOuttakePitchTarget = 10;
 
-    public static double sampleOuttakeRollTarget;
+    public static double sampleOuttakeRollTarget = 0;
 
     public boolean slideUp = false;
     public boolean hingeDown = false;
