@@ -252,6 +252,12 @@ public class TwoFishDelivery {
         return voltageSensor.getVoltage() < operatingVoltage - DIP_FROM_SCORING_SPEC;
     }
 
+    public void stopSlidesIfStuck(){
+        if(voltageSensor.getVoltage() < operatingVoltage - 1){
+            slide.setPower(0);
+        }
+    }
+
     public void limitCheck() {
         if (limitSwitch.isPressed()) {
             minHeight = slide.getCurrentPosition();

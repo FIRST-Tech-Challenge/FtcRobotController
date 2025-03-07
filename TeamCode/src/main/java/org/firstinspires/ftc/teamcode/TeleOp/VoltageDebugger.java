@@ -56,6 +56,12 @@ public class VoltageDebugger {
         linearOpMode.telemetry.addData("", actionVoltages);
     }
 
+    public void addVoltageTelemetry(){
+        linearOpMode.telemetry.addData("Operating Voltage: ", operatingVoltage);
+        linearOpMode.telemetry.addData("Voltage drop: ", voltageSensor.getVoltage());
+        linearOpMode.telemetry.addData("Voltage drop: ", operatingVoltage - voltageSensor.getVoltage());
+    }
+
     public double getVoltage(){
         return voltageSensor.getVoltage();
     }
