@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -18,7 +19,7 @@ public class TwoFishDelivery {
     private Servo pitch2 = null;
     private Servo wrist = null;
     private VoltageSensor voltageSensor = null;
-    //    private TouchSensor limitSwitch = null;
+        public TouchSensor limitSwitch = null;
 
 
     private LinearOpMode linearOpMode;
@@ -36,13 +37,13 @@ public class TwoFishDelivery {
 
     public double slideTarget;
 
-    public double clawOpenPosition = 0.345;
-    public double clawClosePosition = 0.5;
+    public double clawOpenPosition = 0.3683;
+    public double clawClosePosition = 0.545;
     public double pitchIntakePosition = 1;
-    public double pitchUpPosition = 0.45;
-    public double pitchScoreSpecPosition = 0.05;
+    public double pitchUpPosition = 0.5917;
+    public double pitchScoreSpecPosition = 0.29;
     public double pitchTransferPosition = 0;
-    public double pitchSampleScorePosition = 0.75;
+    public double pitchSampleScorePosition = 0.7683;
 
     public double wristUpPosition = 0.9722;
     public double wristDownPosition = 0.3094;
@@ -51,8 +52,12 @@ public class TwoFishDelivery {
     final private double DIP_FROM_SCORING_SPEC = 0.5;
 
     //Slide Heights
-    final private int SPEC_HEIGHT = 350;
-    final private int SAMPLE_HEIGHT = 350;
+    final private int SPEC_DELTA = 500;
+    final private int SAMPLE_DELTA = 500;
+
+    public int minHeight = -999999999;
+    public int specHeight = SPEC_DELTA;
+    public int sampleHeight = SAMPLE_DELTA;
 
 
     //boolean:
@@ -100,12 +105,15 @@ public class TwoFishDelivery {
             pitch2 = linearOpMode.hardwareMap.get(Servo.class, "deliveryPitchRight");
             claw = linearOpMode.hardwareMap.get(Servo.class, "claw");
             wrist = linearOpMode.hardwareMap.get(Servo.class, "wrist");
-//          limitSwitch = linearOpMode.hardwareMap.get(TouchSensor.class, "deliveryTouch");
+          limitSwitch = linearOpMode.hardwareMap.get(TouchSensor.class, "deliveryTouch");
 
             claw.scaleRange(0.0, 1);
             pitch1.scaleRange(0.0, 1);
             pitch2.scaleRange(0.0, 1);
             pitch2.setDirection(Servo.Direction.REVERSE);
+
+
+
             slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             slide.setTargetPosition(0);
@@ -171,7 +179,7 @@ public class TwoFishDelivery {
     public void setPitch(double pitchPosition){
         clawClearTimestamp = time.seconds();
         pitch1.setPosition(pitchPosition);
-       //pitch2.setPosition(pitchPosition);
+       pitch2.setPosition(pitchPosition);
 
         isPitching = true;
     }
@@ -210,11 +218,10 @@ public class TwoFishDelivery {
         return slide.getCurrentPosition();
     }
 
-    public void toSpecHeight(){
-        setSlidesTargetPosition(SPEC_HEIGHT);
-    }
+    public void toMinHeight(){setSlidesTargetPosition(minHeight);}
+    public void toSpecHeight(){setSlidesTargetPosition(specHeight);}
     public void toSampleHeight(){
-        setSlidesTargetPosition(SAMPLE_HEIGHT);
+        setSlidesTargetPosition(sampleHeight);
     }
     public void setClawPosition(double p){ // 0-1
         claw.setPosition(p);
@@ -245,12 +252,13 @@ public class TwoFishDelivery {
         return voltageSensor.getVoltage() < operatingVoltage - DIP_FROM_SCORING_SPEC;
     }
 
-//    public void limitCheck() {
-//        if (limitSwitch.isPressed()) {
-//            minExtension = extension.getCurrentPosition();
-//            maxExtension = minExtension+DELTA_EXTENSION;
-//        }
-//    }
+    public void limitCheck() {
+        if (limitSwitch.isPressed()) {
+            minHeight = slide.getCurrentPosition();
+            specHeight = minHeight+SPEC_DELTA;
+            sampleHeight = minHeight+SAMPLE_DELTA;
+        }
+    }
 
     public void addServoTelemetry(){
         linearOpMode.telemetry.addData("pitch L: ", pitch1.getPosition());

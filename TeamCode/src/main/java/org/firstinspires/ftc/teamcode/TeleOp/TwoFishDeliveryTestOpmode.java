@@ -29,6 +29,7 @@ public class TwoFishDeliveryTestOpmode extends LinearOpMode {
     private boolean isSlidePowered = false;
 
     private Gamepad prevGamepad1 = new Gamepad();
+    private Gamepad currentGamepad1 = new Gamepad();
 
 
 
@@ -43,22 +44,26 @@ public class TwoFishDeliveryTestOpmode extends LinearOpMode {
         twoFishDelivery = new TwoFishDelivery(this, deliveryTimer);
 
 
-        prevGamepad1.copy(gamepad1);
+//        prevGamepad1.copy(currentGamepad1);
+        currentGamepad1.copy(gamepad1);
         waitForStart();
 
         while (opModeIsActive()){
 
-            if(gamepad1.left_stick_y >= 0.1){
-                twoFishDelivery.slideTarget += (int)(gamepad1.left_stick_y *= -0.01f);
-            }
+            prevGamepad1.copy(currentGamepad1);
+            currentGamepad1.copy(gamepad1);
 
-            if(isSlidePowered){
-                twoFishDelivery.PControlPower(0.5);
-            }
-
-            if(gamepad1.a && !prevGamepad1.a){
-                isSlidePowered = !isSlidePowered;
-            }
+//            if(gamepad1.left_stick_y >= 0.1){
+//                twoFishDelivery.slideTarget += (int)(gamepad1.left_stick_y *= -0.01f);
+//            }
+//
+//            if(isSlidePowered){
+//                twoFishDelivery.PControlPower(0.5);
+//            }
+//
+//            if(gamepad1.a && !prevGamepad1.a){
+//                isSlidePowered = !isSlidePowered;
+//            }
 
             TelemetryPacket packet = new TelemetryPacket();
 
@@ -67,8 +72,8 @@ public class TwoFishDeliveryTestOpmode extends LinearOpMode {
 //            if(gamepad1.dpad_down) servoIndex = 2;
 //            if(gamepad1.dpad_left) servoIndex = 3;
 
-            if(gamepad1.right_bumper && !prevGamepad1.right_bumper) servoIndex ++;
-            if(gamepad1.left_bumper && !prevGamepad1.left_bumper) servoIndex --;
+            if(currentGamepad1.right_bumper && !prevGamepad1.right_bumper) servoIndex ++;
+            if(currentGamepad1.left_bumper && !prevGamepad1.left_bumper) servoIndex --;
 
             switch (servoIndex){
                 case    0:

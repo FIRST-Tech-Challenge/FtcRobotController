@@ -11,7 +11,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.io.Serializable;
@@ -24,7 +26,7 @@ public class TwoFishIntake {
     private DcMotor intake = null;
     private Servo pitch = null;
     private Servo transfer = null;
-//    private TouchSensor limitSwitch = null;
+    public TouchSensor limitSwitch = null;
 //    private HuskyLens huskyLens = null;
 
     private LinearOpMode linearOpMode;
@@ -76,7 +78,7 @@ public class TwoFishIntake {
 
     private static final int COLOR_SAMPLE_REPETITIONS = 3;
 
-    ColorSensor colorSens;
+    ColorSensor colorSens = null;
 
     float hsv[] = {0,0,0};
 
@@ -96,6 +98,7 @@ public class TwoFishIntake {
             intake = linearOpMode.hardwareMap.get(DcMotor.class, "intake");
             pitch = linearOpMode.hardwareMap.get(Servo.class, "intakePitch");
             transfer = linearOpMode.hardwareMap.get(Servo.class, "intakeTransfer");
+            colorSens = linearOpMode.hardwareMap.get(ColorSensor.class, "intakeColor");
 
             extension.setTargetPosition(extension.getCurrentPosition());
 
@@ -106,9 +109,14 @@ public class TwoFishIntake {
             extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             extension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+            intake.setDirection(DcMotorSimple.Direction.REVERSE);
+            extension.setDirection(DcMotorSimple.Direction.REVERSE);
+
             pitch.scaleRange(0.0, 1.0);
 
-//            limitSwitch = linearOpMode.hardwareMap.get(TouchSensor.class, "intakeTouch");
+            colorTimer = new ElapsedTime();
+
+            limitSwitch = linearOpMode.hardwareMap.get(TouchSensor.class, "intakeTouch");
 
 //            huskyLens = linearOpMode.hardwareMap.get(HuskyLens.class, "husky");
 //            huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
@@ -123,6 +131,8 @@ public class TwoFishIntake {
         targetLength = ticks;
         extension.setTargetPosition(Math.max(minExtension, Math.min(maxExtension, ticks)));
     }
+
+    public void toMinExtention(){setSlidesTargetPosition(minExtension);}
 
     public void setSlidesPower(double power){
         runPower();
@@ -177,12 +187,12 @@ public class TwoFishIntake {
     public double getPitch(){return pitch.getPosition();}
     public int getExtensionTicks(){ return extension.getCurrentPosition();}
 
-//    public void limitCheck() {
-//        if (limitSwitch.isPressed()) {
-//            minExtension = extension.getCurrentPosition();
-//            maxExtension = minExtension+DELTA_EXTENSION;
-//        }
-//    }
+    public void limitCheck() {
+        if (limitSwitch.isPressed()) {
+            minExtension = extension.getCurrentPosition();
+            maxExtension = minExtension+DELTA_EXTENSION;
+        }
+    }
 
 //    ArrayList<ArrayList<HuskyLens.Block>> blocks = new ArrayList<ArrayList<HuskyLens.Block>>(4);
 //    //yellow blocks -> get(1)
@@ -250,6 +260,7 @@ public class TwoFishIntake {
     }
 
     public boolean verifyColor(String target){
+        if(target == null) return false;
         if(getSampleColor().equals(target)){
             return true;
         }

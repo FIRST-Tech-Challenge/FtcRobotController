@@ -44,9 +44,9 @@ public class ObsPedro extends OpMode {
 
     //Scores the first specimen
     private final Point startPoint = new Point(8, 56);
-    private final Point toFirstSpecPoint1 = new Point(20, 56);
-    private final Point toFirstSpecPoint2 = new Point(24, 64);
-    private final Point firstSpecScorePoint = new Point(39, 64);
+    private final Point toFirstSpecPoint1 = new Point(18, 56);
+    private final Point toFirstSpecPoint2 = new Point(22, 64);
+    private final Point firstSpecScorePoint = new Point(35, 64);
 
     //Collects the first sample
     private final Point startCollectSample1Point = firstSpecScorePoint;
@@ -114,13 +114,17 @@ public class ObsPedro extends OpMode {
         switch (pathState) {
             case 0:
                 follower.followPath(firstSpecScorePath);
-                setPathState(1);
+                setPathState(-1);
                 break;
             case 1:
+                if(follower.getPose().getX() > 30) {
+                    follower.setMaxPower(0.3);
+                }
+
                 if(!follower.isBusy()) {
                     //Score first specimen
                     follower.followPath(firstSampleCollectPath,true);
-                    setPathState(2);
+                    setPathState(1);
                 }
                 break;
             case 2:

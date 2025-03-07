@@ -64,7 +64,7 @@ public class TwoFishTeleop extends LinearOpMode {
     boolean retracted = false;
     boolean pitched = false;
 
-    String targetSampleColor = "NONE";
+    String targetSampleColor = "YELLOW";
 
     private float intakePitchTarget = 0;
 
@@ -141,14 +141,17 @@ public class TwoFishTeleop extends LinearOpMode {
 //                if (gamepad1.y) {
 //                    drivetrainFunctions.Move(0, intake.getCenterBlockDistance("yellow")[1], 0, speedScalar);
 //                }
-                if(gamepad1.x){
+                if(gamepad1.b){
                     targetSampleColor = "RED";
                 }
-                if(gamepad1.b){
+                if(gamepad1.x){
                     targetSampleColor = "BLUE";
                 }
-                if(gamepad1.a){
+                if(gamepad1.y){
                     targetSampleColor = "YELLOW";
+                }
+                if(gamepad1.a){
+                    targetSampleColor = "NONE";
                 }
             }
 
@@ -172,14 +175,16 @@ public class TwoFishTeleop extends LinearOpMode {
                         intake.setSlidesPower(gamepad2.right_stick_y * 0.5f);
                         //intake pitch
                         intakePitchTarget = (float) Math.min(intake.downPitch, Math.max(intake.upPitch, intakePitchTarget)); //down pitch is larger limit
-                        intakePitchTarget += (gamepad2.left_stick_y * 0.0005f);
+                        intakePitchTarget += (gamepad2.left_stick_y * 0.005f);
                         intake.setPitch(intakePitchTarget);
 
                         //Color sensor
+
                         if(intakeTimer.seconds() - colorSensSampleTimestamp > COLOR_SENS_CYCLE_TIME){
                             colorSensSampleTimestamp = intakeTimer.seconds();
                             if(intake.verifyColor(targetSampleColor)){
                                 intake.pitchUp();
+                                intakePitchTarget = (float)intake.upPitch;
                             }
                         }
                         //Intake spin power
@@ -197,27 +202,31 @@ public class TwoFishTeleop extends LinearOpMode {
                         if(currentGamepad2.a && !prevGamepad2.a){
                            state = RobotState.TRANSFER;
                             intake.pitchUp();
-                           intake.setSlidesTargetPosition(0);
+                            intake.setTransferPower(0.0f);
+                           intake.toMinExtention();
+                            delivery.setWrist(delivery.wristUpPosition);
                         }
 
                         //Move to grab spec ("y")
                         if(currentGamepad2.y && !prevGamepad2.y){
                             delivery.setWrist(delivery.wristUpPosition);
+                            intake.setTransferPower(0.5f);
 //                            delivery.resetPWM();
                             state = RobotState.SPECIMEN_GRAB;
                         }
                         break;
 
                     case TRANSFER:
-                        delivery.setSlidesTargetPosition(0);
+                        delivery.toMinHeight();
                         delivery.setSlidesPower(0.5);
                         intake.updateLength();
                         delivery.setPitch(delivery.pitchTransferPosition);
                         //break unless fully retracted
-                        if(intake.getExtensionTicks() > 25){break;}
+                        if(intake.getExtensionTicks() > 25+intake.minExtension){break;}
 
                         //close claw if "a" pressed
                         if(currentGamepad2.a && !prevGamepad2.a){
+                            intake.setTransferPower(0.5f);
                             delivery.clawClose();
                         }
 
@@ -243,21 +252,23 @@ public class TwoFishTeleop extends LinearOpMode {
                         if(delivery.CheckClawOpen()){
 //                            delivery.resetPWM();
                             delivery.setPitch(delivery.pitchUpPosition);
-                            delivery.setSlidesTargetPosition(0);
+                            delivery.toMinHeight();
                             state = RobotState.IDLE;
                         }
 
                         break;
 
                     case SPECIMEN_GRAB:
-                        delivery.toSpecHeight();
+                        delivery.toMinHeight();
                         delivery.setSlidesPower(0.5);
+
+                        delivery.setWrist(delivery.wristUpPosition);
 
                         //pitch to intake position
                         delivery.setPitch(delivery.pitchIntakePosition);
 
                         if(delivery.CheckIfDonePitching()){
-                            delivery.setPitch(delivery.wristUpPosition);
+                            delivery.setWrist(delivery.wristUpPosition);
                         }
 
                         //wait for "a" to grab
@@ -274,21 +285,27 @@ public class TwoFishTeleop extends LinearOpMode {
 
                     case SPECIMEN_SCORE:
                         if(delivery.CheckIfDonePitching()){
-                            delivery.setPitch(delivery.wristDownPosition);
+                            delivery.toSpecHeight();
+                            delivery.setWrist(delivery.wristDownPosition);
                         }
 
                         //raise slides to spec height
-                        delivery.toSpecHeight();
+//                        delivery.toSpecHeight();
                         delivery.setSlidesPower(0.5);
 
-                        //Hold "a" to score, press "left bumper" to let go
-                        if(gamepad2.a){
+                        //lb to score
+                        if(gamepad2.left_bumper){
+                            delivery.clawOpen();
+                        }
+
+                        //falling a --> score
+                        if(currentGamepad2.a && !prevGamepad2.a){
                             delivery.setPitch(delivery.pitchScoreSpecPosition);
                             delivery.setWrist(delivery.wristDownPosition);
-                            if(gamepad2.left_bumper){
-                                delivery.clawOpen();
-                            }
-                        } else{
+                        }
+
+                        //rising a --> up
+                        if(!currentGamepad2.a && prevGamepad2.a){
                             delivery.setPitch(delivery.pitchUpPosition);
                         }
 
@@ -298,10 +315,11 @@ public class TwoFishTeleop extends LinearOpMode {
                             delivery.resetPWM();
                             state = RobotState.IDLE;
                         }
+                        intake.pitchUp();
                         break;
 
                     case IDLE:
-                        delivery.setSlidesTargetPosition(0);
+                        delivery.toSpecHeight();
                         delivery.setSlidesPower(0);
 
                         //if left joystick or triggers are pressed, switch to intake
@@ -323,6 +341,8 @@ public class TwoFishTeleop extends LinearOpMode {
 
             }
 
+            telemetry.addData("Is intake limit switch true?", intake.limitSwitch.isPressed());
+            telemetry.addData("Is delivery limit switch true?", delivery.limitSwitch.isPressed());
             telemetry.update();
 
             //Adds rr actions
@@ -337,6 +357,12 @@ public class TwoFishTeleop extends LinearOpMode {
 
             dash.sendTelemetryPacket(packet);
 
+            intake.limitCheck();
+            delivery.limitCheck();
+            telemetry.addData("intake currect extension: ", intake.getExtensionTicks());
+            telemetry.addData("intake min extension: ", intake.minExtension);
+            telemetry.addData("delivery currect extension: ", delivery.getSlideHeight());
+            telemetry.addData("delivery min extension: ", delivery.minHeight);
 //            prevPoseEstimate = poseEstimate;
             prevEncoderX = encoderX;
         }
