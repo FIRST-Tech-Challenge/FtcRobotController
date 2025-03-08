@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -22,7 +23,7 @@ public class TwoFishDelivery {
         public TouchSensor limitSwitch = null;
 
 
-    private LinearOpMode linearOpMode;
+    private OpMode opMode;
 
     private double CLICKS_PER_METER = 2492.788;
     private double CLICKS_PER_INCH = 63.317;
@@ -61,16 +62,19 @@ public class TwoFishDelivery {
 
 
     //boolean:
-    private boolean clawClosed = false;
-    private boolean isPitching = false;
+    public boolean clawClosed = false;
+    public boolean isPitching = false;
 
     //action timestamps:
     private double clawCloseTimestamp = 0;
     private double clawOpenTimestamp = 0;
     private double clawClearTimestamp = 0;
+    private double specScoreTimestamp = 0;
 
     //action durations:
     private double CLAW_CLOSE_DURATION = 0.5;
+
+    private double SPEC_SCORE_DURATION = 0.75;
 
 
     String file = "TwoFishDeliveryValues.txt";
@@ -85,10 +89,10 @@ public class TwoFishDelivery {
             wristDownPosition
     );
 
-    public TwoFishDelivery(LinearOpMode l, ElapsedTime deliveryTimer)
+    public TwoFishDelivery(OpMode l, ElapsedTime deliveryTimer)
     {
         time = deliveryTimer;
-        linearOpMode = l;
+        opMode = l;
         Initialize();
     }
 
@@ -97,15 +101,15 @@ public class TwoFishDelivery {
 
 
         try {
-            voltageSensor = linearOpMode.hardwareMap.get(VoltageSensor.class, "Control Hub");
+            voltageSensor = opMode.hardwareMap.get(VoltageSensor.class, "Control Hub");
             operatingVoltage = voltageSensor.getVoltage();
 
-            slide  = linearOpMode.hardwareMap.get(DcMotor.class, "deliverySlide");
-            pitch1 = linearOpMode.hardwareMap.get(Servo.class, "deliveryPitchLeft");
-            pitch2 = linearOpMode.hardwareMap.get(Servo.class, "deliveryPitchRight");
-            claw = linearOpMode.hardwareMap.get(Servo.class, "claw");
-            wrist = linearOpMode.hardwareMap.get(Servo.class, "wrist");
-          limitSwitch = linearOpMode.hardwareMap.get(TouchSensor.class, "deliveryTouch");
+            slide  = opMode.hardwareMap.get(DcMotor.class, "deliverySlide");
+            pitch1 = opMode.hardwareMap.get(Servo.class, "deliveryPitchLeft");
+            pitch2 = opMode.hardwareMap.get(Servo.class, "deliveryPitchRight");
+            claw = opMode.hardwareMap.get(Servo.class, "claw");
+            wrist = opMode.hardwareMap.get(Servo.class, "wrist");
+          limitSwitch = opMode.hardwareMap.get(TouchSensor.class, "deliveryTouch");
 
             claw.scaleRange(0.0, 1);
             pitch1.scaleRange(0.0, 1);
@@ -146,7 +150,7 @@ public class TwoFishDelivery {
 
         }catch(NullPointerException e){
             initAttempts++;
-            linearOpMode.telemetry.addData("Couldn't find delivery.       Attempt: ", initAttempts);
+            opMode.telemetry.addData("Couldn't find delivery.       Attempt: ", initAttempts);
             isDisabled = true;
         }
     }
@@ -178,21 +182,43 @@ public class TwoFishDelivery {
     }
     public void setPitch(double pitchPosition){
         clawClearTimestamp = time.seconds();
+        specScoreTimestamp = time.seconds();
         pitch1.setPosition(pitchPosition);
        pitch2.setPosition(pitchPosition);
 
         isPitching = true;
     }
+    public double getPitch(){
+        return pitch1.getPosition();
+    }
 
     public boolean CheckIfDonePitching(){
-        if(time.seconds() - clawClearTimestamp > 0.5 && isPitching){
+        if(time.seconds() - clawClearTimestamp > CLAW_CLOSE_DURATION && isPitching){
             isPitching = false;
+            return true;
         }
-        return (time.seconds() - clawCloseTimestamp > CLAW_CLOSE_DURATION && isPitching);
+        return false;
     }
+
+    public boolean CheckIfDonePitching(double duration){
+        if(time.seconds() - clawClearTimestamp > duration && isPitching){
+            isPitching = false;
+            return true;
+        } else{
+            return false;
+        }
+    }
+//    public boolean CheckIfDoneScoringSpec(){
+//        if(time.seconds() - specScoreTimestamp > SPEC_SCORE_DURATION && isPitching){
+//            isPitching = false;
+//        }
+//        return (time.seconds() - specScoreTimestamp > SPEC_SCORE_DURATION && isPitching);
+//    }
     public void setWrist(double rollPosition){
         wrist.setPosition(rollPosition);
     }
+    public double getWrist(){return wrist.getPosition();}
+
 
 
     public int getMotorPosition(){ return slide.getCurrentPosition(); }
@@ -267,16 +293,16 @@ public class TwoFishDelivery {
     }
 
     public void addServoTelemetry(){
-        linearOpMode.telemetry.addData("pitch L: ", pitch1.getPosition());
-        linearOpMode.telemetry.addData("pitch R: ", pitch2.getPosition());
+        opMode.telemetry.addData("pitch L: ", pitch1.getPosition());
+        opMode.telemetry.addData("pitch R: ", pitch2.getPosition());
 
-        linearOpMode.telemetry.addData("claw: ", claw.getPosition());
-        linearOpMode.telemetry.addData("wrist: ", wrist.getPosition());
+        opMode.telemetry.addData("claw: ", claw.getPosition());
+        opMode.telemetry.addData("wrist: ", wrist.getPosition());
     }
 
     public void addSlideTelemetry(){
-        linearOpMode.telemetry.addData("Slide Target: ", slideTarget);
-        linearOpMode.telemetry.addData("Slide Current: ", slide.getCurrentPosition());
+        opMode.telemetry.addData("Slide Target: ", slideTarget);
+        opMode.telemetry.addData("Slide Current: ", slide.getCurrentPosition());
     }
 
 }

@@ -188,6 +188,18 @@ public class TwoFishTeleop extends LinearOpMode {
                                 intake.pitchUp();
                                 intakePitchTarget = (float)intake.upPitch;
                             }
+                            if(targetSampleColor.equals("RED")){
+                                if(intake.posessedSampleColor.equals("BLUE")){
+                                    intake.setIntakePower(-0.5f);
+                                    intake.setTransferPower(1);
+                                }
+                            }
+                            if(targetSampleColor.equals("BLUE")){
+                                if(intake.posessedSampleColor.equals("RED")){
+                                    intake.setIntakePower(-0.5f);
+                                    intake.setTransferPower(1);
+                                }
+                            }
                         }
                         //Intake spin power
                         if (gamepad2.right_trigger >= 0.01) {
@@ -204,7 +216,7 @@ public class TwoFishTeleop extends LinearOpMode {
                         if(currentGamepad2.a && !prevGamepad2.a){
                            state = RobotState.TRANSFER;
                             intake.pitchUp();
-                            intake.setTransferPower(0.0f);
+                            intake.setTransferPower(-1.0f);
                            intake.toMinExtention();
                             delivery.setWrist(delivery.wristUpPosition);
                             delivery.toSpecHeight();
@@ -214,7 +226,7 @@ public class TwoFishTeleop extends LinearOpMode {
                         //Move to grab spec ("y")
                         if(currentGamepad2.y && !prevGamepad2.y){
                             delivery.setWrist(delivery.wristUpPosition);
-                            intake.setTransferPower(0.5f);
+                            intake.setTransferPower(0.0f);
 //                            delivery.resetPWM();
                             state = RobotState.SPECIMEN_GRAB;
                         }
@@ -234,7 +246,7 @@ public class TwoFishTeleop extends LinearOpMode {
 
                         //close claw if "a" pressed
                         if(currentGamepad2.a && !prevGamepad2.a){
-                            intake.setTransferPower(0.5f);
+                            intake.setTransferPower(0.0f);
                             delivery.clawClose();
                         }
 
@@ -252,7 +264,7 @@ public class TwoFishTeleop extends LinearOpMode {
 
                         // manual control of slide height WIP
                         if(Math.abs(gamepad2.left_stick_y) > 0.01){
-                            delivery.slideTarget = delivery.getSlideHeight() + gamepad2.left_stick_y * 50;
+                            delivery.slideTarget = delivery.getSlideHeight() + gamepad2.left_stick_y * 200;
                         }
 
                         delivery.setSlidesPower(1);
@@ -308,7 +320,18 @@ public class TwoFishTeleop extends LinearOpMode {
 
                         // manual control of slide height
                         if(Math.abs(gamepad2.left_stick_y) > 0.01){
-                            delivery.slideTarget = delivery.getSlideHeight() + gamepad2.left_stick_y * 50;
+                            delivery.slideTarget = delivery.getSlideHeight() - gamepad2.left_stick_y * 200;
+                            delivery.setSlidesTargetPosition((int)delivery.slideTarget);
+                        }
+
+                        if(currentGamepad2.dpad_up && !prevGamepad2.dpad_up){
+                            delivery.slideTarget = delivery.getSlideHeight() - 400;
+                            delivery.setSlidesTargetPosition((int)delivery.slideTarget);
+                        }
+
+                        if(currentGamepad2.dpad_down && !prevGamepad2.dpad_down){
+                            delivery.slideTarget = delivery.getSlideHeight() + 400;
+                            delivery.setSlidesTargetPosition((int)delivery.slideTarget);
                         }
                         delivery.setSlidesPower(0.5);
 

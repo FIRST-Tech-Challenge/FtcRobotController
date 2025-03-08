@@ -10,7 +10,10 @@ import com.pedropathing.util.Constants;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.TwoFishDelivery;
+import org.firstinspires.ftc.teamcode.TwoFishIntake;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
@@ -26,12 +29,26 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
 @Autonomous(name = "Obs Pedro WIP", group = "Autonomous")
 public class ObsPedro extends OpMode {
+
+    ElapsedTime deliveryTimer = new ElapsedTime();
+
+    TwoFishDelivery delivery = null;
+    TwoFishIntake intake = null;
+
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
 
     /** This is the variable where we store the state of our auto.
      * It is used by the pathUpdate method. */
     private int pathState;
+    private int prevPathState;
+    private boolean isDelivering = false;
+    private boolean isIntaking = false;
+    boolean intakeIsPrepped = false;
+    boolean deliveryIsPrepped = false;
+
+    private boolean successfulDeliver = false;
+    private boolean successfulIntake = false;
 
     /* Create and Define Poses + Paths
      * Poses are built with three constructors: x, y, and heading (in Radians).
@@ -69,7 +86,10 @@ public class ObsPedro extends OpMode {
     private final Point collectSpecPoint = endCollectSample2Point;
     private final Point toSpecPoint1 = new Point(18, 28);
     private final Point toSpecPoint2 = new Point(24, 66);
-    private final Point specScorePoint = new Point(39, 66);
+    private final Point specScorePoint = new Point(47, 66);
+
+    private ElapsedTime auxilariesTimer = new ElapsedTime();
+    private ElapsedTime sleepTimer = new ElapsedTime();
 
 
     private PathChain firstSpecScorePath, firstSampleCollectPath, secondSampleCollectPath, specScorePath, specReturnPath;
@@ -113,43 +133,235 @@ public class ObsPedro extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.followPath(firstSpecScorePath);
-                setPathState(-1);
+
+                prepDeliverSpecimen();
+//                follower.followPath(firstSpecScorePath);
+                if(sleepTimer.seconds() > 2) {
+                    setPathState(1);
+                    sleepTimer.reset();
+                }
                 break;
             case 1:
-                if(follower.getPose().getX() > 30) {
-                    follower.setMaxPower(0.3);
+                if(sleepTimer.seconds() > 0.5)
+                if (!follower.isBusy()) {
+                    //Score first specimen
+                    deliverSpecimen();
+                    if(!isDelivering) {
+//                        follower.followPath(firstSampleCollectPath, true);
+
+                        if(sleepTimer.seconds() > 2) {
+                            setPathState(2);
+                            sleepTimer.reset();
+                        }
+                    }
                 }
 
-                if(!follower.isBusy()) {
-                    //Score first specimen
-                    follower.followPath(firstSampleCollectPath,true);
-                    setPathState(1);
-                }
                 break;
             case 2:
+                if(sleepTimer.seconds() > 0.5)
                 if(!follower.isBusy()) {
-                    follower.followPath(secondSampleCollectPath,true);
+//                    follower.followPath(secondSampleCollectPath,true);
+                    prepIntakeSpecimen();
                     setPathState(3);
                 }
                 break;
             case 3:
+                if(sleepTimer.seconds() > 0.5)
                 if(!follower.isBusy()) {
                     //Collect specimen
-                    follower.followPath(specScorePath,true);
-                    setPathState(4);
+                    intakeSpecimen();
+                    if(!isIntaking) {
+//                        follower.followPath(specScorePath, true);
+                        if(sleepTimer.seconds() > 2) {
+                            prepDeliverSpecimen();
+                            setPathState(4);
+                            sleepTimer.reset();
+                        }
+                    }
                 }
                 break;
             case 4:
+                if(sleepTimer.seconds() > 0.5)
                 if(!follower.isBusy()) {
-                    //Score specimen
-                    follower.followPath(specScorePath,true);
-                    setPathState(3);
+                    //Score Spec
+                    deliverSpecimen();
+                    if(!isDelivering) {
+//                        follower.followPath(specReturnPath, true);
+                        if(sleepTimer.seconds() > 2) {
+                            prepIntakeSpecimen();
+                            setPathState(5);
+                            sleepTimer.reset();
+                        }
+                    }
                 }
                 break;
+            case 5:
+                if(sleepTimer.seconds() > 0.5)
+                if(!follower.isBusy()) {
+                    //Intake Spec
+                    intakeSpecimen();
+                    if(!isIntaking) {
+//                        follower.followPath(specScorePath, true);
+                        if(sleepTimer.seconds() > 2) {
+                            prepDeliverSpecimen();
+                            setPathState(6);
+                            sleepTimer.reset();
+                        }
+                    }
+                }
+                break;
+            case 6:
+                if(sleepTimer.seconds() > 0.5)
+                if(!follower.isBusy()) {
+                    //Score Spec
+                    deliverSpecimen();
+                    if(!isDelivering) {
+//                        follower.followPath(specReturnPath, true);
+                        if(sleepTimer.seconds() > 2) {
+                            prepIntakeSpecimen();
+                            setPathState(7);
+                            sleepTimer.reset();
+                        }
+                    }
+                }
+                break;
+            case 7:
+                if(sleepTimer.seconds() > 0.5)
+                if(!follower.isBusy()) {
+                    //Intake Spec
+                    intakeSpecimen();
+                    if(!isIntaking) {
+//                        follower.followPath(specScorePath, true);
+                        setPathState(-1);
+                    }
+                }
+                break;
+
                 //Code loops until match ends
                 //Need to add time break
         }
+    }
+
+    private void prepDeliverSpec(){
+        delivery.toSpecHeight();
+        delivery.setSlidesPower(0.75);
+        delivery.setPitch(delivery.pitchUpPosition);
+
+        if(follower.getPose().getY() > 58) {
+            follower.setMaxPower(0.3);
+        }else{
+            follower.setMaxPower(1);
+        }
+    }
+
+    private void prepDeliverSpecimen(){
+        if(!deliveryIsPrepped) {
+            deliveryIsPrepped = true;
+            delivery.toSpecHeight();
+            delivery.setSlidesPower(0.75);
+            delivery.setWrist(delivery.wristDownPosition);
+            delivery.setPitch(delivery.pitchUpPosition);
+        }
+    }
+
+
+    public void deliverSpecimen(){
+        isDelivering = true;
+        if(delivery.getPitch() != delivery.pitchScoreSpecPosition){
+            auxilariesTimer.reset();
+        }
+        if(auxilariesTimer.seconds() < 0.5 && delivery.getPitch() != delivery.pitchScoreSpecPosition){
+            delivery.setPitch(delivery.pitchScoreSpecPosition);
+        }
+        if(auxilariesTimer.seconds() > 0.5 && auxilariesTimer.seconds() < 1 && delivery.clawClosed){
+            delivery.clawOpen();
+        }
+        if(auxilariesTimer.seconds() > 1){
+            isDelivering = false;
+            deliveryIsPrepped = false;
+        }
+    }
+
+    public boolean deliverSpec(){
+        if(!isDelivering) {
+            isDelivering = true;
+            delivery.setWrist(delivery.wristDownPosition);
+            delivery.setPitch(delivery.pitchScoreSpecPosition);
+        }
+
+        if (delivery.CheckIfDonePitching(1)) {
+            delivery.clawOpen();
+        }
+        if (delivery.CheckClawOpen()) {
+            delivery.setWrist(delivery.wristUpPosition);
+            isDelivering = false;
+            return true;
+        }
+        return false;
+    }
+
+
+    public void prepIntakeSpec(){
+        delivery.toMinHeight();
+        delivery.setSlidesPower(0.75);
+        delivery.setPitch(delivery.pitchIntakePosition);
+        delivery.setWrist(delivery.wristUpPosition);
+
+        if(follower.getPose().getY() < 12) {
+            follower.setMaxPower(0.3);
+        }else{
+            follower.setMaxPower(1);
+        }
+    }
+
+    public void prepIntakeSpecimen() {
+        if(!intakeIsPrepped) {
+            intakeIsPrepped = true;
+            delivery.toMinHeight();
+            delivery.setSlidesPower(0.75);
+            delivery.setPitch(delivery.pitchIntakePosition);
+            delivery.setWrist(delivery.wristUpPosition);
+            delivery.clawOpen();
+        }
+    }
+
+    public void intakeSpecimen(){
+        isIntaking = true;
+        if(!delivery.clawClosed){
+            auxilariesTimer.reset();
+        }
+        if(auxilariesTimer.seconds() < 0.5 && !delivery.clawClosed){
+            delivery.clawClose();
+        }
+        if(auxilariesTimer.seconds() > 0.5 && auxilariesTimer.seconds() < 1 && delivery.getPitch() != delivery.pitchUpPosition){
+            delivery.setPitch(delivery.pitchUpPosition);
+            delivery.toSpecHeight();
+            delivery.setSlidesPower(0.75);
+        }
+        if(auxilariesTimer.seconds() > 1){
+            isIntaking = false;
+            intakeIsPrepped = false;
+        }
+    }
+    public boolean intakeSpec(){
+        if(!isIntaking) {
+            isIntaking = true;
+            delivery.setWrist(delivery.wristUpPosition);
+            delivery.clawClose();
+        }
+
+        if(delivery.CheckClawClosed()){
+            delivery.setPitch(delivery.pitchUpPosition);
+            delivery.toSpecHeight();
+            delivery.setSlidesPower(0.75);
+        }
+
+        if (delivery.CheckIfDonePitching(1.0)) {
+            delivery.setWrist(delivery.wristDownPosition);
+            isIntaking = false;
+            return true;
+        }
+        return false;
     }
 
     /** These change the states of the paths and actions
@@ -168,6 +380,11 @@ public class ObsPedro extends OpMode {
         autonomousPathUpdate();
 
         // Feedback to Driver Hub
+        telemetry.addData("Is Busy?", follower.isBusy());
+        telemetry.addData("Is Delivering?", isDelivering);
+        telemetry.addData("Is Intaking?", isIntaking);
+        telemetry.addData("Check Claw Closed",delivery.CheckClawClosed());
+        telemetry.addLine();
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
@@ -178,6 +395,9 @@ public class ObsPedro extends OpMode {
     /** This method is called once at the init of the OpMode. **/
     @Override
     public void init() {
+        delivery = new TwoFishDelivery(this, deliveryTimer);
+        TwoFishIntake intake = new TwoFishIntake(this);
+
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
@@ -186,6 +406,9 @@ public class ObsPedro extends OpMode {
         follower = new Follower(hardwareMap);
         follower.setStartingPose(new Pose(startPoint.getX(), startPoint.getY(), 0));
         buildPaths();
+
+        delivery.setWrist(delivery.wristDownPosition);
+        delivery.clawClose();
     }
 
     /** This method is called continuously after Init while waiting for "play". **/
@@ -196,6 +419,7 @@ public class ObsPedro extends OpMode {
      * It runs all the setup actions, including building paths and starting the path system **/
     @Override
     public void start() {
+
         opmodeTimer.resetTimer();
         setPathState(0);
     }
