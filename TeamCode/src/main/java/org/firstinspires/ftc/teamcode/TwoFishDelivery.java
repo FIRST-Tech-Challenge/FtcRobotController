@@ -54,9 +54,10 @@ public class TwoFishDelivery {
 
     //Slide Heights
     final private int SPEC_DELTA = 500;
-    final private int SAMPLE_DELTA = 500;
+    final private int SAMPLE_DELTA = 1000;
 
     public int minHeight = -999999999;
+    public int maxHeight = 1200;
     public int specHeight = SPEC_DELTA;
     public int sampleHeight = SAMPLE_DELTA;
 
@@ -161,7 +162,8 @@ public class TwoFishDelivery {
 
     public void setSlidesTargetPosition(int clicks){
         slideTarget = clicks;
-        slide.setTargetPosition(clicks);
+        slideTarget = Math.min(maxHeight, Math.max(minHeight, slideTarget));
+        slide.setTargetPosition((int)slideTarget);
     }
 
     public void setSlidesPower(double power){
@@ -246,6 +248,7 @@ public class TwoFishDelivery {
 
     public void toMinHeight(){setSlidesTargetPosition(minHeight);}
     public void toSpecHeight(){setSlidesTargetPosition(specHeight);}
+    public void toTransferHeight(){setSlidesTargetPosition(minHeight + 60);}
     public void toSampleHeight(){
         setSlidesTargetPosition(sampleHeight);
     }

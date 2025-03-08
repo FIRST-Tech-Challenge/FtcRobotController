@@ -37,7 +37,7 @@ public class TwoFishIntake {
     public double downPitch = 0.5353;
     public double upPitch = 0.4506;
 
-    private final int TICK_LOW_POWER_DISTANCE = 50;
+    private final int TICK_LOW_POWER_DISTANCE = 25;
 
     private double targetLengthCM;
     private int targetLength;
@@ -110,7 +110,7 @@ public class TwoFishIntake {
             extension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             intake.setDirection(DcMotorSimple.Direction.REVERSE);
-            extension.setDirection(DcMotorSimple.Direction.REVERSE);
+            extension.setDirection(DcMotorSimple.Direction.FORWARD);
 
             pitch.scaleRange(0.0, 1.0);
 
@@ -129,33 +129,14 @@ public class TwoFishIntake {
 
     public void setSlidesTargetPosition(int ticks){
         targetLength = ticks;
-        extension.setTargetPosition(Math.max(minExtension, Math.min(maxExtension, ticks)));
+        targetLength = Math.min(maxExtension, Math.max(minExtension, targetLength));
+        extension.setTargetPosition(targetLength);
     }
 
     public void toMinExtention(){setSlidesTargetPosition(minExtension);}
 
     public void setSlidesPower(double power){
-        runPower();
-        int error = 0;
-        double errorMult = 0;
-        int current = extension.getCurrentPosition();
         extension.setPower(power);
-
-        if(current > maxExtension /2){
-            error = (current - maxExtension);
-        } else {
-            error = (current- minExtension);
-        }
-
-        errorMult = (double) error/(TICK_LOW_POWER_DISTANCE*2);
-
-        errorMult = Math.max(0.1, errorMult);
-
-        if(Math.abs(error) < TICK_LOW_POWER_DISTANCE){
-            extension.setPower(power * errorMult);
-            opMode.telemetry.addLine("BRAKING");
-        }
-        opMode.telemetry.addData("Intake Current: ", current);
     }
 
     public void runToPosition(){
@@ -172,8 +153,8 @@ public class TwoFishIntake {
     }
     public void updateLength(){
         runToPosition();
-        opMode.telemetry.addData("Intake Length: ", targetLength);
-        opMode.telemetry.addData("Intake Current: ", extension.getCurrentPosition());
+//        opMode.telemetry.addData("Intake Length: ", targetLength);
+//        opMode.telemetry.addData("Intake Current: ", extension.getCurrentPosition());
         if(Math.abs(extension.getCurrentPosition() - extension.getTargetPosition()) > TICK_STOP_THRESHOLD){
             extension.setPower(1);
         } else{
