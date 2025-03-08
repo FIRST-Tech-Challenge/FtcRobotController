@@ -75,7 +75,7 @@ public class FSMBot extends RollerIntakeBot{
 
     public int intakeSlideMinimum = 180;
 
-    public double normalIntakePitchTarget = 0;
+    public double normalIntakePitchTarget = -20;
 
     public double normalIntakeRollTarget = 0;
 
@@ -87,7 +87,7 @@ public class FSMBot extends RollerIntakeBot{
 
     public static double specimenHighOuttakeRollTarget;
 
-    public static double sampleOuttakePitchTarget = 10;
+    public static double sampleOuttakePitchTarget = 20;
 
     public static double sampleOuttakeRollTarget = 0;
 
@@ -242,8 +242,10 @@ public class FSMBot extends RollerIntakeBot{
                     robot.pivotRunToPosition(samplePivotDropOffPos);
                     robot.slideRunToPosition(sampleSlideDropOffPos);
                 }
-                robot.pitchTo(sampleOuttakePitchTarget);
-                robot.rollTo(sampleOuttakeRollTarget);
+                if(robot.getSlidePosition() > sampleSlideDropOffPos-50) {
+                    robot.pitchTo(sampleOuttakePitchTarget);
+                    robot.rollTo(sampleOuttakeRollTarget);
+                }
                 outtakeTimer.reset();
 //                if(gamepad1.a){
 //                    currentState = gameState.SAMPLE_SCORING_HIGH_3;
@@ -255,6 +257,9 @@ public class FSMBot extends RollerIntakeBot{
 //                if ((-43 > robot.getAngle()) || (robot.getAngle() > -47) && !manualOverride) {
 //                    robot.goToAngle(-45, 0.24);
 //                }
+                    robot.pitchTo(sampleOuttakePitchTarget);
+                    robot.rollTo(sampleOuttakeRollTarget);
+
                 robot.slideRunToPosition(sampleSlideDropOffPos);
                 robot.outake(true);
                 if(outtakeTimer.milliseconds() > 600) {
@@ -304,6 +309,7 @@ public class FSMBot extends RollerIntakeBot{
                 //reset slide, pivot motors, close claw
                 break;
             case DRIVE:
+                isManualOverride = false;
                 robot.pitchTo(normalIntakePitchTarget);
                 robot.rollTo(normalIntakeRollTarget);
                 robot.pivotRunToPosition(0);
@@ -444,8 +450,10 @@ public class FSMBot extends RollerIntakeBot{
                     robot.pivotRunToPosition(samplePivotDropOffPos);
                     robot.slideRunToPosition(sampleSlideDropOffPos);
                 }
-                robot.pitchTo(sampleOuttakePitchTarget);
-                robot.rollTo(sampleOuttakeRollTarget);
+                if(robot.getSlidePosition() > sampleSlideDropOffPos-25) {
+                    robot.pitchTo(sampleOuttakePitchTarget);
+                    robot.rollTo(sampleOuttakeRollTarget);
+                }
                 outtakeTimer.reset();
 //                if(gamepad1.a){
 //                    currentState = gameState.SAMPLE_SCORING_HIGH_3;
@@ -457,6 +465,8 @@ public class FSMBot extends RollerIntakeBot{
 //                if ((-43 > robot.getAngle()) || (robot.getAngle() > -47) && !manualOverride) {
 //                    robot.goToAngle(-45, 0.24);
 //                }
+                robot.pitchTo(sampleOuttakePitchTarget);
+                robot.rollTo(sampleOuttakeRollTarget);
                 robot.slideRunToPosition(sampleSlideDropOffPos);
                 robot.outake(true);
                 if(outtakeTimer.milliseconds() > 600) {

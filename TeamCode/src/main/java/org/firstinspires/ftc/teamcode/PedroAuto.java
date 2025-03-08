@@ -48,18 +48,18 @@ public class PedroAuto extends LinearOpMode {
     //    private final Pose sample1 = new Pose(35, 23,0); //these three poses are just behind the samples
 //    private final Pose samplePivotPose = new Pose(35, 12.7,0); //pivot from one point to grab all 3 samples
 
-    private final Pose samplePickupPose1 = new Pose(27.9, 134.7479406919275, Math.toRadians(-43));
+    private final Pose samplePickupPose1 = new Pose(26.9, 133.7479406919275, Math.toRadians(-43));
 
-    private final Pose samplePickupPose2 = new Pose(30.75, 107.70345963756178, Math.toRadians(55));
+    private final Pose samplePickupPose2 = new Pose(24.75, 112.70345963756178, Math.toRadians(55));
 
-    private final Pose samplePickupPose3 = new Pose(29.8, 120.667215815486, Math.toRadians(55));
+    private final Pose samplePickupPose3 = new Pose(23.5, 120.667215815486, Math.toRadians(55));
 //    private final Pose sample3 = new Pose(35, 6,0);
 
 //    private final Pose dropSamplePose = new Pose(28, 136, Math.toRadians(180));
 
     private final Pose loadSpecimenPose = new Pose(7.9, 23.6, 0);
 
-    private final Pose scoreSamplePose = new Pose(12., 125.2, Math.toRadians(-45));
+    private final Pose scoreSamplePose = new Pose(12.5, 124.7, Math.toRadians(-45));
 
     private final Pose sampleCurveControlPoint = new Pose(21.8, 36.7, Math.toRadians(-36));
 
@@ -110,15 +110,15 @@ public class PedroAuto extends LinearOpMode {
 
         scoreSample1 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(samplePickupPose1), new Point(scoreSamplePose)))
-                .setLinearHeadingInterpolation(samplePickupPose1.getHeading(), scoreSamplePose.getHeading())
+                .setLinearHeadingInterpolation(samplePickupPose1.getHeading(), scoreSamplePose.getHeading()).setPathEndHeadingConstraint(0.001).setPathEndTranslationalConstraint(0.025)
                 .build();
         scoreSample2 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(samplePickupPose2), new Point(scoreSamplePose)))
-                .setLinearHeadingInterpolation(samplePickupPose2.getHeading(), scoreSamplePose.getHeading())
+                .setLinearHeadingInterpolation(samplePickupPose2.getHeading(), scoreSamplePose.getHeading()).setPathEndHeadingConstraint(0.001).setPathEndTranslationalConstraint(0.025)
                 .build();
         scoreSample3 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(samplePickupPose3), new Point(scoreSamplePose)))
-                .setLinearHeadingInterpolation(samplePickupPose3.getHeading(), scoreSamplePose.getHeading())
+                .setLinearHeadingInterpolation(samplePickupPose3.getHeading(), scoreSamplePose.getHeading()).setPathEndHeadingConstraint(0.001).setPathEndTranslationalConstraint(0.025)
                 .build();
     }
 
@@ -201,7 +201,7 @@ public class PedroAuto extends LinearOpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy()) {
                     if(isReady == false) {
-                        if (actiontime.milliseconds() > 2000) {
+                        if (actiontime.milliseconds() > 1000) {
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_2;
                         } else{
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
@@ -218,10 +218,10 @@ public class PedroAuto extends LinearOpMode {
                             robot.slideRunToPosition(0);
                         }
                         if(actiontime.milliseconds() > 1000) {
-                            follower.followPath(pickup1, true);
+                            follower.followPath(pickup2, true);
                             actiontime.reset();
                             isReady = false;
-                            setPathState(2);
+                            setPathState(4);
                         }
                     }
 
@@ -377,16 +377,16 @@ public class PedroAuto extends LinearOpMode {
                         robot.slidePower = 0.6;
                         robot.intake(true);
                         //extend slide out to intake
-                        robot.slideRunToPosition(400);
+                        robot.slideRunToPosition(500);
                     }
-                    if(robot.getSlidePosition() > 390 || robot.getIsIntaked()) {
+                    if(robot.getSlidePosition() > 480 || robot.getIsIntaked()) {
                         robot.slidePower = 1.0;
                         robot.currentState = FSMBot.gameState.DRIVE;
                         if(actiontime.milliseconds() > 2000){
                             //go to score
                             follower.followPath(scoreSample3, true);
                             isReady = false;
-                            setPathState(-1); // end here
+                            setPathState(7); // end here
                         }
                 }
 //                    //pickup first sample
@@ -404,7 +404,7 @@ public class PedroAuto extends LinearOpMode {
                         } else{
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_1;
                         }
-                        if (robot.getSlidePosition() > 700-25) {
+                        if (robot.getSlidePosition() > 660-25) {
                             robot.currentState = FSMBot.gameState.SAMPLE_SCORING_HIGH_3;
                             robot.outake(true);
                             isReady = true;
