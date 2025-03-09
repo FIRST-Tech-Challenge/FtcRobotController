@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 /**
  * TeleOp DriveTrain Only (with test modes).
  */
-@TeleOp(name="Teleop-DrivetrainOnly", group="7592")
+@TeleOp(name="Teleop-Minibot", group="7592")
 @Disabled
-public class TeleopDrivetrainOnly extends LinearOpMode {
+public class TeleopMinibot extends LinearOpMode {
     boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  // Single Wheel Control
     boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  // Backwards Drive mode (also turns off driver-centric mode)
     boolean gamepad1_cross_last,      gamepad1_cross_now      = false;  // UNUSED
@@ -46,8 +46,6 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
     final int DRIVER_MODE_DRV_CENTRIC  = 3;
     int       driverMode               = DRIVER_MODE_STANDARD;
     double    driverAngle              = 0.0;  /* for DRIVER_MODE_DRV_CENTRIC */
-
-    double    clawServoPosAdj = 0.500;
 
     long      nanoTimeCurr=0, nanoTimePrev=0;
     double    elapsedTime, elapsedHz;
@@ -137,8 +135,6 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
                 } // switch()
             } // processDpadDriveMode
 
-            processClaw();
-
             // Compute current cycle time
             nanoTimePrev = nanoTimeCurr;
             nanoTimeCurr = System.nanoTime();
@@ -153,7 +149,8 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
             telemetry.addData("Front", "%d %d counts", robot.frontLeftMotorPos, robot.frontRightMotorPos );
             telemetry.addData("Back ", "%d %d counts", robot.rearLeftMotorPos,  robot.rearRightMotorPos );
             telemetry.addData("Claw Servo", "%.3f counts", robot.clawServo.getPosition() );
-            telemetry.addData("Gyro Angle", "%.1f degrees", robot.headingIMU() );
+//          telemetry.addData("Gyro Angle", "%.1f degrees", robot.headingIMU() );
+            telemetry.addData("Driver Centric", "%.1f degrees", driverAngle );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
             telemetry.update();
 
@@ -192,39 +189,6 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
 //      gamepad2_touchpad_last   = gamepad2_touchpad_now;    gamepad2_touchpad_now   = gamepad2.touchpad;
 //      gamepad2_share_last      = gamepad2_share_now;       gamepad2_share_now      = gamepad2.share;
     } // captureGamepad2Buttons
-
-void processClaw() {
-
-    // Left Bumper = OPEN claw
-    if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last) {
-      robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_OPEN );
-    }
-
-    // Right Bumper = CLOSE claw
-    if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last) {
-        robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_CLOSED );
-    }
-
-    // Manually tweak claw servo position
-    if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last ) {
-        clawServoPosAdj += 0.010;
-        robot.clawServo.setPosition( clawServoPosAdj );
-    }
-    if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last ) {
-        clawServoPosAdj += 0.001;
-        robot.clawServo.setPosition( clawServoPosAdj );
-    }
-
-    if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last ) {
-        clawServoPosAdj -= 0.001;
-        robot.clawServo.setPosition( clawServoPosAdj );
-    }
-    if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last ) {
-        clawServoPosAdj -= 0.010;
-        robot.clawServo.setPosition( clawServoPosAdj );
-    }
-
-} // processClaw
 
     /*---------------------------------------------------------------------------------*/
     /*  TELE-OP: Mecanum-wheel drive control using Dpad (slow/fine-adjustment mode)    */
@@ -374,7 +338,7 @@ void processClaw() {
     /*---------------------------------------------------------------------------------*/
     void processStandardDriveMode() {
         // Retrieve X/Y and ROTATION joystick input
-        if( controlMultSegLinear ) {
+        if( controlMultSegLinear ) {  // robot centric results in 1.0 max power
             yTranslation = multSegLinearXY( -gamepad1.left_stick_y );
             xTranslation = multSegLinearXY(  gamepad1.left_stick_x );
             rotation     = multSegLinearRot( -gamepad1.right_stick_x );
@@ -421,10 +385,10 @@ void processClaw() {
         double gyroAngle;
 
         // Retrieve X/Y and ROTATION joystick input
-        if( controlMultSegLinear ) {
-            yTranslation = multSegLinearXY( -gamepad1.left_stick_y );
-            xTranslation = multSegLinearXY(  gamepad1.left_stick_x );
-            rotation     = multSegLinearRot( -gamepad1.right_stick_x );
+        if( controlMultSegLinear ) { // // driver centric results in 0.6 max??
+            yTranslation = 1.66 * multSegLinearXY( -gamepad1.left_stick_y );
+            xTranslation = 1.66 * multSegLinearXY(  gamepad1.left_stick_x );
+            rotation     = 1.66 * multSegLinearRot( -gamepad1.right_stick_x );
         }
         else {
             yTranslation = -gamepad1.left_stick_y;
@@ -480,4 +444,4 @@ void processClaw() {
 
     } // processDriverCentricDriveMode
 
-} // TeleopDrivetrainOnly
+} // TeleopMinibot

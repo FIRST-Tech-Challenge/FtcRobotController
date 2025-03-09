@@ -378,7 +378,7 @@ public abstract class Teleop extends LinearOpMode {
         }
         //========= POSITIVE JOYSTICK INPUTS =========
         else if( valueIn > 0.0 ) {
-            if( valueIn < 0.33 ) {                      // NOTE: approx 0.06 requfired to **initiate** rotation
+            if( valueIn < 0.33 ) {                      // NOTE: approx 0.06 required to **initiate** rotation
                 valueOut = (0.25 * valueIn) + 0.0650;   // 0.02=0.070  0.33=0.1475
             }
             else if( valueIn < 0.60 ) {

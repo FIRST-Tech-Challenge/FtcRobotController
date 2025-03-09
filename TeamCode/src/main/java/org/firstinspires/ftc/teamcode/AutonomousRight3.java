@@ -247,7 +247,7 @@ public class AutonomousRight3 extends AutonomousBase {
             autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO2);
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR2);
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR2);
-            sleep( 1000 ); //while( autoTiltMotorMoving() || autoViperMotorMoving());
+            sleep( 1200 ); //while( autoTiltMotorMoving() || autoViperMotorMoving());
             // release the specimen
             robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
         } // opModeIsActive
