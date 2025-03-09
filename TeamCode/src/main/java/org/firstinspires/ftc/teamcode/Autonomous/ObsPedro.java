@@ -62,14 +62,14 @@ public class ObsPedro extends OpMode {
     //Scores the first specimen
     private final Point startPoint = new Point(8, 56);
     private final Point toFirstSpecPoint1 = new Point(18, 56);
-    private final Point toFirstSpecPoint2 = new Point(22, 64);
-    private final Point firstSpecScorePoint = new Point(35, 64);
+    private final Point toFirstSpecPoint2 = new Point(22, 70);
+    private final Point firstSpecScorePoint = new Point(35, 70);
 
     //Collects the first sample
     private final Point startCollectSample1Point = firstSpecScorePoint;
     private final Point toCollectSample1Point1 = new Point(14, 19);
-    private final Point toCollectSample1Point2 = new Point(63, 48);
-    private final Point toCollectSample1Point3 = new Point(60, 25);
+    private final Point toCollectSample1Point2 = new Point(70, 55);
+    private final Point toCollectSample1Point3 = new Point(70, 32);
     private final Point endCollectSample1Point = new Point(22, 24);
 
     //Collects the first sample
@@ -105,13 +105,16 @@ public class ObsPedro extends OpMode {
 
         firstSampleCollectPath = follower.pathBuilder()
                 .addPath(new BezierCurve(startCollectSample1Point, toCollectSample1Point1, toCollectSample1Point2, toCollectSample1Point3))
+                .setConstantHeadingInterpolation(0)
                 .addPath(new BezierLine(toCollectSample1Point3, endCollectSample1Point))
                 .setConstantHeadingInterpolation(0)
                 .build();
 
         secondSampleCollectPath = follower.pathBuilder()
                 .addPath(new BezierCurve(startCollectSample2Point, toCollectSample2Point1, toCollectSample2Point2, toCollectSample2Point3))
+                .setConstantHeadingInterpolation(0)
                 .addPath(new BezierLine(toCollectSample2Point3, toCollectSample2Point4))
+                .setConstantHeadingInterpolation(0)
                 .addPath(new BezierCurve(toCollectSample2Point4, toCollectSample2Point5, endCollectSample2Point))
                 .setConstantHeadingInterpolation(0)
                 .build();
@@ -133,16 +136,15 @@ public class ObsPedro extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-
                 prepDeliverSpecimen();
-//                follower.followPath(firstSpecScorePath);
+                follower.followPath(firstSpecScorePath);
                 if(sleepTimer.seconds() > 2) {
                     setPathState(1);
                     sleepTimer.reset();
                 }
                 break;
             case 1:
-                if(sleepTimer.seconds() > 0.5)
+//                if(sleepTimer.seconds() > 0.5)
                 if (!follower.isBusy()) {
                     //Score first specimen
                     deliverSpecimen();
@@ -150,7 +152,7 @@ public class ObsPedro extends OpMode {
 //                        follower.followPath(firstSampleCollectPath, true);
 
                         if(sleepTimer.seconds() > 2) {
-                            setPathState(2);
+                            setPathState(-2);
                             sleepTimer.reset();
                         }
                     }
@@ -158,9 +160,9 @@ public class ObsPedro extends OpMode {
 
                 break;
             case 2:
-                if(sleepTimer.seconds() > 0.5)
+//                if(sleepTimer.seconds() > 0.5)
                 if(!follower.isBusy()) {
-//                    follower.followPath(secondSampleCollectPath,true);
+                    follower.followPath(secondSampleCollectPath,true);
                     prepIntakeSpecimen();
                     setPathState(3);
                 }
@@ -396,7 +398,7 @@ public class ObsPedro extends OpMode {
     @Override
     public void init() {
         delivery = new TwoFishDelivery(this, deliveryTimer);
-        TwoFishIntake intake = new TwoFishIntake(this);
+        intake = new TwoFishIntake(this);
 
         pathTimer = new Timer();
         opmodeTimer = new Timer();
@@ -420,6 +422,7 @@ public class ObsPedro extends OpMode {
     @Override
     public void start() {
 
+        intake.pitchUp();
         opmodeTimer.resetTimer();
         setPathState(0);
     }
