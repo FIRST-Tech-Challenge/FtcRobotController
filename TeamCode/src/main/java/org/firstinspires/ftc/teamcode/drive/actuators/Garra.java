@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.actuators;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLStatus;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.drive.camera.SensorLimelight3A;
+@Config
 @TeleOp
 public class Garra extends OpMode {
     Servo rotate;
@@ -21,6 +23,7 @@ public class Garra extends OpMode {
     public static double position(double angle){
         return (angle + 15) / 30;
     }
+    public static double Kp = 0.0005;
 
     public void init() {
         rotate = hardwareMap.get(Servo.class, "rotate");
@@ -37,6 +40,7 @@ public class Garra extends OpMode {
     }
 
     public void loop() {
+
         LLStatus status = limelight.getStatus();
         telemetry.addData("Name", "%s",
                 status.getName());
@@ -48,12 +52,25 @@ public class Garra extends OpMode {
         LLResult result = limelight.getLatestResult();
         if (result != null) {
             if (result.isValid()) {
-                rotate.setPosition(position(limelight.getLatestResult().getTyNC()));
                 telemetry.addData("rotate", rotate.getPosition());
+                double adjust = adjust(15, limelight.getLatestResult().getTyNC());
+                double posicao = 0;
+                posicao += adjust;
+                rotate.setPosition(posicao);
             } else {
                 telemetry.addData("Limelight", "No data available");
             }
+
             telemetry.update();
+        }
+        if (gamepad1.right_bumper){
+            rotate.setPosition(0);
+        }
+        if (gamepad1.left_bumper){
+            rotate.setPosition(1);
+        }
+        if (gamepad1.dpad_right){
+            rotate.setPosition(0.5);
         }
 
 
@@ -71,5 +88,9 @@ public class Garra extends OpMode {
                 pleft.setPosition(0);
                 pright.setPosition(1);
             }
+        }
+        public double adjust(double reference, double state){
+        double error = reference - state;
+        return Kp * error;
         }
     }

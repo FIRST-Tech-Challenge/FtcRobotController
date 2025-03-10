@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-//@TeleOp
+@TeleOp
 public class Movement extends OpMode {
     DcMotor backLeft;
     DcMotor backRight;
@@ -13,10 +13,10 @@ public class Movement extends OpMode {
     DcMotor frontRight;
     @Override
     public void init() {
-        backLeft = hardwareMap.dcMotor.get("BL");
+        backLeft = hardwareMap.dcMotor.get("odol");
         backRight = hardwareMap.dcMotor.get("BR");
-        frontLeft = hardwareMap.dcMotor.get("FL");
-        frontRight = hardwareMap.dcMotor.get("FR");
+        frontLeft = hardwareMap.dcMotor.get("odor");
+        frontRight = hardwareMap.dcMotor.get("odom");
 
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

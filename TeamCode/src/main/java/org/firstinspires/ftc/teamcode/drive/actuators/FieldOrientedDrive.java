@@ -1,93 +1,61 @@
 package org.firstinspires.ftc.teamcode.drive.actuators;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 
-@TeleOp(name="Field Oriented Drive", group="TeleOp")
-public class FieldOrientedDrive extends OpMode {
+import java.util.concurrent.TimeUnit;
 
-    // Motor declarations
-    private DcMotor frontLeft, frontRight, backLeft, backRight;
-
-    // IMU Sensor
-    private IMU imu;
-    private double headingOffset = 0.0; // To reset field orientation
-
+@TeleOp(name = "Field Centric Mecanum Drive")
+public class FieldOrientedDrive extends LinearOpMode {
     @Override
-    public void init() {
-        // Initialize motors
-        frontLeft = hardwareMap.get(DcMotor.class, "odor");
-        frontRight = hardwareMap.get(DcMotor.class, "odom");
-        backLeft = hardwareMap.get(DcMotor.class, "odol");
-        backRight = hardwareMap.get(DcMotor.class, "BR");
+    public void runOpMode() {
+        DcMotorSimple leftFront = hardwareMap.get(DcMotorSimple.class, "odor");
+        DcMotorSimple leftBack = hardwareMap.get(DcMotorSimple.class, "odol");
+        DcMotorSimple rightFront = hardwareMap.get(DcMotorSimple.class, "odom");
+        DcMotorSimple rightBack = hardwareMap.get(DcMotorSimple.class, "BR");
 
-        // Reverse right-side motors
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // Initialize IMU
-        imu = hardwareMap.get(IMU.class,"imu");
-        IMU.Parameters myIMUparameters;
-        myIMUparameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+        Deadline gamepadRateLimit = new Deadline(500, TimeUnit.MILLISECONDS);
+
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+        ));
+        imu.initialize(parameters);
 
+        waitForStart();
 
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-    }
+        while (opModeIsActive()) {
+            double lx = gamepad1.left_stick_x;
+            double ly = gamepad1.left_stick_y;
+            double rx = -gamepad1.right_stick_x;
 
-    @Override
-    public void loop() {
-        // Get IMU heading (yaw)
-        YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
-        double currentHeading = -angles.getYaw(AngleUnit.RADIANS) - headingOffset;
+            double max = Math.max(Math.abs(lx) + Math.abs(ly) + Math.abs(rx), 1);
 
-        // Get gamepad inputs
-        double y = -gamepad1.left_stick_y; // Forward/Backward
-        double x = -gamepad1.left_stick_x;  // Strafe Left/Right
-        double turn = gamepad1.right_stick_x; // Rotation
+            double drivePower = 1 - (0.6 * gamepad1.right_trigger);
 
-        // Field-oriented transformation
-        double cosA = Math.cos(currentHeading);
-        double sinA = Math.sin(currentHeading);
-        double fieldX = x * cosA - y * sinA;
-        double fieldY = x * sinA + y * cosA;
+            if (gamepadRateLimit.hasExpired() && gamepad1.a) {
+                imu.resetYaw();
+                gamepadRateLimit.reset();
+            }
 
-        // Mecanum drive calculations
-        double frontLeftPower = fieldY + fieldX + turn;
-        double frontRightPower = fieldY - fieldX - turn;
-        double backLeftPower = fieldY - fieldX + turn;
-        double backRightPower = fieldY + fieldX - turn;
+            double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            double adjustedLx = -ly * Math.sin(heading) + lx * Math.cos(heading);
+            double adjustedLy = ly * Math.cos(heading) + lx * Math.sin(heading);
 
-        // Normalize motor power
-        double max = Math.max(1.0, Math.abs(frontLeftPower));
-        max = Math.max(max, Math.abs(frontRightPower));
-        max = Math.max(max, Math.abs(backLeftPower));
-        max = Math.max(max, Math.abs(backRightPower));
-
-        frontLeft.setPower(frontLeftPower / max);
-        frontRight.setPower(frontRightPower / max);
-        backLeft.setPower(backLeftPower / max);
-        backRight.setPower(backRightPower / max);
-
-        if (gamepad1.a) resetHeading();
-
-        // Telemetry output
-        telemetry.addData("Heading (degrees)", Math.toDegrees(currentHeading));
-        telemetry.addData("Field X", fieldX);
-        telemetry.addData("Field Y", fieldY);
-        telemetry.update();
-    }
-
-    // Reset the heading offset (bind this to a button if needed)
-    public void resetHeading() {
-        YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
-        headingOffset = angles.getYaw(AngleUnit.RADIANS);
+            leftFront.setPower(((adjustedLy + adjustedLx + rx) / max) * drivePower);
+            leftBack.setPower(((adjustedLy - adjustedLx + rx) / max) * drivePower);
+            rightFront.setPower(((adjustedLy - adjustedLx - rx) / max) * drivePower);
+            rightBack.setPower(((adjustedLy + adjustedLx - rx) / max) * drivePower);
+        }
     }
 }
