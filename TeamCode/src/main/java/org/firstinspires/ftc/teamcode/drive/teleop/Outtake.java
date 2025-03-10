@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-//@TeleOp
+@TeleOp
 public class Outtake extends OpMode {
     DcMotor poliaright;
     DcMotor polialeft;
@@ -27,8 +27,9 @@ public class Outtake extends OpMode {
         poliaright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         polialeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        Bright = hardwareMap.get(Servo.class,"Bdir");
-        Bleft = hardwareMap.get(Servo.class,"Besq");
+        Bright = hardwareMap.get(Servo.class,"bright");
+        Bleft = hardwareMap.get(Servo.class,"bleft");
+        garrinha = hardwareMap.get(Servo.class,"garrinha");
     }
 
     @Override
@@ -59,14 +60,14 @@ public class Outtake extends OpMode {
             Bleft.setPosition(0);
         }
         if (gamepad1.b){
-            Bright.setPosition(0.6);
-            Bleft.setPosition(0.4);
+            Bright.setPosition(0.2);
+            Bleft.setPosition(0.8);
         }
         if (gamepad1.x){
             garrinha.setPosition(0.4);
         }
         if (gamepad1.y){
-            garrinha.setPosition(0.6);
+            garrinha.setPosition(0);
         }
 
     }

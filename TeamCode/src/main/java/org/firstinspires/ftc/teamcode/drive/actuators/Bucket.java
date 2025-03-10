@@ -1,14 +1,15 @@
 package org.firstinspires.ftc.teamcode.drive.actuators;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
-
+//@TeleOp
 public class Bucket extends OpMode {
     Servo right;
     Servo left;
     public void init(){
-        right = hardwareMap.get(Servo.class,"dir");
-        left = hardwareMap.get(Servo.class,"esq");
+        right = hardwareMap.get(Servo.class,"bright");
+        left = hardwareMap.get(Servo.class,"bleft");
     }
     public void loop(){
         if (gamepad1.a) {
@@ -16,8 +17,8 @@ public class Bucket extends OpMode {
             left.setPosition(0);
         }
         if (gamepad1.b){
-            right.setPosition(0.6);
-            left.setPosition(0.4);
+            right.setPosition(0.2);
+            left.setPosition(0.8);
         }
     }
 }

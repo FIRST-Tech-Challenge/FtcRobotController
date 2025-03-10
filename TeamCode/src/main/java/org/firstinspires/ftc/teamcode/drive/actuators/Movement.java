@@ -43,7 +43,7 @@ public class Movement extends OpMode {
     }
     private void anda(){
         double forward = gamepad2.left_stick_y;
-        double strafe = -gamepad2.left_stick_x;
+        double strafe = gamepad2.left_stick_x;
         double turn = -gamepad2.right_stick_x;
 
         double denominator = Math.max(Math.abs(forward) + Math.abs(strafe) + Math.abs(turn), 2);

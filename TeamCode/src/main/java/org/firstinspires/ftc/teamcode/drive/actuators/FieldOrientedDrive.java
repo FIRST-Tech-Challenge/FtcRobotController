@@ -21,9 +21,9 @@ public class FieldOrientedDrive extends OpMode {
     @Override
     public void init() {
         // Initialize motors
-        frontLeft = hardwareMap.get(DcMotor.class, "FL");
-        frontRight = hardwareMap.get(DcMotor.class, "FR");
-        backLeft = hardwareMap.get(DcMotor.class, "BL");
+        frontLeft = hardwareMap.get(DcMotor.class, "odor");
+        frontRight = hardwareMap.get(DcMotor.class, "odom");
+        backLeft = hardwareMap.get(DcMotor.class, "odol");
         backRight = hardwareMap.get(DcMotor.class, "BR");
 
         // Reverse right-side motors
@@ -33,8 +33,9 @@ public class FieldOrientedDrive extends OpMode {
         // Initialize IMU
         imu = hardwareMap.get(IMU.class,"imu");
         IMU.Parameters myIMUparameters;
-        myIMUparameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
+        myIMUparameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
 
 
         telemetry.addData("Status", "Initialized");
@@ -49,7 +50,7 @@ public class FieldOrientedDrive extends OpMode {
 
         // Get gamepad inputs
         double y = -gamepad1.left_stick_y; // Forward/Backward
-        double x = gamepad1.left_stick_x;  // Strafe Left/Right
+        double x = -gamepad1.left_stick_x;  // Strafe Left/Right
         double turn = gamepad1.right_stick_x; // Rotation
 
         // Field-oriented transformation
