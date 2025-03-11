@@ -237,7 +237,7 @@ public class TwoFishTeleop extends LinearOpMode {
 
                     case TRANSFER:
 
-                        if(delivery.CheckIfDonePitching(1.5)){
+                        if(delivery.CheckIfDonePitching(1)){
                             delivery.toTransferHeight();
                         }
 
@@ -342,7 +342,12 @@ public class TwoFishTeleop extends LinearOpMode {
 
                         //falling a --> score
                         if(currentGamepad2.a && !prevGamepad2.a){
-                            delivery.setPitch(delivery.pitchScoreSpecPosition);
+                            //pitch more if slides are higher
+                            if(delivery.getSlideHeight() > delivery.specHeight + 300){
+                                delivery.setPitch(delivery.pitchScoreSpecPosition - 0.1);
+                            }else{
+                                delivery.setPitch(delivery.pitchScoreSpecPosition);
+                            }
                             delivery.setWrist(delivery.wristDownPosition);
                         }
 
