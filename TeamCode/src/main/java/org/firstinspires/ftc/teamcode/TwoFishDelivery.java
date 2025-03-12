@@ -38,8 +38,8 @@ public class TwoFishDelivery {
 
     public double slideTarget;
 
-    public double clawOpenPosition = 0.3683;
-    public double clawClosePosition = 0.545;
+    public double clawOpenPosition = 0.2583;
+    public double clawClosePosition = 0.6;
     public double pitchIntakePosition = 1;
     public double pitchUpPosition = 0.5917;
     public double pitchScoreSpecPosition = 0.29;
@@ -57,7 +57,7 @@ public class TwoFishDelivery {
     final private int SAMPLE_DELTA = 1000;
 
     public int minHeight = -999999999;
-    public int maxHeight = 1200;
+    public int maxHeight = 2300;
     public int specHeight = SPEC_DELTA;
     public int sampleHeight = SAMPLE_DELTA;
 

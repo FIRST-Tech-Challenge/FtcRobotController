@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.TwoFishIntake;
+
 import java.util.Arrays;
 
 @TeleOp(name = "ColorTelemetry", group = "TESTING")
@@ -61,6 +63,8 @@ public class ColorTelemetry extends LinearOpMode {
 
     ColorSensor colorSens;
 
+    TwoFishIntake intake;
+
     float hsv[] = {0,0,0};
 
     ElapsedTime colorTimer;
@@ -71,13 +75,14 @@ public class ColorTelemetry extends LinearOpMode {
         colorTimer = new ElapsedTime();
 
         colorSens = hardwareMap.get(ColorSensor.class, "intakeColor");
+        intake = new TwoFishIntake(this);
 
 
         waitForStart();
 
 
         while(opModeIsActive()){
-            if(colorTimer.milliseconds() > 100) telemetry.addLine(getSampleColor(3));
+            if(colorTimer.milliseconds() > 100) telemetry.addLine(intake.getSampleColor());
             telemetry.update();
 
 //            color = new Color(colorSens.red(), colorSens.green(), colorSens.blue());

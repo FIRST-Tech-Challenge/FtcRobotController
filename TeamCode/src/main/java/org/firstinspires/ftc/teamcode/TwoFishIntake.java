@@ -34,8 +34,8 @@ public class TwoFishIntake {
     public final int DELTA_EXTENSION = 1000;
     public int minExtension = -999999999;
     public int maxExtension = DELTA_EXTENSION;
-    public double downPitch = 0.5353;
-    public double upPitch = 0.4506;
+    public double downPitch = 0.53;
+    public double upPitch = 0.43;
 
     private final int TICK_LOW_POWER_DISTANCE = 25;
 
@@ -45,7 +45,7 @@ public class TwoFishIntake {
 
     public final double TICK_STOP_THRESHOLD = 5;
 
-    public static String posessedSampleColor;
+    public String posessedSampleColor;
 
     private ElapsedTime time = new ElapsedTime();
 
@@ -232,13 +232,20 @@ public class TwoFishIntake {
         switch (minIndex){
             case(0):
                 posessedSampleColor = "RED";
+                return posessedSampleColor;
             case(1):
                 posessedSampleColor = "YELLOW";
+                return posessedSampleColor;
             case(2):
                 posessedSampleColor = "BLUE";
+                return posessedSampleColor;
             default:
                 posessedSampleColor = "NONE";
+                return posessedSampleColor;
         }
+    }
+
+    public String getStoredPosessedSampleColor(){
         return posessedSampleColor;
     }
 
@@ -263,7 +270,7 @@ public class TwoFishIntake {
         if(index >= numReps-1){
             return huesCopy;
         } else{
-            if(index < numReps && colorTimer.milliseconds() > 10) {
+            if(index < numReps/* && colorTimer.milliseconds() > 10*/) {
                 colorTimer.reset();
                 index++;
                 Color.RGBToHSV(colorSens.red(), colorSens.green(), colorSens.blue(), hsv);

@@ -66,8 +66,10 @@ public class TwoFishTeleop extends LinearOpMode {
     boolean pitched = false;
 
     String targetSampleColor = "YELLOW";
+    String prevTargetSampleColor = "YELLOW";
 
-    private float intakePitchTarget = 0;
+    private double intakePitchTarget = 0;
+    private double pitchTarget = 0;
 
     private enum RobotState{
         INTAKE,
@@ -75,6 +77,7 @@ public class TwoFishTeleop extends LinearOpMode {
         SAMPLE_SCORE,
         SPECIMEN_GRAB,
         SPECIMEN_SCORE,
+        HANG,
         IDLE
     }
 
@@ -91,6 +94,8 @@ public class TwoFishTeleop extends LinearOpMode {
     private ElapsedTime intakeTimer = new ElapsedTime();
 
     private double colorSensSampleTimestamp = 0.0;
+    private String samplePosessed;
+    private boolean colorTestFlag = false;
 
     private Gamepad prevGamepad2 = new Gamepad();
     private Gamepad currentGamepad2 = new Gamepad();
@@ -109,6 +114,11 @@ public class TwoFishTeleop extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()){
+            if(intakeTimer.seconds() - colorSensSampleTimestamp > COLOR_SENS_CYCLE_TIME) {
+                colorSensSampleTimestamp = intakeTimer.seconds();
+                samplePosessed = intake.getSampleColor();
+                colorTestFlag = true;
+            }
 
             prevGamepad2.copy(currentGamepad2);
             currentGamepad2.copy(gamepad2);
@@ -143,6 +153,12 @@ public class TwoFishTeleop extends LinearOpMode {
 //                if (gamepad1.y) {
 //                    drivetrainFunctions.Move(0, intake.getCenterBlockDistance("yellow")[1], 0, speedScalar);
 //                }
+                if(targetSampleColor.equals("NONE")){
+                    targetSampleColor = prevTargetSampleColor;
+                }
+                if(gamepad1.a){
+                    targetSampleColor = "NONE";
+                }
                 if(gamepad1.b){
                     targetSampleColor = "RED";
                 }
@@ -152,10 +168,8 @@ public class TwoFishTeleop extends LinearOpMode {
                 if(gamepad1.y){
                     targetSampleColor = "YELLOW";
                 }
-                if(gamepad1.a){
-                    targetSampleColor = "NONE";
-                }
             }
+            if(!targetSampleColor.equals("NONE")) prevTargetSampleColor = targetSampleColor;
 
             //driver 2
             if(!controlsRelinquished) {
@@ -179,29 +193,27 @@ public class TwoFishTeleop extends LinearOpMode {
                         //intake pitch
                         intakePitchTarget = (float) Math.min(intake.downPitch, Math.max(intake.upPitch, intakePitchTarget)); //down pitch is larger limit
                         intakePitchTarget += (gamepad2.right_stick_y * 0.01f);
-                        intake.setPitch(intakePitchTarget);
+                        intake.setPitch((float)intakePitchTarget);
 
                         //Color sensor
 
-                        if(intakeTimer.seconds() - colorSensSampleTimestamp > COLOR_SENS_CYCLE_TIME){
-                            colorSensSampleTimestamp = intakeTimer.seconds();
-                            if(intake.verifyColor(targetSampleColor)){
+                            if(samplePosessed.equals(targetSampleColor)){
                                 intake.pitchUp();
                                 intakePitchTarget = (float)intake.upPitch;
                             }
                             if(targetSampleColor.equals("RED")){
-                                if(intake.posessedSampleColor.equals("BLUE")){
+                                if(samplePosessed.equals("BLUE")){
                                     intake.setIntakePower(-0.5f);
-                                    intake.setTransferPower(1);
+                                    intake.setTransferPower(-1);
                                 }
                             }
                             if(targetSampleColor.equals("BLUE")){
-                                if(intake.posessedSampleColor.equals("RED")){
+                                if(samplePosessed.equals("RED")){
                                     intake.setIntakePower(-0.5f);
-                                    intake.setTransferPower(1);
+                                    intake.setTransferPower(-1);
                                 }
                             }
-                        }
+
                         //Intake spin power
                         if (gamepad2.right_trigger >= 0.01) {
                             intake.setIntakePower(gamepad2.right_trigger);
@@ -217,11 +229,12 @@ public class TwoFishTeleop extends LinearOpMode {
                         if(currentGamepad2.a && !prevGamepad2.a){
                            state = RobotState.TRANSFER;
                             intake.pitchUp();
-                            intake.setTransferPower(-1.0f);
+                            intake.setTransferPower(1.0f);
                            intake.toMinExtention();
                             delivery.setWrist(delivery.wristUpPosition);
                             delivery.toSpecHeight();
                             delivery.setPitch(delivery.pitchTransferPosition);
+                            delivery.clawOpen();
                         }
 
                         //Move to grab spec ("y")
@@ -325,12 +338,12 @@ public class TwoFishTeleop extends LinearOpMode {
                         }
 
                         if(currentGamepad2.dpad_up && !prevGamepad2.dpad_up){
-                            delivery.slideTarget = delivery.getSlideHeight() + 400;
+                            delivery.slideTarget = delivery.getSlideHeight() + 300;
                             delivery.setSlidesTargetPosition((int)delivery.slideTarget);
                         }
 
                         if(currentGamepad2.dpad_down && !prevGamepad2.dpad_down){
-                            delivery.slideTarget = delivery.getSlideHeight() - 400;
+                            delivery.slideTarget = delivery.getSlideHeight() - 300;
                             delivery.setSlidesTargetPosition((int)delivery.slideTarget);
                         }
                         delivery.setSlidesPower(0.5);
@@ -372,7 +385,7 @@ public class TwoFishTeleop extends LinearOpMode {
                         delivery.setSlidesPower(0);
 
                         //if left joystick or triggers are pressed, switch to intake
-                        if(Math.abs(gamepad2.left_stick_y) > 0.01f || gamepad2.right_trigger > 0.01f || gamepad2.left_trigger > 0.01f){
+                        if(Math.abs(gamepad2.left_stick_y) > 0.01f || gamepad2.right_trigger > 0.01f){
                             state = RobotState.INTAKE;
                         }
 
@@ -383,9 +396,36 @@ public class TwoFishTeleop extends LinearOpMode {
                             delivery.setPitch(delivery.pitchIntakePosition);
                             state = RobotState.SPECIMEN_GRAB;
                         }
+
+                        if(gamepad2.left_bumper && gamepad2.right_bumper){
+                            state = RobotState.HANG;
+                            pitchTarget = delivery.pitchUpPosition;
+                        }
+                        break;
+                    case HANG:
+                        pitchTarget -= gamepad2.left_stick_y * 0.05;
+                        delivery.setPitch(pitchTarget);
+                        delivery.toSpecHeight();
+                        delivery.setSlidesPower(0.5);
+
+                        if(currentGamepad2.a && !prevGamepad2.a){
+                            delivery.clawClose();
+                        }
+                        if(currentGamepad2.b && !prevGamepad2.b){
+                            delivery.clawOpen();
+                        }
+
+                        if(gamepad2.dpad_up){
+                            //retract
+                        }
                 }
 
 //                telemetry.addData("Intake Pitch Target: ", intakePitchTarget);
+                telemetry.addData("IM TWEAKING OUT:", intake.getSampleColor());
+                telemetry.addData("Check Color condition is:", colorTestFlag);
+                telemetry.addData("Sample Color:", samplePosessed);
+                telemetry.addData("Target Sample Color:", targetSampleColor);
+                telemetry.addData("Prev Target Sample Color:", prevTargetSampleColor);
                 telemetry.addData("STATE: ", state);
                 delivery.addSlideTelemetry();
 
