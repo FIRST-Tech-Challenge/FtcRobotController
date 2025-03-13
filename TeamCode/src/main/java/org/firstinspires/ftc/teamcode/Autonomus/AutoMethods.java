@@ -19,7 +19,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.ConstsForTeleskope;
-import org.firstinspires.ftc.teamcode.Camera.Detector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraException;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -128,38 +127,7 @@ public class AutoMethods extends LinearOpMode implements ConstsForTeleskope {
         touch.setMode(DigitalChannel.Mode.INPUT);
     }
 
-    public void camStart(OpMode op) {
-        try {
-            this.op = op;
-            int cameraMonitorViewId = op.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());
-            webcam = OpenCvCameraFactory.getInstance().createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-            webcam.openCameraDevice();
-            webcam.setPipeline(new Detector(op.telemetry));
-            webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
-        }catch (OpenCvCameraException e){camError = true;}
-        catch (NullPointerException e2){camError = true;}
-    }
 
-    public void camStop() {
-        if (!camError) {webcam.stopStreaming();}
-    }
-    public void getPos() {
-
-        if (!camError) {
-            switch (Detector.getLocation()) {
-                    case BLUE:
-                        baza = 1;
-                        break;
-                    case YELLOW:
-                        baza = 2;
-                        break;
-                    case STRIPES:
-                        baza = 3;
-                        break;
-            }
-        }
-
-    }
     public void drive (int X, int Y, OpMode op, double timeout) {
         this.op = op;
 

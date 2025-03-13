@@ -13,5 +13,9 @@ public class RedRight extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         bot.initC(this);
         waitForStart();
+    while (opModeIsActive() && !isStopRequested()){
+    bot.right(3,1);
+    }
+
     }
 }

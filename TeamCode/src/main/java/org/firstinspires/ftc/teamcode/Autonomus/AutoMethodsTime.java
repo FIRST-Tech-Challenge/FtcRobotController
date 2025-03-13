@@ -31,10 +31,10 @@ public class AutoMethodsTime implements ConstsForTeleskope {
         kleshni = op.hardwareMap.get(Servo.class, "kleshni");
         korzina = op.hardwareMap.get(Servo.class, "korzina");
 
-        _20kg.setPosition(CLOSE_20KG_POS);
-        povorot.setPosition(POVOROT_THROW_POS);
-        kleshni.setPosition(KLESHNI_CLOSE_POS);
-        korzina.setPosition(KORZINA_TAKING_POS);
+//        _20kg.setPosition(CLOSE_20KG_POS);
+//        povorot.setPosition(POVOROT_THROW_POS);
+//        kleshni.setPosition(KLESHNI_CLOSE_POS);
+//        korzina.setPosition(KORZINA_TAKING_POS);
 
         //ВЕРНУТЬСЯ / НЕ ЗАБЫТЬ!!!!
         // En1 = hardwareMap.get(DcMotor.class, "En1");
@@ -122,6 +122,7 @@ public class AutoMethodsTime implements ConstsForTeleskope {
             rightB.setPower(max);
             leftF.setPower(max);
         }
+        runtime.reset();
     }
 
     public void rotateClockWise(double time, double max_Power){

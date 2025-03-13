@@ -13,5 +13,6 @@ public class BlueLeft extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         bot.initC(this);
         waitForStart();
+
     }
 }
