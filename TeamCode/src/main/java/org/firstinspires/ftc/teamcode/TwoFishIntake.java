@@ -25,6 +25,7 @@ public class TwoFishIntake {
     private Servo pitch = null;
     private CRServo transfer = null;
     public TouchSensor limitSwitch = null;
+    private Servo sweeper = null;
 //    private HuskyLens huskyLens = null;
 
     private OpMode opMode;
@@ -42,6 +43,10 @@ public class TwoFishIntake {
     private double targetLengthCM;
     private int targetLength;
     private double currentPosition;
+
+    public final double SWEEPER_OUT = 0.1;
+    public final double SWEEPER_IN = 0.2;
+    public boolean sweeperOut = false;
 
     public final double TICK_STOP_THRESHOLD = 5;
 
@@ -99,6 +104,7 @@ public class TwoFishIntake {
             pitch = opMode.hardwareMap.get(Servo.class, "intakePitch");
             transfer = opMode.hardwareMap.get(CRServo.class, "intakeTransfer");
             colorSens = opMode.hardwareMap.get(ColorSensor.class, "intakeColor");
+            sweeper = opMode.hardwareMap.get(Servo.class, "sweeper");
 
             extension.setTargetPosition(extension.getCurrentPosition());
 
@@ -161,7 +167,8 @@ public class TwoFishIntake {
             extension.setPower(0);
         }
     }
-    
+
+    public int getTargetLength(){return targetLength;}
     public void setIntakePower(float power){intake.setPower(power);}
     public void setTransferPower(float power){transfer.setPower(power);}
     public void setPitch(float position){pitch.setPosition(position);}
@@ -169,6 +176,14 @@ public class TwoFishIntake {
     public void pitchDown(){pitch.setPosition(downPitch);}
     public double getPitch(){return pitch.getPosition();}
     public int getExtensionTicks(){ return extension.getCurrentPosition();}
+    public void sweepOut(){
+        sweeper.setPosition(SWEEPER_OUT);
+        sweeperOut = true;
+    }
+    public void sweepIn(){
+        sweeper.setPosition(SWEEPER_IN);
+        sweeperOut = false;
+    }
 
     public void limitCheck() {
         if (limitSwitch.isPressed()) {

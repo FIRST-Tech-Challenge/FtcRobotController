@@ -10,19 +10,41 @@ import com.pedropathing.util.Constants;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.TwoFishDelivery;
+import org.firstinspires.ftc.teamcode.TwoFishIntake;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
-@Autonomous(name = "Net Pedro WIP", group = "Examples")
+@Autonomous(name = "Net Pedro WIP", group = "Autonomous")
 public class NetPedroWorkInProgress extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
 
+
+    ElapsedTime deliveryTimer = new ElapsedTime();
+
+    TwoFishDelivery delivery = null;
+    TwoFishIntake intake = null;
+
     /** This is the variable where we store the state of our auto.
      * It is used by the pathUpdate method. */
     private int pathState;
+
+
+    private ElapsedTime auxilariesTimer = new ElapsedTime();
+    private ElapsedTime sleepTimer = new ElapsedTime();
+
+    private boolean isTransferring = false;
+    private boolean isDelivering = false;
+    private boolean isIntaking = false;
+    boolean intakeIsPrepped = false;
+    boolean transferIsPrepped = false;
+    boolean deliveryIsPrepped = false;
+
+    boolean isSamplePosessed = false;
 
     /* Create and Define Poses + Paths
      * Poses are built with three constructors: x, y, and heading (in Radians).
@@ -34,16 +56,16 @@ public class NetPedroWorkInProgress extends OpMode {
      * Lets assume the Robot is facing the human player and we want to score in the bucket */
 
     /** Start Pose of our robot */
-    private final Point startPoint = new Point(9, 111);
+    private final Point startPoint = new Point(8, 110);
 
     /** Scoring Pose of our robot. It is facing the submersible at a -45 degree (315 degree) angle. */
     private final Point scorePoint = new Point(14, 129);
 
     /** Lowest (First) Sample from the Spike Mark */
-    private final Point pickup1Point = new Point(18.5, 121);
+    private final Point pickup1Point = new Point(18.5, 124);
 
     /** Middle (Second) Sample from the Spike Mark */
-    private final Point pickup2Point = new Point(18.5, 132);
+    private final Point pickup2Point = new Point(18.5, 130);
 
     /** Highest (Third) Sample from the Spike Mark */
     private final Point pickup3Point = new Point(35, 122.5);
@@ -79,13 +101,20 @@ public class NetPedroWorkInProgress extends OpMode {
 
         scorePreload = follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 startPoint,
+                                new Point(startPoint.getX() + 2, startPoint.getY())
+                        )
+                )
+                .setConstantHeadingInterpolation(0)
+                .addPath(
+                        new BezierCurve(
+                                new Point(startPoint.getX() + 2, startPoint.getY()),
                                 new Point(22.000, 118.000), //control point
                                 scorePoint
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-45))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45))
                 .build();
 
         intake1 = follower.pathBuilder()
@@ -135,7 +164,7 @@ public class NetPedroWorkInProgress extends OpMode {
                                 pickup3Point
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(60))
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(80))
                 .build();
 
         score3 = follower.pathBuilder()
@@ -157,7 +186,7 @@ public class NetPedroWorkInProgress extends OpMode {
                                 parkPoint
                         )
                 )
-                .setTangentHeadingInterpolation()
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(90))
                 .build();
     }
 
@@ -171,7 +200,9 @@ public class NetPedroWorkInProgress extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
+                prepDeliverSample();
                 follower.followPath(scorePreload);
+                if(sleepTimer.seconds() > 2)
                 setPathState(1);
                 break;
             case 1:
@@ -185,70 +216,123 @@ public class NetPedroWorkInProgress extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
                     /* Score Preload */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                    deliverSample();
+                    if(!isDelivering) {
+                        /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(intake1,true);
-                    setPathState(2);
+//                        if(sleepTimer.seconds() > 6) {
+                            prepTransferSample();
+                            setPathState(2);
+//                        }
+                    }
                 }
                 break;
             case 2:
+//                if(sleepTimer.seconds() > 7)
+                if(pathTimer.getElapsedTimeSeconds() > 0.5 && !isSamplePosessed) {
+                    prepIntakeSample(1000);
+                }
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the intake1's position */
+//                if(sleepTimer.seconds() > 9)
                 if(!follower.isBusy()) {
                     /* Grab Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(score1,true);
-                    setPathState(3);
+                    prepTransferSample();
+                    intakeSample();
+                    if(!isIntaking) {
+                        transferSample();
+                        if (!isTransferring) {
+                            prepDeliverSample();
+                            /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                            follower.followPath(score1, true);
+                            setPathState(3);
+                        }
+                    }
                 }
                 break;
             case 3:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the score1's position */
                 if(!follower.isBusy()) {
-                    /* Score Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    follower.followPath(intake2,true);
-                    setPathState(4);
+                    /* Score Preload */
+                    deliverSample();
+                    if(!isDelivering) {
+                        /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                        follower.followPath(intake2,true);
+//                        if(sleepTimer.seconds() > 6) {
+                        prepTransferSample();
+                        setPathState(4);
+//                        }
+                    }
                 }
                 break;
             case 4:
+
+                if(pathTimer.getElapsedTimeSeconds() > 0.5 && !isSamplePosessed) {
+                    prepIntakeSample(1000);
+                }
+
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
                 if(!follower.isBusy()) {
                     /* Grab Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(score2,true);
-                    setPathState(5);
+                    intakeSample();
+                    prepTransferSample();
+                    if(!isIntaking) {
+                        transferSample();
+                        if (!isTransferring) {
+                            prepDeliverSample();
+                            /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                            follower.followPath(score2, true);
+                            setPathState(5);
+                        }
+                    }
                 }
                 break;
             case 5:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
-                    /* Score Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    follower.followPath(intake3,true);
-                    setPathState(6);
+                    /* Score Preload */
+                    deliverSample();
+                    if(!isDelivering) {
+                        /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                        follower.followPath(intake3,true);
+//                        if(sleepTimer.seconds() > 6) {
+                        prepTransferSample();
+                        setPathState(6);
+//                        }
+                    }
                 }
                 break;
             case 6:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup3Pose's position */
+
+                if(pathTimer.getElapsedTimeSeconds() > 0.5 && !isSamplePosessed) {
+                    prepIntakeSample(500);
+                }
+
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
                 if(!follower.isBusy()) {
                     /* Grab Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(score3, true);
-                    setPathState(7);
+                    intakeSample();
+                    prepTransferSample();
+                    if(!isIntaking) {
+                        transferSample();
+                        if (!isTransferring) {
+                            prepDeliverSample();
+                            /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                            follower.followPath(score3, true);
+                            setPathState(7);
+                        }
+                    }
                 }
                 break;
             case 7:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
                     /* Score Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
-                    follower.followPath(park,false);
-                    setPathState(8);
+                    deliverSample();
+                    if(!isDelivering) {
+                        /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
+                        follower.followPath(park, false);
+                        setPathState(8);
+                    }
                 }
                 break;
             case 8:
@@ -262,6 +346,112 @@ public class NetPedroWorkInProgress extends OpMode {
                 break;
         }
     }
+
+    private void prepDeliverSample(){
+        if(!deliveryIsPrepped) {
+            deliveryIsPrepped = true;
+            delivery.toSampleHeight();
+            delivery.setSlidesPower(0.75);
+            delivery.setWrist(delivery.wristDownPosition);
+            delivery.setPitch(delivery.pitchUpPosition);
+        }
+    }
+
+    public void deliverSample(){
+        if(!isDelivering && delivery.slideTarget != delivery.specHeight){
+            auxilariesTimer.reset();
+        }
+        isDelivering = true;
+        if(auxilariesTimer.seconds() < 0.5 && delivery.getPitch() != delivery.pitchSampleScorePosition){
+            delivery.setPitch(delivery.pitchSampleScorePosition);
+        }
+        if(auxilariesTimer.seconds() > 0.5 && auxilariesTimer.seconds() < 0.75 && delivery.clawClosed){
+            delivery.clawOpen();
+        }
+        if(auxilariesTimer.seconds() > 0.75 && auxilariesTimer.seconds() < 0.8 && delivery.getPitch() != delivery.pitchUpPosition){
+            delivery.setPitch(delivery.pitchUpPosition);
+        }
+        if(auxilariesTimer.seconds() > 1){
+            delivery.toSpecHeight();
+            delivery.setSlidesPower(0.75);
+            isSamplePosessed = false;
+            isDelivering = false;
+            deliveryIsPrepped = false;
+        }
+    }
+
+
+    public void prepTransferSample() {
+        if(!transferIsPrepped) {
+            transferIsPrepped = true;
+            delivery.toSpecHeight();
+            delivery.setSlidesPower(0.75);
+            delivery.setPitch(delivery.pitchTransferPosition);
+            delivery.setWrist(delivery.wristUpPosition);
+            delivery.clawOpen();
+        }
+    }
+
+    public void prepIntakeSample(int targetLength) {
+        if(!intakeIsPrepped) {
+            intakeIsPrepped = true;
+            delivery.toSpecHeight();
+            delivery.setSlidesPower(0.75);
+            intake.setSlidesTargetPosition(targetLength);
+            intake.setSlidesPower(0.8);
+            delivery.clawOpen();
+        }
+    }
+
+    public void intakeSample(){
+        if(!isIntaking && !isSamplePosessed){
+            auxilariesTimer.reset();
+        }
+        if(!isSamplePosessed) isIntaking = true;
+        if(auxilariesTimer.seconds() < 0.5 && !(intake.getPitch() == intake.downPitch) && !isSamplePosessed){
+            intake.pitchDown();
+            intake.setIntakePower(1.0f);
+            intake.setTransferPower(0.6f);
+        }
+        if(auxilariesTimer.seconds() > 2.5 && auxilariesTimer.seconds() < 3 && intake.getTargetLength() != 0){
+            intake.pitchUp();
+            intake.setSlidesTargetPosition(0);
+            delivery.setSlidesPower(0.75);
+        }
+        if(auxilariesTimer.seconds() > 3){
+            intake.setTransferPower(0.0f);
+            isSamplePosessed = true;
+            isIntaking = false;
+            intakeIsPrepped = false;
+        }
+    }
+
+
+    public void transferSample(){
+        if(!isTransferring){
+            auxilariesTimer.reset();
+        }
+        isTransferring = true;
+        if(auxilariesTimer.seconds() < 0.7 && delivery.getSlideHeight() != 0){
+            intake.setIntakePower(0);
+            intake.setTransferPower(0);
+            delivery.toTransferHeight();
+            delivery.setSlidesPower(0.75);
+        }
+        if(auxilariesTimer.seconds() > 0.7 && auxilariesTimer.seconds() < 0.9 && !delivery.clawClosed){
+            delivery.clawClose();
+        }
+        if(auxilariesTimer.seconds() > 0.9 && auxilariesTimer.seconds() < 2 && delivery.getSlideHeight() != delivery.sampleHeight){
+            delivery.toSampleHeight();
+            delivery.setSlidesPower(0.75);
+        }
+        if(auxilariesTimer.seconds() > 2){
+            delivery.setPitch(delivery.pitchUpPosition);
+            isTransferring = false;
+            transferIsPrepped = false;
+        }
+    }
+
 
     /** These change the states of the paths and actions
      * It will also reset the timers of the individual switches **/
@@ -279,6 +469,13 @@ public class NetPedroWorkInProgress extends OpMode {
         autonomousPathUpdate();
 
         // Feedback to Driver Hub
+        telemetry.addData("Is Busy?", follower.isBusy());
+        telemetry.addData("Is Delivering?", isDelivering);
+        telemetry.addData("Is Intaking?", isIntaking);
+        telemetry.addLine();
+        telemetry.addData("Is Prepped for Delivering?", deliveryIsPrepped);
+        telemetry.addData("Is Prepped for Intaking?", intakeIsPrepped);
+        telemetry.addLine();
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
@@ -289,14 +486,23 @@ public class NetPedroWorkInProgress extends OpMode {
     /** This method is called once at the init of the OpMode. **/
     @Override
     public void init() {
+
+        delivery = new TwoFishDelivery(this, deliveryTimer);
+        intake = new TwoFishIntake(this);
+
+
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
-        follower.setStartingPose(new Pose(startPoint.getX(), startPoint.getY(), Math.toRadians(-45)));
+        follower.setStartingPose(new Pose(startPoint.getX(), startPoint.getY(), Math.toRadians(-90)));
         buildPaths();
+
+        intake.pitchUp();
+        delivery.setWrist(delivery.wristDownPosition);
+        delivery.clawClose();
     }
 
     /** This method is called continuously after Init while waiting for "play". **/
@@ -307,6 +513,7 @@ public class NetPedroWorkInProgress extends OpMode {
      * It runs all the setup actions, including building paths and starting the path system **/
     @Override
     public void start() {
+        sleepTimer.reset();
         opmodeTimer.resetTimer();
         setPathState(0);
     }

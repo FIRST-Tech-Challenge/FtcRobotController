@@ -128,7 +128,7 @@ public class TwoFishTeleop extends LinearOpMode {
             //driver 1
             //slow down power if bumper is pressed
             if (gamepad1.left_bumper) {
-                speedScalar = 0.25;
+                speedScalar = 0.5;
             } else if (gamepad1.right_bumper) {
                 speedScalar = 0.8;
             } else {
@@ -168,6 +168,17 @@ public class TwoFishTeleop extends LinearOpMode {
                 if(gamepad1.y){
                     targetSampleColor = "YELLOW";
                 }
+
+
+                if(gamepad1.right_trigger > 0.1){
+                    if(!intake.sweeperOut) {
+                        intake.sweepOut();
+                    }
+                }else{
+                    if(intake.sweeperOut) {
+                        intake.sweepIn();
+                    }
+                }
             }
             if(!targetSampleColor.equals("NONE")) prevTargetSampleColor = targetSampleColor;
 
@@ -204,13 +215,13 @@ public class TwoFishTeleop extends LinearOpMode {
                             if(targetSampleColor.equals("RED")){
                                 if(samplePosessed.equals("BLUE")){
                                     intake.setIntakePower(-0.5f);
-                                    intake.setTransferPower(-1);
+//                                    intake.setTransferPower(-1);
                                 }
                             }
                             if(targetSampleColor.equals("BLUE")){
                                 if(samplePosessed.equals("RED")){
                                     intake.setIntakePower(-0.5f);
-                                    intake.setTransferPower(-1);
+//                                    intake.setTransferPower(-1);
                                 }
                             }
 
@@ -381,6 +392,7 @@ public class TwoFishTeleop extends LinearOpMode {
                         break;
 
                     case IDLE:
+                        intake.setTransferPower(0.0f);
                         delivery.toSpecHeight();
                         delivery.setSlidesPower(0);
 
@@ -421,11 +433,8 @@ public class TwoFishTeleop extends LinearOpMode {
                 }
 
 //                telemetry.addData("Intake Pitch Target: ", intakePitchTarget);
-                telemetry.addData("IM TWEAKING OUT:", intake.getSampleColor());
-                telemetry.addData("Check Color condition is:", colorTestFlag);
                 telemetry.addData("Sample Color:", samplePosessed);
                 telemetry.addData("Target Sample Color:", targetSampleColor);
-                telemetry.addData("Prev Target Sample Color:", prevTargetSampleColor);
                 telemetry.addData("STATE: ", state);
                 delivery.addSlideTelemetry();
 
@@ -450,9 +459,9 @@ public class TwoFishTeleop extends LinearOpMode {
 
             intake.limitCheck();
             delivery.limitCheck();
-            telemetry.addData("intake currect extension: ", intake.getExtensionTicks());
+            telemetry.addData("intake current extension: ", intake.getExtensionTicks());
             telemetry.addData("intake min extension: ", intake.minExtension);
-            telemetry.addData("delivery currect extension: ", delivery.getSlideHeight());
+            telemetry.addData("delivery current extension: ", delivery.getSlideHeight());
             telemetry.addData("delivery min extension: ", delivery.minHeight);
 //            prevPoseEstimate = poseEstimate;
             prevEncoderX = encoderX;
