@@ -26,7 +26,6 @@ import java.util.Map;
 @Config
 @TeleOp
 public class TeleopWithActionsBlue extends OpMode {
-
     private FtcDashboard dash = FtcDashboard.getInstance();
     private Map<String, Action> runningActions = new HashMap<>();
 

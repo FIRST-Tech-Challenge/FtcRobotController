@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 import org.firstinspires.ftc.teamcode.Mechanisms.Sweeper.Sweeper;
 
 @Config
-@Autonomous(name = "Specimen", group = "AAAAAAAAAA")
+@Autonomous(name = "Specimenn", group = "AAAAAAAAAA")
 public class SpecimenV1 extends LinearOpMode{
         FtcDashboard dashboard;
         Robot robot;
@@ -66,7 +66,7 @@ public class SpecimenV1 extends LinearOpMode{
                         new SequentialAction(
                         arm.specimenAuton(),
                         claw.servoClaw(Claw.clawState.CLOSE),
-                        drivetrain.goToPose(Utils.makePoseVector(-40,20,180))
+                        drivetrain.goToPose(Utils.makePoseVector(-62,19,180))
                     )
             );
         }

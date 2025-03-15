@@ -14,8 +14,8 @@ public class Claw {
     HardwareMap hardwareMap;
     ServoAdvanced clawServo;
 
-    public static double clawOpen = 0.66;
-    public static double clawClosed = 0.5;
+    public static double clawOpen = 0.82;
+    public static double clawClosed = 0.65;
     public clawState clawPos = clawState.OPEN;
     public Claw(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
