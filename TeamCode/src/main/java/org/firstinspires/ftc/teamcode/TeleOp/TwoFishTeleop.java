@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -65,6 +66,7 @@ public class TwoFishTeleop extends LinearOpMode {
     boolean retracted = false;
     boolean pitched = false;
 
+    boolean allianceColorIsRed = true;
     String targetSampleColor = "YELLOW";
     String prevTargetSampleColor = "YELLOW";
 
@@ -96,6 +98,8 @@ public class TwoFishTeleop extends LinearOpMode {
     private double colorSensSampleTimestamp = 0.0;
     private String samplePosessed;
     private boolean colorTestFlag = false;
+
+    private boolean allowAutoPitchUp = true;
 
     private Gamepad prevGamepad2 = new Gamepad();
     private Gamepad currentGamepad2 = new Gamepad();
@@ -168,7 +172,18 @@ public class TwoFishTeleop extends LinearOpMode {
                 if(gamepad1.y){
                     targetSampleColor = "YELLOW";
                 }
-
+                if(gamepad1.back){
+                    allowAutoPitchUp = false;
+                }
+                if(gamepad1.start){
+                    allowAutoPitchUp = true;
+                }
+                if(gamepad1.start && gamepad1.x){
+                    allianceColorIsRed = false;
+                }
+                if(gamepad1.start && gamepad1.y){
+                    allianceColorIsRed = true;
+                }
 
                 if(gamepad1.right_trigger > 0.1){
                     if(!intake.sweeperOut) {
@@ -203,37 +218,47 @@ public class TwoFishTeleop extends LinearOpMode {
                         intake.setSlidesTargetPosition(intake.getExtensionTicks() - (int)(gamepad2.left_stick_y * 200));
                         //intake pitch
                         intakePitchTarget = (float) Math.min(intake.downPitch, Math.max(intake.upPitch, intakePitchTarget)); //down pitch is larger limit
-                        intakePitchTarget += (gamepad2.right_stick_y * 0.01f);
+                        double joystickIncrement = (gamepad2.right_stick_y * 0.015f);
+                        if(intakePitchTarget > intake.downPitch - 0.25 && joystickIncrement > 0.0){ //down is positive
+                            joystickIncrement /= 4;
+                        }
+                        intakePitchTarget += joystickIncrement;
                         intake.setPitch((float)intakePitchTarget);
 
                         //Color sensor
 
-                            if(samplePosessed.equals(targetSampleColor)){
-                                intake.pitchUp();
-                                intakePitchTarget = (float)intake.upPitch;
-                            }
-                            if(targetSampleColor.equals("RED")){
-                                if(samplePosessed.equals("BLUE")){
-                                    intake.setIntakePower(-0.5f);
-//                                    intake.setTransferPower(-1);
-                                }
-                            }
-                            if(targetSampleColor.equals("BLUE")){
-                                if(samplePosessed.equals("RED")){
-                                    intake.setIntakePower(-0.5f);
-//                                    intake.setTransferPower(-1);
-                                }
-                            }
+
 
                         //Intake spin power
                         if (gamepad2.right_trigger >= 0.01) {
                             intake.setIntakePower(gamepad2.right_trigger);
+                            intake.setTransferPower(gamepad2.right_trigger);
                         }
                         if (gamepad2.left_trigger >= 0.01){
                             intake.setIntakePower(-gamepad2.left_trigger*0.5f);
+                            intake.setTransferPower(-gamepad2.left_trigger*0.5f);
                         }
                         if(gamepad2.left_trigger < 0.01 && gamepad2.right_trigger < 0.01){
+                            intake.setTransferPower(0);
                             intake.setIntakePower(0);
+                        }
+
+
+                        if(allowAutoPitchUp && samplePosessed.equals(targetSampleColor)){
+                                intake.pitchUp();
+                                intakePitchTarget = (float) intake.upPitch;
+                        }
+                        if(allianceColorIsRed || targetSampleColor.equals("RED")){
+                            if(samplePosessed.equals("BLUE")){
+                                intake.setIntakePower(-0.5f);
+                                    intake.setTransferPower(-1);
+                            }
+                        }
+                        if(!allianceColorIsRed || targetSampleColor.equals("BLUE")){
+                            if(samplePosessed.equals("RED")){
+                                intake.setIntakePower(-0.5f);
+                                    intake.setTransferPower(-1);
+                            }
                         }
 
                         //confirm intake ---> transfer
@@ -412,12 +437,15 @@ public class TwoFishTeleop extends LinearOpMode {
                         if(gamepad2.left_bumper && gamepad2.right_bumper){
                             state = RobotState.HANG;
                             pitchTarget = delivery.pitchUpPosition;
+                            delivery.setWinchZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                            delivery.setWrist(delivery.wristDownPosition);
                         }
                         break;
                     case HANG:
-                        pitchTarget -= gamepad2.left_stick_y * 0.05;
+                        delivery.setWinchRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                        pitchTarget -= gamepad2.right_stick_y * 0.025;
                         delivery.setPitch(pitchTarget);
-                        delivery.toSpecHeight();
+//                        delivery.toSpecHeight();
                         delivery.setSlidesPower(0.5);
 
                         if(currentGamepad2.a && !prevGamepad2.a){
@@ -426,13 +454,30 @@ public class TwoFishTeleop extends LinearOpMode {
                         if(currentGamepad2.b && !prevGamepad2.b){
                             delivery.clawOpen();
                         }
+                        delivery.setWinchPower(0);
+                        if(gamepad2.right_trigger > 0.1){
+                            delivery.setWinchPower(-gamepad2.right_trigger);
+                        }
+                        if(gamepad2.left_trigger > 0.1){
+                            delivery.setWinchPower(gamepad2.left_trigger);
+                        }
+
+                        if(Math.abs(gamepad2.left_stick_y) > 0.01){
+                            delivery.slideTarget = delivery.getSlideHeight() - gamepad2.left_stick_y * 200;
+                            delivery.setSlidesTargetPosition((int)delivery.slideTarget);
+                        }
 
                         if(gamepad2.dpad_up){
                             //retract
+//                            delivery.setWinchRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                            delivery.setWinchPosition(delivery.WINCH_MIN);
+//                            delivery.setWinchPower(1);
+                            delivery.setWinchZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                         }
                 }
 
 //                telemetry.addData("Intake Pitch Target: ", intakePitchTarget);
+                telemetry.addData("Alliance Color is RED:", allianceColorIsRed);
                 telemetry.addData("Sample Color:", samplePosessed);
                 telemetry.addData("Target Sample Color:", targetSampleColor);
                 telemetry.addData("STATE: ", state);

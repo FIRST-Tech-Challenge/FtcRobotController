@@ -19,6 +19,7 @@ public class TwoFishDelivery {
     private Servo pitch1 = null;
     private Servo pitch2 = null;
     private Servo wrist = null;
+    private DcMotor winch = null;
     private VoltageSensor voltageSensor = null;
         public TouchSensor limitSwitch = null;
 
@@ -61,7 +62,10 @@ public class TwoFishDelivery {
     public int specHeight = SPEC_DELTA;
     public int sampleHeight = SAMPLE_DELTA;
 
+    public final int WINCH_MIN = 0;
+    public final int WINCH_MAX = 1000;
 
+    public int winchTarget = 0;
     //boolean:
     public boolean clawClosed = false;
     public boolean isPitching = false;
@@ -110,6 +114,7 @@ public class TwoFishDelivery {
             pitch2 = opMode.hardwareMap.get(Servo.class, "deliveryPitchRight");
             claw = opMode.hardwareMap.get(Servo.class, "claw");
             wrist = opMode.hardwareMap.get(Servo.class, "wrist");
+            winch = opMode.hardwareMap.get(DcMotor.class, "winch");
           limitSwitch = opMode.hardwareMap.get(TouchSensor.class, "deliveryTouch");
 
             claw.scaleRange(0.0, 1);
@@ -119,9 +124,13 @@ public class TwoFishDelivery {
 
 
 
+            winch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            winch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             slide.setTargetPosition(0);
+            winch.setTargetPosition(0);
+            winch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
@@ -246,6 +255,16 @@ public class TwoFishDelivery {
         return slide.getCurrentPosition();
     }
 
+    public void setWinchPosition(int pos){
+        int position = Math.max(WINCH_MIN, Math.min(WINCH_MAX, pos));
+        winchTarget = position;
+        winch.setTargetPosition(winchTarget);
+    }
+    public void setWinchZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior){winch.setZeroPowerBehavior(zeroPowerBehavior);}
+    public void setWinchRunMode(DcMotor.RunMode mode){winch.setMode(mode);}
+    public int getWinchPosition(){return winch.getCurrentPosition();}
+    public void setWinchPower(double power){winch.setPower(power);}
+    public int getWinchTarget(){return winchTarget;}
     public void toMinHeight(){setSlidesTargetPosition(minHeight);}
     public void toSpecHeight(){setSlidesTargetPosition(specHeight);}
     public void toTransferHeight(){setSlidesTargetPosition(minHeight + 60);}
