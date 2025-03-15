@@ -117,9 +117,9 @@ public class AutoMethods extends LinearOpMode implements ConstsForTeleskope {
         m4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         m5.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        EnX1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        EnY2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        EnY3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        EnX1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        EnY2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        EnY3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         EnY2.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -407,3 +407,7 @@ public class AutoMethods extends LinearOpMode implements ConstsForTeleskope {
         }
     }
 }
+
+//public void moveTo (int posX, int posY, int posAng){
+//
+//}

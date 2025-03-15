@@ -12,6 +12,8 @@ public class BlueRight extends LinearOpMode implements ConstsForTeleskope {
     public AutoMethodsTime bot = new AutoMethodsTime();
 
     //ОСНОВНАЯ ПРОГРАММА
+
+
     @Override
     public void runOpMode() throws InterruptedException {
         bot.initC(this);

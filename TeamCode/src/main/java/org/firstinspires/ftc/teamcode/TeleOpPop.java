@@ -21,10 +21,10 @@ public class TeleOpPop extends LinearOpMode implements ConstsForTeleskope {
     //Переменные моторов;
     private double rightFz1, rightBz2, leftBz3, leftFz4, teleskopeZ5;
 
-    private boolean switchA = false, switchB = false, switchY = false, switchX = false, switchDPadUp = false, switchRBumper = false;
-    private boolean isPovorotVerTaking = false, isPovorotTakingPos = false, isKleshniOpen = false, isdPadUp = false, iskleshniVer = false, isRBumper = false;
+    private boolean switchA = false, switchB = false, switchY = false, switchX = false, switchDPadUp = false, switchRBumper = false, switchLTrigger = false;
+    private boolean isPovorotVerTaking = false, isPovorot = true, isKleshniOpen = false, isdPadUp = false, iskleshniVer = false, isRBumper = false, isTriggerL;
 
-    int dpadUp = 1;
+    int dpadUp = 2;
     private double accel;
 
     //Инициализируем железо
@@ -134,13 +134,13 @@ public class TeleOpPop extends LinearOpMode implements ConstsForTeleskope {
                         double leftStickY2 = -gamepad2.left_stick_y;
 
                         //ТЕЛЕЖКА
-
+                        accel = 0.7;
                         //Коэффицент скорости робота
-                        if(gamepad1.left_trigger < 0.5){
-                            accel = 0.8;
+                        if(gamepad1.right_trigger > 0.05){
+                            accel = 0.3;
                         }
-                        else if(gamepad1.left_trigger > 0.5){
-                            accel = 10;
+                        if(gamepad1.left_trigger > 0.05){
+                            accel = 5.5555555555555555555;
                         }
 
 //                        if(gamepad2.x && !pov_done && timePOV > tick){
@@ -226,7 +226,7 @@ public class TeleOpPop extends LinearOpMode implements ConstsForTeleskope {
                         }
 
                         if(gamepad2.b && !switchB && !gamepad2.start){
-                            isPovorotTakingPos = !isPovorotTakingPos;
+                            isPovorot = !isPovorot;
                             switchB = true;
                         }
                         if(!gamepad2.b && switchB){
@@ -273,7 +273,7 @@ public class TeleOpPop extends LinearOpMode implements ConstsForTeleskope {
                         }
 
                         if(gamepad2.dpad_up && !switchDPadUp){
-                            dpadUp = Range.clip(dpadUp + 1, 1, 5);
+                            dpadUp = Range.clip(dpadUp + 1, 2, 5);
                             isdPadUp = !isdPadUp;
                             switchDPadUp = true;
                         }
@@ -282,7 +282,15 @@ public class TeleOpPop extends LinearOpMode implements ConstsForTeleskope {
                         }
 
                         if(gamepad2.dpad_down){
-                            dpadUp = 1;
+                            dpadUp = 2;
+                        }
+
+                        if(gamepad2.left_trigger > 0.05 && !switchLTrigger){
+                            isTriggerL = !isTriggerL;
+                            switchLTrigger = true;
+                        }
+                        if(gamepad2.left_trigger < 0.05 && switchLTrigger) {
+                            switchLTrigger = false;
                         }
                     }
 
@@ -319,10 +327,10 @@ public class TeleOpPop extends LinearOpMode implements ConstsForTeleskope {
 
             teleskopUpStanding.setPower(teleskopeZ5);
 
-            if(isPovorotTakingPos){
-                povorot.setPosition(POVOROT_THROW_POS);
-           }else {
+            if(isPovorot){
                 povorot.setPosition(POVOROT_TAKING_POS);
+           }else {
+                povorot.setPosition(POVOROT_THROW_POS);
             }
 
             if(isKleshniOpen){
@@ -344,6 +352,9 @@ public class TeleOpPop extends LinearOpMode implements ConstsForTeleskope {
             }
 
             if(dpadUp == 1){
+                horizontal.setPosition(INITCLOSE_HORIZONTAL_POS);
+            }
+            else if(dpadUp == 2){
                 horizontal.setPosition(CLOSE_HORIZONTAL_POS);
 //            } else if (dpadUp == 2) {
 //                _20kg.setPosition(Range.clip(CLOSE_20KG_POS - 0.08, OPEN_20KG_POS,CLOSE_20KG_POS));
@@ -351,8 +362,19 @@ public class TeleOpPop extends LinearOpMode implements ConstsForTeleskope {
 //                _20kg.setPosition(Range.clip(CLOSE_20KG_POS - 0.16, OPEN_20KG_POS,CLOSE_20KG_POS));
 //            } else if (dpadUp == 4) {
 //                _20kg.setPosition(Range.clip(CLOSE_20KG_POS - 0.34, OPEN_20KG_POS,CLOSE_20KG_POS));
-            }else {
+            }
+            else {
                 horizontal.setPosition(OPEN_HORIZONTAL_POS);
+            }
+            if(isTriggerL){
+                kleshni.setPosition(KLESHNI_CLOSE_POS);
+                isKleshniOpen = false;
+                povorot.setPosition(POVOROT_TAKING_POS);
+                isPovorot = true;
+                SLEEP(1800);
+                horizontal.setPosition(INITCLOSE_HORIZONTAL_POS);
+                dpadUp = 1;
+                isTriggerL = false;
             }
 
             if(isRBumper){
@@ -369,9 +391,9 @@ public class TeleOpPop extends LinearOpMode implements ConstsForTeleskope {
 
                 isKleshniOpen = true;
                 isPovorotVerTaking = true;
-                isPovorotTakingPos = true;
+                isPovorot = false;
                 iskleshniVer = false;
-                dpadUp = 1;
+                dpadUp = 2;
                 isRBumper = false;
             }
 
@@ -381,6 +403,7 @@ public class TeleOpPop extends LinearOpMode implements ConstsForTeleskope {
             telemetry.addData("Сервак kleshni позиция:", kleshni.getPosition());
             telemetry.addData("Сервак povorotVer позиция:", povorotVer.getPosition());
             telemetry.addData("Сервак kleshniVer позиция:", kleshniVer.getPosition());
+            telemetry.addData("isTriggerL:", isTriggerL);
 
             telemetry.addData("Ускорение", accel);
 

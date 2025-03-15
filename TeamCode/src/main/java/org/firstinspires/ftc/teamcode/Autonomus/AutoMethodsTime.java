@@ -24,7 +24,7 @@ public class AutoMethodsTime implements ConstsForTeleskope {
         leftB = op.hardwareMap.get(DcMotor.class, "leftB");//m3
         leftF = op.hardwareMap.get(DcMotor.class, "leftF");//m4
 
-        teleskopUpStanding = op.hardwareMap.get(DcMotor.class, "teleskop");
+        teleskopUpStanding = op.hardwareMap.get(DcMotor.class, "teleskope");
 
         _20kg = op.hardwareMap.get(Servo.class, "20kg");
         povorot = op.hardwareMap.get(Servo.class, "povorot");
