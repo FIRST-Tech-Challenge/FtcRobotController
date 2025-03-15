@@ -22,8 +22,8 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 import org.firstinspires.ftc.teamcode.Mechanisms.Sweeper.Sweeper;
 
 @Config
-@Autonomous(name = "Sample v4 RED", group = "AAAAAAAA")
-public class SampleNewNewNewRed extends LinearOpMode {
+@Autonomous(name = "Sample v5", group = "A")
+public class SampleBest extends LinearOpMode {
     // Use FTCDashboard
     FtcDashboard dashboard;
     Robot robot;
@@ -120,7 +120,7 @@ public class SampleNewNewNewRed extends LinearOpMode {
                         new SleepAction(0.55),
                         pivot.setPosition(Intake.intakeState.STOP),
                         extension.servoExtension(Extension.extensionState.RETRACT),
-                        new SleepAction(0.6),
+                        new SleepAction(0.55),
                         intake.motorIntake(Intake.intakeState.STOP),
                         arm.armRetract(),
                         new SleepAction(0.6),
@@ -147,7 +147,7 @@ public class SampleNewNewNewRed extends LinearOpMode {
                         new SleepAction(0.55),
                         pivot.setPosition(Intake.intakeState.STOP),
                         extension.servoExtension(Extension.extensionState.RETRACT),
-                        new SleepAction(0.65),
+                        new SleepAction(0.75),
                         intake.motorIntake(Intake.intakeState.STOP),
                         arm.armRetract(),
                         new SleepAction(0.75),
@@ -167,47 +167,10 @@ public class SampleNewNewNewRed extends LinearOpMode {
                         arm.armNeutral(),
                         new SleepAction(0.3),
                         new ParallelAction(
-                                lift.moveToHeight(0),
-                                drivetrain.goToPose(Utils.makePoseVector(-13, -35, -90)),
-                                arm.armNeutral()),
-                        drivetrain.goToPoseImpresice(Utils.makePoseVector(-9, -50, -90)),
-                        extension.midPos(),
-                        sweeper.sweep(),
-                        new SleepAction(.4),
-                        sweeper.sweep(),
-                        pivot.setPosition(Intake.intakeState.INTAKE),
-                        intake.motorIntake(Intake.intakeState.INTAKE),
-                        new ParallelAction(
-
-                                new SleepAction(1),
-                                robot.stopIfBlue(),
-                                /*new SequentialAction(
-                                drivetrain.goToPose(Utils.makePoseVector(-8, -51, -85)),
-                                drivetrain.goToPose(Utils.makePoseVector(-8, -49, -95))
-                                ),*/
-                                extension.servoExtension(Extension.extensionState.EXTEND)
-                        ),
-                        extension.servoExtension(Extension.extensionState.RETRACT),
-                        pivot.setPosition(Intake.intakeState.STOP),
-                        //drivetrain.goToPose(Utils.makePoseVector(-13, -35, -90)),
-                        intake.motorIntake(Intake.intakeState.STOP),
-                        new SleepAction(0.5),
-                        arm.armRetract(),
-                        new SleepAction(0.5),
-                        claw.servoClaw(Claw.clawState.CLOSE),
-                        new ParallelAction(
-                                drivetrain.goToPose(Utils.makePoseVector(-56, -17,-43)),
-                                lift.moveToHeight(24)),
-                        new SequentialAction(
-                                new SleepAction(.5),
-                                arm.armExtend()
-                        ),
-                        new SleepAction(.6),
-                        claw.servoClaw(Claw.clawState.OPEN),
-                        new SleepAction(.4),
-                        arm.armRetract(),
-                        new SleepAction(.4),
-                        lift.moveToHeight(0)
+                                lift.moveToHeight(12),
+                                drivetrain.goToPoseImpresice(Utils.makePoseVector(-13, -35, 90)),
+                                arm.armSpecimen()),
+                        drivetrain.goToPose(Utils.makePoseVector(-13, -45, 90))
                 )
         );
     }

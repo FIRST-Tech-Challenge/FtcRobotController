@@ -26,7 +26,7 @@ public class Lift {
     public DcMotorAdvanced liftMotorLeft;
     public DcMotorAdvanced liftMotorRight;
     public Encoder encoder;
-    TouchSensor limiter;
+    public TouchSensor limiter;
     public static double kA=0.2;
     public static double kV=0.2;
     public static double kG=0.1;
@@ -122,9 +122,10 @@ public class Lift {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                if (limiter.isPressed()){
-                    liftMotorLeft.setPower(0);
-                    liftMotorRight.setPower(0);
+                double currentPosition = ticksToInches(encoder.getCurrentPosition());
+                if (currentPosition<1){
+                    liftMotorLeft.setPower(power);
+                    liftMotorRight.setPower(power);
                     packet.put("Motor Power", power);
                 } else if (currentPosition < maxHeight) {
                     liftMotorLeft.setPower(power + kG);
