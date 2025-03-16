@@ -77,7 +77,7 @@ public class WristRemoteControl extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Remote Control Ready", "press PLAY");
-        telemetry.addData("This code was last updated", "1/17/2024, 11:47 am"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "3/17/2024, 11:47 am"); // Todo: Update this date when the code is updated
         telemetry.update();
         waitForStart();
         setAscentStick(ASCENT_MIN);
