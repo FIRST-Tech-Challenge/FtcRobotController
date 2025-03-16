@@ -30,7 +30,7 @@ public class MoveLSAction extends Action {
     private double targetTicks;
 
     private final PidNav pidOuttakeLS;
-    private double kG = 0.1;  // gravity term to maintain LS position
+    private double kG;  // gravity term to maintain LS position
 
     public double getCurrentTicks() {
         return currentTicks;
@@ -71,6 +71,8 @@ public class MoveLSAction extends Action {
         }
         this.dependentActions.add(new DoneStateAction());
         this.timeoutTimer = new ElapsedTime();
+
+        this.kG = Math.min(0.15, Math.max(0.05, 0.05 + (this.targetTicks - 300) * 0.1 / 2700)); // 0.05 at 300, 0.15 at 3000
     }
 
     public MoveLSAction(Outtake outtake, double targetMM, double p) {
@@ -153,7 +155,7 @@ public class MoveLSAction extends Action {
 
     public void finish() {
         isDone = true;
-        setLSPower(kG); // maintain
+        setLSPower(targetTicks == 0 ? 0 : kG); // maintain
     }
 
     public void finishWithoutSetPower() {

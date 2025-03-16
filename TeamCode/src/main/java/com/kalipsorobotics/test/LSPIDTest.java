@@ -24,14 +24,18 @@ public class LSPIDTest extends LinearOpMode {
         WaitAction wait1 = new WaitAction(2000);
         MoveLSAction test2 = new MoveLSAction(outtake, Outtake.LS_SPECIMEN_HANG_READY_MM);
         WaitAction wait2 = new WaitAction(2000);
-        MoveLSAction test3 = new MoveLSAction(outtake, Outtake.LS_SPECIMEN_HANG_DONE_MM);
+        MoveLSAction test3 = new MoveLSAction(outtake, Outtake.LS_SPECIMEN_PARK_MM);
+        WaitAction wait3 = new WaitAction(2000);
+        MoveLSAction test4 = new MoveLSAction(outtake, 0);
 
         wait1.setDependentActions(test1);
         test2.setDependentActions(wait1);
         wait2.setDependentActions(test2);
         test3.setDependentActions(wait2);
+        wait3.setDependentActions(test3);
+        test4.setDependentActions(wait3);
 
-        set.addAction(test1, wait1, test2, wait2, test3);
+        set.addAction(test1, wait1, test2, wait2, test3, wait3, test4);
 
         waitForStart();
         while (opModeIsActive()) {
