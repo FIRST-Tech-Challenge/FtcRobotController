@@ -1,5 +1,7 @@
 package com.kalipsorobotics.actions.autoActions;
 
+import android.util.Log;
+
 import com.kalipsorobotics.PID.PidNav;
 import com.kalipsorobotics.utilities.SharedData;
 import com.kalipsorobotics.actions.Action;
@@ -28,6 +30,8 @@ public class PurePursuitAction extends Action {
     public static final double P_ANGLE_SLOW = 1.0/ Math.toRadians(130);
 
     public static final double P_ANGLE_SLOW_FOREAL_BASKET_THIRD_SAMPLE_AUTO = 1.0 / Math.toRadians(180);
+
+    public static final double STUCK_THRESHOLD = 1;
 
 
     private double lastSearchRadius = LAST_RADIUS_MM;
@@ -68,6 +72,8 @@ public class PurePursuitAction extends Action {
 
     private double xVelocity;
     private double yVelocity;
+    private double prevXVelocity;
+    private double prevYVelocity;
     private double thetaVelocity;
 //    private final double threshold = 10;
 
@@ -263,9 +269,13 @@ public class PurePursuitAction extends Action {
             }
         }
 
+
         xVelocity = (Math.abs(lastPosition.getX() - currentPosition.getX())) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
         yVelocity = (Math.abs(lastPosition.getY() - currentPosition.getY())) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
         thetaVelocity = (Math.abs(lastPosition.getTheta() - currentPosition.getTheta())) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
+
+        double prevXVelocity = xVelocity;
+        double prevYVelocity = yVelocity;
 
         if(xVelocity < 0.01 && yVelocity < 0.01 && thetaVelocity < 0.01) {
             if(timeoutTimer.milliseconds() > 1000) {
