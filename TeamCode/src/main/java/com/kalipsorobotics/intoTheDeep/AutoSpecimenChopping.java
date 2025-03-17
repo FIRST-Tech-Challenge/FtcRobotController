@@ -49,9 +49,9 @@ public class AutoSpecimenChopping extends LinearOpMode {
         SharedData.resetOdometryPosition();
 
         // Target can always be 0 because Hung said so
-        MoveLSAction maintainLS = new MoveLSAction(outtake, 0);
-        MoveLSAction.setGlobalLinearSlideMaintainTicks(0);
-        maintainLS.setName("maintainLS");
+//        MoveLSAction maintainLS = new MoveLSAction(outtake, 0);
+//        MoveLSAction.setGlobalLinearSlideMaintainTicks(0);
+//        maintainLS.setName("maintainLS");
 
         InitAuto initAuto = new InitAuto(intakeClaw, outtake);
         initAuto.setName("initAuto");
@@ -116,9 +116,9 @@ public class AutoSpecimenChopping extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-            maintainLS.setIsDone(false);
-            maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
-            maintainLS.updateCheckDone();
+//            maintainLS.setIsDone(false);
+//            maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
+//            maintainLS.updateCheckDone();
             autoSpecimenChopping.updateCheckDone();
         }
 
