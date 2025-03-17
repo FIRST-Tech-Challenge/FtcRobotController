@@ -98,13 +98,13 @@ public class MoveLSAction extends Action {
             return lowestPower;
         }
 
-        if (targetTicks < mmToTicksLS(30)) {
-            lowestPower = 0.2;
-        }
-
-        if (targetTicks < mmToTicksLS(15)) {
-            lowestPower = 0.2; // 0.07
-        }
+//        if (targetTicks < mmToTicksLS(30)) {
+//            lowestPower = 0.2;
+//        }
+//
+//        if (targetTicks < mmToTicksLS(15)) {
+//            lowestPower = 0.2; // 0.07
+//        }
 
         if (targetTicks > mmToTicksLS(100)) {
             lowestPower = 0.16 + ((CalculateTickPer.ticksToMmLS(targetTicks) / 200)*0.01); // for each 200mm it should add 0.04 power more

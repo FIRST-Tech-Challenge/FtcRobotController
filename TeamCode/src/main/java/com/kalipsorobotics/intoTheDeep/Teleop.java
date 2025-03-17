@@ -89,8 +89,8 @@ public class Teleop extends LinearOpMode {
         AngleLockTeleOp angleLockTeleOp = null;
         SpecimenHangReady specimenHangReady = null;
         // Target should always be 0
-        MoveLSAction maintainLS = new MoveLSAction(outtake, outtake.getCurrentPosMm());
-        maintainLS.setName("maintainLS");
+//        MoveLSAction maintainLS = new MoveLSAction(outtake, outtake.getCurrentPosMm());
+//        maintainLS.setName("maintainLS");
         AutoRobotHangAction autoRobotHangAction = null;
         SampleIntakeReady sampleIntakeReady = null;
         SampleIntakeAction sampleIntakeAction = null;
@@ -114,7 +114,7 @@ public class Teleop extends LinearOpMode {
         KServoAutoAction outtakeClawOpenClose = null;
         KServoAutoAction intakeClawOpenClose = null;
 
-        boolean needMaintainLs = true;
+//        boolean needMaintainLs = true;
 
         double intakeLinkagePos = IntakeClaw.INTAKE_LINKAGE_IN_POS;
         double intakeBigSweepPos = 0.5;
@@ -295,7 +295,7 @@ public class Teleop extends LinearOpMode {
                     autoRobotHangAction = new AutoRobotHangAction(outtake);
                     autoRobotHangAction.setName("autoRobotHangAction");
 
-                    needMaintainLs = false;
+//                    needMaintainLs = false;
 
                     setLastOuttakeAction(autoRobotHangAction);
                 }
@@ -535,7 +535,7 @@ public class Teleop extends LinearOpMode {
                 if(moveLS != null) {
                     moveLS.finishWithoutSetPower();
                 }
-                needMaintainLs = true;
+//                needMaintainLs = true;
                 double targetLsMM = outtake.getCurrentPosMm() + (-90.0 * outtakeLSStickValue);
                 moveLS = new MoveLSAction(outtake, targetLsMM);
                 moveLS.setName("moveLS");
@@ -745,13 +745,13 @@ public class Teleop extends LinearOpMode {
                 lastMoveAction.updateCheckDone();
             }
 
-            if(needMaintainLs) {
-                if (lastOuttakeAction == null || lastOuttakeAction.getIsDone()) {
-                    maintainLS.setIsDone(false);
-                    maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
-                    maintainLS.updateCheckDone();
-                }
-            }
+//            if(needMaintainLs) {
+//                if (lastOuttakeAction == null || lastOuttakeAction.getIsDone()) {
+//                    maintainLS.setIsDone(false);
+//                    maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
+//                    maintainLS.updateCheckDone();
+//                }
+//            }
 
             //Log.d("outtakepivot", "outtake pivotPos  " + outtake.getOuttakePivotServo().getServo().getPosition());
 
