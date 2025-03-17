@@ -6,6 +6,7 @@ import android.util.Log;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
+import com.kalipsorobotics.math.CalculateTickPer;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

@@ -60,7 +60,7 @@ public class MoveLSAction extends Action {
 
     public MoveLSAction(Outtake outtake, double targetMM) {
         ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(5); // todo move out of constructor
-        double P_CONSTANT = 8 * (1 / CalculateTickPer.mmToTicksLS(400.0));
+        double P_CONSTANT = 8 * (1 / CalculateTickPer.mmToTicksLS(400.0));  // todo: moves a bit fast on small movements (moving from 400 -> 0 registers -40)
         this.outtake = outtake;
         linearSlide1 = outtake.linearSlide1;
         linearSlide2 = outtake.linearSlide2;
