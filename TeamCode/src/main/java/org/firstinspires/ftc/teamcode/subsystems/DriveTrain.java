@@ -2,17 +2,22 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class DriveTrain {
     HardwareMap hardwareMap;
    DcMotorEx frontLeft, backLeft, frontRight, backRight;
-    public DriveTrain(String frontLeftName,String backLeftName, String frontRightName, String backRightName)
+    public DriveTrain(HardwareMap hardwareMap, String frontLeftName,String backLeftName, String frontRightName, String backRightName)
     {
+        this.hardwareMap = hardwareMap;
         frontLeft = hardwareMap.get(DcMotorEx.class, frontLeftName);
         backLeft = hardwareMap.get(DcMotorEx.class, backLeftName);
         frontRight = hardwareMap.get(DcMotorEx.class, frontRightName);
         backRight = hardwareMap.get(DcMotorEx.class, backRightName);
+
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void drive(double forward, double strafe, double rotate)
