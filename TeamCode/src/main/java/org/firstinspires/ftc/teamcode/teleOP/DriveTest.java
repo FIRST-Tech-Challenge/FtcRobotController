@@ -20,7 +20,7 @@ public class DriveTest extends LinearOpMode {
         waitForStart();
         while(opModeIsActive())
         {
-            robot.cubedDrive(controller1.left_stick_y ,controller1.left_stick_x, controller1.right_stick_x);
+            robot.cubedDrive(-controller1.left_stick_y ,controller1.left_stick_x, controller1.right_stick_x);
             telemetry.addLine("On");
 
             controller1.update();
