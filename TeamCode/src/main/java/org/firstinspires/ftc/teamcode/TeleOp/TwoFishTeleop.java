@@ -437,12 +437,10 @@ public class TwoFishTeleop extends LinearOpMode {
                         if(gamepad2.left_bumper && gamepad2.right_bumper){
                             state = RobotState.HANG;
                             pitchTarget = delivery.pitchUpPosition;
-                            delivery.setWinchZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                             delivery.setWrist(delivery.wristDownPosition);
                         }
                         break;
                     case HANG:
-                        delivery.setWinchRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                         pitchTarget -= gamepad2.right_stick_y * 0.025;
                         delivery.setPitch(pitchTarget);
 //                        delivery.toSpecHeight();
@@ -454,25 +452,10 @@ public class TwoFishTeleop extends LinearOpMode {
                         if(currentGamepad2.b && !prevGamepad2.b){
                             delivery.clawOpen();
                         }
-                        delivery.setWinchPower(0);
-                        if(gamepad2.right_trigger > 0.1){
-                            delivery.setWinchPower(-gamepad2.right_trigger);
-                        }
-                        if(gamepad2.left_trigger > 0.1){
-                            delivery.setWinchPower(gamepad2.left_trigger);
-                        }
 
                         if(Math.abs(gamepad2.left_stick_y) > 0.01){
                             delivery.slideTarget = delivery.getSlideHeight() - gamepad2.left_stick_y * 200;
                             delivery.setSlidesTargetPosition((int)delivery.slideTarget);
-                        }
-
-                        if(gamepad2.dpad_up){
-                            //retract
-//                            delivery.setWinchRunMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                            delivery.setWinchPosition(delivery.WINCH_MIN);
-//                            delivery.setWinchPower(1);
-                            delivery.setWinchZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                         }
                 }
 
