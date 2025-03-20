@@ -35,7 +35,7 @@ public class TwoFishIntake {
     public final int DELTA_EXTENSION = 1000;
     public int minExtension = -999999999;
     public int maxExtension = DELTA_EXTENSION;
-    public double downPitch = 0.53;
+    public double downPitch = 0.51;
     public double upPitch = 0.43;
 
     private final int TICK_LOW_POWER_DISTANCE = 25;
@@ -44,8 +44,8 @@ public class TwoFishIntake {
     private int targetLength;
     private double currentPosition;
 
-    public final double SWEEPER_OUT = 0.1;
-    public final double SWEEPER_IN = 0.2;
+    public final double SWEEPER_OUT = 0.5;
+    public final double SWEEPER_IN = 0.9;
     public boolean sweeperOut = false;
 
     public final double TICK_STOP_THRESHOLD = 5;

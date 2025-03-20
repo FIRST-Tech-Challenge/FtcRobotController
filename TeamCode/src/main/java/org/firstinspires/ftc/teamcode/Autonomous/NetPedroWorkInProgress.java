@@ -62,13 +62,13 @@ public class NetPedroWorkInProgress extends OpMode {
     private final Point scorePoint = new Point(14, 129);
 
     /** Lowest (First) Sample from the Spike Mark */
-    private final Point pickup1Point = new Point(18.5, 124);
+    private final Point pickup1Point = new Point(16, 126);
 
     /** Middle (Second) Sample from the Spike Mark */
-    private final Point pickup2Point = new Point(18.5, 130);
+    private final Point pickup2Point = new Point(16, 129);
 
     /** Highest (Third) Sample from the Spike Mark */
-    private final Point pickup3Point = new Point(35, 122.5);
+    private final Point pickup3Point = new Point(32, 122.5);
 
     /** Park Pose for our robot, after we do all of the scoring. */
     private final Point parkPoint = new Point(60, 96);

@@ -84,7 +84,7 @@ public class ObsPedro extends OpMode {
     private final Point toCollectSample2Point3 = new Point(55, 20);
     private final Point toCollectSample2Point4 = new Point(30, 20);
     private final Point toCollectSample2Point5 = new Point(35, 28);
-    private final Point endCollectSample2Point = new Point(11, 33);
+    private final Point endCollectSample2Point = new Point(10.5, 33);
 
 
     //Scores latter specimens
@@ -205,7 +205,7 @@ public class ObsPedro extends OpMode {
                 break;
             case 3:
 
-                if((follower.getPose().getX() < 70 && follower.getPose().getX() > 50) || follower.getPose().getX() < 10) {
+                if((follower.getPose().getX() < 70 && follower.getPose().getX() > 50) || follower.getPose().getX() < 15) {
                     follower.setMaxPower(0.5);
                 } else{
                     follower.setMaxPower(1);
@@ -253,7 +253,7 @@ public class ObsPedro extends OpMode {
                 break;
             case 5:
 
-                if(follower.getPose().getX() < 10) {
+                if(follower.getPose().getX() < 15) {
                     follower.setMaxPower(0.5);
                 } else{
                     follower.setMaxPower(1);
@@ -298,7 +298,7 @@ public class ObsPedro extends OpMode {
                 break;
             case 7:
 
-                if(follower.getPose().getX() < 10) {
+                if(follower.getPose().getX() < 15) {
                     follower.setMaxPower(0.5);
                 } else{
                     follower.setMaxPower(1);

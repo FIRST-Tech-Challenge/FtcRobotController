@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -14,12 +14,12 @@ import java.io.Serializable;
 @Disabled
 public class TwoFishDelivery {
     private static final double TICK_LOW_POWER_DISTANCE = 200;
-    private DcMotor slide = null;
+    private DcMotor slide0 = null;
+    private DcMotor slide1 = null;
     private Servo claw = null;
     private Servo pitch1 = null;
     private Servo pitch2 = null;
     private Servo wrist = null;
-    private DcMotor winch = null;
     private VoltageSensor voltageSensor = null;
         public TouchSensor limitSwitch = null;
 
@@ -39,7 +39,7 @@ public class TwoFishDelivery {
 
     public double slideTarget;
 
-    public double clawOpenPosition = 0.2583;
+    public double clawOpenPosition = 0.345;
     public double clawClosePosition = 0.6;
     public double pitchIntakePosition = 1;
     public double pitchUpPosition = 0.5917;
@@ -62,10 +62,6 @@ public class TwoFishDelivery {
     public int specHeight = SPEC_DELTA;
     public int sampleHeight = SAMPLE_DELTA;
 
-    public final int WINCH_MIN = 0;
-    public final int WINCH_MAX = 1000;
-
-    public int winchTarget = 0;
     //boolean:
     public boolean clawClosed = false;
     public boolean isPitching = false;
@@ -109,12 +105,12 @@ public class TwoFishDelivery {
             voltageSensor = opMode.hardwareMap.get(VoltageSensor.class, "Control Hub");
             operatingVoltage = voltageSensor.getVoltage();
 
-            slide  = opMode.hardwareMap.get(DcMotor.class, "deliverySlide");
+            slide0 = opMode.hardwareMap.get(DcMotor.class, "deliverySlide0");
+            slide1 = opMode.hardwareMap.get(DcMotor.class, "deliverySlide1");
             pitch1 = opMode.hardwareMap.get(Servo.class, "deliveryPitchLeft");
             pitch2 = opMode.hardwareMap.get(Servo.class, "deliveryPitchRight");
             claw = opMode.hardwareMap.get(Servo.class, "claw");
             wrist = opMode.hardwareMap.get(Servo.class, "wrist");
-            winch = opMode.hardwareMap.get(DcMotor.class, "winch");
           limitSwitch = opMode.hardwareMap.get(TouchSensor.class, "deliveryTouch");
 
             claw.scaleRange(0.0, 1);
@@ -122,16 +118,16 @@ public class TwoFishDelivery {
             pitch2.scaleRange(0.0, 1);
             pitch2.setDirection(Servo.Direction.REVERSE);
 
+            slide1.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-            winch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            winch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            slide0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            slide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            slide.setTargetPosition(0);
-            winch.setTargetPosition(0);
-            winch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            slide0.setTargetPosition(0);
+            slide1.setTargetPosition(0);
+            slide0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            slide1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
 //            FileOutputStream fileOut = new FileOutputStream(file);
@@ -172,24 +168,31 @@ public class TwoFishDelivery {
     public void setSlidesTargetPosition(int clicks){
         slideTarget = clicks;
         slideTarget = Math.min(maxHeight, Math.max(minHeight, slideTarget));
-        slide.setTargetPosition((int)slideTarget);
+        slide0.setTargetPosition((int)slideTarget);
+        slide1.setTargetPosition((int)slideTarget);
     }
 
     public void setSlidesPower(double power){
-        slide.setPower(power);
+        slide0.setPower(power);
+        slide1.setPower(power);
     }
 
     public void manualMove(double power){
-        slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        slide.setPower(power);
+        slide0.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slide0.setPower(power);
+        slide1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slide1.setPower(power);
     }
     public void setSlidesRunToPosition(){
-        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slide0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slide1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void resetEncoder(){
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slide0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide0.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public void setPitch(double pitchPosition){
         clawClearTimestamp = time.seconds();
@@ -232,19 +235,22 @@ public class TwoFishDelivery {
 
 
 
-    public int getMotorPosition(){ return slide.getCurrentPosition(); }
+    public int getMotorPosition(){ return slide0.getCurrentPosition(); }
 
     public double getMotorPositionInches(){ return getMotorPosition() / CLICKS_PER_INCH; }
 
 
     public DcMotor.RunMode getRunMode(){
-        return slide.getMode();
+        return slide0.getMode();
     }
-    public void setRunMode(DcMotor.RunMode mode){ slide.setMode(mode); }
+    public void setRunMode(DcMotor.RunMode mode){
+        slide0.setMode(mode);
+        slide1.setMode(mode);
+    }
 
 
     public void PControlPower(double powerMultiplier){
-        double error = slideTarget - slide.getCurrentPosition();
+        double error = slideTarget - slide0.getCurrentPosition();
         double power = (Math.abs(error) / TICK_LOW_POWER_DISTANCE);
 
         power = Math.max(0.1, Math.min(1, power));
@@ -252,19 +258,9 @@ public class TwoFishDelivery {
         setSlidesPower(power * powerMultiplier);
     }
     public int getSlideHeight(){
-        return slide.getCurrentPosition();
+        return slide0.getCurrentPosition();
     }
 
-    public void setWinchPosition(int pos){
-        int position = Math.max(WINCH_MIN, Math.min(WINCH_MAX, pos));
-        winchTarget = position;
-        winch.setTargetPosition(winchTarget);
-    }
-    public void setWinchZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior){winch.setZeroPowerBehavior(zeroPowerBehavior);}
-    public void setWinchRunMode(DcMotor.RunMode mode){winch.setMode(mode);}
-    public int getWinchPosition(){return winch.getCurrentPosition();}
-    public void setWinchPower(double power){winch.setPower(power);}
-    public int getWinchTarget(){return winchTarget;}
     public void toMinHeight(){setSlidesTargetPosition(minHeight);}
     public void toSpecHeight(){setSlidesTargetPosition(specHeight);}
     public void toTransferHeight(){setSlidesTargetPosition(minHeight + 60);}
@@ -302,13 +298,14 @@ public class TwoFishDelivery {
 
     public void stopSlidesIfStuck(){
         if(voltageSensor.getVoltage() < operatingVoltage - 1){
-            slide.setPower(0);
+            slide0.setPower(0);
+            slide1.setPower(0);
         }
     }
 
     public void limitCheck() {
         if (limitSwitch.isPressed()) {
-            minHeight = slide.getCurrentPosition();
+            minHeight = slide0.getCurrentPosition();
             specHeight = minHeight+SPEC_DELTA;
             sampleHeight = minHeight+SAMPLE_DELTA;
         }
@@ -324,7 +321,8 @@ public class TwoFishDelivery {
 
     public void addSlideTelemetry(){
         opMode.telemetry.addData("Slide Target: ", slideTarget);
-        opMode.telemetry.addData("Slide Current: ", slide.getCurrentPosition());
+        opMode.telemetry.addData("Slide0 Current: ", slide0.getCurrentPosition());
+        opMode.telemetry.addData("Slide1 Current: ", slide1.getCurrentPosition());
     }
 
 }

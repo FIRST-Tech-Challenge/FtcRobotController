@@ -265,7 +265,7 @@ public class TwoFishTeleop extends LinearOpMode {
                         if(currentGamepad2.a && !prevGamepad2.a){
                            state = RobotState.TRANSFER;
                             intake.pitchUp();
-                            intake.setTransferPower(1.0f);
+                            intake.setTransferPower(0.5f);
                            intake.toMinExtention();
                             delivery.setWrist(delivery.wristUpPosition);
                             delivery.toSpecHeight();
