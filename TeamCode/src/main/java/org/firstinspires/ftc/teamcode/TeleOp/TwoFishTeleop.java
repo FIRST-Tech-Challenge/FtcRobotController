@@ -218,7 +218,7 @@ public class TwoFishTeleop extends LinearOpMode {
                         intake.setSlidesTargetPosition(intake.getExtensionTicks() - (int)(gamepad2.left_stick_y * 200));
                         //intake pitch
                         intakePitchTarget = (float) Math.min(intake.downPitch, Math.max(intake.upPitch, intakePitchTarget)); //down pitch is larger limit
-                        double joystickIncrement = (gamepad2.right_stick_y * 0.015f);
+                        double joystickIncrement = (gamepad2.right_stick_y * 0.03f);
                         if(intakePitchTarget > intake.downPitch - 0.25 && joystickIncrement > 0.0){ //down is positive
                             joystickIncrement /= 4;
                         }
