@@ -14,25 +14,29 @@ public class FieldOrientedDrive {
     IMU imu;
     DriveTrain driveTrain;
     DriveAction driveAction;
-    public FieldOrientedDrive(IMU imu, DriveTrain driveTrain, OpModeUtilities opModeUtilities) {
-        imu = imu;
-        driveTrain = driveTrain;
+    public FieldOrientedDrive(IMU imu1, DriveTrain driveTrain1, OpModeUtilities opModeUtilities1) {
+        imu = imu1;
+        driveTrain = driveTrain1;
         driveAction = new DriveAction(driveTrain);
-        opModeUtilities = opModeUtilities;
+        opModeUtilities = opModeUtilities1;
     }
 
     public IMU getImu() {
         return imu;
     }
     private double angleCalculator(double x, double y) {
+        //calculating degrees in radians
         double r = Math.atan2(y, x);
+        //converting radians to degrees
         double degrees = r * 180 / PI;
         return degrees;
     }
     private double calculateRobotDir(Gamepad gamepad){
+        //getting imu heading
         double heading = imu.getRobotYawPitchRollAngles().getYaw();
         double gamepadx = gamepad.left_stick_x;
         double gamepady = gamepad.left_stick_y;
+        //calculating degrees
         double gamepadHeading = angleCalculator(gamepadx, gamepady);
         double robotIntendedDirection = gamepadHeading-heading;
         return robotIntendedDirection;
@@ -41,6 +45,7 @@ public class FieldOrientedDrive {
         Point p = new Point(gamepad.left_stick_x, gamepad.left_stick_y);
         double distanceSqr = (p.x*p.x)+(p.y*p.y);
         double distance = Math.sqrt(distanceSqr);
+        //calculates distance of point to (0,0)
         return distance;
     }
     private void initializeIMU(){
@@ -58,7 +63,7 @@ public class FieldOrientedDrive {
     public Point reverseCalculate(double angle, double distance) {
 
         double angleInRadians = Math.toRadians(angle);
-
+        //calculates point from degrees
         double x = distance * Math.sin(angleInRadians);
         double y = distance * Math.cos(angleInRadians);
 
