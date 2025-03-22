@@ -108,8 +108,8 @@ public class DriveAction {
         Log.d("drive", "bRight power " + driveTrainPower[3]);
 
     }
-    public void moveWithXYValues(double x, double y) {
-        double[] driveTrainPower = calculatePower(x, y);
+    public void moveWithXYValues(double x, double y, Gamepad gamepad) {
+        double[] driveTrainPower = calculatePower(x, y, gamepad);
 
         fLeft.setPower(driveTrainPower[0]);
         fRight.setPower(driveTrainPower[1]);
