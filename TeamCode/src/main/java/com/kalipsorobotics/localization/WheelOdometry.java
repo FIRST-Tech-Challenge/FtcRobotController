@@ -277,6 +277,9 @@ public class WheelOdometry {
         this.wheelHeadingWeight = wheelHeadingWeight;
     }
 
+    /**
+     * mm per sec
+     * */
     public Velocity getCurrentVelocity() {
         return currentVelocity;
     }
