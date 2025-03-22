@@ -23,12 +23,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class MoveLSAction extends Action {
 
     Outtake outtake;
+    DcMotor linearSlide1, linearSlide2;
 
     private static double globalLinearSlideMaintainTicks = 0;
-    DcMotor linearSlide1, linearSlide2;
     public static double ERROR_TOLERANCE_TICKS;
-    private final PidNav pidOuttakeLS;
     private double targetTicks;
+
+    private final PidNav pidOuttakeLS;
+    private double kG;  // gravity term to maintain LS position
 
     public double getCurrentTicks() {
         return currentTicks;
@@ -58,7 +60,7 @@ public class MoveLSAction extends Action {
 
     public MoveLSAction(Outtake outtake, double targetMM) {
         ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(5); // todo move out of constructor
-        double P_CONSTANT = 8 * (1 / CalculateTickPer.mmToTicksLS(400.0));
+        double P_CONSTANT = 8 * (1 / CalculateTickPer.mmToTicksLS(400.0));  // todo: moves a bit fast on small movements (moving from 400 -> 0 registers -40)
         this.outtake = outtake;
         linearSlide1 = outtake.linearSlide1;
         linearSlide2 = outtake.linearSlide2;
@@ -69,15 +71,16 @@ public class MoveLSAction extends Action {
         }
         this.dependentActions.add(new DoneStateAction());
         this.timeoutTimer = new ElapsedTime();
+
+        this.kG = Math.min(0.15, Math.max(0.05, 0.05 + (this.targetTicks - 300) * 0.1 / 2700)); // 0.05 at 300, 0.15 at 3000
     }
 
     public MoveLSAction(Outtake outtake, double targetMM, double p) {
         ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(5);
-        double P_CONSTANT = p;
         this.outtake = outtake;
         linearSlide1 = outtake.linearSlide1;
         linearSlide2 = outtake.linearSlide2;
-        this.pidOuttakeLS = new PidNav(P_CONSTANT, 0, 0);
+        this.pidOuttakeLS = new PidNav(p, 0, 0);
         this.targetTicks = CalculateTickPer.mmToTicksLS(targetMM);
         if (targetTicks >= MAX_RANGE_LS_TICKS) {
             Log.e("Outtake_LS", "target over range, target ticks: " + targetTicks + ", target mm: " + targetMM + ", max: " + MAX_RANGE_LS_TICKS);
@@ -146,13 +149,13 @@ public class MoveLSAction extends Action {
         if (Math.abs(power) < lowestPower) {
             power = power * (lowestPower / Math.abs(power));
         }
-        return  power;
+        return power;
         //return 1;
     }
 
     public void finish() {
         isDone = true;
-        setLSPower(0);
+        setLSPower(targetTicks == 0 ? 0 : kG); // maintain
     }
 
     public void finishWithoutSetPower() {
@@ -174,11 +177,7 @@ public class MoveLSAction extends Action {
         //Log.d("Outtake_LS setGlobalLinearSlideMaintainTicks", "setGlobal " + pos);
         if (pos < MIN_RANGE_LS_TICKS) {
             globalLinearSlideMaintainTicks = MIN_RANGE_LS_TICKS;
-        } else if (pos > MAX_RANGE_LS_TICKS) {
-            globalLinearSlideMaintainTicks = MAX_RANGE_LS_TICKS;
-        } else {
-            globalLinearSlideMaintainTicks = pos;
-        }
+        } else globalLinearSlideMaintainTicks = Math.min(pos, MAX_RANGE_LS_TICKS);
     }
 
     public static double getGlobalLinearSlideMaintainTicks() {
