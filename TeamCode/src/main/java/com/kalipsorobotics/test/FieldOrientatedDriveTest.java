@@ -1,5 +1,7 @@
 package com.kalipsorobotics.test;
 
+import android.util.Log;
+
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.actions.drivetrain.FieldOrientedDrive;
 import com.kalipsorobotics.modules.IMUModule;
@@ -14,6 +16,7 @@ public class FieldOrientatedDriveTest extends LinearOpMode {
         IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
 
         FieldOrientedDrive fieldOrientedDrive = new FieldOrientedDrive(imuModule.imu, driveTrain, opModeUtilities);
+        Log.d("Field Oreintated Drive", "initialized");
         waitForStart();
         while (opModeIsActive()) {
             fieldOrientedDrive.drive(gamepad1);
