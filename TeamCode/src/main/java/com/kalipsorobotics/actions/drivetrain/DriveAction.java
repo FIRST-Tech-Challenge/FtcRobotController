@@ -30,10 +30,10 @@ public class DriveAction {
         this.backEncoder = driveTrain.getBackEncoder();
     }
 
-    public double[] calculatePower(double gamepadx, double gamepady) {
+    public double[] calculatePower(double gamepadx, double gamepady, Gamepad gamepad) {
         //negative because gamepad y is flip
         double forward = -gamepady * -gamepady * -gamepady; //cube so slower is slower and faster is faster
-        double turn = gamepadx * gamepadx * gamepadx;
+        double turn = gamepad.right_stick_x * gamepad.right_stick_x * gamepad.right_stick_x;
         double strafe = gamepadx * gamepadx * gamepadx;
 
         Log.d("drive", "forward " + forward);
