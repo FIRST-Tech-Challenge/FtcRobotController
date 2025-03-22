@@ -62,6 +62,6 @@ public class FieldOrientedDrive {
     public void drive(Gamepad gamepad) {
         double robotIntendedPos = calculateRobotDir(gamepad);
         Point fixedGamepadValue = reverseCalculate(robotIntendedPos, getPointDistanceFromOrigin(gamepad));
-        driveAction.move(gamepad);
+        driveAction.moveWithXYValues(fixedGamepadValue.x, fixedGamepadValue.y);
     }
 }
