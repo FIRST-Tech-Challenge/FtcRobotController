@@ -1,21 +1,12 @@
-package com.kalipsorobotics.modules;
+package com.kalipsorobotics.actions.drivetrain;
 
 import static java.lang.Math.PI;
 
-import com.kalipsorobotics.actions.drivetrain.DriveAction;
-import com.kalipsorobotics.localization.SparkfunOdometry;
-import com.kalipsorobotics.math.Position;
+import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.utilities.OpModeUtilities;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.opencv.core.Point;
 
 public class FieldOrientedDrive {

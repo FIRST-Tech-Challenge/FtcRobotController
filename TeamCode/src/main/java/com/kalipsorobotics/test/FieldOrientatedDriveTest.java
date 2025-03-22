@@ -1,12 +1,10 @@
 package com.kalipsorobotics.test;
 
 import com.kalipsorobotics.modules.DriveTrain;
-import com.kalipsorobotics.modules.FieldOrientedDrive;
+import com.kalipsorobotics.actions.drivetrain.FieldOrientedDrive;
 import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.utilities.OpModeUtilities;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class FieldOrientatedDriveTest extends LinearOpMode {
     @Override
