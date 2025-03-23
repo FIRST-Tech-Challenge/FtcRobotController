@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.opencv.core.Point;
-
+//TODO make imu reset at start
 public class FieldOrientedDrive {
     OpModeUtilities opModeUtilities;
     IMU imu;
