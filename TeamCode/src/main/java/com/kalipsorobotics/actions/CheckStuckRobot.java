@@ -7,7 +7,6 @@ import com.kalipsorobotics.utilities.SharedData;
 
 public class CheckStuckRobot {
     private double prevXVelocity = 0;
-
     /**
      * mm per second
      * */
@@ -18,7 +17,6 @@ public class CheckStuckRobot {
     private double prevThetaVelocity = 0;
 
     final private double THETA_DELTA_MIN_THRESHOLD = 0.1; // to be calc
-
 
     private final WheelOdometry wheelOdometry;
     private final DriveTrain driveTrain;
@@ -69,9 +67,10 @@ public class CheckStuckRobot {
         double currentTheta = currentPos.getTheta();
 
 
+
     }
 
-    //
+
     private void unstuckRobot(DriveTrain driveTrain){
         PurePursuitAction test = new PurePursuitAction(driveTrain, wheelOdometry);
 
