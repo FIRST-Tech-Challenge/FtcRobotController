@@ -30,7 +30,7 @@ public class DriveAction {
         this.backEncoder = driveTrain.getBackEncoder();
     }
 
-    public double[] calculatePower(double gamepadx, double gamepady, Gamepad gamepad) {
+    public double[] calculatePower1(double gamepadx, double gamepady, Gamepad gamepad) {
         //negative because gamepad y is flip
         double forward = -gamepady * -gamepady * -gamepady; //cube so slower is slower and faster is faster
         double turn = gamepad.right_stick_x * gamepad.right_stick_x * gamepad.right_stick_x;
@@ -109,7 +109,7 @@ public class DriveAction {
 
     }
     public void moveWithXYValues(double x, double y, Gamepad gamepad) {
-        double[] driveTrainPower = calculatePower(x, y, gamepad);
+        double[] driveTrainPower = calculatePower1(x, y, gamepad);
 
         fLeft.setPower(driveTrainPower[0]);
         fRight.setPower(driveTrainPower[1]);
