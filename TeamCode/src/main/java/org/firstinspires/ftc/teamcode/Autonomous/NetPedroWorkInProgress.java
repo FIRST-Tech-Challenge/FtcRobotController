@@ -10,8 +10,10 @@ import com.pedropathing.util.Constants;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.TwoFishDelivery;
 import org.firstinspires.ftc.teamcode.TwoFishIntake;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
@@ -28,6 +30,7 @@ public class NetPedroWorkInProgress extends OpMode {
 
     TwoFishDelivery delivery = null;
     TwoFishIntake intake = null;
+    DistanceSensor rearDistanceSens = null;
 
     /** This is the variable where we store the state of our auto.
      * It is used by the pathUpdate method. */
@@ -43,6 +46,9 @@ public class NetPedroWorkInProgress extends OpMode {
     boolean intakeIsPrepped = false;
     boolean transferIsPrepped = false;
     boolean deliveryIsPrepped = false;
+
+    boolean distanceSensorDisabled = false;
+    double distanceSensorX = 0.0;
 
     boolean isSamplePosessed = false;
 
@@ -452,6 +458,12 @@ public class NetPedroWorkInProgress extends OpMode {
         }
     }
 
+    private void relocalizeWithDistanceSensor(){
+        if(!distanceSensorDisabled && distanceSensorX < 0.5){
+            follower.setPose(new Pose(distanceSensorX, follower.getPose().getY(), follower.getPose().getHeading()));
+        }
+    }
+
 
     /** These change the states of the paths and actions
      * It will also reset the timers of the individual switches **/
@@ -464,11 +476,22 @@ public class NetPedroWorkInProgress extends OpMode {
     @Override
     public void loop() {
 
+        if(!distanceSensorDisabled) {
+            distanceSensorX = rearDistanceSens.getDistance(DistanceUnit.INCH);
+        }
+        if(distanceSensorX > 60){
+            distanceSensorDisabled = true;
+            rearDistanceSens = null;
+        }
+        relocalizeWithDistanceSensor();
+
         // These loop the movements of the robot
         follower.update();
         autonomousPathUpdate();
 
         // Feedback to Driver Hub
+        telemetry.addData("Rear Distance (inches)", distanceSensorX);
+        telemetry.addLine();
         telemetry.addData("Is Busy?", follower.isBusy());
         telemetry.addData("Is Delivering?", isDelivering);
         telemetry.addData("Is Intaking?", isIntaking);

@@ -47,20 +47,18 @@ public class ExampleRobotCentricTeleop extends OpMode {
     }
 
     /** This method is called once at the start of the OpMode. **/
-    @Override
-    public void start() {
-        follower.startTeleopDrive();
-    }
+//    @Override
+//    public void start() {
+//        follower.startTeleopDrive();
+//    }
 
     /** This is the main loop of the opmode and runs continuously after play **/
     @Override
     public void loop() {
         distance = rearDistanceSens.getDistance(DistanceUnit.INCH);
-//        if(((int)relocalizeTimer.milliseconds()) % 100 == 0) {
-//            if(Math.abs(follower.getPose().getX() - distance) < 4) {
-//                relocalizeWithDistanceSensor();
-//            }
-//        }
+        if(Math.abs(follower.getPose().getX() - distance) < 3) {
+            relocalizeWithDistanceSensor();
+        }
 
         /* Update Pedro to move the robot based on:
         - Forward/Backward Movement: -gamepad1.left_stick_y
@@ -69,7 +67,7 @@ public class ExampleRobotCentricTeleop extends OpMode {
         - Robot-Centric Mode: true
         */
 
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
+//        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
         follower.update();
 
         /* Telemetry Outputs of our Follower */
