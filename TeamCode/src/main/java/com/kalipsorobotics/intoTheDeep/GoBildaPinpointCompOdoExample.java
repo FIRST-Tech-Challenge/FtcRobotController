@@ -22,6 +22,12 @@
 
 package com.kalipsorobotics.intoTheDeep;
 
+import com.kalipsorobotics.localization.WheelOdometry;
+import com.kalipsorobotics.math.CalculateTickPer;
+import com.kalipsorobotics.modules.DriveTrain;
+import com.kalipsorobotics.modules.IMUModule;
+import com.kalipsorobotics.utilities.OpModeUtilities;
+import com.kalipsorobotics.utilities.SharedData;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.kalipsorobotics.modules.GoBildaPinpointDriver;
@@ -30,6 +36,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import android.util.Log;
 
 /*
 This opmode shows how to use the goBILDA® Pinpoint Odometry Computer.
@@ -67,8 +77,22 @@ public class GoBildaPinpointCompOdoExample extends LinearOpMode {
 
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
+
+        OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
+        DriveTrain.setInstanceNull();
+        DriveTrain driveTrain = DriveTrain.getInstance(opModeUtilities);
+
+        IMUModule.setInstanceNull();
+        IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
+        sleep(1000);
+
+        WheelOdometry.setInstanceNull();
+        WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
+        SharedData.resetOdometryPosition();
+
         odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
+
 
         /*
         Set the odometry pod positions relative to the point that the odometry computer tracks around.
@@ -78,7 +102,9 @@ public class GoBildaPinpointCompOdoExample extends LinearOpMode {
         the tracking point the Y (strafe) odometry pod is. forward of center is a positive number,
         backwards is a negative number.
          */
-        odo.setOffsets(-84.0, -168.0); //these are tuned for 3110-0002-0001 Product Insight #1
+//        odo.setOffsets(-84.0, -168.0);  // these are tuned for 3110-0002-0001 Product Insight #1
+//        odo.setOffsets(-148.5, -70);
+        odo.setOffsets(0, 0);
 
         /*
         Set the kind of pods used by your robot. If you're using goBILDA odometry pods, select either
@@ -86,8 +112,11 @@ public class GoBildaPinpointCompOdoExample extends LinearOpMode {
         If you're using another kind of odometry pod, uncomment setEncoderResolution and input the
         number of ticks per mm of your odometry pod.
          */
-        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
-        //odo.setEncoderResolution(13.26291192);
+//        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
+        odo.setEncoderResolution(CalculateTickPer.mmToTicksDriveTrain(1));
+//        odo.setEncoderResolution(13.26291192);
+        System.out.println(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
+        System.out.println(CalculateTickPer.mmToTicksDriveTrain(1));
 
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
@@ -110,8 +139,15 @@ public class GoBildaPinpointCompOdoExample extends LinearOpMode {
         telemetry.addData("Device Scalar", odo.getYawScalar());
         telemetry.update();
 
+
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
         waitForStart();
+        OpModeUtilities.runOdometryExecutorService(executorService, wheelOdometry);
         resetRuntime();
+
+        odo.update();
+        double tickOffsetX = odo.getEncoderX();
+        double tickOffsetY = odo.getEncoderY();
 
         while (opModeIsActive()) {
 
@@ -132,6 +168,15 @@ public class GoBildaPinpointCompOdoExample extends LinearOpMode {
                 odo.recalibrateIMU(); //recalibrates the IMU without resetting position
             }
 
+            if (gamepad1.dpad_up) {
+                odo.setOffsets(odo.getXOffset() + 10, odo.getYOffset() + 10);
+            }
+
+            if (gamepad1.dpad_down) {
+                odo.setOffsets(odo.getXOffset() - 10, odo.getYOffset() - 10);
+            }
+
+
             /*
             This code prints the loop frequency of the REV Control Hub. This frequency is effected
             by I²C reads/writes. So it's good to keep an eye on. This code calculates the amount
@@ -145,25 +190,42 @@ public class GoBildaPinpointCompOdoExample extends LinearOpMode {
 
             double rawWheelX = odo.getEncoderX();
             double rawWheelY = odo.getEncoderY();
+            double adjWheelX = CalculateTickPer.ticksToMmDriveTrain(rawWheelX - tickOffsetX);  // offsets from init values
+            double adjWheelY = CalculateTickPer.ticksToMmDriveTrain(rawWheelY - tickOffsetY);
 
-            telemetry.addData("RawWheelX", rawWheelX);
-            telemetry.addData("RawWheelY", rawWheelY);
+            Log.d("odo", "AdjWheelX: " + adjWheelX);
+            Log.d("odo", "AdjWheelY: " + adjWheelY);
 
             Pose2D pos = odo.getPosition();
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
-            telemetry.addData("Position", data);
-
+            Log.d("odo", "Position: " + data);
 
             Pose2D vel = odo.getVelocity();
             String velocity = String.format(Locale.US,"{XVel: %.3f, YVel: %.3f, HVel: %.3f}", vel.getX(DistanceUnit.MM), vel.getY(DistanceUnit.MM), vel.getHeading(AngleUnit.DEGREES));
+            Log.d("odo", "Velocity: " + velocity);
+
+            Log.d("odo", "Status: " + odo.getDeviceStatus());
+
+            Log.d("odo", "Pinpoint Frequency: " + odo.getFrequency()); //prints/gets the current refresh rate of the Pinpoint
+
+            Log.d("odo", "REV Hub Frequency: " + frequency); //prints the control system refresh rate
+
+            telemetry.addData("Raw: ", String.format("(%f, %f)", rawWheelX, rawWheelY));
+            telemetry.addData("AdjWheelX", adjWheelX);
+            telemetry.addData("AdjWheelY", adjWheelY);
+            telemetry.addData("Position", data);
             telemetry.addData("Velocity", velocity);
-
             telemetry.addData("Status", odo.getDeviceStatus());
-
             telemetry.addData("Pinpoint Frequency", odo.getFrequency()); //prints/gets the current refresh rate of the Pinpoint
-
             telemetry.addData("REV Hub Frequency: ", frequency); //prints the control system refresh rate
+            telemetry.addLine();
+            telemetry.addLine("Wheel Odometry");
+            telemetry.addData("X", SharedData.getOdometryPosition().getX());
+            telemetry.addData("Y",SharedData.getOdometryPosition().getY());
+            telemetry.addData("Theta",SharedData.getOdometryPosition().getTheta());
             telemetry.update();
 
         }
-    }}
+        OpModeUtilities.shutdownExecutorService(executorService);
+    }
+}
