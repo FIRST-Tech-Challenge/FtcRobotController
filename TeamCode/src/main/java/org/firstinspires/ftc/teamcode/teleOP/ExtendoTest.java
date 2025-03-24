@@ -14,7 +14,7 @@ public class ExtendoTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         controller1 = new GamepadEvents(gamepad1);
-        extendo = new HorizontalExtendo("leftHExtendo", "rightHExtendo", true);
+        extendo = new HorizontalExtendo(hardwareMap, "leftExtendo", "rightExtendo");
         waitForStart();
         while (opModeIsActive())
         {

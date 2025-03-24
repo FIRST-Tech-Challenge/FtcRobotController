@@ -2,38 +2,38 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
 public class HorizontalExtendo {
     DcMotorEx leftMotor, rightMotor;
-    HardwareMap hardwareMap;
+
     private final double multipleConstant = 1000;
     private final double motorSpeed = 0.7;
 
 
-    public HorizontalExtendo(String leftMotorName, String rightMotorName, boolean placeHolder)
+    public HorizontalExtendo(HardwareMap hardwareMap, String leftMotorName, String rightMotorName)
     {
         leftMotor = hardwareMap.get(DcMotorEx.class, leftMotorName);
         rightMotor = hardwareMap.get(DcMotorEx.class, rightMotorName);
-
-
+        rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public HorizontalExtendo(String leftMotorName, String rightMotorName)
-    {
-        leftMotor = hardwareMap.get(DcMotorEx.class, leftMotorName);
-        rightMotor = hardwareMap.get(DcMotorEx.class, rightMotorName);
-
-        leftMotor.setTargetPosition(leftMotor.getCurrentPosition());
-        rightMotor.setTargetPosition(leftMotor.getCurrentPosition());
-
-        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        leftMotor.setPower(motorSpeed);
-        rightMotor.setPower(motorSpeed);
-    }
+//    public HorizontalExtendo(String leftMotorName, String rightMotorName)
+//    {
+//        leftMotor = hardwareMap.get(DcMotorEx.class, leftMotorName);
+//        rightMotor = hardwareMap.get(DcMotorEx.class, rightMotorName);
+//
+//        leftMotor.setTargetPosition(leftMotor.getCurrentPosition());
+//        rightMotor.setTargetPosition(leftMotor.getCurrentPosition());
+//
+//        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//        leftMotor.setPower(motorSpeed);
+//        rightMotor.setPower(motorSpeed);
+//    }
 
     public void move(double val)
     {
