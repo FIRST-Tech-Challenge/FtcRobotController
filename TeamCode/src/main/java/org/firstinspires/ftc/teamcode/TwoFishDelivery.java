@@ -54,11 +54,11 @@ public class TwoFishDelivery {
     final private double DIP_FROM_SCORING_SPEC = 0.5;
 
     //Slide Heights
-    final private int SPEC_DELTA = 510;
-    final private int SAMPLE_DELTA = 2300;
+    final private int SPEC_DELTA = 220;
+    final private int SAMPLE_DELTA = 1000;
 
     public int minHeight = -999999999;
-    public int maxHeight = 2300;
+    public int maxHeight = 1000;
     public int specHeight = SPEC_DELTA;
     public int sampleHeight = SAMPLE_DELTA;
 
