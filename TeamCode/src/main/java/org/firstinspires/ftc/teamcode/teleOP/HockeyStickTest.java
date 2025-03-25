@@ -17,9 +17,9 @@ public class HockeyStickTest extends LinearOpMode {
         waitForStart();
         while (opModeIsActive())
         {
-            double pow = controller1.left_trigger.getTriggerValue() -controller1.right_trigger.getTriggerValue();
+            double pow = controller1.left_trigger.getTriggerValue() - controller1.right_trigger.getTriggerValue();
             hockeyStick.power(pow);
-            telemetry.addData("Stick position: ", pow);
+            telemetry.addData("Stick position: ", hockeyStick.getPostion());
             controller1.update();
         }
     }
