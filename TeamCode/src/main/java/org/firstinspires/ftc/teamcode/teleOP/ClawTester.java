@@ -22,7 +22,7 @@ public class ClawTester extends LinearOpMode {
             {
                 claw.toggle();
             }
-            telemetry.addData("Claw Pos", claw.getPos());
+            telemetry.addData("Expected Claw Pos", claw.getPos());
             telemetry.update();
             controller.update();
         }
