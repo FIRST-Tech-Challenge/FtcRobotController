@@ -463,7 +463,7 @@ public class ObsPedro extends OpMode {
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
 
-        Constants.setConstants(FConstants.class, LConstants.class);
+        Constants.setConstants(FConstants.class, LConstants.class); //Applies tuned values to follower and localizer VERY IMPORTANT
         follower = new Follower(hardwareMap);
         follower.setStartingPose(new Pose(startPoint.getX(), startPoint.getY(), 0));
         buildPaths();
