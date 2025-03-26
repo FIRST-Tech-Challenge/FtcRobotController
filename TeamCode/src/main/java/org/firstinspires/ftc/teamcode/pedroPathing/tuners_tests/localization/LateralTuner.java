@@ -36,7 +36,7 @@ public class LateralTuner extends OpMode {
 
     private Telemetry telemetryA;
 
-    public static double DISTANCE = 48;
+    public static double DISTANCE = 126;//one full field with robot of length 16in (twofish)
 
     /**
      * This initializes the PoseUpdater as well as the FTC Dashboard telemetry.

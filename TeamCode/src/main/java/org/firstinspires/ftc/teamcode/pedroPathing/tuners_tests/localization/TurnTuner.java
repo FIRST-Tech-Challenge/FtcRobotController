@@ -67,6 +67,7 @@ public class TurnTuner extends OpMode {
         telemetryA.addData("total angle", poseUpdater.getTotalHeading());
         telemetryA.addLine("The multiplier will display what your turn ticks to inches should be to scale your current angle to " + ANGLE + " radians.");
         telemetryA.addData("multiplier", ANGLE / (poseUpdater.getTotalHeading() / poseUpdater.getLocalizer().getTurningMultiplier()));
+        telemetryA.addLine(Double.toString(ANGLE / (poseUpdater.getTotalHeading() / poseUpdater.getLocalizer().getTurningMultiplier())));
 
         Drawing.drawPoseHistory(dashboardPoseTracker, "#4CAF50");
         Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
