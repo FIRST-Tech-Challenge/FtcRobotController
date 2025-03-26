@@ -20,6 +20,7 @@ public class HockeyStickTest extends LinearOpMode {
             double pow = (controller1.left_trigger.getTriggerValue() - controller1.right_trigger.getTriggerValue()) * 100;
             hockeyStick.power(pow);
             telemetry.addData("Stick position: ", hockeyStick.getPostion());
+            telemetry.update();
             controller1.update();
         }
     }
