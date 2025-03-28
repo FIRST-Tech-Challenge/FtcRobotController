@@ -23,7 +23,7 @@ public class ArmTest extends LinearOpMode {
         arm = new Arm(hardwareMap, "frontArm", "backArm");
         wrist = new Wrist(hardwareMap, "wrist");
         waitForStart();
-
+        wrist.initPos();
         while(opModeIsActive()){
 //            if(gamepad1.a){
 //                arm.setPosition(0.5);

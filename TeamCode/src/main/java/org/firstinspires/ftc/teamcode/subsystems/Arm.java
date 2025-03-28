@@ -13,7 +13,7 @@ public class Arm {
     {
         backArm = hardwareMap.get(Servo.class, backArmName);
         frontArm = hardwareMap.get(Servo.class, frontArmName);
-        frontArm.setDirection(Servo.Direction.REVERSE);
+//        frontArm.setDirection(Servo.Direction.REVERSE);
 
     }
     public void setPosition(double pos){
