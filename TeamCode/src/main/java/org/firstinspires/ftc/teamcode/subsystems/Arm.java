@@ -9,6 +9,9 @@ public class Arm {
     private Servo backArm;
     private Servo frontArm;
     private double position;
+    private double SPEED_MULI = 0.001;
+    private double MAX = 1;
+    private double MIN = 0;
     public Arm(HardwareMap hardwareMap, String frontArmName, String backArmName)
     {
         backArm = hardwareMap.get(Servo.class, backArmName);
@@ -30,7 +33,8 @@ public class Arm {
 
 
     public void adjustPosition(double increment){
-        position += increment*0.001;
+        position += increment * SPEED_MULI;
+        position = Math.max(Math.min(position, MAX), MIN);
         backArm.setPosition(position);
         frontArm.setPosition(position);
     }
@@ -39,6 +43,10 @@ public class Arm {
         backArm.setPosition(0.5);
         frontArm.setPosition(0.5);
         position = 0.5;
+    }
+
+    public double getPosition(){
+        return position;
     }
 
     @SuppressLint("DefaultLocale")

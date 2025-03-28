@@ -41,6 +41,7 @@ public class ArmTest extends LinearOpMode {
             arm.adjustPosition(controller1.left_stick_y);
             wrist.adjustPosition(controller1.right_stick_y);
             telemetry.addLine(arm.toString());
+            telemetry.addLine(wrist.toString());
             telemetry.update();
             controller1.update();
         }
