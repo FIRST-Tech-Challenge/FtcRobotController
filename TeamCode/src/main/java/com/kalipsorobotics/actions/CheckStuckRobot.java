@@ -65,8 +65,12 @@ public class CheckStuckRobot {
         double currentX = currentPos.getX();
         double currentY = currentPos.getY();
         double currentTheta = currentPos.getTheta();
-
-
+        if (isThetaDeltaValid() && isXDeltaValid() && isYDeltaValid()) {
+            return;
+        }
+        else {
+            //check path here
+        }
 
     }
 
