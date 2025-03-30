@@ -59,11 +59,33 @@ public class CheckStuckRobot {
         }
         return false;
     }
+    private boolean checkDeltaValid() {
+        if (isThetaDeltaValid() && isXDeltaValid() && isYDeltaValid()) {
+            return true;
+        }
+        return false;
+    }
+    private boolean checkRobotNotMoving(double currentXVelocity, double currentYVelocity) {
+        if (currentYVelocity < 0.05 || currentXVelocity < 0.05) {
+            return true;
+        }
+        return false;
+    }
+    private boolean checkRobotSpinning(double currentXVelocity, double currentYVelocity, double currentThetaVelocity) {
+        if (abs(currentThetaVelocity) < THETA_DELTA_MIN_THRESHOLD && (abs(currentXVelocity) < X_DELTA_MIN_THRESHOLD && abs(currentYVelocity) < Y_DELTA_MIN_THRESHOLD)) {
+            return true;
+        }
+        return false;
+    }
 
     // change from out of void when method finished
     // if delta x, y, and theta are too low ( make threshold large ) then check the path and current pos
     public void isStuck() {
         Position currentPos = SharedData.getOdometryPosition();
+        double currentX = currentPos.getX();
+        double currentY = currentPos.getY();
+        double currentTheta = currentPos.getTheta();
+
         double currentThetaVelocity = wheelOdometry.getCurrentVelocity().getTheta();
         double deltaThetaVelocity = abs(prevThetaVelocity - currentThetaVelocity);
 
@@ -72,20 +94,21 @@ public class CheckStuckRobot {
 
         double currentXVelocity = wheelOdometry.getCurrentVelocity().getX();
         double deltaXVelocity = abs(prevXVelocity - currentXVelocity);
+
+
         //if robot is not moving
-        if (currentThetaVelocity < 0.05 || currentYVelocity < 0.05 || currentXVelocity < 0.05) {
+        if (checkRobotNotMoving(currentXVelocity, currentXVelocity)) {
             //check path
         }
+
         //if robot is spinning forever
-        if (abs(currentThetaVelocity) < THETA_DELTA_MIN_THRESHOLD && (abs(currentXVelocity) < X_DELTA_MIN_THRESHOLD && abs(currentYVelocity) < Y_DELTA_MIN_THRESHOLD)) {
+        if (checkRobotSpinning(currentXVelocity, currentYVelocity, currentThetaVelocity)) {
             //check path
         }
-        double currentX = currentPos.getX();
-        double currentY = currentPos.getY();
-        double currentTheta = currentPos.getTheta();
-        //everything it good
-        if (isThetaDeltaValid() && isXDeltaValid() && isYDeltaValid()) {
-            return;
+
+        //everything if delta is not valid
+        if (!checkDeltaValid()) {
+            //check path
         }
 
     }
