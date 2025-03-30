@@ -123,7 +123,7 @@ public class CheckStuckRobot {
             }
         }
 
-    }
+    }//
     private boolean isPathCorrect(Position intendedPos, Position currentPos) {
         if (abs(intendedPos.getX() - currentPos.getX()) > X_DELTA_MIN_THRESHOLD ||
                 abs(intendedPos.getY() - currentPos.getY()) > Y_DELTA_MIN_THRESHOLD ||
