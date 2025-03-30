@@ -1,4 +1,6 @@
 package com.kalipsorobotics.actions;
+import static java.lang.Math.abs;
+
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.math.Position;
@@ -30,7 +32,7 @@ public class CheckStuckRobot {
 
     private boolean isXDeltaValid() {
         double currentXVelocity = wheelOdometry.getCurrentVelocity().getX();
-        double deltaXVelocity = Math.abs(prevXVelocity - currentXVelocity);
+        double deltaXVelocity = abs(prevXVelocity - currentXVelocity);
 
         if (deltaXVelocity < X_DELTA_MIN_THRESHOLD) {
             return true;
@@ -40,7 +42,7 @@ public class CheckStuckRobot {
 
     private boolean isYDeltaValid() {
         double currentYVelocity = wheelOdometry.getCurrentVelocity().getY();
-        double deltaYVelocity = Math.abs(prevYVelocity - currentYVelocity);
+        double deltaYVelocity = abs(prevYVelocity - currentYVelocity);
 
         if (deltaYVelocity < Y_DELTA_MIN_THRESHOLD) {
             return true;
@@ -50,7 +52,7 @@ public class CheckStuckRobot {
 
     private boolean isThetaDeltaValid() {
         double currentThetaVelocity = wheelOdometry.getCurrentVelocity().getTheta();
-        double deltaThetaVelocity = Math.abs(prevThetaVelocity - currentThetaVelocity);
+        double deltaThetaVelocity = abs(prevThetaVelocity - currentThetaVelocity);
 
         if (deltaThetaVelocity < THETA_DELTA_MIN_THRESHOLD) {
             return true;
@@ -62,14 +64,28 @@ public class CheckStuckRobot {
     // if delta x, y, and theta are too low ( make threshold large ) then check the path and current pos
     public void isStuck() {
         Position currentPos = SharedData.getOdometryPosition();
+        double currentThetaVelocity = wheelOdometry.getCurrentVelocity().getTheta();
+        double deltaThetaVelocity = abs(prevThetaVelocity - currentThetaVelocity);
+
+        double currentYVelocity = wheelOdometry.getCurrentVelocity().getY();
+        double deltaYVelocity = abs(prevYVelocity - currentYVelocity);
+
+        double currentXVelocity = wheelOdometry.getCurrentVelocity().getX();
+        double deltaXVelocity = abs(prevXVelocity - currentXVelocity);
+        //if robot is not moving
+        if (currentThetaVelocity < 0.05 || currentYVelocity < 0.05 || currentXVelocity < 0.05) {
+            //check path
+        }
+        //if robot is spinning forever
+        if (abs(currentThetaVelocity) < THETA_DELTA_MIN_THRESHOLD && (abs(currentXVelocity) < X_DELTA_MIN_THRESHOLD && abs(currentYVelocity) < Y_DELTA_MIN_THRESHOLD)) {
+            //check path
+        }
         double currentX = currentPos.getX();
         double currentY = currentPos.getY();
         double currentTheta = currentPos.getTheta();
+        //everything it good
         if (isThetaDeltaValid() && isXDeltaValid() && isYDeltaValid()) {
             return;
-        }
-        else {
-            //check path here
         }
 
     }
