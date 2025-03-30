@@ -32,7 +32,7 @@ public class CheckStuckRobot {
         this.driveTrain = driveTrain;
         this.purePursuitAction = purePursuitAction;
     }
-    //TODO make delta functions for x y and theta
+
     private double getXDelta(Position currentPosition) {
         double currentxDelta = currentPosition.getX() - prevXPos;
         prevXPos = currentPosition.getX();
@@ -101,6 +101,8 @@ public class CheckStuckRobot {
     // if delta x, y, and theta are too low ( make threshold large ) then check the path and current pos
     public void isStuck() {
         Position currentPos = SharedData.getOdometryPosition();
+        Position intendedPos = currentPos;
+        //TODO add intended pos
         double currentX = currentPos.getX();
         double currentY = currentPos.getY();
         double currentTheta = currentPos.getTheta();
@@ -115,23 +117,21 @@ public class CheckStuckRobot {
         double deltaXVelocity = abs(prevXVelocity - currentXVelocity);
 
 
-        //if robot is not moving
-        if (checkRobotNotMoving(currentXVelocity, currentXVelocity)) {
-            //check path
-        }
-
-        //if robot is spinning forever
-        if (checkRobotSpinning(currentXVelocity, currentYVelocity, currentThetaVelocity, currentPos)) {
-            //check path
-        }
-
-        //everything if delta is not valid
-        if (!checkDeltaValid()) {
-            //check path
+        if (checkRobotSpinning(currentXVelocity, currentYVelocity, currentThetaVelocity, currentPos) || !checkDeltaValid() || checkRobotNotMoving(currentXVelocity, currentXVelocity)) {
+            if (isPathCorrect(intendedPos, currentPos)) {
+                unstuckRobot(driveTrain);
+            }
         }
 
     }
-
+    private boolean isPathCorrect(Position intendedPos, Position currentPos) {
+        if (abs(intendedPos.getX() - currentPos.getX()) > X_DELTA_MIN_THRESHOLD ||
+                abs(intendedPos.getY() - currentPos.getY()) > Y_DELTA_MIN_THRESHOLD ||
+                abs(intendedPos.getTheta() - currentPos.getTheta()) > THETA_DELTA_MIN_THRESHOLD) {
+            return false;
+        }
+        return true;
+    }
 
     private void unstuckRobot(DriveTrain driveTrain){
         PurePursuitAction test = new PurePursuitAction(driveTrain, wheelOdometry);
