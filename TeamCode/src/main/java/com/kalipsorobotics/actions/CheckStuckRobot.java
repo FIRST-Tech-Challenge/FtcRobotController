@@ -8,6 +8,9 @@ import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.utilities.SharedData;
 
 public class CheckStuckRobot {
+    private double prevXPos = 0;
+    private double prevYPos = 0;
+    private double prevThetaPos = 0;
     private double prevXVelocity = 0;
     /**
      * mm per second
@@ -30,15 +33,20 @@ public class CheckStuckRobot {
         this.purePursuitAction = purePursuitAction;
     }
     //TODO make delta functions for x y and theta
-    private double getXDelta() {
-        double prevX = SharedData.getOdometryPosition().getX();
-        return 0;
+    private double getXDelta(Position currentPosition) {
+        double currentxDelta = currentPosition.getX() - prevXPos;
+        prevXPos = currentPosition.getX();
+        return currentxDelta;
     }
-    private double getYDelta() {
-        return 0;
+    private double getYDelta(Position currentPosition) {
+        double currentyDelta = currentPosition.getY() - prevYPos;
+        prevYPos = currentPosition.getY();
+        return currentyDelta;
     }
-    private double getThetaDelta() {
-        return 0;
+    private double getThetaDelta(Position currentPosition) {
+        double currentThetaDelta = currentPosition.getTheta() - prevThetaPos;
+        prevThetaPos = currentPosition.getTheta();
+        return currentThetaDelta;
     }
 
     private boolean isXDeltaValid() {
@@ -82,8 +90,8 @@ public class CheckStuckRobot {
         }
         return false;
     }
-    private boolean checkRobotSpinning(double currentXVelocity, double currentYVelocity, double currentThetaVelocity) {
-        if (abs(currentThetaVelocity) < THETA_DELTA_MIN_THRESHOLD && (abs(currentXVelocity) < X_DELTA_MIN_THRESHOLD && abs(currentYVelocity) < Y_DELTA_MIN_THRESHOLD)) {
+    private boolean checkRobotSpinning(double currentXVelocity, double currentYVelocity, double currentThetaVelocity, Position currentPosition) {
+        if (abs(getThetaDelta(currentPosition)) < THETA_DELTA_MIN_THRESHOLD && (abs(getXDelta(currentPosition)) < X_DELTA_MIN_THRESHOLD && abs(getYDelta(currentPosition)) < Y_DELTA_MIN_THRESHOLD)) {
             return true;
         }
         return false;
@@ -113,7 +121,7 @@ public class CheckStuckRobot {
         }
 
         //if robot is spinning forever
-        if (checkRobotSpinning(currentXVelocity, currentYVelocity, currentThetaVelocity)) {
+        if (checkRobotSpinning(currentXVelocity, currentYVelocity, currentThetaVelocity, currentPos)) {
             //check path
         }
 
