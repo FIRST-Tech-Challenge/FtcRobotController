@@ -29,6 +29,17 @@ public class CheckStuckRobot {
         this.driveTrain = driveTrain;
         this.purePursuitAction = purePursuitAction;
     }
+    //TODO make delta functions for x y and theta
+    private double getXDelta() {
+        double prevX = SharedData.getOdometryPosition().getX();
+        return 0;
+    }
+    private double getYDelta() {
+        return 0;
+    }
+    private double getThetaDelta() {
+        return 0;
+    }
 
     private boolean isXDeltaValid() {
         double currentXVelocity = wheelOdometry.getCurrentVelocity().getX();
