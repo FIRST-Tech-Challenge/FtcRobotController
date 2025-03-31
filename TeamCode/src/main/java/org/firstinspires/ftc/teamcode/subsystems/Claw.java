@@ -29,6 +29,11 @@ public class Claw {
 //        claw.setPosition(close);
     }
 
+    public void toggle()
+    {
+         position = (position == open) ? close: open;
+    }
+
     public double getPos()
     {
         return claw.getPosition();

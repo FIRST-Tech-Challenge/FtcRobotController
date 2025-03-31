@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.teleOP;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -37,6 +34,10 @@ public class ArmTest extends LinearOpMode {
             if(gamepad1.b){
                 wrist.setParallel();
             }
+
+
+
+
 
             arm.adjustPosition(controller1.left_stick_y);
             wrist.adjustPosition(controller1.right_stick_y);

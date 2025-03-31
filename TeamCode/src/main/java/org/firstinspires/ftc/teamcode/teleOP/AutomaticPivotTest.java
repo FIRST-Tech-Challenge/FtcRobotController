@@ -22,7 +22,7 @@ public class AutomaticPivotTest extends LinearOpMode {
         pivot.init();
 
         while(opModeIsActive()){
-            robot.drive(-controller1.left_stick_y ,controller1.left_stick_x, controller1.right_stick_x);
+//            robot.drive(-controller1.left_stick_y ,controller1.left_stick_x, controller1.right_stick_x);
 
             //Toggles Parallel <--> Perpendicular
             if(controller1.a.onPress()){
@@ -35,6 +35,10 @@ public class AutomaticPivotTest extends LinearOpMode {
             }else if(gamepad1.dpad_up){
                 pivot.adjustOffset(1);
             }
+
+
+
+
 
             //Moves Arm
             pivot.adjustArm(controller1.left_trigger.getTriggerValue() - controller1.right_trigger.getTriggerValue());

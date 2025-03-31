@@ -14,8 +14,9 @@ public class AutomaticPivot {
     private IMU imu;
 
     //Assuming position change of 0.25 = 90 degrees
-    public static double PARALLEL_OFFSET = -0.1;
-    public static double PERPENDICULAR_OFFSET = PARALLEL_OFFSET - 0.25;
+    //0.74
+    public static double PARALLEL_OFFSET = 0.25;
+    public static double PERPENDICULAR_OFFSET = PARALLEL_OFFSET - 0.3;
 
     public boolean isParallel = true;
 
@@ -33,6 +34,8 @@ public class AutomaticPivot {
                         RevHubOrientationOnRobot.UsbFacingDirection.UP
                 )
         ));
+
+
     }
 
     /**
@@ -42,6 +45,7 @@ public class AutomaticPivot {
     public void init(){
         arm.setParallel();
         wrist.setPosition(0.5 - PARALLEL_OFFSET);
+
     }
 
     /**
@@ -78,6 +82,7 @@ public class AutomaticPivot {
         //Maintain parallel Claw
         if(isParallel){
             wrist.setPosition(0.5 + (-pitch * 0.25) + (0.5-armPos) + PARALLEL_OFFSET);
+
         }
         //Maintain perpendicular Claw
         else{
@@ -99,12 +104,15 @@ public class AutomaticPivot {
      */
     public void adjustOffset(double increment){
         if(isParallel){
-            PARALLEL_OFFSET = Math.max(Math.min( PARALLEL_OFFSET + 0.0001 *increment, 1) ,0);
+            PARALLEL_OFFSET = Math.max(Math.min( PARALLEL_OFFSET + 0.0005 *increment, 1) ,0);
         }else{
-            PERPENDICULAR_OFFSET = Math.max(Math.min( PERPENDICULAR_OFFSET + 0.0001 *increment, 1) ,0);
+            PERPENDICULAR_OFFSET = Math.max(Math.min( PERPENDICULAR_OFFSET + 0.0005 *increment, 1) ,0);
         }
     }
-
+    public void setPos(int pos)
+    {
+        wrist.setPosition(pos);
+    }
     @SuppressLint("DefaultLocale")
     public String toString(){
         return String.format("IMU pitch reading: %.2f\n" +

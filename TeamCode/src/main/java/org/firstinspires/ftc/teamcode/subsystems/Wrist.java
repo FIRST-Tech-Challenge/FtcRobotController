@@ -10,7 +10,7 @@ public class Wrist {
     Servo wrist;
     private double position;
     private double SPEED_MULI = 0.001;
-    private double MAX = 1;
+    private double MAX = 0.7;
     private double MIN = 0;
 
     public Wrist(HardwareMap hw, String wristName){
@@ -29,9 +29,14 @@ public class Wrist {
 
     //Not the actual parallel position by the way!
     public void setParallel(){
-        position = 0.5;
-        wrist.setPosition(0.5);
+        position = 0;
+        wrist.setPosition(position);
     }
+    public void setPerpendicular(){
+        position = 0.5;
+        wrist.setPosition(position);
+    }
+
     public void setPosition(double pos){
         position = pos;
         wrist.setPosition(position);

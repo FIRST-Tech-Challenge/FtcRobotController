@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
-@TeleOp(name = "TSA Claw Tester")
+@TeleOp(name = "Claw Tester")
 public class ClawTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
