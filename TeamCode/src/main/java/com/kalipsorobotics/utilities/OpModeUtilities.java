@@ -45,7 +45,7 @@ public class OpModeUtilities {
             executorService.submit(() -> {
                 Process.setThreadPriority(Process.THREAD_PRIORITY_FOREGROUND);
                 while (!Thread.currentThread().isInterrupted()) {
-                    wheelOdometry.updatePosition();
+                    wheelOdometry.updatePositionAll();
                 }
 
             });
