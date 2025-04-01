@@ -1,8 +1,8 @@
-## TeamCode Module
+## Team13580 Module
 
 Welcome!
 
-This module, TeamCode, is the place where you will write/paste the code for your team's
+This module, Team13580, is the place where you will write/paste the code for your team's
 robot controller App. This module is currently empty (a clean slate) but the
 process for adding OpModes is straightforward.
 
@@ -52,7 +52,7 @@ After the prefix, other conventions will apply:
 
 Once you are familiar with the range of samples available, you can choose one to be the
 basis for your own robot.  In all cases, the desired sample(s) needs to be copied into
-your TeamCode module to be used.
+your Team13580 module to be used.
 
 This is done inside Android Studio directly, using the following steps:
 
@@ -60,9 +60,9 @@ This is done inside Android Studio directly, using the following steps:
 
  2) Right click on the sample class and select "Copy"
 
- 3) Expand the  TeamCode/java folder
+ 3) Expand the  Team13580/java folder
 
- 4) Right click on the org.firstinspires.ftc.teamcode folder and select "Paste"
+ 4) Right click on the org.firstinspires.ftc.team13580 folder and select "Paste"
 
  5) You will be prompted for a class name for the copy.
     Choose something meaningful based on the purpose of this class.
