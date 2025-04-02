@@ -10,6 +10,7 @@ import com.pedropathing.util.Constants;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -418,14 +419,16 @@ public class ObsPedro extends OpMode {
     @Override
     public void loop() {
 
+        /*
         if(!distanceSensorDisabled) {
             distanceSensorX = rearDistanceSens.getDistance(DistanceUnit.INCH);
         }
         if(distanceSensorX > 60){
             distanceSensorDisabled = true;
-            rearDistanceSens = null;
+            //rearDistanceSens = null;
         }
         relocalizeWithDistanceSensor();
+         */
 
         // These loop the movements of the robot
         follower.update();
@@ -458,6 +461,8 @@ public class ObsPedro extends OpMode {
     public void init() {
         delivery = new TwoFishDelivery(this, deliveryTimer);
         intake = new TwoFishIntake(this);
+
+        rearDistanceSens = hardwareMap.get(DistanceSensor.class, "rearDistanceSens");
 
         pathTimer = new Timer();
         opmodeTimer = new Timer();
