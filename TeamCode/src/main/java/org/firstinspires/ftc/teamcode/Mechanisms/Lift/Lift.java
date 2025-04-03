@@ -42,7 +42,7 @@ public class Lift {
     private final double ticksPerInch = ticksPerRev / (2 * Math.PI * spoolRadius);
     boolean reverse;
     public static double maxVoltage = 12.5;
-    public static double maxHeight = 28; // [in]
+    public static double maxHeight = 35; // [in]
 
 
     public Lift(HardwareMap hardwareMap, Battery battery){
