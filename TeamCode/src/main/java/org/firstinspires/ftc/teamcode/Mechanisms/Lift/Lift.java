@@ -42,7 +42,7 @@ public class Lift {
     private final double ticksPerInch = ticksPerRev / (2 * Math.PI * spoolRadius);
     boolean reverse;
     public static double maxVoltage = 12.5;
-    public static double maxHeight = 35; // [in]
+    public static double maxHeight = 30; // [in]
 
 
     public Lift(HardwareMap hardwareMap, Battery battery){
@@ -132,8 +132,13 @@ public class Lift {
                     liftMotorRight.setPower(power + kG);
                     packet.put("Motor Power", power + kG);
                 } else {
-                    liftMotorLeft.setPower(kG);
-                    liftMotorRight.setPower(kG);
+                    if (power < 0) {
+                        liftMotorLeft.setPower(power + kG);
+                        liftMotorRight.setPower(power + kG);
+                    } else {
+                        liftMotorLeft.setPower(kG);
+                        liftMotorRight.setPower(kG);
+                    }
                     packet.put("Motor Power", kG);
                 }
                 return false;
