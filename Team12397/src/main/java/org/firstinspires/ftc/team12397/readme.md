@@ -1,8 +1,8 @@
-## TeamCode Module
+## Team12397 Module
 
 Welcome!
 
-This module, TeamCode, is the place where you will write/paste the code for your team's
+This module, Team12397, is the place where you will write/paste the code for your team's
 robot controller App. This module is currently empty (a clean slate) but the
 process for adding OpModes is straightforward.
 
@@ -60,9 +60,9 @@ This is done inside Android Studio directly, using the following steps:
 
  2) Right click on the sample class and select "Copy"
 
- 3) Expand the  TeamCode/java folder
+ 3) Expand the  Team12397/java folder
 
- 4) Right click on the org.firstinspires.ftc.teamcode folder and select "Paste"
+ 4) Right click on the org.firstinspires.ftc.team12397 folder and select "Paste"
 
  5) You will be prompted for a class name for the copy.
     Choose something meaningful based on the purpose of this class.
