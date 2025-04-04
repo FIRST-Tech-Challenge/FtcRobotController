@@ -35,8 +35,12 @@ public class RobotHardware {
     private DcMotor slideMotorL = null;
     private DcMotor slideMotorR = null;
 
-    private Servo servoA = null;
-    private Servo servoB = null;
+    private Servo leftExtend = null;
+    private Servo rightExtend = null;
+    private Servo inClawPitch = null;
+    private Servo inClaw = null;
+    private Servo getInClawYaw = null;
+    private Servo outClaw = null;
 
 
 
@@ -44,6 +48,8 @@ public class RobotHardware {
             RevHubOrientationOnRobot.LogoFacingDirection.UP,
             RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
 
+
+    public RobotHardware(LinearOpMode OpMode) {myOpMode = OpMode;}
 /**
   Initialize all the robot's hardware.
   This method must be called ONCE when the OpMode is initialized.
@@ -88,8 +94,12 @@ public class RobotHardware {
 
 
 
-        servoA = myOpMode.hardwareMap.get(Servo.class, "servoA");
-        servoB = myOpMode.hardwareMap.get(Servo.class, "servoB");
+        leftExtend = myOpMode.hardwareMap.get(Servo.class, "leftExtend");
+        rightExtend = myOpMode.hardwareMap.get(Servo.class, "rightExtend");
+        inClawPitch = myOpMode.hardwareMap.get(Servo.class, "inClawPitch");
+        inClaw = myOpMode.hardwareMap.get(Servo.class, "inClaw");
+        getInClawYaw = myOpMode.hardwareMap.get(Servo.class, "getInClawYaw");
+        outClaw = myOpMode.hardwareMap.get(Servo.class, "outClaw");
 
         imu = myOpMode.hardwareMap.get(IMU .class, "imu");
         IMU.Parameters parameters = new IMU.Parameters( new RevHubOrientationOnRobot(
