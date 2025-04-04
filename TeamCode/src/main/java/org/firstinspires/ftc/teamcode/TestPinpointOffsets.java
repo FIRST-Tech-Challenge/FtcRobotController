@@ -36,9 +36,8 @@ public class TestPinpointOffsets extends LinearOpMode {
     double  currXinches=0.0, currYinches=0.0, currAngle=0.0;
     double  prevXinches=0.0, prevYinches=0.0, prevAngle=0.0;
     double  minXinches=0.0, maxXinches=0.0, minYinches=0.0, maxYinches=0.0;
-    double  startXradius = 0.0, startYradius = 0.0; // mm
-    double  currXradius  = 0.0, currYradius  = 0.0; // mm
-    double  prevXradius  = 0.0, prevYradius  = 0.0; // mm
+    double  startXradius = 0.0, startYradius = 0.0, startErrorRadius = 0.0; // mm
+    double  currXradius  = 0.0, currYradius  = 0.0, currErrorRadius = 0.0;// mm
     double  startXoffset = 0.0, startYoffset = 0.0; // mm
 
     @Override
@@ -50,9 +49,15 @@ public class TestPinpointOffsets extends LinearOpMode {
         initializeHardware();
 
         // Display program information
-        telemetry.addLine("This app confirms the Pinpoint Ypod/Xpod directions");
-        telemetry.addLine("(FWD/REV) by moving forward and right, and then");
-        telemetry.addLine("rotates the robot to determine the offsets");
+        if( !fineTuneOnly ) {
+            telemetry.addLine("This app confirms the Pinpoint Ypod/Xpod directions");
+            telemetry.addLine("(FWD/REV) by moving forward and right, and then");
+            telemetry.addLine("rotates the robot to determine the offsets");
+        } else {
+            telemetry.addLine("This app refines the current Pinpoint Ypod/Xpod");
+            telemetry.addLine("offsets provided by repeatedly rotating the ");
+            telemetry.addLine("robot and watching <X,Y> movement.");
+        }
         telemetry.addData("State", "Ready");
         telemetry.update();
         waitForStart();
@@ -65,8 +70,8 @@ public class TestPinpointOffsets extends LinearOpMode {
             verifyEncoderDirectionX();
         }
 
-        // What is our starting error (with 0/0 offsets defined)?
-        if( opModeIsActive() && !fineTuneOnly ) {
+        // What is our starting error?
+        if( opModeIsActive() ) {
             findStartError();
         }
 
@@ -91,9 +96,9 @@ public class TestPinpointOffsets extends LinearOpMode {
         // Locate the odometry controller in our hardware settings
         odom = hardwareMap.get(GoBildaPinpointDriver.class,"odom");   // Control Hub I2C port 3
         if( fineTuneOnly ) { // assume we've run this before and only need to fine-tune
-           odom.setOffsets(-144.00, +88.00);  // odometry pod x,y offsets relative center of robot
-           startXoffset = -144.00; // mm
-           startYoffset =  +88.00; // mm
+           odom.setOffsets(-148.0, +88.4);  // odometry pod x,y offsets relative center of robot
+           startXoffset = -148.0; // mm
+           startYoffset =  +88.4; // mm
         } else { // assume we're starting with complete unknowns
            odom.setOffsets( 0.0, 0.0 );       // odometry pod x,y offsets relative center of robot
            startXoffset = 0.0; // mm
@@ -239,10 +244,11 @@ public class TestPinpointOffsets extends LinearOpMode {
         // Save that min-max error radius as our starting point
         startXradius = currXradius;
         startYradius = currYradius;
+        startErrorRadius = currErrorRadius;
         // Summarize our findings
         telemetry.addData("Pinpoint Status", odom.getDeviceStatus() );
         telemetry.addData("X/Y/Angle","%.1f, %.1f in  (%.1f deg)", currXinches, currYinches, currAngle );
-        telemetry.addData("Start error", "x=%.2f mm y=%.2f mm", startXradius, startYradius);
+        telemetry.addData("Starting error", "r=%.2f mm (x=%.2f y=%.2f)", startErrorRadius, startXradius, startYradius);
         waitForUser();
     } // findStartError
 
@@ -251,8 +257,7 @@ public class TestPinpointOffsets extends LinearOpMode {
     // the X & Y odometry pods are positive or negative numbers (ie, which quadrant are we searching?).
     public void findStartOffsets()
     {
-        double posError, negError;
-        // For the goBilda odometry pods to provide useful input to the Pinpoint computer as the 
+        // For the goBilda odometry pods to provide useful input to the Pinpoint computer as the
         // robot navigates around on the field, they need to be mounted AWAY from the center of
         // rotation (otherwise they'd just pivot and not record any movement when the robot rotates.
         // Let's assume they're mounted at least 2"/50mm away from the center such that changing
@@ -261,51 +266,56 @@ public class TestPinpointOffsets extends LinearOpMode {
 
         telemetry.addData("Pinpoint Status", odom.getDeviceStatus() );
         telemetry.addData("X/Y/Angle","%.1f, %.1f in  (%.1f deg)", currXinches, currYinches, currAngle );
-        telemetry.addData("Starting error", "x=%.2f mm y=%.2f mm", startXradius, startYradius);
-        
+        telemetry.addData("Starting error", "r=%.2f mm (x=%.2f y=%.2f)", startErrorRadius, startXradius, startYradius);
+
         // X OFFSET: +50mm
         changePinpointOffsets( +50.0, 0.0);  // x=+50mm, y=0
         rotateAtLeast360deg();
-        posError = currYradius;
-        telemetry.addData("+50/0", "x=%.2f mm y=%.2f mm", currXradius, currYradius);
+        startXoffset = +50.0;
+        startYradius = currYradius;
+        startXradius = currXradius;
+        startErrorRadius = currErrorRadius;
+        telemetry.addData("+50/0", "r=%.2f mm (x=%.2f y=%.2f)", currErrorRadius, currXradius, currYradius);
         // X OFFSET: -50mm
         changePinpointOffsets( -50.0, 0.0);  // x=-50mm, y=0
         rotateAtLeast360deg();
-        negError = currYradius;
-        telemetry.addData("-50/0", "x=%.2f mm y=%.2f mm", currXradius, currYradius);
-        // Which offset produced the smaller error?
+        telemetry.addData("-50/0", "r=%.2f mm (x=%.2f y=%.2f)", currErrorRadius, currXradius, currYradius);
+        // Is this a better result than the first one?
         // (X pod offset is measured along the Y axis!)
-        if( negError < posError ) {
+        if( currErrorRadius < startErrorRadius ) {
            startXoffset = -50.0;
-           startYradius = negError;
-        } else {
-           startXoffset = 50.0;
-           startYradius = posError;
+           startYradius = currYradius;
+           startXradius = currXradius;
+           startErrorRadius = currErrorRadius;
         }
         
         // Y OFFSET: +50mm
         changePinpointOffsets( startXoffset, +50.0);  // x=±50mm, y=+50mm
         rotateAtLeast360deg();
-        posError = currXradius;
-        telemetry.addData( ((startXoffset>0)? "+50/+50":"-50/+50:"),"x=%.2f mm y=%.2f mm", currXradius, currYradius);
+        telemetry.addData( ((startXoffset>0)? "+50/+50":"-50/+50:"),"r=%.2f mm (x=%.2f y=%.2f)", currErrorRadius, currXradius, currYradius);
+        // Is this a better result than the first one?
+        // (Y pod offset is measured along the X axis!)
+        if( currErrorRadius < startErrorRadius ) {
+            startYoffset = +50.0;
+            startYradius = currYradius;
+            startXradius = currXradius;
+            startErrorRadius = currErrorRadius;
+        }
         // Y OFFSET: -50mm
         changePinpointOffsets( startXoffset, -50.0);  // x=±50mm, y=-50mm
         rotateAtLeast360deg();
-        negError = currXradius;
-        telemetry.addData( ((startXoffset>0)? "+50/-50":"-50/-50:"),"x=%.2f mm y=%.2f mm", currXradius, currYradius);
-        // Which offset produced the smaller error?
-        // (Y pod offset is measured along the X axis!)
-        if( negError < posError ) {
-           startYoffset = -50.0;
-           startXradius = negError;
-        } else {
-           startYoffset = 50.0;
-           startXradius = posError;
+        telemetry.addData( ((startXoffset>0)? "+50/-50":"-50/-50:"),"r=%.2f mm (x=%.2f y=%.2f)", currErrorRadius, currXradius, currYradius);
+        // Is this a better result than the first one?
+        if( currErrorRadius < startErrorRadius ) {
+            startYoffset = -50.0;
+            startYradius = currYradius;
+            startXradius = currXradius;
+            startErrorRadius = currErrorRadius;
         }
 
         // Lets report our findings
         telemetry.addData("Best offsets", "x=%.1f mm y=%.1f mm", startXoffset, startYoffset );
-        telemetry.addData("Current error", "x=%.2f mm y=%.2f mm", startXradius, startYradius );
+        telemetry.addData("Current error", "r=%.2f mm (x=%.2f y=%.2f)", startErrorRadius, startXradius, startYradius);
         waitForUser();
     } // findStartOffsets
 
@@ -316,18 +326,19 @@ public class TestPinpointOffsets extends LinearOpMode {
     // center being off and tracing out a circle, so we take small steps in both X and Y to dial
     // it in to the true center offsets.
     public boolean fineTuneOffsets() {
-        double stepX, stepY, posOffset, negOffset, posError, negError;
+        double stepX,stepY, posOffset,negOffset, convergeFactor;
         String posYstr= "x/+y", negYstr= "x/-y";
 
         telemetry.addData("Pinpoint Status", odom.getDeviceStatus());
         telemetry.addData("X/Y/Angle", "%.1f, %.1f in  (%.1f deg)", currXinches, currYinches, currAngle);
-        telemetry.addData("Starting error", "x=%.2f mm y=%.2f mm", startXradius, startYradius);
         telemetry.addData("Starting offsets", "x=%.2f mm y=%.2f mm", startXoffset, startYoffset);
-
+        telemetry.addData("Starting error", "r=%.2f mm (x=%.2f y=%.2f)", startErrorRadius, startXradius, startYradius);
+        // How fast we try to converge the error toward zero depends on how close we are to the center
+        convergeFactor = (startErrorRadius > 10.0)? 0.75 : 0.25;
         // Determine the ±step size to use for the X & Y offsets
         // (zero means we're starting from fineTuneOnly, with no prior results)
-        stepX = (startYradius == 0.0) ? 2.0 : (0.50 * startYradius); // mm
-        stepY = (startXradius == 0.0) ? 2.0 : (0.50 * startXradius); // mm
+        stepX = (startYradius == 0.0) ? 2.0 : (convergeFactor * startYradius); // mm
+        stepY = (startXradius == 0.0) ? 2.0 : (convergeFactor * startXradius); // mm
         telemetry.addData("Step size", "x=%.1f mm y=%.1f mm", stepX, stepY);
         // Compute the two X offsets we're about to test
         posOffset = startXoffset + stepX;
@@ -338,9 +349,11 @@ public class TestPinpointOffsets extends LinearOpMode {
         telemetry.addData("+x/y", "x=%.2f mm y=%.2f mm", currXradius, currYradius);
         // Is this better than where we started?
         // (X pod offset is measured along the Y axis!)
-        if( currYradius < startYradius ) {
+        if( currErrorRadius < startErrorRadius ) {
             startXoffset = posOffset;
             startYradius = currYradius;
+            startXradius = currXradius;
+            startErrorRadius = currErrorRadius;
             posYstr = "+x/+y";
             negYstr = "+x/-y";
         }
@@ -348,10 +361,12 @@ public class TestPinpointOffsets extends LinearOpMode {
         changePinpointOffsets( negOffset, startYoffset );
         rotateAtLeast360deg();
         telemetry.addData("-x/y", "x=%.2f mm y=%.2f mm", currXradius, currYradius);
-        // Is this even better and our starting/positive test?
-        if( currYradius < startYradius ) {
+        // Is this even better than our starting/positive test?
+        if( currErrorRadius < startErrorRadius ) {
             startXoffset = negOffset;
             startYradius = currYradius;
+            startXradius = currXradius;
+            startErrorRadius = currErrorRadius;
             posYstr = "-x/+y";
             negYstr = "-x/-y";
         }
@@ -364,24 +379,26 @@ public class TestPinpointOffsets extends LinearOpMode {
         telemetry.addData( posYstr,"x=%.2f mm y=%.2f mm", currXradius, currYradius);
         // Is this better than where we started?
         // (Y pod offset is measured along the X axis!)
-        if( currXradius < startXradius ) {
+        if( currErrorRadius < startErrorRadius ) {
             startYoffset = posOffset;
             startXradius = currXradius;
-            startYradius = currYradius;  // reflects the new startXoffset we just used
+            startYradius = currYradius;
+            startErrorRadius = currErrorRadius;
         }
         // Y OFFSET: -step
         changePinpointOffsets( startXoffset, negOffset );
         rotateAtLeast360deg();
         telemetry.addData( negYstr,"x=%.2f mm y=%.2f mm", currXradius, currYradius);
         // Is this even better and our starting/positive test?
-        if( currXradius < startXradius ) {
+        if( currErrorRadius < startErrorRadius ) {
             startYoffset = negOffset;
             startXradius = currXradius;
-            startYradius = currYradius;  // reflects the new startXoffset we just used
+            startYradius = currYradius;
+            startErrorRadius = currErrorRadius;
         }
         // Lets report our findings
         telemetry.addData("Best offsets", "x=%.2f mm y=%.2f mm", startXoffset, startYoffset );
-        telemetry.addData("Current error", "x=%.2f mm y=%.2f mm", startXradius, startYradius );
+        telemetry.addData("Current error", "r=%.2f mm (x=%.2f y=%.2f)", startErrorRadius, startXradius, startYradius);
         boolean keepGoing = checkWithUser();
         return !keepGoing;
     } // fineTuneOffsets
@@ -402,6 +419,7 @@ public class TestPinpointOffsets extends LinearOpMode {
         // Assuming rotation only, how much has <X,Y> shifted?
         currXradius = 25.4 * (maxXinches-minXinches)/2.0;  // rotate 180deg; max-min is the diameter of the circle
         currYradius = 25.4 * (maxYinches-minYinches)/2.0;  // of error relative to the true center of the robot
+        currErrorRadius = Math.sqrt( (currXradius * currXradius) + (currYradius * currYradius) );
     } // readPinpointUpdateVariables
 
     /*--------------------------------------------------------------------------------------------*/
