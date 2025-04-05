@@ -4,20 +4,9 @@ public class PositionHistory {
 
     private Position currentPosition;
     private Velocity currentVelocity;
+    private Velocity relativeDelta;
 
-    public PositionHistory() {
-
-    }
-
-    public PositionHistory(Position currentPosition, Velocity currentVelocity) {
-        this.currentPosition = currentPosition;
-        this.currentVelocity = currentVelocity;
-    }
-
-    public PositionHistory(PositionHistory positionHistory) {
-        this.currentPosition = positionHistory.currentPosition;
-        this.currentVelocity = positionHistory.currentVelocity;
-    }
+    public PositionHistory() {}
 
     public Position getCurrentPosition() {
         return currentPosition;
@@ -31,8 +20,18 @@ public class PositionHistory {
         return currentVelocity;
     }
 
-    public void setCurrentVelocity(Velocity currentVelocity) {
+    public void setCurrentVelocity(Velocity relativeDelta, double timeElapsed) {
+        this.relativeDelta = relativeDelta;
+        Velocity currentVelocity = this.currentVelocity.divide(timeElapsed);
         this.currentVelocity = currentVelocity;
+    }
+
+    public String toStringCSV() {
+        return currentPosition.getX() + ", " +
+                currentPosition.getY() + ", " +
+                currentPosition.getTheta() + ", " +
+                relativeDelta.getTheta();
+
     }
 
     @Override

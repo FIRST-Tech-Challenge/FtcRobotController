@@ -3,6 +3,7 @@ package com.kalipsorobotics.odometryDataPaths;
 import android.util.Log;
 
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
+import com.kalipsorobotics.localization.OdometryLogger;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
@@ -28,6 +29,8 @@ public class Straight extends LinearOpMode {
 
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
 
+        OdometryLogger odometryLogger = new OdometryLogger("Straight");
+
         DriveTrain.setInstanceNull();
         DriveTrain driveTrain = DriveTrain.getInstance(opModeUtilities);
 
@@ -46,26 +49,16 @@ public class Straight extends LinearOpMode {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         OpModeUtilities.runOdometryExecutorService(executorService, wheelOdometry);
 
-        KFileWriter writer = new KFileWriter("Straight");
-        try {
-            writer.getWriter().write("Time Stamp, Path, Gobilda, Wheel, Wheel+IMU, Wheel + IMU Fuse, Wheel + Spark, " +
-                    "Wheel + Spark Fuse, Wheel + IMU + Spark Fuse \n");
-            writer.getWriter().write(" , , X, Y, Theta, DeltaTheta, , X, Y, Theta, DeltaTheta, , X, Y, Theta, DeltaTheta, , ");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
         waitForStart();
         while (opModeIsActive()) {
-            try {
-                writer.getWriter().write("Position,");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+
+            odometryLogger.logOdometryPositionHistory(SharedData.getOdometryPositionMap());
             moveStraight600MM.updateCheckDone();
 
             Log.d("odometryData", "currentPos" + SharedData.getOdometryPosition().toString());
         }
+        odometryLogger.close();
         OpModeUtilities.shutdownExecutorService(executorService);
     }
 }

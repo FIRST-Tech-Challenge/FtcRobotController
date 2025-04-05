@@ -341,7 +341,7 @@ public class WheelOdometry {
         wheelRelDelta = linearToArcDelta(wheelRelDelta);
         wheelPositionHistory.setCurrentPosition(calculateGlobal(wheelRelDelta,
                 wheelPositionHistory.getCurrentPosition()));
-        wheelPositionHistory.setCurrentVelocity(wheelRelDelta.divide(timeElapsedSeconds));
+        wheelPositionHistory.setCurrentVelocity(wheelRelDelta, timeElapsedSeconds);
         odometryPositionHistoryHashMap.put(Odometry.WHEEL, wheelPositionHistory);
     }
 
@@ -352,7 +352,7 @@ public class WheelOdometry {
         wheelIMURelDelta = linearToArcDelta(wheelIMURelDelta);
         wheelIMUPositionHistory.setCurrentPosition(calculateGlobal(wheelIMURelDelta,
                 wheelIMUPositionHistory.getCurrentPosition()));
-        wheelIMUPositionHistory.setCurrentVelocity(wheelIMURelDelta.divide(timeElapsedSeconds));
+        wheelIMUPositionHistory.setCurrentVelocity(wheelIMURelDelta, timeElapsedSeconds);
         odometryPositionHistoryHashMap.put(Odometry.WHEEL_IMU, wheelIMUPositionHistory);
 
     }
@@ -364,7 +364,7 @@ public class WheelOdometry {
         wheelIMUFuseRelDelta = linearToArcDelta(wheelIMUFuseRelDelta);
         wheelIMUFusePositionHistory.setCurrentPosition(calculateGlobal(wheelIMUFuseRelDelta,
                 wheelIMUFusePositionHistory.getCurrentPosition()));
-        wheelIMUFusePositionHistory.setCurrentVelocity(wheelIMUFuseRelDelta.divide(timeElapsedSeconds));
+        wheelIMUFusePositionHistory.setCurrentVelocity(wheelIMUFuseRelDelta, timeElapsedSeconds);
         odometryPositionHistoryHashMap.put(Odometry.WHEEL_IMU_FUSE, wheelIMUFusePositionHistory);
 
     }
@@ -376,7 +376,7 @@ public class WheelOdometry {
         wheelSparkRelDelta = linearToArcDelta(wheelSparkRelDelta);
         wheelSparkPositionHistory.setCurrentPosition(calculateGlobal(wheelSparkRelDelta,
                 wheelSparkPositionHistory.getCurrentPosition()));
-        wheelSparkPositionHistory.setCurrentVelocity(wheelSparkRelDelta.divide(timeElapsedSeconds));
+        wheelSparkPositionHistory.setCurrentVelocity(wheelSparkRelDelta, timeElapsedSeconds);
         odometryPositionHistoryHashMap.put(Odometry.WHEEL_SPARK, wheelSparkPositionHistory);
 
     }
@@ -388,7 +388,7 @@ public class WheelOdometry {
         wheelSparkFuseRelDelta = linearToArcDelta(wheelSparkFuseRelDelta);
         wheelSparkFusePositionHistory.setCurrentPosition(calculateGlobal(wheelSparkFuseRelDelta,
                 wheelSparkFusePositionHistory.getCurrentPosition()));
-        wheelSparkFusePositionHistory.setCurrentVelocity(wheelSparkFuseRelDelta.divide(timeElapsedSeconds));
+        wheelSparkFusePositionHistory.setCurrentVelocity(wheelSparkFuseRelDelta, timeElapsedSeconds);
         odometryPositionHistoryHashMap.put(Odometry.WHEEl_SPARK_FUSE, wheelSparkFusePositionHistory);
 
     }
@@ -401,7 +401,7 @@ public class WheelOdometry {
         wheelIMUSparkFuseRelDelta = linearToArcDelta(wheelIMUSparkFuseRelDelta);
         wheelIMUSparkFusePositionHistory.setCurrentPosition(calculateGlobal(wheelIMUSparkFuseRelDelta,
                 wheelIMUSparkFusePositionHistory.getCurrentPosition()));
-        wheelIMUSparkFusePositionHistory.setCurrentVelocity(wheelIMUSparkFuseRelDelta.divide(timeElapsedSeconds));
+        wheelIMUSparkFusePositionHistory.setCurrentVelocity(wheelIMUSparkFuseRelDelta, timeElapsedSeconds);
         odometryPositionHistoryHashMap.put(Odometry.WHEEL_IMU_SPARK_FUSE, wheelIMUSparkFusePositionHistory);
 
     }
@@ -436,6 +436,7 @@ public class WheelOdometry {
         prevImuHeading = currentImuHeading;
         prevSparkImuHeading = currentSparkImuHeading;
         SharedData.setOdometryPosition(odometryPositionHistoryHashMap.get(Odometry.WHEEL_IMU_SPARK_FUSE).getCurrentPosition());
+        SharedData.setOdometryPositionMap(odometryPositionHistoryHashMap);
         return odometryPositionHistoryHashMap;
     }
 
