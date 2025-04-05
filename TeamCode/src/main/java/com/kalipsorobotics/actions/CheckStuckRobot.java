@@ -49,41 +49,41 @@ public class CheckStuckRobot {
         return currentThetaDelta;
     }
 
-    private boolean isXDeltaValid() {
-        double currentXVelocity = wheelOdometry.getCurrentVelocity().getX();
-        double deltaXVelocity = abs(prevXVelocity - currentXVelocity);
-
-        if (deltaXVelocity < X_DELTA_MIN_THRESHOLD) {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean isYDeltaValid() {
-        double currentYVelocity = wheelOdometry.getCurrentVelocity().getY();
-        double deltaYVelocity = abs(prevYVelocity - currentYVelocity);
-
-        if (deltaYVelocity < Y_DELTA_MIN_THRESHOLD) {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean isThetaDeltaValid() {
-        double currentThetaVelocity = wheelOdometry.getCurrentVelocity().getTheta();
-        double deltaThetaVelocity = abs(prevThetaVelocity - currentThetaVelocity);
-
-        if (deltaThetaVelocity < THETA_DELTA_MIN_THRESHOLD) {
-            return true;
-        }
-        return false;
-    }
-    private boolean checkDeltaValid() {
-        if (isThetaDeltaValid() && isXDeltaValid() && isYDeltaValid()) {
-            return true;
-        }
-        return false;
-    }
+//    private boolean isXDeltaValid() {
+//        double currentXVelocity = wheelOdometry.getCurrentVelocity().getX();
+//        double deltaXVelocity = abs(prevXVelocity - currentXVelocity);
+//
+//        if (deltaXVelocity < X_DELTA_MIN_THRESHOLD) {
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//    private boolean isYDeltaValid() {
+//        double currentYVelocity = wheelOdometry.getCurrentVelocity().getY();
+//        double deltaYVelocity = abs(prevYVelocity - currentYVelocity);
+//
+//        if (deltaYVelocity < Y_DELTA_MIN_THRESHOLD) {
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//    private boolean isThetaDeltaValid() {
+//        double currentThetaVelocity = wheelOdometry.getCurrentVelocity().getTheta();
+//        double deltaThetaVelocity = abs(prevThetaVelocity - currentThetaVelocity);
+//
+//        if (deltaThetaVelocity < THETA_DELTA_MIN_THRESHOLD) {
+//            return true;
+//        }
+//        return false;
+//    }
+//    private boolean checkDeltaValid() {
+//        if (isThetaDeltaValid() && isXDeltaValid() && isYDeltaValid()) {
+//            return true;
+//        }
+//        return false;
+//    }
     private boolean checkRobotNotMoving(double currentXVelocity, double currentYVelocity) {
         if (currentYVelocity < 0.05 || currentXVelocity < 0.05) {
             return true;
@@ -107,17 +107,17 @@ public class CheckStuckRobot {
         double currentY = currentPos.getY();
         double currentTheta = currentPos.getTheta();
 
-        double currentThetaVelocity = wheelOdometry.getCurrentVelocity().getTheta();
-        double deltaThetaVelocity = abs(prevThetaVelocity - currentThetaVelocity);
+//        double currentThetaVelocity = wheelOdometry.getCurrentVelocity().getTheta();
+//        double deltaThetaVelocity = abs(prevThetaVelocity - currentThetaVelocity);
+//
+//        double currentYVelocity = wheelOdometry.getCurrentVelocity().getY();
+//        double deltaYVelocity = abs(prevYVelocity - currentYVelocity);
+//
+//        double currentXVelocity = wheelOdometry.
+//        double deltaXVelocity = abs(prevXVelocity - currentXVelocity);
 
-        double currentYVelocity = wheelOdometry.getCurrentVelocity().getY();
-        double deltaYVelocity = abs(prevYVelocity - currentYVelocity);
 
-        double currentXVelocity = wheelOdometry.getCurrentVelocity().getX();
-        double deltaXVelocity = abs(prevXVelocity - currentXVelocity);
-
-
-        if (checkRobotSpinning(currentXVelocity, currentYVelocity, currentThetaVelocity, currentPos) || !checkDeltaValid() || checkRobotNotMoving(currentXVelocity, currentXVelocity)) {
+        if (checkRobotSpinning(getXDelta(currentPos), getYDelta(currentPos), getThetaDelta(currentPos), currentPos) || checkRobotNotMoving(getXDelta(currentPos), getYDelta(currentPos))) {
             if (isPathCorrect(intendedPos, currentPos)) {
                 unstuckRobot(driveTrain);
             }
