@@ -5,6 +5,7 @@ import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.math.Position;
 import com.kalipsorobotics.modules.DriveTrain;
+import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.kalipsorobotics.utilities.SharedData;
 
 public class CheckStuckRobot {
@@ -25,11 +26,13 @@ public class CheckStuckRobot {
 
     private final WheelOdometry wheelOdometry;
     private final DriveTrain driveTrain;
+    private final OpModeUtilities opModeUtilities;
     private PurePursuitAction purePursuitAction;
 
-    public CheckStuckRobot(DriveTrain driveTrain, WheelOdometry wheelOdometry, PurePursuitAction purePursuitAction){
+    public CheckStuckRobot(DriveTrain driveTrain, WheelOdometry wheelOdometry, OpModeUtilities opModeUtilities, PurePursuitAction purePursuitAction){
         this.wheelOdometry = wheelOdometry;
         this.driveTrain = driveTrain;
+        this.opModeUtilities = opModeUtilities;
         this.purePursuitAction = purePursuitAction;
     }
 
@@ -120,6 +123,7 @@ public class CheckStuckRobot {
         if (checkRobotSpinning(getXDelta(currentPos), getYDelta(currentPos), getThetaDelta(currentPos), currentPos) || checkRobotNotMoving(getXDelta(currentPos), getYDelta(currentPos))) {
             if (isPathCorrect(intendedPos, currentPos)) {
                 unstuckRobot(driveTrain);
+                opModeUtilities.getTelemetry().addLine("robot is stuck");
             }
         }
 
