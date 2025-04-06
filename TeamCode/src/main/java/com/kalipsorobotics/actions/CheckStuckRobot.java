@@ -143,6 +143,7 @@ public class CheckStuckRobot {
 
     private void unstuckRobot(DriveTrain driveTrain, Path path, int timeInMillis){
         purePursuitAction = new PurePursuitAction(driveTrain, wheelOdometry);
+        purePursuitAction.setMaxTimeOutMS(500);
         Position currentPos = new Position(wheelOdometry.countLeft(), wheelOdometry.countBack(), wheelOdometry.getCurrentImuHeading());
         //TODO replace 10 with something
         Position possiblePos1 = new Position(currentPos.getX() - 10, currentPos.getY(), currentPos.getTheta());
