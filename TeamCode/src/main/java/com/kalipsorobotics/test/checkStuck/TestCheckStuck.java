@@ -12,22 +12,26 @@ import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+@TeleOp
 public class TestCheckStuck extends LinearOpMode {
-    OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
-    IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
-    DriveTrain driveTrain = DriveTrain.getInstance(opModeUtilities);
-    WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, new Position(0, 0, 0));
-    PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, wheelOdometry, 0, 0);
-    DriveAction driveAction = new DriveAction(driveTrain);
-    CheckStuckRobot checkStuck = new CheckStuckRobot(driveTrain, wheelOdometry, opModeUtilities, purePursuitAction);
     @Override
     public void runOpMode() throws InterruptedException {
+        OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
+        IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
+        DriveTrain driveTrain = DriveTrain.getInstance(opModeUtilities);
+        WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, new Position(0, 0, 0));
+        PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, wheelOdometry, 0, 0);
+        DriveAction driveAction = new DriveAction(driveTrain);
+        CheckStuckRobot checkStuck = new CheckStuckRobot(driveTrain, wheelOdometry, opModeUtilities, purePursuitAction);
         waitForStart();
         while(opModeIsActive()) {
             Path path = null; //TODO find way to get path
             int currentTime = (int) SystemClock.currentThreadTimeMillis();
-            checkStuck.isStuck(/*path*/currentTime);
+            if (checkStuck.isStuck(/*path*/currentTime)) {
+                telemetry.addLine("robot is stuck");
+            }
             driveAction.move(gamepad1);
         }
     }

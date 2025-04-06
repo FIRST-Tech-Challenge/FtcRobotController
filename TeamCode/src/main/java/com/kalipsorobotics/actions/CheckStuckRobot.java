@@ -1,6 +1,7 @@
 package com.kalipsorobotics.actions;
 import static java.lang.Math.abs;
 
+import android.app.SharedElementCallback;
 import android.os.SystemClock;
 
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
@@ -93,9 +94,24 @@ public class CheckStuckRobot {
 //        }
 //        return false;
 //    }
-    private boolean checkRobotNotMoving(double currentXVelocity, double currentYVelocity) {
+    private boolean checkRobotNotMoving(double currentXVelocity, double currentYVelocity, double currentTimeInMs) {
+        double timeInMsSinceLastChecked = 0;
+        double timeOffset = 0;
         if (currentYVelocity < 0.05 || currentXVelocity < 0.05) {
-            return true;
+            timeOffset = currentTimeInMs - timeInMsSinceLastChecked;
+            timeInMsSinceLastChecked += currentTimeInMs - timeOffset;
+            if (timeInMsSinceLastChecked > 1000) {
+                return true;
+            }
+            return false;
+        }
+        if (getXDelta(SharedData.getOdometryPosition()) < X_DELTA_MIN_THRESHOLD && getYDelta(SharedData.getOdometryPosition()) < Y_DELTA_MIN_THRESHOLD) {
+            timeOffset = currentTimeInMs - timeInMsSinceLastChecked;
+            timeInMsSinceLastChecked += currentTimeInMs - timeOffset;
+            if (timeInMsSinceLastChecked > 1000) {
+                return true;
+            }
+            return false;
         }
         return false;
     }
@@ -112,7 +128,7 @@ public class CheckStuckRobot {
 
     // change from out of void when method finished
     // if delta x, y, and theta are too low ( make threshold large ) then check the path and current pos
-    public void isStuck(/*Path path,*/ int timeInMillis) {
+    public boolean isStuck(/*Path path,*/ int timeInMillis) {
         Position currentPos = SharedData.getOdometryPosition();
         Position intendedPos = currentPos;
 
@@ -132,13 +148,14 @@ public class CheckStuckRobot {
 
 
         if (checkRobotSpinning(getXDelta(currentPos), getYDelta(currentPos), getThetaDelta(currentPos), currentPos) ||
-                checkRobotNotMoving(getXDelta(currentPos), getYDelta(currentPos))/* ||
+                checkRobotNotMoving(getXDelta(currentPos), getYDelta(currentPos), timeInMillis)/* ||
                 checkIfOnPath(path, timeInMillis)*/) {
 
             //unstuckRobot(driveTrain, /*path,*/ timeInMillis);
-            opModeUtilities.getTelemetry().addLine("robot is stuck");
+            return true;
 
         }
+        return false;
 
     }
 
