@@ -13,11 +13,15 @@ import com.kalipsorobotics.test.checkStuck.CheckXY;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.kalipsorobotics.utilities.SharedData;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+
 public class CheckStuckRobot {
     private double prevXPos = 0;
     private double prevYPos = 0;
     private double prevThetaPos = 0;
     private double prevXVelocity = 0;
+    private double timeInMsSinceLastChecked = 0;
+    private double timeOffset = 0;
     /**
      * mm per second
      * */
@@ -94,35 +98,24 @@ public class CheckStuckRobot {
 //        }
 //        return false;
 //    }
+
     private boolean checkRobotNotMoving(double currentXVelocity, double currentYVelocity, double currentTimeInMs) {
-        double timeInMsSinceLastChecked = 0;
-        double timeOffset = 0;
         if (currentYVelocity < 0.05 || currentXVelocity < 0.05) {
-            timeOffset = currentTimeInMs - timeInMsSinceLastChecked;
-            timeInMsSinceLastChecked += currentTimeInMs - timeOffset;
-            if (timeInMsSinceLastChecked > 1000) {
-                timeOffset = 0;
-                timeInMsSinceLastChecked = 0;
-                return true;
-            }
-            return false;
+            return true;
         }
         if (getXDelta(SharedData.getOdometryPosition()) < X_DELTA_MIN_THRESHOLD && getYDelta(SharedData.getOdometryPosition()) < Y_DELTA_MIN_THRESHOLD) {
-            timeOffset = currentTimeInMs - timeInMsSinceLastChecked;
-            timeInMsSinceLastChecked += currentTimeInMs - timeOffset;
-            if (timeInMsSinceLastChecked > 1000) {
-                timeOffset = 0;
-                timeInMsSinceLastChecked = 0;
-                return true;
-            }
-            return false;
+            return true;
         }
         return false;
     }
-    private boolean checkRobotSpinning(double currentXVelocity, double currentYVelocity, double currentThetaVelocity, Position currentPosition) {
-        if (abs(getThetaDelta(currentPosition)) < THETA_DELTA_MIN_THRESHOLD && (abs(getXDelta(currentPosition)) < X_DELTA_MIN_THRESHOLD && abs(getYDelta(currentPosition)) < Y_DELTA_MIN_THRESHOLD)) {
-
-            return true;
+    private boolean checkRobotSpinning(double currentXVelocity, double currentYVelocity, double currentThetaVelocity, Position currentPosition, double currentheading, double timeInMillis) {
+        if (abs(currentThetaVelocity) < THETA_DELTA_MIN_THRESHOLD && (abs(currentXVelocity) < X_DELTA_MIN_THRESHOLD && abs(currentYVelocity) < Y_DELTA_MIN_THRESHOLD)) {
+            double prevHeading = currentheading;
+            currentheading = currentPosition.getTheta();
+            // Check for consistent angular velocity
+            if (Math.abs(currentheading - prevHeading) < 1) {
+                return true;
+            }
         }
         return false;
     }
@@ -151,14 +144,19 @@ public class CheckStuckRobot {
 //        double currentXVelocity = wheelOdometry.
 //        double deltaXVelocity = abs(prevXVelocity - currentXVelocity);
 
-
-        if (checkRobotSpinning(getXDelta(currentPos), getYDelta(currentPos), getThetaDelta(currentPos), currentPos) ||
-                checkRobotNotMoving(getXDelta(currentPos), getYDelta(currentPos), timeInMillis)/* ||
+        timeOffset = timeInMillis - timeInMsSinceLastChecked;
+        timeInMsSinceLastChecked += timeInMillis - timeOffset;
+        if (timeInMsSinceLastChecked > 1000) {
+            timeOffset = 0;
+            timeInMsSinceLastChecked = 0;
+            if (checkRobotSpinning(getXDelta(currentPos), getYDelta(currentPos), getThetaDelta(currentPos), currentPos, currentPos.getTheta(), timeInMillis) ||
+                    checkRobotNotMoving(getXDelta(currentPos), getYDelta(currentPos), timeInMillis)/* ||
                 checkIfOnPath(path, timeInMillis)*/) {
 
-            //unstuckRobot(driveTrain, /*path,*/ timeInMillis);
-            return true;
+                //unstuckRobot(driveTrain, /*path,*/ timeInMillis);
+                return true;
 
+            }
         }
         return false;
 
