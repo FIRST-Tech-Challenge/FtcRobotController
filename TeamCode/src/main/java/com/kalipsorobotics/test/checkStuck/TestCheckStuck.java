@@ -27,7 +27,7 @@ public class TestCheckStuck extends LinearOpMode {
         while(opModeIsActive()) {
             Path path = null; //TODO find way to get path
             int currentTime = (int) SystemClock.currentThreadTimeMillis();
-            checkStuck.isStuck(path, currentTime);
+            checkStuck.isStuck(/*path*/currentTime);
             driveAction.move(gamepad1);
         }
     }
