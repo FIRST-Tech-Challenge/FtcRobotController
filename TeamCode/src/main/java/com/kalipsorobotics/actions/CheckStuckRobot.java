@@ -101,6 +101,8 @@ public class CheckStuckRobot {
             timeOffset = currentTimeInMs - timeInMsSinceLastChecked;
             timeInMsSinceLastChecked += currentTimeInMs - timeOffset;
             if (timeInMsSinceLastChecked > 1000) {
+                timeOffset = 0;
+                timeInMsSinceLastChecked = 0;
                 return true;
             }
             return false;
@@ -109,6 +111,8 @@ public class CheckStuckRobot {
             timeOffset = currentTimeInMs - timeInMsSinceLastChecked;
             timeInMsSinceLastChecked += currentTimeInMs - timeOffset;
             if (timeInMsSinceLastChecked > 1000) {
+                timeOffset = 0;
+                timeInMsSinceLastChecked = 0;
                 return true;
             }
             return false;
@@ -117,6 +121,7 @@ public class CheckStuckRobot {
     }
     private boolean checkRobotSpinning(double currentXVelocity, double currentYVelocity, double currentThetaVelocity, Position currentPosition) {
         if (abs(getThetaDelta(currentPosition)) < THETA_DELTA_MIN_THRESHOLD && (abs(getXDelta(currentPosition)) < X_DELTA_MIN_THRESHOLD && abs(getYDelta(currentPosition)) < Y_DELTA_MIN_THRESHOLD)) {
+
             return true;
         }
         return false;
