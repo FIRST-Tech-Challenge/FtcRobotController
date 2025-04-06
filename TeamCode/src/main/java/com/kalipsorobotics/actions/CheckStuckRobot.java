@@ -1,10 +1,14 @@
 package com.kalipsorobotics.actions;
 import static java.lang.Math.abs;
 
+import android.os.SystemClock;
+
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.localization.WheelOdometry;
+import com.kalipsorobotics.math.Path;
 import com.kalipsorobotics.math.Position;
 import com.kalipsorobotics.modules.DriveTrain;
+import com.kalipsorobotics.test.checkStuck.CheckXY;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.kalipsorobotics.utilities.SharedData;
 
@@ -28,12 +32,14 @@ public class CheckStuckRobot {
     private final DriveTrain driveTrain;
     private final OpModeUtilities opModeUtilities;
     private PurePursuitAction purePursuitAction;
+    private CheckXY checkXY;
 
     public CheckStuckRobot(DriveTrain driveTrain, WheelOdometry wheelOdometry, OpModeUtilities opModeUtilities, PurePursuitAction purePursuitAction){
         this.wheelOdometry = wheelOdometry;
         this.driveTrain = driveTrain;
         this.opModeUtilities = opModeUtilities;
         this.purePursuitAction = purePursuitAction;
+        checkXY = new CheckXY(opModeUtilities);
     }
 
     private double getXDelta(Position currentPosition) {
@@ -99,10 +105,13 @@ public class CheckStuckRobot {
         }
         return false;
     }
+    private boolean checkIfOnPath(Path path, int timeInMillis) {
+        return checkXY.isPositionOnPath(path, timeInMillis);
+    }
 
     // change from out of void when method finished
     // if delta x, y, and theta are too low ( make threshold large ) then check the path and current pos
-    public void isStuck() {
+    public void isStuck(Path path, int timeInMillis) {
         Position currentPos = SharedData.getOdometryPosition();
         Position intendedPos = currentPos;
 
@@ -121,24 +130,18 @@ public class CheckStuckRobot {
 //        double deltaXVelocity = abs(prevXVelocity - currentXVelocity);
 
 
-        if (checkRobotSpinning(getXDelta(currentPos), getYDelta(currentPos), getThetaDelta(currentPos), currentPos) || checkRobotNotMoving(getXDelta(currentPos), getYDelta(currentPos))) {
-            if (isPathCorrect(intendedPos, currentPos)) {
-                unstuckRobot(driveTrain);
-                opModeUtilities.getTelemetry().addLine("robot is stuck");
-            }
+        if (checkRobotSpinning(getXDelta(currentPos), getYDelta(currentPos), getThetaDelta(currentPos), currentPos) ||
+                checkRobotNotMoving(getXDelta(currentPos), getYDelta(currentPos)) ||
+                checkIfOnPath(path, timeInMillis)) {
+
+            unstuckRobot(driveTrain, path, timeInMillis);
+            opModeUtilities.getTelemetry().addLine("robot is stuck");
+
         }
 
     }
-    private boolean isPathCorrect(Position intendedPos, Position currentPos) {
-        if (abs(intendedPos.getX() - currentPos.getX()) > X_DELTA_MIN_THRESHOLD ||
-                abs(intendedPos.getY() - currentPos.getY()) > Y_DELTA_MIN_THRESHOLD ||
-                abs(intendedPos.getTheta() - currentPos.getTheta()) > THETA_DELTA_MIN_THRESHOLD) {
-            return false;
-        }
-        return true;
-    }
 
-    private void unstuckRobot(DriveTrain driveTrain){
+    private void unstuckRobot(DriveTrain driveTrain, Path path, int timeInMillis){
         purePursuitAction = new PurePursuitAction(driveTrain, wheelOdometry);
         Position currentPos = new Position(wheelOdometry.countLeft(), wheelOdometry.countBack(), wheelOdometry.getCurrentImuHeading());
         //TODO replace 10 with something
@@ -146,7 +149,7 @@ public class CheckStuckRobot {
         Position possiblePos2 = new Position(currentPos.getX() + 10, currentPos.getY(), currentPos.getTheta());
         Position possiblePos3 = new Position(currentPos.getX(), currentPos.getY() - 10, currentPos.getTheta());
         Position possiblePos4 = new Position(currentPos.getX(), currentPos.getY() + 10, currentPos.getTheta());
-        if (!isPathCorrect(currentPos, currentPos)) {
+        if (!checkIfOnPath(path, timeInMillis)) {
             purePursuitAction.addPoint(possiblePos1.getX(), possiblePos1.getY(), possiblePos1.getTheta());
             purePursuitAction.addPoint(possiblePos2.getX(), possiblePos2.getY(), possiblePos2.getTheta());
             purePursuitAction.addPoint(possiblePos3.getX(), possiblePos3.getY(), possiblePos3.getTheta());

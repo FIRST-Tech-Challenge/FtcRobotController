@@ -1,9 +1,12 @@
 package com.kalipsorobotics.test.checkStuck;
 
+import android.os.SystemClock;
+
 import com.kalipsorobotics.actions.CheckStuckRobot;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
 import com.kalipsorobotics.localization.WheelOdometry;
+import com.kalipsorobotics.math.Path;
 import com.kalipsorobotics.math.Position;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
@@ -22,7 +25,9 @@ public class TestCheckStuck extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         waitForStart();
         while(opModeIsActive()) {
-            checkStuck.isStuck();
+            Path path = null; //TODO find way to get path
+            int currentTime = (int) SystemClock.currentThreadTimeMillis();
+            checkStuck.isStuck(path, currentTime);
             driveAction.move(gamepad1);
         }
     }
