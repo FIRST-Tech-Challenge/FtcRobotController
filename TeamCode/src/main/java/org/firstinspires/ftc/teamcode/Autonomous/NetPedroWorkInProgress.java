@@ -415,12 +415,12 @@ public class NetPedroWorkInProgress extends OpMode {
         }
         if(!isSamplePosessed) isIntaking = true;
         if(auxilariesTimer.seconds() < 0.5 && !(intake.getPitch() == intake.downPitch) && !isSamplePosessed){
-            intake.pitchDown();
+            intake.pitchUp();
             intake.setIntakePower(1.0f);
             intake.setTransferPower(0.6f);
         }
         if(auxilariesTimer.seconds() > 2.5 && auxilariesTimer.seconds() < 3 && intake.getTargetLength() != 0){
-            intake.pitchUp();
+            intake.pitchDown();
             intake.setSlidesTargetPosition(0);
             delivery.setSlidesPower(0.75);
         }
@@ -458,11 +458,11 @@ public class NetPedroWorkInProgress extends OpMode {
         }
     }
 
-    private void relocalizeWithDistanceSensor(){
-        if(!distanceSensorDisabled && distanceSensorX < 0.5){
-            follower.setPose(new Pose(distanceSensorX, follower.getPose().getY(), follower.getPose().getHeading()));
-        }
-    }
+//    private void relocalizeWithDistanceSensor(){
+//        if(!distanceSensorDisabled && distanceSensorX < 0.5){
+//            follower.setPose(new Pose(distanceSensorX, follower.getPose().getY(), follower.getPose().getHeading()));
+//        }
+//    }
 
 
     /** These change the states of the paths and actions
@@ -476,21 +476,21 @@ public class NetPedroWorkInProgress extends OpMode {
     @Override
     public void loop() {
 
-        if(!distanceSensorDisabled) {
-            distanceSensorX = rearDistanceSens.getDistance(DistanceUnit.INCH);
-        }
-        if(distanceSensorX > 60){
-            distanceSensorDisabled = true;
-            rearDistanceSens = null;
-        }
-        relocalizeWithDistanceSensor();
+//        if(!distanceSensorDisabled) {
+//            distanceSensorX = rearDistanceSens.getDistance(DistanceUnit.INCH);
+//        }
+//        if(distanceSensorX > 60){
+//            distanceSensorDisabled = true;
+//            rearDistanceSens = null;
+//        }
+//        relocalizeWithDistanceSensor();
 
         // These loop the movements of the robot
         follower.update();
         autonomousPathUpdate();
 
         // Feedback to Driver Hub
-        telemetry.addData("Rear Distance (inches)", distanceSensorX);
+//        telemetry.addData("Rear Distance (inches)", distanceSensorX);
         telemetry.addLine();
         telemetry.addData("Is Busy?", follower.isBusy());
         telemetry.addData("Is Delivering?", isDelivering);
@@ -523,7 +523,7 @@ public class NetPedroWorkInProgress extends OpMode {
         follower.setStartingPose(new Pose(startPoint.getX(), startPoint.getY(), Math.toRadians(-90)));
         buildPaths();
 
-        intake.pitchUp();
+        intake.pitchDown();
         delivery.setWrist(delivery.wristDownPosition);
         delivery.clawClose();
     }

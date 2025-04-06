@@ -42,7 +42,7 @@ public class TwoFishDelivery {
     public double clawOpenPosition = 0.345;
     public double clawClosePosition = 0.6;
     public double pitchIntakePosition = 1;
-    public double pitchUpPosition = 0.5917;
+    public double pitchUpPosition = 0.57;
     public double pitchScoreSpecPosition = 0.29;
     public double pitchTransferPosition = 0;
     public double pitchSampleScorePosition = 0.7683;
@@ -54,11 +54,11 @@ public class TwoFishDelivery {
     final private double DIP_FROM_SCORING_SPEC = 0.5;
 
     //Slide Heights
-    final private int SPEC_DELTA = 220;
-    final private int SAMPLE_DELTA = 1000;
+    final private int SPEC_DELTA = 480;
+    final private int SAMPLE_DELTA = 3500;
 
     public int minHeight = -999999999;
-    public int maxHeight = 1000;
+    public int maxHeight = 3500;
     public int specHeight = SPEC_DELTA;
     public int sampleHeight = SAMPLE_DELTA;
 

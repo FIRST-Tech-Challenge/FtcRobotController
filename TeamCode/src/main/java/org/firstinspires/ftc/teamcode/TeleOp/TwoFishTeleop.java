@@ -210,6 +210,9 @@ public class TwoFishTeleop extends LinearOpMode {
                     state = RobotState.IDLE;
                 }
 
+                if(intake.getExtensionTicks() < intake.minExtension + 200){
+                    intake.pitchDown();
+                }
                 switch(state) {
 
                     case INTAKE:
@@ -218,10 +221,10 @@ public class TwoFishTeleop extends LinearOpMode {
                         intake.setSlidesTargetPosition(intake.getExtensionTicks() - (int)(gamepad2.left_stick_y * 200));
                         //intake pitch
                         intakePitchTarget = (float) Math.min(intake.downPitch, Math.max(intake.upPitch, intakePitchTarget)); //down pitch is larger limit
-                        double joystickIncrement = (gamepad2.right_stick_y * 0.03f);
-                        if(intakePitchTarget > intake.downPitch - 0.25 && joystickIncrement > 0.0){ //down is positive
-                            joystickIncrement /= 4;
-                        }
+                        double joystickIncrement = -(gamepad2.right_stick_y * 0.03f);
+//                        if(intakePitchTarget > intake.downPitch - 0.25 && joystickIncrement > 0.0){ //down is positive
+//                            joystickIncrement /= 4;
+//                        }
                         intakePitchTarget += joystickIncrement;
                         intake.setPitch((float)intakePitchTarget);
 
@@ -245,8 +248,8 @@ public class TwoFishTeleop extends LinearOpMode {
 
 
                         if(allowAutoPitchUp && samplePosessed.equals(targetSampleColor)){
-                                intake.pitchUp();
-                                intakePitchTarget = (float) intake.upPitch;
+//                                intake.pitchUp();
+//                                intakePitchTarget = (float) intake.upPitch;
                         }
                         if(allianceColorIsRed || targetSampleColor.equals("RED")){
                             if(samplePosessed.equals("BLUE")){
@@ -264,9 +267,10 @@ public class TwoFishTeleop extends LinearOpMode {
                         //confirm intake ---> transfer
                         if(currentGamepad2.a && !prevGamepad2.a){
                            state = RobotState.TRANSFER;
-                            intake.pitchUp();
-                            intake.setTransferPower(0.5f);
-                           intake.toMinExtention();
+                            intake.pitchDown();
+                            intake.setTransferPower(0.0f);
+                            intake.setIntakePower(0.0f);
+                           intake.setSlidesTargetPosition(intake.minExtension+100);
                             delivery.setWrist(delivery.wristUpPosition);
                             delivery.toSpecHeight();
                             delivery.setPitch(delivery.pitchTransferPosition);
@@ -289,12 +293,13 @@ public class TwoFishTeleop extends LinearOpMode {
                         if(delivery.CheckIfDonePitching(1)){
                             delivery.toTransferHeight();
                         }
+                        intake.setSlidesTargetPosition(intake.minExtension+100);
 
                         delivery.setSlidesPower(0.5);
 //                        delivery.stopSlidesIfStuck();
                         intake.setSlidesPower(0.5);
                         //break unless fully retracted
-                        if(intake.getExtensionTicks() > 25+intake.minExtension){break;}
+                        if(intake.getExtensionTicks() > 125+intake.minExtension){break;}
 
                         //close claw if "a" pressed
                         if(currentGamepad2.a && !prevGamepad2.a){
@@ -315,7 +320,7 @@ public class TwoFishTeleop extends LinearOpMode {
 
                         // manual control of slide height
                         if(Math.abs(gamepad2.left_stick_y) > 0.01){
-                            delivery.slideTarget = delivery.getSlideHeight() - gamepad2.left_stick_y * 200;
+                            delivery.slideTarget = delivery.getSlideHeight() - gamepad2.left_stick_y * 400;
                             delivery.setSlidesTargetPosition((int)delivery.slideTarget);
                         }
 
@@ -365,6 +370,8 @@ public class TwoFishTeleop extends LinearOpMode {
                         break;
 
                     case SPECIMEN_SCORE:
+                        intakePitchTarget = intake.upPitch;
+                        intake.pitchDown();
                         voltageDebugger.addActionVoltageTelemetry();
 
                         // manual control of slide height
@@ -413,13 +420,12 @@ public class TwoFishTeleop extends LinearOpMode {
 //                            delivery.resetPWM();
                             state = RobotState.IDLE;
                         }
-                        intake.pitchUp();
                         break;
 
                     case IDLE:
                         intake.setTransferPower(0.0f);
                         delivery.toSpecHeight();
-                        delivery.setSlidesPower(0);
+                        delivery.setSlidesPower(0.5);
 
                         //if left joystick or triggers are pressed, switch to intake
                         if(Math.abs(gamepad2.left_stick_y) > 0.01f || gamepad2.right_trigger > 0.01f){

@@ -35,8 +35,8 @@ public class TwoFishIntake {
     public final int DELTA_EXTENSION = 1000;
     public int minExtension = -999999999;
     public int maxExtension = DELTA_EXTENSION;
-    public double downPitch = 0.66;
-    public double upPitch = 0.28;
+    public double downPitch = 0.7;
+    public double upPitch = 0.1;
 
     private final int TICK_LOW_POWER_DISTANCE = 25;
 
@@ -172,7 +172,9 @@ public class TwoFishIntake {
     public void setIntakePower(float power){intake.setPower(power);}
     public void setTransferPower(float power){transfer.setPower(power);}
     public void setPitch(float position){pitch.setPosition(position);}
-    public void pitchUp(){pitch.setPosition(upPitch);}
+    public void pitchUp(){
+        pitch.setPosition(upPitch);
+    }
     public void pitchDown(){pitch.setPosition(downPitch);}
     public double getPitch(){return pitch.getPosition();}
     public int getExtensionTicks(){ return extension.getCurrentPosition();}

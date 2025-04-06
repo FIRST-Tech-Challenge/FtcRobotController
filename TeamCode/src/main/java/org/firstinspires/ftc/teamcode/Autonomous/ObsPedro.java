@@ -73,10 +73,10 @@ public class ObsPedro extends OpMode {
 //    private final Point toFirstSpecPoint2 = new Point(22, 70);
 //    private final Point firstSpecScorePoint = new Point(35, 70);
 
-    private final Point startPoint = new Point(8, 56);
+    private final Point startPoint = new Point(8, 61);
     private final Point toFirstSpecPoint1 = new Point(30, 73);
     private final Point toFirstSpecPoint2 = new Point(22, 73);
-    private final Point firstSpecScorePoint = new Point(38, 72);
+    private final Point firstSpecScorePoint = new Point(38, 75);
 
     //Collects the first sample
     private final Point startCollectSample1Point = firstSpecScorePoint;
@@ -91,7 +91,7 @@ public class ObsPedro extends OpMode {
     private final Point toCollectSample2Point2 = new Point(50, 32);
     private final Point toCollectSample2Point3 = new Point(55, 20);
     private final Point toCollectSample2Point4 = new Point(30, 20);
-    private final Point toCollectSample2Point5 = new Point(35, 28);
+    private final Point toCollectSample2Point5 = new Point(25, 28);
     private final Point endCollectSample2Point = new Point(10.5, 33);
 
 
@@ -99,7 +99,7 @@ public class ObsPedro extends OpMode {
     private final Point collectSpecPoint = endCollectSample2Point;
     private final Point toSpecPoint1 = new Point(50, 40);
     private final Point toSpecPoint2 = new Point(12, 75);
-    private final Point specScorePoint = new Point(39, 71);
+    private final Point specScorePoint = new Point(39, 73);
 
     private ElapsedTime auxilariesTimer = new ElapsedTime();
     private ElapsedTime sleepTimer = new ElapsedTime();
@@ -175,11 +175,12 @@ public class ObsPedro extends OpMode {
                 }
                 break;
             case 1:
-//                if(follower.getPose().getX() > 50) {
-//                    follower.setMaxPower(0.5);
-//                } else{
-//                    follower.setMaxPower(0.8);
-//                }
+                intake.pitchDown();
+                if(follower.getPose().getX() > 50) {
+                    follower.setMaxPower(0.5);
+                } else{
+                    follower.setMaxPower(1);
+                }
 //                if(sleepTimer.seconds() > 0.5)
                 if (!follower.isBusy()) {
 //                    follower.setMaxPower(1);
@@ -198,9 +199,9 @@ public class ObsPedro extends OpMode {
 
                 break;
             case 2:
-
+                intake.pitchDown();
                 if(follower.getPose().getX() < 70 && follower.getPose().getX() > 50) {
-                    follower.setMaxPower(0.5);
+                    follower.setMaxPower(0.8);
                 } else{
                     follower.setMaxPower(1);
                 }
@@ -212,9 +213,9 @@ public class ObsPedro extends OpMode {
                 }
                 break;
             case 3:
-
+                intake.pitchDown();
                 if((follower.getPose().getX() < 70 && follower.getPose().getX() > 50) || follower.getPose().getX() < 15) {
-                    follower.setMaxPower(0.5);
+                    follower.setMaxPower(0.8);
                 } else{
                     follower.setMaxPower(1);
                 }
@@ -235,6 +236,7 @@ public class ObsPedro extends OpMode {
                 }
                 break;
             case 4:
+                intake.pitchDown();
 
                 if(follower.getPose().getX() > 50) {
                     follower.setMaxPower(0.5);
@@ -260,7 +262,7 @@ public class ObsPedro extends OpMode {
                 }
                 break;
             case 5:
-
+                intake.pitchDown();
                 if(follower.getPose().getX() < 15) {
                     follower.setMaxPower(0.5);
                 } else{
@@ -282,6 +284,7 @@ public class ObsPedro extends OpMode {
                 }
                 break;
             case 6:
+                intake.pitchDown();
 
                 if(follower.getPose().getX() > 50) {
                     follower.setMaxPower(0.5);
@@ -305,7 +308,7 @@ public class ObsPedro extends OpMode {
                 }
                 break;
             case 7:
-
+                intake.pitchDown();
                 if(follower.getPose().getX() < 15) {
                     follower.setMaxPower(0.5);
                 } else{
@@ -324,6 +327,7 @@ public class ObsPedro extends OpMode {
                 }
                 break;
             case 8:
+                intake.pitchDown();
                 if(follower.getPose().getX() > 50) {
                     follower.setMaxPower(0.5);
                 } else{
@@ -344,7 +348,7 @@ public class ObsPedro extends OpMode {
         if(!deliveryIsPrepped) {
             deliveryIsPrepped = true;
             delivery.toSpecHeight();
-            delivery.setSlidesPower(0.75);
+            delivery.setSlidesPower(0.5);
             delivery.setWrist(delivery.wristDownPosition);
             delivery.setPitch(delivery.pitchUpPosition);
         }
@@ -359,12 +363,13 @@ public class ObsPedro extends OpMode {
         if(auxilariesTimer.seconds() < 0.5 && delivery.getPitch() != delivery.pitchScoreSpecPosition){
             delivery.setPitch(delivery.pitchScoreSpecPosition);
             delivery.toSpecHeight();
-            delivery.setSlidesPower(0.75);
+            delivery.setSlidesPower(1);
         }
         if(auxilariesTimer.seconds() > 0.5 && auxilariesTimer.seconds() < 0.6 && delivery.clawClosed){
             delivery.clawOpen();
         }
         if(auxilariesTimer.seconds() > 0.6){
+            delivery.setSlidesPower(0.5);
             isDelivering = false;
             deliveryIsPrepped = false;
         }
@@ -376,7 +381,7 @@ public class ObsPedro extends OpMode {
         if(!intakeIsPrepped) {
             intakeIsPrepped = true;
             delivery.toMinHeight();
-            delivery.setSlidesPower(0.75);
+            delivery.setSlidesPower(0.5);
             delivery.setPitch(delivery.pitchIntakePosition);
             delivery.setWrist(delivery.wristUpPosition);
             delivery.clawOpen();
@@ -394,7 +399,7 @@ public class ObsPedro extends OpMode {
         if(auxilariesTimer.seconds() > 0.5 && auxilariesTimer.seconds() < 0.6 && delivery.getPitch() != delivery.pitchUpPosition){
             delivery.setPitch(delivery.pitchUpPosition);
             delivery.toSpecHeight();
-            delivery.setSlidesPower(0.75);
+            delivery.setSlidesPower(0.5);
         }
         if(auxilariesTimer.seconds() > 0.6){
             isIntaking = false;
@@ -440,6 +445,7 @@ public class ObsPedro extends OpMode {
         telemetry.addData("Rear Distance (inches)", distanceSensorX);
         telemetry.addLine();
         telemetry.addData("Target Delivery height", delivery.slideTarget);
+        telemetry.addData("DeliverySlide0 height:", delivery.getSlideHeight());
         telemetry.addLine();
         telemetry.addData("Is Busy?", follower.isBusy());
         telemetry.addData("Is Delivering?", isDelivering);
@@ -473,6 +479,8 @@ public class ObsPedro extends OpMode {
         follower.setStartingPose(new Pose(startPoint.getX(), startPoint.getY(), 0));
         buildPaths();
 
+        intake.pitchDown();
+
         delivery.setWrist(delivery.wristDownPosition);
         delivery.clawClose();
     }
@@ -486,7 +494,7 @@ public class ObsPedro extends OpMode {
     @Override
     public void start() {
 
-        intake.pitchUp();
+        intake.pitchDown();
         opmodeTimer.resetTimer();
         setPathState(0);
     }
