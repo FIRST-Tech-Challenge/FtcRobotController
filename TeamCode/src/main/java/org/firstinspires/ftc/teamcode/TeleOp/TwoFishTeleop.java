@@ -291,9 +291,10 @@ public class TwoFishTeleop extends LinearOpMode {
                     case TRANSFER:
 
                         if(delivery.CheckIfDonePitching(1)){
+                            delivery.setWrist(delivery.wristUpPosition);
                             delivery.toTransferHeight();
                         }
-                        intake.setSlidesTargetPosition(intake.minExtension+100);
+                        intake.setSlidesTargetPosition(intake.minExtension+125);
 
                         delivery.setSlidesPower(0.5);
 //                        delivery.stopSlidesIfStuck();

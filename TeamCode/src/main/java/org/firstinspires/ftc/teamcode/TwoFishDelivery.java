@@ -39,16 +39,16 @@ public class TwoFishDelivery {
 
     public double slideTarget;
 
-    public double clawOpenPosition = 0.345;
-    public double clawClosePosition = 0.6;
+    public double clawOpenPosition = 0.3289;
+    public double clawClosePosition = 0.6622;
     public double pitchIntakePosition = 1;
     public double pitchUpPosition = 0.57;
     public double pitchScoreSpecPosition = 0.29;
     public double pitchTransferPosition = 0;
     public double pitchSampleScorePosition = 0.7683;
 
-    public double wristUpPosition = 0.9722;
-    public double wristDownPosition = 0.3094;
+    public double wristUpPosition = 0;
+    public double wristDownPosition = 0.6311;
     private double operatingVoltage;
     final private double DIP_FROM_HOLDING_SPEC = 0.25;
     final private double DIP_FROM_SCORING_SPEC = 0.5;
@@ -58,7 +58,7 @@ public class TwoFishDelivery {
     final private int SAMPLE_DELTA = 3500;
 
     public int minHeight = -999999999;
-    public int maxHeight = 3500;
+    public int maxHeight = 3250;
     public int specHeight = SPEC_DELTA;
     public int sampleHeight = SAMPLE_DELTA;
 
@@ -263,7 +263,7 @@ public class TwoFishDelivery {
 
     public void toMinHeight(){setSlidesTargetPosition(minHeight);}
     public void toSpecHeight(){setSlidesTargetPosition(specHeight);}
-    public void toTransferHeight(){setSlidesTargetPosition(minHeight + 60);}
+    public void toTransferHeight(){setSlidesTargetPosition(minHeight + 80);}
     public void toSampleHeight(){
         setSlidesTargetPosition(sampleHeight);
     }

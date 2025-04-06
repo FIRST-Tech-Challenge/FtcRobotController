@@ -112,7 +112,7 @@ public class NetPedroWorkInProgress extends OpMode {
                                 new Point(startPoint.getX() + 2, startPoint.getY())
                         )
                 )
-                .setConstantHeadingInterpolation(0)
+                .setConstantHeadingInterpolation(Math.toRadians(-90))
                 .addPath(
                         new BezierCurve(
                                 new Point(startPoint.getX() + 2, startPoint.getY()),
@@ -120,7 +120,7 @@ public class NetPedroWorkInProgress extends OpMode {
                                 scorePoint
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45))
+                .setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-45))
                 .build();
 
         intake1 = follower.pathBuilder()
@@ -419,12 +419,12 @@ public class NetPedroWorkInProgress extends OpMode {
             intake.setIntakePower(1.0f);
             intake.setTransferPower(0.6f);
         }
-        if(auxilariesTimer.seconds() > 2.5 && auxilariesTimer.seconds() < 3 && intake.getTargetLength() != 0){
+        if(auxilariesTimer.seconds() > 1.5 && auxilariesTimer.seconds() < 2 && intake.getTargetLength() != 0){
             intake.pitchDown();
-            intake.setSlidesTargetPosition(0);
+            intake.setSlidesTargetPosition(125);
             delivery.setSlidesPower(0.75);
         }
-        if(auxilariesTimer.seconds() > 3){
+        if(auxilariesTimer.seconds() > 2){
             intake.setTransferPower(0.0f);
             isSamplePosessed = true;
             isIntaking = false;
