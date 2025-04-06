@@ -122,7 +122,7 @@ public class CheckStuckRobot {
 
         if (checkRobotSpinning(getXDelta(currentPos), getYDelta(currentPos), getThetaDelta(currentPos), currentPos) || checkRobotNotMoving(getXDelta(currentPos), getYDelta(currentPos))) {
             if (isPathCorrect(intendedPos, currentPos)) {
-                unstuckRobot(driveTrain);
+                unstuckRobot(driveTrain, intendedPos);
                 opModeUtilities.getTelemetry().addLine("robot is stuck");
             }
         }
@@ -137,9 +137,14 @@ public class CheckStuckRobot {
         return true;
     }
 
-    private void unstuckRobot(DriveTrain driveTrain){
-        PurePursuitAction test = new PurePursuitAction(driveTrain, wheelOdometry);
-        //get unstuck
+    private void unstuckRobot(DriveTrain driveTrain, Position intendedPos){
+        PurePursuitAction purePursuit = new PurePursuitAction(driveTrain, wheelOdometry);
+        Position currentPos = new Position(wheelOdometry.countLeft(), wheelOdometry.countBack(), wheelOdometry.getCurrentImuHeading());
+        if (!isPathCorrect(intendedPos, currentPos)) {
+            purePursuit.addPoint(intendedPos.getX(), intendedPos.getY(), intendedPos.getTheta());
+            return;
+        }
+        return;
     }
 
 }
