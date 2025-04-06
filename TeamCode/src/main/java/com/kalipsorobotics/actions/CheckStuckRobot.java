@@ -105,6 +105,7 @@ public class CheckStuckRobot {
     public void isStuck() {
         Position currentPos = SharedData.getOdometryPosition();
         Position intendedPos = currentPos;
+
         //TODO add intended pos
         double currentX = currentPos.getX();
         double currentY = currentPos.getY();
@@ -122,7 +123,7 @@ public class CheckStuckRobot {
 
         if (checkRobotSpinning(getXDelta(currentPos), getYDelta(currentPos), getThetaDelta(currentPos), currentPos) || checkRobotNotMoving(getXDelta(currentPos), getYDelta(currentPos))) {
             if (isPathCorrect(intendedPos, currentPos)) {
-                unstuckRobot(driveTrain, intendedPos);
+                unstuckRobot(driveTrain);
                 opModeUtilities.getTelemetry().addLine("robot is stuck");
             }
         }
@@ -137,11 +138,19 @@ public class CheckStuckRobot {
         return true;
     }
 
-    private void unstuckRobot(DriveTrain driveTrain, Position intendedPos){
-        PurePursuitAction purePursuit = new PurePursuitAction(driveTrain, wheelOdometry);
+    private void unstuckRobot(DriveTrain driveTrain){
+        purePursuitAction = new PurePursuitAction(driveTrain, wheelOdometry);
         Position currentPos = new Position(wheelOdometry.countLeft(), wheelOdometry.countBack(), wheelOdometry.getCurrentImuHeading());
-        if (!isPathCorrect(intendedPos, currentPos)) {
-            purePursuit.addPoint(intendedPos.getX(), intendedPos.getY(), intendedPos.getTheta());
+        //TODO replace 10 with something
+        Position possiblePos1 = new Position(currentPos.getX() - 10, currentPos.getY(), currentPos.getTheta());
+        Position possiblePos2 = new Position(currentPos.getX() + 10, currentPos.getY(), currentPos.getTheta());
+        Position possiblePos3 = new Position(currentPos.getX(), currentPos.getY() - 10, currentPos.getTheta());
+        Position possiblePos4 = new Position(currentPos.getX(), currentPos.getY() + 10, currentPos.getTheta());
+        if (!isPathCorrect(currentPos, currentPos)) {
+            purePursuitAction.addPoint(possiblePos1.getX(), possiblePos1.getY(), possiblePos1.getTheta());
+            purePursuitAction.addPoint(possiblePos2.getX(), possiblePos2.getY(), possiblePos2.getTheta());
+            purePursuitAction.addPoint(possiblePos3.getX(), possiblePos3.getY(), possiblePos3.getTheta());
+            purePursuitAction.addPoint(possiblePos4.getX(), possiblePos4.getY(), possiblePos4.getTheta());
             return;
         }
         return;
