@@ -135,7 +135,7 @@ public class CheckStuckRobot {
                 checkRobotNotMoving(getXDelta(currentPos), getYDelta(currentPos))/* ||
                 checkIfOnPath(path, timeInMillis)*/) {
 
-            unstuckRobot(driveTrain, /*path,*/ timeInMillis);
+            //unstuckRobot(driveTrain, /*path,*/ timeInMillis);
             opModeUtilities.getTelemetry().addLine("robot is stuck");
 
         }
