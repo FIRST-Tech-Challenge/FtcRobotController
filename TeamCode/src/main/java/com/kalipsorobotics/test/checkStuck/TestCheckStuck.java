@@ -33,6 +33,7 @@ public class TestCheckStuck extends LinearOpMode {
                 telemetry.addLine("robot is stuck");
             }
             driveAction.move(gamepad1);
+            telemetry.update();
         }
     }
 }
