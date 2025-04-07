@@ -28,7 +28,7 @@ public class TestCheckStuck extends LinearOpMode {
         CheckStuckRobot checkStuck = new CheckStuckRobot(driveTrain, wheelOdometry, opModeUtilities, purePursuitAction);
         waitForStart();
         while(opModeIsActive()) {
-            Path path = null; //TODO find way to get path
+            Path path = null; //TODO find way to get path AND IMPLEMENT INTO CHECKXY
             int currentTime = (int) SystemClock.currentThreadTimeMillis();
             Log.d("check stuck", "current time is: " + currentTime);
             boolean isStuck = checkStuck.isStuck(currentTime);

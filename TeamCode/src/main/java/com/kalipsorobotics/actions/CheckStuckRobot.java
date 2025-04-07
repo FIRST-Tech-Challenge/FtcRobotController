@@ -145,8 +145,9 @@ public class CheckStuckRobot {
 //        double currentXVelocity = wheelOdometry.
 //        double deltaXVelocity = abs(prevXVelocity - currentXVelocity);
 
+        //TODO Fix the time encrements
         timeOffset = timeInMillis - timeInMsSinceLastChecked;
-        timeInMsSinceLastChecked += timeInMillis - timeOffset;
+        timeInMsSinceLastChecked = timeInMsSinceLastChecked + timeInMillis - timeOffset;
         if (timeInMsSinceLastChecked > 1000) {
             timeOffset = 0;
             timeInMsSinceLastChecked = 0;
@@ -157,7 +158,6 @@ public class CheckStuckRobot {
                 //unstuckRobot(driveTrain, /*path,*/ timeInMillis);
                 Log.d("check stuck", "---ROBOT IS STUCK---");
                 return true;
-
             }
             Log.d("check stuck", "---robot is not stuck---");
         }
