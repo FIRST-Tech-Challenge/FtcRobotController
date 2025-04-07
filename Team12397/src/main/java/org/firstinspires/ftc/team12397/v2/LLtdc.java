@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.team12397.v2;
 
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.util.List;
 
 // LimeLight Trigonometry Distance Calculator
 public class LLtdc {
@@ -21,6 +24,11 @@ public class LLtdc {
      * (parallel distance as in: shortest distance to the robot's front plane's center line.)
      */
     private final double lensOffsetIN = 0;
+    /**
+     *TBD; based on robot build
+     * The distance from the lens to the front plane of the robot
+     */
+    private final double lensDepthOffsetIN = 0;
     private final double armMaximumReachIN = 0;
 
     // measured parameters ---
@@ -28,6 +36,8 @@ public class LLtdc {
     private double xPlaneRads;
 
     // calculated parameters ---
+    private double rawYcorrection;
+
     /**
      * how far forward/backward the robot must move
      */
@@ -82,17 +92,80 @@ public class LLtdc {
         limelight.shutdown();
     }
 
+    public void assessEnvironment(int recursionDepth){
+        limelight.captureSnapshot("try1");
+        List<LLResultTypes.DetectorResult> detectorResults = limelight.getLatestResult().getDetectorResults();
 
-    private void formulateYcorrection(){
-        yCorrection = yPlaneRads; // placeholder! please chill until a later date... (insert formula & continue here)
+        if (!detectorResults.isEmpty()) {
+            // filter out unreliable guesses
+            for (int i = detectorResults.size()-1; i >= 0; i--) {
+                if (detectorResults.get(i).getConfidence() < 85) {
+                    detectorResults.remove(i);
+                }
+            }
+
+            /*
+            // filter out by color (needs to be figured out)
+            // Run obd & then 2 clr pipelines?
+            // cv2 to find pxl clr?
+            for (int i = detectorResults.size()-1; i >= 0; i--) {
+                if (detectorResults.get(i).getConfidence() < 85) {
+                    detectorResults.remove(i);
+                }
+            }
+             */
+
+            // get the closest one (by area)
+            LLResultTypes.DetectorResult closest = detectorResults.get(0);
+            for (int i = detectorResults.size()-1; i > 0; i--) {
+                if (detectorResults.get(i).getTargetArea() > closest.getTargetArea()){
+                    closest = detectorResults.get(i);
+                }
+            }
+
+            yPlaneRads = closest.getTargetYDegrees();
+            xPlaneRads = closest.getTargetXDegrees();
+
+
+        } else {
+            recursionDepth--;
+            if (recursionDepth !=0) {
+                assessEnvironment(recursionDepth);
+            } else {
+                yPlaneRads = 0;
+                xPlaneRads = 0;
+            }
+        }
+    }
+
+    private void formulateRobotCorrections(){
+        // cot(yPlaneRads) * lensHeight(opposite) = adjacent length
+        rawYcorrection = (1/Math.tan(yPlaneRads)  )*lensHeightIN;
+        // tan(xPlaneRads) = opposite/adjacent
+        xCorrection = (Math.tan(xPlaneRads)  )*rawYcorrection;
+        // -1 to make cw (+) and ccw (-): tan(yawCorrection) = (xCorrection - lensOffset) (opposite) / yCorrection (adjacent)
+        yawCorrection = (Math.atan(  ((xCorrection-lensOffsetIN)*-1) /rawYcorrection));
+        //
+        if (rawYcorrection > armMaximumReachIN){
+            // find the distance the robot must cover for the arm to be in reach.
+            yCorrection = rawYcorrection - armMaximumReachIN;
+            // give the rest amount of distance to the arm (armMaximumReach).
+            armCorrection = rawYcorrection - yCorrection;
+        } else if (rawYcorrection < armMaximumReachIN){
+            // split distances between both movement mediums to achieve faster times.
+            yCorrection = rawYcorrection/2;
+            armCorrection = rawYcorrection/2;
+        }
     }
 
     private void fabricateReturnObject(){
         // clawYawCorrection will hold 0 until further build details are released.
+        formulateRobotCorrections();
         returnObject = new TdcReturnObject(yawCorrection, xCorrection, yCorrection, armCorrection, 0);
     }
 
     public TdcReturnObject getTdcReturn() {
+        fabricateReturnObject();
         return returnObject;
     }
 }
