@@ -1,6 +1,7 @@
 package com.kalipsorobotics.test.checkStuck;
 
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.kalipsorobotics.actions.CheckStuckRobot;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
@@ -29,7 +30,9 @@ public class TestCheckStuck extends LinearOpMode {
         while(opModeIsActive()) {
             Path path = null; //TODO find way to get path
             int currentTime = (int) SystemClock.currentThreadTimeMillis();
-            if (checkStuck.isStuck(/*path*/currentTime)) {
+            Log.d("check stuck", "current time is: " + currentTime);
+            boolean isStuck = checkStuck.isStuck(currentTime);
+            if (isStuck) {
                 telemetry.addLine("robot is stuck");
             }
             driveAction.move(gamepad1);

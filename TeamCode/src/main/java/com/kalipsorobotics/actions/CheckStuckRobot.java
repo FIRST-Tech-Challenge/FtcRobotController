@@ -3,6 +3,7 @@ import static java.lang.Math.abs;
 
 import android.app.SharedElementCallback;
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.localization.WheelOdometry;
@@ -154,9 +155,11 @@ public class CheckStuckRobot {
                 checkIfOnPath(path, timeInMillis)*/) {
 
                 //unstuckRobot(driveTrain, /*path,*/ timeInMillis);
+                Log.d("check stuck", "---ROBOT IS STUCK---");
                 return true;
 
             }
+            Log.d("check stuck", "---robot is not stuck---");
         }
         return false;
 
