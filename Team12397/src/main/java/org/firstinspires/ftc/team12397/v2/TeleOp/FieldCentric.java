@@ -25,7 +25,7 @@ public class FieldCentric extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            drive = luisL.left_stick_y;
+            drive = -luisL.left_stick_y;
             strafe = luisL.left_stick_x;
             turn = luisL.right_stick_x;
 
