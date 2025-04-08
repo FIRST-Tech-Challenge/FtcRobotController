@@ -9,8 +9,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.team12397.v2.LLtdc;
 import org.firstinspires.ftc.team12397.v2.RobotHardware;
 import org.firstinspires.ftc.team12397.v2.TdcReturnObject;
-import org.opencv.core.Mat;
-
 @TeleOp(name="LimeTeleOp", group="Robot")
 
 public class LimeTeleOp extends LinearOpMode {

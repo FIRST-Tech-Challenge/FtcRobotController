@@ -17,19 +17,19 @@ public class LLtdc {
      * The height from the lens to the floor
      *
      */
-    private final double lensHeightIN = 0;
+    private final double lensHeightIN = 4.75- 1.75;
     /**
      * TBD; based on robot build
      * The parallel distance from the lens to the center of the robot
      * (parallel distance as in: shortest distance to the robot's front plane's center line.)
      */
-    private final double lensOffsetIN = 0;
+    private final double lensOffsetIN = 3.875;
     /**
      *TBD; based on robot build
      * The distance from the lens to the front plane of the robot
      */
     private final double lensDepthOffsetIN = 0;
-    private final double armMaximumReachIN = 0;
+    private final double armMaximumReachIN = 12;
 
     // measured parameters ---
     private double yPlaneRads;
@@ -125,8 +125,8 @@ public class LLtdc {
                 }
             }
 
-            yPlaneRads = closest.getTargetYDegrees();
-            xPlaneRads = closest.getTargetXDegrees();
+            yPlaneRads = Math.toRadians(closest.getTargetYDegrees());
+            xPlaneRads = Math.toRadians(closest.getTargetXDegrees());
 
 
         } else {
