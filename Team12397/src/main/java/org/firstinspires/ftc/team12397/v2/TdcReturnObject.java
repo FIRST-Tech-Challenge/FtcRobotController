@@ -62,5 +62,10 @@ public class TdcReturnObject {
         return new Double[]{yawCorrection, robotXCorrection, robotYCorrection, armYCorrection, clawYawCorrection};
     }
 
+    public String toString(){
+        return "Move the robot " + robotXCorrection + " inches right/left, \n" + robotYCorrection + " inches forward/backward, \n or "
+                + yawCorrection + " radians cw/ccw, \n Move the arm " + armYCorrection + " inches forward/backward, \n and rotate the claw " + clawYawCorrection + " radians cw/ccw";
+    }
+
 
 }

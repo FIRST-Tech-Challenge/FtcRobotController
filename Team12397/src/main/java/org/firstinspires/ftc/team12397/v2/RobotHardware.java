@@ -186,5 +186,27 @@ public class RobotHardware {
         rightBack.setPower(rightBackWheel);
     }
 
-
+    // placeholder
+    public void setServoPosition(int servoNum, double position){
+        switch (servoNum) {
+            case 0:
+                leftExtend.setPosition(position);
+                break;
+            case 1:
+                rightExtend.setPosition(position);
+                break;
+            case 2:
+                inClawPitch.setPosition(position);
+                break;
+            case 3:
+                inClaw.setPosition(position);
+                break;
+            case 4:
+                getInClawYaw.setPosition(position);
+                break;
+            case 5:
+                outClaw.setPosition(position);
+                break;
+        }
+    }
 }

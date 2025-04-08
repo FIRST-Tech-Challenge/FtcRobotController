@@ -54,6 +54,8 @@ public class LLtdc {
      * how far the arm must extend/retract
      */
     private double armCorrection;
+
+    private boolean scanSuccessful;
     public LLtdc(Limelight3A LL){
         limelight = LL;
     }
@@ -96,7 +98,7 @@ public class LLtdc {
         limelight.captureSnapshot("try1");
         List<LLResultTypes.DetectorResult> detectorResults = limelight.getLatestResult().getDetectorResults();
 
-        if (!detectorResults.isEmpty()) {
+        if (!detectorResults.isEmpty()) { scanSuccessful = true;
             // filter out unreliable guesses
             for (int i = detectorResults.size()-1; i >= 0; i--) {
                 if (detectorResults.get(i).getConfidence() < 85) {
@@ -129,6 +131,7 @@ public class LLtdc {
 
         } else {
             recursionDepth--;
+            scanSuccessful = false;
             if (recursionDepth !=0) {
                 assessEnvironment(recursionDepth);
             } else {
@@ -160,12 +163,25 @@ public class LLtdc {
 
     private void fabricateReturnObject(){
         // clawYawCorrection will hold 0 until further build details are released.
-        formulateRobotCorrections();
-        returnObject = new TdcReturnObject(yawCorrection, xCorrection, yCorrection, armCorrection, 0);
+        if (scanSuccessful) {
+            formulateRobotCorrections();
+            returnObject = new TdcReturnObject(yawCorrection, xCorrection, yCorrection, armCorrection, 0);
+        } else {
+            returnObject = new TdcReturnObject(0,0,0,0,0);
+        }
     }
 
+    /**
+     *
+     * @return a TdcReturnObject with all calculated dimensions. If the scan was unsuccessful, all values will be 0.
+     * @see TdcReturnObject
+     */
     public TdcReturnObject getTdcReturn() {
         fabricateReturnObject();
         return returnObject;
+    }
+
+    public boolean getScanSuccess(){
+        return scanSuccessful;
     }
 }
