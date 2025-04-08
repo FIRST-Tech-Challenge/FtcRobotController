@@ -21,7 +21,7 @@ public class FieldCentric extends LinearOpMode {
         Gamepad alexH = gamepad2;
 
         robot.init();
-
+        waitForStart();
 
         while (opModeIsActive()) {
 
@@ -29,9 +29,7 @@ public class FieldCentric extends LinearOpMode {
             strafe = luisL.left_stick_x;
             turn = luisL.right_stick_x;
 
-
             robot.driveFieldCentric(drive, strafe, turn);
-
         }
     }
 
