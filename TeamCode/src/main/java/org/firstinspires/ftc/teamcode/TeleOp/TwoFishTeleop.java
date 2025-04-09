@@ -210,9 +210,6 @@ public class TwoFishTeleop extends LinearOpMode {
                     state = RobotState.IDLE;
                 }
 
-                if(intake.getExtensionTicks() < intake.minExtension + 200){
-                    intake.pitchDown();
-                }
                 switch(state) {
 
                     case INTAKE:
@@ -220,13 +217,15 @@ public class TwoFishTeleop extends LinearOpMode {
                         intake.setSlidesPower(0.75);
                         intake.setSlidesTargetPosition(intake.getExtensionTicks() - (int)(gamepad2.left_stick_y * 200));
                         //intake pitch
-                        intakePitchTarget = (float) Math.min(intake.downPitch, Math.max(intake.upPitch, intakePitchTarget)); //down pitch is larger limit
-                        double joystickIncrement = -(gamepad2.right_stick_y * 0.03f);
-//                        if(intakePitchTarget > intake.downPitch - 0.25 && joystickIncrement > 0.0){ //down is positive
-//                            joystickIncrement /= 4;
-//                        }
-                        intakePitchTarget += joystickIncrement;
-                        intake.setPitch((float)intakePitchTarget);
+
+                        if(intake.getExtensionTicks() > intake.minExtension + 200){
+                            double joystickIncrement = -(gamepad2.right_stick_y * 0.03f);
+                            intakePitchTarget = (float) Math.min(intake.downPitch, Math.max(intake.upPitch, intakePitchTarget)); //down pitch is larger limit
+                            intakePitchTarget += joystickIncrement;
+                            intake.setPitch((float)intakePitchTarget);
+                        } else{
+                            intake.pitchDown();
+                        }
 
                         //Color sensor
 
@@ -238,8 +237,8 @@ public class TwoFishTeleop extends LinearOpMode {
                             intake.setTransferPower(gamepad2.right_trigger);
                         }
                         if (gamepad2.left_trigger >= 0.01){
-                            intake.setIntakePower(-gamepad2.left_trigger*0.5f);
-                            intake.setTransferPower(-gamepad2.left_trigger*0.5f);
+                            intake.setIntakePower(-gamepad2.left_trigger*0.75f);
+                            intake.setTransferPower(-gamepad2.left_trigger*0.75f);
                         }
                         if(gamepad2.left_trigger < 0.01 && gamepad2.right_trigger < 0.01){
                             intake.setTransferPower(0);

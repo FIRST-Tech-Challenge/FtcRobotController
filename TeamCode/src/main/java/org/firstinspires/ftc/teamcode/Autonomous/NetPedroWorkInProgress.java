@@ -225,7 +225,7 @@ public class NetPedroWorkInProgress extends OpMode {
                     deliverSample();
                     if(!isDelivering) {
                         /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    follower.followPath(intake1,true);
+                    follower.followPath(intake1,false);
 //                        if(sleepTimer.seconds() > 6) {
                             prepTransferSample();
                             setPathState(2);
@@ -249,7 +249,7 @@ public class NetPedroWorkInProgress extends OpMode {
                         if (!isTransferring) {
                             prepDeliverSample();
                             /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                            follower.followPath(score1, true);
+                            follower.followPath(score1, false);
                             setPathState(3);
                         }
                     }
@@ -262,7 +262,7 @@ public class NetPedroWorkInProgress extends OpMode {
                     deliverSample();
                     if(!isDelivering) {
                         /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                        follower.followPath(intake2,true);
+                        follower.followPath(intake2,false);
 //                        if(sleepTimer.seconds() > 6) {
                         prepTransferSample();
                         setPathState(4);
@@ -273,7 +273,7 @@ public class NetPedroWorkInProgress extends OpMode {
             case 4:
 
                 if(pathTimer.getElapsedTimeSeconds() > 0.5 && !isSamplePosessed) {
-                    prepIntakeSample(1000);
+                    prepIntakeSample(600);
                 }
 
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
@@ -286,7 +286,7 @@ public class NetPedroWorkInProgress extends OpMode {
                         if (!isTransferring) {
                             prepDeliverSample();
                             /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                            follower.followPath(score2, true);
+                            follower.followPath(score2, false);
                             setPathState(5);
                         }
                     }
@@ -299,7 +299,7 @@ public class NetPedroWorkInProgress extends OpMode {
                     deliverSample();
                     if(!isDelivering) {
                         /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                        follower.followPath(intake3,true);
+                        follower.followPath(intake3,false);
 //                        if(sleepTimer.seconds() > 6) {
                         prepTransferSample();
                         setPathState(6);
@@ -310,7 +310,7 @@ public class NetPedroWorkInProgress extends OpMode {
             case 6:
 
                 if(pathTimer.getElapsedTimeSeconds() > 0.5 && !isSamplePosessed) {
-                    prepIntakeSample(500);
+                    prepIntakeSample(800);
                 }
 
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
@@ -323,7 +323,7 @@ public class NetPedroWorkInProgress extends OpMode {
                         if (!isTransferring) {
                             prepDeliverSample();
                             /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                            follower.followPath(score3, true);
+                            follower.followPath(score3, false);
                             setPathState(7);
                         }
                     }
@@ -345,10 +345,14 @@ public class NetPedroWorkInProgress extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
                     /* Level 1 Ascent */
-
+                    delivery.setPitch(delivery.pitchSampleScorePosition);
                     /* Set the state to a Case we won't use or define, so it just stops running an new paths */
-                    setPathState(-1);
+                    setPathState(9);
                 }
+                break;
+            case 9:
+//                delivery.resetPWM();
+                setPathState(-1);
                 break;
         }
     }
@@ -368,16 +372,16 @@ public class NetPedroWorkInProgress extends OpMode {
             auxilariesTimer.reset();
         }
         isDelivering = true;
-        if(auxilariesTimer.seconds() < 0.5 && delivery.getPitch() != delivery.pitchSampleScorePosition){
+        if(auxilariesTimer.seconds() < 0.25 && delivery.getPitch() != delivery.pitchSampleScorePosition){
             delivery.setPitch(delivery.pitchSampleScorePosition);
         }
-        if(auxilariesTimer.seconds() > 0.5 && auxilariesTimer.seconds() < 0.75 && delivery.clawClosed){
+        if(auxilariesTimer.seconds() > 0.25 && auxilariesTimer.seconds() < 0.4 && delivery.clawClosed){
             delivery.clawOpen();
         }
-        if(auxilariesTimer.seconds() > 0.75 && auxilariesTimer.seconds() < 0.8 && delivery.getPitch() != delivery.pitchUpPosition){
+        if(auxilariesTimer.seconds() > 0.4 && auxilariesTimer.seconds() < 0.6 && delivery.getPitch() != delivery.pitchUpPosition){
             delivery.setPitch(delivery.pitchUpPosition);
         }
-        if(auxilariesTimer.seconds() > 1){
+        if(auxilariesTimer.seconds() > 0.6){
             delivery.toSpecHeight();
             delivery.setSlidesPower(0.75);
             isSamplePosessed = false;
@@ -419,12 +423,12 @@ public class NetPedroWorkInProgress extends OpMode {
             intake.setIntakePower(1.0f);
             intake.setTransferPower(0.6f);
         }
-        if(auxilariesTimer.seconds() > 1.5 && auxilariesTimer.seconds() < 2 && intake.getTargetLength() != 0){
+        if(auxilariesTimer.seconds() > 1.5 && auxilariesTimer.seconds() < 1.6 && intake.getTargetLength() != 0){ // lebron lebron lebroooon
             intake.pitchDown();
             intake.setSlidesTargetPosition(125);
             delivery.setSlidesPower(0.75);
         }
-        if(auxilariesTimer.seconds() > 2){
+        if(auxilariesTimer.seconds() > 1.6){
             intake.setTransferPower(0.0f);
             isSamplePosessed = true;
             isIntaking = false;

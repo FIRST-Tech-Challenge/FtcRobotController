@@ -32,7 +32,7 @@ public class TwoFishIntake {
 
     private final double CLICKS_PER_CM = 24.92788;
 
-    public final int DELTA_EXTENSION = 1000;
+    public final int DELTA_EXTENSION = 1500;
     public int minExtension = -999999999;
     public int maxExtension = DELTA_EXTENSION;
     public double downPitch = 0.7;

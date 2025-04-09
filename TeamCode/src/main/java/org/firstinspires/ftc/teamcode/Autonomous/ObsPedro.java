@@ -103,6 +103,7 @@ public class ObsPedro extends OpMode {
 
     private ElapsedTime auxilariesTimer = new ElapsedTime();
     private ElapsedTime sleepTimer = new ElapsedTime();
+    private ElapsedTime timeoutTimer = new ElapsedTime();
 
 
     private PathChain firstSpecScorePath, firstSampleCollectPath, secondSampleCollectPath, specScorePath, specReturnPath;
@@ -172,17 +173,18 @@ public class ObsPedro extends OpMode {
                 if(sleepTimer.seconds() > 1) {
                     setPathState(1);
                     sleepTimer.reset();
+                    timeoutTimer.reset();
                 }
                 break;
             case 1:
                 intake.pitchDown();
-                if(follower.getPose().getX() > 50) {
+                if(follower.getPose().getX() > 35) {
                     follower.setMaxPower(0.5);
                 } else{
                     follower.setMaxPower(1);
                 }
 //                if(sleepTimer.seconds() > 0.5)
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() || timeoutTimer.seconds() > 5) {
 //                    follower.setMaxPower(1);
                     //Score first specimen
                     deliverSpecimen();
@@ -210,6 +212,7 @@ public class ObsPedro extends OpMode {
                     follower.followPath(secondSampleCollectPath);
                     prepIntakeSpecimen();
                     setPathState(3);
+                    timeoutTimer.reset();
                 }
                 break;
             case 3:
@@ -221,7 +224,7 @@ public class ObsPedro extends OpMode {
                 }
 
                 if(sleepTimer.seconds() > 0.5)
-                if(!follower.isBusy()) {
+                if(!follower.isBusy() || timeoutTimer.seconds() > 3) {
                     //Collect specimen
                     intakeSpecimen();
                     if(!isIntaking) {
@@ -257,6 +260,7 @@ public class ObsPedro extends OpMode {
                             prepIntakeSpecimen();
                             setPathState(5);
                             sleepTimer.reset();
+                            timeoutTimer.reset();
                         }
                     }
                 }
@@ -270,7 +274,7 @@ public class ObsPedro extends OpMode {
                 }
 
                 if(sleepTimer.seconds() > 0.5)
-                if(!follower.isBusy()) {
+                if(!follower.isBusy() || timeoutTimer.seconds() > 3) {
                     //Intake Spec
                     intakeSpecimen();
                     if(!isIntaking) {
@@ -303,6 +307,7 @@ public class ObsPedro extends OpMode {
                             prepIntakeSpecimen();
                             setPathState(7);
                             sleepTimer.reset();
+                            timeoutTimer.reset();
                         }
                     }
                 }
@@ -316,7 +321,7 @@ public class ObsPedro extends OpMode {
                 }
 
                 if(sleepTimer.seconds() > 0.5)
-                if(!follower.isBusy()) {
+                if(!follower.isBusy() || timeoutTimer.seconds() > 3) {
                     //Intake Spec
                     intakeSpecimen();
                     if(!isIntaking) {
@@ -366,7 +371,7 @@ public class ObsPedro extends OpMode {
             delivery.setSlidesPower(1);
         }
         if(auxilariesTimer.seconds() > 0.5 && auxilariesTimer.seconds() < 0.6 && delivery.clawClosed){
-            delivery.clawOpen();
+            delivery.setClawPosition(delivery.clawOpenPosition + 0.05);
         }
         if(auxilariesTimer.seconds() > 0.6){
             delivery.setSlidesPower(0.5);
@@ -384,7 +389,7 @@ public class ObsPedro extends OpMode {
             delivery.setSlidesPower(0.5);
             delivery.setPitch(delivery.pitchIntakePosition);
             delivery.setWrist(delivery.wristUpPosition);
-            delivery.clawOpen();
+            delivery.setClawPosition(delivery.clawOpenPosition + 0.05);
         }
     }
 
