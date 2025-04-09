@@ -6,7 +6,9 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.team00000.v2.vision.ColorVisionSubsystem;
 
 public class RobotHardware {
 
@@ -22,6 +24,7 @@ public class RobotHardware {
     public DcMotor armDrive = null;
     private Servo wristDrive = null;
     private Servo clawDrive = null;
+    public ColorVisionSubsystem colorVision;
 
     // Define Sensor objects (Make them private so that they CANT be accessed externally)
     private IMU imu = null; // Universal IMU interface
@@ -184,6 +187,9 @@ public class RobotHardware {
 
         imu = myOpMode.hardwareMap.get(IMU.class, "imu");
         imu.initialize(parameters);
+
+        WebcamName webcam = myOpMode.hardwareMap.get(WebcamName.class, "Webcam 1");
+        colorVision = new ColorVisionSubsystem(webcam);
 
         /*
          Most robots need the motors on one side to be reversed to drive forward. The motor reversals shown here are
@@ -460,4 +466,7 @@ public class RobotHardware {
     public Action moveClaw(double position) {
         return new MoveClaw(position);
     }
+
+    // ******************** Vision control functions ********************
+
 }
