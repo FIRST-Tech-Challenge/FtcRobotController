@@ -17,6 +17,8 @@ public class FieldCentric extends LinearOpMode {
         double strafe = 0;
         double turn = 0;
 
+        double slideRotation = 0;
+
         Gamepad luisL = gamepad1;
         Gamepad alexH = gamepad2;
 
@@ -30,6 +32,16 @@ public class FieldCentric extends LinearOpMode {
             turn = luisL.right_stick_x;
 
             robot.driveFieldCentric(drive, strafe, turn);
+
+
+            if(alexH.y){
+                slideRotation = robot.ROTATION_90;
+            }else if (alexH.a){
+                slideRotation = robot.ROTATION_START;
+            }
+
+            robot.RotateSlides(slideRotation);
+
         }
     }
 

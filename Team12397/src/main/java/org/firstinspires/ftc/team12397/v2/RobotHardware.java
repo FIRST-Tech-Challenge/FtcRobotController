@@ -2,10 +2,7 @@ package org.firstinspires.ftc.team12397.v2;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -34,6 +31,7 @@ public class RobotHardware {
 
     private DcMotor slideMotorL = null;
     private DcMotor slideMotorR = null;
+    private DcMotor rotateMotor = null;
 
     private Servo leftExtend = null;
     private Servo rightExtend = null;
@@ -42,6 +40,10 @@ public class RobotHardware {
     private Servo getInClawYaw = null;
     private Servo outClaw = null;
 
+
+    public double ROTATE_SLIDE_TICKS_PER_DEGREE = (28.0 * 50.9 / 360.0) * (100.0 / 20.0);
+    public double ROTATION_START = 0.0 * ROTATE_SLIDE_TICKS_PER_DEGREE;
+    public double ROTATION_90 = 90 * ROTATE_SLIDE_TICKS_PER_DEGREE;
 
 
     IMU.Parameters parameters = new IMU.Parameters( new RevHubOrientationOnRobot(
@@ -63,6 +65,8 @@ public class RobotHardware {
         slideMotorL = myOpMode.hardwareMap.get(DcMotor.class, "slide_motor_left");
         slideMotorR = myOpMode.hardwareMap.get(DcMotor.class, "slide_motor_right");
 
+       rotateMotor = myOpMode.hardwareMap.get(DcMotor.class, "rotate_motor");
+
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -70,6 +74,8 @@ public class RobotHardware {
 
         slideMotorL.setDirection(DcMotorSimple.Direction.FORWARD);
         slideMotorR.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        rotateMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -79,6 +85,10 @@ public class RobotHardware {
         slideMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        rotateMotor.setTargetPosition(0);
+        rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -86,6 +96,8 @@ public class RobotHardware {
 
         slideMotorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        rotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -184,6 +196,16 @@ public class RobotHardware {
         leftBack.setPower(leftBackWheel);
         rightFront.setPower(rightFrontWheel);
         rightBack.setPower(rightBackWheel);
+    }
+
+
+    public void RotateSlides(double rotatePosition){
+        rotateMotor.setTargetPosition((int)(rotatePosition));
+
+        ((DcMotorEx) rotateMotor).setVelocity(2500);
+
+        rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
     }
 
     // placeholder
