@@ -96,11 +96,11 @@ public class TestPinpointOffsets extends LinearOpMode {
         // Locate the odometry controller in our hardware settings
         odom = hardwareMap.get(GoBildaPinpointDriver.class,"odom");   // Control Hub I2C port 3
         if( fineTuneOnly ) { // assume we've run this before and only need to fine-tune
-           odom.setOffsets(-148.0, +88.4);  // odometry pod x,y offsets relative center of robot
+           odom.setOffsets(-148.0, +88.4, DistanceUnit.MM);  // odometry pod x,y offsets relative center of robot
            startXoffset = -148.0; // mm
            startYoffset =  +88.4; // mm
         } else { // assume we're starting with complete unknowns
-           odom.setOffsets( 0.0, 0.0 );       // odometry pod x,y offsets relative center of robot
+           odom.setOffsets( 0.0, 0.0, DistanceUnit.MM);      // odometry pod x,y offsets relative center of robot
            startXoffset = 0.0; // mm
            startYoffset = 0.0; // mm
         }

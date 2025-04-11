@@ -17,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 
@@ -346,9 +347,7 @@ public class Hardware2025Bot
 
         // Locate the odometry controller in our hardware settings
         odom = hwMap.get(GoBildaPinpointDriver.class,"odom");      // Control Hub I2C port 3
-//      odom.setOffsets(0.0, -48.0);     // odometry pod x,y locations relative center of robot  NOW
-//      odom.setOffsets(0.0, 0.0);       // odometry pod x,y locations relative center of robot  REFERENCE
-        odom.setOffsets(-144.00, +88.00); // odometry pod x,y locations relative center of robot  2 2
+        odom.setOffsets(-144.00, +88.00, DistanceUnit.MM); // odometry pod x,y locations relative center of robot  2 2
         odom.setEncoderResolution( GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD ); // 4bar pods
         odom.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.REVERSED);
         if( isAutonomous ) {
