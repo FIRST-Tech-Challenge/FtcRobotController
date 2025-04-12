@@ -3,6 +3,8 @@ package org.firstinspires.ftc.team12397.v2;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import java.util.List;
+
 /**
  * Class to return compressed, organized, and easily transformable data for LLtdc
  * @see LLtdc
@@ -15,6 +17,7 @@ public class TdcReturnObject {
     private double robotYCorrection;
     private double armYCorrection;
     private double clawYawCorrection;
+    private List<List<Double>> cornerList;
 
     /**
      * pass in radians and inches.
@@ -24,11 +27,12 @@ public class TdcReturnObject {
      * @param aYc
      * @param cYc
      */
-    public TdcReturnObject(double yC, double rXc, double rYc, double aYc, double cYc){
+    public TdcReturnObject(double yC, double rXc, double rYc, double aYc, double cYc, List<List<Double>> cornerL){
         yawCorrection = yC;
         robotXCorrection = rXc; robotYCorrection = rYc;
         armYCorrection = aYc;
         clawYawCorrection = cYc;
+        cornerList = cornerL;
     }
 
 
@@ -50,6 +54,10 @@ public class TdcReturnObject {
 
     public double getClawYawCorrection(AngleUnit angleUnit){
         return angleUnit.fromUnit(this.angleUnit, clawYawCorrection);
+    }
+
+    public List<List<Double>> getCornerList(){
+        return cornerList;
     }
 
     /**

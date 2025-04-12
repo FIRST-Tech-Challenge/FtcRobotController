@@ -3,7 +3,12 @@ package org.firstinspires.ftc.team12397.v2;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
+import org.opencv.core.RotatedRect;
+import org.opencv.imgproc.Imgproc;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // LimeLight Trigonometry Distance Calculator
@@ -34,6 +39,7 @@ public class LLtdc {
     // measured parameters ---
     private double yPlaneRads;
     private double xPlaneRads;
+    private List<List<Double>> cornerPoints;
 
     // calculated parameters ---
     private double rawYcorrection;
@@ -54,7 +60,11 @@ public class LLtdc {
      * how far the arm must extend/retract
      */
     private double armCorrection;
-
+    /**
+     * how far the claw must rotate
+     */
+    private double clawYawCorrection;
+    
     private boolean scanSuccessful;
     public LLtdc(Limelight3A LL){
         limelight = LL;
@@ -94,40 +104,45 @@ public class LLtdc {
         limelight.shutdown();
     }
 
-    public void assessEnvironment(int recursionDepth){
-        limelight.captureSnapshot("try1");
+    private LLResultTypes.DetectorResult getDetectorResult() {
         List<LLResultTypes.DetectorResult> detectorResults = limelight.getLatestResult().getDetectorResults();
 
-        if (!detectorResults.isEmpty()) { scanSuccessful = true;
-            // filter out unreliable guesses
-            for (int i = detectorResults.size()-1; i >= 0; i--) {
-                if (detectorResults.get(i).getConfidence() < 85) {
-                    detectorResults.remove(i);
-                }
+        // filter out unreliable guesses
+        for (int i = detectorResults.size()-1; i >= 0; i--) {
+            if (detectorResults.get(i).getConfidence() < 85) {
+                detectorResults.remove(i);
             }
+        }
 
-            /*
-            // filter out by color (needs to be figured out)
-            // Run obd & then 2 clr pipelines?
-            // cv2 to find pxl clr?
-            for (int i = detectorResults.size()-1; i >= 0; i--) {
-                if (detectorResults.get(i).getConfidence() < 85) {
-                    detectorResults.remove(i);
-                }
+        // get the closest one (by area)
+        LLResultTypes.DetectorResult closest = detectorResults.get(0);
+        for (int i = detectorResults.size()-1; i > 0; i--) {
+            if (detectorResults.get(i).getTargetArea() > closest.getTargetArea()){
+                closest = detectorResults.get(i);
             }
-             */
+        }
+        return closest;
+    }
 
-            // get the closest one (by area)
-            LLResultTypes.DetectorResult closest = detectorResults.get(0);
-            for (int i = detectorResults.size()-1; i > 0; i--) {
-                if (detectorResults.get(i).getTargetArea() > closest.getTargetArea()){
-                    closest = detectorResults.get(i);
-                }
-            }
+    private RotatedRect List2Rect(List<List<Double>> list){
+        Point p1 = new Point(list.get(0).get(0), list.get(0).get(1));
+        Point p2 = new Point(list.get(1).get(0), list.get(1).get(1));
+        Point p3 = new Point(list.get(2).get(0), list.get(2).get(1));
+        Point p4 = new Point(list.get(3).get(0), list.get(3).get(1));
+        MatOfPoint2f mat = new MatOfPoint2f(p1, p2, p3, p4);
+        return Imgproc.minAreaRect(mat);
+    }
+
+    public void assessEnvironment(int recursionDepth){
+        limelight.captureSnapshot("try");
+
+        if (limelight.getLatestResult() != null) {
+            scanSuccessful = true;
+            LLResultTypes.DetectorResult closest = getDetectorResult();
 
             yPlaneRads = Math.toRadians(closest.getTargetYDegrees());
             xPlaneRads = Math.toRadians(closest.getTargetXDegrees());
-
+            cornerPoints = closest.getTargetCorners();
 
         } else {
             recursionDepth--;
@@ -137,9 +152,12 @@ public class LLtdc {
             } else {
                 yPlaneRads = 0;
                 xPlaneRads = 0;
+                cornerPoints.clear(); cornerPoints.add(new ArrayList<Double>()); cornerPoints.get(0).add((double) 0);
             }
         }
     }
+
+
 
     private void formulateRobotCorrections(){
         // cot(yPlaneRads) * lensHeight(opposite) = adjacent length
@@ -159,15 +177,16 @@ public class LLtdc {
             yCorrection = rawYcorrection/2;
             armCorrection = rawYcorrection/2;
         }
+        clawYawCorrection = List2Rect(cornerPoints).angle;
     }
 
     private void fabricateReturnObject(){
         // clawYawCorrection will hold 0 until further build details are released.
         if (scanSuccessful) {
             formulateRobotCorrections();
-            returnObject = new TdcReturnObject(yawCorrection, xCorrection, yCorrection, armCorrection, 0);
+            returnObject = new TdcReturnObject(yawCorrection, xCorrection, yCorrection, armCorrection, clawYawCorrection, cornerPoints);
         } else {
-            returnObject = new TdcReturnObject(0,0,0,0,0);
+            returnObject = new TdcReturnObject(0,0,0,0,0, cornerPoints);
         }
     }
 

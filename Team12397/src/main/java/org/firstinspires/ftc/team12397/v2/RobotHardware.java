@@ -32,6 +32,7 @@ public class RobotHardware {
     private DcMotor slideMotorL = null;
     private DcMotor slideMotorR = null;
     private DcMotor rotateMotor = null;
+    private DcMotorEx slideExtender = null;
 
     private Servo leftExtend = null;
     private Servo rightExtend = null;
@@ -45,6 +46,10 @@ public class RobotHardware {
     public double ROTATION_START = 0.0 * ROTATE_SLIDE_TICKS_PER_DEGREE;
     public double ROTATION_90 = 90 * ROTATE_SLIDE_TICKS_PER_DEGREE;
 
+    public double EXTEND_SLIDE_TICKS_PER_REV = (((((1+(46./17))) * (1+(46./11))) * 28));
+    public double EXTEND_SLIDE_TICKS_PER_INCH = EXTEND_SLIDE_TICKS_PER_REV/ (112/25.4); // 112: https://www.gobilda.com/3407-series-hub-mount-winch-pulley-dual-spool-112mm-circumference/
+    // mm / 25.4 = in
+    public double EXTENDER_SLIDE_MAXIMUM_TICKS = EXTEND_SLIDE_TICKS_PER_INCH*17.5;
 
     IMU.Parameters parameters = new IMU.Parameters( new RevHubOrientationOnRobot(
             RevHubOrientationOnRobot.LogoFacingDirection.UP,
@@ -65,7 +70,8 @@ public class RobotHardware {
         slideMotorL = myOpMode.hardwareMap.get(DcMotor.class, "slide_motor_left");
         slideMotorR = myOpMode.hardwareMap.get(DcMotor.class, "slide_motor_right");
 
-       rotateMotor = myOpMode.hardwareMap.get(DcMotor.class, "rotate_motor");
+        slideExtender = myOpMode.hardwareMap.get(DcMotorEx.class, "slide_extender");
+        rotateMotor = myOpMode.hardwareMap.get(DcMotor.class, "rotate_motor");
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -76,6 +82,7 @@ public class RobotHardware {
         slideMotorR.setDirection(DcMotorSimple.Direction.REVERSE);
 
         rotateMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideExtender.setDirection(DcMotorSimple.Direction.FORWARD);
 
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -88,6 +95,10 @@ public class RobotHardware {
         rotateMotor.setTargetPosition(0);
         rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rotateMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      
+        slideExtender.setTargetPosition(0);
+        slideExtender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -98,11 +109,15 @@ public class RobotHardware {
         slideMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         rotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideExtender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        slideExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
 
@@ -230,5 +245,16 @@ public class RobotHardware {
                 outClaw.setPosition(position);
                 break;
         }
+    }
+
+    /**
+     *
+     * This is NOT relative. Absolute distance from the starting point
+     * @param inches inches from the retracted position: another term could be absolute inches.
+     */
+    public void setExtenderPosition(double inches){
+        slideExtender.setTargetPosition((int) (inches*EXTEND_SLIDE_TICKS_PER_INCH));
+        slideExtender.setVelocity(2500);
+        slideExtender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }
