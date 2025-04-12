@@ -20,9 +20,10 @@ public class CheckStuckRobot {
     private double prevXPos = 0;
     private double prevYPos = 0;
     private double prevThetaPos = 0;
+    private long lastStuckCheckTime;
     private double prevXVelocity = 0;
-    private double timeInMsSinceLastChecked = 0;
-    private double timeOffset = 0;
+    private double timeInMsSinceLastChecked;
+    private double timeOffset;
     /**
      * mm per second
      * */
@@ -46,6 +47,9 @@ public class CheckStuckRobot {
         this.opModeUtilities = opModeUtilities;
         this.purePursuitAction = purePursuitAction;
         checkXY = new CheckXY(opModeUtilities);
+        timeInMsSinceLastChecked = 0;
+        timeOffset = 0;
+        lastStuckCheckTime = 0;
     }
 
     private double getXDelta(Position currentPosition) {
@@ -146,21 +150,31 @@ public class CheckStuckRobot {
 //        double deltaXVelocity = abs(prevXVelocity - currentXVelocity);
 
         //TODO Fix the time encrements
-        timeOffset = timeInMillis - timeInMsSinceLastChecked;
-        timeInMsSinceLastChecked = timeInMsSinceLastChecked + timeInMillis - timeOffset;
-        if (timeInMsSinceLastChecked > 1000) {
-            timeOffset = 0;
-            timeInMsSinceLastChecked = 0;
-            if (checkRobotSpinning(getXDelta(currentPos), getYDelta(currentPos), getThetaDelta(currentPos), currentPos, currentPos.getTheta(), timeInMillis) ||
-                    checkRobotNotMoving(getXDelta(currentPos), getYDelta(currentPos), timeInMillis)/* ||
-                checkIfOnPath(path, timeInMillis)*/) {
+        // Declare and initialize this somewhere outside the method, so it persists across calls:
+// long lastStuckCheckTime = 0;
 
-                //unstuckRobot(driveTrain, /*path,*/ timeInMillis);
+        if (timeInMillis - lastStuckCheckTime >= 1000) {
+            lastStuckCheckTime = timeInMillis;  // reset the timer
+
+            if (checkRobotSpinning(
+                    getXDelta(currentPos),
+                    getYDelta(currentPos),
+                    getThetaDelta(currentPos),
+                    currentPos,
+                    currentPos.getTheta(),
+                    timeInMillis) ||
+                    checkRobotNotMoving(
+                            getXDelta(currentPos),
+                            getYDelta(currentPos),
+                            timeInMillis)) {
+
                 Log.d("check stuck", "---ROBOT IS STUCK---");
                 return true;
             }
+
             Log.d("check stuck", "---robot is not stuck---");
         }
+
         return false;
 
     }
