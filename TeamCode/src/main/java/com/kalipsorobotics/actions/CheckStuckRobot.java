@@ -169,6 +169,21 @@ public class CheckStuckRobot {
                             timeInMillis)) {
 
                 Log.d("check stuck", "---ROBOT IS STUCK---");
+                if (checkRobotSpinning(
+                        getXDelta(currentPos),
+                        getYDelta(currentPos),
+                        getThetaDelta(currentPos),
+                        currentPos,
+                        currentPos.getTheta(),
+                        timeInMillis)) {
+                    //robot is spinning, unstuck
+                }
+                if (checkRobotNotMoving(
+                        getXDelta(currentPos),
+                        getYDelta(currentPos),
+                        timeInMillis)) {
+                    //move backwards to unstuck
+                }
                 return true;
             }
 
@@ -195,6 +210,8 @@ public class CheckStuckRobot {
             purePursuitAction.addPoint(possiblePos4.getX(), possiblePos4.getY(), possiblePos4.getTheta());
             return;
         }
+        //moves in all four directions
+        //TODO replace with something that actually gets the robot unstuck
         return;
     }
 
