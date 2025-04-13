@@ -28,32 +28,37 @@ public class RobotHardware {
     private DcMotor rightFront = null;
     private DcMotor rightBack = null;
 
-
-    private DcMotor slideMotorL = null;
-    private DcMotor slideMotorR = null;
     private DcMotor rotateMotor = null;
-    private DcMotorEx slideExtender = null;
+    public DcMotorEx slideExtender = null;
 
-    private Servo leftExtend = null;
-    private Servo rightExtend = null;
-    private Servo inClawPitch = null;
-    private Servo inClaw = null;
-    private Servo getInClawYaw = null;
-    private Servo outClaw = null;
+    private Servo clawPinch = null; // closes/opens
+    private Servo clawYaw = null; // rotates the claw around a vertical axis
+    private Servo clawPitch = null; // rotates the claw around a horizontal axis
 
+    public int leftFrontTarget;
+    public int leftBackTarget;
+    public int rightFrontTarget;
+    public int rightBackTarget;
+    // wheel ticks:
+    public final double COUNTS_PER_MOTOR_REV = 537.7;
+    public final double WHEEL_DIAMETER_INCHES = 3.77953;
+    public final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
-    public double ROTATE_SLIDE_TICKS_PER_DEGREE = (28.0 * 50.9 / 360.0) * (100.0 / 20.0);
-    public double ROTATION_START = 0.0 * ROTATE_SLIDE_TICKS_PER_DEGREE;
-    public double ROTATION_90 = 90 * ROTATE_SLIDE_TICKS_PER_DEGREE;
+    // rotator ticks:
+    public final double ROTATE_SLIDE_TICKS_PER_DEGREE = (28.0 * 50.9 / 360.0) * (100.0 / 20.0);
+    public final double ROTATION_START = 0.0 * ROTATE_SLIDE_TICKS_PER_DEGREE;
+    public final double ROTATION_90 = 90 * ROTATE_SLIDE_TICKS_PER_DEGREE;
 
-    public double EXTEND_SLIDE_TICKS_PER_REV = (((((1+(46./17))) * (1+(46./11))) * 28));
-    public double EXTEND_SLIDE_TICKS_PER_INCH = EXTEND_SLIDE_TICKS_PER_REV/ (112/25.4); // 112: https://www.gobilda.com/3407-series-hub-mount-winch-pulley-dual-spool-112mm-circumference/
+    // extender ticks:
+    public final double EXTEND_SLIDE_TICKS_PER_REV = (((((1+(46./17))) * (1+(46./11))) * 28));
+    public final double EXTEND_SLIDE_TICKS_PER_INCH = EXTEND_SLIDE_TICKS_PER_REV/ (112/25.4); // 112: https://www.gobilda.com/3407-series-hub-mount-winch-pulley-dual-spool-112mm-circumference/
     // mm / 25.4 = in
-    public double EXTENDER_SLIDE_MAXIMUM_TICKS = EXTEND_SLIDE_TICKS_PER_INCH*17.5;
+    public final double EXTENDER_SLIDE_MAXIMUM_TICKS = EXTEND_SLIDE_TICKS_PER_INCH*17.5;
+    // end of ticks...
 
     IMU.Parameters parameters = new IMU.Parameters( new RevHubOrientationOnRobot(
-            RevHubOrientationOnRobot.LogoFacingDirection.UP,
-            RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
+            RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
 
 
     public RobotHardware(LinearOpMode OpMode) {myOpMode = OpMode;}
@@ -67,30 +72,23 @@ public class RobotHardware {
         rightFront = myOpMode.hardwareMap.get(DcMotor.class, "right_front");
         rightBack = myOpMode.hardwareMap.get(DcMotor.class, "right_back");
 
-        slideMotorL = myOpMode.hardwareMap.get(DcMotor.class, "slide_motor_left");
-        slideMotorR = myOpMode.hardwareMap.get(DcMotor.class, "slide_motor_right");
-
         slideExtender = myOpMode.hardwareMap.get(DcMotorEx.class, "slide_extender");
         rotateMotor = myOpMode.hardwareMap.get(DcMotor.class, "rotate_motor");
 
+        // motor directions...
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        slideMotorL.setDirection(DcMotorSimple.Direction.FORWARD);
-        slideMotorR.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        rotateMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rotateMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         slideExtender.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        // encoder resets
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        slideMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         rotateMotor.setTargetPosition(0);
         rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -100,17 +98,14 @@ public class RobotHardware {
         slideExtender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        // zero power behavior...
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        slideMotorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slideMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         rotateMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideExtender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -120,29 +115,26 @@ public class RobotHardware {
         slideExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
+        /* waiting on hardware implementation...
+        clawPinch = myOpMode.hardwareMap.get(Servo.class, "claw_pinch");
+        clawYaw = myOpMode.hardwareMap.get(Servo.class, "claw_yaw");
+        clawPitch = myOpMode.hardwareMap.get(Servo.class, "claw_pitch");
 
-        leftExtend = myOpMode.hardwareMap.get(Servo.class, "leftExtend");
-        rightExtend = myOpMode.hardwareMap.get(Servo.class, "rightExtend");
-        inClawPitch = myOpMode.hardwareMap.get(Servo.class, "inClawPitch");
-        inClaw = myOpMode.hardwareMap.get(Servo.class, "inClaw");
-        getInClawYaw = myOpMode.hardwareMap.get(Servo.class, "getInClawYaw");
-        outClaw = myOpMode.hardwareMap.get(Servo.class, "outClaw");
+         */
 
         imu = myOpMode.hardwareMap.get(IMU .class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters( new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
         imu.initialize(parameters);
 
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.update();
-
     }
 
-//     @param Drive     Fwd/Rev driving power(-1.0 to 1.0) +ve is forward
-//     @param Turn      Right/Left turning power(-1.0 to 1.0) +ve is CW
-//     @param Strafe
-
+    /**
+     *
+     * @param Drive Fwd/Rev driving power(-1.0 to 1.0) +ve is forward
+     * @param Strafe Right/Left turning power(-1.0 to 1.0) +ve is CW
+     * @param Turn
+     */
     public void driveRobotCentric(double Drive,double Strafe, double Turn) {
 
 
@@ -165,7 +157,6 @@ public class RobotHardware {
         }
 
         setDrivePower(leftFrontPower, leftBackPower, rightFrontPower, rightBackPower);
-
     }
 
     public void driveFieldCentric(double drive, double strafe, double turn) {
@@ -190,7 +181,7 @@ public class RobotHardware {
         // Scale the values so neither exceed +/- 1.0
         max = Math.max(Math.abs(leftFrontPower) , Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightFrontPower));
-        max= Math.max(max, Math.abs(rightBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
 
         if (max > 1.0){
             leftFrontPower /= max;
@@ -200,9 +191,7 @@ public class RobotHardware {
         }
 
         //Use existing function to drive both wheels.
-        setDrivePower (leftFrontPower, leftBackPower, rightFrontPower, rightBackPower);
-
-
+        setDrivePower(leftFrontPower, leftBackPower, rightFrontPower, rightBackPower);
     }
 
     public void setDrivePower(double leftFrontWheel, double leftBackWheel, double rightFrontWheel, double rightBackWheel) {
@@ -213,37 +202,53 @@ public class RobotHardware {
         rightBack.setPower(rightBackWheel);
     }
 
+    public void driveEncoder(double speed, double leftFrontInches, double leftBackInches, double rightFrontInches, double rightBackInches){
+        // drives only while myOpMode is active
+        if(myOpMode.opModeIsActive()){
 
-    public void RotateSlides(double rotatePosition){
-        rotateMotor.setTargetPosition((int)(rotatePosition));
 
-        ((DcMotorEx) rotateMotor).setVelocity(2500);
+            //determine new target position
+            leftFrontTarget = leftFront.getCurrentPosition() + (int)(leftFrontInches * COUNTS_PER_INCH);
+            leftBackTarget = leftBack.getCurrentPosition() + (int)(leftBackInches * COUNTS_PER_INCH);
+            rightFrontTarget = rightFront.getCurrentPosition() + (int)(rightFrontInches * COUNTS_PER_INCH);
+            rightBackTarget = rightBack.getCurrentPosition() + (int)(rightBackInches * COUNTS_PER_INCH);
 
-        rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftFront.setTargetPosition(leftFrontTarget);
+            leftBack.setTargetPosition(leftBackTarget);
+            rightFront.setTargetPosition(rightFrontTarget);
+            rightBack.setTargetPosition(rightBackTarget);
 
-    }
+            //turn on RUN_TO_POSITION
+            leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-    // placeholder
-    public void setServoPosition(int servoNum, double position){
-        switch (servoNum) {
-            case 0:
-                leftExtend.setPosition(position);
-                break;
-            case 1:
-                rightExtend.setPosition(position);
-                break;
-            case 2:
-                inClawPitch.setPosition(position);
-                break;
-            case 3:
-                inClaw.setPosition(position);
-                break;
-            case 4:
-                getInClawYaw.setPosition(position);
-                break;
-            case 5:
-                outClaw.setPosition(position);
-                break;
+            // reset the time and start motion
+
+            runtime.reset();
+            setDrivePower(Math.abs(speed), Math.abs(speed), Math.abs(speed), Math.abs(speed));
+
+            while ((myOpMode.opModeIsActive() &&
+                    (leftFront.isBusy() && leftBack.isBusy() &&
+                            rightFront.isBusy() && rightBack.isBusy()))){
+
+                //display it for driver
+
+                myOpMode.telemetry.addData("Running to ", " %7d :%7d :%7d :%7d",
+                        leftFront, leftBack, rightFront, rightBack);
+                myOpMode.telemetry.addData("Currently at ", "%7d ;%7d :%7d :%7d",
+                        leftFront.getCurrentPosition(), leftBack.getCurrentPosition(),
+                        rightFront.getCurrentPosition(), rightBack.getCurrentPosition());
+                myOpMode.telemetry.update();
+            }
+
+            setDrivePower(0, 0, 0, 0 );
+            leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         }
     }
 
@@ -253,8 +258,45 @@ public class RobotHardware {
      * @param inches inches from the retracted position: another term could be absolute inches.
      */
     public void setExtenderPosition(double inches){
+        // ensure requested position is not negative distance or overextending.
+        inches = Math.min(inches, EXTENDER_SLIDE_MAXIMUM_TICKS);
+        inches = Math.max(inches, 0);
+
         slideExtender.setTargetPosition((int) (inches*EXTEND_SLIDE_TICKS_PER_INCH));
         slideExtender.setVelocity(2500);
         slideExtender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+
+    /**
+     *
+     * This is NOT relative. Absolute distance from the starting point
+     * @param rotateDegrees degrees from the starting position: another term could be absolute rotation.
+     */
+    public void RotateSlides(double rotateDegrees){
+        rotateMotor.setTargetPosition((int)(rotateDegrees * ROTATE_SLIDE_TICKS_PER_DEGREE));
+
+        ((DcMotorEx) rotateMotor).setVelocity(2500);
+
+        rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    // intention: testing
+    /* waiting on hardware implementation...
+    public void setServoPosition(int servoNum, double position){
+        switch (servoNum) {
+            case 0:
+                clawPinch.setPosition(position);
+                break;
+            case 1:
+                clawYaw.setPosition(position);
+                break;
+            case 2:
+                clawPitch.setPosition(position);
+                break;
+        }
+    }
+     */
+
+
+
 }
