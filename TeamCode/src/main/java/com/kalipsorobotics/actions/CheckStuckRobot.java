@@ -156,20 +156,20 @@ public class CheckStuckRobot {
         if (timeInMillis - lastStuckCheckTime >= 1000) {
             lastStuckCheckTime = timeInMillis;  // reset the timer
 
-            if (checkRobotSpinning(
+            if (/*checkRobotSpinning(
                     getXDelta(currentPos),
                     getYDelta(currentPos),
                     getThetaDelta(currentPos),
                     currentPos,
                     currentPos.getTheta(),
-                    timeInMillis) ||
+                    timeInMillis) ||*/
                     checkRobotNotMoving(
                             getXDelta(currentPos),
                             getYDelta(currentPos),
                             timeInMillis)) {
 
                 Log.d("check stuck", "---ROBOT IS STUCK---");
-                if (checkRobotSpinning(
+                /*if (checkRobotSpinning(
                         getXDelta(currentPos),
                         getYDelta(currentPos),
                         getThetaDelta(currentPos),
@@ -177,7 +177,7 @@ public class CheckStuckRobot {
                         currentPos.getTheta(),
                         timeInMillis)) {
                     //robot is spinning, unstuck
-                }
+                }*/
                 if (checkRobotNotMoving(
                         getXDelta(currentPos),
                         getYDelta(currentPos),

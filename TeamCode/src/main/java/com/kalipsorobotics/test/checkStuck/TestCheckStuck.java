@@ -30,10 +30,11 @@ public class TestCheckStuck extends LinearOpMode {
         while(opModeIsActive()) {
             Path path = null; //TODO find way to get path AND IMPLEMENT INTO CHECKXY
             int currentTime = (int) System.currentTimeMillis();
-            Log.d("check stuck", "current time is: " + currentTime);
-            boolean isStuck = checkStuck.isStuck(currentTime);
-            if (isStuck) {
+            if (checkStuck.isStuck(currentTime)) {
                 telemetry.addLine("robot is stuck");
+                Log.d("check stucks", "ROBOT STUCK");
+            } else {
+                telemetry.addLine("robot is fine");
             }
             driveAction.move(gamepad1);
             telemetry.update();
