@@ -39,6 +39,7 @@ public class RobotHardware {
     public int leftBackTarget;
     public int rightFrontTarget;
     public int rightBackTarget;
+  
     // wheel ticks:
     public final double COUNTS_PER_MOTOR_REV = 537.7;
     public final double WHEEL_DIAMETER_INCHES = 3.77953;
@@ -52,6 +53,7 @@ public class RobotHardware {
     // extender ticks:
     public final double EXTEND_SLIDE_TICKS_PER_REV = (((((1+(46./17))) * (1+(46./11))) * 28));
     public final double EXTEND_SLIDE_TICKS_PER_INCH = EXTEND_SLIDE_TICKS_PER_REV/ (112/25.4); // 112: https://www.gobilda.com/3407-series-hub-mount-winch-pulley-dual-spool-112mm-circumference/
+  
     // mm / 25.4 = in
     public final double EXTENDER_SLIDE_MAXIMUM_TICKS = EXTEND_SLIDE_TICKS_PER_INCH*17.5;
     // end of ticks...
@@ -205,8 +207,7 @@ public class RobotHardware {
     public void driveEncoder(double speed, double leftFrontInches, double leftBackInches, double rightFrontInches, double rightBackInches){
         // drives only while myOpMode is active
         if(myOpMode.opModeIsActive()){
-
-
+          
             //determine new target position
             leftFrontTarget = leftFront.getCurrentPosition() + (int)(leftFrontInches * COUNTS_PER_INCH);
             leftBackTarget = leftBack.getCurrentPosition() + (int)(leftBackInches * COUNTS_PER_INCH);

@@ -28,17 +28,15 @@ public class FieldCentric extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            drive = -luisL.left_stick_y;
+            drive = luisL.left_stick_y;
             strafe = luisL.left_stick_x;
             turn = luisL.right_stick_x;
-
 
             if(alexH.y){
                 rotationDegrees = 0;
             } else if (alexH.a){
                 rotationDegrees = 90;
             }
-
 
             // if alex moves his left stick up/down more than a hundreth of maximum movement...
             if (Math.round(-alexH.left_stick_y*100) != 0){
@@ -55,9 +53,6 @@ public class FieldCentric extends LinearOpMode {
             robot.driveFieldCentric(drive, strafe, turn);
             robot.RotateSlides(rotationDegrees);
             robot.setExtenderPosition(extenderInches);
-
-            sleep(20);
         }
     }
-
 }
