@@ -33,20 +33,20 @@ public class FieldCentric extends LinearOpMode {
             turn = luisL.right_stick_x;
 
             if(alexH.y){
-                rotationDegrees = 0;
+                rotationDegrees = -20;
             } else if (alexH.a){
-                rotationDegrees = 90;
+                rotationDegrees = 20;
             }
 
             // if alex moves his left stick up/down more than a hundreth of maximum movement...
-            if (Math.round(-alexH.left_stick_y*100) != 0){
+            if (Math.round(Math.abs(alexH.left_stick_y*10)) != 0){
                 // set target position to previous distance +/- fudge amount
-                extenderInches = robot.slideExtender.getCurrentPosition();
-                extenderInches = extenderInches + alexH.left_stick_y*1.5;
+                extenderInches = robot.slideExtender.getCurrentPosition()/robot.EXTEND_SLIDE_TICKS_PER_INCH;
+                extenderInches = extenderInches + -alexH.left_stick_y*3;
                 // fudge amount is 3.5 inches: 1/5 of maximum reach.
             } else {
                 // if alex DOES NOT move his left stick, stop arm at current position.
-                extenderInches = robot.slideExtender.getCurrentPosition();
+                extenderInches = robot.slideExtender.getCurrentPosition()/robot.EXTEND_SLIDE_TICKS_PER_INCH;
             }
 
             // action lines (lines of code that actually move the robot)

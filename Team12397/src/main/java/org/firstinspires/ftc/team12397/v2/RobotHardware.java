@@ -46,7 +46,7 @@ public class RobotHardware {
     public final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
     // rotator ticks:
-    public final double ROTATE_SLIDE_TICKS_PER_DEGREE = (28.0 * 50.9 / 360.0) * (100.0 / 20.0);
+    public final double ROTATE_SLIDE_TICKS_PER_DEGREE = (28.0 * 50.9 / 360.0) * (100.0 / 30.0);
     public final double ROTATION_START = 0.0 * ROTATE_SLIDE_TICKS_PER_DEGREE;
     public final double ROTATION_90 = 90 * ROTATE_SLIDE_TICKS_PER_DEGREE;
 
