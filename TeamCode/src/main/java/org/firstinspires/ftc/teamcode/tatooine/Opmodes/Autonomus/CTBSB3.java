@@ -25,8 +25,8 @@ import org.opencv.core.Mat;
 
 import java.security.PolicySpi;
 
-@Autonomous(name = "1+2", group = "Autonomous")
-public class CTBSB2 extends LinearOpMode {
+@Autonomous(name = "3+0", group = "Autonomous")
+public class CTBSB3 extends LinearOpMode {
 
 
 
@@ -39,35 +39,33 @@ public class CTBSB2 extends LinearOpMode {
         wrist.back();
         Intake intake = new Intake(this, false);
         Arm arm = new Arm(this, false);
-        TrajectoryActionBuilder goScoreSpecimen = drive.actionBuilder(beginPose)
-                .splineToLinearHeading(new Pose2d(-7, -31.5, Math.toRadians(90)), Math.toRadians(90));
-        TrajectoryActionBuilder goIntakeSample1 = goScoreSpecimen.endTrajectory().fresh()
-                .strafeTo(new Vector2d(-8, -40 + 0.5))
+        TrajectoryActionBuilder goScoreSample = drive.actionBuilder(beginPose)
+                .strafeTo(new Vector2d(-49.5, -50))
+                .splineToLinearHeading(new Pose2d(-55.5,-58,Math.toRadians(45)), Math.toRadians(-90));
+        TrajectoryActionBuilder goIntakeSample1 = goScoreSample.endTrajectory().fresh()
+                .strafeTo(new Vector2d(-40, -35))
                 .splineToLinearHeading(new Pose2d(-50.5,-40 + 1.5,Math.toRadians(90)), Math.toRadians(180));
         TrajectoryActionBuilder goScoreSample1 = goIntakeSample1.endTrajectory().fresh()
                 .strafeTo(new Vector2d(-49.5, -50))
                 .splineToLinearHeading(new Pose2d(-55.5,-58,Math.toRadians(45)), Math.toRadians(-90));
         TrajectoryActionBuilder goIntakeSample2 = goScoreSample1.endTrajectory().fresh()
-                .turnTo(Math.toRadians(98.4));
-                //                .strafeToLinearHeading(new Vector2d(-55, -58), Math.toRadians(96.2));
+                .turnTo(Math.toRadians(97.8));
+        //                .strafeToLinearHeading(new Vector2d(-55, -58), Math.toRadians(96.2));
         TrajectoryActionBuilder goScoreSample2 = goIntakeSample2.endTrajectory().fresh()
                 .turnTo(Math.toRadians(45));
-       TrajectoryActionBuilder goPark = goScoreSample2.endTrajectory().fresh()
-               .strafeToLinearHeading(new Vector2d(-52, 0),  Math.toRadians(0))
-               .strafeToLinearHeading(new Vector2d(-22.5 , 0), Math.toRadians(0));
+        TrajectoryActionBuilder goPark = goScoreSample2.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-52, 0),  Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(-22.5 , 0), Math.toRadians(0));
         waitForStart();
         Actions.runBlocking(new SequentialAction(intake.intakeByTimer(0.3, 1), new InstantAction(()-> arm.setAnglePower(0.7)), new SleepAction(2), new InstantAction(()-> arm.setAnglePower(0)),new InstantAction(()->arm.setStartAngle(90.0)), new InstantAction(()->arm.resetAngleEncoders()) , new ParallelAction(
                         arm.moveExtend(),arm.moveAngle(),new SequentialAction(
-                                arm.setAngle(Conts.angleScoreSpecimenHigh),
-                        new InstantAction(wrist::intakeFlat)
-//                        , arm.setAngle(90)
-                        ,new ParallelAction(
-                                new InstantAction(wrist::intakeFlat)
-                                , arm.setAngle(Conts.angleScoreSpecimenHigh)
-                                , arm.setExtend(20),
-                                goScoreSpecimen.build())
+
+                        goScoreSample.build()
+                        , new SequentialAction(
+                        new ParallelAction(arm.setAngle(Conts.angleScoreSample), arm.setExtend(58))
+                        , new InstantAction(wrist::doc),new SleepAction(0.35), intake.intakeByTimer(-1, 0.5))
+                        , new SequentialAction(intake.stop(),new InstantAction(()-> wrist.intakeFlat()), arm.setExtend(2), arm.setAngle(Conts.angleDrive))
 //                    , arm.setAngle(45)
-                        , arm.setExtend(0)
                         , new ParallelAction(goIntakeSample1.build() , new SequentialAction(intake.intakeByTimer(-1, 0.5)
                         ,intake.intakeByTimer(0, 0.1)))
                         , intake.intakeByTimer(1, 0.1)

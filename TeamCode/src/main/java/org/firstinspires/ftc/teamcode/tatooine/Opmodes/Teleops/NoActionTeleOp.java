@@ -16,14 +16,6 @@ import org.firstinspires.ftc.teamcode.tatooine.utils.mathUtil.MathUtil;
 
 @TeleOp(name = "NATO", group = "TeleOp")
 public class NoActionTeleOp extends LinearOpMode {
-    // Determines whether the robot is on the red alliance
-    private final boolean isRed = CheckAlliance.isRed();
-
-    // Wrist position variable, initialized at the midpoint
-    private double position = 0.5;
-
-    // Sensitivity of wrist position adjustment
-    private final double WRIST_SENSITIVITY = 0.03;
 
     @Override
     public void runOpMode() {
@@ -74,7 +66,6 @@ public class NoActionTeleOp extends LinearOpMode {
                 arm.resetAngleEncoders();
                 arm.setStartAngle(-6);
             }
-
 
         }
     }

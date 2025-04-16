@@ -32,7 +32,6 @@ public class Intake {
 
         // Initialize hardware
         intake = opMode.hardwareMap.get(CRServo.class, "IT");
-
        // colorSensor = new ColorSensorOur(opMode, isDebugMode);
 
         init();

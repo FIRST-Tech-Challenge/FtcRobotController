@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.tatooine.Opmodes.Teleops.Tests;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.tatooine.utils.gamepads.EasyGamepad;
 import org.firstinspires.ftc.teamcode.tatooine.utils.gamepads.GamepadKeys;
-
+@Disabled
 @TeleOp(name = "FDT", group = "Tests")
 public class FieldDriveTest extends LinearOpMode {
 

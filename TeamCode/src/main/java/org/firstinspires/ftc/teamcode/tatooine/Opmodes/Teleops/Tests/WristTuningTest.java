@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.tatooine.utils.mathUtil.MathUtil;
 //
 import java.util.ArrayList;
 import java.util.List;
-
+@Disabled
 @TeleOp(name = "WristTuningTest", group = "Tests")
 public class WristTuningTest extends LinearOpMode {
 

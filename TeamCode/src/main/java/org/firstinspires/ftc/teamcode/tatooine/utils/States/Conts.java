@@ -12,7 +12,7 @@ public class Conts {
 
 
 
-            public static double angleScoreSample = 90.0;
+            public static double angleScoreSample = 86.0;
 
             public static double extendScoreSampleHigh = 52;
 
@@ -20,7 +20,7 @@ public class Conts {
 
             public static double angleScoreSpecimenLow = 0;
 
-            public static double angleScoreSpecimenHigh = 50;
+            public static double angleScoreSpecimenHigh = 39;
             public static double extendScoreSpecimenLow = 0;
 
             public static double extendScoreSpecimenHigh = 0;

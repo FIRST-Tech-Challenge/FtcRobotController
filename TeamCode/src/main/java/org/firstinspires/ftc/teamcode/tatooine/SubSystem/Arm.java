@@ -145,17 +145,17 @@ public class Arm {
 
     // Get the current angle of the left arm motor
     public double getLeftAngle() {
-        return MathUtil.convertTicksToDegrees(ANGLE_CPR, angleRight.getCurrentPosition()) + startAngle;
+        return MathUtil.convertTicksToDegrees(ANGLE_CPR, angleRight.getCurrentPosition());
     }
 
     // Get the current angle of the right arm motor
     public double getRightAngle() {
-        return MathUtil.convertTicksToDegrees(ANGLE_CPR, angleLeft.getCurrentPosition()) + startAngle;
+        return MathUtil.convertTicksToDegrees(ANGLE_CPR, angleLeft.getCurrentPosition());
     }
 
     // Get the average angle of the arm
     public double getAngle() {
-        double angle = (getRightAngle() + getLeftAngle()) / 2;
+        double angle = ((getRightAngle() + getLeftAngle()) / 2) + startAngle;
         DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "angle", angle);
         return angle;
     }
@@ -275,7 +275,7 @@ public class Arm {
     }
 
     public void setPowerWithLimit(double power){
-        if (getAngle() < 45 && getExtend() >= ( UnitConverter.convert(42, unit.INCHES, unit.CM) - 20 - 5)){
+        if (getAngle() < 50 && getExtend() >= ( 106 - 45 - 20) && power > 0){
             power = 0;
         }
         setPowerExtend(power);

@@ -14,6 +14,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
@@ -21,7 +22,7 @@ import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Arm;
 import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Intake;
 import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Wrist;
 import org.firstinspires.ftc.teamcode.tatooine.utils.States.Conts;
-
+@Disabled
 @Autonomous(name = "1+3", group = "Autonomous")
 public class CTBSB extends LinearOpMode {
 
