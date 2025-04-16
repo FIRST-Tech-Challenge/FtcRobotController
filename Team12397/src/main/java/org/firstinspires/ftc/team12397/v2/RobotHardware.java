@@ -31,9 +31,9 @@ public class RobotHardware {
     private DcMotor rotateMotor = null;
     public DcMotorEx slideExtender = null;
 
-    private Servo clawPinch = null; // closes/opens
-    private Servo clawYaw = null; // rotates the claw around a vertical axis
-    private Servo clawPitch = null; // rotates the claw around a horizontal axis
+    private Servo clawPinch = null; // closes/opens  .5 close | 0 open
+    private Servo clawYaw = null; // rotates the claw around a vertical axis 0 default | .6? turn around
+    private Servo clawPitch = null; // rotates the claw around a horizontal axis .5 center
 
     public int leftFrontTarget;
     public int leftBackTarget;
@@ -117,12 +117,10 @@ public class RobotHardware {
         slideExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        /* waiting on hardware implementation...
         clawPinch = myOpMode.hardwareMap.get(Servo.class, "claw_pinch");
         clawYaw = myOpMode.hardwareMap.get(Servo.class, "claw_yaw");
         clawPitch = myOpMode.hardwareMap.get(Servo.class, "claw_pitch");
 
-         */
 
         imu = myOpMode.hardwareMap.get(IMU .class, "imu");
         imu.initialize(parameters);
@@ -282,7 +280,7 @@ public class RobotHardware {
     }
 
     // intention: testing
-    /* waiting on hardware implementation...
+    // waiting on hardware implementation...
     public void setServoPosition(int servoNum, double position){
         switch (servoNum) {
             case 0:
@@ -296,8 +294,5 @@ public class RobotHardware {
                 break;
         }
     }
-     */
-
-
 
 }
