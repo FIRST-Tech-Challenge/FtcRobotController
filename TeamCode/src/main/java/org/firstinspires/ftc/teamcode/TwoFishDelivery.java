@@ -263,7 +263,7 @@ public class TwoFishDelivery {
 
     public void toMinHeight(){setSlidesTargetPosition(minHeight);}
     public void toSpecHeight(){setSlidesTargetPosition(specHeight);}
-    public void toTransferHeight(){setSlidesTargetPosition(minHeight + 80);}
+    public void toTransferHeight(){setSlidesTargetPosition(minHeight + 100);}
     public void toSampleHeight(){
         setSlidesTargetPosition(sampleHeight);
     }

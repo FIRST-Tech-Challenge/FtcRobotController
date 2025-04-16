@@ -345,7 +345,10 @@ public class NetPedroWorkInProgress extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
                     /* Level 1 Ascent */
-                    delivery.setPitch(delivery.pitchSampleScorePosition);
+                    delivery.setPitch(delivery.pitchSampleScorePosition + 0.15);
+                    delivery.toSpecHeight();
+                    delivery.setSlidesPower(0.5);
+                    delivery.clawClose();
                     /* Set the state to a Case we won't use or define, so it just stops running an new paths */
                     setPathState(9);
                 }
@@ -375,10 +378,10 @@ public class NetPedroWorkInProgress extends OpMode {
         if(auxilariesTimer.seconds() < 0.25 && delivery.getPitch() != delivery.pitchSampleScorePosition){
             delivery.setPitch(delivery.pitchSampleScorePosition);
         }
-        if(auxilariesTimer.seconds() > 0.25 && auxilariesTimer.seconds() < 0.4 && delivery.clawClosed){
+        if(auxilariesTimer.seconds() > 0.25 && auxilariesTimer.seconds() < 0.6 && delivery.clawClosed){
             delivery.clawOpen();
         }
-        if(auxilariesTimer.seconds() > 0.4 && auxilariesTimer.seconds() < 0.6 && delivery.getPitch() != delivery.pitchUpPosition){
+        if(auxilariesTimer.seconds() > 0.6 && auxilariesTimer.seconds() < 0.8 && delivery.getPitch() != delivery.pitchUpPosition){
             delivery.setPitch(delivery.pitchUpPosition);
         }
         if(auxilariesTimer.seconds() > 0.6){
@@ -442,9 +445,8 @@ public class NetPedroWorkInProgress extends OpMode {
             auxilariesTimer.reset();
         }
         isTransferring = true;
-        if(auxilariesTimer.seconds() < 0.7 && delivery.getSlideHeight() != 0){
+        if(auxilariesTimer.seconds() > 0.2 && auxilariesTimer.seconds() < 0.7 && delivery.getSlideHeight() != 0){
             intake.setIntakePower(0);
-            intake.setTransferPower(0);
             delivery.toTransferHeight();
             delivery.setSlidesPower(0.75);
         }
@@ -452,6 +454,7 @@ public class NetPedroWorkInProgress extends OpMode {
             delivery.clawClose();
         }
         if(auxilariesTimer.seconds() > 0.9 && auxilariesTimer.seconds() < 2 && delivery.getSlideHeight() != delivery.sampleHeight){
+            intake.setTransferPower(0);
             delivery.toSampleHeight();
             delivery.setSlidesPower(0.75);
         }

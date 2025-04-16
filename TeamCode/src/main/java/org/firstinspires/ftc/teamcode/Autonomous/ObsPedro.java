@@ -389,6 +389,7 @@ public class ObsPedro extends OpMode {
             delivery.setSlidesPower(0.5);
             delivery.setPitch(delivery.pitchIntakePosition);
             delivery.setWrist(delivery.wristUpPosition);
+            delivery.clawClose();
             delivery.setClawPosition(delivery.clawOpenPosition + 0.05);
         }
     }
