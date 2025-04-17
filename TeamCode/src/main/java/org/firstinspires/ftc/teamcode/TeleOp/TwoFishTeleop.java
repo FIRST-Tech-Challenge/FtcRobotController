@@ -451,13 +451,18 @@ public class TwoFishTeleop extends LinearOpMode {
                         pitchTarget -= gamepad2.right_stick_y * 0.025;
                         delivery.setPitch(pitchTarget);
 //                        delivery.toSpecHeight();
-                        delivery.setSlidesPower(0.5);
+                        delivery.setSlidesPower(0.75);
 
                         if(currentGamepad2.a && !prevGamepad2.a){
                             delivery.clawClose();
                         }
                         if(currentGamepad2.b && !prevGamepad2.b){
                             delivery.clawOpen();
+                        }
+
+                        if(gamepad2.dpad_down){
+                            delivery.setSlidesTargetPosition(-999999);
+                            delivery.limitCheck();
                         }
 
                         if(Math.abs(gamepad2.left_stick_y) > 0.01){

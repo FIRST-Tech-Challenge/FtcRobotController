@@ -10,12 +10,9 @@ import com.pedropathing.util.Constants;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.TwoFishDelivery;
 import org.firstinspires.ftc.teamcode.TwoFishIntake;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
@@ -31,8 +28,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
  * @version 2.0, 11/28/2024
  */
 
-@Autonomous(name = "Obs Pedro WIP", group = "Autonomous")
-public class ObsPedro extends OpMode {
+@Autonomous(name = "AutoAuxilaryTestingOBS", group = "TESTING")
+public class AutoTestingObsAuxilaries extends OpMode {
 
     ElapsedTime deliveryTimer = new ElapsedTime();
 
@@ -76,7 +73,7 @@ public class ObsPedro extends OpMode {
     private final Point startPoint = new Point(8, 61);
     private final Point toFirstSpecPoint1 = new Point(30, 73);
     private final Point toFirstSpecPoint2 = new Point(22, 73);
-    private final Point firstSpecScorePoint = new Point(37.5, 75);
+    private final Point firstSpecScorePoint = new Point(38, 75);
 
     //Collects the first sample
     private final Point startCollectSample1Point = firstSpecScorePoint;
@@ -92,7 +89,7 @@ public class ObsPedro extends OpMode {
     private final Point toCollectSample2Point3 = new Point(55, 20);
     private final Point toCollectSample2Point4 = new Point(30, 20);
     private final Point toCollectSample2Point5 = new Point(25, 28);
-    private final Point endCollectSample2Point = new Point(9.5, 33);
+    private final Point endCollectSample2Point = new Point(10.5, 33);
 
 
     //Scores latter specimens
@@ -169,7 +166,6 @@ public class ObsPedro extends OpMode {
         switch (pathState) {
             case 0:
                 prepDeliverSpecimen();
-                follower.followPath(firstSpecScorePath, true);
                 if(sleepTimer.seconds() > 1) {
                     setPathState(1);
                     sleepTimer.reset();
@@ -183,14 +179,10 @@ public class ObsPedro extends OpMode {
                 } else{
                     follower.setMaxPower(1);
                 }
-//                if(sleepTimer.seconds() > 0.5)
-                if (!follower.isBusy() || timeoutTimer.seconds() > 5) {
-//                    follower.setMaxPower(1);
+                if (true) {
                     //Score first specimen
                     deliverSpecimen();
                     if(!isDelivering) {
-                        follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY() + 1));
-                        follower.followPath(firstSampleCollectPath, true);
 
                         if(sleepTimer.seconds() > 1) {
                             setPathState(2);
@@ -208,8 +200,7 @@ public class ObsPedro extends OpMode {
                     follower.setMaxPower(1);
                 }
 //                if(sleepTimer.seconds() > 0.5)
-                if(!follower.isBusy()) {
-                    follower.followPath(secondSampleCollectPath);
+                if(true) {
                     prepIntakeSpecimen();
                     setPathState(3);
                     timeoutTimer.reset();
@@ -224,11 +215,10 @@ public class ObsPedro extends OpMode {
                 }
 
                 if(sleepTimer.seconds() > 0.5)
-                if(!follower.isBusy() || timeoutTimer.seconds() > 3) {
+                if(true) {
                     //Collect specimen
                     intakeSpecimen();
                     if(!isIntaking) {
-                        follower.followPath(specScorePath, true);
                         if(sleepTimer.seconds() > 2) {
                             prepDeliverSpecimen();
                             setPathState(4);
@@ -250,12 +240,10 @@ public class ObsPedro extends OpMode {
 //                if(sleepTimer.seconds() > 0.5)
 //                if(follower.getPose().getX() > 59)
 //                    deliverSpec();
-                if(!follower.isBusy()) {
+                if(true) {
                     //Score Spec
                     deliverSpecimen();
                     if(!isDelivering) {
-                        follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY() + 1));
-                        follower.followPath(specReturnPath);
                         if(sleepTimer.seconds() > 1) {
                             prepIntakeSpecimen();
                             setPathState(5);
@@ -274,11 +262,10 @@ public class ObsPedro extends OpMode {
                 }
 
                 if(sleepTimer.seconds() > 0.5)
-                if(!follower.isBusy() || timeoutTimer.seconds() > 3) {
+                if(true) {
                     //Intake Spec
                     intakeSpecimen();
                     if(!isIntaking) {
-                        follower.followPath(specScorePath, true);
                         if(sleepTimer.seconds() > 1) {
                             prepDeliverSpecimen();
                             setPathState(6);
@@ -297,12 +284,10 @@ public class ObsPedro extends OpMode {
                 }
 
                 if(sleepTimer.seconds() > 0.5)
-                if(!follower.isBusy()) {
+                if(true) {
                     //Score Spec
                     deliverSpecimen();
                     if(!isDelivering) {
-                        follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY() + 1));
-                        follower.followPath(specReturnPath);
                         if(sleepTimer.seconds() > 2) {
                             prepIntakeSpecimen();
                             setPathState(7);
@@ -321,11 +306,10 @@ public class ObsPedro extends OpMode {
                 }
 
                 if(sleepTimer.seconds() > 0.5)
-                if(!follower.isBusy() || timeoutTimer.seconds() > 3) {
+                if(true) {
                     //Intake Spec
                     intakeSpecimen();
                     if(!isIntaking) {
-                        follower.followPath(specScorePath, true);
                         prepDeliverSpecimen();
                         setPathState(8);
                     }
