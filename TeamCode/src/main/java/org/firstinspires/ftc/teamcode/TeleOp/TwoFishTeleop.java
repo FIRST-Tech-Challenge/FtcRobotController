@@ -445,12 +445,13 @@ public class TwoFishTeleop extends LinearOpMode {
                             state = RobotState.HANG;
                             pitchTarget = delivery.pitchUpPosition;
                             delivery.setWrist(delivery.wristDownPosition);
+                            delivery.setSlidesTargetPosition(-999999);
+                            delivery.limitCheck();
                         }
                         break;
                     case HANG:
                         pitchTarget -= gamepad2.right_stick_y * 0.025;
                         delivery.setPitch(pitchTarget);
-//                        delivery.toSpecHeight();
                         delivery.setSlidesPower(0.75);
 
                         if(currentGamepad2.a && !prevGamepad2.a){
@@ -459,10 +460,25 @@ public class TwoFishTeleop extends LinearOpMode {
                         if(currentGamepad2.b && !prevGamepad2.b){
                             delivery.clawOpen();
                         }
+                        if(currentGamepad2.x){
+                            delivery.setWrist(delivery.wristDownPosition);
+                        }
+                        if(currentGamepad2.y){
+                            delivery.setWrist(delivery.wristUpPosition);
+                        }
 
                         if(gamepad2.dpad_down){
-                            delivery.setSlidesTargetPosition(-999999);
+                            delivery.setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                            delivery.setSlidesPower(-0.75);
                             delivery.limitCheck();
+                        }
+                        if(!currentGamepad2.dpad_down && prevGamepad2.dpad_down){
+                            delivery.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                            delivery.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        }
+                        if(gamepad2.back){
+                            delivery.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                            delivery.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
                         }
 
                         if(Math.abs(gamepad2.left_stick_y) > 0.01){

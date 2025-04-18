@@ -68,13 +68,13 @@ public class NetPedroWorkInProgress extends OpMode {
     private final Point scorePoint = new Point(14, 129);
 
     /** Lowest (First) Sample from the Spike Mark */
-    private final Point pickup1Point = new Point(16, 126);
+    private final Point pickup1Point = new Point(16, 126.5);
 
     /** Middle (Second) Sample from the Spike Mark */
     private final Point pickup2Point = new Point(16, 129);
 
     /** Highest (Third) Sample from the Spike Mark */
-    private final Point pickup3Point = new Point(32, 122.5);
+    private final Point pickup3Point = new Point(31.75, 122.5);
 
     /** Park Pose for our robot, after we do all of the scoring. */
     private final Point parkPoint = new Point(60, 96);
@@ -192,7 +192,7 @@ public class NetPedroWorkInProgress extends OpMode {
                                 parkPoint
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(90))
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(-90))
                 .build();
     }
 
@@ -256,6 +256,8 @@ public class NetPedroWorkInProgress extends OpMode {
                 }
                 break;
             case 3:
+                intake.setIntakePower(-1);
+                intake.setTransferPower(-1);
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the score1's position */
                 if(!follower.isBusy()) {
                     /* Score Preload */
@@ -293,6 +295,8 @@ public class NetPedroWorkInProgress extends OpMode {
                 }
                 break;
             case 5:
+                intake.setIntakePower(-1);
+                intake.setTransferPower(-1);
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
                     /* Score Preload */
@@ -345,8 +349,9 @@ public class NetPedroWorkInProgress extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
                     /* Level 1 Ascent */
-                    delivery.setPitch(delivery.pitchSampleScorePosition + 0.15);
-                    delivery.toSpecHeight();
+//                    delivery.setPitch(delivery.pitchSampleScorePosition + 0.15);
+                    delivery.setPitch(delivery.pitchScoreSpecPosition);
+                    delivery.setSlidesTargetPosition(delivery.specHeight + 100);
                     delivery.setSlidesPower(0.5);
                     delivery.clawClose();
                     /* Set the state to a Case we won't use or define, so it just stops running an new paths */
@@ -424,7 +429,7 @@ public class NetPedroWorkInProgress extends OpMode {
         if(auxilariesTimer.seconds() < 0.5 && !(intake.getPitch() == intake.downPitch) && !isSamplePosessed){
             intake.pitchUp();
             intake.setIntakePower(1.0f);
-            intake.setTransferPower(0.6f);
+            intake.setTransferPower(1.0f);
         }
         if(auxilariesTimer.seconds() > 1.5 && auxilariesTimer.seconds() < 1.6 && intake.getTargetLength() != 0){ // lebron lebron lebroooon
             intake.pitchDown();
@@ -432,7 +437,7 @@ public class NetPedroWorkInProgress extends OpMode {
             delivery.setSlidesPower(0.75);
         }
         if(auxilariesTimer.seconds() > 1.6){
-            intake.setTransferPower(0.0f);
+            intake.setTransferPower(1.0f);
             isSamplePosessed = true;
             isIntaking = false;
             intakeIsPrepped = false;
@@ -454,11 +459,12 @@ public class NetPedroWorkInProgress extends OpMode {
             delivery.clawClose();
         }
         if(auxilariesTimer.seconds() > 0.9 && auxilariesTimer.seconds() < 2 && delivery.getSlideHeight() != delivery.sampleHeight){
-            intake.setTransferPower(0);
+
             delivery.toSampleHeight();
             delivery.setSlidesPower(0.75);
         }
         if(auxilariesTimer.seconds() > 2){
+            intake.setTransferPower(0);
             delivery.setPitch(delivery.pitchUpPosition);
             isTransferring = false;
             transferIsPrepped = false;

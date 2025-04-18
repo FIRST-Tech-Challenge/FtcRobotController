@@ -233,6 +233,7 @@ public class ObsPedro extends OpMode {
                             prepDeliverSpecimen();
                             setPathState(4);
                             sleepTimer.reset();
+                            timeoutTimer.reset();
                             follower.setMaxPower(1);
                         }
                     }
@@ -250,7 +251,7 @@ public class ObsPedro extends OpMode {
 //                if(sleepTimer.seconds() > 0.5)
 //                if(follower.getPose().getX() > 59)
 //                    deliverSpec();
-                if(!follower.isBusy()) {
+                if(!follower.isBusy() || timeoutTimer.seconds() > 4) {
                     //Score Spec
                     deliverSpecimen();
                     if(!isDelivering) {
@@ -283,6 +284,7 @@ public class ObsPedro extends OpMode {
                             prepDeliverSpecimen();
                             setPathState(6);
                             sleepTimer.reset();
+                            timeoutTimer.reset();
                         }
                     }
                 }
@@ -297,7 +299,7 @@ public class ObsPedro extends OpMode {
                 }
 
                 if(sleepTimer.seconds() > 0.5)
-                if(!follower.isBusy()) {
+                if(!follower.isBusy()  || timeoutTimer.seconds() > 4) {
                     //Score Spec
                     deliverSpecimen();
                     if(!isDelivering) {
@@ -328,6 +330,7 @@ public class ObsPedro extends OpMode {
                         follower.followPath(specScorePath, true);
                         prepDeliverSpecimen();
                         setPathState(8);
+                        timeoutTimer.reset();
                     }
                 }
                 break;
