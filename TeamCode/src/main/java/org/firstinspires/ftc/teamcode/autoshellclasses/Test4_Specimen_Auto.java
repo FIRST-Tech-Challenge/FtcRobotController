@@ -120,7 +120,7 @@ public class Test4_Specimen_Auto extends LinearOpMode {
                 .build();
 
         clawCloseSampleWait1 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.2)
+                .waitSeconds(0.5)
                 .build();
         clawCloseSampleWait2 = drive.actionBuilder(drive.pose)
                 .waitSeconds(0.2)
@@ -143,13 +143,17 @@ public class Test4_Specimen_Auto extends LinearOpMode {
                         sampleGrab1,
                         _ViperArmActions.MoveViperHalfExtend(),
                         _WristClawActions.CloseClaw(),
+                        clawCloseSampleWait1,
                         sampleDrop1,
                         _WristClawActions.OpenClaw(),
+                        clawOpenSampleWait1,
                         sampleGrab2,
                         _WristClawActions.CloseClaw(),
+                        clawCloseSampleWait2,
                         _ViperArmActions.MoveViperToHome(),
                         sampleDrop2,
                         _WristClawActions.OpenClaw(),
+                        clawOpenSampleWait2,
                         grabSpecimen2,
                         _WristClawActions.CloseClaw(),
                         clawCloseSpecimenWait1,
@@ -168,6 +172,7 @@ public class Test4_Specimen_Auto extends LinearOpMode {
                         _ViperArmActions.LowerFromClip(),
                         grabSpecimen4,
                         _WristClawActions.CloseClaw(),
+                        clawCloseSpecimenWait3,
                         driveToClip4,
                         _ViperArmActions.RaiseToClip(),
                         clippingSpecimen4,
