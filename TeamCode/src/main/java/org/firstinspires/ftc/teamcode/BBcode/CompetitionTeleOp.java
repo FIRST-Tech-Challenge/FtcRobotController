@@ -321,69 +321,53 @@ public class CompetitionTeleOp extends LinearOpMode{
 
             switch (hangState) {
                 case Home:
-                    if (viper.getIsViperExtendHang() && gamepad1.right_trigger > 0 && gamepad1.dpad_up) {
-                        arm.MoveToHighBasket();
+                    if (gamepad1.right_trigger > 0 && gamepad1.right_trigger > 0 && gamepad1.dpad_up) {
+                        arm.MoveToHang();
                         hangState = HangState.RaiseArmHang;
                     }
-                    else if (gamepad1.left_trigger > 0 && gamepad1.dpad_down) {
-                        viper.ExtendClosed(0.75);
-                        hangState = HangState.EmergencyExitViperDown;
+                    else if (gamepad1.right_trigger > 0 && gamepad1.dpad_down) {
+                        arm.MoveToHome();
+                        hangState = HangState.EmergencyExitArmDown;
                     }
                     break;
                 case RaiseArmHang:
-                    if (arm.getIsArmHighBasketPosition()) {
-                        viper.ExtendFull(1);
+                    if (arm.getIsArmHangPosition()) {
+                        viper.ExtendSpecimenhang(1);
                         hangState = HangState.ViperExtendHang;
                     }
                     break;
 
                 case ViperExtendHang:
-                    if (viper.getIsViperExtendFull()) {
-                        wristClaw.WristDown();
-                        hangState = HangState.WristDown;
-                        wristTimer.reset();
-                    }
-                    break;
-
-                case WristDown:
-                    if (wristTimer.seconds() >= wristFlipTime){
+                    if (viper.getIsViperExtendSpecimenHang()) {
                         hangState = HangState.Hang;
                     }
                     break;
 
                 case Hang:
                     if (gamepad1.right_trigger > 0 && gamepad1.dpad_down) {
-                        viper.ExtendHang(1);
+                        viper.ExtendClosed(1);
                         hangState = HangState.ViperDown;
                     }
                     break;
 
                 case ViperDown:
-                    if (viper.getIsViperExtendHang()) {
+                    if (viper.getIsViperExtendClosed()) {
                         arm.MoveToSlowDown();
                         hangState = HangState.ArmDown;
                     }
-                    else if (gamepad1.left_trigger > 0 && gamepad1.dpad_down) {
-                        viper.ExtendClosed(0.75);
-                        hangState = HangState.EmergencyExitViperDown;
+                    else if (gamepad1.left_trigger > 0 && gamepad1.right_trigger > 0 && gamepad1.dpad_down) {
+                        arm.MoveToHome();
+                        hangState = HangState.EmergencyExitArmDown;
                     }
                     break;
 
                 case ArmDown:
-                    if (arm.getIsArmSpecimenPosition()) {
+                    if (arm.getIsArmSlowDownPosition()) {
                         hangState = HangState.Home;
                     }
-                    else if (gamepad1.right_trigger > 0 && gamepad1.dpad_down) {
-                        viper.ExtendClosed(1);
-                        hangState = HangState.EmergencyExitViperDown;
-                    }
-                    break;
-
-                case EmergencyExitViperDown:
-                    if (viper.getIsViperExtendClosed()) {
-                        viper.Rest();
+                    else if (gamepad1.left_trigger > 0 && gamepad1.right_trigger > 0 && gamepad1.dpad_down) {
                         arm.MoveToHome();
-                        hangState = HangState.Home;
+                        hangState = HangState.EmergencyExitArmDown;
                     }
                     break;
 
