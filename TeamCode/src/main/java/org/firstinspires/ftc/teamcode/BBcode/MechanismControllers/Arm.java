@@ -25,7 +25,7 @@ public class Arm {
     //variables are in degrees
     final int homePosition = 0;
     final int slowDownPosition = 5;
-    final int hangPosition = 75;
+    final int hangPosition = 40;
     final int highBasketPosition = 95;
     final double initialSpecimenPosition = 42.5;//used in auto and tele
     final double maxSpecimenPosition = 49;
