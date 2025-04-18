@@ -2,6 +2,8 @@ package org.firstinspires.ftc.team12397.v2.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.team12397.v2.RobotHardware;
 
@@ -18,13 +20,18 @@ public class FieldCentric extends LinearOpMode {
         double turn;
         double extenderInches;
 
+        final double rotationBottomPosition = robot.ROTATION_MAXIMUM; // bot is maximum because it would go the farthest forward
+        final double rotationTopPosition = robot.ROTATION_MINIMUM; // top is minimum because it would go (-) ticks
+        final double rotationSmidgePosition = 360/robot.ROTATE_SLIDE_TICKS_PER_DEGREE; // peak height reaches 12 inches off ground
+
         double rotationDegrees = 0;
 
         Gamepad luisL = gamepad1;
         Gamepad alexH = gamepad2;
 
-        waitForStart();
         robot.init();
+        waitForStart();
+
 
         while (opModeIsActive()) {
 
@@ -32,17 +39,21 @@ public class FieldCentric extends LinearOpMode {
             strafe = luisL.left_stick_x;
             turn = luisL.right_stick_x;
 
-            if(alexH.y){
-                rotationDegrees = -20;
-            } else if (alexH.a){
-                rotationDegrees = 20;
+            if (alexH.a){ // bottom
+                rotationDegrees = rotationBottomPosition;
+                robot.rotateMotor.setVelocity(1250);
+            } else if (alexH.y){ // up
+                rotationDegrees = rotationTopPosition;
+                robot.rotateMotor.setVelocity(1250);
+            } else if (alexH.x){ // slightly elevated
+                rotationDegrees = rotationSmidgePosition;
             }
 
-            // if alex moves his left stick up/down more than a hundreth of maximum movement...
+            // if alex moves his left stick up/down more than a hundredth of maximum movement...
             if (Math.round(Math.abs(alexH.left_stick_y*10)) != 0){
                 // set target position to previous distance +/- fudge amount
                 extenderInches = robot.slideExtender.getCurrentPosition()/robot.EXTEND_SLIDE_TICKS_PER_INCH;
-                extenderInches = extenderInches + -alexH.left_stick_y*3;
+                extenderInches = extenderInches + -alexH.left_stick_y*4;
                 // fudge amount is 3.5 inches: 1/5 of maximum reach.
             } else {
                 // if alex DOES NOT move his left stick, stop arm at current position.
@@ -55,23 +66,36 @@ public class FieldCentric extends LinearOpMode {
             robot.setExtenderPosition(extenderInches);
 
 
-            if(alexH.dpad_up){
+            if (alexH.dpad_up){
                 robot.setServoPosition(0, 0.1);
-            } else if ( alexH.dpad_down){
+            } else if (alexH.dpad_down){
                 robot.setServoPosition(0, 0.375);
             }
 
-            if(alexH.dpad_left){
+            if (alexH.dpad_left){
                 robot.setServoPosition(1, 0);
             } else if ( alexH.dpad_right){
                 robot.setServoPosition(1, 0.685);
             }
 
-            if(alexH.left_bumper){
-                robot.setServoPosition(2, 0.05);
+            if (alexH.left_bumper){
+                // if alex presses left bumper again, go to middle position
+                if (robot.clawPitch.getPosition() == 0.05){
+                    robot.setServoPosition(2, 0.5);
+                } else { // else, go to the default left bumper position
+                    robot.setServoPosition(2, 0.05);
+                }
             } else if (alexH.right_bumper){
-                robot.setServoPosition(2, 1);
+                // if alex presses right bumper again, go to middle position
+                if (robot.clawPitch.getPosition() == 1){
+                    robot.setServoPosition(2, 1);
+                } else { // else, go to the default right bumper position
+                    robot.setServoPosition(2, 1);
+                }
             }
+
+            telemetry.addData(String.valueOf(robot.rotateMotor.getCurrentPosition()), " rotation encoder ticks");
+            telemetry.update();
 
         }
     }

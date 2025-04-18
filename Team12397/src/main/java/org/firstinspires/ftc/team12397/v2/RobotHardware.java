@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.opencv.core.Mat;
 
 public class RobotHardware {
 
@@ -28,12 +29,12 @@ public class RobotHardware {
     private DcMotor rightFront = null;
     private DcMotor rightBack = null;
 
-    private DcMotor rotateMotor = null;
+    public DcMotorEx rotateMotor = null;
     public DcMotorEx slideExtender = null;
 
     private Servo clawPinch = null; // closes/opens  .5 close | 0 open
     private Servo clawYaw = null; // rotates the claw around a vertical axis 0 default | .6? turn around
-    private Servo clawPitch = null; // rotates the claw around a horizontal axis .5 center
+    public Servo clawPitch = null; // rotates the claw around a horizontal axis .5 center
 
     public int leftFrontTarget;
     public int leftBackTarget;
@@ -49,6 +50,8 @@ public class RobotHardware {
     public final double ROTATE_SLIDE_TICKS_PER_DEGREE = (28.0 * 50.9 / 360.0) * (100.0 / 30.0);
     public final double ROTATION_START = 0.0 * ROTATE_SLIDE_TICKS_PER_DEGREE;
     public final double ROTATION_90 = 90 * ROTATE_SLIDE_TICKS_PER_DEGREE;
+    public final double ROTATION_MINIMUM = -565/ROTATE_SLIDE_TICKS_PER_DEGREE;
+    public final double ROTATION_MAXIMUM = 715/ROTATE_SLIDE_TICKS_PER_DEGREE;
 
     // extender ticks:
     public final double EXTEND_SLIDE_TICKS_PER_REV = (((((1+(46./17))) * (1+(46./11))) * 28));
@@ -75,7 +78,7 @@ public class RobotHardware {
         rightBack = myOpMode.hardwareMap.get(DcMotor.class, "right_back");
 
         slideExtender = myOpMode.hardwareMap.get(DcMotorEx.class, "slide_extender");
-        rotateMotor = myOpMode.hardwareMap.get(DcMotor.class, "rotate_motor");
+        rotateMotor = myOpMode.hardwareMap.get(DcMotorEx.class, "rotate_motor");
 
         // motor directions...
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -258,7 +261,7 @@ public class RobotHardware {
      */
     public void setExtenderPosition(double inches){
         // ensure requested position is not negative distance or overextending.
-        inches = Math.min(inches, EXTENDER_SLIDE_MAXIMUM_TICKS);
+        inches = Math.min(inches, 17.5);
         inches = Math.max(inches, 0);
 
         slideExtender.setTargetPosition((int) (inches*EXTEND_SLIDE_TICKS_PER_INCH));
@@ -272,10 +275,11 @@ public class RobotHardware {
      * @param rotateDegrees degrees from the starting position: another term could be absolute rotation.
      */
     public void RotateSlides(double rotateDegrees){
-        rotateMotor.setTargetPosition((int)(rotateDegrees * ROTATE_SLIDE_TICKS_PER_DEGREE));
+        rotateDegrees = Math.min(rotateDegrees, ROTATION_MAXIMUM);
+        rotateDegrees = Math.max(rotateDegrees, ROTATION_MINIMUM);
 
-        ((DcMotorEx) rotateMotor).setVelocity(2500);
-
+        rotateMotor.setTargetPosition((int) (rotateDegrees * ROTATE_SLIDE_TICKS_PER_DEGREE));
+        rotateMotor.setVelocity(2500);
         rotateMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
