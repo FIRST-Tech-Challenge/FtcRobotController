@@ -56,7 +56,7 @@ public class Straight extends LinearOpMode {
             odometryLogger.logOdometryPositionHistory(SharedData.getOdometryPositionMap());
             moveStraight600MM.updateCheckDone();
 
-            Log.d("odometryData", "currentPos" + SharedData.getOdometryPosition().toString());
+            //Log.d("odometryData", "currentPos" + SharedData.getOdometryPosition().toString());
         }
         odometryLogger.close();
         OpModeUtilities.shutdownExecutorService(executorService);
