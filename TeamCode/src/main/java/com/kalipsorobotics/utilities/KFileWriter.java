@@ -24,7 +24,7 @@ public class KFileWriter {
     public KFileWriter(String name) {
 
         try {
-            writer = new BufferedWriter(new FileWriter(name + "—" + formattedDateTime));
+            writer = new BufferedWriter(new FileWriter(name + "—" + formattedDateTime + ".csv"));
         } catch (IOException ioException) {
             Log.d("IOException", "Caught IOException While Initializing");
         }
