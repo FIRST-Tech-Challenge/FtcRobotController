@@ -20,6 +20,9 @@ public class CheckStuckRobot {
     private double prevXPos = 0;
     private double prevYPos = 0;
     private double prevThetaPos = 0;
+    private boolean wasSpinning = false;
+    private double spinningStartTime = 0;
+    private static final long SPINNING_TIMEOUT_MS = 2000; // 2 seconds
     private long lastStuckCheckTime;
     private double prevXVelocity = 0;
     private double timeInMsSinceLastChecked;
@@ -113,17 +116,36 @@ public class CheckStuckRobot {
         }
         return false;
     }
-    private boolean checkRobotSpinning(double currentXVelocity, double currentYVelocity, double currentThetaVelocity, Position currentPosition, double currentheading, double timeInMillis) {
-        if (abs(currentThetaVelocity) < THETA_DELTA_MIN_THRESHOLD && (abs(currentXVelocity) < X_DELTA_MIN_THRESHOLD && abs(currentYVelocity) < Y_DELTA_MIN_THRESHOLD)) {
-            double prevHeading = currentheading;
-            currentheading = currentPosition.getTheta();
-            // Check for consistent angular velocity
-            if (Math.abs(currentheading - prevHeading) < 1) {
-                return true;
+    private double prevHeading = 0;
+
+    private boolean checkRobotSpinning(double xVel, double yVel, double thetaVel, Position currentPos, double currentTimeMs) {
+        double currentHeading = currentPos.getTheta();
+        double headingDelta = Math.abs(currentHeading - prevHeading);
+        prevHeading = currentHeading;
+
+        boolean isSpinningNow =
+                Math.abs(xVel) < X_DELTA_MIN_THRESHOLD &&
+                        Math.abs(yVel) < Y_DELTA_MIN_THRESHOLD &&
+                        Math.abs(thetaVel) < THETA_DELTA_MIN_THRESHOLD &&
+                        headingDelta < 1;  // degrees
+
+        if (isSpinningNow) {
+            if (!wasSpinning) {
+                wasSpinning = true;
+                spinningStartTime = currentTimeMs;
+            } else {
+                if ((currentTimeMs - spinningStartTime) >= SPINNING_TIMEOUT_MS) {
+                    return true;  // spinning "forever"
+                }
             }
+        } else {
+            wasSpinning = false;
+            spinningStartTime = 0;
         }
+
         return false;
     }
+
     private boolean checkIfOnPath(/*Path path,*/ int timeInMillis) {
         //return checkXY.isPositionOnPath(path, timeInMillis);
         return true;
@@ -169,15 +191,14 @@ public class CheckStuckRobot {
                             timeInMillis)) {
 
                 Log.d("check stuck", "---ROBOT IS STUCK---");
-                /*if (checkRobotSpinning(
+                if (checkRobotSpinning(
                         getXDelta(currentPos),
                         getYDelta(currentPos),
                         getThetaDelta(currentPos),
                         currentPos,
-                        currentPos.getTheta(),
                         timeInMillis)) {
                     //robot is spinning, unstuck
-                }*/
+                }
                 if (checkRobotNotMoving(
                         getXDelta(currentPos),
                         getYDelta(currentPos),
