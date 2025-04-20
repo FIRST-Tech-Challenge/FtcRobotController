@@ -21,7 +21,7 @@ public class Straight extends LinearOpMode {
 
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
 
-        OdometryFileWriter odometryFileWriter = new OdometryFileWriter("Straight");
+        OdometryFileWriter odometryFileWriter = new OdometryFileWriter("Straight", opModeUtilities);
 
         DriveTrain.setInstanceNull();
         DriveTrain driveTrain = DriveTrain.getInstance(opModeUtilities);
