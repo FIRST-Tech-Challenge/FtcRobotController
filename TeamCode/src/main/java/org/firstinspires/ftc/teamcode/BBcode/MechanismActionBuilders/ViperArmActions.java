@@ -118,15 +118,26 @@ public class ViperArmActions {
     }
 
     //Moves Viper to pickup sample
-    public class MoveViperToSamplePickUpAction implements Action {
+    public class MoveViperToLongSamplePickUpAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             _Viper.Extendlongsubmersible(1);
             return false;
         }
     }
-    public Action MoveViperToSamplePickUp() {
-        return new MoveViperToSamplePickUpAction();
+    public Action MoveViperToLongSamplePickUp() {
+        return new MoveViperToLongSamplePickUpAction();
+    }
+
+    public class MoveViperToShortSamplePickUpAction implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            _Viper.Extendshortsubmersible(1);
+            return false;
+        }
+    }
+    public Action MoveViperToShortSamplePickUp() {
+        return new MoveViperToShortSamplePickUpAction();
     }
 
     //dump in high basket

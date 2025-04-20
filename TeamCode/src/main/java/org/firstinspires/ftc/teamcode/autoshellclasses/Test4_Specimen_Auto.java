@@ -51,7 +51,7 @@ public class Test4_Specimen_Auto extends LinearOpMode {
         // Declare OpMode member for the Odometry Computer
         GoBildaPinpointDriverRR odo;
 
-        Action driveToClip1, clippingSpecimen1, sampleGrab1, sampleDrop1, sampleGrab2, sampleDrop2, grabSpecimen2, driveToClip2, clippingSpecimen2, grabSpecimen3, driveToClip3, clippingSpecimen3, grabSpecimen4, driveToClip4, clippingSpecimen4, driveToPark, clawCloseSpecimenWait1, clawCloseSpecimenWait2, clawCloseSpecimenWait3, clawCloseSampleWait1, clawCloseSampleWait2, clawOpenSampleWait1, clawOpenSampleWait2;
+        Action driveToClip1, clippingSpecimen1, sampleGrab1, sampleDrop1, sampleGrab2, sampleDrop2, grabSpecimen2, driveToClip2, clippingSpecimen2, grabSpecimen3, driveToClip3, clippingSpecimen3, grabSpecimen4, driveToClip4, clippingSpecimen4, driveToPark, clawCloseSpecimenWait1, clawCloseSpecimenWait2, clawCloseSpecimenWait3, clawCloseSampleWait1, clawCloseSampleWait2, clawOpenSampleWait1, clawOpenSampleWait2, viperOutWait;
 
         driveToClip1 = drive.actionBuilder(drive.pose)
                 .strafeToLinearHeading(SpecimenPose.clipCenter.position, SpecimenPose.clipCenter.heading)
@@ -66,7 +66,7 @@ public class Test4_Specimen_Auto extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(6,-48),Math.toRadians(90))
                 .build();
 
-        clippingSpecimen1 = drive.actionBuilder(drive.pose)//(new Pose2d(0,-48,Math.toRadians(90)))
+        clippingSpecimen1 = drive.actionBuilder(new Pose2d(0,-48,Math.toRadians(90)))
                 .strafeToLinearHeading(new Vector2d(0,-34),Math.toRadians(90), new TranslationalVelConstraint(20))
                 .build();
         clippingSpecimen2 = drive.actionBuilder(new Pose2d(2,-48,Math.toRadians(90)))
@@ -81,21 +81,21 @@ public class Test4_Specimen_Auto extends LinearOpMode {
 
         sampleGrab1 = drive.actionBuilder(new Pose2d(0,-34,Math.toRadians(90)))
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(36,-40, Math.toRadians(45) ), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(30.87,-44.51, Math.toRadians(48.48) ), Math.toRadians(90))
                 .build();
-        sampleGrab2 = drive.actionBuilder(new Pose2d(0,-34,Math.toRadians(-45)))
-                .strafeToLinearHeading(new Vector2d(48,-40), Math.toRadians(45))
-                .build();
-
-        sampleDrop1 = drive.actionBuilder(new Pose2d(36,-40,Math.toRadians(45)))
-                .turnTo(-45)
-                .build();
-        sampleDrop2 = drive.actionBuilder(new Pose2d(48,-40,Math.toRadians(45)))
-                .strafeToLinearHeading(new Vector2d(48,-60), Math.toRadians(-45))
+        sampleGrab2 = drive.actionBuilder(new Pose2d(30.87,-44.51,Math.toRadians(-45)))
+                .strafeToLinearHeading(new Vector2d(43.82,-47.29), Math.toRadians(56.38))
                 .build();
 
-        grabSpecimen2 = drive.actionBuilder(new Pose2d(0,-34,Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(38,-58), Math.toRadians(0))
+        sampleDrop1 = drive.actionBuilder(new Pose2d(30.87,-44.51,Math.toRadians(48.48)))
+                .strafeToLinearHeading(new Vector2d(30.85, -44.50), Math.toRadians(-45), new TranslationalVelConstraint(25))
+                .build();
+        sampleDrop2 = drive.actionBuilder(new Pose2d(43.82,-47.29,Math.toRadians(56.38)))
+                .strafeToLinearHeading(new Vector2d(44.72,-50.59), Math.toRadians(-45), new TranslationalVelConstraint(25))
+                .build();
+
+        grabSpecimen2 = drive.actionBuilder(new Pose2d(44.72,-50.59,Math.toRadians(-45)))
+                .strafeToLinearHeading(new Vector2d(46.68,-48.73), Math.toRadians(-85))
                 .build();
 
         grabSpecimen3 = drive.actionBuilder(new Pose2d(2,-34,Math.toRadians(90)))
@@ -133,15 +133,22 @@ public class Test4_Specimen_Auto extends LinearOpMode {
                 .waitSeconds(0.2)
                 .build();
 
+        viperOutWait = drive.actionBuilder(drive.pose)
+                .waitSeconds(0.75)
+                .build();
+
         Actions.runBlocking(
                 new SequentialAction(
                         _WristClawActions.WristMid(),
                         _ViperArmActions.MoveArmToSpecimen(),
                         _ViperArmActions.MoveViperToSpecimen(),
+                        driveToClip1,
                         clippingSpecimen1,
                         _ViperArmActions.LowerFromClip(),
+                        _WristClawActions.WristDown(),
                         sampleGrab1,
-                        _ViperArmActions.MoveViperHalfExtend(),
+                        _ViperArmActions.MoveViperToLongSamplePickUp(),
+                        viperOutWait,
                         _WristClawActions.CloseClaw(),
                         clawCloseSampleWait1,
                         sampleDrop1,
@@ -150,34 +157,35 @@ public class Test4_Specimen_Auto extends LinearOpMode {
                         sampleGrab2,
                         _WristClawActions.CloseClaw(),
                         clawCloseSampleWait2,
-                        _ViperArmActions.MoveViperToHome(),
+                        _ViperArmActions.MoveViperToShortSamplePickUp(),
                         sampleDrop2,
                         _WristClawActions.OpenClaw(),
                         clawOpenSampleWait2,
                         grabSpecimen2,
                         _WristClawActions.CloseClaw(),
                         clawCloseSpecimenWait1,
-                        _WristClawActions.WristUp(),
-                        driveToClip2,
-                        _ViperArmActions.RaiseToClip(),
-                        clippingSpecimen2,
-                        _ViperArmActions.LowerFromClip(),
-                        grabSpecimen3,
-                        _WristClawActions.CloseClaw(),
-                        clawCloseSpecimenWait2,
-                        _WristClawActions.WristUp(),
-                        driveToClip3,
-                        _ViperArmActions.RaiseToClip(),
-                        clippingSpecimen3,
-                        _ViperArmActions.LowerFromClip(),
-                        grabSpecimen4,
-                        _WristClawActions.CloseClaw(),
-                        clawCloseSpecimenWait3,
-                        driveToClip4,
-                        _ViperArmActions.RaiseToClip(),
-                        clippingSpecimen4,
-                        _ViperArmActions.LowerFromClip(),
-                        driveToPark
+                        _ViperArmActions.MoveViperToHome(),
+                        _WristClawActions.WristUp()
+//                        driveToClip2,
+//                        _ViperArmActions.RaiseToClip(),
+//                        clippingSpecimen2,
+//                        _ViperArmActions.LowerFromClip(),
+//                        grabSpecimen3,
+//                        _WristClawActions.CloseClaw(),
+//                        clawCloseSpecimenWait2,
+//                        _WristClawActions.WristUp(),
+//                        driveToClip3,
+//                        _ViperArmActions.RaiseToClip(),
+//                        clippingSpecimen3,
+//                        _ViperArmActions.LowerFromClip(),
+//                        grabSpecimen4,
+//                        _WristClawActions.CloseClaw(),
+//                        clawCloseSpecimenWait3,
+//                        driveToClip4,
+//                        _ViperArmActions.RaiseToClip(),
+//                        clippingSpecimen4,
+//                        _ViperArmActions.LowerFromClip(),
+//                        driveToPark
                 )
         );
         odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
