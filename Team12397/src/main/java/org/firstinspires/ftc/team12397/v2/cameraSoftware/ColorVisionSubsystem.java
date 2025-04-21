@@ -1,15 +1,15 @@
-package org.firstinspires.ftc.team00000.v2.vision;
+package org.firstinspires.ftc.team12397.v2.cameraSoftware;
 
 import android.util.Size;
 import com.acmerobotics.dashboard.config.Config;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.team12397.v2.cameraSoftware.util.ExponentialMovingAverage;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
-import org.opencv.core.RotatedRect;
 import org.opencv.core.Point;
-import org.firstinspires.ftc.team00000.v2.util.ExponentialMovingAverage;
+import org.opencv.core.RotatedRect;
 
 import java.util.List;
 

@@ -8,7 +8,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 // Non-RR imports
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-        import org.firstinspires.ftc.team00000.v1.roadrunner.MecanumDrive;
+        import org.firstinspires.ftc.team00000.roadrunner.MecanumDrive;
 
         import java.lang.Math;
 

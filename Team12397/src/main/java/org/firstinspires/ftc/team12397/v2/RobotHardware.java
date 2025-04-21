@@ -4,8 +4,8 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.opencv.core.Mat;
 
 public class RobotHardware {
 
@@ -33,13 +33,15 @@ public class RobotHardware {
     public DcMotorEx slideExtender = null;
 
     private Servo clawPinch = null; // closes/opens  .5 close | 0 open
-    private Servo clawYaw = null; // rotates the claw around a vertical axis 0 default | .6? turn around
+    public Servo clawYaw = null; // rotates the claw around a vertical axis 0 default | .6? turn around
     public Servo clawPitch = null; // rotates the claw around a horizontal axis .5 center
 
     public int leftFrontTarget;
     public int leftBackTarget;
     public int rightFrontTarget;
     public int rightBackTarget;
+
+    public WebcamName camera = null;
   
     // wheel ticks:
     public final double COUNTS_PER_MOTOR_REV = 537.7;
@@ -79,6 +81,8 @@ public class RobotHardware {
 
         slideExtender = myOpMode.hardwareMap.get(DcMotorEx.class, "slide_extender");
         rotateMotor = myOpMode.hardwareMap.get(DcMotorEx.class, "rotate_motor");
+
+        camera = myOpMode.hardwareMap.get(WebcamName.class, "Webcam 1");
 
         // motor directions...
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);

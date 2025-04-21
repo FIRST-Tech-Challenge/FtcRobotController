@@ -5,13 +5,14 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.*;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.team00000.v2.RobotHardware;
-import org.firstinspires.ftc.team00000.v2.roadrunner.MecanumDrive;
+import org.firstinspires.ftc.team00000.roadrunner.MecanumDrive;
 
 import java.lang.Math;
 
-@Config
+@Disabled
 @Autonomous(name = "Test 1: Drive (Y-Axis)", group = "Autonomous")
 
 public class TestStraight extends LinearOpMode {

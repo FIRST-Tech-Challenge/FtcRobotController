@@ -8,11 +8,12 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.team00000.v2.RobotHardware;
-import org.firstinspires.ftc.team00000.v2.roadrunner.MecanumDrive;
+import org.firstinspires.ftc.team00000.roadrunner.MecanumDrive;
 
-@Config
+@Disabled
 @Autonomous(name = "Test 6: Figure Eight Spline", group = "Autonomous")
 
 public class TestFigureEight extends LinearOpMode {

@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.team12397.v2.TeleOp;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.team12397.v2.RobotHardware;
+import org.firstinspires.ftc.team12397.v2.cameraSoftware.ColorVisionSubsystem;
+import org.firstinspires.ftc.team12397.v2.cameraSoftware.util.AngleServoController;
 
 @TeleOp(name="FieldCentric", group="Robot")
 
@@ -30,6 +31,13 @@ public class FieldCentric extends LinearOpMode {
         Gamepad alexH = gamepad2;
 
         robot.init();
+
+        // vision inits must go after robot.init to prevent camera & servo from returning null
+        ColorVisionSubsystem vision = new ColorVisionSubsystem(robot.camera);
+        AngleServoController servo  = new AngleServoController(robot.clawYaw, telemetry);
+
+        FtcDashboard.getInstance().startCameraStream(vision.getPortal(), 0);
+
         waitForStart();
 
 
@@ -92,6 +100,19 @@ public class FieldCentric extends LinearOpMode {
                 } else { // else, go to the default right bumper position
                     robot.setServoPosition(2, 1);
                 }
+            }
+
+            // tester control
+            if (luisL.a){
+                vision.update();
+
+                if (vision.hasTarget()) {
+                    servo.update(vision.getAngleErrorToVertical());
+                }
+
+                telemetry.addData("Target?", vision.hasTarget());
+                telemetry.addData("Angle°",  "%.1f", vision.getAngle());
+                telemetry.addData("Area",    "%.0f", vision.getArea());
             }
 
             telemetry.addData(String.valueOf(robot.rotateMotor.getCurrentPosition()), " rotation encoder ticks");
