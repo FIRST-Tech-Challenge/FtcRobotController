@@ -7,12 +7,14 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 
 // Non-RR imports
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
         import org.firstinspires.ftc.team00000.roadrunner.MecanumDrive;
 
         import java.lang.Math;
 
 @Config
+@Disabled
 @Autonomous(name = "Neutral Samples (roadrunner)", group = "Autonomous")
 public class AutoDriveByRoadrunner_Neutral extends LinearOpMode{
 

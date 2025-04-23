@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.team00000.v1.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.team00000.v1.RobotHardware;
-
+@Disabled
 @Autonomous(name = "Alliance Samples", group = "Autonomous")
 
 public class AutoDriveByEncoder_Alliance extends LinearOpMode {

@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.team00000.v2.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.team00000.v2.RobotHardware;
-
+@Disabled
 @TeleOp(name = "Robot Centric", group = "TeleOp")
 
 public class RobotCentric extends LinearOpMode {

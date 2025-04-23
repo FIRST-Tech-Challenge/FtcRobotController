@@ -22,7 +22,11 @@ public final class TuningOpModes {
     public static final Class<?> DRIVE_CLASS = MecanumDrive.class;
 
     public static final String GROUP = "quickstart";
-    public static final boolean DISABLED = false;
+
+
+    // Set to true for competition builds so all tuning OpModes stay hidden.
+    // Flip back to false whenever you want to calibrate again.
+    public static final boolean DISABLED = true;
 
     private TuningOpModes() {}
 

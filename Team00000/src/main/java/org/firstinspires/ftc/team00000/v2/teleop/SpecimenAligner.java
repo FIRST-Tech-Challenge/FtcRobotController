@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team00000.v2.teleop;
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.team00000.v2.util.AngleServoController;
 import org.firstinspires.ftc.team00000.v2.vision.ColorVisionSubsystem;
 
+@Disabled
 @TeleOp(name = "Specimen Aligner Test", group = "Test")
 public class SpecimenAligner extends LinearOpMode {
 
