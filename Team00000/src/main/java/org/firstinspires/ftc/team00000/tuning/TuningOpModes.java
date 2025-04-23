@@ -23,7 +23,6 @@ public final class TuningOpModes {
 
     public static final String GROUP = "quickstart";
 
-
     // Set to true for competition builds so all tuning OpModes stay hidden.
     // Flip back to false whenever you want to calibrate again.
     public static final boolean DISABLED = true;
