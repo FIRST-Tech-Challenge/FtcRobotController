@@ -38,8 +38,8 @@ public class RobotCentricSolo extends LinearOpMode {
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
             // This way it's also easy to just drive straight, or just turn.
             drive = -gamepad1.left_stick_y;
-            strafe = gamepad1.left_stick_x;
-            turn  =  gamepad1.right_stick_x;
+            strafe = -gamepad1.left_stick_x;
+            turn = gamepad1.right_stick_x;
 
             // Combine drive and turn for blended motion. Use RobotHardware class
             robot.driveRobotCentric(drive, strafe, turn);
@@ -47,9 +47,9 @@ public class RobotCentricSolo extends LinearOpMode {
             // Use gamepad left Bumper to open and close the intake claw
 
             double inClawOffset = 0;
-            if(gamepad1.left_bumper) {
+            if (gamepad1.left_bumper) {
                 inClawOffset = 1;
-            }else{
+            } else {
                 inClawOffset = 0;
             }
 
@@ -59,9 +59,9 @@ public class RobotCentricSolo extends LinearOpMode {
 
             double outClawOffset = 0;
 
-            if(gamepad1.right_bumper){
+            if (gamepad1.right_bumper) {
                 outClawOffset = 1;
-            }else{
+            } else {
                 outClawOffset = 0;
             }
 
@@ -77,14 +77,17 @@ public class RobotCentricSolo extends LinearOpMode {
                 vertical = 0;
             }
 
+            int rotation = 1;
+            //if (gamepad1.right_trigger) {
+
+            //} else {
+            rotation = 1;
+            //}
+            //robot.setInClawRotation(rotation);
+
+
+
             robot.setVerticalPower(vertical);
-
-            double rotation = 1;
-
-                rotation = 0;
-
-            robot.setInClawRotation(rotation);
-
 
             //moves vertical slides
             if(gamepad1.dpad_up){

@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.team12395.v1.RobotHardware;
 
 
-@TeleOp(name="Robot Centric (Duo)", group="Robot")
+@TeleOp(name="Field Centric (Solo)", group="Robot")
 
-public class RobotCentricDuo extends LinearOpMode {
+public class FieldCentricSolo extends LinearOpMode {
 
     // Create a RobotHardware object to be used to access robot hardware.
     // Prefix any hardware functions with "robot." to access this class.
@@ -39,7 +39,7 @@ public class RobotCentricDuo extends LinearOpMode {
             // This way it's also easy to just drive straight, or just turn.
             drive = -gamepad1.left_stick_y;
             strafe = gamepad1.left_stick_x;
-            turn  =  gamepad1.right_stick_x;
+            turn = gamepad1.right_stick_x;
 
             // Combine drive and turn for blended motion. Use RobotHardware class
             robot.driveFieldCentric(drive, strafe, turn);
@@ -47,33 +47,21 @@ public class RobotCentricDuo extends LinearOpMode {
             // Use gamepad left Bumper to open and close the intake claw
 
             double inClawOffset = 0;
-            if(gamepad1.left_bumper) {
+            if (gamepad1.left_bumper) {
                 inClawOffset = 1;
-            }else{
+            } else {
                 inClawOffset = 0;
             }
 
             robot.setInClawPosition(inClawOffset);
 
-            double rotation = 1;
-
-            if(gamepad1.right_bumper){
-                rotation = 1;
-            } else {
-                rotation = 0;
-            }
-
-            robot.setInClawRotation(rotation);
-
-
-
             //Use right bumper to open and close outtake claw
 
             double outClawOffset = 0;
 
-            if(gamepad2.right_bumper){
+            if (gamepad1.right_bumper) {
                 outClawOffset = 1;
-            }else{
+            } else {
                 outClawOffset = 0;
             }
 
@@ -83,25 +71,30 @@ public class RobotCentricDuo extends LinearOpMode {
 
             // Use gamepad buttons to move arm up (Y) and down (A)
             // Use the MOTOR constants defined in RobotHardware class.
-            if (gamepad2.a) {
+            if (gamepad1.y) {
                 vertical = 1;
-            } else if (gamepad2.y) {
+            } else if (gamepad1.a) {
                 vertical = 0;
-            } else if (gamepad2.b) {
-                vertical = 3;
             }
+
+            int rotation = 1;
+            //if (gamepad1.right_trigger) {
+
+            //} else {
+                rotation = 1;
+            //}
+            //robot.setInClawRotation(rotation);
+
+
 
             robot.setVerticalPower(vertical);
 
-
             //moves vertical slides
-            if(gamepad2.dpad_up){
+            if(gamepad1.dpad_up){
                 slide = robot.SLIDE_HIGH_RUNG;
-            }else if (gamepad2.dpad_down){
+            }else if (gamepad1.dpad_down){
                 vertical = 1;
                 slide = robot.SLIDE_START;
-            } else if (gamepad2.dpad_left){
-                slide = robot.SLIDE_HIGH_BASKET;
             }
 
             robot.setVerticalPower(vertical);
@@ -112,7 +105,6 @@ public class RobotCentricDuo extends LinearOpMode {
             }
             else if (gamepad1.b) {
                 horizontalOffset = 0;
-                robot.setIntakePosition(2);
             }
 
             robot.setInClawPosition(inClawOffset);

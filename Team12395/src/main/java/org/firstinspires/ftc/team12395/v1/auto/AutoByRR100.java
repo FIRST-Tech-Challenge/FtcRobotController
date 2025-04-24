@@ -2,9 +2,13 @@ package org.firstinspires.ftc.team12395.v1.auto;
 
 
 // RR-specific imports
-
 import com.acmerobotics.roadrunner.*;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.Vector2d;
+
+// Non-RR imports
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -64,7 +68,7 @@ public class AutoByRR100 extends LinearOpMode{
 
                 });
 //                .setTangent(Math.PI / 2);
-                //.lineToConstantHeading(new Vector2d(0, -32.5));
+        //.lineToConstantHeading(new Vector2d(0, -32.5));
 
 
         Action trajectoryActionCloseOut = tab1.endTrajectory().fresh()

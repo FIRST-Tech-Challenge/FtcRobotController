@@ -3,11 +3,14 @@ package org.firstinspires.ftc.team12395.v1;
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class RobotHardware {
 
@@ -15,6 +18,17 @@ public class RobotHardware {
     private LinearOpMode myOpMode = null;
 
     public ElapsedTime runtime = new ElapsedTime();
+
+    public IMU imu = null;
+
+    public double drivePower = 0;
+    public double strafePower = 0;
+    public double turnPower = 0;
+
+    public double leftFrontPower = 0;
+    public double leftBackPower = 0;
+    public double rightFrontPower = 0;
+    public double rightBackPower = 0;
 
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -25,7 +39,6 @@ public class RobotHardware {
     private DcMotor slideMotorR = null;
 
     private Servo horizontal1 = null;
-    private Servo horizontal2 = null;
     private Servo lextend = null;
     private Servo rextend = null;
     private Servo leftOutTake = null;
@@ -43,20 +56,18 @@ public class RobotHardware {
     public double WHEEL_DIAMETER_INCHES = 3.77953;
     public double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
-    // public static final double MID_SERVO = 0.8 ;
-    public static final double SERVO_UP = 0.90;
-    public static final double SERVO_DOWN = -0.90;
-    public static final double SLIDE_UP_POWER = 1.0;
-    public static final double SLIDE_DOWN_POWER = -0.50;
+
 
     public double SLIDE_TICKS_PER_DEGREE = 28.0 * 19.2 / 360.0;
 
     public double SLIDE_START = 0.0 * SLIDE_TICKS_PER_DEGREE;
-    public double SLIDE_HIGH_RUNG = 725 * SLIDE_TICKS_PER_DEGREE;
-    public double SLIDE_LOW_BASKET = 360.0 * SLIDE_TICKS_PER_DEGREE;
-    public double SLIDE_HIGH_BASKET = 2000 * SLIDE_TICKS_PER_DEGREE;
-
+    public double SLIDE_HIGH_RUNG = 82 * SLIDE_TICKS_PER_DEGREE;
+    public double SLIDE_HIGH_BASKET = 2100 * SLIDE_TICKS_PER_DEGREE;
     public double slidePosition = (int)SLIDE_START;
+
+    IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+            RevHubOrientationOnRobot.LogoFacingDirection.UP,
+            RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
 
 
     public RobotHardware(LinearOpMode OpMode) {myOpMode = OpMode;}
@@ -125,6 +136,9 @@ public class RobotHardware {
         outClaw = myOpMode.hardwareMap.get(Servo.class, "outClaw");
         rotClaw = myOpMode.hardwareMap.get(Servo.class, "rotClaw");
 
+        imu = myOpMode.hardwareMap.get(IMU.class, "imu");
+        imu.initialize(parameters);
+
 
 
         myOpMode.telemetry.addData(">", "Hardware Initialized");
@@ -162,6 +176,40 @@ public class RobotHardware {
 
         //Use existing function to drive both wheels.
         setDrivePower(leftFrontPower, leftBackPower, rightFrontPower, rightBackPower);
+    }
+
+    public void driveFieldCentric(double drive, double strafe, double turn){
+        drivePower = drive;
+        strafePower = strafe;
+        turnPower = turn;
+
+        double max;
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+        double strafeRotation = strafe * Math.cos(-botHeading) - drive * Math.sin(-botHeading);
+        double driveRotation = strafe * Math.sin(-botHeading) + drive * Math.cos(-botHeading);
+
+
+
+        leftFrontPower = driveRotation + strafeRotation + turn;
+        leftBackPower = driveRotation - strafeRotation + turn;
+        rightFrontPower = driveRotation - strafeRotation - turn;
+        rightBackPower = driveRotation + strafeRotation - turn;
+
+        max = Math.max(Math.abs(leftBackPower), Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if(max > 1.0){
+            leftFrontPower /= max;
+            leftBackPower /= max;
+            rightFrontPower /= max;
+            rightBackPower /= max;
+        }
+
+        setDrivePower(leftFrontPower, leftBackPower, rightFrontPower, rightBackPower);
+
+
     }
 
     public void driveEncoder(double speed, double leftFrontInches, double leftBackInches, double rightFrontInches, double rightBackInches){
@@ -269,11 +317,11 @@ public class RobotHardware {
 
     public void setHorizontalPosition(double offset) {
         if (offset == 0) {
-            horizontal1.setPosition(0.25);
+            horizontal1.setPosition(0.24);
             //b is pressed
         } else if (offset == 1) {
             //x is pressed
-            horizontal1.setPosition(0.75);
+            horizontal1.setPosition(0.79);
         }
     }
 
@@ -281,19 +329,19 @@ public class RobotHardware {
     //changes here affect both duo and solo , add to left and right.
     public void setVerticalPower(double power) {
         if (power == 1) {
-            // y is pressed
-            leftOutTake.setPosition(.25);
-            rightOutTake.setPosition(.75);
-        }else if (power == 0){
             // a is pressed
-            leftOutTake.setPosition(.65);
-            rightOutTake.setPosition(.35);
+            leftOutTake.setPosition(.34);
+            rightOutTake.setPosition(.66);
+        }else if (power == 0){
+            // y is pressed
+            leftOutTake.setPosition(.622);
+            rightOutTake.setPosition(.378);
         }else if (power == 2){
             leftOutTake.setPosition(.9);
             rightOutTake.setPosition(0.1);
         } else if (power == 3){
-            leftOutTake.setPosition(.75);
-            rightOutTake.setPosition(.25);
+            leftOutTake.setPosition(.8);
+            rightOutTake.setPosition(.2);
         }
 
     }
@@ -323,122 +371,6 @@ public class RobotHardware {
             outClaw.setPosition(.7);
         }
     }
-
-
-    // roadrunner set actions
-
-
-    public class SetSlidePosition implements Action {
-        private final double position;
-
-        public SetSlidePosition(double position){
-            this.position = position;
-        }
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet){
-            SetSlidePosition(position);
-            return false;
-        }
-    }
-
-    public Action setSlidePosition(double slidePosition){
-        return new SetSlidePosition(slidePosition);
-    }
-
-    public class SetIntakePosition implements Action {
-        private final double position;
-
-        public SetIntakePosition(double position){
-            this.position = position;
-        }
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet){
-            setIntakePosition(position);
-            return false;
-        }
-    }
-
-    public Action SetIntakePosition(double position){
-        return new SetIntakePosition(position);
-    }
-
-    public class setHorizontalPosition implements Action{
-        private final double position;
-
-        public setHorizontalPosition(double position){
-            this.position = position;
-        }
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet){
-            setHorizontalPosition(position);
-            return false;
-        }
-
-    }
-
-    public Action SetHorizontalPosition (double position){
-        return new setHorizontalPosition(position);
-    }
-
-    public class setVerticalPower implements Action{
-        private final double position;
-
-        public setVerticalPower(double position){
-            this.position = position;
-        }
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet){
-            setVerticalPower(position);
-            return false;
-        }
-
-    }
-
-    public Action SetVerticalPower(double position){
-        return new setVerticalPower(position);
-    }
-
-
-    public class SetInClawPosition implements Action{
-        private final double position;
-
-        public SetInClawPosition(double position){
-            this.position = position;
-        }
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet){
-            setInClawPosition(position);
-            return false;
-        }
-    }
-
-    public Action SetInClawPosition(double position){
-        return new SetInClawPosition(position);
-    }
-
-    public class setOutClawPosition implements Action {
-        private final double position;
-
-        public setOutClawPosition(double position){
-            this.position = position;
-        }
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet){
-            setOutClawPosition(position);
-            return false;
-        }
-
-    }
-
-    public Action SetOutClawPosition(double position){
-        return new setOutClawPosition(position);
-    }
-
 }
+
 
