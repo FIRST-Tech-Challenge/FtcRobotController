@@ -28,17 +28,17 @@ public class TestPinpointOffsets extends LinearOpMode {
     DcMotorEx rearLeftMotor   = null;
     DcMotorEx rearRightMotor  = null;
 
+    double  currXinches=0.0, currYinches=0.0, currAngle=0.0;
+    double  prevXinches=0.0, prevYinches=0.0, prevAngle=0.0;
+    double  minXinches=0.0,  maxXinches=0.0,  minYinches=0.0, maxYinches=0.0;
+    double  startXradius = 0.0, startYradius = 0.0, startErrorRadius = 0.0; // mm
+    double  currXradius  = 0.0, currYradius  = 0.0, currErrorRadius = 0.0;// mm
+    double  startXoffset = 0.0, startYoffset = 0.0; // mm
+
     // Once the program has determined x/y offsets, those values can be saved in
     // the hardware initialization routine, and this flag can be togged to TRUE
     // to make the program skip the initial setup and go straight to the fine-tuning
     boolean fineTuneOnly = false;
-    
-    double  currXinches=0.0, currYinches=0.0, currAngle=0.0;
-    double  prevXinches=0.0, prevYinches=0.0, prevAngle=0.0;
-    double  minXinches=0.0, maxXinches=0.0, minYinches=0.0, maxYinches=0.0;
-    double  startXradius = 0.0, startYradius = 0.0, startErrorRadius = 0.0; // mm
-    double  currXradius  = 0.0, currYradius  = 0.0, currErrorRadius = 0.0;// mm
-    double  startXoffset = 0.0, startYoffset = 0.0; // mm
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -409,7 +409,7 @@ public class TestPinpointOffsets extends LinearOpMode {
         // Instruct the Pinpoint computer to update the current position
         odom.update();
         Pose2D pos = odom.getPosition();  // x,y pos in inch; heading in degrees
-        // Update our local variables
+        // Update our local variables for POSITION
         currXinches = pos.getX(DistanceUnit.INCH);
         currYinches = pos.getY(DistanceUnit.INCH);
         currAngle   = pos.getHeading(AngleUnit.DEGREES);

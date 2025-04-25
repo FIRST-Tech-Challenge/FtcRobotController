@@ -1,13 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 /**
  * goBilda Pinpoint Odometry Computer offset callibration. Run this OpMode to 
@@ -16,7 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
  * <X,Y> position to remain constant as we navigate if we rotate to a new angle.
  */
 @TeleOp(name = "Drivetrain Min Power", group = "Test")
-//@Disabled
+@Disabled
 public class TestDriveTrainMinPower extends LinearOpMode {
 
     //====== GOBILDA PINPOINT ODOMETRY COMPUTER ======
@@ -28,17 +30,15 @@ public class TestDriveTrainMinPower extends LinearOpMode {
     DcMotorEx rearLeftMotor   = null;
     DcMotorEx rearRightMotor  = null;
 
-    double  currXinches=0.0, currXvel=0.0;
-    double  currYinches=0.0, currYvel=0.0;
-    double  currAngle=0.0,   currAnglevel=0.0;
-    double  prevXinches=0.0, prevYinches=0.0, prevAngle=0.0;
-    double  minXinches=0.0, maxXinches=0.0, minYinches=0.0, maxYinches=0.0;
+    double  currXinches=0.0,  currYinches=0.0,  currAngle=0.0;
+    double  startXinches=0.0, startYinches=0.0, startAngle=0.0;
+    double  currXvel=0.0,     currYvel=0.0,     currAnglevel=0.0;
 
-    public boolean          driveLogging = false; // only enable during development!!
     public final static int LOG_SIZE = 256;   // 256 entries = 2.5 seconds @ 10msec/100Hz
-
     protected double[] logTime = new double[LOG_SIZE];  // Drive time (msec)
     protected double[] logDist = new double[LOG_SIZE];  // Drive distance (mm)
+
+    ElapsedTime driveTimer = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -56,7 +56,7 @@ public class TestDriveTrainMinPower extends LinearOpMode {
         waitForStart();
 
         // Automate the process...
-        findMinDrivePower();
+        findMinDrivePowerToMove();
 
         // Ensure all the motors are stopped when we exit
         driveTrainMotorsZero();
@@ -89,6 +89,11 @@ public class TestDriveTrainMinPower extends LinearOpMode {
         driveTrainMotorsZero();
 
         // Set all drivetrain motors to run without encoders
+        // In order to determine the minimum power that will actually move or rotate the robot,
+        // we run without encoders (otherwise the PID control would eventually build up enough
+        // power to move, even with a lower power setting).  That's bad, because while it will
+        // EVENTUALLY move the robot, that's SLOW so we want to know the true motor power setting
+        // that will move the mass of the robot without any accumulated PID buildup.
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rearLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -103,21 +108,90 @@ public class TestDriveTrainMinPower extends LinearOpMode {
     } // initializeHardware
 
     /*--------------------------------------------------------------------------------------------*/
-    public void findMinDrivePower()
+    // The 1st task is to determine min power to achieve any movement at all (no matter how slowly)
+    public void findMinDrivePowerToMove()
     {
-        // In order to determine the minimum power that will actually move or rotate the robot,
-        // we run without encoders (otherwise the PID control would eventually build up enough
-        // power to move, even with a lower power setting).  That's bad, because while it will
-        // EVENTUALLY move the robot, that's SLOW so we want to know the true motor power setting
-        // that will move the mass of the robot without any buildup.
+        double posDist, negDist, avgDist;
+        long msecSleep = 200;
+        
+        telemetry.addLine("1. Apply POS & NEG motor power for 200 msec");
+        readPinpointUpdateVariables();
+        telemetry.addData("Pinpoint Status", odom.getDeviceStatus() );
+        telemetry.addData("Position","x=%.2f, y=%.2f in  (%.2f deg)", currXinches, currYinches, currAngle );
+        telemetry.addData("Velocity","%.2f, %.2f inch/sec  (%.2f deg/sec)", currXvel, currYvel, currAnglevel );
+        telemetry.update();
+
+        // Evaluate from 0.5% to 7.0% in 0.5% increments
+        for( int i=1; i<=14; i++ ) {
+            double motorPower = 0.005 * i;
+            // Note our starting Y position
+            startYinches = currYinches;
+            // Apply the power in the POSITIVE direction
+            driveTrainFwdRev( +motorPower );
+            sleep( msecSleep );
+            driveTrainMotorsZero();
+            // How far did we move?
+            readPinpointUpdateVariables();
+            posDist = Math.abs( currYinches - startYinches );
+            // Note new our starting Y position
+            startYinches = currYinches;
+            // Apply the power in the NEGATIVE direction
+            driveTrainFwdRev( -motorPower );
+            sleep( msecSleep );
+            driveTrainMotorsZero();
+            // How far did we move?
+            readPinpointUpdateVariables();
+            negDist = Math.abs( currYinches - startYinches );
+            // Compute the AVERAGE of POS & NEG movements (converted to "mm")
+            avgDist = 25.4 * (posDist+negDist)/2.0f;
+            // Add this to our working telemetry
+            telemetry.addData("Pwr","%.2f -> %.2f mm", motorPower, avgDist );
+        } // i
+
+        telemetry.update();
+        waitForUser();
+
+    } // findMinDrivePowerToMove
+
+    /*--------------------------------------------------------------------------------------------*/
+    // Evaluate the distance traveled for a few settings around the min power
+    public void findHowFarHowFast()
+    {
+ /*
         readPinpointUpdateVariables();
         telemetry.addData("Pinpoint Status", odom.getDeviceStatus() );
         telemetry.addData("Position","x=%.2f, y=%.2f in  (%.2f deg)", currXinches, currYinches, currAngle );
         telemetry.addData("Velocity","%.2f, %.2f inch/sec  (%.2f deg/sec)", currXvel, currYvel, currAnglevel );
 
+        // Reset the timer
+        driveTimer.reset();
+        driveTimer.milliseconds()
 
         waitForUser();
-    } // findMinDrivePower
+
+        public final static int LOG_SIZE = 256;   // 256 entries = 2.5 seconds @ 10msec/100Hz
+        protected double[] logTime = new double[LOG_SIZE];  // Drive time (msec)
+        protected double[] logDist = new double[LOG_SIZE];  // Drive distance (mm)
+*/
+    } // findHowFarHowFast
+
+
+    /*--------------------------------------------------------------------------------------------*/
+    public void readPinpointUpdateVariables()
+    {
+        // Instruct the Pinpoint computer to update the current position
+        odom.update();
+        Pose2D pos = odom.getPosition();  // x,y pos in inch; heading in degrees
+        // Update our local variables for POSITION
+        currXinches = pos.getX(DistanceUnit.INCH);
+        currYinches = pos.getY(DistanceUnit.INCH);
+        currAngle   = pos.getHeading(AngleUnit.DEGREES);
+        // Update our local variables for VELOCITY
+        Pose2D vel = odom.getVelocity();
+        currXvel = vel.getX(DistanceUnit.INCH);            // inch/sec
+        currYvel = vel.getY(DistanceUnit.INCH);            // inch/sec
+        currAnglevel = vel.getHeading(AngleUnit.DEGREES);  // deg/sec
+    } // readPinpointUpdateVariables
 
     /*--------------------------------------------------------------------------------------------*/
     // Only one answer is allowed here, and when user presses the "X" key we continue
@@ -164,27 +238,6 @@ public class TestDriveTrainMinPower extends LinearOpMode {
         // should never get here, but in case we do we need a return value
         return false;
     } // checkWithUser
-
-    /*--------------------------------------------------------------------------------------------*/
-    public void readPinpointUpdateVariables()
-    {
-        // Instruct the Pinpoint computer to update the current position
-        odom.update();
-        Pose2D pos = odom.getPosition();  // x,y pos in inch; heading in degrees
-        // Update our local variables for POSITION
-        currXinches = pos.getX(DistanceUnit.INCH);
-        currYinches = pos.getY(DistanceUnit.INCH);
-        currAngle   = pos.getHeading(AngleUnit.DEGREES);
-        // Update our tracking min-max variables
-        if(currXinches<minXinches){minXinches=currXinches;} if(currXinches>maxXinches){maxXinches=currXinches;}
-        if(currYinches<minYinches){minYinches=currYinches;} if(currYinches>maxYinches){maxYinches=currYinches;}
-        // Update our local variables for VELOCITY
-        Pose2D vel = odom.getVelocity();
-        currXvel = vel.getX(DistanceUnit.INCH);            // inch/sec
-        currYvel = vel.getY(DistanceUnit.INCH);            // inch/sec
-        currAnglevel = vel.getHeading(AngleUnit.DEGREES);  // deg/sec
-
-    } // readPinpointUpdateVariables
 
     /*--------------------------------------------------------------------------------------------*/
     /* Set all 4 motor powers to drive straight FORWARD (Ex: +0.10) or REVERSE (Ex: -0.10)        */
