@@ -12,6 +12,7 @@ import com.kalipsorobotics.math.Position;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.utilities.OpModeUtilities;
+import com.kalipsorobotics.utilities.SharedData;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -32,13 +33,17 @@ public class TestCheckStuck extends LinearOpMode {
             int currentTime = (int) System.currentTimeMillis();
             if (checkStuck.isStuck(currentTime)) {
                 telemetry.addLine("robot is stuck");
-                Log.d("check stucks", "ROBOT STUCK");
+                //Log.d("check stucks", "ROBOT STUCK");
             } else {
-                Log.d("check stucks", "ROBOT NOT STUCK");
+                //Log.d("check stucks", "ROBOT NOT STUCK");
                 telemetry.addLine("robot is fine");
             }
+            Log.d("check stucks", "x delta: " + checkStuck.getXDelta(SharedData.getOdometryPosition()) +
+                    " y delta: " + checkStuck.getYDelta(SharedData.getOdometryPosition()) +
+                    " theta delta: " + checkStuck.getThetaDelta(SharedData.getOdometryPosition()));
             driveAction.move(gamepad1);
             telemetry.update();
+            //TODO fix shared data thing
         }
     }
 }

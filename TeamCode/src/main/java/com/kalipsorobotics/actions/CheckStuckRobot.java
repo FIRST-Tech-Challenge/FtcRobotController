@@ -30,13 +30,13 @@ public class CheckStuckRobot {
     /**
      * mm per second
      * */
-    final private double X_DELTA_MIN_THRESHOLD = 0.1; // to be calc
+    final private double X_DELTA_MIN_THRESHOLD = 1; // to be calc
     private double prevYVelocity = 0;
-    final private double Y_DELTA_MIN_THRESHOLD = 0.1; // to be calc
+    final private double Y_DELTA_MIN_THRESHOLD = 1; // to be calc
 
     private double prevThetaVelocity = 0;
 
-    final private double THETA_DELTA_MIN_THRESHOLD = 0.1; // to be calc
+    final private double THETA_DELTA_MIN_THRESHOLD = 1; // to be calc
 
     private final WheelOdometry wheelOdometry;
     private final DriveTrain driveTrain;
@@ -55,17 +55,17 @@ public class CheckStuckRobot {
         lastStuckCheckTime = 0;
     }
 
-    private double getXDelta(Position currentPosition) {
+    public double getXDelta(Position currentPosition) {
         double currentxDelta = currentPosition.getX() - prevXPos;
         prevXPos = currentPosition.getX();
         return currentxDelta;
     }
-    private double getYDelta(Position currentPosition) {
+    public double getYDelta(Position currentPosition) {
         double currentyDelta = currentPosition.getY() - prevYPos;
         prevYPos = currentPosition.getY();
         return currentyDelta;
     }
-    private double getThetaDelta(Position currentPosition) {
+    public double getThetaDelta(Position currentPosition) {
         double currentThetaDelta = currentPosition.getTheta() - prevThetaPos;
         prevThetaPos = currentPosition.getTheta();
         return currentThetaDelta;
