@@ -3,14 +3,12 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.google.common.util.concurrent.Uninterruptibles;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDriver;
+import org.firstinspires.ftc.teamcode.util.AngleUtils;
 import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
-
-import java.util.concurrent.TimeUnit;
 
 @Config
 public class DriveToTargetCommand extends SounderBotCommandBase {
@@ -152,7 +150,7 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
             backLeftPower = maxPower * backLeftPower / max;
             backRightPower = maxPower * backRightPower / max;
         }
-        else if (max < minPower) {
+        else if (max > 0 && max < minPower) {
             // Proportionally increase power in all motors until max wheel power is enough
             double proportion = minPower / max;
             frontLeftPower *= proportion;
@@ -177,8 +175,8 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     @Override
     protected boolean isTargetReached() {
         return (Math.abs(targetX - odo.getPosX()) < distanceTolerance)
-                && (Math.abs(targetY - odo.getPosY())) < distanceTolerance
-                && Math.abs(targetHeading - odo.getHeading()) < Math.toRadians(2.5);
+                && (Math.abs(targetY - odo.getPosY()) < distanceTolerance)
+                && Math.abs(AngleUtils.angleDifference(targetHeading, odo.getHeading())) < Math.toRadians(2.5);
     }
 
     @Override
