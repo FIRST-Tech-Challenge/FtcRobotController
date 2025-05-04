@@ -2,6 +2,7 @@ package org.bluebananas.ftc.roadrunneractions;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -50,7 +51,7 @@ public class ActionBuilder {
                 .setReversed(true)
                 .splineToLinearHeading(new Pose2d(36,-40, Math.toRadians(45) ), Math.toRadians(90))
                 .waitSeconds(0.2)
-                .turnTo(-45)
+                .turnTo(new Rotation2d(25, -45))
                 .waitSeconds(0.2)
                 .strafeToLinearHeading(new Vector2d(48,-40), Math.toRadians(45))
                 .waitSeconds(0.2)
