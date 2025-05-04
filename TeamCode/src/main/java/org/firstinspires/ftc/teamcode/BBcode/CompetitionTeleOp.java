@@ -42,9 +42,7 @@ public class CompetitionTeleOp extends LinearOpMode{
         WristDown,
         Hang,
         ViperDown,
-        ArmDown,
-        EmergencyExitViperDown,
-        EmergencyExitArmDown
+        ArmDown
     }
 
     enum SpecimenClipState {
@@ -321,17 +319,16 @@ public class CompetitionTeleOp extends LinearOpMode{
 
             switch (hangState) {
                 case Home:
-                    if (gamepad1.right_trigger > 0 && gamepad1.right_trigger > 0 && gamepad1.dpad_up) {
-                        arm.MoveToHang();
+                    if (gamepad1.right_trigger > 0 && gamepad1.dpad_up) {
+                        arm.MoveToHangOut();
                         hangState = HangState.RaiseArmHang;
                     }
                     else if (gamepad1.right_trigger > 0 && gamepad1.dpad_down) {
                         arm.MoveToHome();
-                        hangState = HangState.EmergencyExitArmDown;
                     }
                     break;
                 case RaiseArmHang:
-                    if (arm.getIsArmHangPosition()) {
+                    if (arm.getIsArmHangOutPosition()) {
                         viper.ExtendSpecimenhang(1);
                         hangState = HangState.ViperExtendHang;
                     }
@@ -352,27 +349,13 @@ public class CompetitionTeleOp extends LinearOpMode{
 
                 case ViperDown:
                     if (viper.getIsViperExtendClosed()) {
-                        arm.MoveToSlowDown();
+                        arm.MoveToHangIn();
                         hangState = HangState.ArmDown;
-                    }
-                    else if (gamepad1.left_trigger > 0 && gamepad1.right_trigger > 0 && gamepad1.dpad_down) {
-                        arm.MoveToHome();
-                        hangState = HangState.EmergencyExitArmDown;
                     }
                     break;
 
                 case ArmDown:
-                    if (arm.getIsArmSlowDownPosition()) {
-                        hangState = HangState.Home;
-                    }
-                    else if (gamepad1.left_trigger > 0 && gamepad1.right_trigger > 0 && gamepad1.dpad_down) {
-                        arm.MoveToHome();
-                        hangState = HangState.EmergencyExitArmDown;
-                    }
-                    break;
-
-                case EmergencyExitArmDown:
-                    if (arm.getIsArmHomePosition()) {
+                    if (arm.getIsArmHangInPosition()) {
                         hangState = HangState.Home;
                     }
                     break;

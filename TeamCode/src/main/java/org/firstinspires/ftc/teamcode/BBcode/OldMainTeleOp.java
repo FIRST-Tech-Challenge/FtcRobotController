@@ -63,7 +63,7 @@ public class OldMainTeleOp extends LinearOpMode{
        Gamepad gamepad = gamepad2;
         //Hang
         if (gamepad.left_trigger > 0 && gamepad.dpad_left) {
-            arm.MoveToHang();
+            arm.MoveToHangOut();
             desiredViperState = ViperState.PrepareToHang;
             viper.ExtendHalf(0.5);
         }

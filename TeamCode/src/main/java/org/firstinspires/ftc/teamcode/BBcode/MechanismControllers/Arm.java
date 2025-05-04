@@ -25,9 +25,10 @@ public class Arm {
     //variables are in degrees
     final int homePosition = 0;
     final int slowDownPosition = 5;
-    final int hangPosition = 40;
+    final int hangOutPosition = 40;
+    final int hangInPosition = 35;
     final int highBasketPosition = 95;
-    final double initialSpecimenPosition = 42.5;//used in auto and tele
+    final double initialSpecimenPosition = 44;//used in auto and tele
     final double maxSpecimenPosition = 49;
     final double minSpecimenPosition = 39;
     final double specimanAdjustment = 0.5;
@@ -51,7 +52,8 @@ public class Arm {
     public boolean getIsArmHighBasketPosition() {return _armMotor.getCurrentPosition() > DegreeConverterToTicks(highBasketPosition);}
     public boolean getIsArmHomePosition() {return _armMotor.getCurrentPosition() < DegreeConverterToTicks(homePosition + 5);}
     public boolean getIsArmSpecimenPosition() {return _armMotor.getCurrentPosition() > DegreeConverterToTicks(specimenPosition);}
-    public boolean getIsArmHangPosition() {return _armMotor.getCurrentPosition() < DegreeConverterToTicks(hangPosition);}
+    public boolean getIsArmHangOutPosition() {return _armMotor.getCurrentPosition() > DegreeConverterToTicks(hangOutPosition);}
+    public boolean getIsArmHangInPosition() {return _armMotor.getCurrentPosition() < DegreeConverterToTicks(hangInPosition);}
     public boolean getIsArmSlowDownPosition() {return _armMotor.getCurrentPosition() < DegreeConverterToTicks(slowDownPosition);}
 
     public DcMotorEx get_armMotor() {
@@ -90,10 +92,11 @@ public class Arm {
     {
         ArmMotorCustom(slowDownPosition, 0.75);
     }
-    public void MoveToHang()
+    public void MoveToHangOut()
     {
-        ArmMotorCustom(hangPosition, 1);
+        ArmMotorCustom(hangOutPosition, 1);
     }
+    public void MoveToHangIn() {ArmMotorCustom(hangInPosition, 1);}
     public void MoveToHighBasket()
     {
         ArmMotorCustom(highBasketPosition, 1);
