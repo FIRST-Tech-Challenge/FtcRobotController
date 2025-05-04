@@ -1,0 +1,60 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.google.ar.core.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorImplEx;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+
+    @TeleOp(name = "EHS Testing", group = "Arm")
+//    @Config // Enables configuration via FTC Dashboard
+    public class Testing extends LinearOpMode {
+
+        DcMotor hussam;
+        DcMotor gautham;
+        DcMotor arnav;
+        //    @Override
+        DcMotor Ishita;
+        Servo Ryan;
+
+
+        public void runOpMode() throws InterruptedException {
+            hussam = hardwareMap.get(DcMotor.class, "hussam");
+            gautham = hardwareMap.get(DcMotor.class, "gautham");
+            arnav = hardwareMap.get(DcMotor.class, "arnav");
+            Ishita= hardwareMap.get(DcMotor.class, "Ishita");
+//        Ryan= hardwareMap.get(Servo.class,"Ryan");
+
+            waitForStart();
+
+            while (opModeIsActive()) {
+
+                if(gamepad1.left_stick_x> 0.3){
+                    hussam.setPower(0.7);
+                } else if  (gamepad1.right_stick_x > 0.8){
+                    gautham.setPower(0.5);
+                }
+                else if(gamepad1.cross) {
+                    arnav.setPower(0.4);
+                }
+                else if (gamepad1.dpad_left) {
+                    Ishita.setPower(0.5);
+                }
+                else{
+                    hussam.setPower(0);
+                    Ishita.setPower(0);
+                    arnav.setPower(0);
+                    gautham.setPower(0);
+                }
+//            if(gamepad1.a){
+//                Ryan.setPosition(0.5);
+//
+
+            }
+        }
+    }
