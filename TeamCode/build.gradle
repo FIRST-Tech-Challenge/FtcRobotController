@@ -42,7 +42,8 @@ dependencies {
     implementation "com.acmerobotics.roadrunner:actions:1.0.1"
     implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
     //implementation "com.github.jdhs-ftc:road-runner-ftc-otos:8e83c17ff7"
-    implementation "com.github.jdhs-ftc:road-runner-ftc-otos:45ff81d" //https://github.com/jdhs-ftc/road-runner-ftc-otos/commits/master/
+    //implementation "com.github.jdhs-ftc:road-runner-ftc-otos:88eb0ee" //https://github.com/jdhs-ftc/road-runner-ftc-otos/commits/master/
+    implementation "com.github.jdhs-ftc:road-runner-ftc-otos:88eb0ee1c148e5452e350a63e1851668be715ffc"
     implementation project(':RoadRunnerTrajectories')
     testImplementation('junit:junit:4.13.2')
 //
