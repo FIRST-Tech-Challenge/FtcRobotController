@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "Shuangren")
-public class SHuangren extends LinearOpMode {
+public class Shuangren extends LinearOpMode {
 
     private DcMotor leftFront, rightFront, leftBack, rightBack;
     private DcMotor slideBack, slideBack2, slideRight, slideLeft;
