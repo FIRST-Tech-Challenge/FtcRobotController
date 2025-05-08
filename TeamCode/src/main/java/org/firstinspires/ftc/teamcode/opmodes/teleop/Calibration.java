@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.opmodes.OpModeTemplate;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleFourWheelMecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 
@@ -25,7 +25,7 @@ public class Calibration extends OpModeTemplate {
         DeliveryPivot deliveryPivot = new DeliveryPivot(hardwareMap, operatorGamepad, telemetry, feedback, rollingIntake);
         DeliverySlider deliverySlider = new DeliverySlider(hardwareMap, operatorGamepad, telemetry, feedback, deliveryPivot);
 
-        TeleFourWheelMecanumDriveTrain driveTrain = new TeleFourWheelMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, feedback, null);
+        TeleDriveTrain driveTrain = new TeleDriveTrain(hardwareMap, driverGamepad, telemetry, feedback, null);
 
         new Trigger(() -> gamepad2.right_stick_y > 0.5)
                 .whenActive(new InstantCommand(deliveryPivot::RotateTowardsDelivery, deliveryPivot))

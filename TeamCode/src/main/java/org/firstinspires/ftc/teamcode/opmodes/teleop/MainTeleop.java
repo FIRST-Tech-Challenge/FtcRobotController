@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import android.util.Log;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -14,19 +12,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.command.SounderBotBaseRunCommand;
 import org.firstinspires.ftc.teamcode.opmodes.OpModeTemplate;
 import org.firstinspires.ftc.teamcode.opmodes.PowerMode;
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.AlignToSampleUsingLimelight;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.MovePivotRelativelyCommand;
 import org.firstinspires.ftc.teamcode.subsystems.climb.HangingArm;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleFourWheelMecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
-import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenClaw;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSlider;
 //import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSliderClaw;
-import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 
 /**
  * This is old mainTeleop
@@ -36,7 +31,7 @@ import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 public class MainTeleop extends OpModeTemplate {
 
     private static final String LOG_TAG = MainTeleop.class.getSimpleName();
-    private TeleFourWheelMecanumDriveTrain driveTrain;
+    private TeleDriveTrain driveTrain;
 
     @Override
     public void initialize() {
@@ -52,7 +47,7 @@ public class MainTeleop extends OpModeTemplate {
         HangingArm hangingArm = new HangingArm(hardwareMap, telemetry, driverGamepad, feedback);
         SpecimenSliderClaw specimenSliderClaw = new SpecimenSliderClaw(hardwareMap, telemetry, feedback);
 
-        driveTrain = new TeleFourWheelMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, feedback, null);
+        driveTrain = new TeleDriveTrain(hardwareMap, driverGamepad, telemetry, feedback, null);
 
         switchToMode(PowerMode.REGULAR);
 

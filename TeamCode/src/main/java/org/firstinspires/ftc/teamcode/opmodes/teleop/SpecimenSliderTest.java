@@ -6,9 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.command.SounderBotBaseRunCommand;
 import org.firstinspires.ftc.teamcode.opmodes.OpModeTemplate;
-import org.firstinspires.ftc.teamcode.opmodes.PowerMode;
-import org.firstinspires.ftc.teamcode.subsystems.delivery.Hang;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleFourWheelMecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSlider;
 
 /**
@@ -18,7 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSlider;
 @SuppressWarnings("unused")
 public class SpecimenSliderTest extends OpModeTemplate {
 
-    private TeleFourWheelMecanumDriveTrain driveTrain;
+    private TeleDriveTrain driveTrain;
 
     @Override
     public void initialize() {

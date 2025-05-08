@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 /**
  * four wheel mecanum drive train for teleop that will drive the robot in periodic call
  */
-public class TeleFourWheelMecanumDriveTrain extends DriveTrain {
+public class TeleDriveTrain extends DriveTrain {
 
     @Override
     public void periodic() {
@@ -19,7 +19,7 @@ public class TeleFourWheelMecanumDriveTrain extends DriveTrain {
         driveRobotCentric(directionFlag * powerRatio * gamepad.getLeftX(), directionFlag * powerRatio * gamepad.getLeftY(), powerRatio * gamepad.getRightX() * -1);
     }
 
-    public TeleFourWheelMecanumDriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, LimeLight limeLight) {
+    public TeleDriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, LimeLight limeLight) {
         super(hardwareMap, gamepad, telemetry, feedback, false, limeLight);
     }
 

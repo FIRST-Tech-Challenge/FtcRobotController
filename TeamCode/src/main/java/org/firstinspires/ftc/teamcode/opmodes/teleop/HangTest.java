@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.command.SounderBotBaseRunCommand;
 import org.firstinspires.ftc.teamcode.opmodes.OpModeTemplate;
 import org.firstinspires.ftc.teamcode.opmodes.PowerMode;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.Hang;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleFourWheelMecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleDriveTrain;
 
 /**
  * This is old mainTeleop
@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleFourWheelMecanum
 @SuppressWarnings("unused")
 public class HangTest extends OpModeTemplate {
 
-    private TeleFourWheelMecanumDriveTrain driveTrain;
+    private TeleDriveTrain driveTrain;
 
     @Override
     public void initialize() {

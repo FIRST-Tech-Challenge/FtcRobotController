@@ -1,13 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveTrain;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDriver;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleFourWheelMecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
@@ -20,7 +16,7 @@ public class AlignToSampleUsingLimelight extends SounderBotCommandBase {
 
     double angleTolerence = 1;
 
-    TeleFourWheelMecanumDriveTrain driveTrain;
+    TeleDriveTrain driveTrain;
 
     Telemetry telemetry;
 
@@ -41,7 +37,7 @@ public class AlignToSampleUsingLimelight extends SounderBotCommandBase {
     protected LimeLight limeLight;
 
 
-    public AlignToSampleUsingLimelight(TeleFourWheelMecanumDriveTrain driveTrain, LimeLight limeLight, Telemetry telemetry, long timeOut) {
+    public AlignToSampleUsingLimelight(TeleDriveTrain driveTrain, LimeLight limeLight, Telemetry telemetry, long timeOut) {
         super(timeOut);
 
         this.driveTrain = driveTrain;
