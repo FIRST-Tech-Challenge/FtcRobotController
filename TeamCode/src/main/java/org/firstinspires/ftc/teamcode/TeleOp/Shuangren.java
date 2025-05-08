@@ -7,12 +7,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "Shuangren")
 public class Shuangren extends LinearOpMode {
-
     private DcMotor leftFront, rightFront, leftBack, rightBack;
     private DcMotor slideBack, slideBack2, slideRight, slideLeft;
     private Servo frontclawbigPitch, frontclawsmallPitch, frontclaw, frontclawTurn;
     private Servo backclaw, backclawPitch;
-
     private double frontclaw_OPEN = 0.4;
     private double frontclaw_CLOSE = 0.825;
     private double backclaw_OPEN = 0.4;
