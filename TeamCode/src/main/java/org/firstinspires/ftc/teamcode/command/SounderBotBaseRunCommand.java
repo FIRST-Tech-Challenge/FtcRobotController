@@ -7,7 +7,7 @@ import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.Subsystem;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.BasicDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveTrain;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +17,7 @@ import java.util.List;
  * This run command make sure the telemetry will be updated after each run command finished, no
  * matter an exception thrown or not from runnable.
  */
-public class SounderBotBaseRunCommand<T extends BasicDriveTrain> extends RunCommand {
+public class SounderBotBaseRunCommand<T extends DriveTrain> extends RunCommand {
 
     private final T driveTrain;
 

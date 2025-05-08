@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.util.Units;
  * driving logic will be in drive related command</p>
  */
 @Config
-public class BasicDriveTrain extends SubsystemBase {
+public class DriveTrain extends SubsystemBase {
 
     protected static final double OdometryWheelCircumference = 150.792;
     protected static final double METER_PER_SEC_TO_POWER = 400;
@@ -61,7 +61,7 @@ public class BasicDriveTrain extends SubsystemBase {
         }
     }
 
-    public BasicDriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, boolean revertMotor, LimeLight limeLight) {
+    public DriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, boolean revertMotor, LimeLight limeLight) {
 
         this.revertMotor = revertMotor;
         /* instantiate motors */

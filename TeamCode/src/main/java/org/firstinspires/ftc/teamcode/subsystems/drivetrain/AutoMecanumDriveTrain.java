@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 /**
  * four wheel mecanum drive train for auto op mode, that hold references to odometers
  */
-public class AutoMecanumDriveTrain extends BasicDriveTrain {
+public class AutoMecanumDriveTrain extends DriveTrain {
 
 
     public AutoMecanumDriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, LimeLight limeLight) {

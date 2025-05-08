@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 /**
  * four wheel mecanum drive train for teleop that will drive the robot in periodic call
  */
-public class TeleFourWheelMecanumDriveTrain extends BasicDriveTrain {
+public class TeleFourWheelMecanumDriveTrain extends DriveTrain {
 
     @Override
     public void periodic() {
