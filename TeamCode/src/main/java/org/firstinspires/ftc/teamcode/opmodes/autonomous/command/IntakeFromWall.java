@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
 import org.checkerframework.checker.index.qual.LTEqLengthOf;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 
 public class IntakeFromWall extends SounderBotCommandBase {
 
-    public IntakeFromWall(AutoMecanumDriveTrain driveTrain, RollingIntake intake) {
+    public IntakeFromWall(DriveTrain driveTrain, RollingIntake intake) {
         super(4000);
 
         this.intake = intake;
@@ -16,7 +16,7 @@ public class IntakeFromWall extends SounderBotCommandBase {
 
     RollingIntake intake;
 
-    AutoMecanumDriveTrain driveTrain;
+    DriveTrain driveTrain;
 
     @Override
     public void initialize() {

@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveTrain;
 
 public class ForwardDistanceCommand extends SounderBotCommandBase {
 
-    public ForwardDistanceCommand(AutoMecanumDriveTrain driveTrain, double expectedDistance, double minDistance, long timeout, Telemetry telemetry) {
+    public ForwardDistanceCommand(DriveTrain driveTrain, double expectedDistance, double minDistance, long timeout, Telemetry telemetry) {
         super(timeout);
 
         this.driveTrain = driveTrain;
@@ -18,7 +18,7 @@ public class ForwardDistanceCommand extends SounderBotCommandBase {
 
     double minDistance;
 
-    AutoMecanumDriveTrain driveTrain;
+    DriveTrain driveTrain;
     Telemetry telemetry;
 
     @Override

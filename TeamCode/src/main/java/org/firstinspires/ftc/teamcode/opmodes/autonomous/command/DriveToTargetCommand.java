@@ -5,7 +5,7 @@ import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.util.AngleUtils;
 import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
@@ -20,7 +20,7 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
 
     double distanceTolerance = 20;
 
-    AutoMecanumDriveTrain driveTrain;
+    DriveTrain driveTrain;
 
     GoBildaPinpointDriver odo;
 
@@ -50,15 +50,15 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
 
     boolean turnOffMotorAtEnd = true;
 
-    public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower) {
+    public DriveToTargetCommand(DriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower) {
         this(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, 1.0, 20);
     }
 
-    public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance) {
+    public DriveToTargetCommand(DriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance) {
         this(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, maxPower, distanceTolerance, 1800, true);
     }
 
-    public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance, long timeOut, boolean turnOffMotorAtEnd) {
+    public DriveToTargetCommand(DriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance, long timeOut, boolean turnOffMotorAtEnd) {
         super(timeOut);
 
         this.driveTrain = driveTrain;

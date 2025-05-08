@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 import com.google.common.util.concurrent.Uninterruptibles;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
@@ -14,7 +14,7 @@ public class TurnAngleAbsoluteCommand extends SounderBotCommandBase {
     double minError = Math.toRadians(2);
     double minPower = 0.15;
 
-    AutoMecanumDriveTrain driveTrain;
+    DriveTrain driveTrain;
     GoBildaPinpointDriver odo;
     Telemetry telemetry;
     double targetTurnInRadians;
@@ -22,7 +22,7 @@ public class TurnAngleAbsoluteCommand extends SounderBotCommandBase {
 
     SonicPIDFController pidController = new SonicPIDFController(0.5, 0, 0.02);
 
-    public TurnAngleAbsoluteCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double turnInDegrees) {
+    public TurnAngleAbsoluteCommand(DriveTrain driveTrain, Telemetry telemetry, double turnInDegrees) {
         this.driveTrain = driveTrain;
         this.telemetry = telemetry;
 

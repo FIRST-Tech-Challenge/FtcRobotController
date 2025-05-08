@@ -2,12 +2,13 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
 import com.google.common.util.concurrent.Uninterruptibles;
 
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDriver;
 
 public class TelemetryCommand extends SounderBotCommandBase {
 
-    AutoMecanumDriveTrain driveTrain;
+    DriveTrain driveTrain;
     GoBildaPinpointDriver odo;
     org.firstinspires.ftc.robotcore.external.Telemetry telemetry;
     double targetX, targetY, targetHeading;
@@ -15,7 +16,7 @@ public class TelemetryCommand extends SounderBotCommandBase {
     boolean isFirst = true;
 
 
-    public TelemetryCommand(AutoMecanumDriveTrain driveTrain, org.firstinspires.ftc.robotcore.external.Telemetry telemetry) {
+    public TelemetryCommand(DriveTrain driveTrain, org.firstinspires.ftc.robotcore.external.Telemetry telemetry) {
         this.driveTrain = driveTrain;
         this.odo = driveTrain.getOdo();
         this.telemetry = telemetry;

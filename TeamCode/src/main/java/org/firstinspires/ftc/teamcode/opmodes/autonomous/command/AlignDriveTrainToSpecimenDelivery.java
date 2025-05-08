@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 
 public class AlignDriveTrainToSpecimenDelivery extends SounderBotCommandBase {
 
-    public AlignDriveTrainToSpecimenDelivery(AutoMecanumDriveTrain driveTrain, double expectedDistance, double absoluteMin, long timeout, Telemetry telemetry) {
+    public AlignDriveTrainToSpecimenDelivery(DriveTrain driveTrain, double expectedDistance, double absoluteMin, long timeout, Telemetry telemetry) {
         super(timeout);
 
         this.driveTrain = driveTrain;
@@ -15,16 +15,12 @@ public class AlignDriveTrainToSpecimenDelivery extends SounderBotCommandBase {
         this.absoluteMin = absoluteMin;
     }
 
-    AutoMecanumDriveTrain driveTrain;
+    DriveTrain driveTrain;
     Telemetry telemetry;
 
     double expectedDistance;
 
     double absoluteMin;
-
-    @Override
-    public void initialize() {
-    }
 
     @Override
     protected boolean isTargetReached() {

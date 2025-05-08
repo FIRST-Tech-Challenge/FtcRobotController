@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 import com.google.common.util.concurrent.Uninterruptibles;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
@@ -16,7 +16,7 @@ public class AlignToSample extends SounderBotCommandBase {
 
     double angleTolerance = 3;
 
-    AutoMecanumDriveTrain driveTrain;
+    DriveTrain driveTrain;
 
     Telemetry telemetry;
 
@@ -27,7 +27,7 @@ public class AlignToSample extends SounderBotCommandBase {
     SonicPIDFController yPid = new SonicPIDFController(-1, 0, 0, 0.3);
 
 
-    public AlignToSample(AutoMecanumDriveTrain driveTrain, LimeLight limelight, Telemetry telemetry) {
+    public AlignToSample(DriveTrain driveTrain, LimeLight limelight, Telemetry telemetry) {
         this.driveTrain = driveTrain;
         this.telemetry = telemetry;
         this.limeLight = limelight;

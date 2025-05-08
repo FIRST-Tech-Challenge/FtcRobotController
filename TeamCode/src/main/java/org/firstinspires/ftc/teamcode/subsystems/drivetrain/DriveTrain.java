@@ -61,6 +61,10 @@ public class DriveTrain extends SubsystemBase {
         }
     }
 
+    public DriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, LimeLight limeLight) {
+        this(hardwareMap, gamepad, telemetry, feedback, true, limeLight);
+    }
+
     public DriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, boolean revertMotor, LimeLight limeLight) {
 
         this.revertMotor = revertMotor;

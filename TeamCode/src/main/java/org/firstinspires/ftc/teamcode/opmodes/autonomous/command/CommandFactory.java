@@ -15,7 +15,8 @@ import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSlider;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSliderClaw;
@@ -44,7 +45,7 @@ public class CommandFactory {
 
 
 
-    private final AutoMecanumDriveTrain driveTrain;
+    private final DriveTrain driveTrain;
     private final RollingIntake intake;
     private final LimeLight vision;
     private final Telemetry telemetry;
@@ -55,7 +56,7 @@ public class CommandFactory {
 
     private  final SpecimenSliderClaw specimenSliderClaw;
 
-    public CommandFactory(Telemetry telemetry, AutoMecanumDriveTrain driveTrain, RollingIntake intake, LimeLight vision, DeliveryPivot pivot, DeliverySlider slider, SpecimenSlider specimenSlider, SpecimenSliderClaw specimenSliderClaw) {
+    public CommandFactory(Telemetry telemetry, DriveTrain driveTrain, RollingIntake intake, LimeLight vision, DeliveryPivot pivot, DeliverySlider slider, SpecimenSlider specimenSlider, SpecimenSliderClaw specimenSliderClaw) {
         this.driveTrain = driveTrain;
         this.intake = intake;
         this.vision = vision;

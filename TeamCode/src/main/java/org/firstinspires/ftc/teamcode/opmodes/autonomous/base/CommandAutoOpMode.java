@@ -13,7 +13,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.CommandFactory;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSlider;
@@ -22,6 +22,8 @@ import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSliderClaw;
 public abstract class CommandAutoOpMode extends CommandOpMode {
 
     protected CommandFactory commandFactory;
+
+    boolean barebone = false;
 
     @Override
     public void reset() {
@@ -38,10 +40,9 @@ public abstract class CommandAutoOpMode extends CommandOpMode {
         dashboard.setTelemetryTransmissionInterval(200);
         Intent launchIntent = hardwareMap.appContext.getPackageManager().getLaunchIntentForPackage(hardwareMap.appContext.getPackageName());
         assert launchIntent != null;
-        final boolean barebone = launchIntent.getBooleanExtra("barebone", false);
         DriverFeedback feedback = barebone ? null : new DriverFeedback(hardwareMap, driverGamePad, operatorGamePad, telemetry);
         //LimeLight limeLight = barebone ? null : new LimeLight(hardwareMap, telemetry);
-        AutoMecanumDriveTrain driveTrain = new AutoMecanumDriveTrain(hardwareMap, driverGamePad, telemetry, null, null);
+        DriveTrain driveTrain = new DriveTrain(hardwareMap, driverGamePad, telemetry, null, null);
         RollingIntake rollingIntake = barebone ? null : new RollingIntake(hardwareMap, operatorGamePad, telemetry, feedback);
         DeliveryPivot pivot = barebone ? null : new DeliveryPivot(hardwareMap, operatorGamePad, telemetry, feedback, rollingIntake);
         DeliverySlider slider = barebone ? null : new DeliverySlider(hardwareMap, operatorGamePad, telemetry, feedback, pivot);

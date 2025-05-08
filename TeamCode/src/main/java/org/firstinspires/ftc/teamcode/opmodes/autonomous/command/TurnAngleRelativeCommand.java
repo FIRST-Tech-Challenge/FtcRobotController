@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 import com.google.common.util.concurrent.Uninterruptibles;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
@@ -13,7 +13,7 @@ public class TurnAngleRelativeCommand extends SounderBotCommandBase {
     private static final String LOG_TAG = TurnAngleRelativeCommand.class.getSimpleName();
     double minPower = 0.2;
 
-    AutoMecanumDriveTrain driveTrain;
+    DriveTrain driveTrain;
     GoBildaPinpointDriver odo;
     Telemetry telemetry;
 
@@ -28,7 +28,7 @@ public class TurnAngleRelativeCommand extends SounderBotCommandBase {
     boolean isFirst = true;
 
 
-    public TurnAngleRelativeCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double turnInDegrees) {
+    public TurnAngleRelativeCommand(DriveTrain driveTrain, Telemetry telemetry, double turnInDegrees) {
         this.driveTrain = driveTrain;
         this.telemetry = telemetry;
         this.odo = driveTrain.getOdo();
