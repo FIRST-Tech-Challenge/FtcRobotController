@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.command.SounderBotBaseRunCommand;
 import org.firstinspires.ftc.teamcode.opmodes.OpModeTemplate;
 import org.firstinspires.ftc.teamcode.opmodes.PowerMode;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.BareboneFourWheelMecanumDriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.drivetrain.BasicDriveTrain;
 
 /**
  * This is old mainTeleop
@@ -25,7 +25,7 @@ public class NewSpecificAttachmentTest extends OpModeTemplate {
     //private Servo specimenArmServo;
     SpecimenTest specimen;
     //private Servo specimenClawServo;
-    private BareboneFourWheelMecanumDriveTrain driveTrain;
+    private BasicDriveTrain driveTrain;
 
     @Override
     public void initialize() {
@@ -36,7 +36,7 @@ public class NewSpecificAttachmentTest extends OpModeTemplate {
         Servo specimenClawServo = hardwareMap.get(Servo.class,"specimenClaw");
         specimen = new SpecimenTest(specimenArmServo,specimenClawServo,telemetry);
         //DriverFeedback feedback = new DriverFeedback(hardwareMap, driverGamepad, operatorGamepad, telemetry);
-        driveTrain = new BareboneFourWheelMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, null, null);
+        driveTrain = new BasicDriveTrain(hardwareMap, driverGamepad, telemetry, null, false, null);
         switchToMode(PowerMode.REGULAR);
 
 
