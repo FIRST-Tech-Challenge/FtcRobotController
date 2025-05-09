@@ -4,7 +4,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.command.SounderBotBaseRunCommand;
+import org.firstinspires.ftc.teamcode.opmodes.command.SounderBotBaseRunCommand;
 import org.firstinspires.ftc.teamcode.opmodes.OpModeTemplate;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSlider;

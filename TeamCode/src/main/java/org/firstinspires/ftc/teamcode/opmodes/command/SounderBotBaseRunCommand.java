@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.command;
+package org.firstinspires.ftc.teamcode.opmodes.command;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
