@@ -50,6 +50,10 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
 
     boolean turnOffMotorAtEnd = true;
 
+
+    double xSpeedScale = 1.1;
+    double ySpeedScale = 1.0;
+
     public DriveToTargetCommand(DriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower) {
         this(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, 1.0, 20);
     }
@@ -117,8 +121,8 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
         odo.update();
 
         // Battery reading of 13.49 required a Kp of 0.015
-        double x = xPid.calculatePIDAlgorithm(targetX - odo.getPosX());
-        double y = yPid.calculatePIDAlgorithm(targetY - odo.getPosY());
+        double x = xPid.calculatePIDAlgorithm(targetX - odo.getPosX()) * xSpeedScale;
+        double y = yPid.calculatePIDAlgorithm(targetY - odo.getPosY()) * ySpeedScale;
         double h = hPid.calculatePIDAlgorithm(targetHeading - odo.getHeading());
 
         onFlagEnabled(addTelemetry, () -> {
