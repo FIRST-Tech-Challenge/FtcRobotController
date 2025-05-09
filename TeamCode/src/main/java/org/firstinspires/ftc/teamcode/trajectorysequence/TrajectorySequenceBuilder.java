@@ -493,7 +493,7 @@ public class TrajectorySequenceBuilder {
         currentTrajectoryBuilder = new TrajectoryBuilder(lastPose, tangent, currentVelConstraint, currentAccelConstraint, resolution);
     }
 
-    public TrajectorySequence build() {
+    public org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence build() {
         pushPath();
 
         List<TrajectoryMarker> globalMarkers = convertMarkersToGlobal(
