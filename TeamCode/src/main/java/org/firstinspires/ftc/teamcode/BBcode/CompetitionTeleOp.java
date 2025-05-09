@@ -120,7 +120,7 @@ public class CompetitionTeleOp extends LinearOpMode{
 
     GoBildaPinpointDriverRR odo; // Declare OpMode member for the Odometry Computer
     public double xOffset = -7.002384767061902; //RRTune, -6.5; measured
-    public double yOffset = -1.2229245167313665;
+    public double yOffset = -4.7; // -1.2229245167313665;
     @Override
     public void runOpMode() throws InterruptedException{
         // Initialization Code Goes Here
