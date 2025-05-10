@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
  * @version 1.0, 5/6/2024
  */
 @Config
-@Autonomous(name = "Forward Localizer Tuner", group = ".Localization")
+//@Autonomous(name = "Forward Localizer Tuner", group = ".Localization")
 public class ForwardTuner extends OpMode {
     private PoseUpdater poseUpdater;
     private DashboardPoseTracker dashboardPoseTracker;

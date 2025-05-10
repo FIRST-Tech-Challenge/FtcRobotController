@@ -13,10 +13,10 @@ public class Movement extends OpMode {
     DcMotor frontRight;
     @Override
     public void init() {
-        backLeft = hardwareMap.dcMotor.get("odol");
-        backRight = hardwareMap.dcMotor.get("BR");
-        frontLeft = hardwareMap.dcMotor.get("odor");
-        frontRight = hardwareMap.dcMotor.get("odom");
+        backLeft = hardwareMap.dcMotor.get("odor");
+        backRight = hardwareMap.dcMotor.get("odom");
+        frontLeft = hardwareMap.dcMotor.get("odol");
+        frontRight = hardwareMap.dcMotor.get("FR");
 
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -43,10 +43,10 @@ public class Movement extends OpMode {
     }
     private void anda(){
         double forward = gamepad2.left_stick_y;
-        double strafe = gamepad2.left_stick_x;
+        double strafe = -gamepad2.left_stick_x;
         double turn = -gamepad2.right_stick_x;
 
-        double denominator = Math.max(Math.abs(forward) + Math.abs(strafe) + Math.abs(turn), 2);
+        double denominator = Math.max(Math.abs(forward) + Math.abs(strafe) + Math.abs(turn), 0.5);
 
         frontRight.setPower((forward - strafe - turn) / denominator);
         frontLeft.setPower((forward + strafe + turn) / denominator);

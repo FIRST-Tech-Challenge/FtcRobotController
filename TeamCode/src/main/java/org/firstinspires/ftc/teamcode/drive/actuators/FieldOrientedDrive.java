@@ -15,10 +15,10 @@ import java.util.concurrent.TimeUnit;
 public class FieldOrientedDrive extends LinearOpMode {
     @Override
     public void runOpMode() {
-        DcMotorSimple leftFront = hardwareMap.get(DcMotorSimple.class, "odor");
-        DcMotorSimple leftBack = hardwareMap.get(DcMotorSimple.class, "odol");
-        DcMotorSimple rightFront = hardwareMap.get(DcMotorSimple.class, "odom");
-        DcMotorSimple rightBack = hardwareMap.get(DcMotorSimple.class, "BR");
+        DcMotorSimple leftFront = hardwareMap.get(DcMotorSimple.class, "odol");
+        DcMotorSimple leftBack = hardwareMap.get(DcMotorSimple.class, "odor");
+        DcMotorSimple rightFront = hardwareMap.get(DcMotorSimple.class, "FR");
+        DcMotorSimple rightBack = hardwareMap.get(DcMotorSimple.class, "odom");
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -41,13 +41,10 @@ public class FieldOrientedDrive extends LinearOpMode {
 
             double max = Math.max(Math.abs(lx) + Math.abs(ly) + Math.abs(rx), 1);
 
-            double drivePower = 1 - (0.6 * gamepad1.right_trigger);
+            double drivePower = 1 - (0.7 * gamepad1.right_trigger);
 
-            if (gamepadRateLimit.hasExpired() && gamepad1.a) {
-                imu.resetYaw();
-                gamepadRateLimit.reset();
-            }
-
+            if(gamepad1.left_bumper) reset(imu);
+            telemetry.addLine("Angulo do robô: "+ imu.getRobotYawPitchRollAngles().getYaw());
             double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             double adjustedLx = -ly * Math.sin(heading) + lx * Math.cos(heading);
             double adjustedLy = ly * Math.cos(heading) + lx * Math.sin(heading);
@@ -56,6 +53,12 @@ public class FieldOrientedDrive extends LinearOpMode {
             leftBack.setPower(((adjustedLy - adjustedLx + rx) / max) * drivePower);
             rightFront.setPower(((adjustedLy - adjustedLx - rx) / max) * drivePower);
             rightBack.setPower(((adjustedLy + adjustedLx - rx) / max) * drivePower);
+            telemetry.update();
         }
+    }
+
+
+    public void reset(IMU imu) {
+        imu.resetYaw();
     }
 }

@@ -8,7 +8,6 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,7 +15,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 
 import java.util.concurrent.TimeUnit;
@@ -32,16 +30,6 @@ public class Teleop extends OpMode {
     Servo pright;
     Servo lright;
     Servo lleft;
-
-    //CAMERA
-    public static Limelight3A limelight;
-
-    public static double position(double angle) {
-        return (angle + 15) / 30;
-    }
-
-    boolean sampleAligned = false;
-
     //OUTTAKE
 
     DcMotor poliaright;
@@ -49,9 +37,9 @@ public class Teleop extends OpMode {
     Servo Bright;
     Servo Bleft;
     Servo garrinha;
-    double ticks = 2830;
-    double ticks2 = 4000;
-    double ticks3 = 1500;
+    double ticks = 2800.5;
+    double ticks2 = 4500;
+    double ticks3 = 1000;
     double newTarget;
 
     //MOVIMENTACAO
@@ -69,14 +57,6 @@ public class Teleop extends OpMode {
         pleft = hardwareMap.get(Servo.class, "pleft");
         pright = hardwareMap.get(Servo.class, "pright");
 
-        //CAMERA
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        telemetry.setMsTransmissionInterval(11);
-        limelight.pipelineSwitch(0);
-        limelight.start();
-
         //OUTTAKE
         poliaright = hardwareMap.get(DcMotor.class, "poliaright");
         polialeft = hardwareMap.get(DcMotor.class, "polialeft");
@@ -90,27 +70,27 @@ public class Teleop extends OpMode {
         polialeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //MOVIMENTACAO
-        frontLeft = hardwareMap.get(DcMotor.class, "odor");
-        frontRight = hardwareMap.get(DcMotor.class, "odom");
-        backLeft = hardwareMap.get(DcMotor.class, "odol");
-        backRight = hardwareMap.get(DcMotor.class, "BR");
+        frontLeft = hardwareMap.get(DcMotor.class, "odol");
+        frontRight = hardwareMap.get(DcMotor.class, "FR");
+        backLeft = hardwareMap.get(DcMotor.class, "odor");
+        backRight = hardwareMap.get(DcMotor.class, "odom");
 
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Hardware: ", "Initialized");
     }
         public void loop(){
-            IMU imu = hardwareMap.get(IMU.class, "imu");
-            IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                    RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                    RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
-            ));
-            imu.initialize(parameters);
-
-            //Deadline gamepadRateLimit = new Deadline(100, TimeUnit.MILLISECONDS);
             //INTAKE
             if (gamepad2.dpad_down) {
                 garra.setPosition(0.7);
@@ -141,25 +121,6 @@ public class Teleop extends OpMode {
                 pright.setPosition(1);
             }
 
-            LLStatus status = limelight.getStatus();
-            telemetry.addData("Name", "%s",
-                    status.getName());
-            telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d",
-                    status.getTemp(), status.getCpu(), (int) status.getFps());
-            telemetry.addData("Pipeline", "Index: %d, Type: %s",
-                    status.getPipelineIndex(), status.getPipelineType());
-
-            LLResult result = limelight.getLatestResult();
-            if (result != null) {
-                if (result.isValid()) {
-                    //rotate.setPosition(position(limelight.getLatestResult().getTyNC()));
-                    telemetry.addData("rotate", rotate.getPosition());
-                } else {
-                    telemetry.addData("Limelight", "No data available");
-                }
-                telemetry.update();
-            }
-
             //OUTTAKE
 
             if (gamepad1.dpad_up) {
@@ -179,6 +140,9 @@ public class Teleop extends OpMode {
                 viperslide2Down();
                 Bright.setPosition(1);
                 Bleft.setPosition(0);
+                sleep(1100);
+                polialeft.setPower(0);
+                poliaright.setPower(0);
             }
             if (gamepad1.y) {
                 Bright.setPosition(1);
@@ -194,23 +158,11 @@ public class Teleop extends OpMode {
             if (gamepad1.a) {
                 garrinha.setPosition(0);
             }
+            if (gamepad1.right_bumper){
+                climb();
+            }
             //MOVIMENTACAO
-            double lx = gamepad1.left_stick_x;
-            double ly = gamepad1.left_stick_y;
-            double rx = -gamepad1.right_stick_x;
-
-            double max = Math.max(Math.abs(lx) + Math.abs(ly) + Math.abs(rx), 1);
-
-            double drivePower = 1 - (0.7 * gamepad1.right_trigger);
-
-            double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            double adjustedLx = -ly * Math.sin(heading) + lx * Math.cos(heading);
-            double adjustedLy = ly * Math.cos(heading) + lx * Math.sin(heading);
-
-            frontLeft.setPower(((adjustedLy + adjustedLx + rx) / max) * drivePower);
-            backLeft.setPower(((adjustedLy - adjustedLx + rx) / max) * drivePower);
-            frontRight.setPower(((adjustedLy - adjustedLx - rx) / max) * drivePower);
-            backRight.setPower(((adjustedLy + adjustedLx - rx) / max) * drivePower);
+            anda();
         }
         public void viperslide1Up ( int turnage){
         newTarget = ticks / turnage;
@@ -257,5 +209,21 @@ public class Teleop extends OpMode {
         polialeft.setTargetPosition((int) newTarget);
         polialeft.setPower(1);
         polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+    public void climb(){
+        viperslide1Down();
+        viperslide2Down();
+    }
+    private void anda(){
+        double forward = gamepad2.left_stick_y;
+        double strafe = -gamepad2.left_stick_x;
+        double turn = -gamepad2.right_stick_x;
+
+        double denominator = Math.max(Math.abs(forward) + Math.abs(strafe) + Math.abs(turn), 0.5);
+
+        frontRight.setPower((forward - strafe - turn) / denominator);
+        frontLeft.setPower((forward + strafe + turn) / denominator);
+        backLeft.setPower((forward - strafe + turn) / denominator);
+        backRight.setPower((forward + strafe - turn) / denominator);
     }
 }

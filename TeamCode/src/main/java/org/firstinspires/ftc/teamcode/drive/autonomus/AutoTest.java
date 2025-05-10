@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.drive.autonomus;
 
+import static android.os.SystemClock.sleep;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
@@ -9,8 +13,11 @@ import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Constants;
 import com.pedropathing.util.Timer;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
@@ -27,6 +34,26 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
 @Autonomous(name = "Auto Blue", group = "Examples")
 public class AutoTest extends OpMode {
+
+    Servo rotate;
+    Servo garra;
+    Servo pleft;
+    Servo pright;
+    Servo lright;
+    Servo lleft;
+
+    //CAMERA
+    public static Limelight3A limelight;
+
+    //OUTTAKE
+
+    DcMotor poliaright;
+    DcMotor polialeft;
+    Servo Bright;
+    Servo Bleft;
+    Servo garrinha;
+    double ticks = 2800.5;
+    double newTarget;
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -45,26 +72,26 @@ public class AutoTest extends OpMode {
      * Lets assume the Robot is facing the human player and we want to score in the bucket */
 
     /** Start Pose of our robot */
-    private final Pose startPose = new Pose(9.757, 84.983, Math.toRadians(0));
+    private final Pose startPose = new Pose(6.728971962616822, 103.19626168224299, Math.toRadians(0));
 
     /** Scoring Pose of our robot. It is facing the submersible at a -45 degree (315 degree) angle. */
-    private final Pose scorePose = new Pose(16.668, 126.983, Math.toRadians(135));
+    private final Pose scorePose = new Pose(14.528037383177569, 132.42056074766356, Math.toRadians(135));
 
     /** Lowest (First) Sample from the Spike Mark */
-    private final Pose pickup1Pose = new Pose(25.668, 125.5, Math.toRadians(170));
+    private final Pose pickup1Pose = new Pose(20.67289719626168, 124.95327102803738, Math.toRadians(180));
 
     /** Middle (Second) Sample from the Spike Mark */
-    private final Pose pickup2Pose = new Pose(27.813084112149532, 130, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(21.121495327102807, 137.80373831775702, Math.toRadians(180));
 
     /** Highest (Third) Sample from the Spike Mark */
-    private final Pose pickup3Pose = new Pose(26, 135, Math.toRadians(195));
+    private final Pose pickup3Pose = new Pose(26.018691588785046, 145.98130841121497, Math.toRadians(190));
 
     /** Park Pose for our robot, after we do all of the scoring. */
-    private final Pose parkPose = new Pose(60, 95, Math.toRadians(90));
+    private final Pose parkPose = new Pose(14.528037383177569, 132.42056074766356, Math.toRadians(135));
 
     /** Park Control Pose for our robot, this is used to manipulate the bezier curve that we will create for the parking.
      * The Robot will not go to this pose, it is used a control point for our bezier curve. */
-    private final Pose parkControlPose = new Pose(60, 120, Math.toRadians(90));
+    private final Pose parkControlPose = new Pose(14.528037383177569, 132.42056074766356, Math.toRadians(135));
 
     /* These are our Paths and PathChains that we will define in buildPaths() */
     private Path scorePreload, park;
@@ -156,7 +183,7 @@ public class AutoTest extends OpMode {
 
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
-                    /* Score Preload */
+                    Entrega();
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(grabPickup1,true);
@@ -166,7 +193,7 @@ public class AutoTest extends OpMode {
             case 2:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
                 if(!follower.isBusy()) {
-                    /* Grab Sample */
+                    Coleta();
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                     follower.followPath(scorePickup1,true);
@@ -176,7 +203,7 @@ public class AutoTest extends OpMode {
             case 3:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
-                    /* Score Sample */
+                    Entrega();
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(grabPickup2,true);
@@ -186,7 +213,7 @@ public class AutoTest extends OpMode {
             case 4:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
                 if(!follower.isBusy()) {
-                    /* Grab Sample */
+                    Coleta();
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                     follower.followPath(scorePickup2,true);
@@ -196,7 +223,7 @@ public class AutoTest extends OpMode {
             case 5:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
-                    /* Score Sample */
+                    Entrega();
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(grabPickup3,true);
@@ -206,7 +233,7 @@ public class AutoTest extends OpMode {
             case 6:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup3Pose's position */
                 if(!follower.isBusy()) {
-                    /* Grab Sample */
+                    Coleta();
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                     follower.followPath(scorePickup3, true);
@@ -216,7 +243,7 @@ public class AutoTest extends OpMode {
             case 7:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
-                    /* Score Sample */
+                    Entrega();
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
                     follower.followPath(park,true);
@@ -226,7 +253,6 @@ public class AutoTest extends OpMode {
             case 8:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
-                    /* Level 1 Ascent */
 
                     /* Set the state to a Case we won't use or define, so it just stops running an new paths */
                     setPathState(-1);
@@ -261,6 +287,33 @@ public class AutoTest extends OpMode {
     /** This method is called once at the init of the OpMode. **/
     @Override
     public void init() {
+        lright = hardwareMap.get(Servo.class, "lright");
+        lleft = hardwareMap.get(Servo.class, "lleft");
+        rotate = hardwareMap.get(Servo.class, "rotate");
+        garra = hardwareMap.get(Servo.class, "garra");
+        pleft = hardwareMap.get(Servo.class, "pleft");
+        pright = hardwareMap.get(Servo.class, "pright");
+
+        //CAMERA
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        telemetry.setMsTransmissionInterval(11);
+        limelight.pipelineSwitch(0);
+        limelight.start();
+
+        //OUTTAKE
+        poliaright = hardwareMap.get(DcMotor.class, "poliaright");
+        polialeft = hardwareMap.get(DcMotor.class, "polialeft");
+        Bright = hardwareMap.get(Servo.class, "bright");
+        Bleft = hardwareMap.get(Servo.class, "bleft");
+        garrinha = hardwareMap.get(Servo.class, "garrinha");
+
+        poliaright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        poliaright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        poliaright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        polialeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
@@ -286,5 +339,61 @@ public class AutoTest extends OpMode {
     /** We do not use this because everything should automatically disable **/
     @Override
     public void stop() {
+    }
+    public void viperslide1Up ( int turnage){
+        newTarget = ticks / turnage;
+        poliaright.setTargetPosition((int) newTarget);
+        poliaright.setPower(1);
+        poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+    public void viperslide2Up ( int turnage){
+        newTarget = ticks / turnage;
+        polialeft.setTargetPosition((int) newTarget);
+        polialeft.setPower(1);
+        polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+    public void viperslide1Down () {
+        poliaright.setTargetPosition(0);
+        poliaright.setPower(1);
+        poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+    public void viperslide2Down () {
+        polialeft.setTargetPosition(0);
+        polialeft.setPower(1);
+        polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+    public void Entrega(){
+        viperslide1Up(-1);
+        viperslide2Up(1);
+        sleep(600);
+        Bright.setPosition(0.4);
+        Bleft.setPosition(0.6);
+        sleep(1400);
+        viperslide1Down();
+        viperslide2Down();
+        Bright.setPosition(1);
+        Bleft.setPosition(0);
+        sleep(1300);
+        polialeft.setPower(0);
+        poliaright.setPower(0);
+    }
+    public void Coleta(){
+        lright.setPosition(0.6);
+        lleft.setPosition(0.7);
+        sleep(200);
+        garra.setPosition(0.3);
+        pleft.setPosition(0);
+        pright.setPosition(1);
+        sleep(500);
+        garra.setPosition(0.7);
+        sleep(200);
+        rotate.setPosition(0.7);
+        pleft.setPosition(0.8);
+        pright.setPosition(0.2);
+        lright.setPosition(1);
+        lleft.setPosition(0.1);
+        sleep(500);
+        garra.setPosition(0.3);
+        sleep(100);
     }
 }
