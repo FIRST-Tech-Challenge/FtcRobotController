@@ -119,19 +119,11 @@ public class CompetitionTeleOp extends LinearOpMode{
     }
 
     GoBildaPinpointDriverRR odo; // Declare OpMode member for the Odometry Computer
-    public double xOffset = -7.002384767061902; //RRTune, -6.5; measured
-    public double yOffset = -4.7; // -1.2229245167313665;
     @Override
     public void runOpMode() throws InterruptedException{
         // Initialization Code Goes Here
         ChristmasLight _christmasLight = new ChristmasLight(this);
         odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
-        GoBildaPinpointDriver.EncoderDirection xDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
-        GoBildaPinpointDriver.EncoderDirection yDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
-        double encoderResolution = GoBildaPinpointDriverRR.goBILDA_4_BAR_POD;
-        odo.setOffsets(DistanceUnit.MM.fromInches(xOffset), DistanceUnit.MM.fromInches(yOffset));
-        odo.setEncoderResolution(encoderResolution);
-        odo.setEncoderDirections(xDirection, yDirection);
         odo.resetPosAndIMU();
 
         //Init limelight
