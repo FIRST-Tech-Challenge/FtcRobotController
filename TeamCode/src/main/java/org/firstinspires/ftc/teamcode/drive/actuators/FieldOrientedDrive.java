@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class FieldOrientedDrive extends LinearOpMode {
     Servo lright;
     Servo lleft;
+    Servo Sergio;
     @Override
     public void runOpMode() {
         DcMotorSimple leftFront = hardwareMap.get(DcMotorSimple.class, "odol");
