@@ -85,8 +85,8 @@ public class Teleop extends OpMode {
 
         telemetry.addData("Hardware: ", "Initialized");
 
-        pleft.setPosition(0.8);
-        pright.setPosition(0.2);
+        lright.setPosition(1);
+        lleft.setPosition(0.1);
         rotate.setPosition(0.7);
         pleft.setPosition(0.8);
         pright.setPosition(0.2);
@@ -180,7 +180,8 @@ public class Teleop extends OpMode {
 
             double drivePower = 1 - (0.5 * gamepad1.right_trigger);
 
-            if(gamepad1.left_bumper) reset(imu);
+            if(gamepad1.left_bumper) imu.resetYaw();
+
             double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             double adjustedLx = +ly * Math.sin(heading) + lx * Math.cos(heading);
             double adjustedLy = ly * Math.cos(heading) - lx * Math.sin(heading);
@@ -242,9 +243,4 @@ public class Teleop extends OpMode {
         viperslide1Down();
         viperslide2Down();
     }
-
-    public void reset(IMU imu) {
-        imu.resetYaw();
-    }
-
 }
