@@ -1,6 +1,14 @@
+Setup ADB tool
+---
+1. Find out the SDK_HOME. In android studio, in hamburger menu, goto tools/sdk manager, write down android sdk location shows in the dialog.
+2. Settings > System > Advanced System Settings > Environment Variables, in current user or system section, select path, then click edit, add new item with value $SDK_HOME/platform-tools, replace the $SDK_HOME with value saved from above step
+3. save the change, and restart the terminal or android studio
+4. Test by typing adb in a terminal
+
 Why
 ---
 To deploy and capture latest logcat output when robot is moving
+To push code to device without direct connection
 
 Howto
 ---

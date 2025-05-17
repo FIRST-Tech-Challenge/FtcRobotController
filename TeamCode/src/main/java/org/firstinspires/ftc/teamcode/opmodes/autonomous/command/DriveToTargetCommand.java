@@ -27,19 +27,22 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     Telemetry telemetry;
     double targetX, targetY, targetHeading;
 
-    public static double xPid_p = 0.0010;
-    public static double xPid_i = 0;
-    public static double xPid_d = 0;
-    public static double xPid_f = 0.005;
+    //Generally, increase P with D will create the response of slowing down harder over a shorter time.
+    //I is helpful when straight lines begin to wander left or right without any external input, or if theres a consistent undershoot or overshoot.
 
-    public static double yPid_p = -0.0033;
-    public static double yPid_i = 0;
-    public static double yPid_d = 0;
-    public static double yPid_f = 0.02;
+    public static double xPid_p =  0.0037;
+    public static double xPid_i =  0.00006;
+    public static double xPid_d =  0.0008;
+    public static double xPid_f =  0;
 
-    public static double hPid_p = 1;
+    public static double yPid_p = -0.0037;
+    public static double yPid_i = -0.00006;
+    public static double yPid_d = -0.0008;
+    public static double yPid_f = -0;
+
+    public static double hPid_p = 0.8;
     public static double hPid_i = 0;
-    public static double hPid_d = 0;
+    public static double hPid_d = 0.05;
     public static double hPid_f = 0;
 
     SonicPIDFController xPid;
