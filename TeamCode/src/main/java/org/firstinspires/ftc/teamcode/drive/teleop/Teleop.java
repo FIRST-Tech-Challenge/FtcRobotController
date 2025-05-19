@@ -32,7 +32,7 @@ public class Teleop extends OpMode {
     Servo Bright;
     Servo Bleft;
     Servo garrinha;
-    double ticks = 2800.5;
+    double ticks = 2700;
     double ticks2 = 4500;
     double ticks3 = 1000;
     double newTarget;
@@ -196,13 +196,13 @@ public class Teleop extends OpMode {
         public void viperslide1Up ( int turnage){
         newTarget = ticks / turnage;
         poliaright.setTargetPosition((int) newTarget);
-        poliaright.setPower(1);
+        poliaright.setPower(0.8);
         poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide2Up ( int turnage){
         newTarget = ticks / turnage;
         polialeft.setTargetPosition((int) newTarget);
-        polialeft.setPower(1);
+        polialeft.setPower(0.8);
         polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide1Down () {
@@ -218,25 +218,25 @@ public class Teleop extends OpMode {
     public void viperslide1Clip ( int turnage){
         newTarget = ticks2 / turnage;
         poliaright.setTargetPosition((int) newTarget);
-        poliaright.setPower(1);
+        poliaright.setPower(0.8);
         poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide2Clip ( int turnage){
         newTarget = ticks2 / turnage;
         polialeft.setTargetPosition((int) newTarget);
-        polialeft.setPower(1);
+        polialeft.setPower(0.8);
         polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide1Clipar ( int turnage){
         newTarget = ticks3 / turnage;
         poliaright.setTargetPosition((int) newTarget);
-        poliaright.setPower(1);
+        poliaright.setPower(0.8);
         poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide2Clipar ( int turnage){
         newTarget = ticks3 / turnage;
         polialeft.setTargetPosition((int) newTarget);
-        polialeft.setPower(1);
+        polialeft.setPower(0.8);
         polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void climb(){
