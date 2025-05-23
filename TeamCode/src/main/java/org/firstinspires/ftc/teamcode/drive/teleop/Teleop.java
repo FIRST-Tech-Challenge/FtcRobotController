@@ -162,68 +162,76 @@ public class Teleop extends OpMode {
                 climb();
             }
             //MOVIMENTACAO
-            anda();
+            double lx = -gamepad1.left_stick_x;
+            double ly = gamepad1.left_stick_y;
+            double rx = -gamepad1.right_stick_x;
+
+            double max = Math.max(Math.abs(lx) + Math.abs(ly) + Math.abs(rx), 1);
+
+            double drivePower = 1 - (0.5 * gamepad1.right_trigger);
+
+            if(gamepad1.left_bumper) reset(imu);
+            double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            double adjustedLx = ly * Math.sin(heading) + lx * Math.cos(heading);
+            double adjustedLy = ly * Math.cos(heading) - lx * Math.sin(heading);
+
+            frontLeft.setPower(((adjustedLy + adjustedLx + rx) / max) * drivePower);
+            backLeft.setPower(((adjustedLy - adjustedLx + rx) / max) * drivePower);
+            frontRight.setPower(((adjustedLy - adjustedLx - rx) / max) * drivePower);
+            backRight.setPower(((adjustedLy + adjustedLx - rx) / max) * drivePower);
+            telemetry.update();
         }
         public void viperslide1Up ( int turnage){
         newTarget = ticks / turnage;
         poliaright.setTargetPosition((int) newTarget);
-        poliaright.setPower(1);
+        poliaright.setPower(0.8);
         poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide2Up ( int turnage){
         newTarget = ticks / turnage;
         polialeft.setTargetPosition((int) newTarget);
-        polialeft.setPower(1);
+        polialeft.setPower(0.8);
         polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide1Down () {
         poliaright.setTargetPosition(0);
-        poliaright.setPower(1);
+        poliaright.setPower(0.8);
         poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide2Down () {
         polialeft.setTargetPosition(0);
-        polialeft.setPower(1);
+        polialeft.setPower(0.8);
         polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide1Clip ( int turnage){
         newTarget = ticks2 / turnage;
         poliaright.setTargetPosition((int) newTarget);
-        poliaright.setPower(1);
+        poliaright.setPower(0.8);
         poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide2Clip ( int turnage){
         newTarget = ticks2 / turnage;
         polialeft.setTargetPosition((int) newTarget);
-        polialeft.setPower(1);
+        polialeft.setPower(0.8);
         polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide1Clipar ( int turnage){
         newTarget = ticks3 / turnage;
         poliaright.setTargetPosition((int) newTarget);
-        poliaright.setPower(1);
+        poliaright.setPower(0.8);
         poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide2Clipar ( int turnage){
         newTarget = ticks3 / turnage;
         polialeft.setTargetPosition((int) newTarget);
-        polialeft.setPower(1);
+        polialeft.setPower(0.8);
         polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void climb(){
         viperslide1Down();
         viperslide2Down();
     }
-    private void anda(){
-        double forward = gamepad2.left_stick_y;
-        double strafe = -gamepad2.left_stick_x;
-        double turn = -gamepad2.right_stick_x;
-
-        double denominator = Math.max(Math.abs(forward) + Math.abs(strafe) + Math.abs(turn), 0.5);
-
-        frontRight.setPower((forward - strafe - turn) / denominator);
-        frontLeft.setPower((forward + strafe + turn) / denominator);
-        backLeft.setPower((forward - strafe + turn) / denominator);
-        backRight.setPower((forward + strafe - turn) / denominator);
+    public void reset(IMU imu) {
+        imu.resetYaw();
     }
 }

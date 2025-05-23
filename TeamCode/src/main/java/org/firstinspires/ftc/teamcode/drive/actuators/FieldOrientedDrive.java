@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name = "Field Centric Mecanum Drive")
+//@TeleOp(name = "Field Centric Mecanum Drive")
 public class FieldOrientedDrive extends LinearOpMode {
     @Override
     public void runOpMode() {
@@ -46,8 +46,8 @@ public class FieldOrientedDrive extends LinearOpMode {
             if(gamepad1.left_bumper) reset(imu);
             telemetry.addLine("Angulo do robô: "+ imu.getRobotYawPitchRollAngles().getYaw());
             double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            double adjustedLx = -ly * Math.sin(heading) + lx * Math.cos(heading);
-            double adjustedLy = ly * Math.cos(heading) + lx * Math.sin(heading);
+            double adjustedLx = ly * Math.sin(heading) + lx * Math.cos(heading);
+            double adjustedLy = ly * Math.cos(heading) - lx * Math.sin(heading);
 
             leftFront.setPower(((adjustedLy + adjustedLx + rx) / max) * drivePower);
             leftBack.setPower(((adjustedLy - adjustedLx + rx) / max) * drivePower);
