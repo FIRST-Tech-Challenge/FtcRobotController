@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 //@TeleOp
 public class Movement extends OpMode {
@@ -11,8 +12,16 @@ public class Movement extends OpMode {
     DcMotor backRight;
     DcMotor frontLeft;
     DcMotor frontRight;
+    Servo lright;
+    Servo lleft;
     @Override
     public void init() {
+        lright = hardwareMap.get(Servo.class,"lright");
+        lleft = hardwareMap.get(Servo.class,"lleft");
+
+        lright.setPosition(1);
+        lleft.setPosition(0.1);
+
         backLeft = hardwareMap.dcMotor.get("odor");
         backRight = hardwareMap.dcMotor.get("odom");
         frontLeft = hardwareMap.dcMotor.get("odol");
@@ -22,11 +31,6 @@ public class Movement extends OpMode {
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Reversão de valores
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -46,7 +50,7 @@ public class Movement extends OpMode {
         double strafe = -gamepad2.left_stick_x;
         double turn = -gamepad2.right_stick_x;
 
-        double denominator = Math.max(Math.abs(forward) + Math.abs(strafe) + Math.abs(turn), 0.5);
+        double denominator = Math.max(Math.abs(forward) + Math.abs(strafe) + Math.abs(turn), 1.5);
 
         frontRight.setPower((forward - strafe - turn) / denominator);
         frontLeft.setPower((forward + strafe + turn) / denominator);

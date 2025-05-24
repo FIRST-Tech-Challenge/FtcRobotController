@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
@@ -13,12 +14,20 @@ import java.util.concurrent.TimeUnit;
 
 //@TeleOp(name = "Field Centric Mecanum Drive")
 public class FieldOrientedDrive extends LinearOpMode {
+    Servo lright;
+    Servo lleft;
+    Servo Sergio;
     @Override
     public void runOpMode() {
         DcMotorSimple leftFront = hardwareMap.get(DcMotorSimple.class, "odol");
         DcMotorSimple leftBack = hardwareMap.get(DcMotorSimple.class, "odor");
         DcMotorSimple rightFront = hardwareMap.get(DcMotorSimple.class, "FR");
         DcMotorSimple rightBack = hardwareMap.get(DcMotorSimple.class, "odom");
+        lright = hardwareMap.get(Servo.class,"lright");
+        lleft = hardwareMap.get(Servo.class,"lleft");
+
+        lright.setPosition(1);
+        lleft.setPosition(0.1);
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -35,13 +44,14 @@ public class FieldOrientedDrive extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            double lx = gamepad1.left_stick_x;
+
+            double lx = -gamepad1.left_stick_x;
             double ly = gamepad1.left_stick_y;
             double rx = -gamepad1.right_stick_x;
 
             double max = Math.max(Math.abs(lx) + Math.abs(ly) + Math.abs(rx), 1);
 
-            double drivePower = 1 - (0.7 * gamepad1.right_trigger);
+            double drivePower = 1 - (0.5 * gamepad1.right_trigger);
 
             if(gamepad1.left_bumper) reset(imu);
             telemetry.addLine("Angulo do robô: "+ imu.getRobotYawPitchRollAngles().getYaw());
@@ -56,8 +66,6 @@ public class FieldOrientedDrive extends LinearOpMode {
             telemetry.update();
         }
     }
-
-
     public void reset(IMU imu) {
         imu.resetYaw();
     }

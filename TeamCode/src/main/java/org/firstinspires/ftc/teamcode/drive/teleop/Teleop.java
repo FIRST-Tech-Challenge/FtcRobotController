@@ -2,11 +2,6 @@ package org.firstinspires.ftc.teamcode.drive.teleop;
 
 import static android.os.SystemClock.sleep;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLStatus;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -37,7 +32,7 @@ public class Teleop extends OpMode {
     Servo Bright;
     Servo Bleft;
     Servo garrinha;
-    double ticks = 2800.5;
+    double ticks = 2700;
     double ticks2 = 4500;
     double ticks3 = 1000;
     double newTarget;
@@ -85,10 +80,17 @@ public class Teleop extends OpMode {
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.REVERSE);
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Hardware: ", "Initialized");
+
+        lright.setPosition(1);
+        lleft.setPosition(0.1);
+        rotate.setPosition(0.7);
+        pleft.setPosition(0.8);
+        pright.setPosition(0.2);
+        garra.setPosition(0.3);
     }
         public void loop(){
             //INTAKE
@@ -162,6 +164,14 @@ public class Teleop extends OpMode {
                 climb();
             }
             //MOVIMENTACAO
+            Deadline gamepadRateLimit = new Deadline(500, TimeUnit.MILLISECONDS);
+
+            IMU imu = hardwareMap.get(IMU.class, "imu");
+            IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                    RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                    RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+            ));
+            imu.initialize(parameters);
             double lx = -gamepad1.left_stick_x;
             double ly = gamepad1.left_stick_y;
             double rx = -gamepad1.right_stick_x;
@@ -170,9 +180,10 @@ public class Teleop extends OpMode {
 
             double drivePower = 1 - (0.5 * gamepad1.right_trigger);
 
-            if(gamepad1.left_bumper) reset(imu);
+            if(gamepad1.left_bumper) imu.resetYaw();
+
             double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            double adjustedLx = ly * Math.sin(heading) + lx * Math.cos(heading);
+            double adjustedLx = +ly * Math.sin(heading) + lx * Math.cos(heading);
             double adjustedLy = ly * Math.cos(heading) - lx * Math.sin(heading);
 
             frontLeft.setPower(((adjustedLy + adjustedLx + rx) / max) * drivePower);
@@ -180,6 +191,7 @@ public class Teleop extends OpMode {
             frontRight.setPower(((adjustedLy - adjustedLx - rx) / max) * drivePower);
             backRight.setPower(((adjustedLy + adjustedLx - rx) / max) * drivePower);
             telemetry.update();
+
         }
         public void viperslide1Up ( int turnage){
         newTarget = ticks / turnage;
@@ -195,12 +207,12 @@ public class Teleop extends OpMode {
     }
     public void viperslide1Down () {
         poliaright.setTargetPosition(0);
-        poliaright.setPower(0.8);
+        poliaright.setPower(1);
         poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide2Down () {
         polialeft.setTargetPosition(0);
-        polialeft.setPower(0.8);
+        polialeft.setPower(1);
         polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide1Clip ( int turnage){
@@ -230,8 +242,5 @@ public class Teleop extends OpMode {
     public void climb(){
         viperslide1Down();
         viperslide2Down();
-    }
-    public void reset(IMU imu) {
-        imu.resetYaw();
     }
 }
