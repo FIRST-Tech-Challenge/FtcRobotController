@@ -5,7 +5,7 @@ import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap
 import org.firstinspires.ftc.teamcode.internals.templates.Script
 
-class ServoScript(
+class ServoScript( //script for controlling a servo
     private val servoId: Int,
     private val input:()-> Double = { (gamepad1.right_trigger-gamepad1.left_trigger).toDouble() }
 ): Script() {
