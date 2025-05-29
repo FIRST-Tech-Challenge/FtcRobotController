@@ -32,9 +32,9 @@ public class Teleop extends OpMode {
     Servo Bright;
     Servo Bleft;
     Servo garrinha;
-    double ticks = 2700;
-    double ticks2 = 4500;
-    double ticks3 = 1000;
+    double ticks = 2750;
+    double ticks2 = 2350;
+    double ticks3 = 338;
     double newTarget;
 
     //MOVIMENTACAO
@@ -94,8 +94,19 @@ public class Teleop extends OpMode {
     }
         public void loop(){
             //INTAKE
+            if (gamepad1.right_trigger > 0.1) {
+                garra.setPosition(0.5);
+                sleep(200);
+                rotate.setPosition(0.7);
+                pleft.setPosition(0.8);
+                pright.setPosition(0.2);
+                lright.setPosition(1);
+                lleft.setPosition(0.1);
+                sleep(500);
+                garra.setPosition(0.3);
+            }
             if (gamepad2.dpad_down) {
-                garra.setPosition(0.7);
+                garra.setPosition(0.5);
                 sleep(200);
                 rotate.setPosition(0.7);
                 pleft.setPosition(0.8);
@@ -108,11 +119,22 @@ public class Teleop extends OpMode {
             if (gamepad2.a) {
                 garra.setPosition(0.3);
             }
+            if (gamepad2.b){
+                garra.setPosition(0.5);
+            }
             if (gamepad2.left_bumper){
                 rotate.setPosition(1);
             }
             if (gamepad2.right_bumper){
                 rotate.setPosition(0.5);
+            }
+            if (gamepad1.left_trigger > 0.1) {
+                lright.setPosition(0.6);
+                lleft.setPosition(0.7);
+                sleep(200);
+                garra.setPosition(0.3);
+                pleft.setPosition(0);
+                pright.setPosition(1);
             }
             if (gamepad2.dpad_up) {
                 lright.setPosition(0.6);
@@ -130,19 +152,19 @@ public class Teleop extends OpMode {
                 viperslide2Up(1);
             }
             if (gamepad1.dpad_left) {
-                viperslide1Clipar(-3);
-                viperslide2Clipar(3);
+                viperslide1Clipar(-1);
+                viperslide2Clipar(1);
             }
             if (gamepad1.dpad_right){
-                viperslide1Clip(-2);
-                viperslide2Clip(2);
+                viperslide1Clip(-1);
+                viperslide2Clip(1);
             }
             if (gamepad1.dpad_down) {
                 viperslide1Down();
                 viperslide2Down();
                 Bright.setPosition(1);
                 Bleft.setPosition(0);
-                sleep(1100);
+                sleep(1200);
                 polialeft.setPower(0);
                 poliaright.setPower(0);
             }

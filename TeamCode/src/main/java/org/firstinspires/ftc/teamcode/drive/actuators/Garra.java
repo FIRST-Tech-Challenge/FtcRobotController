@@ -4,18 +4,19 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-//@TeleOp
+@TeleOp
 public class Garra extends OpMode {
     Servo rotate;
     Servo garra;
     Servo pleft;
     Servo pright;
-
+    Servo garrinha;
     public void init() {
         rotate = hardwareMap.get(Servo.class, "rotate");
         garra = hardwareMap.get(Servo.class, "garra");
         pleft = hardwareMap.get(Servo.class, "pleft");
         pright = hardwareMap.get(Servo.class, "pright");
+        garrinha = hardwareMap.get(Servo.class, "garrinha");
     }
 
     public void loop() {
@@ -44,6 +45,12 @@ public class Garra extends OpMode {
             if (gamepad1.y) {
                 pleft.setPosition(0);
                 pright.setPosition(1);
+            }
+            if (gamepad2.a){
+                garrinha.setPosition(0);
+            }
+            if (gamepad2.b){
+                garrinha.setPosition(1);
             }
         }
     }
