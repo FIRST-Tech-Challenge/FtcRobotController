@@ -19,7 +19,7 @@ public class SpecimenSlider extends SonicSubsystemBase {
 
     public SpecimenSlider(HardwareMap hardwareMap, Telemetry telemetry, DriverFeedback feedback) {
         /* instantiate motors */
-        this.servo1  = hardwareMap.get(CRServo.class,"SpecimenServo1");
+              this.servo1  = hardwareMap.get(CRServo.class,"SpecimenServo1");
         this.servo2  = hardwareMap.get(CRServo.class,"SpecimenServo2");
 
         this.telemetry = telemetry;

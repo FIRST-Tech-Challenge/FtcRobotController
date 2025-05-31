@@ -32,3 +32,9 @@ Howto
 To disconnect
 ---
 run `adb disconnect` will disconnect everything including the control hub.
+
+Dashboard
+---
+```
+http://192.168.43.1:8080/dash
+```

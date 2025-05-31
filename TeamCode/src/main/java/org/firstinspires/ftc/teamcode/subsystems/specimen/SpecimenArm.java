@@ -1,20 +1,13 @@
 package org.firstinspires.ftc.teamcode.subsystems.specimen;
 
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.SonicSubsystemBase;
-import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
-import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 
-public class SpecimenClaw extends SonicSubsystemBase {
+public class SpecimenArm extends SonicSubsystemBase {
 
     private Servo specimenArmServo;
 
@@ -22,10 +15,10 @@ public class SpecimenClaw extends SonicSubsystemBase {
 
     private Telemetry telemetry;
 
-    public SpecimenClaw(HardwareMap hardwareMap, Telemetry telemetry, DriverFeedback feedback) {
+    public SpecimenArm(HardwareMap hardwareMap, Telemetry telemetry, DriverFeedback feedback) {
         /* instantiate motors */
-        this.specimenArmServo  = hardwareMap.get(Servo.class,"SpecimenArm");
-        this.specimenClawServo  = hardwareMap.get(Servo.class,"SpecimenClaw");
+        this.specimenArmServo  = hardwareMap.get(Servo.class,"SpecimenArmServo");
+        this.specimenClawServo  = hardwareMap.get(Servo.class,"SpecimenClawServo    ");
 
         this.telemetry = telemetry;
 
@@ -57,7 +50,7 @@ public class SpecimenClaw extends SonicSubsystemBase {
     }
 
     public void dropArm(){
-        this.specimenArmServo.setPosition(0.37);
+        this.specimenArmServo.setPosition(0);
 
     }
 

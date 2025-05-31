@@ -19,16 +19,14 @@ public class MoveAroundTest extends CommandAutoOpMode {
     @Override
     protected Command createCommand() {
         return new SequentialCommandGroup(
-                commandFactory.driveToTarget(forward_distance, 0, 0, 0.05, tolerance),
-                commandFactory.driveToTarget(0, side_distance, 0, 0.05, tolerance),
-                commandFactory.driveToTarget(forward_distance, side_distance, 0, 0.05, tolerance),
-                commandFactory.driveToTarget(0, 0, 0, 0.05, tolerance)
-                //commandFactory.driveToTarget(0, 0, 90, tolerance),
-                //commandFactory.driveToTarget(forward_distance, 0, 90, tolerance),
-                //commandFactory.driveToTarget(0, side_distance, 90, tolerance),
-                //commandFactory.driveToTarget(forward_distance, side_distance, 90, tolerance),
-                //commandFactory.driveToTarget(0, 0, 90, tolerance),
-                //commandFactory.driveToTarget(0, 0, 0, tolerance)
+                //Make an 8
+                commandFactory.driveToTarget(forward_distance, 0, 0, 0.05, 1,30),
+                commandFactory.driveToTarget(0, side_distance, 0, 0.05, 1,30),
+                commandFactory.driveToTarget(forward_distance, side_distance, 0, 0.05, 1,30),
+                commandFactory.driveToTarget(0, 0, 0, 0.05, 1,tolerance),
+                //Long Vertical Strafe
+                commandFactory.driveToTarget(forward_distance*2,side_distance,0,0.05,1,30),
+                commandFactory.driveToTarget(0,0,0,0.05,1,tolerance)
 
         );
     }

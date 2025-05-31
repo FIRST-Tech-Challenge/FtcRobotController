@@ -43,7 +43,7 @@ public class RollingIntake extends SonicSubsystemBase {
 
         this.elbowServo = hardwareMap.get(Servo.class, "Elbow");
 
-        this.colorSensor = hardwareMap.get(NormalizedColorSensor.class, "ColorSensor");
+        //this.colorSensor = hardwareMap.get(NormalizedColorSensor.class, "ColorSensor");
 
         this.gamepad = gamepad;
         this.telemetry = telemetry;
@@ -68,15 +68,15 @@ public class RollingIntake extends SonicSubsystemBase {
             telemetry.addData("IsDelivery", this.isInDeliveryPosition);
         }
 
-        if(d < 50) {
-            if (feedback != null) {
-                feedback.TurnLedGreen();
-            }
-        } else {
-            if (feedback != null) {
-                feedback.TurnLedRed();
-            }
-        }
+//        if(d < 50) {
+//            if (feedback != null) {
+//                feedback.TurnLedGreen();
+//            }
+//        } else {
+//            if (feedback != null) {
+//                feedback.TurnLedRed();
+//            }
+//        }
 
         if(state == IntakeState.Intake || state == IntakeState.IntakeAuto) {
             if(addData) {

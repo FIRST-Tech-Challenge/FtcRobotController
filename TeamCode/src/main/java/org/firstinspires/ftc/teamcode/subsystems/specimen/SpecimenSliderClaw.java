@@ -17,7 +17,7 @@ public class SpecimenSliderClaw extends SonicSubsystemBase {
 
     public SpecimenSliderClaw(HardwareMap hardwareMap, Telemetry telemetry, DriverFeedback feedback) {
         /* instantiate motors */
-        this.specimenClawServo  = hardwareMap.get(Servo.class,"SpecimenClaw");
+        this.specimenClawServo  = hardwareMap.get(Servo.class,"SpecimenClawServo");
 
         this.telemetry = telemetry;
         closeClaw();

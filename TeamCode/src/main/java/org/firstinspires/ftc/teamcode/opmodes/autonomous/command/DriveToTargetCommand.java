@@ -169,7 +169,7 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
 
         if(isTargetReached()) {
             // Give a 200ms to identify overshoot
-            sleep(200);
+            //sleep(200);
             odo.update();
 
             if(isTargetReached()) {
