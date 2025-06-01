@@ -10,6 +10,9 @@
 
 
 // Custom definitions may go here
+plugins {
+    id("io.freefair.lombok") version "8.13.1"
+}
 
 // Include common definitions from above.
 apply from: '../build.common.gradle'
@@ -27,4 +30,10 @@ dependencies {
     implementation project(':FtcRobotController')
     implementation 'org.ftclib.ftclib:core:2.1.1' // core
     implementation("com.google.guava:guava:33.3.1-android")
+
+    compileOnly("org.projectlombok:lombok:1.18.38")
+    annotationProcessor("org.projectlombok:lombok:1.18.38")
+
+    testCompileOnly("org.projectlombok:lombok:1.18.38")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
 }

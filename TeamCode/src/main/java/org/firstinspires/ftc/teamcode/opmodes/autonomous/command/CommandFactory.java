@@ -11,11 +11,9 @@ import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
 import com.arcrobotics.ftclib.trajectory.TrajectoryConfig;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 
-import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSlider;
@@ -84,23 +82,72 @@ public class CommandFactory {
     }
 
     public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower) {
-        return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, 1.0, 20);
+
+        return new DriveToTargetCommand(driveTrain, telemetry,  DriveToTargetCommand.DriveParameters
+                .builder()
+                .targetX(targetX)
+                .targetY(targetY)
+                .targetHeadingInDegrees(targetHeading)
+                .minPower(minPower).build());
     }
 
     public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower, double distanceTolerance) {
-        return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, 1.0, distanceTolerance);
+        return new DriveToTargetCommand(driveTrain, telemetry, DriveToTargetCommand.DriveParameters
+                .builder()
+                .targetX(targetX)
+                .targetY(targetY)
+                .targetHeadingInDegrees(targetHeading)
+                .minPower(minPower)
+                .distanceTolerance(distanceTolerance).build());
+    }
+
+    public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower, double distanceTolerance, DriveToTargetCommand.PIDProfile pidProfile) {
+        return new DriveToTargetCommand(driveTrain, telemetry, DriveToTargetCommand.DriveParameters
+                .builder()
+                .targetX(targetX)
+                .targetY(targetY)
+                .targetHeadingInDegrees(targetHeading)
+                .minPower(minPower)
+                .distanceTolerance(distanceTolerance)
+                .pidProfile(pidProfile).build());
     }
 
     public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance) {
-        return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, maxPower, distanceTolerance);
+        return new DriveToTargetCommand(driveTrain, telemetry, DriveToTargetCommand.DriveParameters
+                .builder()
+                .targetX(targetX)
+                .targetY(targetY)
+                .targetHeadingInDegrees(targetHeading)
+                .minPower(minPower)
+                .distanceTolerance(distanceTolerance).build());
     }
 
     public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance, long timeOut) {
-        return driveToTarget(targetX, targetY, targetHeading, minPower, maxPower, distanceTolerance, timeOut, true);
+        return new DriveToTargetCommand(driveTrain, telemetry, DriveToTargetCommand.DriveParameters
+                .builder()
+                .targetX(targetX)
+                .targetY(targetY)
+                .targetHeadingInDegrees(targetHeading)
+                .minPower(minPower)
+                .distanceTolerance(distanceTolerance)
+                .timeout(timeOut).build());
     }
 
     public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance, long timeOut, boolean turnOffMotorAtEnd) {
-        return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, maxPower, distanceTolerance, timeOut,  turnOffMotorAtEnd);
+        return new DriveToTargetCommand(driveTrain, telemetry, DriveToTargetCommand.DriveParameters
+                .builder()
+                .targetX(targetX)
+                .targetY(targetY)
+                .targetHeadingInDegrees(targetHeading)
+                .minPower(minPower)
+                .maxPower(maxPower)
+                .distanceTolerance(distanceTolerance)
+                .timeout(timeOut)
+                .turnOffMotorAtEnd(turnOffMotorAtEnd).build());
+    }
+
+    public DriveToTargetCommand driveToTargetCommand(DriveToTargetCommand.DriveParameters driveParameters) {
+        return new DriveToTargetCommand(driveTrain, telemetry, driveParameters);
     }
 
     public ForwardDistanceCommand checkForwardDistance(double expectedDistance, double minDistance, long timeOut) {

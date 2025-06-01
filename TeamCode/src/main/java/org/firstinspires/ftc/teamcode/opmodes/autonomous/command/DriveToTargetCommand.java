@@ -10,9 +10,77 @@ import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDrive
 import org.firstinspires.ftc.teamcode.util.AngleUtils;
 import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
+import lombok.Builder;
+import lombok.Value;
+
 @Config
 public class DriveToTargetCommand extends SounderBotCommandBase {
 
+
+    @Builder
+    @Value
+    public static class DriveParameters {
+        double targetX;
+        double targetY;
+        double targetHeadingInDegrees;
+        @Builder.Default
+        double minPower = 0.05;
+        @Builder.Default
+        double maxPower = 1.0;
+        @Builder.Default
+        double distanceTolerance = 20;
+        @Builder.Default
+        PIDProfile pidProfile = PIDProfile.FAST;
+        @Builder.Default
+        boolean turnOffMotorAtEnd = true;
+        @Builder.Default
+        long timeout = 1800;
+
+        public static DriveParameters create(double targetX, double targetY, double targetHeadingInDegrees) {
+            return DriveParameters.builder()
+                    .targetX(targetX)
+                    .targetY(targetY)
+                    .targetHeadingInDegrees(targetHeadingInDegrees)
+                    .build();
+        }
+    }
+
+    public static enum PIDProfile {
+        FAST,
+        SLOW
+    }
+
+    @Config
+    public static class FastPID {
+        public static double xPid_p =  0.0037;
+        public static double xPid_i =  0.00006;
+        public static double xPid_d =  0.0008;
+        public static double xPid_f =  0;
+        public static double yPid_p = -0.0037;
+        public static double yPid_i = -0.00006;
+        public static double yPid_d = -0.0008;
+        public static double yPid_f = -0;
+        public static double hPid_p = 0.8;
+        public static double hPid_i = 0;
+        public static double hPid_d = 0.05;
+        public static double hPid_f = 0;
+    }
+
+    @Config
+    public static class SlowPID {
+        public static double xPid_p =  0.0037;
+        public static double xPid_i =  0.00006;
+        public static double xPid_d =  0.0008;
+        public static double xPid_f =  0;
+        public static double yPid_p = -0.0037;
+        public static double yPid_i = -0.00006;
+        public static double yPid_d = -0.0008;
+        public static double yPid_f = -0;
+        public static double hPid_p = 0.8;
+        public static double hPid_i = 0;
+        public static double hPid_d = 0.05;
+        public static double hPid_f = 0;
+    }
     private static final String LOG_TAG = DriveToTargetCommand.class.getSimpleName();
     double minPower = 0.15;
 
@@ -30,21 +98,6 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     //Generally, increase P with D will create the response of slowing down harder over a shorter time.
     //I is helpful when straight lines begin to wander left or right without any external input, or if theres a consistent undershoot or overshoot.
 
-    public static double xPid_p =  0.0037;
-    public static double xPid_i =  0.00006;
-    public static double xPid_d =  0.0008;
-    public static double xPid_f =  0;
-
-    public static double yPid_p = -0.0037;
-    public static double yPid_i = -0.00006;
-    public static double yPid_d = -0.0008;
-    public static double yPid_f = -0;
-
-    public static double hPid_p = 0.8;
-    public static double hPid_i = 0;
-    public static double hPid_d = 0.05;
-    public static double hPid_f = 0;
-
     SonicPIDFController xPid;
 
     SonicPIDFController yPid;
@@ -57,31 +110,40 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     double xSpeedScale = 1.1;
     double ySpeedScale = 1.0;
 
-    public DriveToTargetCommand(DriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower) {
-        this(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, 1.0, 20);
-    }
 
-    public DriveToTargetCommand(DriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance) {
-        this(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, maxPower, distanceTolerance, 1800, true);
-    }
-
-    public DriveToTargetCommand(DriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance, long timeOut, boolean turnOffMotorAtEnd) {
-        super(timeOut);
+    public DriveToTargetCommand(DriveTrain driveTrain, Telemetry telemetry, DriveParameters driveParameters) {
+        super(driveParameters.timeout);
 
         this.driveTrain = driveTrain;
         this.odo = driveTrain.getOdo();
         this.telemetry = telemetry;
-        this.targetX = targetX;
-        this.targetY = targetY;
-        this.targetHeading = Math.toRadians(targetHeading);
-        this.minPower = minPower;
-        this.maxPower = maxPower;
-        this.distanceTolerance = distanceTolerance;
-        this.turnOffMotorAtEnd = turnOffMotorAtEnd;
+        this.targetX = driveParameters.targetX;
+        this.targetY = driveParameters.targetY;
+        this.targetHeading = Math.toRadians(driveParameters.targetHeadingInDegrees);
+        this.minPower = driveParameters.minPower;
+        this.maxPower = driveParameters.maxPower;
+        this.distanceTolerance = driveParameters.distanceTolerance;
+        this.turnOffMotorAtEnd = driveParameters.turnOffMotorAtEnd;
 
-        xPid = new SonicPIDFController(xPid_p, xPid_i, xPid_d, xPid_f);
-        yPid = new SonicPIDFController(yPid_p, yPid_i, yPid_d, yPid_f);
-        hPid = new SonicPIDFController(hPid_p, hPid_i, hPid_d, hPid_f);
+        switch (driveParameters.pidProfile) {
+            case FAST:
+                xSpeedScale = 1.1;
+                ySpeedScale = 1.0;
+                xPid = new SonicPIDFController(FastPID.xPid_p, FastPID.xPid_i, FastPID.xPid_d, FastPID.xPid_f);
+                yPid = new SonicPIDFController(FastPID.yPid_p, FastPID.yPid_i, FastPID.yPid_d, FastPID.yPid_f);
+                hPid = new SonicPIDFController(FastPID.hPid_p, FastPID.hPid_i, FastPID.hPid_d, FastPID.hPid_f);
+                break;
+            case SLOW:
+                xSpeedScale = 1.1;
+                ySpeedScale = 1.0;
+                xPid = new SonicPIDFController(SlowPID.xPid_p, SlowPID.xPid_i, SlowPID.xPid_d, SlowPID.xPid_f);
+                yPid = new SonicPIDFController(SlowPID.yPid_p, SlowPID.yPid_i, SlowPID.yPid_d, SlowPID.yPid_f);
+                hPid = new SonicPIDFController(SlowPID.hPid_p, SlowPID.hPid_i, SlowPID.hPid_d, SlowPID.hPid_f);
+                break;
+        }
+        xPid = new SonicPIDFController(FastPID.xPid_p, FastPID.xPid_i, FastPID.xPid_d, FastPID.xPid_f);
+        yPid = new SonicPIDFController(FastPID.yPid_p, FastPID.yPid_i, FastPID.yPid_d, FastPID.yPid_f);
+        hPid = new SonicPIDFController(FastPID.hPid_p, FastPID.hPid_i, FastPID.hPid_d, FastPID.hPid_f);
 
         addRequirements(driveTrain);
     }
