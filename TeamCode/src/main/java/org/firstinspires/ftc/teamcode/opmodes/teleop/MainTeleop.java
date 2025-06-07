@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.IntakeCommand;
 import org.firstinspires.ftc.teamcode.opmodes.command.SounderBotBaseRunCommand;
 import org.firstinspires.ftc.teamcode.opmodes.OpModeTemplate;
 import org.firstinspires.ftc.teamcode.opmodes.PowerMode;
@@ -20,7 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSlider;
-import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenArm;
+import org.firstinspires.ftc.teamcode.subsystems.intake.MultiAxisIntake;
 //import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSliderClaw;
 
@@ -48,7 +49,7 @@ public class MainTeleop extends OpModeTemplate {
         //LimeLight limeLight = new LimeLight(hardwareMap, telemetry);
         HangingArm hangingArm = new HangingArm(hardwareMap, telemetry, driverGamepad, feedback);
         SpecimenSliderClaw specimenSliderClaw = new SpecimenSliderClaw(hardwareMap, telemetry, feedback);
-        SpecimenArm specimanArm = new SpecimenArm(hardwareMap, telemetry, feedback);
+        MultiAxisIntake multiAxisIntake = new MultiAxisIntake(hardwareMap, operatorGamepad, telemetry, feedback);
 
         driveTrain = new TeleDriveTrain(hardwareMap, driverGamepad, telemetry, feedback, null);
 
@@ -117,12 +118,9 @@ public class MainTeleop extends OpModeTemplate {
                 .whenPressed(new InstantCommand(specimenSlider::Collapse, specimenSlider))
                 .whenReleased(new InstantCommand(specimenSlider::Hold, specimenSlider));
 
-        //operatorGamepad.getGamepadButton(GamepadKeys.Button.B)
-        //        .whenPressed(new InstantCommand(specimanArm::dropArm, specimanArm))
-        //        .whenReleased(new InstantCommand(specimanArm::raiseArm, specimanArm));
-
         operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new InstantCommand(specimenSliderClaw::ToggleClaw, specimenSliderClaw));
+                .whenPressed(new InstantCommand(multiAxisIntake::setIntakeSample, multiAxisIntake));
+
         // Toggle wrist angle
         operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
                 .whenHeld(new SequentialCommandGroup(
