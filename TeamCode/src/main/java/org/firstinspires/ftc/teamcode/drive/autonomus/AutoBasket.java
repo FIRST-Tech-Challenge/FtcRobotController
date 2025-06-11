@@ -32,8 +32,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
  * @version 2.0, 11/28/2024
  */
 
-@Autonomous(name = "Auto Blue", group = "Examples")
-public class AutoTest extends OpMode {
+@Autonomous(name = "Auto Basket", group = "Examples")
+public class AutoBasket extends OpMode {
 
     Servo rotate;
     Servo garra;
@@ -72,26 +72,26 @@ public class AutoTest extends OpMode {
      * Lets assume the Robot is facing the human player and we want to score in the bucket */
 
     /** Start Pose of our robot */
-    private final Pose startPose = new Pose(6.728971962616822, 103.19626168224299, Math.toRadians(0));
+    private final Pose startPose = new Pose(6.280373831775702, 103.17757009345796, Math.toRadians(0));
 
     /** Scoring Pose of our robot. It is facing the submersible at a -45 degree (315 degree) angle. */
-    private final Pose scorePose = new Pose(14.528037383177569, 132.42056074766356, Math.toRadians(135));
+    private final Pose scorePose = new Pose(11.663551401869158, 131.21495327102804, Math.toRadians(135));
 
     /** Lowest (First) Sample from the Spike Mark */
-    private final Pose pickup1Pose = new Pose(20.67289719626168, 124.95327102803738, Math.toRadians(180));
+    private final Pose pickup1Pose = new Pose(23.91588785046729, 125.7943925233645, Math.toRadians(180));
 
     /** Middle (Second) Sample from the Spike Mark */
-    private final Pose pickup2Pose = new Pose(21.121495327102807, 137.80373831775702, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(23.36448598130841, 131.21495327102804, Math.toRadians(180));
 
     /** Highest (Third) Sample from the Spike Mark */
-    private final Pose pickup3Pose = new Pose(26.018691588785046, 145.98130841121497, Math.toRadians(190));
+    private final Pose pickup3Pose = new Pose(25.934579439252335, 137.49532710280374, Math.toRadians(190));
 
     /** Park Pose for our robot, after we do all of the scoring. */
-    private final Pose parkPose = new Pose(14.528037383177569, 132.42056074766356, Math.toRadians(135));
+    private final Pose parkPose = new Pose(11.663551401869158, 131.21495327102804, Math.toRadians(135));
 
     /** Park Control Pose for our robot, this is used to manipulate the bezier curve that we will create for the parking.
      * The Robot will not go to this pose, it is used a control point for our bezier curve. */
-    private final Pose parkControlPose = new Pose(14.528037383177569, 132.42056074766356, Math.toRadians(135));
+    private final Pose parkControlPose = new Pose(11.663551401869158, 131.21495327102804, Math.toRadians(135));
 
     /* These are our Paths and PathChains that we will define in buildPaths() */
     private Path scorePreload, park;
@@ -340,7 +340,7 @@ public class AutoTest extends OpMode {
     @Override
     public void stop() {
     }
-    public void viperslide1Up ( int turnage){
+    public void viperslide1Up ( int turnage){   
         newTarget = ticks / turnage;
         poliaright.setTargetPosition((int) newTarget);
         poliaright.setPower(1);
