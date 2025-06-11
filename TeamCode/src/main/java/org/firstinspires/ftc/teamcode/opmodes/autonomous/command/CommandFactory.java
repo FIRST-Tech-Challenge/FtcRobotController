@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.DriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.intake.MultiAxisIntake;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSlider;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSliderClaw;
@@ -44,29 +45,19 @@ public class CommandFactory {
 
 
     private final DriveTrain driveTrain;
-    private final RollingIntake intake;
+    private final MultiAxisIntake intake;
     private final LimeLight vision;
     private final Telemetry telemetry;
     private final DeliveryPivot pivot;
     private final DeliverySlider slider;
 
-    private  final SpecimenSlider specimenSlider;
-
-    private  final SpecimenSliderClaw specimenSliderClaw;
-
-    public CommandFactory(Telemetry telemetry, DriveTrain driveTrain, RollingIntake intake, LimeLight vision, DeliveryPivot pivot, DeliverySlider slider, SpecimenSlider specimenSlider, SpecimenSliderClaw specimenSliderClaw) {
+    public CommandFactory(Telemetry telemetry, DriveTrain driveTrain, MultiAxisIntake intake, LimeLight vision, DeliveryPivot pivot, DeliverySlider slider) {
         this.driveTrain = driveTrain;
         this.intake = intake;
         this.vision = vision;
         this.telemetry = telemetry;
         this.pivot = pivot;
         this.slider = slider;
-        this.specimenSlider = specimenSlider;
-        this.specimenSliderClaw = specimenSliderClaw;
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        if (dashboard.isEnabled()) {
-
-        }
     }
 
     public TelemetryCommand WriteTelemetry() {
@@ -161,23 +152,6 @@ public class CommandFactory {
     public AlignDriveTrainToSpecimenDelivery alignToSpecimenIntake(double expectedDistanncne, double absoluteMin, long timeOut) {
         return new AlignDriveTrainToSpecimenDelivery(driveTrain, expectedDistanncne, absoluteMin, timeOut, telemetry);
     }
-
-    public ExtendSpecimenSlider extendSpecimenSlider(long timeOut) {
-        return new ExtendSpecimenSlider(specimenSlider, timeOut, telemetry);
-    }
-
-    public CollapseSpecimenSlider collapseSpecimenSlider(long timeOut) {
-        return new CollapseSpecimenSlider(specimenSlider, timeOut, telemetry);
-    }
-
-    public InstantCommand openSpecimenClaw() {
-        return new InstantCommand(specimenSliderClaw::openClaw, specimenSliderClaw);
-    }
-
-    public InstantCommand closeSpecimenClaw() {
-        return new InstantCommand(specimenSliderClaw::closeClaw, specimenSliderClaw);
-    }
-
     public MoveSliderCommand extendSlider() {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition - 20, DeliverySlider.Direction.EXPANDING);
     }
@@ -194,12 +168,8 @@ public class CommandFactory {
 //        return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition, DeliverySlider.Direction.EXPANDING).withEndAction(new MoveSliderCommand.EndAction(endHoldingSignalProvider));
 //    }
 
-    public WhileSamplePresent whileSamplePresent(int timeout) {
-        return new WhileSamplePresent(intake, telemetry, timeout);
-    }
-
     public MoveSliderCommand extendSliderToSpecimen() {
-        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition, DeliverySlider.Direction.EXPANDING);
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.SpecimenPosition, DeliverySlider.Direction.EXPANDING);
     }
 
     public MoveSliderCommand extendSliderToSweep() {
@@ -280,46 +250,6 @@ public class CommandFactory {
 
     }
 
-    public SingleRunCommand elbowToIntakePosition() {
-        return new SingleRunCommand(intake::SetElbowInIntakePosition);
-    }
-
-    public Command elbowToPosition(double position) {
-        return new SingleRunCommand(() -> intake.setElbowToPosition(position));
-    }
-
-    public SingleRunCommand elbowToIntakePositionForSample3() {
-        return new SingleRunCommand(intake::SetElbowInIntakePositionForSample3);
-    }
-
-    public SingleRunCommand elbowToDeliveryPosition() {
-        return new SingleRunCommand(intake::SetElbowInSampleDeliveryPosition);
-    }
-
-    public SingleRunCommand elbowToSweepPosition() {
-        return new SingleRunCommand(intake::SetElbowInSampleSweepPosition);
-    }
-
-    public SingleRunCommand elbowToStartPosition() {
-        return new SingleRunCommand(intake::SetElbowInInStart);
-    }
-
-    public SingleRunCommand elbowToSpecimenPosition() {
-        return new SingleRunCommand(intake::SetElbowInSampleDeliveryPosition);
-    }
-
-    public SmartIntakeCommand intake() {
-        return new SmartIntakeCommand(intake);
-    }
-
-    public SmartOuttakeCommand outtake() {
-        return new SmartOuttakeCommand(intake);
-    }
-
-    public IntakeFromGround intakeFromGround() {
-        return new IntakeFromGround(intake, pivot, telemetry);
-    }
-
     public MovePivotCommand AutoToGround(int waitTime) {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(650, 0.715), 100, waitTime,  .07);
     }
@@ -331,42 +261,10 @@ public class CommandFactory {
     public MovePivotCommand AutoToGroundForSample3(int waitTime) {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(680, 0.715), 100, waitTime,  .07);
     }
-
-    public ParallelRaceGroup intakeFromGround2(int waitTime) {
-        return new ParallelRaceGroup(
-                intake(),
-                AutoToGround(waitTime)
-        );
-    }
-
-    public Command intakeFromGroundForSample3(int waitTime) {
-        return new ParallelRaceGroup(
-                intake(),
-                AutoToGroundForSample3(waitTime)
-        );
-    }
-
-    public Command intakeFromGround(double groundTarget, int waitTime) {
-        return new ParallelRaceGroup(
-                intake(),
-                AutoToGroundForSample(groundTarget, waitTime)
-        );
-    }
-
-    public IntakeFromWall intakeFromWall() {
-        return new IntakeFromWall(driveTrain, intake);
-    }
-
     public SleeperCommand sleep(long timeToSleepMs) {
         return new SleeperCommand(timeToSleepMs);
     }
 
-    public Command inCaseSampleIntakeFailed(String sampleName, Command command) {
-        Map<Object, Command> commandMap = new HashMap<>();
-        commandMap.put(true, doNothing().alongWith(new LogCatCommand(LOG_TAG, ">>>>> " + sampleName + " in place, do nothing", Log.INFO)));
-        commandMap.put(false, command.alongWith(new LogCatCommand(LOG_TAG, ">>>>> " + sampleName + " in take failed, retrying...", Log.INFO)));
-        return new SelectCommand(commandMap, intake::IsSampleIntaken);
-    }
     public Command doNothing() {
         return new InstantCommand();
     }

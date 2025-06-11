@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.SonicSubsystemBase;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
+import org.firstinspires.ftc.teamcode.subsystems.intake.MultiAxisIntake;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 import static org.firstinspires.ftc.teamcode.util.Units.*;
@@ -32,9 +33,13 @@ public class DeliveryPivot extends SonicSubsystemBase {
     // 384.5 / 537.7 = 0.715
     private int StartPositionFromCalibration = scale(2800, .715);
 
-    public static int DeliveryPositionFromStart = scale(1325, .715); //CHANGED
+    public static int DeliveryPositionFromStart = scale(1000, .715); //CHANGED
 
-    public static int IntakePositionFromStart = scale(-1775, .715);
+    public static int IntakePositionFromStart = scale(-1875, .715);
+
+    public static int SpecimenIntakePositionFromStart = scale(-1800, .715);
+
+    public static int SpecimenIntakePickPositionFromStart = scale(-1200, .715);
 
     public static int SweepPositionFromStart = scale(-2900, .715);
 
@@ -60,11 +65,11 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     public static double recordedPosition;
 
-    RollingIntake rollingIntake;
+    MultiAxisIntake intake;
 
     NormalizedColorSensor colorSensor;
 
-    public DeliveryPivot(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, RollingIntake rollingIntake) {
+    public DeliveryPivot(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, MultiAxisIntake intake) {
         /* instantiate motors */
         this.motor  = new Motor(hardwareMap, "DeliveryPivot");
         this.colorSensor = hardwareMap.get(NormalizedColorSensor.class, "PivotColor");
@@ -75,7 +80,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
         this.gamepad = gamepad;
         this.telemetry = telemetry;
         this.feedback = feedback;
-        this.rollingIntake = rollingIntake;
+        this.intake = intake;
 
         this.recordedPosition = 0;
 
@@ -154,6 +159,16 @@ public class DeliveryPivot extends SonicSubsystemBase {
     public void AutoToIntake() {
         SetAuto();
         this.currentTarget = IntakePositionFromStart;
+    }
+
+    public void AutoToISpecimenIntake() {
+        SetAuto();
+        this.currentTarget = SpecimenIntakePositionFromStart;
+    }
+
+    public void AutoToSpecimenIntakePick() {
+        SetAuto();
+        this.currentTarget = SpecimenIntakePickPositionFromStart;
     }
 
     public void AutoToStart() {

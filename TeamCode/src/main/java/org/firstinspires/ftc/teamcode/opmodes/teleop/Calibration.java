@@ -21,8 +21,7 @@ public class Calibration extends OpModeTemplate {
         super.initialize();
 
         DriverFeedback feedback = new DriverFeedback(hardwareMap, driverGamepad, operatorGamepad, telemetry);
-        RollingIntake rollingIntake = new RollingIntake(hardwareMap, operatorGamepad, telemetry, feedback);
-        DeliveryPivot deliveryPivot = new DeliveryPivot(hardwareMap, operatorGamepad, telemetry, feedback, rollingIntake);
+        DeliveryPivot deliveryPivot = new DeliveryPivot(hardwareMap, operatorGamepad, telemetry, feedback, null);
         DeliverySlider deliverySlider = new DeliverySlider(hardwareMap, operatorGamepad, telemetry, feedback, deliveryPivot);
 
         TeleDriveTrain driveTrain = new TeleDriveTrain(hardwareMap, driverGamepad, telemetry, feedback, null);
@@ -46,11 +45,11 @@ public class Calibration extends OpModeTemplate {
         operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
                 .whenHeld(new InstantCommand(deliveryPivot::Calibrate, deliveryPivot));
 
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.B)
-                .whenHeld(new InstantCommand(rollingIntake::SetElbowInSampleDeliveryPosition, rollingIntake));
+//        operatorGamepad.getGamepadButton(GamepadKeys.Button.B)
+//                .whenHeld(new InstantCommand(rollingIntake::SetElbowInSampleDeliveryPosition, rollingIntake));
 
         // Register all subsystems
-        register(deliveryPivot, deliverySlider, driveTrain, rollingIntake, feedback);
+        register(deliveryPivot, deliverySlider, driveTrain, feedback);
 
         // update telemetry every loop
         schedule(new RunCommand(telemetry::update));

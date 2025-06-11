@@ -38,24 +38,24 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     private DriverFeedback feedback;
 
-    public static int BasketDeliveryPosition = 870;
+    public static int BasketDeliveryPosition = 900;
 
-    public static int MaxExtension = 890;
+    public static int MaxExtension = 910;
 
     public static int CollapsedPosition = -10;
 
     public static int StartPosition = 125;
 
-    public static int SpecimenPosition = 145;
+    public static int SpecimenPosition = 295;
 
     public static int ExtendLimit = 420;
 
     private int currentTarget = 0;
 
-    public static double pid_p = 0.005;
+    public static double pid_p = 0.0045;
     public static double pid_i = 0;
     public static double pid_d = 0;
-    public static double pid_f = 0.05;
+    public static double pid_f = 0.02;
 
     public static SonicPIDFController pidController = new SonicPIDFController(pid_p, pid_i, pid_d, pid_f);
 
@@ -161,6 +161,16 @@ public class DeliverySlider extends SonicSubsystemBase {
         currentTarget = CollapsedPosition;
     }
 
+    public void MoveToCollapsedPositionForSpecimen() {
+        isTeleop = false;
+        currentTarget = CollapsedPosition;
+    }
+
+    public void MoveToSpecimenPosition() {
+        isTeleop = false;
+        currentTarget = SpecimenPosition;
+    }
+
     @Override
     public void periodic() {
         super.periodic();
@@ -169,7 +179,7 @@ public class DeliverySlider extends SonicSubsystemBase {
         recordedPosition = position;
         Log.i("armControl", "slider position = " + position + ", action: " + (motor.get() > 0 ? "extend" : (motor.get() < 0 ? "Collapse" : "Stop")) );
 
-        boolean addTelemetry = false;
+        boolean addTelemetry = true;
         double expectedPivotAngle = Math.toDegrees(Math.asin(7.25 / (14.5 + position * 0.0329)));
         double sliderLength = position * 0.0329;
         int extraTicks = (int)((30 - expectedPivotAngle) * -3);

@@ -9,21 +9,18 @@ import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.IntakeCommand;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.CommandFactory;
 import org.firstinspires.ftc.teamcode.opmodes.command.SounderBotBaseRunCommand;
 import org.firstinspires.ftc.teamcode.opmodes.OpModeTemplate;
 import org.firstinspires.ftc.teamcode.opmodes.PowerMode;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.MovePivotRelativelyCommand;
-import org.firstinspires.ftc.teamcode.subsystems.climb.HangingArm;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleDriveTrain;
-import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
-import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSlider;
 import org.firstinspires.ftc.teamcode.subsystems.intake.MultiAxisIntake;
 //import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
-import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSliderClaw;
+
 
 /**
  * This is old mainTeleop
@@ -39,17 +36,15 @@ public class MainTeleop extends OpModeTemplate {
     public void initialize() {
         super.initialize();
 
-
         DriverFeedback feedback = new DriverFeedback(hardwareMap, driverGamepad, operatorGamepad, telemetry);
-        RollingIntake rollingIntake = new RollingIntake(hardwareMap, operatorGamepad, telemetry, feedback);
-        DeliveryPivot deliveryPivot = new DeliveryPivot(hardwareMap, operatorGamepad, telemetry, feedback, rollingIntake);
+        MultiAxisIntake multiAxisIntake = new MultiAxisIntake(hardwareMap, operatorGamepad, telemetry, feedback);
+        DeliveryPivot deliveryPivot = new DeliveryPivot(hardwareMap, operatorGamepad, telemetry, feedback, multiAxisIntake);
         DeliverySlider deliverySlider = new DeliverySlider(hardwareMap, operatorGamepad, telemetry, feedback, deliveryPivot);
         deliverySlider.setPivotLowEnoughSupplier(deliveryPivot::lowEnoughToLimitSlider);
-        SpecimenSlider specimenSlider = new SpecimenSlider(hardwareMap, telemetry, feedback);
         //LimeLight limeLight = new LimeLight(hardwareMap, telemetry);
-        HangingArm hangingArm = new HangingArm(hardwareMap, telemetry, driverGamepad, feedback);
-        SpecimenSliderClaw specimenSliderClaw = new SpecimenSliderClaw(hardwareMap, telemetry, feedback);
-        MultiAxisIntake multiAxisIntake = new MultiAxisIntake(hardwareMap, operatorGamepad, telemetry, feedback);
+        //HangingArm hangingArm = new HangingArm(hardwareMap, telemetry, driverGamepad, feedback);
+
+        CommandFactory commands = new CommandFactory(telemetry, driveTrain, multiAxisIntake, null, deliveryPivot, deliverySlider );
 
         driveTrain = new TeleDriveTrain(hardwareMap, driverGamepad, telemetry, feedback, null);
 
@@ -91,19 +86,24 @@ public class MainTeleop extends OpModeTemplate {
 
         // Intake and Outtake
 
-        new Trigger(() -> gamepad2.right_trigger > 0.5)
-                .whenActive(new InstantCommand(rollingIntake::Intake, rollingIntake))
-                .whenInactive(new InstantCommand(rollingIntake::Hold, rollingIntake));
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(new InstantCommand(multiAxisIntake::ToggleClaw, multiAxisIntake));
 
-        new Trigger(() -> gamepad2.left_trigger > 0.5)
-                .whenActive(new InstantCommand(rollingIntake::Outtake, rollingIntake))
-                .whenInactive(new InstantCommand(rollingIntake::Hold, rollingIntake));
 
-        driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                .whenPressed(new InstantCommand(rollingIntake::ToggleElbowAcrossAll, rollingIntake));
+
+//
+//        driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+//                .whenPressed(new InstantCommand(rollingIntake::ToggleElbowAcrossAll, rollingIntake));
 
         driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(new InstantCommand(deliverySlider::MoveToMaxExtension, deliverySlider));
+
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new SequentialCommandGroup(
+                                new InstantCommand(multiAxisIntake::CloseClawAndWait, multiAxisIntake),
+                                new InstantCommand(deliveryPivot::AutoToSpecimenIntakePick, deliveryPivot)
+
+                        ));
 
         //driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
         //        .whenPressed(new AlignToSampleUsingLimelight(driveTrain, limeLight, telemetry, 3000));
@@ -111,42 +111,70 @@ public class MainTeleop extends OpModeTemplate {
         // Specimen Slider Actions
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-                .whenPressed(new InstantCommand(specimenSlider::Expand, specimenSlider))
-                .whenReleased(new InstantCommand(specimenSlider::Hold, specimenSlider));
+                .whenPressed(
+                        new SequentialCommandGroup(
+                                new ParallelCommandGroup(
+                                        new InstantCommand(deliveryPivot::AutoToISpecimenIntake, deliveryPivot),
+                                        new InstantCommand(deliverySlider::MoveToCollapsedPosition, deliverySlider),
+                                        new InstantCommand(multiAxisIntake::SequenceSpecimentOuttakeToIntake, multiAxisIntake)
+                                )
+                            )
+                        );
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(new InstantCommand(specimenSlider::Collapse, specimenSlider))
-                .whenReleased(new InstantCommand(specimenSlider::Hold, specimenSlider));
+                .whenPressed(
+                        new SequentialCommandGroup(
+                                new ParallelCommandGroup(
+                                        new InstantCommand(deliveryPivot::AutoToDelivery, deliveryPivot),
+                                        new InstantCommand(multiAxisIntake::SequenceSpecimentIntakeToOuttake, multiAxisIntake)
+                                ),
+                                new InstantCommand(deliverySlider::MoveToSpecimenPosition, deliverySlider)
+                        )
+                );
 
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new InstantCommand(multiAxisIntake::setIntakeSample, multiAxisIntake));
 
         // Toggle wrist angle
         operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
                 .whenHeld(new SequentialCommandGroup(
-                        new InstantCommand(deliverySlider::MoveToDeliverySamplePosition, deliverySlider),
-                        new InstantCommand(rollingIntake::ToggleElbowPosition, rollingIntake)
+                        new InstantCommand(deliverySlider::MoveToDeliverySamplePosition, deliverySlider)
+                        //new InstantCommand(rollingIntake::ToggleElbowPosition, rollingIntake)
                 ));
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.X)
                 .whenHeld(new ParallelCommandGroup(
-                        new InstantCommand(rollingIntake::ToggleElbowPosition, rollingIntake),
                         new InstantCommand(deliverySlider::MoveToCollapsedPosition, deliverySlider)
                 ));
 
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.B)
-                .whenHeld(new InstantCommand(deliveryPivot::AutoToDelivery, deliveryPivot));
+                .whenHeld(new SequentialCommandGroup(
+                        new ParallelCommandGroup(
+                            new InstantCommand(deliveryPivot::AutoToDelivery, deliveryPivot),
+                            new InstantCommand(multiAxisIntake::SetYawBackward, multiAxisIntake)
+                        ),
+                        //new InstantCommand(multiAxisIntake::Wait, multiAxisIntake),
+                        new InstantCommand(multiAxisIntake::SetPitchOuttakeSample, multiAxisIntake)
+                        )
+                );
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.Y)
-                .whenHeld(new InstantCommand(deliveryPivot::AutoToIntake, deliveryPivot));
+                .whenHeld(new SequentialCommandGroup(
+                            new ParallelCommandGroup(
+                                new InstantCommand(deliveryPivot::AutoToIntake, deliveryPivot),
+                                new InstantCommand(multiAxisIntake::SetPitchIntakeSubmersible, multiAxisIntake)
+                            ),
+                            //new InstantCommand(multiAxisIntake::Wait, multiAxisIntake),
+                            new InstantCommand(multiAxisIntake::SetYawForward, multiAxisIntake),
+                            new InstantCommand(multiAxisIntake::OpenClaw, multiAxisIntake)
+                        )
+                );
 
         // Pivot back to start position - previously on operator gamepad
         driverGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new InstantCommand(deliveryPivot::AutoToStart, deliveryPivot));
 
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(new InstantCommand(rollingIntake::ToggleElbowPosition, rollingIntake));
+//        operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+//                .whenPressed(new InstantCommand(rollingIntake::ToggleElbowPosition, rollingIntake));
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
                 .whenPressed(new InstantCommand(deliverySlider::ResetEncoder, deliverySlider));
@@ -154,31 +182,25 @@ public class MainTeleop extends OpModeTemplate {
         operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
                     .whenPressed(new MovePivotRelativelyCommand(deliveryPivot, MovePivotRelativelyCommand.Direction.ToPickup, deliveryPivot.DeliveryPositionFromStart - 400, telemetry)
                             .andThen(new InstantCommand(deliveryPivot::resetEncoder, deliveryPivot)));
-
-        //driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-        //        .whenPressed(new InstantCommand(driveTrain::AlignTx, driveTrain));
-
-        //driverGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-        //        .whenPressed(new InstantCommand(driveTrain::AlignTy, driveTrain));
-
-        driverGamepad.getGamepadButton(GamepadKeys.Button.Y)
-                .whenHeld(new InstantCommand(hangingArm::collapse, hangingArm))
-                .whenReleased(new InstantCommand(hangingArm::hold, hangingArm));
-
-        driverGamepad.getGamepadButton(GamepadKeys.Button.X)
-                .whenHeld(new InstantCommand(hangingArm::extend, hangingArm))
-                .whenReleased(new InstantCommand(hangingArm::hold, hangingArm));
+//
+//        driverGamepad.getGamepadButton(GamepadKeys.Button.Y)
+//                .whenHeld(new InstantCommand(hangingArm::collapse, hangingArm))
+//                .whenReleased(new InstantCommand(hangingArm::hold, hangingArm));
+//
+//        driverGamepad.getGamepadButton(GamepadKeys.Button.X)
+//                .whenHeld(new InstantCommand(hangingArm::extend, hangingArm))
+//                .whenReleased(new InstantCommand(hangingArm::hold, hangingArm));
 
         // DRIVER Actions
 
         // Drivetrain speed
         new Trigger(() -> gamepad1.right_trigger > 0.5)
-                .whenActive(new InstantCommand(this::switchToNitroMode, driveTrain))
-                .whenInactive(new InstantCommand(this::switchToRegularMode, driveTrain));
+                .whenActive(new InstantCommand(this::switchToRegularMode, driveTrain))
+                .whenInactive(new InstantCommand(this::switchToNitroMode, driveTrain));
 
         new Trigger(() -> gamepad1.left_trigger > 0.5)
                 .whenActive(new InstantCommand(this::switchToSlowMode, driveTrain))
-                .whenInactive(new InstantCommand(this::switchToRegularMode, driveTrain));
+                .whenInactive(new InstantCommand(this::switchToNitroMode, driveTrain));
 
 
         // Robot direction
@@ -191,10 +213,14 @@ public class MainTeleop extends OpModeTemplate {
                 .whenHeld(new InstantCommand(driveTrain::ToggleDriveDirection, driveTrain));
 
         // Register all subsystems
-        register(driveTrain, deliveryPivot, deliverySlider, feedback, rollingIntake, specimenSlider); //, limeLight);
+        register(driveTrain, deliveryPivot, deliverySlider, feedback); //, limeLight);
 
         // update telemetry every loop
         schedule(SounderBotBaseRunCommand.createTelemetryEnabledOnlyInstance(telemetry));
+    }
+
+    public void SleepFor500ms() {
+        sleep(500);
     }
 
     @Override

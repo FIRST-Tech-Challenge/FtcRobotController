@@ -10,7 +10,9 @@ public class SleeperCommand extends SounderBotCommandBase {
 
 
     @Override
-    protected void doExecute() {}
+    protected void doExecute() {
+
+    }
 
     @Override
     protected boolean isTargetReached() {
