@@ -32,7 +32,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
  * @version 2.0, 11/28/2024
  */
 
-@Autonomous(name = "Auto Clip", group = "Examples")
+//@Autonomous(name = "Auto Clip", group = "Examples")
 public class AutoClip extends OpMode {
     double ticks2 = 2350;
     double ticks3 = 338;

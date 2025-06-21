@@ -32,7 +32,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
  * @version 2.0, 11/28/2024
  */
 
-@Autonomous(name = "Auto Basket", group = "Examples")
+//@Autonomous(name = "Auto Basket", group = "Examples")
 public class AutoBasket extends OpMode {
 
     Servo rotate;
@@ -75,16 +75,16 @@ public class AutoBasket extends OpMode {
     private final Pose startPose = new Pose(6.280373831775702, 103.17757009345796, Math.toRadians(0));
 
     /** Scoring Pose of our robot. It is facing the submersible at a -45 degree (315 degree) angle. */
-    private final Pose scorePose = new Pose(11.663551401869158, 131.21495327102804, Math.toRadians(135));
+    private final Pose scorePose = new Pose(12.663551401869158, 131.21495327102804, Math.toRadians(135));
 
     /** Lowest (First) Sample from the Spike Mark */
-    private final Pose pickup1Pose = new Pose(23.91588785046729, 125.7943925233645, Math.toRadians(180));
+    private final Pose pickup1Pose = new Pose(17.91588785046729, 122.7943925233645, Math.toRadians(180));
 
     /** Middle (Second) Sample from the Spike Mark */
-    private final Pose pickup2Pose = new Pose(23.36448598130841, 131.21495327102804, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(13.36448598130841, 131.21495327102804, Math.toRadians(180));
 
     /** Highest (Third) Sample from the Spike Mark */
-    private final Pose pickup3Pose = new Pose(25.934579439252335, 137.49532710280374, Math.toRadians(190));
+    private final Pose pickup3Pose = new Pose(13.934579439252335, 137.49532710280374, Math.toRadians(190));
 
     /** Park Pose for our robot, after we do all of the scoring. */
     private final Pose parkPose = new Pose(11.663551401869158, 131.21495327102804, Math.toRadians(135));

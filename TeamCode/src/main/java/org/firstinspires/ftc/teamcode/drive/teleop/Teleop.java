@@ -33,7 +33,7 @@ public class Teleop extends OpMode {
     Servo Bleft;
     Servo garrinha;
     double ticks = 2750;
-    double ticks2 = 2350;
+    double ticks2 = 2200;
     double ticks3 = 338;
     double newTarget;
 
@@ -95,7 +95,7 @@ public class Teleop extends OpMode {
         public void loop(){
             //INTAKE
             if (gamepad1.right_trigger > 0.1) {
-                garra.setPosition(0.5);
+                garra.setPosition(0.6);
                 sleep(200);
                 rotate.setPosition(0.7);
                 pleft.setPosition(0.8);
@@ -106,7 +106,7 @@ public class Teleop extends OpMode {
                 garra.setPosition(0.3);
             }
             if (gamepad2.dpad_down) {
-                garra.setPosition(0.5);
+                garra.setPosition(0.6);
                 sleep(200);
                 rotate.setPosition(0.7);
                 pleft.setPosition(0.8);
@@ -218,13 +218,13 @@ public class Teleop extends OpMode {
         public void viperslide1Up ( int turnage){
         newTarget = ticks / turnage;
         poliaright.setTargetPosition((int) newTarget);
-        poliaright.setPower(0.8);
+        poliaright.setPower(1);
         poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide2Up ( int turnage){
         newTarget = ticks / turnage;
         polialeft.setTargetPosition((int) newTarget);
-        polialeft.setPower(0.8);
+        polialeft.setPower(1);
         polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide1Down () {
@@ -240,25 +240,25 @@ public class Teleop extends OpMode {
     public void viperslide1Clip ( int turnage){
         newTarget = ticks2 / turnage;
         poliaright.setTargetPosition((int) newTarget);
-        poliaright.setPower(0.8);
+        poliaright.setPower(1);
         poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide2Clip ( int turnage){
         newTarget = ticks2 / turnage;
         polialeft.setTargetPosition((int) newTarget);
-        polialeft.setPower(0.8);
+        polialeft.setPower(1);
         polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide1Clipar ( int turnage){
         newTarget = ticks3 / turnage;
         poliaright.setTargetPosition((int) newTarget);
-        poliaright.setPower(0.8);
+        poliaright.setPower(1);
         poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void viperslide2Clipar ( int turnage){
         newTarget = ticks3 / turnage;
         polialeft.setTargetPosition((int) newTarget);
-        polialeft.setPower(0.8);
+        polialeft.setPower(1);
         polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void climb(){
@@ -266,3 +266,37 @@ public class Teleop extends OpMode {
         viperslide2Down();
     }
 }
+
+/*
+CONFIGURAÇÃO DO DRIVER
+
+CONTROL HUB:
+Motores
+0 - odor (backleft)
+1 - odom (backright)
+2 - odol (frontleft)
+3 - FR (frontright)
+
+Servos
+0 - lright
+1 - lleft
+2 - garra
+3 - rotate
+4 - pleft
+5 - pright
+
+EXPANSION HUB:
+Motores
+0 - nada
+1 - nada
+2 - poliaright
+3 - polialeft
+
+Servos
+0 -
+1 -
+2 -
+3 - garrinha
+4 - bleft
+5 - bright
+ */
