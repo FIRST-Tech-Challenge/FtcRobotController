@@ -158,4 +158,38 @@
 
     <!-- ======================================================================================= -->
 
+     goBILDA SKU: 3122-0003-0001, Calibrated by Ethan Doak, 2024.10.08 using 3DF Zephyr
+    <Camera vid="0xBDA" pid="0x5805">
+        <Calibration
+            size="1920, 1080"
+            focalLength="1432.032f, 1432.032f"
+            principalPoint="997.085f, 535.891f"
+            distortionCoefficients="0.1289180, -0.3621222, 0, 0, 0.2872672, 0, 0, 0"
+            />
+
+        <Calibration
+            size="1280, 720"
+            focalLength="964.146f, 964.146f"
+            principalPoint="637.101f, 369.345f"
+            distortionCoefficients="0.1345473, -0.3987214, 0, 0, 0.3413483, 0, 0, 0"
+            />
+
+        <Calibration
+            size="800, 600"
+            focalLength="602.426f, 602.4268f"
+            principalPoint="416.250f, 302.576f"
+            distortionCoefficients="0.1402389, -0.4099823, 0, 0, 0.3524094, 0, 0, 0"
+            />
+
+        <Calibration
+            size="640, 480"
+            focalLength="481.985f, 481.985f"
+            principalPoint="334.203f, 241.948f"
+            distortionCoefficients="0.1293532, -0.3755644, 0, 0, 0.3164797, 0, 0, 0"
+            />
+
+    </Camera>
+
+    <!-- ======================================================================================= -->
+
 </Calibrations>
