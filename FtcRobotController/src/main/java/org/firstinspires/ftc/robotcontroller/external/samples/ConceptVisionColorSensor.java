@@ -21,13 +21,13 @@
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import android.graphics.Color;
 import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
@@ -112,22 +112,33 @@ public class ConceptVisionColorSensor extends LinearOpMode
                 .build();
 
         telemetry.setMsTransmissionInterval(50);  // Speed up telemetry updates, Just use for debugging.
+        telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
 
         // WARNING:  To be able to view the stream preview on the Driver Station, this code runs in INIT mode.
         while (opModeIsActive() || opModeInInit())
         {
-            telemetry.addData("DS preview on/off", "3 dots, Camera Stream\n");
+            telemetry.addLine("Preview on/off: 3 dots, Camera Stream\n");
 
             // Request the most recent color analysis.
-            // This will return the closest matching colorSwatch and the predominant RGB color.
-            // Note: to take actions based on the detected color, simply use the colorSwatch in a comparison or switch.
+            // This will return the closest matching colorSwatch and the predominant color in RGB, HSV and YCrCb color spaces.
+            // The color space values are returned as three-element int[] arrays as follows:
+            //  RGB   Red 0-255, Green 0-255, Blue 0-255
+            //  HSV   Hue 0-180, Saturation 0-255, Value 0-255
+            //  YCrCb Luminance(Y) 0-255, Cr 0-255 (center 128), Cb 0-255 (center 128)
+            //
+            // Note: to take actions based on the detected color, simply use the colorSwatch or color space value in a comparison or switch.
             //  eg:
             //      if (result.closestSwatch == PredominantColorProcessor.Swatch.RED) {... some code  ...}
+            //  or:
+            //      if (result.RGB[0] > 128) {... some code  ...}
+
             PredominantColorProcessor.Result result = colorSensor.getAnalysis();
 
             // Display the Color Sensor result.
-            telemetry.addData("Best Match:", result.closestSwatch);
-            telemetry.addLine(String.format("R %3d, G %3d, B %3d", Color.red(result.rgb), Color.green(result.rgb), Color.blue(result.rgb)));
+            telemetry.addData("Best Match", result.closestSwatch);
+            telemetry.addLine(String.format("RGB   (%3d, %3d, %3d)", result.RGB[0], result.RGB[1], result.RGB[2]));
+            telemetry.addLine(String.format("HSV   (%3d, %3d, %3d)", result.HSV[0], result.HSV[1], result.HSV[2]));
+            telemetry.addLine(String.format("YCrCb (%3d, %3d, %3d)", result.YCrCb[0], result.YCrCb[1], result.YCrCb[2]));
             telemetry.update();
 
             sleep(20);
