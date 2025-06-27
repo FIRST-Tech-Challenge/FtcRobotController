@@ -1,3 +1,7 @@
+# Sharyland Robotics FTC Git Ignore
+# This file ensures that build artifacts, debug output, and IDE-specific files
+# are not tracked in version control. DO NOT EDIT unless you know what you're doing.
+
 # Built application files
 *.apk
 *.aar
@@ -79,3 +83,18 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+# Ignore all build output for every module (already covered, but reinforced here)
+**/build/
+
+# Ignore debug-specific source sets and generated output across modules
+**/src/debug/
+**/src/test/
+**/src/androidTest/
+**/build/generated/
+**/build/intermediates/
+**/build/tmp/
+**/.cxx/
+
+# Ignore opmode registration or annotation processing output (optional, if cluttering)
+**/build/generated/source/
