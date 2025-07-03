@@ -14,10 +14,12 @@ public class Vector {
     }
 
     public Vector rotate(final float theta) {
-        final float sin = (float) Math.sin(theta);
-        final float cos = (float) Math.cos(theta);
-        final float newX = x * cos - y * sin;
-        final float newY = x * sin + y * cos;
+        final float sinTheta = (float) Math.sin(theta);
+        final float cosTheta = (float) Math.cos(theta);
+
+        final float newX = x * cosTheta - y * sinTheta;
+        final float newY = x * sinTheta + y * cosTheta;
+
         return new Vector(newX, newY);
     }
 

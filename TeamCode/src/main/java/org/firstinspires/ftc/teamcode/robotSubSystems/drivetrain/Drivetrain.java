@@ -38,22 +38,35 @@ public class Drivetrain {
     }
 
 
-    public static void operate(final Vector joystick,final float omega){
-        final Vector fieldCSJoystick = joystick.rotate(Angle.wrapPlusMinusPI((float) -Math.toRadians(Gyro.getAngle())));
+    public static void operate(final Vector joystick, final float omega) {
+        final float robotAngle = (float) Math.toRadians(Gyro.getAngle());
+        final Vector velocity_RobotCS_W = joystick.rotate(-robotAngle);
 
-        if (fieldCSJoystick.norm() < 0.01 && Math.abs(omega) == 0){
+        if (velocity_RobotCS_W.norm() < 0.01 && Math.abs(omega) == 0) {
             stop();
-        }else {
-            drive(fieldCSJoystick.y,fieldCSJoystick.x,omega);
+        } else {
+            drive(velocity_RobotCS_W, omega);
         }
     }
 
-    public static void drive(final float y, final float x, final float omega) {
+    public static void drive(Vector drive, final float r) {
 
-        lf.setPower(y + x + omega);
-        rf.setPower(y - x - omega);
-        lb.setPower(y - x + omega);
-        rb.setPower(y + x - omega);
+
+        final double lfPower = drive.y + drive.x + r;
+        final double rfPower = drive.y - drive.x - r;
+        final double lbPower = drive.y - drive.x + r;
+        final double rbPower = drive.y + drive.x - r;
+        double highestPower = 1;
+        final double max = Math.max(Math.abs(lfPower),
+                Math.max(Math.abs(lbPower), Math.max(Math.abs(rfPower), Math.abs(rbPower))));
+
+        if (max > 1) highestPower = max;
+
+        lf.setPower(lfPower / highestPower);
+        rf.setPower(rfPower / highestPower);
+        lb.setPower(lbPower / highestPower);
+        rb.setPower(rbPower / highestPower);
+
     }
 
     public static void stop() {
