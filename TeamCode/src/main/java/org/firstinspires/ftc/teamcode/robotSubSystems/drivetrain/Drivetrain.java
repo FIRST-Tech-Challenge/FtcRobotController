@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.utils.Angle;
 import org.firstinspires.ftc.teamcode.utils.Vector;
 
 public class Drivetrain {
@@ -31,14 +32,14 @@ public class Drivetrain {
         lb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        rf.setDirection(DcMotorSimple.Direction.REVERSE);
         rb.setDirection(DcMotorSimple.Direction.REVERSE);
+        lb.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 
 
     public static void operate(final Vector joystick,final float omega){
-        final Vector fieldCSJoystick = joystick.rotate((float) -Math.toRadians(Gyro.getAngle()));
+        final Vector fieldCSJoystick = joystick.rotate(Angle.wrapPlusMinusPI((float) -Math.toRadians(Gyro.getAngle())));
 
         if (fieldCSJoystick.norm() < 0.01 && Math.abs(omega) == 0){
             stop();
@@ -48,6 +49,7 @@ public class Drivetrain {
     }
 
     public static void drive(final float y, final float x, final float omega) {
+
         lf.setPower(y + x + omega);
         rf.setPower(y - x - omega);
         lb.setPower(y - x + omega);
