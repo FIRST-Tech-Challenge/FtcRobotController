@@ -7,21 +7,18 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name = "Goto AprilTag tx ty ta", group = "Autonomous")
-public class GotoAprilTag_TxTyTa extends LinearOpMode {
+@Autonomous(name = "AprilTag Align", group = "Autonomous")
+public class GotoAprilTag_PID extends LinearOpMode {
 
     private DcMotor frontLeft, frontRight, backLeft, backRight;
     private Limelight3A limelight;
-    Servo rotate;
-    Servo garra;
-    Servo pleft;
-    Servo pright;
-    Servo lright;
-    Servo lleft;
+    Servo rotate, garra, pleft, pright, lright, lleft;
+
+    private double previousTx = 0;
+    private double integralTx = 0;
 
     @Override
     public void runOpMode() {
-        // Mapear motores
         frontLeft = hardwareMap.get(DcMotor.class, "odol");
         frontRight = hardwareMap.get(DcMotor.class, "FR");
         backLeft = hardwareMap.get(DcMotor.class, "odor");
@@ -37,19 +34,9 @@ public class GotoAprilTag_TxTyTa extends LinearOpMode {
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
 
-        // Iniciar Limelight
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(2);
         limelight.start();
-
-        telemetry.addLine("Pressione PLAY para iniciar");
-        telemetry.update();
-
-        lright.setPosition(1);
-        lleft.setPosition(0.1);
-        rotate.setPosition(0.7);
-        pleft.setPosition(0.35);
-        pright.setPosition(0.65);
 
         waitForStart();
 
@@ -57,18 +44,22 @@ public class GotoAprilTag_TxTyTa extends LinearOpMode {
             LLResult result = limelight.getLatestResult();
 
             if (result != null && result.isValid()) {
-                double tx = result.getTx(); // rotação horizontal
-                double ty = result.getTy(); // offset vertical (proxy de distância)
-                double ta = result.getTa(); // área do alvo
+                double tx = result.getTx();
+                double ty = result.getTy();
+                double ta = result.getTa();
 
-                // Constantes de controle
-                double kTurn = 0.025;
-                double kForward = 0.03;
+                // Controle PID para tx
+                double kP = 0.015;
+                double kI = 0.0002;
+                double kD = 0.002;
 
-                double turn = tx * kTurn;
-                double forward = (15 - ty) * kForward; // ty aumenta conforme se aproxima
+                integralTx += tx;
+                double derivativeTx = tx - previousTx;
+                double turn = kP * tx + kI * integralTx + kD * derivativeTx;
+                previousTx = tx;
 
-                // Limites
+                double forward = (15 - ty) * 0.04;
+
                 turn = clip(turn, -0.4, 0.4);
                 forward = clip(forward, -0.4, 0.4);
 
@@ -79,14 +70,12 @@ public class GotoAprilTag_TxTyTa extends LinearOpMode {
                 telemetry.addData("ta", ta);
                 telemetry.update();
 
-                // Parar se estiver alinhado e perto
-                if (Math.abs(tx) < 1 && ty > 9 && ta > 1.8) {
+                if (Math.abs(tx) < 1.0 && ty > 9 && ta > 1.8) {
                     break;
                 }
-
             } else {
                 driveMecanum(0, 0, 0);
-                telemetry.addLine("Tag não visível");
+                telemetry.addLine("Tag não detectada");
                 telemetry.update();
             }
         }
