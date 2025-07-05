@@ -40,13 +40,13 @@ public class Drivetrain {
 
 
     public static void operate(final Vector joystick, final float omega) {
-        final float robotAngle = (float) Math.toRadians(Angle.wrapPlusMinusPI(Gyro.getAngle()));
+        final float robotAngle = Angle.wrapPlusMinusPI((float) Math.toRadians(Gyro.getAngle()));
         final Vector velocity_RobotCS_W = joystick.rotate(-robotAngle);
 
         if (velocity_RobotCS_W.norm() < 0.01 && Math.abs(omega) == 0) {
             stop();
         } else {
-            drive(joystick, omega);
+            drive(velocity_RobotCS_W, omega);
         }
     }
 

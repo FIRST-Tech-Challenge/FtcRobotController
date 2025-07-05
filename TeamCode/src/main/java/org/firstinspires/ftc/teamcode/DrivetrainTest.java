@@ -20,12 +20,12 @@ public class DrivetrainTest extends LinearOpMode {
             final float omega = gamepad1.right_trigger - gamepad1.left_trigger;
             final Vector joystick = new Vector(gamepad1.left_stick_x, -gamepad1.left_stick_y);
 
-            if (gamepad1.left_stick_button) {
+//            if (gamepad1.left_stick_button) {
                 Drivetrain.operate(joystick, omega);
-            }
-            else {
-                Drivetrain.testMotors(gamepad1);
-            }
+//            }
+//            else {
+//                Drivetrain.testMotors(gamepad1);
+//            }
 
 
             if (gamepad1.dpad_down){
