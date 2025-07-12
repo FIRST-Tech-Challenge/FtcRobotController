@@ -31,11 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -51,33 +47,82 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Iterative OpMode", group="Iterative OpMode")
-@Disabled
-public class Kaitlyn_BasicOpMode_Iterative extends OpMode
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="teleop", group="Iterative OpMode")
+public class TeleOp extends OpMode
 {
     // Declare OpMode members.
 
-    Drive_base db = new Drive_base();
-    Arm arm = new Arm();
+
+    Robot robot = new Robot();
 
     @Override
     public void init() {
-        db.init(hardwareMap);
-        arm.init(hardwareMap);
+        robot.init(hardwareMap);
+//        robot.arm.wrist.setPosition(0);
     }
 
 
     @Override
     public void loop() {
-        db.drive(gamepad1);
-        arm.updateArm();
-        if (gamepad1.a) {
-            arm.setPosition(50);
-        } else if (gamepad1.b){
-            arm.setPosition(100);
-        } else if (gamepad1.x) {
-            arm.setPosition(0);
+        robot.db.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        robot.arm.updateArm();
+//        robot.ll.updateLift();
+        if (gamepad2.x) {
+            robot.arm.setPosition(0);
+        } else if (gamepad2.b) {
+            robot.arm.setPosition(-1000);
+        } else if (gamepad2.y){
+            robot.arm.setPosition(-700);
         }
+//        if (gamepad2.a) {
+//            robot.arm.arm.setPower(1);
+//        } else if (gamepad2.b) {
+//            robot.arm.arm.setPower(-1);
+//        } else {
+//            robot.arm.arm.setPower(0);
+//        }
+
+//        else if (gamepad2.right_stick_y > .1) {
+//            robot.arm.setPosition(-750);
+//        }
+
+        if (gamepad2.right_trigger > .1) {
+            robot.arm.spinIn();
+        } else if (gamepad2.left_trigger > .1){
+            robot.arm.spinOut();
+        } else {
+            robot.arm.spinOff();
+        }
+//
+//        if(gamepad2.dpad_up) {
+//            robot.ll.setLift(0);
+//        } else if (gamepad2.dpad_left) {
+//            robot.ll.setLift(-1000);
+//        } else if (gamepad2.dpad_down) {
+//            robot.ll.setLift(-1500);
+//        } else if (gamepad2.dpad_right) {
+//            robot.ll.setLift(-2000);
+//        }
+//        telemetry.addData("Arm pos", robot.ll.lift.getCurrentPosition());
+
+//        if(gamepad2.dpad_up) {
+//            robot.ll.lift.setPower(.5);
+//        } else if (gamepad2.dpad_down) {
+//            robot.ll.lift.setPower(-.5);
+//        }else {
+//            robot.ll.lift.setPower(0);
+//        }
+
+////        robot.ll.setLift(100);
+//        telemetry.addData("liftTargetPosition", robot.ll.targetPosition);
+//        telemetry.addData("lifterror", robot.ll.targetPosition - robot.ll.lift.getCurrentPosition());
+//        telemetry.addData("liftCurrentPosition", robot.ll.lift.getCurrentPosition());
+//        telemetry.addData("liftCurrentPower", robot.ll.lift.getPower());
+        telemetry.addData("armTargetPosition", robot.arm.targetPosition);
+        telemetry.addData("error", robot.arm.targetPosition - robot.arm.arm.getCurrentPosition());
+        telemetry.addData("armCurrentPosition", robot.arm.arm.getCurrentPosition());
+        telemetry.addData("armCurrentPower", robot.arm.arm.getPower());
+        telemetry.addData("intake power", robot.arm.hand.getPower());
     }
 
 }

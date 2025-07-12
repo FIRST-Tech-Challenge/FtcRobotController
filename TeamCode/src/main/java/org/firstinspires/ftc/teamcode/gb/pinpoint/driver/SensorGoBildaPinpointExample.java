@@ -1,3 +1,4 @@
+
 /*   MIT License
  *   Copyright (c) [2024] [Base 10 Assets, LLC]
  *
@@ -27,7 +28,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.opModes.comp.auto.AutoConstants;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
 import java.util.Locale;
 
@@ -59,6 +60,7 @@ For support, contact tech@gobilda.com
 
 @TeleOp(name="goBILDA® PinPoint Odometry Example", group="Linear OpMode")
 //@Disabled
+
 public class SensorGoBildaPinpointExample extends LinearOpMode {
 
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
@@ -72,7 +74,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
 
-        odo = hardwareMap.get(GoBildaPinpointDriver.class,"ODO");
+        odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
 
         /*
         Set the odometry pod positions relative to the point that the odometry computer tracks around.
@@ -82,7 +84,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
         the tracking point the Y (strafe) odometry pod is. forward of center is a positive number,
         backwards is a negative number.
          */
-        odo.setOffsets(-44.45, 38.1); //these are tuned for 3110-0002-0001 Product Insight #1
+        odo.setOffsets(-84.0, -168.0); //these are tuned for 3110-0002-0001 Product Insight #1
 
         /*
         Set the kind of pods used by your robot. If you're using goBILDA odometry pods, select either
@@ -112,12 +114,12 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
          */
         //odo.recalibrateIMU();
         odo.resetPosAndIMU();
-        odo.setPosition(AutoConstants.STARTING_POSITION);
+
         telemetry.addData("Status", "Initialized");
         telemetry.addData("X offset", odo.getXOffset());
         telemetry.addData("Y offset", odo.getYOffset());
         telemetry.addData("Device Version Number:", odo.getDeviceVersion());
-        telemetry.addData("Device SCalar", odo.getYawScalar());
+        telemetry.addData("Device Scalar", odo.getYawScalar());
         telemetry.update();
 
         // Wait for the game to start (driver presses START)
@@ -129,10 +131,16 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
         while (opModeIsActive()) {
 
             /*
-            Request a bulk update from the Pinpoint odometry computer. This checks almost all outputs
+            Request an update from the Pinpoint odometry computer. This checks almost all outputs
             from the device in a single I2C read.
              */
-            odo.bulkUpdate();
+            odo.update();
+
+            /*
+            Optionally, you can update only the heading of the device. This takes less time to read, but will not
+            pull any other data. Only the heading (which you can pull with getHeading() or in getPosition().
+             */
+            //odo.update(GoBildaPinpointDriver.readData.ONLY_UPDATE_HEADING);
 
 
             if (gamepad1.a){
@@ -145,7 +153,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
 
             /*
             This code prints the loop frequency of the REV Control Hub. This frequency is effected
-            by I2C reads/writes. So it's good to keep an eye on. This code calculates the amount
+            by I²C reads/writes. So it's good to keep an eye on. This code calculates the amount
             of time each cycle takes and finds the frequency (number of updates per second) from
             that cycle time.
              */
@@ -162,7 +170,6 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Position", data);
 
-
             /*
             gets the current Velocity (x & y in mm/sec and heading in degrees/sec) and prints it.
              */
@@ -170,9 +177,6 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
             String velocity = String.format(Locale.US,"{XVel: %.3f, YVel: %.3f, HVel: %.3f}", vel.getX(DistanceUnit.MM), vel.getY(DistanceUnit.MM), vel.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Velocity", velocity);
 
-            telemetry.addData("X Encoder:", odo.getEncoderX()); //gets the raw data from the X encoder
-            telemetry.addData("Y Encoder:",odo.getEncoderY()); //gets the raw data from the Y encoder
-            telemetry.addData("Pinpoint Frequency", odo.getFrequency()); //prints/gets the current refresh rate of the Pinpoint
 
             /*
             Gets the Pinpoint device status. Pinpoint can reflect a few states. But we'll primarily see
@@ -185,7 +189,10 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
             */
             telemetry.addData("Status", odo.getDeviceStatus());
 
+            telemetry.addData("Pinpoint Frequency", odo.getFrequency()); //prints/gets the current refresh rate of the Pinpoint
+
             telemetry.addData("REV Hub Frequency: ", frequency); //prints the control system refresh rate
             telemetry.update();
+
         }
     }}
