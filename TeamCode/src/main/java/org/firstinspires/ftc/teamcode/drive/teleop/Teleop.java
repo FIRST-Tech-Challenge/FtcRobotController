@@ -65,10 +65,10 @@ public class Teleop extends OpMode {
         polialeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //MOVIMENTACAO
-        frontLeft = hardwareMap.get(DcMotor.class, "odol");
+        frontLeft = hardwareMap.get(DcMotor.class, "FL");
         frontRight = hardwareMap.get(DcMotor.class, "FR");
-        backLeft = hardwareMap.get(DcMotor.class, "odor");
-        backRight = hardwareMap.get(DcMotor.class, "odom");
+        backLeft = hardwareMap.get(DcMotor.class, "BL");
+        backRight = hardwareMap.get(DcMotor.class, "BR");
 
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
