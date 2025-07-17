@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="MovimentaçãoControl", group="Linear OpMode")
 @Disabled
-public class MovimentaçãoControl extends LinearOpMode {
+public class MovimentacaoControl extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor FL0 = null;
     private DcMotor FR1 = null;

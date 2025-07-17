@@ -19,7 +19,7 @@ public class AutonomoTest extends LinearOpMode {
     static final double DRIVE_GEAR_REDUCTION     = 20.0; // 20:1 engrenagens externas.
     static final double WHEEL_DIAMETER_INCHES    = 3.78; // Para calcular a circunferência roda preta 2.99 roda amarela 3.78
     static final double COUNTS_PER_INCH          = (CONTS_PER_MORTOR_REV * DRIVE_GEAR_REDUCTION)/(WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double DRIVE_SPEED              = 0.9;
+    static final double DRIVE_SPEED              = 0.7;
     static final double TURN_SPEED               = 0.7;
 
     @Override
