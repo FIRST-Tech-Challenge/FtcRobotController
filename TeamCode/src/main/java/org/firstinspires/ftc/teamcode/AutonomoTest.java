@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "RocketAutonomo", group = "Robot")
+@Autonomous(name = "AutonomeTest", group = "Robot")
 @Disabled
 public class AutonomoTest extends LinearOpMode {
 
