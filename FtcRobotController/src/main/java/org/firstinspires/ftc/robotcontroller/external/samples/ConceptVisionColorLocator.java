@@ -149,39 +149,54 @@ public class ConceptVisionColorLocator extends LinearOpMode
              *   Note:  All contours will be still displayed on the Stream Preview, but only those that satisfy the filter
              *          conditions will remain in the current list of "blobs".  Multiple filters may be used.
              *
-             * Use any of the following filters.
+             * To perform a filter
+             *   ColorBlobLocatorProcessor.Util.filterByCriteria(criteria, minValue, maxValue, blobs);
              *
-             * ColorBlobLocatorProcessor.Util.filterByArea(minArea, maxArea, blobs);
+             * The following criteria are currently supported.
+             *
+             * ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA
              *   A Blob's area is the number of pixels contained within the Contour.  Filter out any that are too big or small.
              *   Start with a large range and then refine the range based on the likely size of the desired object in the viewfinder.
              *
-             * ColorBlobLocatorProcessor.Util.filterByDensity(minDensity, maxDensity, blobs);
+             * ColorBlobLocatorProcessor.BlobCriteria.BY_DENSITY
              *   A blob's density is an indication of how "full" the contour is.
              *   If you put a rubber band around the contour you would get the "Convex Hull" of the contour.
              *   The density is the ratio of Contour-area to Convex Hull-area.
              *
-             * ColorBlobLocatorProcessor.Util.filterByAspectRatio(minAspect, maxAspect, blobs);
+             * ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO
              *   A blob's Aspect ratio is the ratio of boxFit long side to short side.
              *   A perfect Square has an aspect ratio of 1.  All others are > 1
+             *
+             * ColorBlobLocatorProcessor.BlobCriteria.BY_ARC_LENGTH
+             *   A blob's arc length is the perimeter of the blob.
+             *   This can be used in conjunction with an area filter to detect oddly shaped blobs.
+             *
+             * ColorBlobLocatorProcessor.BlobCriteria.BY_CIRCULARITY
+             *   A blob's circularity is how circular it is based on the known area and arc length.
+             *   A perfect circle has a circularity of 1.  All others are < 1
              */
-            ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blobs);  // filter out very small blobs.
+            ColorBlobLocatorProcessor.Util.filterByCriteria(
+                    ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA,
+                    50, 20000, blobs);  // filter out very small blobs.
 
             /*
              * The list of Blobs can be sorted using the same Blob attributes as listed above.
              * No more than one sort call should be made.  Sorting can use ascending or descending order.
-             *     ColorBlobLocatorProcessor.Util.sortByArea(SortOrder.DESCENDING, blobs);      // Default
-             *     ColorBlobLocatorProcessor.Util.sortByDensity(SortOrder.DESCENDING, blobs);
-             *     ColorBlobLocatorProcessor.Util.sortByAspectRatio(SortOrder.DESCENDING, blobs);
+             *     ColorBlobLocatorProcessor.Util.sortByCriteria(ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA SortOrder.DESCENDING, blobs); // Default
+             *     ColorBlobLocatorProcessor.Util.sortByCriteria(ColorBlobLocatorProcessor.BlobCriteria.BY_DENSITY SortOrder.DESCENDING, blobs);
+             *     ColorBlobLocatorProcessor.Util.sortByCriteria(ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO SortOrder.DESCENDING, blobs);
+             *     ColorBlobLocatorProcessor.Util.sortByCriteria(ColorBlobLocatorProcessor.BlobCriteria.BY_ARC_LENGTH SortOrder.DESCENDING, blobs);
+             *     ColorBlobLocatorProcessor.Util.sortByCriteria(ColorBlobLocatorProcessor.BlobCriteria.BY_CIRCULARITY SortOrder.DESCENDING, blobs);
              */
 
-            telemetry.addLine(" Area Density Aspect  Center");
+            telemetry.addLine("Area Density Aspect Arc Circle Center");
 
             // Display the size (area) and center location for each Blob.
             for(ColorBlobLocatorProcessor.Blob b : blobs)
             {
                 RotatedRect boxFit = b.getBoxFit();
-                telemetry.addLine(String.format("%5d  %4.2f   %5.2f  (%3d,%3d)",
-                          b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y));
+                telemetry.addLine(String.format("%5d  %4.2f  %5.2f %3d %5.3f (%3d,%3d)",
+                          b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) b.getArcLength(), b.getCircularity(), (int) boxFit.center.x, (int) boxFit.center.y));
             }
 
             telemetry.update();
