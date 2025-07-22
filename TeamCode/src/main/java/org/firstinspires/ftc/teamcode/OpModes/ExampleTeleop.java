@@ -18,6 +18,17 @@ public class ExampleTeleop extends OpMode {
     Follower follower;
 
 
+    //Getting rid of magic numbers/variables
+    double forwardDrive;
+    double strafe;
+    double heading;
+
+    //For definitions of bot centric/field centric look HERE: https://docs.ftclib.org/ftclib/features/drivebases
+    //Scroll down till it says "Control Scheme"
+    //This can be helpful if you forget which is which
+    boolean robotCentric = false;
+
+
 
     @Override
     public void init() {
@@ -38,7 +49,7 @@ public class ExampleTeleop extends OpMode {
         //INIT LOOP
         //We never put anything here for motors/servos
         //as its against the rules for the bots to move AT ALL
-        //in the initialization phase of Driver Controlled.
+        //in the initialization phase of the Driver Controlled Period.
         //For testing purposes, obviously yes you can put stuff here.
 
 
@@ -134,12 +145,15 @@ public class ExampleTeleop extends OpMode {
 
 
 
+        forwardDrive = -gamepad1.left_stick_y;
+        strafe = -gamepad1.left_stick_x;
+        heading = -gamepad1.right_stick_x;
 
 
 
 
         //Using the gamepad1 sticks, we set the different VECTORS that the drive will try to follow.
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, false);
+        follower.setTeleOpMovementVectors(forwardDrive, strafe, heading, robotCentric);
         //Updates all aspects of the follower, including but not limited to its
         //Current pose data, power vectors, target poses, etc.
         follower.update();
