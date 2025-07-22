@@ -1,21 +1,37 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
+//Written for the use of teaching
+//Written by Noah Nottingham - 6566 Circuit Breakers
 
-
-
-
+@Config //Allows ALL PUBLIC STATIC VARIABLES to be monitored on FTC Dash.
+@TeleOp(name = "TeleOp", group = "Driver") //The name and group
+//@Disabled //How you would disable/enable an opmode from appearing on the DS
 public class Teleop extends OpMode {
 
     //Pedro Pathing Follower
     Follower follower;
+
+
+    //Getting rid of magic numbers/variables
+    double forwardDrive;
+    double strafe;
+    double heading;
+
+    //For definitions of bot centric/field centric look HERE: https://docs.ftclib.org/ftclib/features/drivebases
+    //Scroll down till it says "Control Scheme"
+    //This can be helpful if you forget which is which
+    public static boolean robotCentric = false;
 
 
 
@@ -38,7 +54,7 @@ public class Teleop extends OpMode {
         //INIT LOOP
         //We never put anything here for motors/servos
         //as its against the rules for the bots to move AT ALL
-        //in the initialization phase of Driver Controlled.
+        //in the initialization phase of the Driver Controlled Period.
         //For testing purposes, obviously yes you can put stuff here.
 
 
@@ -59,36 +75,38 @@ public class Teleop extends OpMode {
         //https://gm0.org/en/latest/docs/software/tutorials/gamepad.html
 
 
+
+
         //Gamepad 1
         if(gamepad1.a){
-            telemetry.addLine("BUTTON A PRESSED");
+            telemetry.addLine("G1 BUTTON A HELD DOWN");
         }
         if(gamepad1.b){
-            telemetry.addLine("BUTTON B PRESSED");
+            telemetry.addLine("G1 BUTTON B HELD DOWN");
 
         }
         if(gamepad1.x){
-            telemetry.addLine("BUTTON X PRESSED");
+            telemetry.addLine("G1 BUTTON X HELD DOWN");
 
         }
         if(gamepad1.y){
-            telemetry.addLine("BUTTON Y PRESSED");
+            telemetry.addLine("G1 BUTTON Y HELD DOWN");
 
         }
 
         if(gamepad1.dpad_down){
-            telemetry.addLine("BUTTON DPAD DOWN PRESSED");
+            telemetry.addLine("G1 BUTTON DPAD DOWN HELD DOWN");
         }
         if(gamepad1.dpad_right){
-            telemetry.addLine("BUTTON DPAD RIGHT PRESSED");
+            telemetry.addLine("G1 BUTTON DPAD RIGHT HELD DOWN");
 
         }
         if(gamepad1.dpad_left){
-            telemetry.addLine("BUTTON DPAD LEFT PRESSED");
+            telemetry.addLine("G1 BUTTON DPAD LEFT HELD DOWN");
 
         }
         if(gamepad1.dpad_up){
-            telemetry.addLine("BUTTON DPAD UP PRESSED");
+            telemetry.addLine("G1 BUTTON DPAD UP HELD DOWN");
 
         }
 
@@ -99,34 +117,34 @@ public class Teleop extends OpMode {
 
         //Gamepad 2
         if(gamepad2.a){
-            telemetry.addLine("BUTTON A PRESSED");
+            telemetry.addLine("G2 BUTTON A HELD DOWN");
         }
         if(gamepad2.b){
-            telemetry.addLine("BUTTON B PRESSED");
+            telemetry.addLine("G2 BUTTON B HELD DOWN");
 
         }
         if(gamepad2.x){
-            telemetry.addLine("BUTTON X PRESSED");
+            telemetry.addLine("G2 BUTTON X HELD DOWN");
 
         }
         if(gamepad2.y){
-            telemetry.addLine("BUTTON Y PRESSED");
+            telemetry.addLine("G2 BUTTON Y HELD DOWN");
 
         }
 
         if(gamepad2.dpad_down){
-            telemetry.addLine("BUTTON DPAD DOWN PRESSED");
+            telemetry.addLine("G2 BUTTON DPAD DOWN HELD DOWN");
         }
         if(gamepad2.dpad_right){
-            telemetry.addLine("BUTTON DPAD RIGHT PRESSED");
+            telemetry.addLine("G2 BUTTON DPAD RIGHT HELD DOWN");
 
         }
         if(gamepad2.dpad_left){
-            telemetry.addLine("BUTTON DPAD LEFT PRESSED");
+            telemetry.addLine("G2 BUTTON DPAD LEFT HELD DOWN");
 
         }
         if(gamepad2.dpad_up){
-            telemetry.addLine("BUTTON DPAD UP PRESSED");
+            telemetry.addLine("G2 BUTTON DPAD UP HELD DOWN");
 
         }
 
@@ -136,10 +154,17 @@ public class Teleop extends OpMode {
 
 
 
+        //The reason we set these values here instead of using the Gamepad directly is because
+        //We want to ELIMINATE magic numbers. https://en.wikipedia.org/wiki/Magic_number_(programming)
+        //This reduces unreadability, and makes debugging easier on us in case we need to fix something.
+
+        forwardDrive = -gamepad1.left_stick_y;
+        strafe = -gamepad1.left_stick_x;
+        heading = -gamepad1.right_stick_x;
 
 
         //Using the gamepad1 sticks, we set the different VECTORS that the drive will try to follow.
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, false);
+        follower.setTeleOpMovementVectors(forwardDrive, strafe, heading, robotCentric);
         //Updates all aspects of the follower, including but not limited to its
         //Current pose data, power vectors, target poses, etc.
         follower.update();
