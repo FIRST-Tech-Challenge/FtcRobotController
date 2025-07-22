@@ -8,11 +8,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
+//Written for the use of teaching
+//Written by Noah Nottingham - 6566 Circuit Breakers
 
 
-
-
-public class Teleop extends OpMode {
+public class ExampleTeleop extends OpMode {
 
     //Pedro Pathing Follower
     Follower follower;
