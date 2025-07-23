@@ -38,9 +38,9 @@ public class AutonomoEncoder extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            moveCM(10, 0.4);        // 10 cm para frente
-            strafeCM(-10, 0.4);     // 10 cm para esquerda
-            turnToAngle(180);       // virar 180 graus
+            //moveCM(10, 0.4);        // 10 cm para frente
+            //strafeCM(-10, 0.4);     // 10 cm para esquerda
+            //turnToAngle(180);       // virar 180 graus
         }
     }
 
