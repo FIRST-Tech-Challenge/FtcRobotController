@@ -98,8 +98,8 @@ public class Teleop extends OpMode {
                 garra.setPosition(0.6);
                 sleep(200);
                 rotate.setPosition(0.7);
-                pleft.setPosition(0.8);
-                pright.setPosition(0.2);
+                pleft.setPosition(0.75);
+                pright.setPosition(0.25);
                 lright.setPosition(1);
                 lleft.setPosition(0.1);
                 sleep(500);
@@ -109,8 +109,8 @@ public class Teleop extends OpMode {
                 garra.setPosition(0.6);
                 sleep(200);
                 rotate.setPosition(0.7);
-                pleft.setPosition(0.8);
-                pright.setPosition(0.2);
+                pleft.setPosition(0.75);
+                pright.setPosition(0.25);
                 lright.setPosition(1);
                 lleft.setPosition(0.1);
                 sleep(500);

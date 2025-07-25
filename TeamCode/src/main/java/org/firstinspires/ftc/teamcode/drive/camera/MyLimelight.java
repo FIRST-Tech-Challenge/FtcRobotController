@@ -33,7 +33,6 @@ public class MyLimelight extends LinearOpMode {
     Servo garrinha;
     double ticks = 2750;
     double newTarget;
-
     Servo rotate;
     Servo garra;
     Servo pleft;
@@ -56,10 +55,10 @@ public class MyLimelight extends LinearOpMode {
 
         lright = hardwareMap.get(Servo.class, "lright");
         lleft = hardwareMap.get(Servo.class, "lleft");
-        rotate = hardwareMap.get(Servo.class, "rotate");
         garra = hardwareMap.get(Servo.class, "garra");
         pleft = hardwareMap.get(Servo.class, "pleft");
         pright = hardwareMap.get(Servo.class, "pright");
+        rotate = hardwareMap.get(Servo.class, "rotate");
 
         //OUTTAKE
         poliaright = hardwareMap.get(DcMotor.class, "poliaright");
@@ -86,6 +85,7 @@ public class MyLimelight extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            rotate.setPosition(0.7);
             LLResult result = limelight.getLatestResult();
             if (result != null && result.isValid()) {
                 // First, tell Limelight which way your robot is facing
@@ -98,30 +98,44 @@ public class MyLimelight extends LinearOpMode {
                     telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
                     // Etapas sequenciais usando verificação booleana
                     if (!verificacao) {
-                        if (Math.abs(x + 164) > 2) {
+                        if (Math.abs(x + 167) > 1) {
                             startAllMotors(0.2);
                         } else {
                             stopAllMotors();
                             verificacao = true;
                         }
                     } else if (!verificacaoY) {
-                        if (Math.abs(y + 81) > 2) {
+                        if (Math.abs(y + 81) > 1) {
                             strafeAllMotors(0.2);
                         } else {
                             stopAllMotors();
                             verificacaoY = true;
                         }
                     } else {
-                        moveCM(10, 0.2);
+                        strafeCM(14,0.15);
                         sleep(200);
-                        turnToAngle(-45);
-                        moveCM(5,0.2);
-                        sleep(500);
-                        //Entrega();
-                        turnToAngle(-10);
+                        moveCM(10.5,0.15);
                         sleep(100);
-                        moveCM(-17,0.2);
-                        //Coleta();
+                        turnToAngle(-30);
+                        Entrega();
+                        turnToAngle(-23);
+                        sleep(100);
+                        moveCM(-8,0.2);
+                        Coleta();
+                        sleep(500);
+                        moveCM(10.5, 0.15);
+                        sleep(100);
+                        turnToAngle(-30);
+                        Entrega();
+                        sleep(100);
+                        turnToAngle(-5);
+                        sleep(100);
+                        moveCM(-4, 0.2);
+                        Coleta();
+                        moveCM(4.5,0.15);
+                        sleep(100);
+                        turnToAngle(-30);
+                        Entrega();
                         break;
                     }
 
@@ -177,30 +191,36 @@ public class MyLimelight extends LinearOpMode {
     public void Entrega(){
         viperslide1Up(-1);
         viperslide2Up(1);
-        sleep(500);
+        sleep(1000);
         Bright.setPosition(0.4);
         Bleft.setPosition(0.6);
-        sleep(100);
+        sleep(1100);
+        Bright.setPosition(1);
+        Bleft.setPosition(0);
+        sleep(300);
         viperslide1Down();
         viperslide2Down();
+        sleep(1000);
+        poliaright.setPower(0);
+        polialeft.setPower(0);
     }
     public void Coleta(){
         lright.setPosition(0.6);
         lleft.setPosition(0.7);
-        sleep(200);
+        sleep(500);
         garra.setPosition(0.3);
         pleft.setPosition(0);
         pright.setPosition(1);
-        sleep(100);
+        sleep(500);
         garra.setPosition(0.6);
         sleep(200);
-        rotate.setPosition(0.7);
         pleft.setPosition(0.8);
         pright.setPosition(0.2);
         lright.setPosition(1);
         lleft.setPosition(0.1);
         sleep(500);
         garra.setPosition(0.3);
+        sleep(500);
     }
     public void viperslide1Up ( int turnage){
         newTarget = ticks / turnage;

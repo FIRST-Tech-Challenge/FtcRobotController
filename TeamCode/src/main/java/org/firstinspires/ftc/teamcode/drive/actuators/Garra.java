@@ -39,8 +39,8 @@ public class Garra extends OpMode {
                 garra.setPosition(0.7);
             }
             if (gamepad1.x) {
-                pleft.setPosition(0.8);
-                pright.setPosition(0.2);
+                pleft.setPosition(0.75);
+                pright.setPosition(0.25);
             }
             if (gamepad1.y) {
                 pleft.setPosition(0);
