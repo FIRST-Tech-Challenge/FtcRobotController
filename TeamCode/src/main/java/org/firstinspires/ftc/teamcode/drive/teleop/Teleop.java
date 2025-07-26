@@ -6,6 +6,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -43,7 +44,7 @@ public class Teleop extends OpMode {
     DcMotor frontLeft, frontRight, backLeft, backRight;
     IMU imu;
 
-    Intake intake = new Intake();
+    Intake intake = new Intake(hardwareMap);
 
     @Override
     public void init() {
