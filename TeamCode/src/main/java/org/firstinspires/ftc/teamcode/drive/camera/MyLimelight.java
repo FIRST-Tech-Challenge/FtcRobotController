@@ -22,7 +22,7 @@ public class MyLimelight extends LinearOpMode {
     public IMU imu;
     private DcMotor frontLeft, frontRight, backLeft, backRight;
     static final double TICKS_PER_CM = 17.82; // Para o nosso chassi
-    static final double TURN_TOLERANCE = 2.0; // graus de margem de erro
+    static final double TURN_TOLERANCE = 1.5; // graus de margem de erro
     boolean verificacao = false;
     boolean verificacaoY = false;
 
@@ -98,7 +98,7 @@ public class MyLimelight extends LinearOpMode {
                     telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
                     // Etapas sequenciais usando verificação booleana
                     if (!verificacao) {
-                        if (Math.abs(x + 167) > 1) {
+                        if (Math.abs(x + 168) > 1) {
                             startAllMotors(0.2);
                         } else {
                             stopAllMotors();
@@ -112,7 +112,7 @@ public class MyLimelight extends LinearOpMode {
                             verificacaoY = true;
                         }
                     } else {
-                        strafeCM(14,0.15);
+                        strafeCM(13,0.15);
                         sleep(200);
                         moveCM(10.5,0.15);
                         sleep(100);
@@ -123,7 +123,7 @@ public class MyLimelight extends LinearOpMode {
                         moveCM(-8,0.2);
                         Coleta();
                         sleep(500);
-                        moveCM(10.5, 0.15);
+                        moveCM(9, 0.15);
                         sleep(100);
                         turnToAngle(-30);
                         Entrega();
@@ -138,9 +138,6 @@ public class MyLimelight extends LinearOpMode {
                         Entrega();
                         break;
                     }
-
-
-
                 }
             } else {
                 telemetry.addData("Limelight", "No Targets");
@@ -185,7 +182,6 @@ public class MyLimelight extends LinearOpMode {
             telemetry.addLine("Movendo para frente...");
             telemetry.update();
         }
-
         stopAllMotors();
     }
     public void Entrega(){
@@ -200,7 +196,7 @@ public class MyLimelight extends LinearOpMode {
         sleep(300);
         viperslide1Down();
         viperslide2Down();
-        sleep(1000);
+        sleep(1200);
         poliaright.setPower(0);
         polialeft.setPower(0);
     }

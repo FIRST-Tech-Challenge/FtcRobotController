@@ -33,18 +33,16 @@ public class TelemetryLL extends OpMode {
     }
     public void loop(){
         LLResult result = limelight.getLatestResult();
-        // First, tell Limelight which way your robot is facing
-        double robotYaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        limelight.updateRobotOrientation(robotYaw);
-        if (result != null && result.isValid()) {
-            Pose3D botpose_mt2 = result.getBotpose_MT2();
-            List<LLResultTypes.DetectorResult> detections = result.getDetectorResults();
-            for (LLResultTypes.DetectorResult detection : detections) {
-                String className = detection.getClassName(); // What was detected
-                double x = detection.getTargetXDegrees(); // Where it is (left-right)
-                double y = detection.getTargetYDegrees(); // Where it is (up-down)
-                telemetry.addData(className, "at (" + x + ", " + y + ") degrees");
-        }
+            double robotYaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            limelight.updateRobotOrientation(robotYaw);
+            if (result != null && result.isValid()) {
+                Pose3D botpose_mt2 = result.getBotpose_MT2();
+                if (botpose_mt2 != null) {
+                    double x = botpose_mt2.getPosition().x;
+                    double y = botpose_mt2.getPosition().y;
+                    telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
+                }
+
         }
     }
 }
