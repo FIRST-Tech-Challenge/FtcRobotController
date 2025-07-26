@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Util.Subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -28,6 +30,7 @@ public class Example2MotorLift extends SubsystemBase {
 
     public static int allowedError = 1;
 
+    private double currentPosition;
 
 
 
@@ -58,11 +61,15 @@ public class Example2MotorLift extends SubsystemBase {
     }
 
     public void update(){
+
+        currentPosition = readingFrom == EncoderReadingFrom.LEFT ? liftLeft.getCurrentPosition()   :
+                readingFrom == EncoderReadingFrom.RIGHT ? liftRight.getCurrentPosition() :
+                        (double) (liftLeft.getCurrentPosition() + liftRight.getCurrentPosition()) / 2;
+
+
         pdflController.setPDFL(P, D, F, L);
         pdflController.setTarget(liftTarget);
-        pdflController.update(readingFrom == EncoderReadingFrom.LEFT ? liftLeft.getCurrentPosition()   :
-                              readingFrom == EncoderReadingFrom.RIGHT ? liftRight.getCurrentPosition() :
-                              (double) (liftLeft.getCurrentPosition() + liftRight.getCurrentPosition()) / 2);
+        pdflController.update(currentPosition);
 
 
 
@@ -80,10 +87,13 @@ public class Example2MotorLift extends SubsystemBase {
         telemetry.addData("Reading From ", readingFrom);
     }
 
-
-
+    public boolean isAtTarget(){
+        return Math.abs(liftTarget - currentPosition) < allowedError;
+    }
 
 
 }
+
+
 
 
