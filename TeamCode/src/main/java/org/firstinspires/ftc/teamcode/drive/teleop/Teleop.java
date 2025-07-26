@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
+import org.firstinspires.ftc.teamcode.drive.actuators.Intake;
 
 import java.util.concurrent.TimeUnit;
 
@@ -41,6 +42,8 @@ public class Teleop extends OpMode {
 
     DcMotor frontLeft, frontRight, backLeft, backRight;
     IMU imu;
+
+    Intake intake = new Intake();
 
     @Override
     public void init() {
@@ -137,12 +140,7 @@ public class Teleop extends OpMode {
                 pright.setPosition(1);
             }
             if (gamepad2.dpad_up) {
-                lright.setPosition(0.6);
-                lleft.setPosition(0.7);
-                sleep(200);
-                garra.setPosition(0.3);
-                pleft.setPosition(0);
-                pright.setPosition(1);
+                intake.extendsIntake();
             }
 
             //OUTTAKE
