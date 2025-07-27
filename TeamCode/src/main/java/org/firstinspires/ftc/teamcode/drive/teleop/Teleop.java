@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.drive.actuators.Intake;
+import org.firstinspires.ftc.teamcode.drive.actuators.Outtake;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,7 +29,9 @@ public class Teleop extends OpMode {
     Servo pright;
     Servo lright;
     Servo lleft;
+
     //OUTTAKE
+    Outtake outtake;
 
     DcMotor poliaright;
     DcMotor polialeft;
@@ -70,6 +73,8 @@ public class Teleop extends OpMode {
         poliaright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         poliaright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         polialeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        outtake = new Outtake(hardwareMap);
 
         //MOVIMENTACAO
         frontLeft = hardwareMap.get(DcMotor.class, "FL");
@@ -129,25 +134,16 @@ public class Teleop extends OpMode {
             //OUTTAKE
 
             if (gamepad1.dpad_up) {
-                viperslide1Up(-1);
-                viperslide2Up(1);
+                outtake.basketSet();
             }
             if (gamepad1.dpad_left) {
-                viperslide1Clipar(-1);
-                viperslide2Clipar(1);
+                outtake.wallClipSet();
             }
             if (gamepad1.dpad_right){
-                viperslide1Clip(-1);
-                viperslide2Clip(1);
+                outtake.wranglerClipSet();
             }
             if (gamepad1.dpad_down) {
-                viperslide1Down();
-                viperslide2Down();
-                Bright.setPosition(1);
-                Bleft.setPosition(0);
-                sleep(1200);
-                polialeft.setPower(0);
-                poliaright.setPower(0);
+                outtake.slidesDown();
             }
             if (gamepad1.y) {
                 Bright.setPosition(1);
@@ -163,9 +159,7 @@ public class Teleop extends OpMode {
             if (gamepad1.a) {
                 garrinha.setPosition(0);
             }
-            if (gamepad1.right_bumper){
-                climb();
-            }
+
             //MOVIMENTACAO
             Deadline gamepadRateLimit = new Deadline(500, TimeUnit.MILLISECONDS);
 
@@ -196,56 +190,6 @@ public class Teleop extends OpMode {
             telemetry.update();
 
         }
-        public void viperslide1Up ( int turnage){
-        newTarget = ticks / turnage;
-        poliaright.setTargetPosition((int) newTarget);
-        poliaright.setPower(1);
-        poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-    public void viperslide2Up ( int turnage){
-        newTarget = ticks / turnage;
-        polialeft.setTargetPosition((int) newTarget);
-        polialeft.setPower(1);
-        polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-    public void viperslide1Down () {
-        poliaright.setTargetPosition(0);
-        poliaright.setPower(1);
-        poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-    public void viperslide2Down () {
-        polialeft.setTargetPosition(0);
-        polialeft.setPower(1);
-        polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-    public void viperslide1Clip ( int turnage){
-        newTarget = ticks2 / turnage;
-        poliaright.setTargetPosition((int) newTarget);
-        poliaright.setPower(1);
-        poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-    public void viperslide2Clip ( int turnage){
-        newTarget = ticks2 / turnage;
-        polialeft.setTargetPosition((int) newTarget);
-        polialeft.setPower(1);
-        polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-    public void viperslide1Clipar ( int turnage){
-        newTarget = ticks3 / turnage;
-        poliaright.setTargetPosition((int) newTarget);
-        poliaright.setPower(1);
-        poliaright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-    public void viperslide2Clipar ( int turnage){
-        newTarget = ticks3 / turnage;
-        polialeft.setTargetPosition((int) newTarget);
-        polialeft.setPower(1);
-        polialeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-    public void climb(){
-        viperslide1Down();
-        viperslide2Down();
-    }
 }
 
 /*
