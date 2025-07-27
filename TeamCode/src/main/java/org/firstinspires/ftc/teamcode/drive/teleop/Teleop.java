@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class Teleop extends OpMode {
 
     //INTAKE
+    Intake intake;
 
     Servo rotate;
     Servo garra;
@@ -44,10 +45,10 @@ public class Teleop extends OpMode {
     DcMotor frontLeft, frontRight, backLeft, backRight;
     IMU imu;
 
-    Intake intake = new Intake(hardwareMap);
 
     @Override
     public void init() {
+
         //INTAKE
         lright = hardwareMap.get(Servo.class, "lright");
         lleft = hardwareMap.get(Servo.class, "lleft");
@@ -55,6 +56,8 @@ public class Teleop extends OpMode {
         garra = hardwareMap.get(Servo.class, "garra");
         pleft = hardwareMap.get(Servo.class, "pleft");
         pright = hardwareMap.get(Servo.class, "pright");
+
+        intake = new Intake(hardwareMap);
 
         //OUTTAKE
         poliaright = hardwareMap.get(DcMotor.class, "poliaright");
@@ -99,26 +102,10 @@ public class Teleop extends OpMode {
         public void loop(){
             //INTAKE
             if (gamepad1.right_trigger > 0.1) {
-                garra.setPosition(0.6);
-                sleep(200);
-                rotate.setPosition(0.7);
-                pleft.setPosition(0.75);
-                pright.setPosition(0.25);
-                lright.setPosition(1);
-                lleft.setPosition(0.1);
-                sleep(500);
-                garra.setPosition(0.3);
+                intake.retractsIntake();
             }
             if (gamepad2.dpad_down) {
-                garra.setPosition(0.6);
-                sleep(200);
-                rotate.setPosition(0.7);
-                pleft.setPosition(0.75);
-                pright.setPosition(0.25);
-                lright.setPosition(1);
-                lleft.setPosition(0.1);
-                sleep(500);
-                garra.setPosition(0.3);
+                intake.retractsIntake();
             }
             if (gamepad2.a) {
                 garra.setPosition(0.3);
@@ -133,12 +120,7 @@ public class Teleop extends OpMode {
                 rotate.setPosition(0.5);
             }
             if (gamepad1.left_trigger > 0.1) {
-                lright.setPosition(0.6);
-                lleft.setPosition(0.7);
-                sleep(200);
-                garra.setPosition(0.3);
-                pleft.setPosition(0);
-                pright.setPosition(1);
+                intake.extendsIntake();
             }
             if (gamepad2.dpad_up) {
                 intake.extendsIntake();

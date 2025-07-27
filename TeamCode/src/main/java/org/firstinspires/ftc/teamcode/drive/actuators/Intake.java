@@ -32,4 +32,15 @@ public class Intake {
             pleft.setPosition(0);
             pright.setPosition(1);
         }
+        public void retractsIntake(){
+            garra.setPosition(0.6);
+            sleep(200);
+            rotate.setPosition(0.7);
+            pleft.setPosition(0.75);
+            pright.setPosition(0.25);
+            lright.setPosition(1);
+            lleft.setPosition(0.1);
+            sleep(500);
+            garra.setPosition(0.3);
+        }
 }
