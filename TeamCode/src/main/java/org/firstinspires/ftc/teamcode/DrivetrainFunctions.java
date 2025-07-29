@@ -55,10 +55,10 @@ public class DrivetrainFunctions {
 
     private void Initialize(){
         try {
-            leftFrontDrive = linearOpMode.hardwareMap.get(DcMotor.class, "leftFront");
-            leftBackDrive = linearOpMode.hardwareMap.get(DcMotor.class, "leftRear");
-            rightFrontDrive = linearOpMode.hardwareMap.get(DcMotor.class, "rightFront");
-            rightBackDrive = linearOpMode.hardwareMap.get(DcMotor.class, "rightRear");
+            leftFrontDrive = linearOpMode.hardwareMap.get(DcMotor.class, "LF");
+            leftBackDrive = linearOpMode.hardwareMap.get(DcMotor.class, "LBLE");
+            rightFrontDrive = linearOpMode.hardwareMap.get(DcMotor.class, "RFBE");
+            rightBackDrive = linearOpMode.hardwareMap.get(DcMotor.class, "RBRE");
 
 
 //            try{

@@ -11,13 +11,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Delivery;
 import org.firstinspires.ftc.teamcode.DrivetrainFunctions;
 import org.firstinspires.ftc.teamcode.Intake;
-import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoboMom;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Disabled
+
 @TeleOp(name="MrKrabs Teleop", group="AAA")
 public class MrKrabsTeleOp extends RoboMom {
 
@@ -59,15 +58,12 @@ public class MrKrabsTeleOp extends RoboMom {
 
 //        intake = new Intake(this);
 
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(11.8, 61.7, Math.toRadians(90)));
 
 //        intake.unbrakePitch();
 
         waitForStart();
 
         while (opModeIsActive()){
-            drive.updatePoseEstimate();
-            Pose2d currentPose = drive.pose;
             TelemetryPacket packet = new TelemetryPacket();
 
             //driver 1
