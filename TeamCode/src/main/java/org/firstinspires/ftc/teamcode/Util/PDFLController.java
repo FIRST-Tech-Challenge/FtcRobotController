@@ -18,6 +18,8 @@ public class PDFLController {
 
     public double dir;
 
+    private boolean atTarget = false;
+
     /**
      * Constructor for PDFLController.
      * @param p The proportional gain
@@ -40,9 +42,14 @@ public class PDFLController {
         double returnVal = (error*p) + (dError*d);
         dir = error > 0 ? 1 : error < 0 ? -1 : 0;
 
-        if (Math.abs(error) <= errorMin) return f;
 
 
+        if (Math.abs(error) <= errorMin) {
+            atTarget = true;
+            return f;
+        }
+
+        atTarget = false;
         return ((Math.max(Math.abs(l), Math.abs(returnVal))) * dir) + f;
     }
 
@@ -58,6 +65,10 @@ public class PDFLController {
         time = System.nanoTime();
 
         dError = (error-oldError) /((time-oldTime)/ Math.pow(10.0,9));
+    }
+
+    public boolean atSetTarget(){
+        return atTarget;
     }
 
     /**

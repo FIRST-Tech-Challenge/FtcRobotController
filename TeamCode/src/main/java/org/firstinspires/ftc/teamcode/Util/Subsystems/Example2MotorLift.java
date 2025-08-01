@@ -62,9 +62,10 @@ public class Example2MotorLift extends SubsystemBase {
 
     public void update(){
 
-        currentPosition = readingFrom == EncoderReadingFrom.LEFT ? liftLeft.getCurrentPosition()   :
+        currentPosition =
+                readingFrom == EncoderReadingFrom.LEFT ? liftLeft.getCurrentPosition()   :
                 readingFrom == EncoderReadingFrom.RIGHT ? liftRight.getCurrentPosition() :
-                        (double) (liftLeft.getCurrentPosition() + liftRight.getCurrentPosition()) / 2;
+                (double) (liftLeft.getCurrentPosition() + liftRight.getCurrentPosition()) / 2;
 
 
         pdflController.setPDFL(P, D, F, L);
