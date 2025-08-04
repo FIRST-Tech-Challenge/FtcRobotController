@@ -34,13 +34,13 @@ public class Names {
 
 
     //Outtake Claw
-    public static final String OUTTAKE_CLAW = "OuttakeClaw";
+    public static final String OUTTAKE_CLAW_NAME = "OCLAW";
     public static final double OUTTAKE_CLAW_OPEN = 0;
     public static final double OUTTAKE_CLAW_CLOSED = .5;
 
-    public static final String CLAW_ROTATION = "CR1";
-    public static final double CLAW_ROTATION_PERP = 0;
-    public static final double CLAW_ROTATION_PARA = .5;
+    public static final String OUTTAKE_ROTATION_NAME = "ORS";
+    public static final double OUTTAKE_ROTATION_PERP = 0;
+    public static final double OUTTAKE_ROTATION_PARA = .5;
 
 
     //Drive

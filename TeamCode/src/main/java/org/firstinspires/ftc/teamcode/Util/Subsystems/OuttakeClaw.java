@@ -33,18 +33,18 @@ public class OuttakeClaw implements Subsystem {
             .withState(ClawStates.CLOSED, (stateRef, name) -> closeClaw())
             .withState(ClawStates.OPEN, (stateRef, name) -> openClaw());
 
-//    private static final StateMachine<SideStates> sideStates = new StateMachine<>(SideStates.PARA)
-//            .withState(SideStates.PERP, (stateRef, name) -> perpClaw())
-//            .withState(SideStates.PARA, (stateRef, name) -> paraClaw());
+    private static final StateMachine<SideStates> sideStates = new StateMachine<>(SideStates.PARA)
+            .withState(SideStates.PERP, (stateRef, name) -> perpClaw())
+            .withState(SideStates.PARA, (stateRef, name) -> paraClaw());
 
 
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hwmap = opMode.getOpMode().hardwareMap;
-        clawServo = hwmap.get(Servo.class, Names.OUTTAKE_CLAW);
-        clawServo.setDirection(Servo.Direction.REVERSE);
+        clawServo = hwmap.get(Servo.class, Names.OUTTAKE_CLAW_NAME);
+        //clawServo.setDirection(Servo.Direction.REVERSE);
 
-        sideServo = hwmap.get(Servo.class, "intakeSide");
+        sideServo = hwmap.get(Servo.class, Names.OUTTAKE_ROTATION_NAME);
     }
 
     //Started
@@ -55,11 +55,11 @@ public class OuttakeClaw implements Subsystem {
 
 
 
-    private static void close(){ clawServo.setPosition(Names.INTAKE_CLAW_CLOSED); clawStates.setState(ClawStates.CLOSED);}
-    private static void open(){clawServo.setPosition(Names.INTAKE_CLAW_OPEN); clawStates.setState(ClawStates.OPEN); }
+    private static void close(){ clawServo.setPosition(Names.OUTTAKE_CLAW_CLOSED); clawStates.setState(ClawStates.CLOSED);}
+    private static void open(){clawServo.setPosition(Names.OUTTAKE_CLAW_OPEN); clawStates.setState(ClawStates.OPEN); }
 
-//    private static void perp(){sideServo.setPosition(Names.INTAKE_SIDE_PERP); sideStates.setState(SideStates.PERP);}
-//    private static void para(){sideServo.setPosition(Names.INTAKE_SIDE_PARA); sideStates.setState(SideStates.PARA);}
+    private static void perp(){sideServo.setPosition(Names.OUTTAKE_ROTATION_PERP); sideStates.setState(SideStates.PERP);}
+    private static void para(){sideServo.setPosition(Names.OUTTAKE_ROTATION_PARA); sideStates.setState(SideStates.PARA);}
 
     @NonNull
     public static Lambda toggleClaw(){
@@ -93,19 +93,19 @@ public class OuttakeClaw implements Subsystem {
     }
 
 
-//    @NonNull
-//    public static Lambda perpClaw(){
-//        return new Lambda("Outtake Perp Claw")
-//                .addRequirements(INSTANCE)
-//                .setInit(OuttakeClaw::perp);
-//    }
-//
-//    @NonNull
-//    public static Lambda paraClaw(){
-//        return new Lambda("Outtake Para Claw")
-//                .addRequirements(INSTANCE)
-//                .setInit(OuttakeClaw::para);
-//    }
+    @NonNull
+    public static Lambda perpClaw(){
+        return new Lambda("Outtake Perp Claw")
+                .addRequirements(INSTANCE)
+                .setInit(OuttakeClaw::perp);
+    }
+
+    @NonNull
+    public static Lambda paraClaw(){
+        return new Lambda("Outtake Para Claw")
+                .addRequirements(INSTANCE)
+                .setInit(OuttakeClaw::para);
+    }
 
 
 

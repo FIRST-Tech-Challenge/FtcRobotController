@@ -14,7 +14,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
@@ -48,7 +47,7 @@ public class IntakeClaw implements Subsystem {
     public void postUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hwmap = opMode.getOpMode().hardwareMap;
         clawServo = hwmap.get(Servo.class, Names.INTAKE_CLAW_NAME);
-        clawServo.setDirection(Servo.Direction.REVERSE);
+        //clawServo.setDirection(Servo.Direction.REVERSE);
         downServo = hwmap.get(Servo.class, Names.INTAKE_VERTICAL_NAME);
         sideServo = hwmap.get(Servo.class, Names.INTAKE_HORIZONTAL_NAME);
     }

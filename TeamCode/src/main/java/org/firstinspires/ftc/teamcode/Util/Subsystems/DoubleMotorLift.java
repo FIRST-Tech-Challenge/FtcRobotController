@@ -191,7 +191,7 @@ public class DoubleMotorLift implements Subsystem {
     @Inherited
     public @interface Attach { }
 
-    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotation<>(DoubleMotorLift.Attach.class));
+    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotation<>(Attach.class));
 
     @NonNull
     @Override
