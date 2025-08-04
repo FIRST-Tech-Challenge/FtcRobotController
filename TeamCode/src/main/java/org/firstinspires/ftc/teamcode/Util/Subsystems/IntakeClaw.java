@@ -47,10 +47,10 @@ public class IntakeClaw implements Subsystem {
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hwmap = opMode.getOpMode().hardwareMap;
-        clawServo = hwmap.get(Servo.class, "intakeClaw");
+        clawServo = hwmap.get(Servo.class, Names.INTAKE_CLAW_NAME);
         clawServo.setDirection(Servo.Direction.REVERSE);
-        downServo = hwmap.get(Servo.class, "intakeDown");
-        sideServo = hwmap.get(Servo.class, "intakeSide");
+        downServo = hwmap.get(Servo.class, Names.INTAKE_VERTICAL_NAME);
+        sideServo = hwmap.get(Servo.class, Names.INTAKE_HORIZONTAL_NAME);
     }
 
     //Started
@@ -60,15 +60,14 @@ public class IntakeClaw implements Subsystem {
     }
 
 
-
     private static void close(){ clawServo.setPosition(Names.INTAKE_CLAW_CLOSED); clawStates.setState(ClawStates.CLOSED);}
     private static void open(){clawServo.setPosition(Names.INTAKE_CLAW_OPEN); clawStates.setState(ClawStates.OPEN); }
 
-    private static void down(){downServo.setPosition(Names.INTAKE_DOWN_DOWN); downStates.setState(DownStates.DOWN);}
-    private static void up(){downServo.setPosition(Names.INTAKE_DOWN_UP); downStates.setState(DownStates.UP);}
+    private static void down(){downServo.setPosition(Names.INTAKE_VERTICAL_DOWN); downStates.setState(DownStates.DOWN);}
+    private static void up(){downServo.setPosition(Names.INTAKE_VERTICAL_UP); downStates.setState(DownStates.UP);}
 
-    private static void perp(){sideServo.setPosition(Names.INTAKE_SIDE_PERP); sideStates.setState(SideStates.PERP);}
-    private static void para(){sideServo.setPosition(Names.INTAKE_SIDE_PARA); sideStates.setState(SideStates.PARA);}
+    private static void perp(){sideServo.setPosition(Names.INTAKE_HORIZONTAL_PERP); sideStates.setState(SideStates.PERP);}
+    private static void para(){sideServo.setPosition(Names.INTAKE_HORIZONTAL_PARA); sideStates.setState(SideStates.PARA);}
 
     @NonNull
     public static Lambda toggleClaw(){

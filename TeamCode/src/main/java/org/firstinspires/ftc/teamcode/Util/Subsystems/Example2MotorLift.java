@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.Util.Subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.Util.Names;
 import org.firstinspires.ftc.teamcode.Util.PDFLController;
 
 
@@ -23,7 +23,7 @@ public class Example2MotorLift extends SubsystemBase {
 
     public static int P = 0, D = 0, F = 0, L = 0;
 
-    public EncoderReadingFrom readingFrom = EncoderReadingFrom.BOTH ;
+    public Names.EncoderReadingFrom readingFrom = Names.EncoderReadingFrom.BOTH ;
 
     PDFLController pdflController;
     public static double power;
@@ -62,11 +62,7 @@ public class Example2MotorLift extends SubsystemBase {
 
     public void update(){
 
-        currentPosition =
-                readingFrom == EncoderReadingFrom.LEFT ? liftLeft.getCurrentPosition()   :
-                readingFrom == EncoderReadingFrom.RIGHT ? liftRight.getCurrentPosition() :
-                (double) (liftLeft.getCurrentPosition() + liftRight.getCurrentPosition()) / 2;
-
+        currentPosition = getCurrentPosition();
 
         pdflController.setPDFL(P, D, F, L);
         pdflController.setTarget(liftTarget);
@@ -81,15 +77,24 @@ public class Example2MotorLift extends SubsystemBase {
 
     public void debugTelemetry(Telemetry telemetry){
         telemetry.addData("Power Supplied ", power);
-        //One of these should probably be zero
         telemetry.addData("Left Encoder ", liftLeft.getCurrentPosition());
         telemetry.addData("Right Encoder ", liftRight.getCurrentPosition());
         telemetry.addData("Target ", liftTarget);
         telemetry.addData("Reading From ", readingFrom);
+        telemetry.addData("Current Left (MA) ", liftLeft.getCurrent(CurrentUnit.MILLIAMPS));
+        telemetry.addData("Current Right (MA) ", liftRight.getCurrent(CurrentUnit.MILLIAMPS));
+        telemetry.addData("Current Read Position ", getCurrentPosition());
+
     }
 
     public boolean isAtTarget(){
         return Math.abs(liftTarget - currentPosition) < allowedError;
+    }
+
+    public int getCurrentPosition(){
+        return readingFrom == Names.EncoderReadingFrom.LEFT ? liftLeft.getCurrentPosition()   :
+                (int) (readingFrom == Names.EncoderReadingFrom.RIGHT ? liftRight.getCurrentPosition() :
+                        (double) (liftLeft.getCurrentPosition() + liftRight.getCurrentPosition()) / 2);
     }
 
 

@@ -1,20 +1,17 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.Util.Names;
 import org.firstinspires.ftc.teamcode.Util.Subsystems.DoubleMotorLift;
 import org.firstinspires.ftc.teamcode.Util.Subsystems.IntakeClaw;
 import org.firstinspires.ftc.teamcode.Util.Subsystems.MecDrive;
 import org.firstinspires.ftc.teamcode.Util.Subsystems.OuttakeClaw;
-import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
-import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
+
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Lambda;
 
@@ -38,8 +35,7 @@ public class Teleop extends OpMode {
     @Override
     public void init() {
 
-
-
+        Mercurial.gamepad1();
 
         Mercurial.gamepad1().a()
                 .onTrue(new Lambda("Intake Close Claw"));
@@ -67,6 +63,8 @@ public class Teleop extends OpMode {
     @Override
     public void start(){
 
+
+
     }
 
     @Override
@@ -74,8 +72,12 @@ public class Teleop extends OpMode {
 
 
         liftTarget += (int) gamepad2.left_stick_y * 10;
-        liftTarget = Math.max(Math.min(liftTarget,1500), 0);
+        liftTarget = Math.max(Math.min(liftTarget,2000), 0);
         DoubleMotorLift.setLiftTarget(liftTarget);
+
+
+        DoubleMotorLift.log(Names.loggingState.ENABLED);
+        telemetry.update();
 
 
 

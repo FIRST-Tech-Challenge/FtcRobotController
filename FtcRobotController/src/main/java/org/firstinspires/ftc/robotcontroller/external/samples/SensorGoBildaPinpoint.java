@@ -90,7 +90,7 @@ public class SensorGoBildaPinpoint extends OpMode {
          * Set the kind of pods used by your robot. If you're using goBILDA odometry pods, select either
          * the goBILDA_SWINGARM_POD, or the goBILDA_4_BAR_POD.
          * If you're using another kind of odometry pod, uncomment setEncoderResolution and input the
-         * number of ticks per unit of your odometry pod.  For example: 
+         * number of ticks per unit of your odometry pod.  For example:
          *     pinpoint.setEncoderResolution(13.26291192, DistanceUnit.MM);
          */
         pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);

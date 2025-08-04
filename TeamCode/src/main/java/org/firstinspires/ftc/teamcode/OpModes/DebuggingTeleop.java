@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.Util.Names;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
@@ -19,8 +21,8 @@ public class DebuggingTeleop extends OpMode {
 
     Follower follower;
 
-    DcMotorEx slideLeft;
-    DcMotorEx slideRight;
+    static DcMotorEx slideLeft;
+    static DcMotorEx slideRight;
 
     Servo claw;
     public static double clawTarget = 0;
@@ -40,12 +42,16 @@ public class DebuggingTeleop extends OpMode {
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
-        slideLeft = hardwareMap.get(DcMotorEx.class, "slideLeft");
-        slideRight = hardwareMap.get(DcMotorEx.class, "slideRight");
+        slideLeft = hardwareMap.get(DcMotorEx.class, Names.SLIDE_MOTOR_LEFT);
+        slideRight = hardwareMap.get(DcMotorEx.class, Names.SLIDE_MOTOR_RIGHT);
+
     }
 
     @Override
     public void loop() {
+
+        slideLeft.setPower(gamepad1.left_stick_y);
+        slideRight.setPower(gamepad1.left_stick_y);
 
         telemetry.addData("Slide Left Position ", slideLeft.getCurrentPosition());
         telemetry.addData("Slide Right Position ", slideRight.getCurrentPosition());
@@ -53,7 +59,17 @@ public class DebuggingTeleop extends OpMode {
         telemetry.addData("Y ", follower.getPose().getY());
         telemetry.addData("Heading (Deg) ", Math.toDegrees(follower.getPose().getHeading()));
 
+        telemetry.addData("Left Encoder ", slideLeft.getCurrentPosition());
+        telemetry.addData("Right Encoder ", slideRight.getCurrentPosition());
+        telemetry.addData("Current Left (MA) ", slideLeft.getCurrent(CurrentUnit.MILLIAMPS));
+        telemetry.addData("Current Right (MA) ", slideRight.getCurrent(CurrentUnit.MILLIAMPS));
+        telemetry.addData("Current Read Position ", getCurrentPosition());
 
 
+
+    }
+
+    public static int getCurrentPosition(){
+        return (int) ((double) (slideLeft.getCurrentPosition() + slideRight.getCurrentPosition()) / 2);
     }
 }

@@ -6,7 +6,7 @@ import com.pedropathing.localization.Pose;
 //Make your poses using THIS website: https://visualizer.pedropathing.com
 //All tutorials and explanations can be found HERE: https://pedropathing.com
 
-public class Util {
+public class Poses {
 
     //Please Please PLEASE, use well constructed names for these poses.
     //The reason we use poses over points is that poses have a heading component.
