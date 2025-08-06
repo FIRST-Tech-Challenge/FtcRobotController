@@ -3,10 +3,13 @@ package org.firstinspires.ftc.teamcode.Util.Subsystems;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Util.Names;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Util.UniConstants;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -26,6 +29,7 @@ public class OuttakeClaw implements Subsystem {
     public static Servo clawServo;
     public static Servo sideServo;
     public static final OuttakeClaw INSTANCE = new OuttakeClaw();
+    public static Telemetry telemetry;
 
     private OuttakeClaw() { }
 
@@ -41,10 +45,11 @@ public class OuttakeClaw implements Subsystem {
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hwmap = opMode.getOpMode().hardwareMap;
-        clawServo = hwmap.get(Servo.class, Names.OUTTAKE_CLAW_NAME);
+        clawServo = hwmap.get(Servo.class, UniConstants.OUTTAKE_CLAW_NAME);
         //clawServo.setDirection(Servo.Direction.REVERSE);
 
-        sideServo = hwmap.get(Servo.class, Names.OUTTAKE_ROTATION_NAME);
+        sideServo = hwmap.get(Servo.class, UniConstants.OUTTAKE_ROTATION_NAME);
+        telemetry = new MultipleTelemetry(opMode.getOpMode().telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
     //Started
@@ -55,15 +60,15 @@ public class OuttakeClaw implements Subsystem {
 
 
 
-    private static void close(){ clawServo.setPosition(Names.OUTTAKE_CLAW_CLOSED); clawStates.setState(ClawStates.CLOSED);}
-    private static void open(){clawServo.setPosition(Names.OUTTAKE_CLAW_OPEN); clawStates.setState(ClawStates.OPEN); }
+    private static void close(){ clawServo.setPosition(UniConstants.OUTTAKE_CLAW_CLOSED); clawStates.setState(ClawStates.CLOSED);}
+    private static void open(){clawServo.setPosition(UniConstants.OUTTAKE_CLAW_OPEN); clawStates.setState(ClawStates.OPEN); }
 
-    private static void perp(){sideServo.setPosition(Names.OUTTAKE_ROTATION_PERP); sideStates.setState(SideStates.PERP);}
-    private static void para(){sideServo.setPosition(Names.OUTTAKE_ROTATION_PARA); sideStates.setState(SideStates.PARA);}
+    private static void perp(){sideServo.setPosition(UniConstants.OUTTAKE_ROTATION_PERP); sideStates.setState(SideStates.PERP);}
+    private static void para(){sideServo.setPosition(UniConstants.OUTTAKE_ROTATION_PARA); sideStates.setState(SideStates.PARA);}
 
     @NonNull
     public static Lambda toggleClaw(){
-        return new Lambda("outtake claw toggle")
+        return new Lambda("outtake-claw-toggle")
                 .setInit(() -> {
                     switch (clawStates.getState()){
                         case OPEN:
@@ -80,14 +85,14 @@ public class OuttakeClaw implements Subsystem {
     }
     @NonNull
     public static Lambda closeClaw(){
-        return new Lambda("Outtake Close Claw")
+        return new Lambda("Outtake-Close-Claw")
                 .addRequirements(INSTANCE)
                 .setInit(OuttakeClaw::close);
     }
 
     @NonNull
     public static Lambda openClaw(){
-        return new Lambda("Outtake Open Claw")
+        return new Lambda("Outtake-Open-Claw")
                 .addRequirements(INSTANCE)
                 .setInit(OuttakeClaw::open);
     }
@@ -108,6 +113,28 @@ public class OuttakeClaw implements Subsystem {
     }
 
 
+    public static void log(UniConstants.loggingState state){
+        switch (state){
+
+            case DISABLED:
+                break;
+            case ENABLED:
+                telemetry.addData("Outtake Claw State ", clawStates.getState());
+                telemetry.addData("Outtake Side State ", sideStates.getState());
+
+                break;
+            case EXTREME:
+                telemetry.addData("Outtake Claw State ", clawStates.getState());
+                telemetry.addData("Outtake Side State ", sideStates.getState());
+                telemetry.addData("Outtake Claw Target Position ", clawServo.getPosition());
+                telemetry.addData("Outtake Side Target Position ", sideServo.getPosition());
+                break;
+
+
+
+        }
+
+    }
 
 
 

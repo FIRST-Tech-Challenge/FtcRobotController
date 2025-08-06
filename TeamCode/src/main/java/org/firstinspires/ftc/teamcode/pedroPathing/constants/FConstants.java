@@ -3,21 +3,21 @@ package org.firstinspires.ftc.teamcode.pedroPathing.constants;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Localizers;
 
-import org.firstinspires.ftc.teamcode.Util.Names;
+import org.firstinspires.ftc.teamcode.Util.UniConstants;
 
 public class FConstants {
     static {
         FollowerConstants.localizers = Localizers.PINPOINT;
 
-        FollowerConstants.leftFrontMotorName = Names.DRIVE_FRONT_LEFT;
-        FollowerConstants.leftRearMotorName = Names.DRIVE_BACK_LEFT;
-        FollowerConstants.rightFrontMotorName = Names.DRIVE_FRONT_RIGHT;
-        FollowerConstants.rightRearMotorName = Names.DRIVE_BACK_RIGHT;
+        FollowerConstants.leftFrontMotorName = UniConstants.DRIVE_FRONT_LEFT;
+        FollowerConstants.leftRearMotorName = UniConstants.DRIVE_BACK_LEFT;
+        FollowerConstants.rightFrontMotorName = UniConstants.DRIVE_FRONT_RIGHT;
+        FollowerConstants.rightRearMotorName = UniConstants.DRIVE_BACK_RIGHT;
 
-        FollowerConstants.leftFrontMotorDirection = Names.DRIVE_FRONT_LEFT_DIRECTION;
-        FollowerConstants.leftRearMotorDirection = Names.DRIVE_BACK_LEFT_DIRECTION;
-        FollowerConstants.rightFrontMotorDirection = Names.DRIVE_FRONT_RIGHT_DIRECTION;
-        FollowerConstants.rightRearMotorDirection = Names.DRIVE_BACK_RIGHT_DIRECTION;
+        FollowerConstants.leftFrontMotorDirection = UniConstants.DRIVE_FRONT_LEFT_DIRECTION;
+        FollowerConstants.leftRearMotorDirection = UniConstants.DRIVE_BACK_LEFT_DIRECTION;
+        FollowerConstants.rightFrontMotorDirection = UniConstants.DRIVE_FRONT_RIGHT_DIRECTION;
+        FollowerConstants.rightRearMotorDirection = UniConstants.DRIVE_BACK_RIGHT_DIRECTION;
 
         FollowerConstants.mass = 0;
 

@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
+import org.firstinspires.ftc.teamcode.Util.UniConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
@@ -97,18 +99,24 @@ public class MecDrive implements Subsystem {
 
     @Override
     public void preUserStartHook(@NonNull Wrapper opMode) {
+        if(opMode.getOpModeType() == OpModeMeta.Flavor.TELEOP) {
+            follower.startTeleopDrive();
+        }
     }
 
     @Override
-    public void postUserLoopHook(@NonNull Wrapper opMode) {}
+    public void postUserLoopHook(@NonNull Wrapper opMode) {
+
+//        drive(Mercurial.gamepad1());
+    }
 
     public static Lambda drive(BoundGamepad gamepad){
         return new Lambda("drive")
                 .addRequirements(INSTANCE)
                 .setExecute(() -> drive(
-                        -gamepad.leftStickY().state(),
-                        gamepad.leftStickX().state(),
-                        gamepad.rightStickX().state()
+                        gamepad.leftStickY().state(),
+                        -gamepad.leftStickX().state(),
+                        -gamepad.rightStickX().state()
                 ))
                 .setFinish(() -> false);
     }
@@ -207,6 +215,33 @@ public class MecDrive implements Subsystem {
                 .setFinish(() -> !follower.isBusy() || follower.isRobotStuck());
     }
 
+    public static void log(UniConstants.loggingState state){
+        switch (state){
+
+            case DISABLED:
+                break;
+            case ENABLED:
+                telemetry.addData("Follower X ", follower.getPose().getX());
+                telemetry.addData("Follower Y ", follower.getPose().getY());
+                telemetry.addData("Follower Heading (Deg) ", follower.getPose().getHeading());
+                telemetry.addLine();
+                telemetry.addData("Follower Is Busy ", follower.isBusy());
+                telemetry.addData("Follower Is Robot Stuck ", follower.isRobotStuck());
+                telemetry.addData("Follower Is Slowed ", isSlowed);
+                break;
+            case EXTREME:
+                telemetry.addLine("FOLLOWER INFO BELOW: ");
+                //follower.telemetryDebug(telemetry);
+                telemetry.addLine();
+                telemetry.addData("Follower Is Busy ", follower.isBusy());
+                telemetry.addData("Follower Is Robot Stuck ", follower.isRobotStuck());
+                break;
+
+
+
+        }
+
+    }
 
 
     @Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) @MustBeDocumented

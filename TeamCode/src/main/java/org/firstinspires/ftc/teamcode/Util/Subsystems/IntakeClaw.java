@@ -3,10 +3,13 @@ package org.firstinspires.ftc.teamcode.Util.Subsystems;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Util.Names;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Util.UniConstants;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -27,6 +30,7 @@ public class IntakeClaw implements Subsystem {
     public static Servo downServo;
     public static Servo sideServo;
     public static final IntakeClaw INSTANCE = new IntakeClaw();
+    public static Telemetry telemetry;
 
     private IntakeClaw() { }
 
@@ -46,10 +50,12 @@ public class IntakeClaw implements Subsystem {
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hwmap = opMode.getOpMode().hardwareMap;
-        clawServo = hwmap.get(Servo.class, Names.INTAKE_CLAW_NAME);
+        clawServo = hwmap.get(Servo.class, UniConstants.INTAKE_CLAW_NAME);
         //clawServo.setDirection(Servo.Direction.REVERSE);
-        downServo = hwmap.get(Servo.class, Names.INTAKE_VERTICAL_NAME);
-        sideServo = hwmap.get(Servo.class, Names.INTAKE_HORIZONTAL_NAME);
+        downServo = hwmap.get(Servo.class, UniConstants.INTAKE_VERTICAL_NAME);
+        sideServo = hwmap.get(Servo.class, UniConstants.INTAKE_HORIZONTAL_NAME);
+
+        telemetry = new MultipleTelemetry(opMode.getOpMode().telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
     //Started
@@ -59,14 +65,14 @@ public class IntakeClaw implements Subsystem {
     }
 
 
-    private static void close(){ clawServo.setPosition(Names.INTAKE_CLAW_CLOSED); clawStates.setState(ClawStates.CLOSED);}
-    private static void open(){clawServo.setPosition(Names.INTAKE_CLAW_OPEN); clawStates.setState(ClawStates.OPEN); }
+    private static void close(){ clawServo.setPosition(UniConstants.INTAKE_CLAW_CLOSED); clawStates.setState(ClawStates.CLOSED);}
+    private static void open(){clawServo.setPosition(UniConstants.INTAKE_CLAW_OPEN); clawStates.setState(ClawStates.OPEN); }
 
-    private static void down(){downServo.setPosition(Names.INTAKE_VERTICAL_DOWN); downStates.setState(DownStates.DOWN);}
-    private static void up(){downServo.setPosition(Names.INTAKE_VERTICAL_UP); downStates.setState(DownStates.UP);}
+    private static void down(){downServo.setPosition(UniConstants.INTAKE_VERTICAL_DOWN); downStates.setState(DownStates.DOWN);}
+    private static void up(){downServo.setPosition(UniConstants.INTAKE_VERTICAL_UP); downStates.setState(DownStates.UP);}
 
-    private static void perp(){sideServo.setPosition(Names.INTAKE_HORIZONTAL_PERP); sideStates.setState(SideStates.PERP);}
-    private static void para(){sideServo.setPosition(Names.INTAKE_HORIZONTAL_PARA); sideStates.setState(SideStates.PARA);}
+    private static void perp(){sideServo.setPosition(UniConstants.INTAKE_HORIZONTAL_PERP); sideStates.setState(SideStates.PERP);}
+    private static void para(){sideServo.setPosition(UniConstants.INTAKE_HORIZONTAL_PARA); sideStates.setState(SideStates.PARA);}
 
     @NonNull
     public static Lambda toggleClaw(){
@@ -128,6 +134,31 @@ public class IntakeClaw implements Subsystem {
     }
 
 
+    public static void log(UniConstants.loggingState state){
+        switch (state){
+
+            case DISABLED:
+                break;
+            case ENABLED:
+                telemetry.addData("Intake Claw State ", clawStates.getState());
+                telemetry.addData("Intake Down State ", downStates.getState());
+                telemetry.addData("Intake Side State ", sideStates.getState());
+                break;
+            case EXTREME:
+                telemetry.addData("Intake Claw State ", clawStates.getState());
+                telemetry.addData("Intake Down State ", downStates.getState());
+                telemetry.addData("Intake Side State ", sideStates.getState());
+                telemetry.addLine();
+                telemetry.addData("Intake Claw Target Position ", clawServo.getPosition());
+                telemetry.addData("Intake Down Target Position ", downServo.getPosition());
+                telemetry.addData("Intake Side Target Position ", sideServo.getPosition());
+                break;
+
+
+
+        }
+
+    }
 
 
 
