@@ -123,22 +123,19 @@ public class DoubleMotorLift implements Subsystem {
         return new Lambda("Set Lift Target")
                 .addRequirements(INSTANCE)
                 .setInit(() -> {
+                    liftStates.setState(state);
                     switch (state){
                         case TRANSFER:
                             liftTarget = UniConstants.LIFT_TRANSFER;
-                            liftStates.setState(HeightStates.TRANSFER);
                             break;
                         case MIDDLE:
                             liftTarget = UniConstants.LIFT_MIDDLE;
-                            liftStates.setState(HeightStates.MIDDLE);
                             break;
                         case BASKET:
                             liftTarget = UniConstants.LIFT_BASKET;
-                            liftStates.setState(HeightStates.BASKET);
                             break;
                         case BAR:
                             liftTarget = UniConstants.LIFT_BAR;
-                            liftStates.setState(HeightStates.BAR);
                             break;
                     }
                 })
