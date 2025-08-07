@@ -11,7 +11,7 @@ buildscript {
     }
     dependencies {
         // Note for FTC Teams: Do not modify this yourself.
-        classpath 'com.android.tools.build:gradle:8.7.0'
+        classpath 'com.android.tools.build:gradle:8.7.3'
     }
 }
 
@@ -26,4 +26,12 @@ allprojects {
 
 repositories {
     mavenCentral()
+}
+
+// makes sure you are using java 21
+tasks.register("printStudioJavaVersion") {
+    doLast {
+        println "Gradle is using Java version: ${System.getProperty('java.version')}"
+        println "JAVA_HOME: ${System.getenv('JAVA_HOME')}"
+    }
 }
