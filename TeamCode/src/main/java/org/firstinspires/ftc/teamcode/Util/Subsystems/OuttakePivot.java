@@ -33,9 +33,9 @@ public class OuttakePivot implements Subsystem {
 
     private OuttakePivot() { }
 
-    private static final StateMachine<ClawStates> pivotStates = new StateMachine<>(ClawStates.CLOSED)
-            .withState(ClawStates.CLOSED, (stateRef, name) -> pivotUp())
-            .withState(ClawStates.OPEN, (stateRef, name) -> openClaw());
+    private static final StateMachine<PivotStates> pivotStates = new StateMachine<>(PivotStates.DOWN)
+            .withState(PivotStates.DOWN, (stateRef, name) -> pivotUp())
+            .withState(PivotStates.UP, (stateRef, name) -> pivotDown());
 
 
 
@@ -43,10 +43,10 @@ public class OuttakePivot implements Subsystem {
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hwmap = opMode.getOpMode().hardwareMap;
-        leftServo = hwmap.get(Servo.class, UniConstants.OUTTAKE_CLAW_NAME);
+        leftServo = hwmap.get(Servo.class, UniConstants.OUTTAKE_PIVOT_LEFT_NAME);
         //clawServo.setDirection(Servo.Direction.REVERSE);
 
-        rightServo = hwmap.get(Servo.class, UniConstants.OUTTAKE_ROTATION_NAME);
+        rightServo = hwmap.get(Servo.class, UniConstants.OUTTAKE_PIVOT_RIGHT_NAME);
         telemetry = new MultipleTelemetry(opMode.getOpMode().telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
@@ -58,9 +58,8 @@ public class OuttakePivot implements Subsystem {
 
 
 
-    private static void up(){ leftServo.setPosition(UniConstants.OUTTAKE_CLAW_CLOSED); pivotStates.setState(ClawStates.CLOSED);}
-    private static void pivotDown(){
-        leftServo.setPosition(UniConstants.OUTTAKE_CLAW_OPEN); pivotStates.setState(ClawStates.OPEN); }
+    private static void up(){leftServo.setPosition(UniConstants.OUTTAKE_CLAW_CLOSED); pivotStates.setState(PivotStates.DOWN);}
+    private static void down(){}
 
 
 
@@ -74,10 +73,10 @@ public class OuttakePivot implements Subsystem {
     }
 
     @NonNull
-    public static Lambda openClaw(){
+    public static Lambda pivotDown(){
         return new Lambda("Outtake-Open-Claw")
                 .addRequirements(INSTANCE)
-                .setInit(OuttakePivot::pivotDown);
+                .setInit(OuttakePivot::down);
     }
 
 
@@ -110,9 +109,11 @@ public class OuttakePivot implements Subsystem {
 
 
 
-    private enum ClawStates {
-        OPEN,
-        CLOSED
+    private enum PivotStates {
+        UP,
+        DOWN,
+        OUT,
+        TRANSFER
     }
 
 

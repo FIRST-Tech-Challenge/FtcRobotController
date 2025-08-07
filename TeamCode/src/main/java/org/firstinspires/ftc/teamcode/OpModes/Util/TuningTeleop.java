@@ -26,7 +26,7 @@ public class TuningTeleop extends OpMode {
     private static DcMotorEx liftRight;
 
     public static double P = 0, D = 0, F = 0.1, L = 0;
-    private static final PDFLController pdflController = new PDFLController(P, D, F, L);
+    PDFLController pdflController = new PDFLController(P, D, F, L);
     public static double power;
 
     public static int allowedError = 1;
@@ -55,7 +55,12 @@ public class TuningTeleop extends OpMode {
 
     @Override
     public void init_loop() {
-
+        telemetry.addData("P ", P);
+        telemetry.addData("D ", D);
+        telemetry.addData("F ", F);
+        telemetry.addData("L ", L);
+        telemetry.addData("Enabled ", FtcDashboard.getInstance().isEnabled());
+        telemetry.update();
     }
 
     @Override
@@ -72,7 +77,7 @@ public class TuningTeleop extends OpMode {
         pdflController.setTarget(liftTarget);
         pdflController.update(currentPosition);
         power = pdflController.runPDFL(allowedError);
-        liftLeft.setPower(power);
+        liftLeft.setPower(-power);
         liftRight.setPower(power);
 
         telemetry.addData("Lift Power Supplied ", power);

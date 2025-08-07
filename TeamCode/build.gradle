@@ -18,6 +18,8 @@ apply from: '../build.dependencies.gradle'
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
 
+
+
     packagingOptions {
         jniLibs.useLegacyPackaging true
     }
@@ -31,6 +33,8 @@ repositories {
     maven {
         url "https://repo.dairy.foundation/snapshots"
     }
+
+
 }
 
 dependencies {
@@ -40,4 +44,5 @@ dependencies {
     implementation "dev.frozenmilk.dairy:Core:2.2.3"
     implementation "dev.frozenmilk.sinister:Sloth:0.2.3"
     implementation "dev.frozenmilk.mercurial:Mercurial:1.0.3"
+
 }

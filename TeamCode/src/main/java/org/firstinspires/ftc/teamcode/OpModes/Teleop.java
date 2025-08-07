@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -51,10 +50,10 @@ public class Teleop extends OpMode {
                 .onTrue(MecDrive.slow())
                 .onFalse(MecDrive.fast()); //No clue if this works or not
 
-        gp2.a().onTrue(DoubleMotorLift.home());
-        gp2.dpadUp().onTrue(DoubleMotorLift.setHeightState(DoubleMotorLift.HeightStates.MIDDLE));
-        gp2.dpadLeft().onTrue(DoubleMotorLift.setHeightState(DoubleMotorLift.HeightStates.BASKET));
-        gp2.dpadRight().onTrue(DoubleMotorLift.setHeightState(DoubleMotorLift.HeightStates.BAR));
+        gp2.dpadDown().onTrue(DoubleMotorLift.home());
+        gp2.dpadUp().onTrue(DoubleMotorLift.goToLiftTarget(DoubleMotorLift.HeightStates.MIDDLE));
+        gp2.dpadLeft().onTrue(DoubleMotorLift.goToLiftTarget(DoubleMotorLift.HeightStates.BASKET));
+        gp2.dpadRight().onTrue(DoubleMotorLift.goToLiftTarget(DoubleMotorLift.HeightStates.BAR));
 
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

@@ -217,7 +217,6 @@ public class MecDrive implements Subsystem {
 
     public static void log(UniConstants.loggingState state){
         switch (state){
-
             case DISABLED:
                 break;
             case ENABLED:

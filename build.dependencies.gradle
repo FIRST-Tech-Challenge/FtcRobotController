@@ -3,6 +3,7 @@ repositories {
     google() // Needed for androidx
     maven { url = 'https://maven.brott.dev/' }
     maven { url= 'https://maven.pedropathing.com/' }
+    maven { url = 'https://repo.dairy.foundation/releases' }
 }
 
 dependencies {
@@ -17,6 +18,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
     implementation 'com.pedropathing:pedro:1.0.9'
-    implementation 'com.acmerobotics.dashboard:dashboard:0.4.16'
+    implementation 'com.acmerobotics.slothboard:dashboard:0.2.3+0.4.16'
 }
 

@@ -38,7 +38,7 @@ public class DoubleMotorLift implements Subsystem {
 
     public static int liftTarget = 0;
 
-    public static double P = 0, D = 0, F = 0.1, L = 0;
+    public static double P = 0.0025, D = 0, F = 0.07, L = 0.14;
 
     public static UniConstants.EncoderReadingFrom readingFrom = UniConstants.EncoderReadingFrom.BOTH ;
 
@@ -90,7 +90,7 @@ public class DoubleMotorLift implements Subsystem {
 
 
         if(opMode.getOpModeType() == OpModeMeta.Flavor.TELEOP){
-            liftTarget += (int) (Mercurial.gamepad2().leftStickY().state() * 10);
+            liftTarget += (int) (Mercurial.gamepad2().leftStickY().state() * 35);
             liftTarget = Math.max(Math.min(liftTarget,2000), 0);
         }
 
@@ -98,7 +98,7 @@ public class DoubleMotorLift implements Subsystem {
         pdflController.setPDFL(P, D, F, L);
         pdflController.setTarget(liftTarget);
         pdflController.update(currentPosition);
-        isAtTarget = Math.abs(liftTarget - currentPosition) < allowedError;
+        isAtTarget = pdflController.atSetTarget();
 
 
         runController();
@@ -111,17 +111,38 @@ public class DoubleMotorLift implements Subsystem {
     @NonNull
     public static Lambda goToLiftTarget(int target){
         return new Lambda("Set Lift Target")
-                .addRequirements(INSTANCE)
-                .setInit(() -> liftTarget = target)
+                .setInterruptible(true)
+                .setInit(() -> {
+                    liftTarget = target;
+                })
                 .setFinish(() -> isAtTarget);
     }
 
     @NonNull
-    public static Lambda setHeightState(HeightStates state){
+    public static Lambda goToLiftTarget(HeightStates state){
         return new Lambda("Set Lift Target")
                 .addRequirements(INSTANCE)
-                .setInit(() -> liftStates.setState(state))
-                .setFinish(() -> true);
+                .setInit(() -> {
+                    switch (state){
+                        case TRANSFER:
+                            liftTarget = UniConstants.LIFT_TRANSFER;
+                            liftStates.setState(HeightStates.TRANSFER);
+                            break;
+                        case MIDDLE:
+                            liftTarget = UniConstants.LIFT_MIDDLE;
+                            liftStates.setState(HeightStates.MIDDLE);
+                            break;
+                        case BASKET:
+                            liftTarget = UniConstants.LIFT_BASKET;
+                            liftStates.setState(HeightStates.BASKET);
+                            break;
+                        case BAR:
+                            liftTarget = UniConstants.LIFT_BAR;
+                            liftStates.setState(HeightStates.BAR);
+                            break;
+                    }
+                })
+                .setFinish(() -> isAtTarget);
     }
 
 
@@ -136,7 +157,7 @@ public class DoubleMotorLift implements Subsystem {
 
 
                         power = pdflController.runPDFL(allowedError);
-                        liftLeft.setPower(power);
+                        liftLeft.setPower(-power);
                         liftRight.setPower(power);
 
                     }
@@ -163,7 +184,7 @@ public class DoubleMotorLift implements Subsystem {
 
     public static void setPower(double power) {
         enableController = false;
-        liftLeft.setPower(power);
+        liftLeft.setPower(-power);
         liftRight.setPower(power);
     }
 
@@ -187,6 +208,7 @@ public class DoubleMotorLift implements Subsystem {
                 telemetry.addData("Lift Target ", liftTarget);
                 telemetry.addData("Lift Current Read Position ", getCurrentPosition());
                 telemetry.addData("Lift Is At Position ", isAtTarget);
+                telemetry.addData("Lift State ", liftStates.getState());
                 break;
             case EXTREME:
                 telemetry.addData("Lift Power Supplied ", power);
