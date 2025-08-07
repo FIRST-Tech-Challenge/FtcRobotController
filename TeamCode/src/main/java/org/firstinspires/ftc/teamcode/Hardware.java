@@ -5,39 +5,50 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Hardware {
-    // Motors
-    public static DcMotor lift1;
-    public static DcMotor lift2;
-    public static DcMotor lift3;
 
-    public static DcMotor lf;
-    public static DcMotor rf;
-    public static DcMotor lb;
-    public static DcMotor rb;
+    //singleton
+    private static Hardware instance;
+
+    // Motors
+    public final DcMotor lift1;
+    public final DcMotor lift2;
+    public final DcMotor lift3;
+
+    public final DcMotor lf;
+    public final DcMotor rf;
+    public final DcMotor lb;
+    public final DcMotor rb;
 
     // Servos
-    public static Servo claw;
-    public static Servo larm;
-    public static Servo rarm;
+    public final Servo claw;
+    public final Servo lArm;
+    public final Servo rArm;
 
-    public static Servo llinkage;
-    public static Servo rlinkage;
+    public final Servo lLinkage;
+    public final Servo rLinkage;
 
-    public static void init(HardwareMap hwMap) {
-        lift1 = hwMap.get(DcMotor.class, Specifications.EXTENSION_MOTOR_MAIN);
-        lift2 = hwMap.get(DcMotor.class, Specifications.EXTENSION_MOTOR_AUX1);
-        lift3 = hwMap.get(DcMotor.class, Specifications.EXTENSION_MOTOR_AUX2);
+    private Hardware(HardwareMap hwMap){
+        this.lift1 = hwMap.get(DcMotor.class, Specifications.EXTENSION_MOTOR_MAIN);
+        this.lift2 = hwMap.get(DcMotor.class, Specifications.EXTENSION_MOTOR_AUX1);
+        this.lift3 = hwMap.get(DcMotor.class, Specifications.EXTENSION_MOTOR_AUX2);
 
-        lf = hwMap.get(DcMotor.class, Specifications.FTLF_MOTOR);
-        rf = hwMap.get(DcMotor.class, Specifications.FTRT_MOTOR);
-        lb = hwMap.get(DcMotor.class, Specifications.BKLF_MOTOR);
-        rb = hwMap.get(DcMotor.class, Specifications.BKRT_MOTOR);
+        this.rf = hwMap.get(DcMotor.class, Specifications.FTRT_MOTOR); //rightforward
+        this.lf = hwMap.get(DcMotor.class, Specifications.FTLF_MOTOR); //leftforward
+        this.lb = hwMap.get(DcMotor.class, Specifications.BKLF_MOTOR); //leftback
+        this.rb = hwMap.get(DcMotor.class, Specifications.BKRT_MOTOR); //rightback
 
-        claw = hwMap.get(Servo.class, Specifications.CLAW_SERVO);
-        larm = hwMap.get(Servo.class, Specifications.LEFT_OUTPUT_ARM);
-        rarm = hwMap.get(Servo.class, Specifications.RIGHT_OUTPUT_ARM);
+        this.claw = hwMap.get(Servo.class, Specifications.CLAW_SERVO);
+        this.lArm = hwMap.get(Servo.class, Specifications.LEFT_OUTPUT_ARM);
+        this.rArm = hwMap.get(Servo.class, Specifications.RIGHT_OUTPUT_ARM);
 
-        llinkage = hwMap.get(Servo.class, Specifications.EXTENSION_ARM_LEFT);
-        rlinkage = hwMap.get(Servo.class, Specifications.EXTENSION_ARM_RIGHT);
+        this.lLinkage = hwMap.get(Servo.class, Specifications.EXTENSION_ARM_LEFT);
+        this.rLinkage = hwMap.get(Servo.class, Specifications.EXTENSION_ARM_RIGHT);
+    }
+
+    public static Hardware getInstance(HardwareMap hwMap) {
+        if (instance == null) {
+            instance = new Hardware(hwMap);
+        }
+        return instance;
     }
 }
