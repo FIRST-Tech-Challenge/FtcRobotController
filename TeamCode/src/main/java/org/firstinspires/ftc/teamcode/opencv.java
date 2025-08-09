@@ -126,7 +126,7 @@ public class opencv extends LinearOpMode {
 
             }
 
-            if (largestContourR != null) {
+            else if (largestContourR != null) {
                 // Draw a red outline around the largest detected object
                 Imgproc.drawContours(input, contoursR, contoursR.indexOf(largestContourR), new Scalar(255, 0, 0), 2);
                 // Calculate the width of the bounding box
@@ -153,7 +153,7 @@ public class opencv extends LinearOpMode {
 
             }
 
-            if (largestContourB != null) {
+            else if (largestContourB != null) {
                 // Draw a red outline around the largest detected object
                 Imgproc.drawContours(input, contoursB, contoursB.indexOf(largestContourB), new Scalar(255, 0, 0), 2);
                 // Calculate the width of the bounding box
