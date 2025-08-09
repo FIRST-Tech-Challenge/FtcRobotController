@@ -1,4 +1,4 @@
-//HOPEFULLY IT WORKS LOL
+//PARAMETER MINDS BOOM CHIK CHIK BOOM
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
