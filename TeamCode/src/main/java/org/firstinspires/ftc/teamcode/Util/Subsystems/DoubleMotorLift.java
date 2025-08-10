@@ -57,7 +57,7 @@ public class DoubleMotorLift implements Subsystem {
     private static final int maxCurrentLimit = 5000;
 
 
-    private static final StateMachine<HeightStates> liftStates = new StateMachine<>(HeightStates.TRANSFER)
+    private static final StateMachine<HeightStates> liftStates = new StateMachine<>(HeightStates.HOME)
             .withState(HeightStates.TRANSFER, (stateRef, name) -> goToLiftTarget(UniConstants.LIFT_TRANSFER))
             .withState(HeightStates.MIDDLE, (stateRef, name) -> goToLiftTarget(UniConstants.LIFT_MIDDLE))
             .withState(HeightStates.BASKET, (stateRef, name) -> goToLiftTarget(UniConstants.LIFT_BASKET))
@@ -92,6 +92,9 @@ public class DoubleMotorLift implements Subsystem {
         if(opMode.getOpModeType() == OpModeMeta.Flavor.TELEOP){
             liftTarget += (int) (Mercurial.gamepad2().leftStickY().state() * 35);
             liftTarget = Math.max(Math.min(liftTarget,2000), 0);
+
+
+
         }
 
         currentPosition = getCurrentPosition();
@@ -149,10 +152,6 @@ public class DoubleMotorLift implements Subsystem {
         return new Lambda("Run Controller")
                 .setExecute(() -> {
                     if(enableController){
-
-
-
-
                         power = pdflController.runPDFL(allowedError);
                         liftLeft.setPower(-power);
                         liftRight.setPower(power);
@@ -251,6 +250,7 @@ public class DoubleMotorLift implements Subsystem {
         MIDDLE,
         BASKET,
         BAR,
+        HOME
     }
 
 
