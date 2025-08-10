@@ -10,6 +10,7 @@ import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.util.DashboardPoseTracker;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -63,7 +64,7 @@ public class MecDrive implements Subsystem {
                 x * (isSlowed ? slowSpeed : 1),
                 y * (isSlowed ? slowSpeed : 1),
                 z * (isSlowed ? slowSpeed : 1),
-                false
+                true
         );
         follower.update();
     }
@@ -86,6 +87,12 @@ public class MecDrive implements Subsystem {
         bl.setDirection(FollowerConstants.leftRearMotorDirection);
         fr.setDirection(FollowerConstants.rightFrontMotorDirection);
         br.setDirection(FollowerConstants.rightRearMotorDirection);
+
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
 
         follower.setStartingPose(new Pose(0, 0, 0));
@@ -222,10 +229,9 @@ public class MecDrive implements Subsystem {
             case ENABLED:
                 telemetry.addData("Follower X ", follower.getPose().getX());
                 telemetry.addData("Follower Y ", follower.getPose().getY());
-                telemetry.addData("Follower Heading (Deg) ", follower.getPose().getHeading());
+                telemetry.addData("Follower Heading (Deg) ", Math.toDegrees(follower.getPose().getHeading()));
                 telemetry.addLine();
                 telemetry.addData("Follower Is Busy ", follower.isBusy());
-                telemetry.addData("Follower Is Robot Stuck ", follower.isRobotStuck());
                 telemetry.addData("Follower Is Slowed ", isSlowed);
                 break;
             case EXTREME:
@@ -234,6 +240,13 @@ public class MecDrive implements Subsystem {
                 telemetry.addLine();
                 telemetry.addData("Follower Is Busy ", follower.isBusy());
                 telemetry.addData("Follower Is Robot Stuck ", follower.isRobotStuck());
+                telemetry.addData("Follower Is Slowed ", isSlowed);
+                telemetry.addLine();
+                telemetry.addData("Gamepad1 Left Stick Y ", Mercurial.gamepad1().leftStickY().state());
+                telemetry.addData("Gamepad1 Left Stick X ", Mercurial.gamepad1().leftStickX().state());
+                telemetry.addData("Gamepad1 Right Stick X ", Mercurial.gamepad1().rightStickX().state());
+
+
                 break;
 
 

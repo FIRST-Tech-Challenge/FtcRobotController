@@ -45,7 +45,7 @@ public class DoubleMotorLift implements Subsystem {
     private static final PDFLController pdflController = new PDFLController(P, D, F, L);
     public static double power;
 
-    public static int allowedError = 1;
+    public static int allowedError = 5;
 
     private static double currentPosition = 0;
 
@@ -115,9 +115,7 @@ public class DoubleMotorLift implements Subsystem {
     public static Lambda goToLiftTarget(int target){
         return new Lambda("Set Lift Target")
                 .setInterruptible(true)
-                .setInit(() -> {
-                    liftTarget = target;
-                })
+                .setInit(() -> liftTarget = target)
                 .setFinish(() -> isAtTarget);
     }
 
@@ -132,7 +130,9 @@ public class DoubleMotorLift implements Subsystem {
                             liftTarget = UniConstants.LIFT_TRANSFER;
                             break;
                         case MIDDLE:
-                            liftTarget = UniConstants.LIFT_MIDDLE;
+                            if(currentPosition <= 550){
+                                liftTarget = UniConstants.LIFT_MIDDLE;
+                            }
                             break;
                         case BASKET:
                             liftTarget = UniConstants.LIFT_BASKET;
@@ -175,6 +175,7 @@ public class DoubleMotorLift implements Subsystem {
                         resetMotors();
                     }
                     enableController = true;
+                    goToLiftTarget(15);
                 });
     }
 

@@ -35,7 +35,10 @@ public class OuttakePivot implements Subsystem {
 
     private static final StateMachine<PivotStates> pivotStates = new StateMachine<>(PivotStates.DOWN)
             .withState(PivotStates.DOWN, (stateRef, name) -> pivotUp())
-            .withState(PivotStates.UP, (stateRef, name) -> pivotDown());
+            .withState(PivotStates.UP, (stateRef, name) -> pivotDown())
+            .withState(PivotStates.BAR, (stateRef, name) -> pivotBar())
+            .withState(PivotStates.BASKET, (stateRef, name) -> pivotBasket())
+            .withState(PivotStates.TRANSFER, (stateRef, name) -> pivotTransfer());
 
 
 
@@ -58,8 +61,32 @@ public class OuttakePivot implements Subsystem {
 
 
 
-    private static void up(){leftServo.setPosition(UniConstants.OUTTAKE_CLAW_CLOSED); pivotStates.setState(PivotStates.DOWN);}
-    private static void down(){}
+    private static void up(){
+        leftServo.setPosition(UniConstants.OUTTAKE_PIVOT_LEFT_UP);
+        rightServo.setPosition(UniConstants.OUTTAKE_PIVOT_RIGHT_UP);
+        pivotStates.setState(PivotStates.UP);
+    }
+    private static void down(){
+        leftServo.setPosition(UniConstants.OUTTAKE_PIVOT_LEFT_DOWN);
+        rightServo.setPosition(UniConstants.OUTTAKE_PIVOT_RIGHT_DOWN);
+
+        pivotStates.setState(PivotStates.DOWN);
+    }
+    private static void bar(){
+        leftServo.setPosition(UniConstants.OUTTAKE_PIVOT_LEFT_BAR);
+        rightServo.setPosition(UniConstants.OUTTAKE_PIVOT_RIGHT_BAR);
+        pivotStates.setState(PivotStates.BAR);
+    }
+    private static void basket(){
+        leftServo.setPosition(UniConstants.OUTTAKE_PIVOT_LEFT_BASKET);
+        rightServo.setPosition(UniConstants.OUTTAKE_PIVOT_RIGHT_BASKET);
+        pivotStates.setState(PivotStates.BASKET);
+    }
+    private static void transfer(){
+        leftServo.setPosition(UniConstants.OUTTAKE_PIVOT_LEFT_TRANSFER);
+        rightServo.setPosition(UniConstants.OUTTAKE_PIVOT_RIGHT_TRANSFER);
+        pivotStates.setState(PivotStates.TRANSFER);
+    }
 
 
 
@@ -67,16 +94,37 @@ public class OuttakePivot implements Subsystem {
 
     @NonNull
     public static Lambda pivotUp(){
-        return new Lambda("Outtake-Close-Claw")
+        return new Lambda("Outtake-Pivot-Up")
                 .addRequirements(INSTANCE)
                 .setInit(OuttakePivot::up);
     }
 
     @NonNull
     public static Lambda pivotDown(){
-        return new Lambda("Outtake-Open-Claw")
+        return new Lambda("Outtake-Pivot-Down")
                 .addRequirements(INSTANCE)
                 .setInit(OuttakePivot::down);
+    }
+
+    @NonNull
+    public static Lambda pivotBar(){
+        return new Lambda("Outtake-Pivot-Bar")
+                .addRequirements(INSTANCE)
+                .setInit(OuttakePivot::bar);
+    }
+
+    @NonNull
+    public static Lambda pivotBasket(){
+        return new Lambda("Outtake-Pivot-Basket")
+                .addRequirements(INSTANCE)
+                .setInit(OuttakePivot::basket);
+    }
+
+    @NonNull
+    public static Lambda pivotTransfer(){
+        return new Lambda("Outtake-Pivot-Transfer")
+                .addRequirements(INSTANCE)
+                .setInit(OuttakePivot::transfer);
     }
 
 
@@ -112,7 +160,8 @@ public class OuttakePivot implements Subsystem {
     private enum PivotStates {
         UP,
         DOWN,
-        OUT,
+        BAR,
+        BASKET,
         TRANSFER
     }
 

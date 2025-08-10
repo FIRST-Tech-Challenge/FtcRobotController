@@ -61,7 +61,7 @@ public class IntakeClaw implements Subsystem {
     //Started
     @Override
     public void postUserStartHook(@NonNull Wrapper opMode){
-        clawServo.setPosition(.25); //Middle position
+
     }
 
 

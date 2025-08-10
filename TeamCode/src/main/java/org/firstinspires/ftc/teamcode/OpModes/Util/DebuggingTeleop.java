@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OpModes.Util;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Util.Subsystems.OuttakePivot;
 import org.firstinspires.ftc.teamcode.Util.UniConstants;
 import org.firstinspires.ftc.teamcode.Util.Subsystems.DoubleMotorLift;
 import org.firstinspires.ftc.teamcode.Util.Subsystems.IntakeClaw;
@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Util.Subsystems.OuttakeClaw;
 import dev.frozenmilk.mercurial.Mercurial;
 
 @OuttakeClaw.Attach
+@OuttakePivot.Attach
 @IntakeClaw.Attach
 @MecDrive.Attach
 @DoubleMotorLift.Attach

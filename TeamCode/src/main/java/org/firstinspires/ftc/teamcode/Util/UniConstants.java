@@ -11,10 +11,16 @@ public class UniConstants {
     public static final DcMotorEx.Direction SLIDE_MOTOR_LEFT_DIRECTION = DcMotorEx.Direction.REVERSE;
     public static final String SLIDE_MOTOR_RIGHT = "LIFTR";
     public static final DcMotorEx.Direction SLIDE_MOTOR_RIGHT_DIRECTION = DcMotorEx.Direction.FORWARD;
-    public static int LIFT_TRANSFER = 500;
-    public static int LIFT_MIDDLE = 500;
-    public static int LIFT_BASKET = 1500;
-    public static int LIFT_BAR = 1000;
+    public static final int LIFT_TRANSFER = 500;
+    public static final int LIFT_MIDDLE = 600;
+    public static final int LIFT_BASKET = 1500;
+    public static final int LIFT_BAR = 1000;
+
+    //Intake Slide/Linkage
+    public static final String INTAKE_LINKAGE_NAME = "LINK";
+    public static final double INTAKE_LINKAGE_IN = 0;
+    public static final double INTAKE_LINKAGE_OUT = 1;
+
 
 
     //Intake Claw
@@ -42,12 +48,12 @@ public class UniConstants {
 
     //Outtake Claw
     public static final String OUTTAKE_CLAW_NAME = "OCLAW";
-    public static final double OUTTAKE_CLAW_OPEN = 0;
-    public static final double OUTTAKE_CLAW_CLOSED = .5;
+    public static final double OUTTAKE_CLAW_OPEN = 0.55;
+    public static final double OUTTAKE_CLAW_CLOSED = 0.75;
 
     public static final String OUTTAKE_ROTATION_NAME = "ORS";
-    public static final double OUTTAKE_ROTATION_PERP = 0;
-    public static final double OUTTAKE_ROTATION_PARA = .5;
+    public static final double OUTTAKE_ROTATION_PERP = 0.3;
+    public static final double OUTTAKE_ROTATION_PARA = 0.6;
 
 
     //Drive
@@ -62,10 +68,21 @@ public class UniConstants {
 
 
     //Outtake Pivot
-    public static String OUTTAKE_PIVOT_LEFT_NAME = "";
-    public static String OUTTAKE_PIVOT_RIGHT_NAME = "";
+    public static final String OUTTAKE_PIVOT_LEFT_NAME = "LEFT";
 
-    public static final double OUTTAKE_PIVOT_LEFT_UP = 0;
+    public static final double OUTTAKE_PIVOT_LEFT_UP = 0.5;
+    public static final double OUTTAKE_PIVOT_LEFT_DOWN = 1;
+    public static final double OUTTAKE_PIVOT_LEFT_TRANSFER = 0.5;
+    public static final double OUTTAKE_PIVOT_LEFT_BAR = 0.83;
+    public static final double OUTTAKE_PIVOT_LEFT_BASKET = 0.25;
+
+    public static final String OUTTAKE_PIVOT_RIGHT_NAME = "RIGHT";
+
+    public static final double OUTTAKE_PIVOT_RIGHT_UP = 0.5;
+    public static final double OUTTAKE_PIVOT_RIGHT_DOWN = 0;
+    public static final double OUTTAKE_PIVOT_RIGHT_TRANSFER = 0.5;
+    public static final double OUTTAKE_PIVOT_RIGHT_BAR = 0.17;
+    public static final double OUTTAKE_PIVOT_RIGHT_BASKET = 0.75;
 
 
     //Util Enums

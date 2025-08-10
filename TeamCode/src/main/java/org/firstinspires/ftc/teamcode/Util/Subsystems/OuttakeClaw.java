@@ -55,7 +55,7 @@ public class OuttakeClaw implements Subsystem {
     //Started
     @Override
     public void postUserStartHook(@NonNull Wrapper opMode){
-        clawServo.setPosition(.25); //Middle position
+
     }
 
 
@@ -72,10 +72,28 @@ public class OuttakeClaw implements Subsystem {
                 .setInit(() -> {
                     switch (clawStates.getState()){
                         case OPEN:
-                            clawStates.schedule(ClawStates.CLOSED);
+                            close();
                             break;
                         case CLOSED:
-                            clawStates.schedule(ClawStates.OPEN);
+                            open();
+                            break;
+                    }
+                })
+                .setFinish(() -> true);
+
+
+    }
+
+    @NonNull
+    public static Lambda toggleRotation(){
+        return new Lambda("outtake-side-toggle")
+                .setInit(() -> {
+                    switch (sideStates.getState()){
+                        case PERP:
+                            para();
+                            break;
+                        case PARA:
+                            perp();
                             break;
                     }
                 })
@@ -139,15 +157,15 @@ public class OuttakeClaw implements Subsystem {
 
 
 
-    private enum ClawStates {
+    public enum ClawStates {
         OPEN,
         CLOSED
     }
-    private enum DownStates {
+    public enum DownStates {
         DOWN,
         UP
     }
-    private enum SideStates {
+    public enum SideStates {
         PERP,
         PARA
     }

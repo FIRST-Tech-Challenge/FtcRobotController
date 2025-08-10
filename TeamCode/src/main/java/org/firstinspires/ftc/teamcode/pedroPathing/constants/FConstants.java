@@ -5,9 +5,10 @@ import com.pedropathing.localization.Localizers;
 
 import org.firstinspires.ftc.teamcode.Util.UniConstants;
 
+
 public class FConstants {
     static {
-        FollowerConstants.localizers = Localizers.PINPOINT;
+        FollowerConstants.localizers = Localizers.TWO_WHEEL;
 
         FollowerConstants.leftFrontMotorName = UniConstants.DRIVE_FRONT_LEFT;
         FollowerConstants.leftRearMotorName = UniConstants.DRIVE_BACK_LEFT;
