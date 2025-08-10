@@ -1,4 +1,4 @@
-//PARAMETER MINDS BOOM CHIK CHIK BOOM
+// SO PERCENT 2F SUCKS
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
