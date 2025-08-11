@@ -1,132 +1,133 @@
 package org.firstinspires.ftc.teamcode;
 
+import org.openftc.easyopencv.OpenCvPipeline;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvPipeline;
+import org.opencv.core.MatOfPoint;
+import org.opencv.imgproc.Moments;
+import org.opencv.core.Core;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 public class SampleDetectionPipeline extends OpenCvPipeline {
 
-    public enum DetectedColor {
-        RED, BLUE, YELLOW, NONE
-    }
+    // Public fields for telemetry
+    public double yellowX = -1, yellowY = -1, yellowDist = -1;
+    public double redX = -1, redY = -1, redDist = -1;
+    public double blueX = -1, blueY = -1, blueDist = -1;
 
-    private DetectedColor detectedColor = DetectedColor.NONE;
-    private Point objectCenter = new Point(-1, -1);
-
-    // HSV ranges for colors (tune these for your lighting!)
-    private Scalar lowerRed1 = new Scalar(0, 100, 100);
-    private Scalar upperRed1 = new Scalar(10, 255, 255);
-    private Scalar lowerRed2 = new Scalar(160, 100, 100);
-    private Scalar upperRed2 = new Scalar(179, 255, 255);
-
-    private Scalar lowerBlue = new Scalar(100, 150, 0);
-    private Scalar upperBlue = new Scalar(140, 255, 255);
-
-    private Scalar lowerYellow = new Scalar(20, 100, 100);
-    private Scalar upperYellow = new Scalar(30, 255, 255);
+    private static final double KNOWN_WIDTH_INCHES = 2.0;
+    private static final double FOCAL_LENGTH_PIXELS = 800.0;
 
     @Override
     public Mat processFrame(Mat input) {
         Mat hsv = new Mat();
-        Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(input, hsv, Imgproc.COLOR_BGR2HSV);
 
-        // Create masks
-        Mat redMask1 = new Mat();
-        Mat redMask2 = new Mat();
-        Mat redMask = new Mat();
-        Mat blueMask = new Mat();
-        Mat yellowMask = new Mat();
+        // Masks
+        Mat yellowMask = getYellowMask(hsv);
+        Mat redMask = getRedMask(hsv);
+        Mat blueMask = getBlueMask(hsv);
 
-        Core.inRange(hsv, lowerRed1, upperRed1, redMask1);
-        Core.inRange(hsv, lowerRed2, upperRed2, redMask2);
-        Core.bitwise_or(redMask1, redMask2, redMask);
-
-        Core.inRange(hsv, lowerBlue, upperBlue, blueMask);
-        Core.inRange(hsv, lowerYellow, upperYellow, yellowMask);
-
-        // Find the largest contour for each color
-        double redArea = getLargestContourArea(redMask);
-        double blueArea = getLargestContourArea(blueMask);
-        double yellowArea = getLargestContourArea(yellowMask);
-
-        // Choose the largest detected color
-        double maxArea = Math.max(redArea, Math.max(blueArea, yellowArea));
-        if (maxArea < 500) { // Ignore tiny noise
-            detectedColor = DetectedColor.NONE;
-            objectCenter = new Point(-1, -1);
-        } else if (maxArea == redArea) {
-            detectedColor = DetectedColor.RED;
-            objectCenter = findCenter(redMask);
-        } else if (maxArea == blueArea) {
-            detectedColor = DetectedColor.BLUE;
-            objectCenter = findCenter(blueMask);
-        } else if (maxArea == yellowArea) {
-            detectedColor = DetectedColor.YELLOW;
-            objectCenter = findCenter(yellowMask);
-        }
-
-        // Draw center point on screen
-        if (detectedColor != DetectedColor.NONE) {
-            Imgproc.circle(input, objectCenter, 5, new Scalar(0, 255, 0), -1);
-        }
-
-        hsv.release();
-        redMask1.release();
-        redMask2.release();
-        redMask.release();
-        blueMask.release();
-        yellowMask.release();
+        // Detect & draw each color
+        yellowDist = detectAndDraw(input, yellowMask, new Scalar(0, 255, 255), "YELLOW", 0, v -> yellowX = v[0], v -> yellowY = v[0]);
+        redDist    = detectAndDraw(input, redMask,    new Scalar(0, 0, 255),   "RED",    20, v -> redX = v[0],    v -> redY = v[0]);
+        blueDist   = detectAndDraw(input, blueMask,   new Scalar(255, 0, 0),   "BLUE",   40, v -> blueX = v[0],   v -> blueY = v[0]);
 
         return input;
     }
 
-    private double getLargestContourArea(Mat mask) {
+    private double detectAndDraw(Mat frame, Mat mask, Scalar color, String label, int yOffset,
+                                 java.util.function.Consumer<double[]> setX,
+                                 java.util.function.Consumer<double[]> setY) {
         List<MatOfPoint> contours = new ArrayList<>();
-        Mat hierarchy = new Mat();
-        Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(mask, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        double maxArea = 0;
-        for (MatOfPoint contour : contours) {
-            double area = Imgproc.contourArea(contour);
-            if (area > maxArea) {
-                maxArea = area;
-            }
-        }
-        return maxArea;
-    }
-
-    private Point findCenter(Mat mask) {
-        List<MatOfPoint> contours = new ArrayList<>();
-        Mat hierarchy = new Mat();
-        Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-
+        double distance = -1;
         if (!contours.isEmpty()) {
-            // Get largest contour
             MatOfPoint largestContour = contours.get(0);
             double maxArea = Imgproc.contourArea(largestContour);
-
-            for (MatOfPoint contour : contours) {
-                double area = Imgproc.contourArea(contour);
+            for (MatOfPoint c : contours) {
+                double area = Imgproc.contourArea(c);
                 if (area > maxArea) {
                     maxArea = area;
-                    largestContour = contour;
+                    largestContour = c;
                 }
             }
 
             Rect rect = Imgproc.boundingRect(largestContour);
-            return new Point(rect.x + rect.width / 2.0, rect.y + rect.height / 2.0);
+            Imgproc.rectangle(frame, rect, color, 2);
+
+            Moments m = Imgproc.moments(largestContour);
+            double cX = -1, cY = -1;
+            if (m.get_m00() != 0) {
+                cX = m.get_m10() / m.get_m00();
+                cY = m.get_m01() / m.get_m00();
+                Imgproc.circle(frame, new Point(cX, cY), 5, color, -1);
+            }
+
+            // Update telemetry fields
+            setX.accept(new double[]{cX});
+            setY.accept(new double[]{cY});
+
+            // Distance calculation
+            distance = getDistance(rect.width);
+            distance = Math.round(distance * 100.0) / 100.0;
+
+            Imgproc.putText(frame, label, new Point(rect.x, rect.y - 10 - yOffset), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, color, 2);
+            Imgproc.putText(frame, "Dist: " + distance + " in", new Point(rect.x, rect.y + rect.height + 15 + yOffset), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, color, 2);
         }
-        return new Point(-1, -1);
+        return distance;
     }
 
-    public DetectedColor getDetectedColor() {
-        return detectedColor;
+    private double getDistance(double pixelWidth) {
+        if (pixelWidth > 0) {
+            return (KNOWN_WIDTH_INCHES * FOCAL_LENGTH_PIXELS) / pixelWidth;
+        }
+        return -1;
     }
 
-    public Point getObjectCenter() {
-        return objectCenter;
+    private Mat getYellowMask(Mat hsv) {
+        Scalar lower = new Scalar(20, 100, 100);
+        Scalar upper = new Scalar(30, 255, 255);
+        return getCleanMask(hsv, lower, upper);
+    }
+
+    private Mat getBlueMask(Mat hsv) {
+        Scalar lower = new Scalar(100, 150, 0);
+        Scalar upper = new Scalar(140, 255, 255);
+        return getCleanMask(hsv, lower, upper);
+    }
+
+    private Mat getRedMask(Mat hsv) {
+        // Lower red range
+        Scalar lower1 = new Scalar(0, 120, 70);
+        Scalar upper1 = new Scalar(10, 255, 255);
+        Mat mask1 = new Mat();
+        Core.inRange(hsv, lower1, upper1, mask1);
+
+        // Upper red range
+        Scalar lower2 = new Scalar(170, 120, 70);
+        Scalar upper2 = new Scalar(180, 255, 255);
+        Mat mask2 = new Mat();
+        Core.inRange(hsv, lower2, upper2, mask2);
+
+        Mat redMask = new Mat();
+        Core.add(mask1, mask2, redMask);
+        return cleanMask(redMask);
+    }
+
+    private Mat getCleanMask(Mat hsv, Scalar lower, Scalar upper) {
+        Mat mask = new Mat();
+        Core.inRange(hsv, lower, upper, mask);
+        return cleanMask(mask);
+    }
+
+    private Mat cleanMask(Mat mask) {
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
+        Imgproc.morphologyEx(mask, mask, Imgproc.MORPH_OPEN, kernel);
+        Imgproc.morphologyEx(mask, mask, Imgproc.MORPH_CLOSE, kernel);
+        return mask;
     }
 }
