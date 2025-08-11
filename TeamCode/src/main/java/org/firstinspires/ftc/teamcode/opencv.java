@@ -101,7 +101,7 @@ public class opencv extends LinearOpMode {
 
             if (largestContourY != null) {
                 // Draw a red outline around the largest detected object
-                Imgproc.drawContours(input, contoursY, contoursY.indexOf(largestContourY), new Scalar(255, 0, 0), 2);
+                Imgproc.drawContours(input, contoursY, contoursY.indexOf(largestContourY), new Scalar(0, 255, 255), 2);
                 // Calculate the width of the bounding box
                 width = calculateWidth(largestContourY);
 
@@ -126,9 +126,9 @@ public class opencv extends LinearOpMode {
 
             }
 
-            else if (largestContourR != null) {
+            if (largestContourR != null) {
                 // Draw a red outline around the largest detected object
-                Imgproc.drawContours(input, contoursR, contoursR.indexOf(largestContourR), new Scalar(255, 0, 0), 2);
+                Imgproc.drawContours(input, contoursR, contoursR.indexOf(largestContourR),  new Scalar(0, 0, 255), 2);
                 // Calculate the width of the bounding box
                 width = calculateWidth(largestContourR);
 
@@ -153,7 +153,7 @@ public class opencv extends LinearOpMode {
 
             }
 
-            else if (largestContourB != null) {
+            if (largestContourB != null) {
                 // Draw a red outline around the largest detected object
                 Imgproc.drawContours(input, contoursB, contoursB.indexOf(largestContourB), new Scalar(255, 0, 0), 2);
                 // Calculate the width of the bounding box
@@ -187,9 +187,8 @@ public class opencv extends LinearOpMode {
             Mat hsvFrame = new Mat();
             Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
 
-            Scalar lowerYellow = new Scalar(100, 100, 100);
-            Scalar upperYellow = new Scalar(180, 255, 255);
-
+            Scalar lowerYellow = new Scalar(20, 100, 100);
+            Scalar upperYellow = new Scalar(30, 255, 255);
 
             Mat yellowMask = new Mat();
             Core.inRange(hsvFrame, lowerYellow, upperYellow, yellowMask);
