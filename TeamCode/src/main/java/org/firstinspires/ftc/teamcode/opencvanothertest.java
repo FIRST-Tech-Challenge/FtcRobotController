@@ -19,7 +19,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name = "OpenCV Testing")
+@TeleOp(name = "OpenCV Testing without red")
 
 public class opencvanothertest extends LinearOpMode {
 
