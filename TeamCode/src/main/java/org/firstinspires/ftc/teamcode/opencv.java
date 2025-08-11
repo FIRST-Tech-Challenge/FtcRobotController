@@ -26,6 +26,11 @@ public class opencv extends LinearOpMode {
     double cY = 0;
     double width = 0;
 
+    private int redCX = -1, redCY = -1, redWidth = -1;
+    private int yellowCX = -1, yellowCY = -1, yellowWidth = -1;
+    private int blueCX = -1, blueCY = -1, blueWidth = -1;
+
+
     private OpenCvCamera controlHubCam;  // Use OpenCvCamera class from FTC SDK
     private static final int CAMERA_WIDTH = 640; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 360; // height of wanted camera resolution
@@ -76,109 +81,39 @@ public class opencv extends LinearOpMode {
     class YellowBlobDetectionPipeline extends OpenCvPipeline {
         @Override
         public Mat processFrame(Mat input) {
-            // Preprocess the frame to detect yellow, blue, red regions
-            Mat yellowMask = preprocessFrameY(input);
+            // === RED ===
             Mat redMask = preprocessFrameR(input);
+            Point redCenter = findCenter(redMask);
+            if (redCenter != null) {
+                redCX = (int) redCenter.x;
+                redCY = (int) redCenter.y;
+                redWidth = getBoundingWidth(redMask);
+                Imgproc.circle(input, redCenter, 5, new Scalar(0, 0, 255), -1);
+                Imgproc.putText(input, "RED", redCenter, Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0, 0, 255), 2);
+            }
+
+            // === YELLOW ===
+            Mat yellowMask = preprocessFrameY(input);
+            Point yellowCenter = findCenter(yellowMask);
+            if (yellowCenter != null) {
+                yellowCX = (int) yellowCenter.x;
+                yellowCY = (int) yellowCenter.y;
+                yellowWidth = getBoundingWidth(yellowMask);
+                Imgproc.circle(input, yellowCenter, 5, new Scalar(0, 255, 255), -1);
+                Imgproc.putText(input, "YELLOW", yellowCenter, Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0, 255, 255), 2);
+            }
+
+            // === BLUE ===
             Mat blueMask = preprocessFrameB(input);
-
-            // Find contours of the detected yellow, red, and blue regions
-            List<MatOfPoint> contoursY = new ArrayList<>();
-            Mat hierarchy = new Mat();
-            Imgproc.findContours(yellowMask, contoursY, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-
-            List<MatOfPoint> contoursR = new ArrayList<>();
-            Mat hierarchyR = new Mat();
-            Imgproc.findContours(redMask, contoursR, hierarchyR, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-
-            List<MatOfPoint> contoursB = new ArrayList<>();
-            Mat hierarchyB = new Mat();
-            Imgproc.findContours(blueMask, contoursB, hierarchyB, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-
-            // Find the largest yellow, red, and blue contour (blob)
-            MatOfPoint largestContourY = findLargestContour(contoursY);
-            MatOfPoint largestContourR = findLargestContour(contoursR);
-            MatOfPoint largestContourB = findLargestContour(contoursB);
-
-            if (largestContourY != null) {
-                // Draw a red outline around the largest detected object
-                Imgproc.drawContours(input, contoursY, contoursY.indexOf(largestContourY), new Scalar(0, 255, 255), 2);
-                // Calculate the width of the bounding box
-                width = calculateWidth(largestContourY);
-
-                // Display the width next to the label
-                String widthLabel = "Width: " + (int) width + " pixels";
-                Imgproc.putText(input, widthLabel, new Point(cX + 10, cY + 20), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
-                //Display the Distance
-                String distanceLabel = "Distance: " + String.format("%.2f", getDistance(width)) + " inches";
-                Imgproc.putText(input, distanceLabel, new Point(cX + 10, cY + 60), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
-                //Display the color
-                String colorLabel = "Color: " + " Yellow";
-                Imgproc.putText(input, colorLabel, new Point(cX + 10, cY + 100), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
-                // Calculate the centroid of the largest contour
-                Moments moments = Imgproc.moments(largestContourY);
-                cX = moments.get_m10() / moments.get_m00();
-                cY = moments.get_m01() / moments.get_m00();
-
-                // Draw a dot at the centroid
-                String label = "(" + (int) cX + ", " + (int) cY + ")";
-                Imgproc.putText(input, label, new Point(cX + 10, cY), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 255, 0), 2);
-                Imgproc.circle(input, new Point(cX, cY), 5, new Scalar(0, 255, 0), -1);
-
+            Point blueCenter = findCenter(blueMask);
+            if (blueCenter != null) {
+                blueCX = (int) blueCenter.x;
+                blueCY = (int) blueCenter.y;
+                blueWidth = getBoundingWidth(blueMask);
+                Imgproc.circle(input, blueCenter, 5, new Scalar(255, 0, 0), -1);
+                Imgproc.putText(input, "BLUE", blueCenter, Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 0, 0), 2);
             }
 
-            if (largestContourR != null) {
-                // Draw a red outline around the largest detected object
-                Imgproc.drawContours(input, contoursR, contoursR.indexOf(largestContourR),  new Scalar(0, 0, 255), 2);
-                // Calculate the width of the bounding box
-                width = calculateWidth(largestContourR);
-
-                // Display the width next to the label
-                String widthLabel = "Width: " + (int) width + " pixels";
-                Imgproc.putText(input, widthLabel, new Point(cX + 10, cY + 20), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
-                //Display the Distance
-                String distanceLabel = "Distance: " + String.format("%.2f", getDistance(width)) + " inches";
-                Imgproc.putText(input, distanceLabel, new Point(cX + 10, cY + 60), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
-                //Display the Color
-                String colorLabel = "Color: " + " Red";
-                Imgproc.putText(input, colorLabel, new Point(cX + 10, cY + 100), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
-                // Calculate the centroid of the largest contour
-                Moments moments = Imgproc.moments(largestContourR);
-                cX = moments.get_m10() / moments.get_m00();
-                cY = moments.get_m01() / moments.get_m00();
-
-                // Draw a dot at the centroid
-                String label = "(" + (int) cX + ", " + (int) cY + ")";
-                Imgproc.putText(input, label, new Point(cX + 10, cY), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 255, 0), 2);
-                Imgproc.circle(input, new Point(cX, cY), 5, new Scalar(0, 255, 0), -1);
-
-            }
-
-            if (largestContourB != null) {
-                // Draw a red outline around the largest detected object
-                Imgproc.drawContours(input, contoursB, contoursB.indexOf(largestContourB), new Scalar(255, 0, 0), 2);
-                // Calculate the width of the bounding box
-                width = calculateWidth(largestContourB);
-
-                // Display the width next to the label
-                String widthLabel = "Width: " + (int) width + " pixels";
-                Imgproc.putText(input, widthLabel, new Point(cX + 10, cY + 20), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
-                //Display the Distance
-                String distanceLabel = "Distance: " + String.format("%.2f", getDistance(width)) + " inches";
-                Imgproc.putText(input, distanceLabel, new Point(cX + 10, cY + 60), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
-                //Display the Color
-                String colorLabel = "Color: " + " Blue";
-                Imgproc.putText(input, colorLabel, new Point(cX + 10, cY + 100), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
-                // Calculate the centroid of the largest contour
-                Moments moments = Imgproc.moments(largestContourB);
-                cX = moments.get_m10() / moments.get_m00();
-                cY = moments.get_m01() / moments.get_m00();
-
-                // Draw a dot at the centroid
-                String label = "(" + (int) cX + ", " + (int) cY + ")";
-                Imgproc.putText(input, label, new Point(cX + 10, cY), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 255, 0), 2);
-                Imgproc.circle(input, new Point(cX, cY), 5, new Scalar(0, 255, 0), -1);
-
-            }
             return input;
         }
 
@@ -252,7 +187,18 @@ public class opencv extends LinearOpMode {
             Rect boundingRect = Imgproc.boundingRect(contour);
             return boundingRect.width;
         }
+        // Get bounding rectangle width for the given mask
+        private int getBoundingWidth(Mat mask) {
+            Rect rect = Imgproc.boundingRect(mask);
+            return rect.width;
+        }
 
+        // Same findCenter you already had
+        private Point findCenter(Mat mask) {
+            if (Core.countNonZero(mask) == 0) return null;
+            Rect rect = Imgproc.boundingRect(mask);
+            return new Point(rect.x + rect.width / 2.0, rect.y + rect.height / 2.0);
+        }
     }
     private static double getDistance(double width){
         double distance = (objectWidthInRealWorldUnits * focalLength) / width;

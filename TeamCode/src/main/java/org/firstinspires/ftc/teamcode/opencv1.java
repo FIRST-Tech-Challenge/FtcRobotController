@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @TeleOp(name = "OpenCV Testing")
-
 public class opencv1 extends LinearOpMode {
 
     // Public fields updated by pipeline for telemetry
