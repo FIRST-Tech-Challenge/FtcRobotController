@@ -1,4 +1,4 @@
-// SO PERCENT 2F SUCKS yeah
+// SO PERCENT 2F SUCKS yeah color label kinda
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -113,7 +113,7 @@ public class opencv extends LinearOpMode {
                 Imgproc.putText(input, distanceLabel, new Point(cX + 10, cY + 60), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
                 //Display the color
                 String colorLabel = "Color: " + " Yellow";
-                Imgproc.putText(input, colorLabel, new Point(cX + 10, cY + 60), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+                Imgproc.putText(input, colorLabel, new Point(cX + 10, cY + 100), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
                 // Calculate the centroid of the largest contour
                 Moments moments = Imgproc.moments(largestContourY);
                 cX = moments.get_m10() / moments.get_m00();
@@ -140,7 +140,7 @@ public class opencv extends LinearOpMode {
                 Imgproc.putText(input, distanceLabel, new Point(cX + 10, cY + 60), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
                 //Display the Color
                 String colorLabel = "Color: " + " Red";
-                Imgproc.putText(input, colorLabel, new Point(cX + 10, cY + 60), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+                Imgproc.putText(input, colorLabel, new Point(cX + 10, cY + 100), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
                 // Calculate the centroid of the largest contour
                 Moments moments = Imgproc.moments(largestContourR);
                 cX = moments.get_m10() / moments.get_m00();
@@ -167,7 +167,7 @@ public class opencv extends LinearOpMode {
                 Imgproc.putText(input, distanceLabel, new Point(cX + 10, cY + 60), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
                 //Display the Color
                 String colorLabel = "Color: " + " Blue";
-                Imgproc.putText(input, colorLabel, new Point(cX + 10, cY + 60), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+                Imgproc.putText(input, colorLabel, new Point(cX + 10, cY + 100), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
                 // Calculate the centroid of the largest contour
                 Moments moments = Imgproc.moments(largestContourB);
                 cX = moments.get_m10() / moments.get_m00();
