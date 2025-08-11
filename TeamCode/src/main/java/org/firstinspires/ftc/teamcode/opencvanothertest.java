@@ -96,7 +96,7 @@ public class opencvanothertest extends LinearOpMode {
         public Mat processFrame(Mat input) {
             detectColor(input, new Scalar(20, 100, 100), new Scalar(30, 255, 255), "Yellow");
             detectColor(input, new Scalar(100, 150, 0), new Scalar(140, 255, 255), "Blue");
-            detectRed(input);
+//            detectRed(input);
             return input;
         }
 
@@ -126,40 +126,40 @@ public class opencvanothertest extends LinearOpMode {
             }
         }
 
-        private void detectRed(Mat input) {
-            Mat hsv = new Mat();
-            Imgproc.cvtColor(input, hsv, Imgproc.COLOR_BGR2HSV);
-
-            // First red range
-            Mat mask1 = new Mat();
-            Core.inRange(hsv, new Scalar(0, 120, 70), new Scalar(10, 255, 255), mask1);
-
-            // Second red range
-            Mat mask2 = new Mat();
-            Core.inRange(hsv, new Scalar(170, 120, 70), new Scalar(180, 255, 255), mask2);
-
-            // Combine both
-            Mat redMask = new Mat();
-            Core.add(mask1, mask2, redMask);
-
-            Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
-            Imgproc.morphologyEx(redMask, redMask, Imgproc.MORPH_OPEN, kernel);
-            Imgproc.morphologyEx(redMask, redMask, Imgproc.MORPH_CLOSE, kernel);
-
-            Rect rect = Imgproc.boundingRect(redMask);
-            if (rect.width > 0 && rect.height > 0) {
-                double widthLocal = rect.width;
-                double dist = getDistance(widthLocal);
-                dist = Math.round(dist * 100.0) / 100.0;
-
-                Imgproc.putText(input, "Red Dist: " + dist + " in",
-                        new Point(rect.x, rect.y - 5),
-                        Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(255, 255, 255), 2);
-
-                redDist = dist;
-            }
-
-        }
+//        private void detectRed(Mat input) {
+//            Mat hsv = new Mat();
+//            Imgproc.cvtColor(input, hsv, Imgproc.COLOR_BGR2HSV);
+//
+//            // First red range
+//            Mat mask1 = new Mat();
+//            Core.inRange(hsv, new Scalar(0, 120, 70), new Scalar(10, 255, 255), mask1);
+//
+//            // Second red range
+//            Mat mask2 = new Mat();
+//            Core.inRange(hsv, new Scalar(170, 120, 70), new Scalar(180, 255, 255), mask2);
+//
+//            // Combine both
+//            Mat redMask = new Mat();
+//            Core.add(mask1, mask2, redMask);
+//
+//            Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
+//            Imgproc.morphologyEx(redMask, redMask, Imgproc.MORPH_OPEN, kernel);
+//            Imgproc.morphologyEx(redMask, redMask, Imgproc.MORPH_CLOSE, kernel);
+//
+//            Rect rect = Imgproc.boundingRect(redMask);
+//            if (rect.width > 0 && rect.height > 0) {
+//                double widthLocal = rect.width;
+//                double dist = getDistance(widthLocal);
+//                dist = Math.round(dist * 100.0) / 100.0;
+//
+//                Imgproc.putText(input, "Red Dist: " + dist + " in",
+//                        new Point(rect.x, rect.y - 5),
+//                        Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(255, 255, 255), 2);
+//
+//                redDist = dist;
+//            }
+//
+//        }
 
     }
     private double getDistance(double widthPixels) {
