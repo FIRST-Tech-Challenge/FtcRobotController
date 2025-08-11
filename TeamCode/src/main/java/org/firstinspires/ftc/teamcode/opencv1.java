@@ -216,7 +216,7 @@ public class opencv1 extends LinearOpMode {
         }
 
     }
-    private static double getDistance(double width) {
+    static double getDistance(double width) {
         if (width == 0) return 0; // prevent div-by-zero
         return (objectWidthInRealWorldUnits * focalLength) / width;
     }

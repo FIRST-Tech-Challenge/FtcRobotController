@@ -1,6 +1,7 @@
 // SO PERCENT 2F SUCKS yeah color label kinda
 package org.firstinspires.ftc.teamcode;
 
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,6 +14,7 @@ import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
@@ -25,25 +27,38 @@ public class opencv extends LinearOpMode {
     double cX = 0;
     double cY = 0;
     double width = 0;
-
-    private int redCX = -1, redCY = -1, redWidth = -1;
-    private int yellowCX = -1, yellowCY = -1, yellowWidth = -1;
-    private int blueCX = -1, blueCY = -1, blueWidth = -1;
-
-
-    private OpenCvCamera controlHubCam;  // Use OpenCvCamera class from FTC SDK
-    private static final int CAMERA_WIDTH = 640; // width  of wanted camera resolution
-    private static final int CAMERA_HEIGHT = 360; // height of wanted camera resolution
-
-    // Calculate the distance using the formula
-    public static final double objectWidthInRealWorldUnits = 3.75;  // Replace with the actual width of the object in real-world units
-    public static final double focalLength = 728;  // Replace with the focal length of the camera in pixels
+    YellowBlobDetectionPipeline pipeline;
+    private OpenCvCamera controlHubCam;
+    private static final int CAMERA_WIDTH = 640;
+    private static final int CAMERA_HEIGHT = 360;
+    public static final double objectWidthInRealWorldUnits = 3.75;
+    public static final double focalLength = 728;
 
 
     @Override
     public void runOpMode() {
+        int cameraMonitorViewId = hardwareMap.appContext.getResources()
+                .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
-        initOpenCV();
+        controlHubCam = OpenCvCameraFactory.getInstance()
+                .createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+
+        pipeline = new YellowBlobDetectionPipeline();
+        controlHubCam.setPipeline(pipeline);
+
+        controlHubCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                controlHubCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera error", errorCode);
+                telemetry.update();
+            }
+        });
+
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         FtcDashboard.getInstance().startCameraStream(controlHubCam, 30);
@@ -54,155 +69,147 @@ public class opencv extends LinearOpMode {
         while (opModeIsActive()) {
             telemetry.addData("Coordinate", "(" + (int) cX + ", " + (int) cY + ")");
             telemetry.addData("Distance in Inch", (getDistance(width)));
+            telemetry.addData("Yellow Distance (in)", pipeline.yellowDist);
+            telemetry.addData("Blue Distance (in)", pipeline.blueDist);
+            telemetry.addData("Red Distance (in)", pipeline.redDist);
+            telemetry.addData("Center X", pipeline.cX);
+            telemetry.addData("Center Y", pipeline.cY);
+            telemetry.addData("Width px", pipeline.width);
             telemetry.update();
 
-            // The OpenCV pipeline automatically processes frames and handles detection
         }
 
-        // Release resources
         controlHubCam.stopStreaming();
     }
 
-    private void initOpenCV() {
 
-        // Create an instance of the camera
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-
-        // Use OpenCvCameraFactory class from FTC SDK to create camera instance
-        controlHubCam = OpenCvCameraFactory.getInstance().createWebcam(
-                hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-
-        controlHubCam.setPipeline(new YellowBlobDetectionPipeline());
-
-        controlHubCam.openCameraDevice();
-        controlHubCam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
-    }
     class YellowBlobDetectionPipeline extends OpenCvPipeline {
+        public double yellowDist = 0, blueDist = 0, redDist = 0;
+
+        public double cX = 0.0;
+        public double cY = 0.0;
+        public double width = 0.0;
+
+        // HSV bounds for colors
+        private final Scalar lowerYellow = new Scalar(20, 100, 100);
+        private final Scalar upperYellow = new Scalar(30, 255, 255);
+
+        private final Scalar lowerBlue = new Scalar(100, 150, 0);
+        private final Scalar upperBlue = new Scalar(140, 255, 255);
+
+        private final Scalar lowerRed1 = new Scalar(0, 100, 100);
+        private final Scalar upperRed1 = new Scalar(10, 255, 255);
+        private final Scalar lowerRed2 = new Scalar(160, 100, 100);
+        private final Scalar upperRed2 = new Scalar(179, 255, 255);
+
         @Override
         public Mat processFrame(Mat input) {
-            // === RED ===
-            Mat redMask = preprocessFrameR(input);
-            Point redCenter = findCenter(redMask);
-            if (redCenter != null) {
-                redCX = (int) redCenter.x;
-                redCY = (int) redCenter.y;
-                redWidth = getBoundingWidth(redMask);
-                Imgproc.circle(input, redCenter, 5, new Scalar(0, 0, 255), -1);
-                Imgproc.putText(input, "RED", redCenter, Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0, 0, 255), 2);
-            }
+            Mat hsv = new Mat();
+            Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
 
-            // === YELLOW ===
-            Mat yellowMask = preprocessFrameY(input);
-            Point yellowCenter = findCenter(yellowMask);
-            if (yellowCenter != null) {
-                yellowCX = (int) yellowCenter.x;
-                yellowCY = (int) yellowCenter.y;
-                yellowWidth = getBoundingWidth(yellowMask);
-                Imgproc.circle(input, yellowCenter, 5, new Scalar(0, 255, 255), -1);
-                Imgproc.putText(input, "YELLOW", yellowCenter, Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0, 255, 255), 2);
-            }
+            boolean yellowDetected = detectColor(hsv, lowerYellow, upperYellow, "Yellow");
+            boolean blueDetected   = detectColor(hsv, lowerBlue, upperBlue, "Blue");
+            boolean redDetected    = detectRed(hsv, lowerRed1, upperRed1, lowerRed2, upperRed2);
 
-            // === BLUE ===
-            Mat blueMask = preprocessFrameB(input);
-            Point blueCenter = findCenter(blueMask);
-            if (blueCenter != null) {
-                blueCX = (int) blueCenter.x;
-                blueCY = (int) blueCenter.y;
-                blueWidth = getBoundingWidth(blueMask);
-                Imgproc.circle(input, blueCenter, 5, new Scalar(255, 0, 0), -1);
-                Imgproc.putText(input, "BLUE", blueCenter, Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 0, 0), 2);
-            }
+            // Draw text
+            if (yellowDetected) Imgproc.putText(input, "Yellow", new Point(30, 30), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 255, 0), 2);
+            if (blueDetected)   Imgproc.putText(input, "Blue", new Point(30, 60), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 0, 0), 2);
+            if (redDetected)    Imgproc.putText(input, "Red", new Point(30, 90), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0, 0, 255), 2);
 
+            hsv.release();
             return input;
         }
 
+        // Detect Yellow or Blue
+        private boolean detectColor(Mat hsv, Scalar lower, Scalar upper, String colorName) {
+            Mat mask = new Mat();
+            Core.inRange(hsv, lower, upper, mask);
 
-        private Mat preprocessFrameY(Mat frame) {
-            Mat hsvFrame = new Mat();
-            Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
+            Mat hierarchy = new Mat();
+            List<MatOfPoint> contours = new ArrayList<>();
+            Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-            Scalar lowerYellow = new Scalar(20, 100, 100);
-            Scalar upperYellow = new Scalar(30, 255, 255);
+            boolean detected = false;
 
-            Mat yellowMask = new Mat();
-            Core.inRange(hsvFrame, lowerYellow, upperYellow, yellowMask);
+            if (!contours.isEmpty()) {
+                double maxArea = 0;
+                MatOfPoint largestContour = null;
+                for (MatOfPoint contour : contours) {
+                    double area = Imgproc.contourArea(contour);
+                    if (area > maxArea) {
+                        maxArea = area;
+                        largestContour = contour;
+                    }
+                }
 
-            Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
-            Imgproc.morphologyEx(yellowMask, yellowMask, Imgproc.MORPH_OPEN, kernel);
-            Imgproc.morphologyEx(yellowMask, yellowMask, Imgproc.MORPH_CLOSE, kernel);
+                if (largestContour != null) {
+                    Rect rect = Imgproc.boundingRect(largestContour);
+                    Imgproc.rectangle(hsv, rect, new Scalar(0, 255, 0), 2);
 
-            return yellowMask;
-        }
+                    // Update pipeline fields
+                    cX = rect.x + rect.width / 2.0;
+                    cY = rect.y + rect.height / 2.0;
+                    width = rect.width;
 
-        private Mat preprocessFrameR(Mat frame) {
-            Mat hsvFrame = new Mat();
-            Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
-
-            Scalar lowerRed = new Scalar(0, 120, 70);
-            Scalar upperRed = new Scalar(10, 255, 255);
-
-            Mat redMask = new Mat();
-            Core.inRange(hsvFrame, lowerRed, upperRed, redMask);
-
-            Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
-            Imgproc.morphologyEx(redMask, redMask, Imgproc.MORPH_OPEN, kernel);
-            Imgproc.morphologyEx(redMask, redMask, Imgproc.MORPH_CLOSE, kernel);
-
-            return redMask;
-        }
-
-        private Mat preprocessFrameB(Mat frame) {
-            Mat hsvFrame = new Mat();
-            Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
-
-            Scalar lowerBlue = new Scalar(100, 150, 0);
-            Scalar upperBlue = new Scalar(140, 255, 255);
-
-            Mat blueMask = new Mat();
-            Core.inRange(hsvFrame, lowerBlue, upperBlue, blueMask);
-
-            Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
-            Imgproc.morphologyEx(blueMask, blueMask, Imgproc.MORPH_OPEN, kernel);
-            Imgproc.morphologyEx(blueMask, blueMask, Imgproc.MORPH_CLOSE, kernel);
-
-            return blueMask;
-        }
-
-        private MatOfPoint findLargestContour(List<MatOfPoint> contours) {
-            double maxArea = 0;
-            MatOfPoint largestContour = null;
-
-            for (MatOfPoint contour : contours) {
-                double area = Imgproc.contourArea(contour);
-                if (area > maxArea) {
-                    maxArea = area;
-                    largestContour = contour;
+                    detected = true;
                 }
             }
 
-            return largestContour;
-        }
-        private double calculateWidth(MatOfPoint contour) {
-            Rect boundingRect = Imgproc.boundingRect(contour);
-            return boundingRect.width;
-        }
-        // Get bounding rectangle width for the given mask
-        private int getBoundingWidth(Mat mask) {
-            Rect rect = Imgproc.boundingRect(mask);
-            return rect.width;
+            mask.release();
+            hierarchy.release();
+            return detected;
         }
 
-        // Same findCenter you already had
-        private Point findCenter(Mat mask) {
-            if (Core.countNonZero(mask) == 0) return null;
-            Rect rect = Imgproc.boundingRect(mask);
-            return new Point(rect.x + rect.width / 2.0, rect.y + rect.height / 2.0);
-        }
-    }
-    private static double getDistance(double width){
-        double distance = (objectWidthInRealWorldUnits * focalLength) / width;
-        return distance;
-    }
+        // Detect Red (needs two ranges for hue wraparound)
+        private boolean detectRed(Mat hsv, Scalar lower1, Scalar upper1, Scalar lower2, Scalar upper2) {
+            Mat mask1 = new Mat();
+            Mat mask2 = new Mat();
+            Core.inRange(hsv, lower1, upper1, mask1);
+            Core.inRange(hsv, lower2, upper2, mask2);
 
-}
+            Mat mask = new Mat();
+            Core.add(mask1, mask2, mask);
+
+            Mat hierarchy = new Mat();
+            List<MatOfPoint> contours = new ArrayList<>();
+            Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            boolean detected = false;
+
+            if (!contours.isEmpty()) {
+                double maxArea = 0;
+                MatOfPoint largestContour = null;
+                for (MatOfPoint contour : contours) {
+                    double area = Imgproc.contourArea(contour);
+                    if (area > maxArea) {
+                        maxArea = area;
+                        largestContour = contour;
+                    }
+                }
+
+                if (largestContour != null) {
+                    Rect rect = Imgproc.boundingRect(largestContour);
+                    Imgproc.rectangle(hsv, rect, new Scalar(0, 255, 0), 2);
+
+                    // Update pipeline fields
+                    cX = rect.x + rect.width / 2.0;
+                    cY = rect.y + rect.height / 2.0;
+                    width = rect.width;
+
+                    detected = true;
+                }
+            }
+
+            mask1.release();
+            mask2.release();
+            mask.release();
+            hierarchy.release();
+            return detected;
+        }
+
+    }
+    private double getDistance(double widthPixels) {
+        double focalLength = 728;
+        double realWidthInches = 3.5;
+        return (realWidthInches * focalLength) / widthPixels;
+    }}
