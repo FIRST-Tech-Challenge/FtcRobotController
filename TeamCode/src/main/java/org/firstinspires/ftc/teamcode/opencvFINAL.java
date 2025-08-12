@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -71,7 +72,7 @@ public class opencvFINAL extends LinearOpMode {
                 telemetry.update();
             }
         });
-
+        FtcDashboard.getInstance().startCameraStream(webcam, 30);
         // MAIN OP MODE: ensure camera and mats are cleaned up even if opMode ends
         try {
             waitForStart();
