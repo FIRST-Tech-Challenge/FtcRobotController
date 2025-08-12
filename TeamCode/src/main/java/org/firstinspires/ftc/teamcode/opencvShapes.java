@@ -135,14 +135,15 @@ public class opencvShapes extends LinearOpMode {
                 if (vertices == 3) {
                     triCount++;
                 }
-                if (vertices == 4) {
+                else if (vertices == 4) {
                     rectCount++;
                     Imgproc.drawContours(input, List.of(new MatOfPoint(approx.toArray())), -1, new Scalar(255, 0, 0), 2);
                 }
-                if (vertices == 6) {
+                else if (vertices == 6) {
                     hexCount++;
                     Imgproc.drawContours(input, List.of(new MatOfPoint(approx.toArray())), -1, new Scalar(0, 255, 0), 2);
                 }
+
 
                 contour2f.release();
                 approx.release();
