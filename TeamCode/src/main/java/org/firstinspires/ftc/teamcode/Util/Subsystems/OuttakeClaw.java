@@ -66,6 +66,8 @@ public class OuttakeClaw implements Subsystem {
     private static void perp(){sideServo.setPosition(UniConstants.OUTTAKE_ROTATION_PERP); sideStates.setState(SideStates.PERP);}
     private static void para(){sideServo.setPosition(UniConstants.OUTTAKE_ROTATION_PARA); sideStates.setState(SideStates.PARA);}
 
+
+
     @NonNull
     public static Lambda toggleClaw(){
         return new Lambda("outtake-claw-toggle")

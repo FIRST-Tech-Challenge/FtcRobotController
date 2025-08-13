@@ -20,6 +20,7 @@ import java.lang.annotation.Target;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
+import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.commands.util.StateMachine;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
@@ -36,7 +37,8 @@ public class IntakeLinkage implements Subsystem {
 
     private static final StateMachine<LinkageStates> linkageStates = new StateMachine<>(LinkageStates.IN)
             .withState(LinkageStates.OUT, (stateRef, name) -> linkageOut())
-            .withState(LinkageStates.IN, (stateRef, name) -> linkageIn());
+            .withState(LinkageStates.IN, (stateRef, name) -> linkageIn())
+            .withState(LinkageStates.TRANSFER, (stateRef, name) -> linkageTransfer());
 
 
 
@@ -61,7 +63,12 @@ public class IntakeLinkage implements Subsystem {
     private static void out(){
         linkageServo.setPosition(UniConstants.INTAKE_LINKAGE_OUT); linkageStates.setState(LinkageStates.OUT);}
     private static void in(){
-        linkageServo.setPosition(UniConstants.INTAKE_LINKAGE_IN); linkageStates.setState(LinkageStates.IN); }
+        linkageServo.setPosition(UniConstants.INTAKE_LINKAGE_IN); linkageStates.setState(LinkageStates.IN);
+    }
+
+    private static void transfer(){
+        linkageServo.setPosition(UniConstants.INTAKE_LINKAGE_TRANSFER); linkageStates.setState(LinkageStates.IN);
+    }
 
 
 
@@ -81,23 +88,49 @@ public class IntakeLinkage implements Subsystem {
     }
 
     @NonNull
+    public static Lambda linkageTransfer(){
+        return new Lambda("Intake Linkage Transfer")
+                .addRequirements(INSTANCE)
+                .setInit(IntakeLinkage::transfer);
+    }
+
+    @NonNull
     public static Lambda toggleLinkage(){
         return new Lambda("Toggle-Linkage")
                 .setInit(() -> {
-                        switch (linkageStates.getState()) {
-                            case IN:
-                                out();
-                                break;
-                            case OUT:
-                                in();
-                                break;
-                            case TRANSFER:
-                                break;
-                        }
+                    switch (linkageStates.getState()) {
+                        case IN:
+                            out();
+                            break;
+                        case OUT:
+                            in();
+                            break;
+                    }
 
                 });
 
     }
+
+    @NonNull
+    public static Lambda setLinkageState(LinkageStates state){
+        return new Lambda("Set-Linkage-State")
+                .setInit(() -> {
+                    switch (state) {
+                        case IN:
+                            in();
+                            break;
+                        case OUT:
+                            out();
+                            break;
+                        case TRANSFER:
+                            transfer();
+                            break;
+                    }
+
+                });
+
+    }
+
 
 
 

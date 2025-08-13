@@ -20,6 +20,7 @@ public class UniConstants {
     public static final String INTAKE_LINKAGE_NAME = "LINK";
     public static final double INTAKE_LINKAGE_IN = 0;
     public static final double INTAKE_LINKAGE_OUT = 1;
+    public static final double INTAKE_LINKAGE_TRANSFER = 0;
 
 
 
@@ -35,14 +36,14 @@ public class UniConstants {
     //Servo for horizontal rotation
     public static final String INTAKE_HORIZONTAL_NAME = "IHS";
     public static final double INTAKE_HORIZONTAL_PERP = 0.6;
-    public static final double INTAKE_HORIZONTAL_PARA = 0.25;
+    public static final double INTAKE_HORIZONTAL_PARA = 1;
 
 
 
     //Servo for vertical rotation
     public static final String INTAKE_VERTICAL_NAME = "IVS";
-    public static double INTAKE_VERTICAL_DOWN = 0;
-    public static double INTAKE_VERTICAL_UP = 0;
+    public static double INTAKE_VERTICAL_DOWN = 0.8;
+    public static double INTAKE_VERTICAL_UP = 0.2;
 
 
 

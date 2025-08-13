@@ -96,7 +96,6 @@ public class MecDrive implements Subsystem {
 
 
         follower.setStartingPose(new Pose(0, 0, 0));
-        setDefaultCommand(drive(Mercurial.gamepad1()));
 
 
     }
@@ -108,6 +107,7 @@ public class MecDrive implements Subsystem {
     public void preUserStartHook(@NonNull Wrapper opMode) {
         if(opMode.getOpModeType() == OpModeMeta.Flavor.TELEOP) {
             follower.startTeleopDrive();
+            setDefaultCommand(drive(Mercurial.gamepad1()));
         }
     }
 

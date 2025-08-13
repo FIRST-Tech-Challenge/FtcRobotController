@@ -35,7 +35,7 @@ public class Teleop extends OpMode {
     BoundGamepad gp1;
     BoundGamepad gp2;
 
-    IntegratedCommands commands;
+    IntegratedCommands commands = new IntegratedCommands();
 
     UniConstants.loggingState logState = UniConstants.loggingState.ENABLED;
 
@@ -47,25 +47,30 @@ public class Teleop extends OpMode {
         gp1 = Mercurial.gamepad1();
         gp2 = Mercurial.gamepad2();
 
-        gp1.a().onTrue(OuttakeClaw.toggleClaw());
-        gp1.b().onTrue(OuttakeClaw.toggleRotation());
-        gp1.x().onTrue(commands.toggleIntakeLinkage);
+        gp1.a().onTrue(IntakeClaw.toggleClaw());
+        gp1.b().onTrue(IntakeClaw.toggleHorizontal());
+        gp1.x().onTrue(IntakeClaw.toggleVertical());
+        gp1.y().onTrue(commands.transfer);
+
         gp1.rightBumper()
                 .onTrue(MecDrive.slow())
                 .onFalse(MecDrive.fast());
+        gp1.leftBumper().onTrue(commands.toggleIntakeLinkage);
+
         gp1.dpadDown().onTrue(commands.outtakePivotDown);
         gp1.dpadUp().onTrue(OuttakePivot.pivotUp());
-        gp1.dpadLeft().onTrue(OuttakePivot.pivotBar());
-        gp1.dpadRight().onTrue(OuttakePivot.pivotBasket());
+        gp1.dpadLeft().onTrue();
+        gp1.dpadRight().onTrue();
+        gp1.share().onTrue(commands.init);
 
 
-
-
+        gp2.a().onTrue(OuttakeClaw.toggleClaw());
+        gp2.b().onTrue(OuttakeClaw.toggleRotation());
 
         gp2.dpadDown().onTrue(commands.outtakeSlidesHome);
-        gp2.dpadUp().onTrue(DoubleMotorLift.goToLiftTarget(DoubleMotorLift.HeightStates.MIDDLE));
-        gp2.dpadLeft().onTrue(DoubleMotorLift.goToLiftTarget(DoubleMotorLift.HeightStates.BASKET));
-        gp2.dpadRight().onTrue(DoubleMotorLift.goToLiftTarget(DoubleMotorLift.HeightStates.BAR));
+        gp2.dpadUp().onTrue();
+        gp2.dpadLeft().onTrue(commands.outtakeBasket);
+        gp2.dpadRight().onTrue(commands.outtakeBar);
 
 
 
@@ -75,6 +80,13 @@ public class Teleop extends OpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
+
+    }
+
+    @Override
+    public void start(){
+
+        commands.init.schedule();
 
     }
 

@@ -80,10 +80,46 @@ public class IntakeClaw implements Subsystem {
                 .setInit(() -> {
                     switch (clawStates.getState()){
                         case OPEN:
-                            clawStates.schedule(ClawStates.CLOSED);
+                            close();
                             break;
                         case CLOSED:
-                            clawStates.schedule(ClawStates.OPEN);
+                            open();
+                            break;
+                    }
+                })
+                .setFinish(() -> true);
+
+
+    }
+
+    @NonNull
+    public static Lambda toggleVertical(){
+        return new Lambda("intake vertical toggle")
+                .setInit(() -> {
+                    switch (downStates.getState()){
+                        case DOWN:
+                            up();
+                            break;
+                        case UP:
+                            down();
+                            break;
+                    }
+                })
+                .setFinish(() -> true);
+
+
+    }
+
+    @NonNull
+    public static Lambda toggleHorizontal(){
+        return new Lambda("intake horizontal toggle")
+                .setInit(() -> {
+                    switch (sideStates.getState()){
+                        case PARA:
+                            perp();
+                            break;
+                        case PERP:
+                            para();
                             break;
                     }
                 })

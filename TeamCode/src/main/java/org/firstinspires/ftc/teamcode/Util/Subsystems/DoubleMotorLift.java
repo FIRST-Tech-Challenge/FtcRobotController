@@ -45,7 +45,7 @@ public class DoubleMotorLift implements Subsystem {
     private static final PDFLController pdflController = new PDFLController(P, D, F, L);
     public static double power;
 
-    public static int allowedError = 5;
+    public static int allowedError = 2;
 
     private static double currentPosition = 0;
 
