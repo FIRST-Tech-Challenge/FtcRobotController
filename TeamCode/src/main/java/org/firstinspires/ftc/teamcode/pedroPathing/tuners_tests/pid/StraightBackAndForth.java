@@ -63,7 +63,7 @@ public class StraightBackAndForth extends LinearOpMode {
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetryA.addLine("This will run the robot in a straight line going " + DISTANCE
                 + " inches forward. The robot will go forward and backward continuously"
-                + " along the path. Make sure you have enough room.!!!");
+                + " along the path. Make sure you have enough room.>>>");
         telemetryA.update();
     }
 
