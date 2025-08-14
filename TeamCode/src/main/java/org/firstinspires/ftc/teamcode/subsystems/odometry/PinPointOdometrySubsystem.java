@@ -3,12 +3,12 @@ package org.firstinspires.ftc.teamcode.subsystems.odometry;
 import android.widget.GridLayout;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Specifications;
 import org.firstinspires.ftc.teamcode.util.GoBildaPinpointDriver;
 
@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.util.GoBildaPinpointDriver;
  */
 public class PinPointOdometrySubsystem {
     // Underlying odometry driver instance
-    private GoBildaPinpointDriver odo;
+    private GoBildaPinpointDriver pinpointDriver;
 
     // Current pose estimates (in cm or degrees as appropriate)
     private double x = 0;
@@ -43,28 +43,28 @@ public class PinPointOdometrySubsystem {
 
     /**
      * Constructor initializes the PinPointOdo with hardware mapping, sets encoder parameters and resets sensor.
-     * @param hardwareMap hardware map to access sensors
+     * @param hw Hwardware to access sensors
      */
-    public PinPointOdometrySubsystem(HardwareMap hardwareMap){
+    public PinPointOdometrySubsystem(Hardware hw){
         // Get the GoBildaPinpointDriver from hardware map with configured name
-        odo = hardwareMap.get(GoBildaPinpointDriver.class, Specifications.PIN_POINT_ODOMETRY);
+        pinpointDriver = hw.pinPointOdo;
 
         // TODO: Tune these offsets for accurate positioning
         // odo.setOffsets(0, 865);
-        odo.setOffsets(120, -48);
+        pinpointDriver.setOffsets(120, -48);
 
         // Set the encoder resolution to the 4-bar pod type
-        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        pinpointDriver.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
 
         // Set encoder directions to FORWARD for both encoders
         // This means x increases when moving forward, y increases when strafing left
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        pinpointDriver.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
         // Initialize and reset control loop timer
         controllerLoopTime = new ElapsedTime();
 
         // Reset odometry position and IMU heading
-        odo.resetPosAndIMU();
+        pinpointDriver.resetPosAndIMU();
 
         // Reset timer to start counting from zero
         controllerLoopTime.reset();
@@ -92,10 +92,10 @@ public class PinPointOdometrySubsystem {
      * Adjusts y-axis sign to fit coordinate convention (positive y when strafing right).
      */
     public void processOdometry(){
-        x =  (odo.getPosX() / 10);           // Convert mm or encoder units to cm for x
-        y = -(odo.getPosY() / 10);           // Convert and invert y to match coordinate system
-        heading = odo.getHeading();          // Get current heading in degrees
-        odo.update();                        // Update internal odometry data
+        x =  (pinpointDriver.getPosX() / 10);           // Convert mm or encoder units to cm for x
+        y = -(pinpointDriver.getPosY() / 10);           // Convert and invert y to match coordinate system
+        heading = pinpointDriver.getHeading();          // Get current heading in degrees
+        pinpointDriver.update();                        // Update internal odometry data
     }
 
     /**
@@ -128,12 +128,12 @@ public class PinPointOdometrySubsystem {
      * Otherwise, it updates pose from sensor data and velocity readings.
      */
     public void deadReckoning(){
-        odo.update();                       // Update odometry sensor
+        pinpointDriver.update();                       // Update odometry sensor
 
         // Read current raw position and heading from sensor
-        Double checkX = odo.getPosX();
-        Double checkY = odo.getPosY();
-        Double checkHeading = odo.getHeading();
+        Double checkX = pinpointDriver.getPosX();
+        Double checkY = pinpointDriver.getPosY();
+        Double checkHeading = pinpointDriver.getHeading();
 
         // Check if any reading is NaN (invalid)
         if (checkX.isNaN() || checkY.isNaN() || checkHeading.isNaN()){
@@ -151,9 +151,9 @@ public class PinPointOdometrySubsystem {
             // heading = previousHeading;
         } else {
             // If readings valid, update pose from sensor, with unit conversions and sign adjustments
-            x =  (odo.getPosX() / 10);
-            y = -(odo.getPosY() / 10);
-            heading = odo.getHeading();
+            x =  (pinpointDriver.getPosX() / 10);
+            y = -(pinpointDriver.getPosY() / 10);
+            heading = pinpointDriver.getHeading();
 
             // Save current pose for next dead reckoning step if needed
             previousX = x;
@@ -161,9 +161,9 @@ public class PinPointOdometrySubsystem {
             previousHeading = heading;
 
             // Update velocity readings from odometry
-            vx = odo.getVelX();
-            vy = odo.getVelY();
-            vtheta = odo.getHeadingVelocity();
+            vx = pinpointDriver.getVelX();
+            vy = pinpointDriver.getVelY();
+            vtheta = pinpointDriver.getHeadingVelocity();
         }
 
         // Reset timer for next control loop
@@ -178,7 +178,7 @@ public class PinPointOdometrySubsystem {
      * @param heading new heading (in degrees)
      */
     public void setNewPosition(double x, double y, double heading){
-        odo.setPosition(new Pose2D(DistanceUnit.CM, x, y, AngleUnit.DEGREES, heading));
+        pinpointDriver.setPosition(new Pose2D(DistanceUnit.CM, x, y, AngleUnit.DEGREES, heading));
     }
 
     /**
@@ -186,7 +186,7 @@ public class PinPointOdometrySubsystem {
      * @return raw encoder value for x
      */
     public double getRawX(){
-        return odo.getEncoderX();
+        return pinpointDriver.getEncoderX();
     }
 
     /**
@@ -194,7 +194,7 @@ public class PinPointOdometrySubsystem {
      * @return raw encoder value for y
      */
     public double getRawY(){
-        return odo.getEncoderY();
+        return pinpointDriver.getEncoderY();
     }
 
     /**
@@ -202,7 +202,7 @@ public class PinPointOdometrySubsystem {
      * Useful for initialization or re-zeroing.
      */
     public void reset() {
-        odo.resetPosAndIMU();
+        pinpointDriver.resetPosAndIMU();
     }
 
     /**
@@ -222,10 +222,10 @@ public class PinPointOdometrySubsystem {
     }
 
     /**
-     * Get current estimated heading in degrees.
+     * Get current estimated heading in degrees. (through the Driver)
      * @return current heading
      */
     public double getHeading(){
-        return heading;
+        return pinpointDriver.getHeading();
     }
 }
