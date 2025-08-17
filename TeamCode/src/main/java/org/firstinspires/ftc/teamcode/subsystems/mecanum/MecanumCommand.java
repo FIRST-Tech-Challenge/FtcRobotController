@@ -1,19 +1,21 @@
 package org.firstinspires.ftc.teamcode.subsystems.mecanum;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.subsystems.odometry.PinPointOdometrySubsystem;
-import org.firstinspires.ftc.teamcode.util.pidcore.PIDCore;
 
-import static org.firstinspires.ftc.teamcode.subsystems.mecanum.MecanumConstants.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-//Here are the subsystems used
+/**
+ * Command wrapper for controlling a Mecanum drive system using
+ * positional PID and field-oriented driving. This class consolidates
+ * subsystem interactions and provides high-level movement commands.
+ */
 public class MecanumCommand {
 
     // create a class to consolidate subsystems
     private MecanumSubsystem mecanumSubsystem;
-    private PinPointOdometrySubsystem pinPointOdo;
+    private PinPointOdometrySubsystem pinPointOdoSubsystem;
 
     // hardware is owned by test and pass down to subsystems
     private Hardware hw;
@@ -29,21 +31,38 @@ public class MecanumCommand {
     private double ey = 0;
     private double etheta = 0;
 
-   // subsystem class would be pass into the functions
+    /**
+     * Creates a new MecanumCommand instance.
+     *
+     * @param opmode The active {@link LinearOpMode} controlling the robot.
+     * @param hw     Hardware configuration object for accessing devices.
+     */
     public MecanumCommand(LinearOpMode opmode, Hardware hw) {
         this.hw = hw;
         this.mecanumSubsystem = new MecanumSubsystem(hw);
-        this.pinPointOdo = new PinPointOdometrySubsystem(hw);
+        this.pinPointOdoSubsystem = new PinPointOdometrySubsystem(hw);
         this.opMode = opmode;
         elapsedTime = new ElapsedTime();
-        xFinal = pinPointOdo.getX();
-        yFinal = pinPointOdo.getY();
-        thetaFinal = pinPointOdo.getHeading();
+        xFinal = pinPointOdoSubsystem.getX();
+        yFinal = pinPointOdoSubsystem.getY();
+        thetaFinal = pinPointOdoSubsystem.getHeading();
         velocity = 0;
-        mecanumSubsystem.turnOffInternalPID();
+        turnOffInternalPID();
     }
 
-    //Command used to update constants
+    /**
+     * Updates PID constants for X, Y, and theta control loops.
+     *
+     * @param kpx     Proportional gain for X-axis PID.
+     * @param kdx     Derivative gain for X-axis PID.
+     * @param kix     Integral gain for X-axis PID.
+     * @param kpy     Proportional gain for Y-axis PID.
+     * @param kdy     Derivative gain for Y-axis PID.
+     * @param kiy     Integral gain for Y-axis PID.
+     * @param kptheta Proportional gain for theta (heading) PID.
+     * @param kdtheta Derivative gain for theta PID.
+     * @param kitheta Integral gain for theta PID.
+     */
     public void setConstants(double kpx, double kdx, double kix, double kpy, double kdy, double kiy, double kptheta, double kdtheta, double kitheta){
         MecanumConstants.kpx = kpx;
         MecanumConstants.kdx = kdx;
@@ -57,45 +76,24 @@ public class MecanumCommand {
         mecanumSubsystem.updatePIDConstants();
     }
 
+    /**
+     * Disables the internal PID control in the mecanum subsystem.
+     * Useful if external PID control or direct power control is preferred.
+     */
     public void turnOffInternalPID(){
         mecanumSubsystem.turnOffInternalPID();
     }
 
-    //uses imu for heading
-    public void pidPinPointProcessIMU(double imuAngle){
+    /**
+     * Runs PID control using PinPoint odometry to drive toward the target
+     * {@code xFinal}, {@code yFinal}, and {@code thetaFinal} positions.
+     * Limits motion based on the configured {@code velocity}.
+     */
+    public void pidPinPointProcess(){
+        ex = mecanumSubsystem.globalXControllerOutputPositional(xFinal, pinPointOdoSubsystem.getX());
+        ey = mecanumSubsystem.globalYControllerOutputPositional(yFinal, pinPointOdoSubsystem.getY());
+        etheta = mecanumSubsystem.globalThetaControllerOutputPositional(thetaFinal, pinPointOdoSubsystem.getHeading());
 
-        ex = mecanumSubsystem.globalXController.outputPositional(xFinal, pinPointOdo.getX());
-        ey =  mecanumSubsystem.globalYController.outputPositional(yFinal, pinPointOdo.getY());
-        etheta = mecanumSubsystem.globalThetaController.outputPositional(thetaFinal, pinPointOdo.getHeading());
-
-        if ((isXReached())) {
-            globalXController.integralReset();
-        }
-        if ((isYReached())) {
-            globalYController.integralReset();
-        }
-
-        if (isThetaReached()) {
-            globalThetaController.integralReset();
-        }
-
-        if (isXPassed()) {
-            globalXController.activateIntegral();
-        } else {
-            globalXController.deactivateIntegral();
-        }
-
-        if (isYPassed()) {
-            globalYController.activateIntegral();
-        } else {
-            globalYController.deactivateIntegral();
-        }
-
-        if (isThetaPassed()) {
-            globalThetaController.activateIntegral();
-        } else {
-            globalThetaController.deactivateIntegral();
-        }
 
         double max = Math.max(Math.abs(ex), Math.abs(ey));
         if (max > velocity) {
@@ -104,10 +102,44 @@ public class MecanumCommand {
             ey *= scalar;
             etheta *= scalar;
         }
+
         moveGlobalPartialPinPoint(true, ex, ey, etheta);
 
     }
 
+    /**
+     * Wrapper for field-oriented movement for TeleOp modes using PinPoint heading.
+     *
+     * @param vertical   Forward/backward input (-1 to 1).
+     * @param horizontal Left/right strafe input (-1 to 1).
+     * @param rotational Rotation input (-1 to 1).
+     */
+    public void fieldOrientedMove(double vertical, double horizontal, double rotational){
+        mecanumSubsystem.fieldOrientedMove(vertical, horizontal, rotational, pinPointOdoSubsystem.getHeading());
+    }
+
+    /**
+     * Moves the robot in global coordinates using partial control (drive + rotation).
+     * Converts global X/Y commands to local robot-oriented movement based on heading.
+     *
+     * @param run        If true, execute movement; if false, stop.
+     * @param vertical   Global Y-axis movement (forward/back).
+     * @param horizontal Global X-axis movement (strafe).
+     * @param rotational Rotation command.
+     */
+    public void moveGlobalPartialPinPoint(boolean run, double vertical, double horizontal, double rotational){
+        if (run){
+            //might have to change this because Gobilda Odommetry strafing left is POSITIVE while this works for strafing right is Positive
+            double angle = Math.PI/2 - pinPointOdoSubsystem.getHeading();
+            double localVertical = vertical*Math.cos(pinPointOdoSubsystem.getHeading()) - horizontal*Math.cos(angle);
+            double localHorizontal = vertical*Math.sin(pinPointOdoSubsystem.getHeading()) + horizontal*Math.sin(angle);
+            mecanumSubsystem.partialMove(true, localVertical, localHorizontal, rotational);
+        }
+    }
+
+    public void resetPinPointOdometry(){
+        pinPointOdoSubsystem.reset();
+    }
 
     // AUTO COMMANDS
 }

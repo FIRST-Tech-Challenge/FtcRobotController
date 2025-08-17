@@ -260,7 +260,16 @@ public class MecanumSubsystem {
         globalThetaController.setConstant(kptheta, kdtheta, kitheta);
     }
 
-    public void
+    // Output Positional Getters for PID controllers
+    public double globalXControllerOutputPositional(double XsetPoint, double Xfeedback) {
+        return globalXController.outputPositional(XsetPoint, Xfeedback);
+    }
+    public double globalYControllerOutputPositional(double YsetPoint, double Yfeedback) {
+        return globalYController.outputPositional(YsetPoint, Yfeedback);
+    }
+    public double globalThetaControllerOutputPositional(double ThetasetPoint, double Thetafeedback) {
+        return globalThetaController.outputPositional(ThetasetPoint, Thetafeedback);
+    }
 
     // stop all motors
     public void stop(boolean run){
@@ -313,8 +322,5 @@ public class MecanumSubsystem {
         hw.rb.setPower(rightBackMotorOutput);
         hw.lb.setPower(leftBackMotorOutput);
     }
-
-
-    //------------------------------------------------------------ Auto Mode ------------------------------------------------------------
 }
 
