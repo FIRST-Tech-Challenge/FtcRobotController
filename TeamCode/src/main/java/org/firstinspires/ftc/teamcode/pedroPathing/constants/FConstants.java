@@ -15,7 +15,7 @@ public class FConstants {
         FollowerConstants.rightFrontMotorName = "frontRightMotor";
         FollowerConstants.rightRearMotorName = "backRightMotor";
         */
-        FollowerConstants.leftFrontMotorName = "backRightMotor ";
+        FollowerConstants.leftFrontMotorName = "backRightMotor";
         FollowerConstants.leftRearMotorName = "frontRightMotor";
         FollowerConstants.rightFrontMotorName = "backLeftMotor";
         FollowerConstants.rightRearMotorName = "frontLeftMotor";
