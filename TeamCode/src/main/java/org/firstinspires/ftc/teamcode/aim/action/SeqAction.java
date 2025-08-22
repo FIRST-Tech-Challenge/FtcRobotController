@@ -3,12 +3,13 @@ package org.firstinspires.ftc.teamcode.aim.action;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SeqAction {
+public class SeqAction extends Action {
     // A list to hold AutoAction items
     private List<Action> actions;
 
     // Constructor
-    public SeqAction() {
+    public SeqAction(String name) {
+        super(name);
         this.actions = new ArrayList<>();
     }
 
@@ -17,6 +18,7 @@ public class SeqAction {
         actions.add(action);
     }
 
+    @Override
     // The run method which calls 'run()' on each item in the list
     public boolean run() {
         if (actions.isEmpty()) {

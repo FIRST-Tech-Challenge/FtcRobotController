@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.aim.action;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 
-public class ParallelAction implements Action {
+public class ParallelAction extends Action {
     private List<Action> actions;
 
     // Constructor
-    public ParallelAction() {
+    public ParallelAction(String name) {
+        super(name);
         this.actions = new ArrayList<>();
     }
 
@@ -17,13 +19,30 @@ public class ParallelAction implements Action {
     }
 
     // The run method which calls 'run()' on each item in the list
+    @Override
     public boolean run() {
-        for (Action action : actions) {
-            boolean done = action.run();
-            if (!done) {
-                return false;
+        if (actions.isEmpty()) {
+            return true;
+        }
+        for (Iterator<Action> it = actions.iterator(); it.hasNext();) {
+            Action act = it.next();
+            if (act.run()) {
+                it.remove();
             }
         }
-        return true;
+        if (actions.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        String s = super.getName();
+        for (Iterator<Action> it = actions.iterator(); it.hasNext();) {
+            Action act = it.next();
+            s += "\n  " + act.toString();
+        }
+        return s;
     }
 }
