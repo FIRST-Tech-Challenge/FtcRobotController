@@ -5,7 +5,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.aim.components.ToggleButton;
+import org.firstinspires.ftc.teamcode.aim.components.Button;
 import org.firstinspires.ftc.teamcode.aim.drive.MecanumIMUDrive;
 
 public class Robot {
@@ -14,7 +14,8 @@ public class Robot {
     private MecanumIMUDrive driveCtrl;
     private LinearOpMode opMode;
 
-    private ToggleButton botRotateButton = new ToggleButton();
+    private Button botRotateButton = new Button();
+    private boolean botRotated = false;
 
     private void initImu() {
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(RobotConfig.logoDirection, RobotConfig.usbDirection);
@@ -70,9 +71,14 @@ public class Robot {
     }
 
     public void handleRobotMove() {
-        boolean botRotate = this.botRotateButton.update(this.opMode.gamepad1.x);
+        this.botRotateButton.update(this.opMode.gamepad1.x);
+        if (this.botRotateButton.isToggleOn()) {
+            this.botRotated = true;
+        }  else if (this.botRotateButton.isToggleOff()) {
+            this.botRotated = false;
+        }
         int botDirection = 1;
-        if (botRotate) {
+        if (this.botRotated) {
             botDirection = -1;
         }
         double power = 0, x = 0, y = 0, turn = 0;
