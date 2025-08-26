@@ -1,9 +1,11 @@
 repositories {
+    maven { url = 'https://maven.brott.dev/' }
     mavenCentral()
     google() // Needed for androidx
 }
 
 dependencies {
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.17'
     implementation 'org.firstinspires.ftc:Inspection:10.3.0'
     implementation 'org.firstinspires.ftc:Blocks:10.3.0'
     implementation 'org.firstinspires.ftc:RobotCore:10.3.0'
