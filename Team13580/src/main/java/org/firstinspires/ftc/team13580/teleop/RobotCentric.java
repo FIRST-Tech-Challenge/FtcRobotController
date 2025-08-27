@@ -27,58 +27,55 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.team00000.teleop; // TODO(STUDENTS): Change to your team package (e.g., org.firstinspires.ftc.team12345.teleop)
+package org.firstinspires.ftc.team13580.teleop; // TODO(STUDENTS): Change to your team package (e.g., org.firstinspires.ftc.team12345.teleop)
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.team00000.RobotHardware;
+import org.firstinspires.ftc.team13580.RobotHardware;
 
-@TeleOp(name="Field Centric", group="TeleOp")
-// TODO(STUDENTS): You may rename this for your robot (e.g., "Field Centric - Comp Bot)
-public class FieldCentric extends LinearOpMode {
+@TeleOp(name="Robot Centric", group="TeleOp")
+// TODO(STUDENTS): You may rename this OpMode in the annotation for clarity (e.g., "Robot-Centric - Practice Bot")
+public class RobotCentric extends LinearOpMode {
 
-    // NOTE: One hardware instance per OpMode keeps mapping/IMU use simple and testable
+    // NOTE: One RobotHardware instance per OpMode keeps mapping/telemetry simple.
     RobotHardware robot = new RobotHardware(this);
 
     @Override
     public void runOpMode() {
-        // Driver inputs (range roughly [-1, 1])
+        // Driver inputs (range about [-1, 1])
         double axial    = 0; // forward/back (+ forward)
         double lateral  = 0; // strafe left/right (+ right)
         double yaw      = 0; // rotation (+ CCW/left turn)
 
         // --- INIT PHASE ---
-        // WHY: Centralized init in RobotHardware sets motor directions, encoder modes, IMU orientation, etc.
-        // TODO(STUDENTS): Confirm IMU orientation & Motor names in RobotHardware.init()
+        // WHY: Centralized initialization (motor directions, encoders, IMU) lives in RobotHardware.init()
+        // TODO(STUDENTS): Confirm motor names, directions, and zero-power modes in RobotHardware.init()
         robot.init();
 
-        // Wait for driver to press START on Driver Station
+        // Wait for START on the Diver Station
         waitForStart();
 
         // --- TELEOP LOOP ---
         while (opModeIsActive()) {
 
-            // READ sticks
-            // NOTE: FTC gamepads support negative when pushing left_stick_y forward, so we invert it.
+            // Read sticks (FTC gamepads: pushing left_stick_y forward is negative → invert it)
             axial   = -gamepad1.left_stick_y;
             lateral =  gamepad1.left_stick_x;
             yaw     =  gamepad1.right_stick_x;
 
-            // Optional: Deadband to ignore tiny stick noise (uncomment to use)
-            // double dead = 0.05: // TODO(STUDENTS): tune
+            // Optional: Deadband to filter tiny stick noise (uncomment to use)
+            // double dead = 0.05; // TODO(STUDENTS): tune
             // axial   = (Math.abs(axial)   < dead) ? 0 : axial;
             // lateral = (Math.abs(lateral) < dead) ? 0 : lateral;
             // yaw     = (Math.abs(yaw)     < dead) ? 0 : yaw;
 
-            // Optional: Precision/slow mode (hold Left Trigger to reduce sensitivity)
-            // double slow = 1.0 - (0.6 * gamepad1.left_trigger); // 1.0 → 0.4
+            // Optional: Precision/slow mode (hold Left Trigger to reduce overall sensitivity)
+            // double slow = 1.0 - (0.6 * gamepad1.left_trigger); // 1.0 → 0.4 as LT goes 0→1
             // axial *= slow; lateral *= slow; yaw *= slow;
 
-            // Optional: Zero heading on button (keeps field-forward aligned to current front)
-            // if (gamepad1.a) { robot.zeroHeading(); } // Implement zeroHeading in Robot Hardware to call imu.resetYaw()
+            // WHY: Robot-centric uses the driver’s frame (no IMU rotation); great for quick testing.
+            robot.driveRobotCentric(axial, lateral, yaw);
 
-            // Drive field-centric (rotates axial/lateral by -IMU heading so "forward" = field-forward)
-            robot.driveFieldCentric(axial, lateral, yaw);
 
             // Telemetry for drivers + debugging
             telemetry.addData("Controls", "Drive/Strafe: Left Stick | Turn: Right Stick");
