@@ -45,45 +45,70 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  * STUDENT CHECKLIST:
  * 1) TODO(STUDENTS): Update motor names to match your Robot Configuration
  * 2) TODO(STUDENTS): Verify IMU orientation (logo/USB direction) match your hub mount.
- * 3) TODO(STUDENTS); 
+ * 3) (OPTIONAL) Set reversal directions to match your wiring/wheel mounting.
+ *
+ * SAFETY/DEBUG:
+ * - If the robot drives "sideways" or heading feels wrong, verify IMU orientation + motor directions.
+ * - Use telemetry to print axial/lateral/yaw and botHeading when tuning.
  */
-
 public class RobotHardware {
 
+    // We hold a reference to the active OpMode to access hardwareMap/telemetry safely
     private LinearOpMode myOpMode = null;
 
+    // Drivetrain motors for a mecanum chassis
     private DcMotor frontLeftDrive, backLeftDrive, frontRightDrive, backRightDrive;
+
+    // IMU is used for field-centric heading
     private IMU imu;
 
     public RobotHardware(LinearOpMode opmode) {
         myOpMode = opmode;
     }
 
-    public void init()    {
+    /**
+     * Initialize hardware mappings and base motor/IMU configuration.
+     * Call once from your OPMode before driving.
+     */
+    public void init() {
+        // --- HARDWARE MAP NAMES ---
+        // TODO(STUDENTS): These strings MUST match your Driver Station Robot Configuration.
         frontLeftDrive = myOpMode.hardwareMap.get(DcMotor.class, "front_left_drive");
         backLeftDrive = myOpMode.hardwareMap.get(DcMotor.class, "back_left_drive");
         frontRightDrive = myOpMode.hardwareMap.get(DcMotor.class, "front_right_drive");
         backRightDrive = myOpMode.hardwareMap.get(DcMotor.class, "back_right_drive");
 
+        // --- IMU ORIENTATION ---
+        // TODO(STUDENTS): Update if your Control/Expansion Hub is mounted differently.
+        // The two enums MUST reflect the physical orientation of the REV Hub on the robot.
+        // WHY: Field-centric depends on accurate yaw; wrong orientation => wrong heading rotations.
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,        // e.g., logo pointing up
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));  // e.g., USB ports towards front
 
-        imu = myOpMode.hardwareMap.get(IMU.class, "imu");
+        imu = myOpMode.hardwareMap.get(IMU.class, "imu"); // TODO(STUDENTS): confirm IMU name
         imu.initialize(parameters);
 
+        // NOTE: Reset yaw at init so heading starts ~0 at OpMode start.
+        // If you prefer "press A to zero heading", move this to your OpMode and bind to a button.
         imu.resetYaw();
 
+        // --- MOTOR DIRECTIONS ---
+        // NOTE: these reversals are common for mecanum so "axial + lateral" maps correctly.
+        // TODO(STUDENTS): If the robot strafes opposite or spins wrong, swap these directions.
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
+        // --- ENCODER MODES ---
+        // WHY: Reset once at init for a clean baseline; then RUN_USING_ENCODER for closed-loop speed control if needed.
         frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        // NOTE: BRAKE helps with precise stopping; FLOAT cna feel smoother when coasting.
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -98,18 +123,22 @@ public class RobotHardware {
         myOpMode.telemetry.update();
     }
 
+    /**
+     * Robot-Centric drive (driver-relative): no IMU rotation applied.
+     * @param axial     forward/backward (+forward)
+     * @param lateral   left/right (+ right)
+     * @param yaw       rotate CCW (+ left turn)
+     */
     public void driveRobotCentric(double axial, double lateral, double yaw) {
-        double max;
-
+        // WHY: Standard mecanum mixing (A + L + Y. etc.). Values may exceed |1|; we normalize below.
         double frontLeftPower  = axial + lateral + yaw;
         double frontRightPower = axial - lateral - yaw;
         double backLeftPower   = axial - lateral + yaw;
         double backRightPower  = axial + lateral - yaw;
 
-        max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
-        max = Math.max(max, Math.abs(backLeftPower));
-        max = Math.max(max, Math.abs(backRightPower));
-
+        // Normalize so that the highest magnitude is 1.0, preserving ratios
+        double max = Math.max(Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
+                              Math.max(Math.abs(backLeftPower), Math.abs(backRightPower)));
         if (max > 1.0) {
             frontLeftPower  /= max;
             frontRightPower /= max;
@@ -120,22 +149,29 @@ public class RobotHardware {
         setDrivePower(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
     }
 
+    /**
+     * Field-Centric drive (field-relative): rotates driver inputs by -heading so forward is field-forward.
+     * @param axial     forward/backward from stick
+     * @param lateral   left/right from stick
+     * @param yaw       rotation command
+     */
     public void driveFieldCentric(double axial, double lateral, double yaw) {
-        double max;
+        // NOTE: Heading is in radians; positive CCW. We rotate the input vector by -heading.
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
+        // Input rotation for field frame
         double lateralRotation = lateral * Math.cos(-botHeading) - axial * Math.sin(-botHeading);
         double axialRotation = lateral * Math.sin(-botHeading) + axial * Math.cos(-botHeading);
 
+        // WHY: Standard mecanum mixing (A + L + Y. etc.). Values may exceed |1|; we normalize below.
         double frontLeftPower  = axialRotation + lateralRotation + yaw;
         double frontRightPower = axialRotation - lateralRotation - yaw;
         double backLeftPower   = axialRotation - lateralRotation + yaw;
         double backRightPower  = axialRotation + lateralRotation - yaw;
 
-        max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
-        max = Math.max(max, Math.abs(backLeftPower));
-        max = Math.max(max, Math.abs(backRightPower));
-
+        // Normalize so that the highest magnitude is 1.0, preserving ratios
+        double max = Math.max(Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
+                Math.max(Math.abs(backLeftPower), Math.abs(backRightPower)));
         if (max > 1.0) {
             frontLeftPower  /= max;
             frontRightPower /= max;
@@ -146,6 +182,10 @@ public class RobotHardware {
         setDrivePower(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
     }
 
+    /**
+     * Low-level power application.
+     * NOTE: No ramping here-add slew rate limiting on TeleOP if you want softer starts.
+     */
     public void setDrivePower(double frontLeftWheel, double frontRightWheel, double backLeftWheel, double backRightWheel) {
         frontLeftDrive.setPower(frontLeftWheel);
         frontRightDrive.setPower(frontRightWheel);
