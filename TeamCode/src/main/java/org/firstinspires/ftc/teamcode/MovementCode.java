@@ -14,17 +14,17 @@ public class MovementCode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // Map motors from Robot Configuration
+       
         frontLeft  = hardwareMap.get(DcMotor.class, "front_left");
         frontRight = hardwareMap.get(DcMotor.class, "front_right");
         backLeft   = hardwareMap.get(DcMotor.class, "back_left");
         backRight  = hardwareMap.get(DcMotor.class, "back_right");
 
-        // Reverse left side to ensure forward is forward
+       
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
 
-        // Initialize IMU
+        
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS; // radians for trig
@@ -42,13 +42,13 @@ public class MovementCode extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            // Toggle between robot-centric and field-centric when pressing A
+            
             if (gamepad1.a) {
                 fieldCentric = !fieldCentric;
-                sleep(300); // debounce
+                sleep(300); 
             }
 
-            // Joystick controls
+            
             double y  = -gamepad1.left_stick_y;     // Forward/Backward
             double x  = gamepad1.left_stick_x * 1.1; // Strafe (corrected)
             double rx = gamepad1.right_stick_x;    // Rotation
@@ -65,7 +65,6 @@ public class MovementCode extends LinearOpMode {
         }
     }
 
-    /** Robot-centric mecanum drive */
     private void driveRobotCentric(double x, double y, double rx) {
         double fl = y + x + rx;
         double bl = y - x + rx;
@@ -75,9 +74,9 @@ public class MovementCode extends LinearOpMode {
         setMotorPowers(fl, fr, bl, br);
     }
 
-    /** Field-centric mecanum drive (joystick rotated by IMU heading) */
+
     private void driveFieldCentric(double x, double y, double rx, double heading) {
-        // Rotate joystick vector by -heading
+       
         double rotX = x * Math.cos(-heading) - y * Math.sin(-heading);
         double rotY = x * Math.sin(-heading) + y * Math.cos(-heading);
 
@@ -89,7 +88,6 @@ public class MovementCode extends LinearOpMode {
         setMotorPowers(fl, fr, bl, br);
     }
 
-    /** Normalize and set motor powers */
     private void setMotorPowers(double fl, double fr, double bl, double br) {
         double max = Math.max(1.0, Math.max(Math.abs(fl),
                 Math.max(Math.abs(fr), Math.max(Math.abs(bl), Math.abs(br)))));
