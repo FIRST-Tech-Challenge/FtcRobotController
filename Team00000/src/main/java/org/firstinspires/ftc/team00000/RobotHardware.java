@@ -84,7 +84,7 @@ public class RobotHardware {
         // WHY: Field-centric depends on accurate yaw; wrong orientation => wrong heading rotations.
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,        // e.g., logo pointing up
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));  // e.g., USB ports towards front
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));  // e.g., USB ports towards right
 
         imu = myOpMode.hardwareMap.get(IMU.class, "imu"); // TODO(STUDENTS): confirm IMU name
         imu.initialize(parameters);
