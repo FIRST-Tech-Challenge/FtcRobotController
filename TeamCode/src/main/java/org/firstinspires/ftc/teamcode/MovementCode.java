@@ -1,99 +1,43 @@
-package teleop;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name="Mecanum TeleOp Toggle", group="Competition")
+@TeleOp
 public class MovementCode extends LinearOpMode {
-
-    private DcMotor frontLeft, frontRight, backLeft, backRight;
-    private BNO055IMU imu;
-    private boolean fieldCentric = false; // start robot-centric
-
     @Override
     public void runOpMode() throws InterruptedException {
-       
-        frontLeft  = hardwareMap.get(DcMotor.class, "front_left");
-        frontRight = hardwareMap.get(DcMotor.class, "front_right");
-        backLeft   = hardwareMap.get(DcMotor.class, "back_left");
-        backRight  = hardwareMap.get(DcMotor.class, "back_right");
-
-       
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
+           
+        DcMotor frontLeftMotor  = hardwareMap.dcMotor.get("frontLeftMotor");
+        DcMotor backLeftMotor   = hardwareMap.dcMotor.get("backLeftMotor");
+        DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
+        DcMotor backRightMotor  = hardwareMap.dcMotor.get("backRightMotor");
 
         
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS; // radians for trig
-        imu.initialize(parameters);
-
-        telemetry.addLine("IMU calibrating...");
-        telemetry.update();
-        while (!isStopRequested() && !imu.isGyroCalibrated()) {
-            sleep(50);
-            idle();
-        }
-        telemetry.addLine("IMU Ready");
-        telemetry.update();
+        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
+        if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            
-            if (gamepad1.a) {
-                fieldCentric = !fieldCentric;
-                sleep(300); 
-            }
+            double y  = -gamepad1.left_stick_y;      
+            double x  =  gamepad1.left_stick_x * 1.1; 
+            double rx =  gamepad1.right_stick_x;
 
-            
-            double y  = -gamepad1.left_stick_y;     // Forward/Backward
-            double x  = gamepad1.left_stick_x * 1.1; // Strafe (corrected)
-            double rx = gamepad1.right_stick_x;    // Rotation
+            double denom = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1.0);
 
-            if (fieldCentric) {
-                double heading = imu.getAngularOrientation().firstAngle;
-                driveFieldCentric(x, y, rx, heading);
-            } else {
-                driveRobotCentric(x, y, rx);
-            }
+            double frontLeftPower  = (y + x + rx) / denom;
+            double backLeftPower   = (y - x + rx) / denom;
+            double frontRightPower = (y - x - rx) / denom;
+            double backRightPower  = (y + x - rx) / denom;
 
-            telemetry.addData("Mode", fieldCentric ? "Field Centric" : "Robot Centric");
-            telemetry.update();
+            frontLeftMotor.setPower(frontLeftPower);
+            backLeftMotor.setPower(backLeftPower);
+            frontRightMotor.setPower(frontRightPower);
+            backRightMotor.setPower(backRightPower);
         }
-    }
-
-    private void driveRobotCentric(double x, double y, double rx) {
-        double fl = y + x + rx;
-        double bl = y - x + rx;
-        double fr = y - x - rx;
-        double br = y + x - rx;
-
-        setMotorPowers(fl, fr, bl, br);
-    }
-
-
-    private void driveFieldCentric(double x, double y, double rx, double heading) {
-       
-        double rotX = x * Math.cos(-heading) - y * Math.sin(-heading);
-        double rotY = x * Math.sin(-heading) + y * Math.cos(-heading);
-
-        double fl = rotY + rotX + rx;
-        double bl = rotY - rotX + rx;
-        double fr = rotY - rotX - rx;
-        double br = rotY + rotX - rx;
-
-        setMotorPowers(fl, fr, bl, br);
-    }
-
-    private void setMotorPowers(double fl, double fr, double bl, double br) {
-        double max = Math.max(1.0, Math.max(Math.abs(fl),
-                Math.max(Math.abs(fr), Math.max(Math.abs(bl), Math.abs(br)))));
-        frontLeft.setPower(fl / max);
-        frontRight.setPower(fr / max);
-        backLeft.setPower(bl / max);
-        backRight.setPower(br / max);
     }
 }
