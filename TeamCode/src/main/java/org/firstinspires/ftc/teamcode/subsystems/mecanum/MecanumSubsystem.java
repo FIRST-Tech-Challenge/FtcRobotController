@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.util.pidcore.PIDCore;
 
-public class MecanumSubsystem {
+class MecanumSubsystem {
     //rf: right front/forward
     //rb: right back
     //lb: left back
@@ -78,7 +78,6 @@ public class MecanumSubsystem {
 
         // stop all motors
         hw.lb.setPower(0);
-        hw.lf.setPower(0);
         hw.lf.setPower(0);
         hw.rb.setPower(0);
         hw.rf.setPower(0);
@@ -166,30 +165,41 @@ public class MecanumSubsystem {
         hw.lf.setVelocity(lfvel, AngleUnit.RADIANS);
     }
     // processes velocity control with no encoder feedback
+    // processes velocity control with no encoder feedback
     public void motorProcessNoEncoder(){
-        //normalize vectors
-        if (Math.abs(lfVelMain + lfVelAdjustment1) > 1 || Math.abs(lbVelMain + lbVelAdjustment1) > 1 || Math.abs(rfVelMain + rfVelAdjustment1) > 1|| Math.abs(rbVelMain + rbVelAdjustment1) > 1){
-            lfvel = (lfVelMain + lfVelAdjustment1);
-            lbvel = (lbVelMain + lbVelAdjustment1);
-            rfvel = (rfVelMain + rfVelAdjustment1);
-            rbvel = (rbVelMain + rbVelAdjustment1);
-            double max = Math.max(Math.abs(lfvel), Math.max(Math.abs(lbvel), Math.max(Math.abs(rfvel), Math.abs(rbvel))));
-            lfvel = lfvel/max;
-            lbvel = lbvel/max;
-            rfvel = rfvel/max;
-            rbvel = rbvel/max;
-        } else {
-            lfvel = lfVelMain + lfVelAdjustment1;
-            lbvel = lbVelMain + lbVelAdjustment1;
-            rfvel = rfVelMain + rfVelAdjustment1;
-            rbvel = rbVelMain + rbVelAdjustment1;
+        double lfVelTemp = lfVelMain + lfVelAdjustment1;
+        double lbVelTemp = lbVelMain + lbVelAdjustment1;
+        double rfVelTemp = rfVelMain + rfVelAdjustment1;
+        double rbVelTemp = rbVelMain + rbVelAdjustment1;
+
+        // normalize vectors (between 0 to 1)
+        double max = maxDouble(Math.abs(lfVelTemp), Math.abs(lbVelTemp), Math.abs(rfVelTemp), Math.abs(rbVelTemp));
+        if (max > 1) {
+            lfVelTemp /= max;
+            lbVelTemp /= max;
+            rfVelTemp /= max;
+            rbVelTemp /= max;
         }
 
+        lfvel = lfVelTemp;
+        lbvel = lbVelTemp;
+        rfvel = rfVelTemp;
+        rbvel = rbVelTemp;
+
         // set motor powers
-        hw.rf.setPower(rfvel);
+        hw.rf.setPower(lfvel);
         hw.lb.setPower(lbvel);
-        hw.rb.setPower(rbvel);
-        hw.lf.setPower(lfvel);
+        hw.rb.setPower(rfvel);
+        hw.lf.setPower(rbvel);
+    }
+
+    //    named maxDouble temporarily to avoid name conflicts with local variable
+    private double maxDouble(double... nums) {
+        double max = -Double.MAX_VALUE;
+        for (double num : nums) {
+            max = Math.max(max, num);
+        }
+        return max;
     }
 
     //

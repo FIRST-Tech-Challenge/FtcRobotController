@@ -27,11 +27,12 @@ public class MecanumCommand {
 
     // hardware is owned by test and pass down to subsystems
     private Hardware hw;
-    private boolean runMotionProfile;
 
-    private LinearOpMode opMode;
     private ElapsedTime elapsedTime;
-    ;
+    public double xFinal;
+    public double yFinal;
+    private double thetaFinal;
+    private double velocity;
 
     private double ex = 0;
     private double ey = 0;
@@ -43,14 +44,12 @@ public class MecanumCommand {
     /**
      * Creates a new MecanumCommand instance.
      *
-     * @param opmode The active {@link LinearOpMode} controlling the robot.
      * @param hw     Hardware configuration object for accessing devices.
      */
-    public MecanumCommand(LinearOpMode opmode, Hardware hw) {
+    public MecanumCommand( Hardware hw) {
         this.hw = hw;
         this.mecanumSubsystem = new MecanumSubsystem(hw);
         this.pinPointOdoSubsystem = new PinPointOdometrySubsystem(hw);
-        this.opMode = opmode;
         elapsedTime = new ElapsedTime();
         xFinal = pinPointOdoSubsystem.getX();
         yFinal = pinPointOdoSubsystem.getY();
@@ -164,7 +163,6 @@ public class MecanumCommand {
             this.yFinal = y;
             this.thetaFinal = theta;
             this.velocity = velocity;
-            this.runMotionProfile = runMotionProfile;
         }
     }
 
@@ -218,13 +216,16 @@ public class MecanumCommand {
 
 
     //teleop
-
     public void handleMovement(double leftStickY, double leftStickX, double rightStickX) {
 
         fieldOrientedMove(-leftStickY, leftStickX, rightStickX);
     }
 
 
+    public void motorProcess() {
+        mecanumSubsystem.motorProcessNoEncoder();
+    }
 
 }
+
 
