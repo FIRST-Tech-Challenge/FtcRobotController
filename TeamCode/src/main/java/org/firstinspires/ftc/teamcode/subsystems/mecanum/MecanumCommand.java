@@ -217,5 +217,14 @@ public class MecanumCommand {
     }
 
 
+    //teleop
+
+    public void handleMovement(double leftStickY, double leftStickX, double rightStickX) {
+
+        fieldOrientedMove(-leftStickY, leftStickX, rightStickX);
+    }
+
+
+
 }
 
