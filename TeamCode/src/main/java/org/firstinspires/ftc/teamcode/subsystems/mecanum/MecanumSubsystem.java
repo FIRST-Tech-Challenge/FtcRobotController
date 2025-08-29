@@ -165,7 +165,6 @@ class MecanumSubsystem {
         hw.lf.setVelocity(lfvel, AngleUnit.RADIANS);
     }
     // processes velocity control with no encoder feedback
-    // processes velocity control with no encoder feedback
     public void motorProcessNoEncoder(){
         double lfVelTemp = lfVelMain + lfVelAdjustment1;
         double lbVelTemp = lbVelMain + lbVelAdjustment1;
@@ -187,10 +186,8 @@ class MecanumSubsystem {
         rbvel = rbVelTemp;
 
         // set motor powers
-        hw.rf.setPower(lfvel);
-        hw.lb.setPower(lbvel);
-        hw.rb.setPower(rfvel);
-        hw.lf.setPower(rbvel);
+
+        setPowers(rfvel,lbvel,rbvel,lfvel);
     }
 
     //    named maxDouble temporarily to avoid name conflicts with local variable
@@ -237,10 +234,7 @@ class MecanumSubsystem {
             rightBackMotorOutput = (vertical * Math.cos(Math.toRadians(45)) + horizontal * Math.sin(Math.toRadians(45)) + rotational * Math.sin(Math.toRadians(45)))*(1.41421356237);
             leftBackMotorOutput = (-horizontal * Math.cos(Math.toRadians(45)) + vertical * Math.sin(Math.toRadians(45)) - rotational * Math.sin(Math.toRadians(45)))*(1.41421356237);
 
-            hw.rf.setPower(rightFrontMotorOutput);
-            hw.lf.setPower(leftFrontMotorOutput);
-            hw.rb.setPower(rightBackMotorOutput);
-            hw.lb.setPower(leftBackMotorOutput);
+            setPowers(rightBackMotorOutput,leftBackMotorOutput,rightFrontMotorOutput,leftFrontMotorOutput);
         }
     }
 
@@ -251,15 +245,9 @@ class MecanumSubsystem {
             double y2 = power * Math.sin(Math.toRadians(degree)) * Math.cos(Math.toRadians(45)) - power * Math.cos(Math.toRadians(degree)) * Math.sin(Math.toRadians(45));
             double x2 = power * Math.cos(Math.toRadians(degree)) * Math.cos(Math.toRadians(45)) + power * Math.sin(Math.toRadians(degree)) * Math.sin(Math.toRadians(45));
             while (hw.rf.getCurrentPosition()<position){
-                hw.rf.setPower(x1);
-                hw.lb.setPower(x2);
-                hw.rb.setPower(y1);
-                hw.lf.setPower(y2);
+                setPowers(0,0,0,0);
             }
-            hw.rf.setPower(0);
-            hw.lb.setPower(0);
-            hw.rb.setPower(0);
-            hw.lf.setPower(0);
+        setPowers(0,0,0,0);
         }
     }
 
@@ -284,10 +272,7 @@ class MecanumSubsystem {
     // stop all motors
     public void stop(boolean run){
         if (run){
-            hw.rf.setPower(0);
-            hw.lb.setPower(0);
-            hw.rb.setPower(0);
-            hw.lf.setPower(0);
+            setPowers(0,0,0,0);
         }
     }
 
@@ -327,10 +312,14 @@ class MecanumSubsystem {
         rightBackMotorOutput *= POWER_SCALE_FACTOR;
         leftBackMotorOutput *= POWER_SCALE_FACTOR;
 
-        hw.rf.setPower(rightFrontMotorOutput);
-        hw.lf.setPower(leftFrontMotorOutput);
-        hw.rb.setPower(rightBackMotorOutput);
-        hw.lb.setPower(leftBackMotorOutput);
+        setPowers(rightBackMotorOutput,leftBackMotorOutput,rightFrontMotorOutput,leftFrontMotorOutput);
+    }
+
+    public void setPowers (double x1, double x2, double y1, double y2){
+        hw.rf.setPower(x1);
+        hw.lb.setPower(x2);
+        hw.rb.setPower(y1);
+        hw.lf.setPower(y2);
     }
 }
 

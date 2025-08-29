@@ -7,10 +7,11 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.util.pidcore.PIDCore;
 
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.subsystems.mecanum.MecanumCommand;
-import org.firstinspires.ftc.teamcode.subsystems.odometry.PinPointOdometrySubsystem;
+
 
 
 @Config
@@ -58,6 +59,13 @@ public class SampleAutoOpMode extends LinearOpMode {
                     break;
 
                 default:
+//                case SUB_PICKUP:
+//                    mecanumCommand.moveGlobalPartialPinPoint(true, 10, 15,0.8);
+//                    autoState = AUTO_STATE.FINISH;
+//                    br eak;
+
+                case FINISH:
+                    stopRobot();
                     break;
             }
         }
