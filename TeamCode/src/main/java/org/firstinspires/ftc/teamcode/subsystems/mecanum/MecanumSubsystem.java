@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.subsystems.mecanum;
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import static org.firstinspires.ftc.teamcode.subsystems.mecanum.MecanumConstants.*;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -260,13 +259,13 @@ class MecanumSubsystem {
 
     // Output Positional Getters for PID controllers
     public double globalXControllerOutputPositional(double XsetPoint, double Xfeedback) {
-        return globalXController.outputPositional(XsetPoint, Xfeedback);
+        return globalXController.outputPID(XsetPoint, Xfeedback);
     }
     public double globalYControllerOutputPositional(double YsetPoint, double Yfeedback) {
-        return globalYController.outputPositional(YsetPoint, Yfeedback);
+        return globalYController.outputPID(YsetPoint, Yfeedback);
     }
     public double globalThetaControllerOutputPositional(double ThetasetPoint, double Thetafeedback) {
-        return globalThetaController.outputPositional(ThetasetPoint, Thetafeedback);
+        return globalThetaController.outputPID(ThetasetPoint, Thetafeedback);
     }
 
     // stop all motors

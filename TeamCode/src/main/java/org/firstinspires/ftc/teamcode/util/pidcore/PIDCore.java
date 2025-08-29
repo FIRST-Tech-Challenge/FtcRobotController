@@ -13,6 +13,7 @@ public class PIDCore {
     private double Kp;
     private double Kd;
     private double Ki;
+    private double lastTime = 0;
 
     // Proportional, Derivative, Integral gains for velocity control
     private double KpVel;
@@ -257,26 +258,52 @@ public class PIDCore {
 
     /**
      * Calculates positional PID output. Marked as "do not touch".
-     * Adds integral term if enabled.
-     * @param setPoint target value
-     * @param feedback current value
+  //   * Adds integral term if enabled.
+     /* @param setPoint target value
+  /   * @param feedback current value
      * @return control output
      */
-    public double outputPositional(double setPoint, double feedback) {
+// Call this once before using the PID (e.g., in init or start)
+    public void reset() {
         timer.reset();
-        error = setPoint - feedback;
-        timeChange = timer.milliseconds();
-        if(activateIntegral){
-            integralSum += error * timer.seconds();
+        lastTime = 0;
+        lastError = 0;
+        integralSum = 0;
+    }
+
+
+    public double outputPID(double setPoint, double feedback) {
+        double currentTime = timer.seconds();
+        double deltaTime = currentTime - lastTime;
+
+        // Prevent a giant deltaTime on the very first loop
+        if (lastTime == 0) {
+            deltaTime = 0;
         }
-        else{
+
+        error = setPoint - feedback;
+
+        // Integral term
+        if (activateIntegral && deltaTime > 0) {
+            integralSum += error * deltaTime;
+        } else if (!activateIntegral) {
             integralSum = 0;
         }
-        errorChange = (error - lastError);
-        derivative = (error - lastError) / timer.milliseconds();
+
+        // Derivative term
+        double derivative = 0;
+        if (deltaTime > 0) {
+            derivative = (error - lastError) / deltaTime;
+        }
+
+        // Save state for next loop
         lastError = error;
-        return (error * Kp) + (derivative * Kd) + (integralSum * Ki);
+        lastTime = currentTime;
+
+        // PID output
+        return (Kp * error) + (Ki * integralSum) + (Kd * derivative);
     }
+
 
     /**
      * Get the elapsed time in milliseconds since last derivative calculation.
@@ -343,7 +370,7 @@ public class PIDCore {
      * @param error the current error value
      * @return control output
      */
-    public double outputPositional(double error) {
+    public double outputPID(double error) {
         this.error = error;
         derivative = (error - lastError) / timer.time();
         lastError = error;
@@ -357,14 +384,6 @@ public class PIDCore {
      * @param error current error
      * @return control output
      */
-    public double outputPositionalFiltered(double error){
-        this.error = error;
-        derivative = (error - lastError) / timer.time();
-        lastError = error;
-        timer.reset();
-
-        return (error * Kp) + (derivative * Kd);
-    }
 
     /**
      * Enable the integral term in the PID controller.
@@ -436,7 +455,7 @@ public class PIDCore {
      * @return combined output value
      */
     public double cascadeOutput(double setPoint, double feedback, double setVelocity, double feedbackVelocity){
-        outputPositionalValue = outputPositional(setPoint, feedback);
+        outputPositionalValue = outputPID(setPoint, feedback);
         outputVelocityValue = outputVelocity(setVelocity, feedbackVelocity);
         return outputPositionalValue + outputVelocityValue;
     }

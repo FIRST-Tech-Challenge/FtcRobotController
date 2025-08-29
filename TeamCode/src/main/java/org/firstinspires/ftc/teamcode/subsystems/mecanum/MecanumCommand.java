@@ -5,7 +5,6 @@ import org.firstinspires.ftc.teamcode.subsystems.odometry.PinPointOdometrySubsys
 import org.firstinspires.ftc.teamcode.util.pidcore.PIDCore;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -29,16 +28,14 @@ public class MecanumCommand {
     private Hardware hw;
 
     private ElapsedTime elapsedTime;
-    public double xFinal;
-    public double yFinal;
-    private double thetaFinal;
-    private double velocity;
+    public double xFinal, yFinal, thetaFinal;
+    public double velocity;
+
 
     private double ex = 0;
     private double ey = 0;
     private double etheta = 0;
-    public double xFinal, yFinal, thetaFinal;
-    public double velocity;
+
 
 
     /**
@@ -112,7 +109,7 @@ public class MecanumCommand {
             etheta *= scalar;
         }
 
-        moveGlobalPartialPinPoint(true, ex, ey, etheta);
+        moveGlobalPartialPinPoint( ex, ey, etheta);
 
     }
 
@@ -131,20 +128,17 @@ public class MecanumCommand {
     /**
      * Moves the robot in global coordinates using partial control (drive + rotation).
      * Converts global X/Y commands to local robot-oriented movement based on heading.
-     *
-     * @param run        If true, execute movement; if false, stop.
      * @param vertical   Global Y-axis movement (forward/back).
      * @param horizontal Global X-axis movement (strafe).
      * @param rotational Rotation command.
      */
-    public void moveGlobalPartialPinPoint(boolean run, double vertical, double horizontal, double rotational) {
-        if (run) {
+    public void moveGlobalPartialPinPoint(double vertical, double horizontal, double rotational) {
+
             //might have to change this because Gobilda Odommetry strafing left is POSITIVE while this works for strafing right is Positive
             double angle = Math.PI / 2 - pinPointOdoSubsystem.getHeading();
             double localVertical = vertical * Math.cos(pinPointOdoSubsystem.getHeading()) - horizontal * Math.cos(angle);
             double localHorizontal = vertical * Math.sin(pinPointOdoSubsystem.getHeading()) + horizontal * Math.sin(angle);
             mecanumSubsystem.partialMove(true, localVertical, localHorizontal, rotational);
-        }
     }
 
     public void resetPinPointOdometry() {
@@ -153,17 +147,17 @@ public class MecanumCommand {
 
     public boolean moveToPos(double x, double y, double theta) {
         elapsedTime.reset();
-        setFinalPositionMotionProfile(true, 30, x, y, theta, false);
+        setFinalPosition( 30, x, y, theta);
         return positionNotReachedYet();
     }
 
-    public void setFinalPositionMotionProfile(boolean run, double velocity, double x, double y, double theta, boolean runMotionProfile) {
-        if (run) {
+    public void setFinalPosition(double velocity, double x, double y, double theta) {
+
             this.xFinal = x;
             this.yFinal = y;
             this.thetaFinal = theta;
             this.velocity = velocity;
-        }
+
     }
 
     public boolean positionNotReachedYet() {
