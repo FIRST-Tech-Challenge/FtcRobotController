@@ -11,6 +11,7 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
     double tx = 0; // must define it as double here to make it global
     double ta = 0;
     double ty = 0;
+    double slidespower = 0;
     private Limelight3A limelight;
 
     @Override
@@ -26,6 +27,7 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
         limelight.start(); // starts, REQUIRED FOR LIMELIGHT!
         FL.setDirection(DcMotorSimple.Direction.REVERSE); // regular drivetrain reverse
         BL.setDirection(DcMotorSimple.Direction.REVERSE); // regular drivetrain reverse
+        slides.setDirection(DcMotorSimple.Direction.REVERSE);
         FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Resets encoder for driving
         FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -36,6 +38,7 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
         FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         telemetry.addData("Robot is ready!", "Skibidi Toliet Rizz!"); //hehe
         telemetry.update();
         waitForStart();
@@ -47,6 +50,7 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
                 ty = result.getTy();
                 telemetry.addData("Target X", tx);
                 telemetry.addData("Target A", ta);
+                telemetry.addData("Target Y", ty);
                 telemetry.addData("Target Area", ta);
             } else {
                 telemetry.addData("Limelight", "No Targets");
@@ -54,7 +58,7 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
                 ta = 0;
                 ty = 0;
             }
-            telemetry.update();
+
             double tuningconstant = 0.02;
             double turnpower = tx * tuningconstant;
             if(turnpower >= 0.7) {
@@ -71,12 +75,17 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
             if(movepower <= -0.7) {
                 movepower = -0.7;
             }
+            double slidestuningconstant = 0.028;
+            if(Math.abs(ty) >= 2.5) {
+                slidespower = ty * slidestuningconstant;
+            } else {
+                slidespower = 0;
+            }
 
-            double slidespower = ty * tuningconstant;
-            if(slidespower <= 0.4) {
+            if(slidespower <= 0.4 && slidespower > 0) {
                 slidespower = 0.4;
             }
-            if(slidespower >= 0.8) {
+            if(slidespower >= 0.8 && slidespower > 0) {
                 slidespower = 0.8;
             }
             if(result.isValid() == false) {
@@ -84,12 +93,14 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
                 turnpower = 0;
                 slidespower = 0;
             }
-            if(slides.getCurrentPosition() < -3000 && slidespower > 0) {
+            if(-slides.getCurrentPosition() < -2988 && slidespower > 0) {
                 slidespower = 0;
             }
-            if(slides.getCurrentPosition() > -5 && slidespower < 0) {
+            if(-slides.getCurrentPosition() > -5 && slidespower < 0) {
                 slidespower = 0;
             }
+            telemetry.addData("Slides Current Position", slides.getCurrentPosition());
+            telemetry.update();
             movepower = -movepower;
             FL.setPower(turnpower+movepower);
             FR.setPower(movepower-turnpower);
