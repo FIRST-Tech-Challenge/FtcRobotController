@@ -5,6 +5,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.aim.Vision;
 import org.firstinspires.ftc.teamcode.aim.components.Button;
 import org.firstinspires.ftc.teamcode.aim.drive.MecanumIMUDrive;
 
@@ -13,9 +14,10 @@ public class Robot {
     private DcMotor frontRightMotor, backRightMotor, frontLeftMotor, backLeftMotor;
     private MecanumIMUDrive driveCtrl;
     private LinearOpMode opMode;
-
     private Button botRotateButton = new Button();
     private boolean botRotated = false;
+
+    public Vision vision = new Vision();
 
     private void initImu() {
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(RobotConfig.logoDirection, RobotConfig.usbDirection);
@@ -63,11 +65,26 @@ public class Robot {
         this.driveCtrl = gryo;
     }
 
+    private void initCamera() {
+        vision.init(this.opMode.hardwareMap, this.opMode.telemetry, 9,
+                RobotConfig.cameraName, RobotConfig.cameraHeight, RobotConfig.cameraAngel,
+                RobotConfig.targetHeight);
+    }
+
     public void init(LinearOpMode opMode) {
         this.opMode = opMode;
         this.initImu();
         this.initWheels();
         this.initMecanumIMUDrive();
+        if (RobotConfig.cameraEnabled) {
+            this.initCamera();
+        }
+    }
+
+    public void start() {
+        if (RobotConfig.cameraEnabled) {
+            this.vision.start();
+        }
     }
 
     public void handleRobotMove() {
@@ -105,5 +122,12 @@ public class Robot {
         }
 
         this.driveCtrl.moveByPower(power, x, y, turn);
+    }
+
+    public void update() {
+        handleRobotMove();
+        if (RobotConfig.cameraEnabled) {
+            vision.update();
+        }
     }
 }

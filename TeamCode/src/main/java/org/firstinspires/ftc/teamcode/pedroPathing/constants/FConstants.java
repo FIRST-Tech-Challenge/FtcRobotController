@@ -15,10 +15,10 @@ public class FConstants {
         FollowerConstants.rightFrontMotorName = "frontRightMotor";
         FollowerConstants.rightRearMotorName = "backRightMotor";
         */
-        FollowerConstants.leftFrontMotorName = "backRightMotor";
-        FollowerConstants.leftRearMotorName = "frontRightMotor";
-        FollowerConstants.rightFrontMotorName = "backLeftMotor";
-        FollowerConstants.rightRearMotorName = "frontLeftMotor";
+        FollowerConstants.leftFrontMotorName = "frontLeftMotor"; //"backRightMotor";
+        FollowerConstants.leftRearMotorName = "backLeftMotor"; //""frontRightMotor";
+        FollowerConstants.rightFrontMotorName ="frontRightMotor"; //"backLeftMotor";
+        FollowerConstants.rightRearMotorName = "backRightMotor"; //frontLeftMotor";
 
         FollowerConstants.leftFrontMotorDirection = DcMotorSimple.Direction.REVERSE;
         FollowerConstants.leftRearMotorDirection = DcMotorSimple.Direction.REVERSE;
