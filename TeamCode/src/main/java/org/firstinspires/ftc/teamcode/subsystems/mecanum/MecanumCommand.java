@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems.mecanum;
+
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.subsystems.odometry.PinPointOdometrySubsystem;
+import org.firstinspires.ftc.teamcode.util.pidcore.PIDCore;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,23 +15,30 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 public class MecanumCommand {
 
+
+    // PID controllers for x, y, and heading
+    private PIDCore xController;
+    private PIDCore yController;
+    private PIDCore thetaController;
+
     // create a class to consolidate subsystems
     private MecanumSubsystem mecanumSubsystem;
     private PinPointOdometrySubsystem pinPointOdoSubsystem;
 
     // hardware is owned by test and pass down to subsystems
     private Hardware hw;
+    private boolean runMotionProfile;
 
     private LinearOpMode opMode;
     private ElapsedTime elapsedTime;
-    public double xFinal;
-    public double yFinal;
-    private double thetaFinal;
-    private double velocity;
+    ;
 
     private double ex = 0;
     private double ey = 0;
     private double etheta = 0;
+    public double xFinal, yFinal, thetaFinal;
+    public double velocity;
+
 
     /**
      * Creates a new MecanumCommand instance.
@@ -63,7 +72,7 @@ public class MecanumCommand {
      * @param kdtheta Derivative gain for theta PID.
      * @param kitheta Integral gain for theta PID.
      */
-    public void setConstants(double kpx, double kdx, double kix, double kpy, double kdy, double kiy, double kptheta, double kdtheta, double kitheta){
+    public void setConstants(double kpx, double kdx, double kix, double kpy, double kdy, double kiy, double kptheta, double kdtheta, double kitheta) {
         MecanumConstants.kpx = kpx;
         MecanumConstants.kdx = kdx;
         MecanumConstants.kix = kix;
@@ -80,16 +89,17 @@ public class MecanumCommand {
      * Disables the internal PID control in the mecanum subsystem.
      * Useful if external PID control or direct power control is preferred.
      */
-    public void turnOffInternalPID(){
+    public void turnOffInternalPID() {
         mecanumSubsystem.turnOffInternalPID();
     }
+
 
     /**
      * Runs PID control using PinPoint odometry to drive toward the target
      * {@code xFinal}, {@code yFinal}, and {@code thetaFinal} positions.
      * Limits motion based on the configured {@code velocity}.
      */
-    public void pidPinPointProcess(){
+    public void processPIDUsingPinpoint() {
         ex = mecanumSubsystem.globalXControllerOutputPositional(xFinal, pinPointOdoSubsystem.getX());
         ey = mecanumSubsystem.globalYControllerOutputPositional(yFinal, pinPointOdoSubsystem.getY());
         etheta = mecanumSubsystem.globalThetaControllerOutputPositional(thetaFinal, pinPointOdoSubsystem.getHeading());
@@ -114,9 +124,10 @@ public class MecanumCommand {
      * @param horizontal Left/right strafe input (-1 to 1).
      * @param rotational Rotation input (-1 to 1).
      */
-    public void fieldOrientedMove(double vertical, double horizontal, double rotational){
+    public void fieldOrientedMove(double vertical, double horizontal, double rotational) {
         mecanumSubsystem.fieldOrientedMove(vertical, horizontal, rotational, pinPointOdoSubsystem.getHeading());
     }
+
 
     /**
      * Moves the robot in global coordinates using partial control (drive + rotation).
@@ -127,19 +138,84 @@ public class MecanumCommand {
      * @param horizontal Global X-axis movement (strafe).
      * @param rotational Rotation command.
      */
-    public void moveGlobalPartialPinPoint(boolean run, double vertical, double horizontal, double rotational){
-        if (run){
+    public void moveGlobalPartialPinPoint(boolean run, double vertical, double horizontal, double rotational) {
+        if (run) {
             //might have to change this because Gobilda Odommetry strafing left is POSITIVE while this works for strafing right is Positive
-            double angle = Math.PI/2 - pinPointOdoSubsystem.getHeading();
-            double localVertical = vertical*Math.cos(pinPointOdoSubsystem.getHeading()) - horizontal*Math.cos(angle);
-            double localHorizontal = vertical*Math.sin(pinPointOdoSubsystem.getHeading()) + horizontal*Math.sin(angle);
+            double angle = Math.PI / 2 - pinPointOdoSubsystem.getHeading();
+            double localVertical = vertical * Math.cos(pinPointOdoSubsystem.getHeading()) - horizontal * Math.cos(angle);
+            double localHorizontal = vertical * Math.sin(pinPointOdoSubsystem.getHeading()) + horizontal * Math.sin(angle);
             mecanumSubsystem.partialMove(true, localVertical, localHorizontal, rotational);
         }
     }
 
-    public void resetPinPointOdometry(){
+    public void resetPinPointOdometry() {
         pinPointOdoSubsystem.reset();
     }
 
-    // AUTO COMMANDS
+    public boolean moveToPos(double x, double y, double theta) {
+        elapsedTime.reset();
+        setFinalPositionMotionProfile(true, 30, x, y, theta, false);
+        return positionNotReachedYet();
+    }
+
+    public void setFinalPositionMotionProfile(boolean run, double velocity, double x, double y, double theta, boolean runMotionProfile) {
+        if (run) {
+            this.xFinal = x;
+            this.yFinal = y;
+            this.thetaFinal = theta;
+            this.velocity = velocity;
+            this.runMotionProfile = runMotionProfile;
+        }
+    }
+
+    public boolean positionNotReachedYet() {
+        return !(isXReached() && isYReached() && isThetaReached());
+    }
+
+    public double getXDifferencePinPoint() {
+        return Math.abs(this.xFinal - pinPointOdoSubsystem.getX());
+    }
+
+    public double getYDifferencePinPoint() {
+        return Math.abs(this.yFinal - pinPointOdoSubsystem.getY());
+    }
+
+    public double getThetaDifferencePinPoint() {
+        return Math.abs(this.thetaFinal - pinPointOdoSubsystem.getHeading());
+    }
+
+    public boolean isYReached() {
+        return getYDifferencePinPoint() < 2.5;
+    }
+
+    public boolean isXReached() {
+        return getXDifferencePinPoint() < 2.5;
+    }
+
+    public boolean isThetaReached() {
+        return getThetaDifferencePinPoint() < 0.07;
+    }
+
+    public double getOdoX(){
+        return pinPointOdoSubsystem.getX();
+    }
+    public double getOdoY(){
+        return pinPointOdoSubsystem.getY();
+    }
+    public double getOdoHeading(){
+        return pinPointOdoSubsystem.getHeading();
+    }
+    public boolean isThetaPassed(){
+        return getThetaDifferencePinPoint() < 0.22;
+    }
+
+    public boolean isXPassed(){
+        return getXDifferencePinPoint() < 10;
+    }
+    public boolean isYPassed(){
+        return getYDifferencePinPoint() < 10;
+    }
+
+
 }
+

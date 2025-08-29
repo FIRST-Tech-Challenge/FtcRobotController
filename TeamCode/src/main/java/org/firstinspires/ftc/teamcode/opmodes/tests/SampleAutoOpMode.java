@@ -7,7 +7,9 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.util.pidcore.PIDCore;
 
+import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.subsystems.mecanum.MecanumCommand;
 import org.firstinspires.ftc.teamcode.subsystems.mecanum.MecanumSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.odometry.PinPointOdometrySubsystem;
@@ -20,18 +22,21 @@ public class SampleAutoOpMode extends LinearOpMode {
     private MecanumCommand mecanumCommand;
     private TelemetryPacket packet;
     private FtcDashboard dash;
-    PinPointOdometrySubsystem pinPointOdo;
     private int stage1 = 0;
+
     @Override
     public void runOpMode() throws InterruptedException {
+        Hardware hw = new Hardware(hardwareMap);
+        mecanumCommand = new MecanumCommand(this, hw);
+
         enum AUTO_STATE {
             FIRST_BUCKET,
             SECOND_BUCKET,
             THIRD_BUCKET,
             FOURTH_BUCKET,
             SUB_PICKUP,
+            FINISH
 
-            FIFTH_BUCKET
         }
         boolean firstInstance = true;
         dash = FtcDashboard.getInstance();
@@ -41,73 +46,56 @@ public class SampleAutoOpMode extends LinearOpMode {
 
 
         AUTO_STATE autoState = AUTO_STATE.FIRST_BUCKET;
-
+waitForStart();
         while (opModeIsActive()) {
-
             // run processes
             updateTelemetry();
             motorProcess();
             processPinPoint();
-
             switch (autoState) {
                 case FIRST_BUCKET:
-                    processFirstBucket();
+                    if(mecanumCommand.moveToPos(0, 10,0.8)){
+                        autoState = AUTO_STATE.SUB_PICKUP;
+                    }
                     break;
 
-                default:
+//                case SUB_PICKUP:
+//                    mecanumCommand.moveGlobalPartialPinPoint(true, 10, 15,0.8);
+//                    autoState = AUTO_STATE.FINISH;
+//                    break;
+
+                case FINISH:
+                    stopRobot();
                     break;
             }
+            updateTelemetry();
+
         }
 
     }
 
-
     public void updateTelemetry() {
         //telemetry.addData("nan occurences: ", pinPointOdo.getNanCounter());
-        packet.put("x: ", pinPointOdo.getX());
-        packet.put("y: ", pinPointOdo.getY());
-        packet.put("theta: ", pinPointOdo.getHeading());
+        packet.put("x: ", mecanumCommand.getOdoX());
+        packet.put("y: ", mecanumCommand.getOdoY());
+        packet.put("theta: ", mecanumCommand.getOdoHeading());
 
     }
 
+
+
+    private void stopRobot() {
+        mecanumCommand.moveGlobalPartialPinPoint(false, 0, 0, 0);
+    }
     private void motorProcess() {
         mecanumSubsystem.motorProcessNoEncoder();
     }
 
+
+
     public void processPinPoint() {
-        pinPointOdo.deadReckoning();
+
 
     }
 
-    private void processFirstBucket() {
-        switch (stage1) {
-            case 0:
-                //     levelPositional = 4;
-                //   moveToPos(11,-45,-0.77,false,0,0);
-                break;
-            case 1:
-                // waitPosition(2600);
-                break;
-            case 2:
-                // outputCommand.outputToBucket();
-                // waitTime(200);
-                break;
-            case 3:
-                // outputCommand.openClaw();
-                //   waitTime(100);
-                break;
-            case 4:
-                stage1++;
-                break;
-            case 5:
-                // levelPositional = 0;
-                stage1++;
-                break;
-            case 6:
-//                autoState = AUTO_STATE.SUB_PICKUP;
-                stage1 = 0;
-
-
-        }
-    }
 }
