@@ -1,0 +1,17 @@
+name: Feature
+description: Add a feature
+title: "[FEATURE] "
+labels: ["feature"]
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: Provide a short summary of the feature.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What specifically needs to be done?
