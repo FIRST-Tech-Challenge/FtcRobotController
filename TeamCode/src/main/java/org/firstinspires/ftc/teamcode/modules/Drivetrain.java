@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.modules;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static java.lang.Math.atan;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -90,11 +91,5 @@ public class Drivetrain {
         flWheel.setPower(flWheelPower);
         brWheel.setPower(brWheelPower);
         blWheel.setPower(blWheelPower);
-        frWheel.setPower(frWheelPower);
-        flWheel.setPower(flWheelPower);
-        brWheel.setPower(brWheelPower);
-        blWheel.setPower(blWheelPower);
-
     }
-
 }
