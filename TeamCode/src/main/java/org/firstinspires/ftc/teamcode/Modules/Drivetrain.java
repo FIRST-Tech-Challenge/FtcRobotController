@@ -1,8 +1,5 @@
-package org.firstinspires.ftc.teamcode.modules;
+package org.firstinspires.ftc.teamcode.Modules;
 
-import static java.lang.Math.atan;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 import static java.lang.Thread.sleep;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;

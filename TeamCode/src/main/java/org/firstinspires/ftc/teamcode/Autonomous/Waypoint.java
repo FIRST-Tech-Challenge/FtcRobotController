@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.drive.Autonomous;
+package org.firstinspires.ftc.teamcode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drive.modules.EditablePose2D;
+import org.firstinspires.ftc.teamcode.Modules.EditablePose2D;
 
 // ----- READY TO TRANSFER ----- //
 

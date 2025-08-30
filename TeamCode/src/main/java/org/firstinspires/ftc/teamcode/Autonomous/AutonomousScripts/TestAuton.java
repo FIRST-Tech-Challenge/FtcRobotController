@@ -1,17 +1,17 @@
-package org.firstinspires.ftc.teamcode.drive.Autonomous.AutonomousScripts;
+package org.firstinspires.ftc.teamcode.Autonomous.AutonomousScripts;
 
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.CLAW_CLOSE;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.CLAW_OPEN;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.CLAW_CLOSE;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.CLAW_OPEN;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drive.Autonomous.AutonomousRobot;
-import org.firstinspires.ftc.teamcode.drive.Autonomous.Path;
-import org.firstinspires.ftc.teamcode.drive.Autonomous.Waypoint;
-import org.firstinspires.ftc.teamcode.drive.modules.Timer;
-import org.firstinspires.ftc.teamcode.drive.modules.riptideUtil;
+import org.firstinspires.ftc.teamcode.Autonomous.AutonomousRobot;
+import org.firstinspires.ftc.teamcode.Autonomous.Path;
+import org.firstinspires.ftc.teamcode.Autonomous.Waypoint;
+import org.firstinspires.ftc.teamcode.Modules.Timer;
+import org.firstinspires.ftc.teamcode.Modules.riptideUtil;
 
 // this could be usefull for testing auton
 // ----- READY TO TRANSFER ----- //

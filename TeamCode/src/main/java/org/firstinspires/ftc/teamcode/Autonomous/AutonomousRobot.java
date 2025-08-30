@@ -1,26 +1,26 @@
-package org.firstinspires.ftc.teamcode.drive.Autonomous;
+package org.firstinspires.ftc.teamcode.Autonomous;
 
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.LAT_KD;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.LAT_KI;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.LAT_KP;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.MAX_A;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.MAX_V;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.TURN_KD;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.TURN_KI;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.TURN_KP;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.VERT_KD;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.VERT_KI;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.VERT_KP;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KD;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KI;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KP;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.MAX_A;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.MAX_V;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.TURN_KD;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.TURN_KI;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.TURN_KP;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.VERT_KD;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.VERT_KI;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.VERT_KP;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drive.modules.EditablePose2D;
-import org.firstinspires.ftc.teamcode.drive.modules.PIDController;
-import org.firstinspires.ftc.teamcode.drive.modules.PIDController1;
-import org.firstinspires.ftc.teamcode.drive.modules.Robot;
-import org.firstinspires.ftc.teamcode.drive.modules.riptideUtil;
+import org.firstinspires.ftc.teamcode.Modules.PIDController;
+import org.firstinspires.ftc.teamcode.Modules.EditablePose2D;
+import org.firstinspires.ftc.teamcode.Modules.PIDController;
+import org.firstinspires.ftc.teamcode.Modules.Robot;
+import org.firstinspires.ftc.teamcode.Modules.riptideUtil;
 
 // maybe GOING TO BE REFACTORED, THIS IS GOING TO BE SO DEPRECATED
 
@@ -70,9 +70,9 @@ public class AutonomousRobot extends Robot {
 
     public moveStates currentState = moveStates.IDLE;
 
-    PIDController1 latPid = new PIDController1(riptideUtil.LAT_KP, riptideUtil.LAT_KI, riptideUtil.LAT_KD);
-    PIDController1 vertPid = new PIDController1(riptideUtil.VERT_KP, riptideUtil.VERT_KI, riptideUtil.VERT_KD);
-    PIDController1 turnPid = new PIDController1(TURN_KP, TURN_KI, TURN_KD);
+    PIDController latPid = new PIDController(riptideUtil.LAT_KP, riptideUtil.LAT_KI, riptideUtil.LAT_KD);
+    PIDController vertPid = new PIDController(riptideUtil.VERT_KP, riptideUtil.VERT_KI, riptideUtil.VERT_KD);
+    PIDController turnPid = new PIDController(TURN_KP, TURN_KI, TURN_KD);
     private ElapsedTime timer;
     private double goalPosX;
     private double goalPosY;
@@ -91,7 +91,7 @@ public class AutonomousRobot extends Robot {
                     new Waypoint(0, 0, 90, 36, 72, DistanceUnit.INCH),
                     Path.FollowMethods.FOLLOW_AND_TURN, //For now only use this turn method or else it will error
                     () -> {
-                        this.clawArm.setAllThreeJoints(90, 0, 0);
+                        // some function here
                     },
                     0
             )
