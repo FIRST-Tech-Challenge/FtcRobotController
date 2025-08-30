@@ -1,0 +1,17 @@
+name: Clean
+description: Code cleanup
+title: "[CLEAN] "
+labels: ["clean"]
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: Provide a short summary of what is getting cleaned.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What specifically needs to be cleaned, and how?
