@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.modules;
+package org.firstinspires.ftc.teamcode.modules;
 
 import static java.lang.Math.atan;
 import static java.lang.Math.cos;
@@ -27,13 +27,7 @@ public class Drivetrain {
     // -------- DRIVETRAIN MOTORS -------- //
     private final DcMotor frWheel, flWheel, brWheel, blWheel;
     private final IMU imu;
-<<<<<<< Updated upstream
     private ElapsedTime timer;
-=======
-
->>>>>>> Stashed changes
-    // ------------ ODOMETRY ------------ //
-    private final OdometryLocalizer robotPos;
 
     ///////////////////////////////////////////////
     ////                                     /////
@@ -69,8 +63,6 @@ public class Drivetrain {
         flWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         blWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        robotPos = new OdometryLocalizer(blWheel, brWheel, flWheel, 10);
-
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
@@ -87,21 +79,6 @@ public class Drivetrain {
         imu.resetYaw();
     }
 
-    public void startOdometry() {
-        Thread localizer = new Thread(robotPos);
-        localizer.start();
-    }
-
-    // ------------ GETTERS ------------ //
-
-    public EditablePose2D getCurrPos() {
-        return robotPos.getCurrPos();
-    }
-
-    public OdometryLocalizer getRobotPos() {
-        return robotPos;
-    }
-
     public double getRobotHeading(AngleUnit unit) {
         return imu.getRobotYawPitchRollAngles().getYaw(unit); // heading of bot in radians
     }
@@ -109,17 +86,15 @@ public class Drivetrain {
     // ------------ SETTERS ------------ //
 
     public void setWheelPowers(double flWheelPower, double frWheelPower, double brWheelPower, double blWheelPower) {
-<<<<<<< Updated upstream
         frWheel.setPower(frWheelPower);
         flWheel.setPower(flWheelPower);
         brWheel.setPower(brWheelPower);
         blWheel.setPower(blWheelPower);
-=======
-        frWheel.setPower(frWheelPower + riptideUtil.FR_WHEEL_KF);
-        flWheel.setPower(flWheelPower + riptideUtil.FL_WHEEL_KF);
-        brWheel.setPower(brWheelPower + riptideUtil.BR_WHEEL_KF);
-        blWheel.setPower(blWheelPower + riptideUtil.BL_WHEEL_KF);
->>>>>>> Stashed changes
+        frWheel.setPower(frWheelPower);
+        flWheel.setPower(flWheelPower);
+        brWheel.setPower(brWheelPower);
+        blWheel.setPower(blWheelPower);
+
     }
 
 }
