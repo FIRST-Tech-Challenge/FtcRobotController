@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "Alex's limelight that is cool")
 public class AlexLimelightFollowV2 extends LinearOpMode{
@@ -12,8 +13,16 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
     double ta = 0;
     double ty = 0;
     double slidespower = 0;
+    double targetposition;
     private Limelight3A limelight;
-
+    double Kp;
+    double Ki;
+    double Kd;
+    double error;
+    double derivative;
+    double integralsum;
+    double lasterror;
+    double slidesholdpower;
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor FL = hardwareMap.dcMotor.get("FL"); //init motors
@@ -39,9 +48,11 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
         BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ElapsedTime timer = new ElapsedTime();
         telemetry.addData("Robot is ready!", "Skibidi Toliet Rizz!"); //hehe
         telemetry.update();
         waitForStart();
+        timer.reset();
         while (opModeIsActive()) {
             LLResult result = limelight.getLatestResult();
             if (result != null && result.isValid()) { // if the limelight sees a apriltag
@@ -106,7 +117,20 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
             FR.setPower(movepower-turnpower);
             BL.setPower(turnpower+movepower);
             BR.setPower(movepower-turnpower);
-            slides.setPower(slidespower);
+            if(slidespower != 0) {
+                slides.setPower(slidespower);
+                targetposition = slides.getCurrentPosition();
+            } else {
+                error = targetposition - slides.getCurrentPosition();
+                derivative = (error - lasterror) / timer.seconds();
+                integralsum = integralsum + (error*timer.seconds());
+                slidesholdpower = (Kp*error) + (Ki*integralsum) + (Kd*derivative);
+                slides.setPower(slidesholdpower);
+                lasterror = error;
+                timer.reset();
+            }
+
+
 
 
 
