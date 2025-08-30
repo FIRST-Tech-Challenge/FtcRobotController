@@ -15,3 +15,5 @@ body:
     attributes:
       label: Acceptance Criteria
       description: What specifically needs to be done?
+    validations:
+      required: true
