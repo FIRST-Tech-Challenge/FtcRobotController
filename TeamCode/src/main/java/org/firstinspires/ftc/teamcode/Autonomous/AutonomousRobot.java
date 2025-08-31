@@ -21,11 +21,12 @@ import org.firstinspires.ftc.teamcode.Modules.EditablePose2D;
 import org.firstinspires.ftc.teamcode.Modules.PIDController;
 import org.firstinspires.ftc.teamcode.Modules.Robot;
 import org.firstinspires.ftc.teamcode.Modules.riptideUtil;
+import org.firstinspires.ftc.teamcode.Modules.Drivetrain;
 
 // maybe GOING TO BE REFACTORED, THIS IS GOING TO BE SO DEPRECATED
 
 public class AutonomousRobot extends Robot {
-
+    Drivetrain drivetrain;
     public AutonomousRobot(HardwareMap hardwareMap) {
         super(hardwareMap);
     }
@@ -131,9 +132,9 @@ public class AutonomousRobot extends Robot {
 
 
                 //Find the current field positions
-                double currentX = this.getCurrPos().getX(DistanceUnit.INCH);
-                double currentY = this.getCurrPos().getY(DistanceUnit.INCH);
-                double currentH = this.getCurrPos().getH();
+                double currentX = this.drivetrain.getCurrPos().getX(DistanceUnit.INCH);
+                double currentY = this.drivetrain.getCurrPos().getY(DistanceUnit.INCH);
+                double currentH = this.drivetrain.getCurrPos().getH();
 
                 //Find the expected position along the path, as a magnitude of a vector with angle lineSlope
                 // then use some trig to find x and y components
@@ -182,9 +183,9 @@ public class AutonomousRobot extends Robot {
 
                 //set current position point as start point
                 start = new EditablePose2D(
-                        this.getCurrPos().getX(DistanceUnit.INCH),
-                        this.getCurrPos().getY(DistanceUnit.INCH),
-                        this.getCurrPos().getH(),
+                        this.drivetrain.getCurrPos().getX(DistanceUnit.INCH),
+                        this.drivetrain.getCurrPos().getY(DistanceUnit.INCH),
+                        this.drivetrain.getCurrPos().getH(),
                         DistanceUnit.INCH
                 );
 
@@ -222,8 +223,8 @@ public class AutonomousRobot extends Robot {
                 goalPoint = path.get(pathIndex);
                 elapsedTime = (System.nanoTime() / (Math.pow(10, 9)) - time);
 
-                cP = super.getCurrPos();
-                boolean y = atPoint(super.getCurrPos(), goalPoint.getWaypoint());
+                cP = super.getDrivetrain().getCurrPos();
+                boolean y = atPoint(super.getDrivetrain().getCurrPos(), goalPoint.getWaypoint());
 
                 atPoint = y;
                 delayUntilNextPointClear =  elapsedTime > goalPoint.getDelayUntilNextPoint();
@@ -311,7 +312,7 @@ public class AutonomousRobot extends Robot {
         Path.PathPoint firstPoint = path.get(0);
         Waypoint firstPose = firstPoint.getWaypoint();
 
-        if (atPoint(firstPose, getCurrPos())) {
+        if (atPoint(firstPose, drivetrain.getCurrPos())) {
             pathIndex = 1;
         }
     }
