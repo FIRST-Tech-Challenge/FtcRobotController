@@ -1,23 +1,23 @@
-package org.firstinspires.ftc.teamcode.drive.tuning;
+package org.firstinspires.ftc.teamcode.Tuning;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drive.modules.PIDController1;
-import org.firstinspires.ftc.teamcode.drive.modules.Robot;
-import org.firstinspires.ftc.teamcode.drive.Autonomous.TrapezoidalMotionProfile;
-import org.firstinspires.ftc.teamcode.drive.modules.riptideUtil;
+import org.firstinspires.ftc.teamcode.Modules.Drivetrain;
+import org.firstinspires.ftc.teamcode.Modules.PIDController;
+import org.firstinspires.ftc.teamcode.Modules.Robot;
+import org.firstinspires.ftc.teamcode.Autonomous.TrapezoidalMotionProfile;
+import org.firstinspires.ftc.teamcode.Modules.riptideUtil;
 
 // ----- READY TO TRANSFER ----- //
 
-@Config
+
 @TeleOp(name = "Drive Train PID Tuner", group = "Tuning")
 public class DriveTrainPIDTuner extends LinearOpMode {
+    Drivetrain drivetrain;
 
     Robot robot;
     Telemetry t = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -25,7 +25,7 @@ public class DriveTrainPIDTuner extends LinearOpMode {
     //in IN
     public static double goalInINCHES = 0;
     public static double goalINDEGREES = 0;
-    public static PIDController1 pid = new PIDController1(0, 0, 0);
+    public static PIDController pid = new PIDController(0, 0, 0);
     private double lastGoal = 0;
     private double startPos = 0;
     private double elapsedTime;
@@ -130,7 +130,7 @@ public class DriveTrainPIDTuner extends LinearOpMode {
         double expPos;
         switch(d){
             case TURN:
-                double currentAngle = Math.toDegrees(robot.getCurrPos().getH());
+                double currentAngle = Math.toDegrees(drivetrain.getCurrPos().getH());
 
                 t.addData("Current Angle: ", currentAngle);
 
@@ -147,7 +147,7 @@ public class DriveTrainPIDTuner extends LinearOpMode {
 
                 break;
             case LAT:
-                currentPos = robot.getCurrPos().getY(DistanceUnit.INCH);
+                currentPos = drivetrain.getCurrPos().getY(DistanceUnit.INCH);
                 t.addData("Current Pos: ", currentPos);
 
                 pid.setPID(riptideUtil.LAT_KP, riptideUtil.LAT_KI, riptideUtil.LAT_KD);
@@ -161,7 +161,7 @@ public class DriveTrainPIDTuner extends LinearOpMode {
                 robot.setWheelPowers(-power, power, -power, power);
                 break;
             case VERT:
-                currentPos = robot.getCurrPos().getX(DistanceUnit.INCH);
+                currentPos = drivetrain.getCurrPos().getX(DistanceUnit.INCH);
                 t.addData("Current Pos: ", currentPos);
 
                 pid.setPID(riptideUtil.VERT_KP, riptideUtil.VERT_KI, riptideUtil.VERT_KD);
