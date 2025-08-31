@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.tuning;
+package org.firstinspires.ftc.teamcode.Tuning;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -40,7 +40,7 @@ public class SlidesPIDFTuner extends LinearOpMode {
 
         robot = new Robot(hardwareMap);
 
-        PIDController1 slideController = new PIDController1(kp, ki, kd);
+        PIDController slideController = new PIDController(kp, ki, kd);
 
         waitForStart();
 
@@ -52,10 +52,10 @@ public class SlidesPIDFTuner extends LinearOpMode {
             }
 
             slideController.setPID(kp, ki, kd);
-            if(TorF) {currentPosition = robot.getSlidePositionAvg();}
-            else{currentPosition = robot.getOneSlidePosition();}
+            if(TorF) {currentPosition = robot.getSlides().getSlidePositionAvg();}
+            else{currentPosition = robot.getSlides().getOneSlidePosition();}
 
-            robot.setSlidePower(slideController.calculate(currentPosition, goal) + kf);
+            robot.getSlides().setSlidePower(slideController.calculate(currentPosition, goal) + kf);
 
             t.addData("Current Position", currentPosition);
             t.addData("Goal Position", goal);
