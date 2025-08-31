@@ -25,4 +25,5 @@ android {
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation 'androidx.xr.runtime:runtime:1.0.0-alpha05'
 }

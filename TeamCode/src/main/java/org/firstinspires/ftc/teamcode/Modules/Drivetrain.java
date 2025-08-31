@@ -104,4 +104,9 @@ public class Drivetrain {
     public EditablePose2D getCurrPos() {
         return robotPos.getCurrPos();
     }
+
+    public void startOdometry() {
+        Thread localizer = new Thread(robotPos);
+        localizer.start();
+    }
 }
