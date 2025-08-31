@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Modules;
 
+import com.acmerobotics.dashboard.config.Config;
+
+@Config
 public class riptideUtil {
     // PID stuff to be used in AutonomousRobot
     public static final double POINT_TOLERANCE = 0; // UNDETERMINED
