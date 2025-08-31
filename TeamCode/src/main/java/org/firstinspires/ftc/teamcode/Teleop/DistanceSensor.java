@@ -83,7 +83,7 @@ public class DistanceSensor extends LinearOpMode {
             return;
         }
 
-        double heading = robot.getRobotHeading(AngleUnit.RADIANS);
+        double heading = robot.getDrivetrain().getRobotHeading(AngleUnit.RADIANS);
 
 
         double rotX = x * Math.cos(-heading) - y * Math.sin(-heading);
@@ -95,10 +95,10 @@ public class DistanceSensor extends LinearOpMode {
         double brWheelPower = (rotY + rotX - rx) / denominator;
         double blWheelPower = (rotY - rotX + rx) / denominator;
 
-        robot.setWheelPowers(flWheelPower, frWheelPower, brWheelPower, blWheelPower);
+        robot.getDrivetrain().setWheelPowers(flWheelPower, frWheelPower, brWheelPower, blWheelPower);
 
         if (gamepad1.y) {
-            robot.resetImu();
+            robot.getDrivetrain().resetImu();
         }
     }
 }
