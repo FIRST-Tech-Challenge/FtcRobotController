@@ -16,29 +16,33 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class PIDSlidesTune extends LinearOpMode{
     FtcDashboard dashboard;
 
-    public  static double targetposition = 8000;
+    public  static double targetposition = 2000;
+    public  static double P = 0.046;
+    public  static double I = 0.000002;
+    public  static double D = 0.0855;
+    public DcMotor slides;
     @Override
     public void runOpMode() throws InterruptedException {
-        DcMotor slides = hardwareMap.dcMotor.get("slides");
+        Slide slide = new Slide();
+        slides = hardwareMap.dcMotor.get("slides");
         slides.setDirection(DcMotorSimple.Direction.REVERSE);
         slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        telemetry.addData("Slides", slides.getCurrentPosition());
-        slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         ElapsedTime timer = new ElapsedTime();
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
         telemetry.addData("Robot is ready!", "Skibidi Toliet Rizz!"); //hehe
         telemetry.addData("Slides", slides.getCurrentPosition());
-        telemetry.addData("Time", timer.seconds());
         telemetry.update();
         waitForStart();
         timer.reset();
         while (opModeIsActive()) {
             if(opModeIsActive()) {
-                Slide slide = new Slide();
-                slide.slidesinit(hardwareMap);
-                slide.slidego(targetposition);
+
+                slide.slidego(targetposition, hardwareMap);
+
+                telemetry.addData("Slides", slides.getCurrentPosition());
+                telemetry.update();
             }
         }
         }

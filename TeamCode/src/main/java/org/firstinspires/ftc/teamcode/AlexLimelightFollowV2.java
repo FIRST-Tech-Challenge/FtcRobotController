@@ -17,6 +17,7 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
     private Limelight3A limelight;
     double slidestargetposition = 0;
     boolean resettimer = true;
+    DcMotor slides;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -24,7 +25,6 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
         DcMotor FR = hardwareMap.dcMotor.get("FR");
         DcMotor BL = hardwareMap.dcMotor.get("BL");
         DcMotor BR = hardwareMap.dcMotor.get("BR");
-        DcMotor slides = hardwareMap.dcMotor.get("slides");
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0); // get the pipeline for limelight
         limelight.setPollRateHz(100);
@@ -40,7 +40,10 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
         FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Slide slide = new Slide();
-        slide.slidesinit(hardwareMap);
+        slides = hardwareMap.dcMotor.get("slides");
+        slides.setDirection(DcMotorSimple.Direction.REVERSE);
+        slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         telemetry.addData("Robot is ready!", "Skibidi Toliet Rizz!"); //hehe
         telemetry.update();
         waitForStart();
@@ -83,16 +86,17 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
                 movepower = -0.7;
             }
 
-
-            slidestargetposition = (ty*20.6923) + slides.getCurrentPosition();
+            if(Math.abs(ty) >= 3.3) {
+                slidestargetposition = (ty * 19.5) + slides.getCurrentPosition();
+            }
             if(result.isValid() == false) {
                 movepower = 0;
                 turnpower = 0;
             }
-            if(slidestargetposition >= 2988) {
+            if(slidestargetposition >= 2988 &&  slidestargetposition > slides.getCurrentPosition()) {
                 slidestargetposition = 2988;
             }
-            if(slidestargetposition <= 5) {
+            if(slidestargetposition <= 5 && slidestargetposition < slides.getCurrentPosition()) {
                 slidestargetposition = 5;
             }
             telemetry.addData("Slides Current Position", slides.getCurrentPosition());
@@ -102,7 +106,7 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
             FR.setPower(movepower-turnpower);
             BL.setPower(turnpower+movepower);
             BR.setPower(movepower-turnpower);
-            slide.slidego(slidestargetposition);
+            slide.slidego(slidestargetposition, hardwareMap);
 
 
         }
