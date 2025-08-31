@@ -52,9 +52,10 @@ public class Path {
         // The grave of setRobotAction(RobotAction a)
         //     Dunno what this was about -_- T-T ToT
 
-        public void setWaypoint(Waypoint w){
-            this.w = w;
-        }
+        // The grave of setWayPoint(Waypoint w)
+        //     The fact that we didn't use this feels kind of stupid
+        //     It feels like we should be using this :|
+        //     It was basically just "this.w = w" in case you wanna revive it
 
         public Waypoint getWaypoint(){
             return w;
