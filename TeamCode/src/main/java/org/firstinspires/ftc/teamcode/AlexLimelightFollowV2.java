@@ -88,13 +88,12 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
             if(result.isValid() == false) {
                 movepower = 0;
                 turnpower = 0;
-                slidesmove = false;
             }
-            if(slides.getCurrentPosition() > 2988 && slidestargetposition > slides.getCurrentPosition()) {
-                slidesmove = false;
+            if(slidestargetposition >= 2988) {
+                slidestargetposition = 2988;
             }
-            if(slides.getCurrentPosition() < 5 && slidestargetposition < slides.getCurrentPosition()) {
-                slidesmove = false;
+            if(slidestargetposition <= 5) {
+                slidestargetposition = 5;
             }
             telemetry.addData("Slides Current Position", slides.getCurrentPosition());
             telemetry.update();
@@ -103,11 +102,7 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
             FR.setPower(movepower-turnpower);
             BL.setPower(turnpower+movepower);
             BR.setPower(movepower-turnpower);
-           if (slidesmove == true && Math.abs(ty) > 1.5) {
-                slide.slidego(slidestargetposition);
-            } else {
-               slide.slidego(slides.getCurrentPosition());
-           }
+            slide.slidego(slidestargetposition);
 
 
         }
