@@ -15,14 +15,14 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
     double slidespower = 0;
     double targetposition;
     private Limelight3A limelight;
-    double Kp;
-    double Ki;
-    double Kd;
-    double error;
-    double derivative;
-    double integralsum;
-    double lasterror;
-    double slidesholdpower;
+    double Kp = 0.046;
+    double Ki = 0.000002;
+    double Kd = 0.0855;
+    double error = 8000;
+    double derivative = 0;
+    double integralsum = 0;
+    double lasterror = 0;
+    double slidesholdpower = 0;
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor FL = hardwareMap.dcMotor.get("FL"); //init motors
