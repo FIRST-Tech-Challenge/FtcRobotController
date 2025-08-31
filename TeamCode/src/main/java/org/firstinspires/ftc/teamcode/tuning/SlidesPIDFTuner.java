@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.tuning;
+package org.firstinspires.ftc.teamcode.Tuning;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -8,15 +8,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.drive.modules.PIDController1;
-import org.firstinspires.ftc.teamcode.drive.modules.Robot;
+import org.firstinspires.ftc.teamcode.Modules.PIDController;
+import org.firstinspires.ftc.teamcode.Modules.Robot;
+
 
 // gotta rename this but otherwise
 // ----- READY TO TRANSFER ----- //
 
 @Config
 @TeleOp(name = "Vertical slides PIDF Tuner", group = "Tuning")
-public class VSlidesPIDFTuner extends LinearOpMode {
+public class SlidesPIDFTuner extends LinearOpMode {
 
     Telemetry t = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     Robot robot;
@@ -40,7 +41,7 @@ public class VSlidesPIDFTuner extends LinearOpMode {
 
         robot = new Robot(hardwareMap);
 
-        PIDController1 slideController = new PIDController1(kp, ki, kd);
+        PIDController slideController = new PIDController(kp, ki, kd);
 
         waitForStart();
 
@@ -52,10 +53,10 @@ public class VSlidesPIDFTuner extends LinearOpMode {
             }
 
             slideController.setPID(kp, ki, kd);
-            if(TorF) {currentPosition = robot.getSlidePositionAvg();}
-            else{currentPosition = robot.getOneSlidePosition();}
+            if(TorF) {currentPosition = robot.getSlides().getSlidePositionAvg();}
+            else{currentPosition = robot.getSlides().getOneSlidePosition();}
 
-            robot.setSlidePower(slideController.calculate(currentPosition, goal) + kf);
+            robot.getSlides().setSlidePower(slideController.calculate(currentPosition, goal) + kf);
 
             t.addData("Current Position", currentPosition);
             t.addData("Goal Position", goal);
