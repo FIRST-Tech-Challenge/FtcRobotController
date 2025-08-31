@@ -13,5 +13,7 @@ dependencies {
     implementation 'org.firstinspires.ftc:FtcCommon:10.3.0'
     implementation 'org.firstinspires.ftc:Vision:10.3.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation "com.bylazar:ftcontrol:0.6.8"
+    implementation "com.bylazar:limelightproxy:1.0.1"
 }
 
