@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.drive.tuning;
 
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.LAT_KD;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.LAT_KI;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.LAT_KP;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.MAX_A;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.MAX_V;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.VERT_KD;
-
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KD;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KI;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KP;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.MAX_A;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.MAX_V;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.TURN_KP;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.VERT_KD;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.VERT_KP;
 
 import com. acmerobotics. dashboard. canvas. Canvas;
 
@@ -19,11 +20,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drive.Autonomous.TrapezoidalMotionProfile;
-import org.firstinspires.ftc.teamcode.drive.modules.EditablePose2D;
-import org.firstinspires.ftc.teamcode.drive.modules.PIDController1;
-import org.firstinspires.ftc.teamcode.drive.modules.Robot;
-import org.firstinspires.ftc.teamcode.drive.modules.riptideUtil;
+import org.firstinspires.ftc.teamcode.Autonomous.TrapezoidalMotionProfile;
+import org.firstinspires.ftc.teamcode.Modules.EditablePose2D;
+import org.firstinspires.ftc.teamcode.Modules.PIDController;
+import org.firstinspires.ftc.teamcode.Modules.Robot;
+import org.firstinspires.ftc.teamcode.Modules.riptideUtil;
+
 
 // ----- READY TO TRANSFER ----- //
 
@@ -50,9 +52,9 @@ public class LateralTuning extends LinearOpMode {
 
     // GOAL POSITION
     public EditablePose2D goal = new EditablePose2D(goalXININCHES, goalYININCHES, Math.toRadians(goalHINDEGREES), DistanceUnit.INCH);
-    public static PIDController1 turnPid = new PIDController1(0, 0, 0);
-    public static PIDController1 vertPid = new PIDController1(0, 0, 0);
-    public static PIDController1 latPid = new PIDController1(0, 0, 0);
+    public static PIDController turnPid = new PIDController(0, 0, 0);
+    public static PIDController vertPid = new PIDController(0, 0, 0);
+    public static PIDController latPid = new PIDController(0, 0, 0);
     private EditablePose2D lastGoal = new EditablePose2D(0, 0, 0, DistanceUnit.INCH);
     private EditablePose2D startPos = new EditablePose2D(0, 0, 0, DistanceUnit.INCH);
     private double elapsedTime;
@@ -80,7 +82,7 @@ public class LateralTuning extends LinearOpMode {
         // * * * * * * * * * * * * * * *
 
         telemetry.clear();
-        robot.startOdometry();
+        robot.getDrivetrain().startOdometry();
         /*
          * * * * * * * * * * * * * * *
          * LOOP
@@ -145,10 +147,10 @@ public class LateralTuning extends LinearOpMode {
             elapsedTime = System.nanoTime()/1e9 - time;
         }
 
-        double currentAngleRadians = robot.getCurrPos().getH();
+        double currentAngleRadians = robot.getDrivetrain().getCurrPos().getH();
         double currentAngle = Math.toDegrees(currentAngleRadians);
-        double currentX = robot.getCurrPos().getX(DistanceUnit.INCH);
-        double currentY = robot.getCurrPos().getY(DistanceUnit.INCH);
+        double currentX = robot.getDrivetrain().getCurrPos().getX(DistanceUnit.INCH);
+        double currentY = robot.getDrivetrain().getCurrPos().getY(DistanceUnit.INCH);
 
 //        currentX = currentX * Math.cos( - currentAngleRadians) - currentY * Math.sin(-currentAngleRadians);
 //        currentY = currentX * Math.sin(-currentAngleRadians) + currentY * Math.cos(-currentAngleRadians);
@@ -165,8 +167,8 @@ public class LateralTuning extends LinearOpMode {
         p.put("exp x", expX);
         p.put("exp y", expY);
 
-        turnPid.setPID(riptideUtil.TURN_KP, riptideUtil.TURN_KI, riptideUtil.TURN_KD);
-        vertPid.setPID(riptideUtil.VERT_KP, riptideUtil.VERT_KI, VERT_KD);
+        turnPid.setPID(TURN_KP, riptideUtil.TURN_KI, riptideUtil.TURN_KD);
+        vertPid.setPID(VERT_KP, riptideUtil.VERT_KI, VERT_KD);
         latPid.setPID(LAT_KP, LAT_KI, LAT_KD);
 
         double turnPower = turnPid.calculate(0, turnError);
@@ -186,7 +188,7 @@ public class LateralTuning extends LinearOpMode {
         double brWheelPower = (yPowerRotated + xPowerRotated - turnPower) / denominator;
         double blWheelPower = (yPowerRotated - xPowerRotated + turnPower) / denominator;
 
-        robot.setWheelPowers(flWheelPower, frWheelPower, brWheelPower, blWheelPower);
+        robot.getDrivetrain().setWheelPowers(flWheelPower, frWheelPower, brWheelPower, blWheelPower);
 
 
         //Visual effects
