@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.modules;
+package org.firstinspires.ftc.teamcode.Modules;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static java.lang.Math.atan;
@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Modules.EditablePose2D;
+import org.firstinspires.ftc.teamcode.Modules.OdometryLocalizer;
 
 // ----- READY TO TRANSFER ----- //
 
@@ -29,6 +31,8 @@ public class Drivetrain {
     private final DcMotor frWheel, flWheel, brWheel, blWheel;
     private final IMU imu;
     private ElapsedTime timer;
+
+    private final OdometryLocalizer robotPos;
 
     ///////////////////////////////////////////////
     ////                                     /////
@@ -64,6 +68,8 @@ public class Drivetrain {
         flWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         blWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        robotPos = new OdometryLocalizer(blWheel, brWheel, flWheel, 10);
+
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
@@ -91,5 +97,10 @@ public class Drivetrain {
         flWheel.setPower(flWheelPower);
         brWheel.setPower(brWheelPower);
         blWheel.setPower(blWheelPower);
+    }
+
+    // ------------ GETTERS ------------ //
+    public EditablePose2D getCurrPos() {
+        return robotPos.getCurrPos();
     }
 }
