@@ -17,28 +17,32 @@ public class Slide {
     double lasterror = 0;
     double slidesholdpower = 0;
     boolean stopPID = false;
+    boolean resettimer = true;
     private DcMotor slides;
     ElapsedTime timer = new ElapsedTime();
     public void slidesinit(HardwareMap hardwareMap) {
-        DcMotor slides = hardwareMap.dcMotor.get("slides");
+        slides = hardwareMap.dcMotor.get("slides");
         slides.setDirection(DcMotorSimple.Direction.REVERSE);
         slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        timer = new ElapsedTime();
+        timer.reset();
+    }
+    public void resettimer() {
+        timer.reset();
     }
     public void stopPID() {
         stopPID = true;
         slides.setPower(0);
     }
     public void slidego(double targetposition) {
-        timer.reset();
-        while (stopPID !=false) {
+            double dt = timer.seconds();
+            timer.reset();
             error = targetposition - slides.getCurrentPosition();
-            derivative = (error - lasterror) / timer.seconds();
-            integralsum = integralsum + (error * timer.seconds());
+            derivative = (error - lasterror) / dt;
+            integralsum = integralsum + (error * dt);
             slidesholdpower = (P * error) + (I * integralsum) + (D * derivative);
             slides.setPower(slidesholdpower);
             lasterror = error;
-        }
+
     }
 }

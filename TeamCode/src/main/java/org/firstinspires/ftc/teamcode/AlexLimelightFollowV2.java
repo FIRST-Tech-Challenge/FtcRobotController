@@ -14,9 +14,9 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
     double ty = 0;
     double slidespower = 0;
     boolean slidesmove = true;
-    double targetposition;
     private Limelight3A limelight;
     double slidestargetposition = 0;
+    boolean resettimer = true;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -45,6 +45,11 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
         telemetry.update();
         waitForStart();
         while (opModeIsActive()) {
+            if(resettimer == true) {
+                slide.resettimer();
+                resettimer = false;
+            }
+            slidesmove = true;
             LLResult result = limelight.getLatestResult();
             if (result != null && result.isValid()) { // if the limelight sees a apriltag
                 tx = result.getTx(); // How far left or right the target is (degrees)
