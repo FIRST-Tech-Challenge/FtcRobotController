@@ -109,4 +109,8 @@ public class Drivetrain {
         Thread localizer = new Thread(robotPos);
         localizer.start();
     }
+
+    public OdometryLocalizer getRobotPos() {
+        return robotPos;
+    }
 }
