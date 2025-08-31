@@ -5,6 +5,8 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import edu.wpi.first.math.MathUtil;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 public class Vision {
     private Limelight3A camera;
@@ -44,6 +46,52 @@ public class Vision {
             return defaultValue;
         }
         return result.getTy();
+    }
+
+    public String getRawJSON() {
+        if (result == null) {
+            return "";
+        }
+        return result.toString();  // Returns raw JSON string with 'pts' data
+    }
+    
+    public double calculateOrientation() {
+        String json = getRawJSON();
+        if (json.isEmpty()) {
+            return 0.0;
+        }
+        
+        try {
+            JSONObject jsonObj = new JSONObject(json);
+            
+            if (!jsonObj.has("pts")) {
+                return 0.0; // No pts data found
+            }
+            
+            JSONArray ptsArray = jsonObj.getJSONArray("pts");
+            if (ptsArray.length() < 4) {
+                return 0.0; // Need at least 4 values (2 points)
+            }
+            
+            // Extract first two points: [x0,y0,x1,y1,...]
+            double x0 = ptsArray.getDouble(0);
+            double y0 = ptsArray.getDouble(1);
+            double x1 = ptsArray.getDouble(2);
+            double y1 = ptsArray.getDouble(3);
+            
+            // Calculate angle of first edge
+            double angleRadians = Math.atan2(y1 - y0, x1 - x0);
+            double angleDegrees = Math.toDegrees(angleRadians);
+            
+            // Normalize to -90 to +90 degrees
+            while (angleDegrees > 90) angleDegrees -= 180;
+            while (angleDegrees < -90) angleDegrees += 180;
+            
+            return angleDegrees;
+            
+        } catch (Exception e) {
+            return 0.0; // JSON parsing error
+        }
     }
 
     public boolean isTargetVisible() {
