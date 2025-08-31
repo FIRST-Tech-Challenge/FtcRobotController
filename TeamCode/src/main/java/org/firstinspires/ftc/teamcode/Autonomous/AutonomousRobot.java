@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.Modules.Drivetrain;
 
 public class AutonomousRobot extends Robot {
     Drivetrain drivetrain;
+    Robot robot;
     public AutonomousRobot(HardwareMap hardwareMap) {
         super(hardwareMap);
     }
@@ -131,9 +132,9 @@ public class AutonomousRobot extends Robot {
 
 
                 //Find the current field positions
-                double currentX = this.drivetrain.getCurrPos().getX(DistanceUnit.INCH);
-                double currentY = this.drivetrain.getCurrPos().getY(DistanceUnit.INCH);
-                double currentH = this.drivetrain.getCurrPos().getH();
+                double currentX = this.robot.getDrivetrain().getCurrPos().getX(DistanceUnit.INCH);
+                double currentY = this.robot.getDrivetrain().getCurrPos().getY(DistanceUnit.INCH);
+                double currentH = this.robot.getDrivetrain().getCurrPos().getH();
 
                 //Find the expected position along the path, as a magnitude of a vector with angle lineSlope
                 // then use some trig to find x and y components
@@ -182,9 +183,9 @@ public class AutonomousRobot extends Robot {
 
                 //set current position point as start point
                 start = new EditablePose2D(
-                        this.drivetrain.getCurrPos().getX(DistanceUnit.INCH),
-                        this.drivetrain.getCurrPos().getY(DistanceUnit.INCH),
-                        this.drivetrain.getCurrPos().getH(),
+                        this.robot.getDrivetrain().getCurrPos().getX(DistanceUnit.INCH),
+                        this.robot.getDrivetrain().getCurrPos().getY(DistanceUnit.INCH),
+                        this.robot.getDrivetrain().getCurrPos().getH(),
                         DistanceUnit.INCH
                 );
 
@@ -300,7 +301,7 @@ public class AutonomousRobot extends Robot {
         double brWheelPower = (vertPower - latPower + anglePower) / denominator;
         double blWheelPower = (vertPower + latPower - anglePower) / denominator;
 
-        super.setWheelPowers(flWheelPower, frWheelPower, brWheelPower, blWheelPower);
+        super.getDrivetrain().setWheelPowers(flWheelPower, frWheelPower, brWheelPower, blWheelPower);
     }
 
     public void startPath() {
@@ -311,7 +312,7 @@ public class AutonomousRobot extends Robot {
         Path.PathPoint firstPoint = path.get(0);
         Waypoint firstPose = firstPoint.getWaypoint();
 
-        if (atPoint(firstPose, drivetrain.getCurrPos())) {
+        if (atPoint(firstPose, robot.getDrivetrain().getCurrPos())) {
             pathIndex = 1;
         }
     }

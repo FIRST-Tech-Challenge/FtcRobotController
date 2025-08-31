@@ -28,7 +28,6 @@ import org.firstinspires.ftc.teamcode.Modules.Robot;
 @Config
 @TeleOp(name = "11Pid To Point Tuner",group = "Tuning")
 public class PidToPointTuner extends LinearOpMode {
-    Drivetrain drivetrain;
 
     Robot robot;
 
@@ -72,11 +71,11 @@ public class PidToPointTuner extends LinearOpMode {
         // * * * * * * * * * * * * * * *
 
         telemetry.clear();
-        robot.startOdometry();
+        robot.getDrivetrain().startOdometry();
 
-        goal = new EditablePose2D(drivetrain.getCurrPos().getX(DistanceUnit.INCH),
-                drivetrain.getCurrPos().getY(DistanceUnit.INCH),
-                drivetrain.getCurrPos().getH(),
+        goal = new EditablePose2D(robot.getDrivetrain().getCurrPos().getX(DistanceUnit.INCH),
+                robot.getDrivetrain().getCurrPos().getY(DistanceUnit.INCH),
+                robot.getDrivetrain().getCurrPos().getH(),
                 DistanceUnit.INCH);
 
         /*
@@ -113,9 +112,9 @@ public class PidToPointTuner extends LinearOpMode {
             dbounce = true;
 
             //set old goal point as start point
-            start.setX(drivetrain.getCurrPos().getX(DistanceUnit.INCH), DistanceUnit.INCH);
-            start.setY(drivetrain.getCurrPos().getY(DistanceUnit.INCH), DistanceUnit.INCH);
-            start.setH(drivetrain.getCurrPos().getH());
+            start.setX(robot.getDrivetrain().getCurrPos().getX(DistanceUnit.INCH), DistanceUnit.INCH);
+            start.setY(robot.getDrivetrain().getCurrPos().getY(DistanceUnit.INCH), DistanceUnit.INCH);
+            start.setH(robot.getDrivetrain().getCurrPos().getH());
 
             // set new goal Point
             goal.setX(goalXININCHES, DistanceUnit.INCH);
@@ -147,9 +146,9 @@ public class PidToPointTuner extends LinearOpMode {
         }
 
         //Find the current field positions
-        double currentX = drivetrain.getCurrPos().getX(DistanceUnit.INCH);
-        double currentY = drivetrain.getCurrPos().getY(DistanceUnit.INCH);
-        double currentH = drivetrain.getCurrPos().getH();
+        double currentX = robot.getDrivetrain().getCurrPos().getX(DistanceUnit.INCH);
+        double currentY = robot.getDrivetrain().getCurrPos().getY(DistanceUnit.INCH);
+        double currentH = robot.getDrivetrain().getCurrPos().getH();
 
         //Find the expected position along the path, as a magnitude of a vector with angle lineSlope
         // then use some trig to find x and y components
@@ -184,7 +183,7 @@ public class PidToPointTuner extends LinearOpMode {
         double brWheelPower = (vertPower - latPower + anglePower) / denominator;
         double blWheelPower = (vertPower + latPower - anglePower) / denominator;
 
-        robot.setWheelPowers(flWheelPower, frWheelPower, brWheelPower, blWheelPower);
+        robot.getDrivetrain().setWheelPowers(flWheelPower, frWheelPower, brWheelPower, blWheelPower);
 
         //Ftc dashboard drawings
         double robotSize = 18;

@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.Modules.riptideUtil;
 
 @TeleOp(name = "Drive Train PID Tuner", group = "Tuning")
 public class DriveTrainPIDTuner extends LinearOpMode {
-    Drivetrain drivetrain;
 
     Robot robot;
     Telemetry t = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -60,7 +59,7 @@ public class DriveTrainPIDTuner extends LinearOpMode {
         // * * * * * * * * * * * * * * *
 
         telemetry.clear();
-        robot.startOdometry();
+        robot.getDrivetrain().startOdometry();
         /*
          * * * * * * * * * * * * * * *
          * LOOP
@@ -130,7 +129,7 @@ public class DriveTrainPIDTuner extends LinearOpMode {
         double expPos;
         switch(d){
             case TURN:
-                double currentAngle = Math.toDegrees(drivetrain.getCurrPos().getH());
+                double currentAngle = Math.toDegrees(robot.getDrivetrain().getCurrPos().getH());
 
                 t.addData("Current Angle: ", currentAngle);
 
@@ -143,11 +142,11 @@ public class DriveTrainPIDTuner extends LinearOpMode {
                 t.addData("Current Power * 50", power * 50);
 
 
-                robot.setWheelPowers(power, -power, -power, power);
+                robot.getDrivetrain().setWheelPowers(power, -power, -power, power);
 
                 break;
             case LAT:
-                currentPos = drivetrain.getCurrPos().getY(DistanceUnit.INCH);
+                currentPos = robot.getDrivetrain().getCurrPos().getY(DistanceUnit.INCH);
                 t.addData("Current Pos: ", currentPos);
 
                 pid.setPID(riptideUtil.LAT_KP, riptideUtil.LAT_KI, riptideUtil.LAT_KD);
@@ -158,10 +157,10 @@ public class DriveTrainPIDTuner extends LinearOpMode {
                 t.addData("Expected Position - Lateral", expPos);
                 t.addData("Current Power * 50", power * 50);
 
-                robot.setWheelPowers(-power, power, -power, power);
+                robot.getDrivetrain().setWheelPowers(-power, power, -power, power);
                 break;
             case VERT:
-                currentPos = drivetrain.getCurrPos().getX(DistanceUnit.INCH);
+                currentPos = robot.getDrivetrain().getCurrPos().getX(DistanceUnit.INCH);
                 t.addData("Current Pos: ", currentPos);
 
                 pid.setPID(riptideUtil.VERT_KP, riptideUtil.VERT_KI, riptideUtil.VERT_KD);
@@ -172,7 +171,7 @@ public class DriveTrainPIDTuner extends LinearOpMode {
                 t.addData("Expected Position - Vertical", expPos);
                 t.addData("Current Power * 50", power * 50);
 
-                robot.setWheelPowers(power, power, power, power);
+                robot.getDrivetrain().setWheelPowers(power, power, power, power);
                 break;
 
 
