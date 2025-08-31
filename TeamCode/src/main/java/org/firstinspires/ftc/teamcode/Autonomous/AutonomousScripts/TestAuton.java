@@ -24,7 +24,6 @@ public class Test extends LinearOpMode {
     Path p = new Path.PathBuilder()
             .addNewFullPoint(
                     new Waypoint(24, 48, -90, 96, 72, DistanceUnit.INCH),
-                    Path.FollowMethods.FOLLOW_AND_TURN,
                     () -> {
                         robot.setSlideGoalPosition(2500);
                         robot.setSlidePower();
@@ -34,7 +33,6 @@ public class Test extends LinearOpMode {
             )
             .addNewFullPoint(
                     new Waypoint(24, 48, -90, 96, 72, DistanceUnit.INCH),
-                    Path.FollowMethods.FOLLOW_AND_TURN,
                     () -> {
 
 
@@ -53,7 +51,6 @@ public class Test extends LinearOpMode {
             )
             .addNewFullPoint(
                     new Waypoint(0,0,90,72, 96, DistanceUnit.INCH),
-                    Path.FollowMethods.FOLLOW_AND_TURN,
                     () -> {
                         robot.setSlidePower();
                         robot.clawArm.setAllThreeJoints(90, 0, 0);

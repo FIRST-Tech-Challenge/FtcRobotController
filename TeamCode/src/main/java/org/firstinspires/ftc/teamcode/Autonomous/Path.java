@@ -13,12 +13,9 @@ public class Path {
         void Action();
     }
 
-    public enum FollowMethods {
-        TURN_THEN_FOLLOW, //Only use this one for now. The others are so bad.
-        FOLLOW_THEN_TURN,
-        FOLLOW_AND_TURN,
-        TURN
-    }
+    // This is the grave of the enum known as FollowMethod.
+    //     It was useless because we were only using one
+    //     type of "follow method" in the first place.
 
     private ArrayList<PathPoint> path = new ArrayList<PathPoint>();
 
@@ -26,9 +23,9 @@ public class Path {
         this.path = b.getPath();
     }
 
-    public ArrayList<PathPoint> getPath(){
-        return path;
-    }
+    // This is the grave of getPath, which I feel like should have
+    //     been used but for some reason it wasn't.
+    //     This version returned ArrayList<PathPoint>
 
     /**
      * @param i index of the waypoint list
@@ -42,21 +39,18 @@ public class Path {
         return path.size();
     }
 
-    public void removePoint(int i){
-        path.remove(i);
-    }
+    // This is the grave of removePoint() which I honestly feel like
+    //     is useless unless the path was completely fucked up.
 
 
     public static class PathPoint{
 
         private RobotAction a = null;
         private Waypoint w;
-        private FollowMethods f = FollowMethods.TURN_THEN_FOLLOW;
         private double delayUntilNextPoint = 0;
 
-        public void setRobotAction(RobotAction a){
-            this.a = a;
-        }
+        // The grave of setRobotAction(RobotAction a)
+        //     Dunno what this was about -_- T-T ToT
 
         public void setWaypoint(Waypoint w){
             this.w = w;
@@ -64,10 +58,6 @@ public class Path {
 
         public Waypoint getWaypoint(){
             return w;
-        }
-
-        public void setFollowMethod(FollowMethods f){
-            this.f = f;
         }
 
         public RobotAction getAction(){
@@ -78,10 +68,9 @@ public class Path {
             return delayUntilNextPoint;
         }
 
-        public PathPoint(Waypoint w, FollowMethods f, RobotAction a, double delayUntilNextPoint){
+        public PathPoint(Waypoint w, RobotAction a, double delayUntilNextPoint){
             this.a = a;
             this.w = w;
-            this.f = f;
             this.delayUntilNextPoint = delayUntilNextPoint;
         }
 
@@ -90,28 +79,10 @@ public class Path {
     public static class PathBuilder{
         private ArrayList<PathPoint> path = new ArrayList<PathPoint>();
 
-        public PathBuilder addNewPoint(Waypoint point){
-            PathPoint p = new PathPoint(point, FollowMethods.TURN_THEN_FOLLOW, null, 0);
-            path.add(p);
-            return this;
-        }
+        // This is the grave of a few PathBuilders that nobody knows why they existed
 
-        public PathBuilder addNewActionButAddIfFreePathPoint(RobotAction a, double delay){
-            if (!path.isEmpty()) {
-                PathPoint p = path.get(path.size() - 1);
-                if (p.getAction() == null){
-                    p.setRobotAction(a);
-                }
-                else{
-                    path.add(new PathPoint(null, FollowMethods.TURN_THEN_FOLLOW, a, delay));
-                }
-            }
-
-            return this;
-        }
-
-        public PathBuilder addNewFullPoint(Waypoint w, FollowMethods f, RobotAction a, double delay){
-            PathPoint p = new PathPoint(w, f, a, delay);
+        public PathBuilder addNewFullPoint(Waypoint w, RobotAction a, double delay){
+            PathPoint p = new PathPoint(w, a, delay);
             path.add(p);
             return this;
         }
