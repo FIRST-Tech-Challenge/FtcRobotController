@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.Teleop;
+package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drive.modules.Robot;
+import org.firstinspires.ftc.teamcode.Modules.Robot;
 
 // maybe transferable, talk to James
 // idk

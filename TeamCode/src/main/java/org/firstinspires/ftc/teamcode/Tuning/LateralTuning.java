@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.tuning;
+package org.firstinspires.ftc.teamcode.Tuning;
 
 import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.LAT_KD;
 import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.LAT_KI;
@@ -8,7 +8,7 @@ import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.MAX_V;
 import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.VERT_KD;
 
 
-import com. acmerobotics. dashboard. canvas. Canvas;
+import com.acmerobotics.dashboard. canvas. Canvas;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;

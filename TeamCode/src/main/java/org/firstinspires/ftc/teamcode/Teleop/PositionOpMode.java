@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.Teleop;
+package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drive.modules.EditablePose2D;
-import org.firstinspires.ftc.teamcode.drive.modules.Robot;
+import org.firstinspires.ftc.teamcode.Modules.EditablePose2D;
+import org.firstinspires.ftc.teamcode.Modules.Robot;
 
 // this will probably be usefull
 // ----- READY TO TRANSFER ----- //

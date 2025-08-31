@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Modules.riptideUtil;
 // ----- READY TO TRANSFER ----- //
 
 @Autonomous
-public class Test extends LinearOpMode {
+public class TestAuton extends LinearOpMode {
 
     AutonomousRobot robot;
 
