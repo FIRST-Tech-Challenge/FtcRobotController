@@ -13,16 +13,11 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
     double ta = 0;
     double ty = 0;
     double slidespower = 0;
+    boolean slidesmove = true;
     double targetposition;
     private Limelight3A limelight;
-    double Kp = 0.046;
-    double Ki = 0.000002;
-    double Kd = 0.0855;
-    double error = 8000;
-    double derivative = 0;
-    double integralsum = 0;
-    double lasterror = 0;
-    double slidesholdpower = 0;
+    double slidestargetposition = 0;
+
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor FL = hardwareMap.dcMotor.get("FL"); //init motors
@@ -36,23 +31,19 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
         limelight.start(); // starts, REQUIRED FOR LIMELIGHT!
         FL.setDirection(DcMotorSimple.Direction.REVERSE); // regular drivetrain reverse
         BL.setDirection(DcMotorSimple.Direction.REVERSE); // regular drivetrain reverse
-        slides.setDirection(DcMotorSimple.Direction.REVERSE);
         FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Resets encoder for driving
         FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // sets mode to run without encoder because we don't need to caluclate volocity
         BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        slides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        ElapsedTime timer = new ElapsedTime();
+        Slide slide = new Slide();
+        slide.slidesinit(hardwareMap);
         telemetry.addData("Robot is ready!", "Skibidi Toliet Rizz!"); //hehe
         telemetry.update();
         waitForStart();
-        timer.reset();
         while (opModeIsActive()) {
             LLResult result = limelight.getLatestResult();
             if (result != null && result.isValid()) { // if the limelight sees a apriltag
@@ -86,29 +77,18 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
             if(movepower <= -0.7) {
                 movepower = -0.7;
             }
-            double slidestuningconstant = 0.028;
-            if(Math.abs(ty) >= 2.5) {
-                slidespower = ty * slidestuningconstant;
-            } else {
-                slidespower = 0;
-            }
 
-            if(slidespower <= 0.4 && slidespower > 0) {
-                slidespower = 0.4;
-            }
-            if(slidespower >= 0.8 && slidespower > 0) {
-                slidespower = 0.8;
-            }
+
+            slidestargetposition = (ty*20.6923) + slides.getCurrentPosition();
             if(result.isValid() == false) {
                 movepower = 0;
                 turnpower = 0;
-                slidespower = 0;
             }
-            if(-slides.getCurrentPosition() < -2988 && slidespower > 0) {
-                slidespower = 0;
+            if(-slides.getCurrentPosition() < -2988 && slidestargetposition > slides.getCurrentPosition()) {
+                slidesmove = false;
             }
-            if(-slides.getCurrentPosition() > -5 && slidespower < 0) {
-                slidespower = 0;
+            if(-slides.getCurrentPosition() > -5 && slidestargetposition < slides.getCurrentPosition()) {
+                slidesmove = false;
             }
             telemetry.addData("Slides Current Position", slides.getCurrentPosition());
             telemetry.update();
@@ -117,21 +97,9 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
             FR.setPower(movepower-turnpower);
             BL.setPower(turnpower+movepower);
             BR.setPower(movepower-turnpower);
-            if(slidespower != 0) {
-                slides.setPower(slidespower);
-                targetposition = slides.getCurrentPosition();
-            } else {
-                error = targetposition - slides.getCurrentPosition();
-                derivative = (error - lasterror) / timer.seconds();
-                integralsum = integralsum + (error*timer.seconds());
-                slidesholdpower = (Kp*error) + (Ki*integralsum) + (Kd*derivative);
-                slides.setPower(slidesholdpower);
-                lasterror = error;
-                timer.reset();
+           if (slidesmove == true && Math.abs(ty) > 1.5) {
+                slide.slidego(slidestargetposition);
             }
-
-
-
 
 
         }
