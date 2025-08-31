@@ -90,7 +90,6 @@ public class AutonomousRobot extends Robot {
     public Path path = new Path.PathBuilder()
             .addNewFullPoint(
                     new Waypoint(0, 0, 90, 36, 72, DistanceUnit.INCH),
-                    Path.FollowMethods.FOLLOW_AND_TURN, //For now only use this turn method or else it will error
                     () -> {
                         // some function here
                     },

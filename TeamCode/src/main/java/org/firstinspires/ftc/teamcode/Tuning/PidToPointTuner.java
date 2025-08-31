@@ -1,34 +1,34 @@
-package org.firstinspires.ftc.teamcode.drive.tuning;
+package org.firstinspires.ftc.teamcode.Tuning;
 
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.LAT_KD;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.LAT_KI;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.LAT_KP;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.MAX_A;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.MAX_V;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.TURN_KD;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.TURN_KI;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.TURN_KP;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.VERT_KD;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.VERT_KI;
-import static org.firstinspires.ftc.teamcode.drive.modules.riptideUtil.VERT_KP;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KD;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KI;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KP;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.MAX_A;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.MAX_V;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.TURN_KD;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.TURN_KI;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.TURN_KP;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.VERT_KD;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.VERT_KI;
+import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.VERT_KP;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drive.Autonomous.TrapezoidalMotionProfile;
-import org.firstinspires.ftc.teamcode.drive.modules.EditablePose2D;
-import org.firstinspires.ftc.teamcode.drive.modules.PIDController1;
-import org.firstinspires.ftc.teamcode.drive.modules.Robot;
+import org.firstinspires.ftc.teamcode.Autonomous.TrapezoidalMotionProfile;
+import org.firstinspires.ftc.teamcode.Modules.Drivetrain;
+import org.firstinspires.ftc.teamcode.Modules.EditablePose2D;
+import org.firstinspires.ftc.teamcode.Modules.PIDController;
+import org.firstinspires.ftc.teamcode.Modules.Robot;
 
 // ----- READY TO TRANFER ----- //
 
 @Config
 @TeleOp(name = "11Pid To Point Tuner",group = "Tuning")
 public class PidToPointTuner extends LinearOpMode {
+    Drivetrain drivetrain;
 
     Robot robot;
 
@@ -36,9 +36,9 @@ public class PidToPointTuner extends LinearOpMode {
     public static double goalYININCHES = 0;
     public static double goalHINDEGREES = 0;
 
-    public PIDController1 vertPid = new PIDController1(0, 0, 0);
-    public PIDController1 latPid = new PIDController1(0, 0, 0);
-    public PIDController1 turnPid = new PIDController1(0, 0, 0);
+    public PIDController vertPid = new PIDController(0, 0, 0);
+    public PIDController latPid = new PIDController(0, 0, 0);
+    public PIDController turnPid = new PIDController(0, 0, 0);
 
     private EditablePose2D goal = new EditablePose2D(0,0, 0, DistanceUnit.INCH);
 
@@ -74,9 +74,9 @@ public class PidToPointTuner extends LinearOpMode {
         telemetry.clear();
         robot.startOdometry();
 
-        goal = new EditablePose2D(robot.getCurrPos().getX(DistanceUnit.INCH),
-                robot.getCurrPos().getY(DistanceUnit.INCH),
-                robot.getCurrPos().getH(),
+        goal = new EditablePose2D(drivetrain.getCurrPos().getX(DistanceUnit.INCH),
+                drivetrain.getCurrPos().getY(DistanceUnit.INCH),
+                drivetrain.getCurrPos().getH(),
                 DistanceUnit.INCH);
 
         /*
@@ -103,7 +103,6 @@ public class PidToPointTuner extends LinearOpMode {
     double lineSlope = 0;
 
     public void tuneMethod(){
-        TelemetryPacket p = new TelemetryPacket(false);
 
 
         //find how much time has passed since the start of this path (seconds).
@@ -114,9 +113,9 @@ public class PidToPointTuner extends LinearOpMode {
             dbounce = true;
 
             //set old goal point as start point
-            start.setX(robot.getCurrPos().getX(DistanceUnit.INCH), DistanceUnit.INCH);
-            start.setY(robot.getCurrPos().getY(DistanceUnit.INCH), DistanceUnit.INCH);
-            start.setH(robot.getCurrPos().getH());
+            start.setX(drivetrain.getCurrPos().getX(DistanceUnit.INCH), DistanceUnit.INCH);
+            start.setY(drivetrain.getCurrPos().getY(DistanceUnit.INCH), DistanceUnit.INCH);
+            start.setH(drivetrain.getCurrPos().getH());
 
             // set new goal Point
             goal.setX(goalXININCHES, DistanceUnit.INCH);
@@ -148,9 +147,9 @@ public class PidToPointTuner extends LinearOpMode {
         }
 
         //Find the current field positions
-        double currentX = robot.getCurrPos().getX(DistanceUnit.INCH);
-        double currentY = robot.getCurrPos().getY(DistanceUnit.INCH);
-        double currentH = robot.getCurrPos().getH();
+        double currentX = drivetrain.getCurrPos().getX(DistanceUnit.INCH);
+        double currentY = drivetrain.getCurrPos().getY(DistanceUnit.INCH);
+        double currentH = drivetrain.getCurrPos().getH();
 
         //Find the expected position along the path, as a magnitude of a vector with angle lineSlope
         // then use some trig to find x and y components
@@ -190,39 +189,5 @@ public class PidToPointTuner extends LinearOpMode {
         //Ftc dashboard drawings
         double robotSize = 18;
         double headingLineLength = 12;
-
-        p.fieldOverlay()
-                .drawImage("/images/intothedeepfieldphoto.png", 0, 0, 144, 144, Math.toRadians(-90), 72, 72, false)
-                .setFill("Red")
-                .fillCircle(36, 36, 2)
-                .setFill("Orange")
-                .fillCircle(-36, 36, 2)
-                .setFill("Green")
-                .fillCircle(36, -36, 2)
-                .setFill("Blue")
-                .fillCircle(-36, -36, 2)
-                .setTranslation(-72 + robotSize/2, -36)
-                .setFill("Blue")
-                .setRotation(currentH)
-                .fillRect( currentY + robotSize / 2, -(currentX - robotSize/2), robotSize, robotSize)
-                .setStroke("Green")
-                .strokeLine(currentX, currentY, headingLineLength + currentY, headingLineLength  + currentX);
-
-
-        p.put("exp X ", xComponent);
-        p.put("exp Y", yComponent);
-        p.put("x, y Error (rotated)", xErrorRot + " | " +  yErrorRot);
-        p.put("Line slope", lineSlope);
-        p.put("Distance", distance);
-        p.put("current X", currentX);
-        p.put("Current Y", currentY);
-        p.put("Goal X", goal.getX(DistanceUnit.INCH));
-        p.put("Goal Y", goal.getY(DistanceUnit.INCH));
-
-        p.put("Start", "x" + start.getX(DistanceUnit.INCH) +" - y:" + start.getY(DistanceUnit.INCH));
-        p.put("Current Angle", Math.toDegrees(currentH));
-        p.put("Goal Angle", Math.toDegrees(goal.getH()));
-
-        FtcDashboard.getInstance().sendTelemetryPacket(p);
     }
 }
