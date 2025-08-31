@@ -64,8 +64,8 @@ public class AngleTuner extends LinearOpMode {
                     moveToDesiredAngle(desiredHeading, currentHeading);
                 }
             }
-            currentHeading = robot.getRobotHeading(AngleUnit.RADIANS);
-            telemetry.addData("Current heading: ", robot.getRobotHeading(AngleUnit.RADIANS));
+            currentHeading = robot.getDrivetrain().getRobotHeading(AngleUnit.RADIANS);
+            telemetry.addData("Current heading: ", robot.getDrivetrain().getRobotHeading(AngleUnit.RADIANS));
         }
     }
 

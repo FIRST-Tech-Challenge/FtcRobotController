@@ -73,7 +73,7 @@ public class Drivetrain {
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
 
         imu.resetYaw();
         imu.initialize(parameters);
