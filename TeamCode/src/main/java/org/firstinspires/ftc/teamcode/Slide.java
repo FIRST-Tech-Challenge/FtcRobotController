@@ -13,7 +13,7 @@ public class Slide {
     FtcDashboard dashboard;
     public static double P = 0.06;
     public static double I = 0.000015;
-    public static double D = 0.000410;
+    public static double D = 0.0006;
 
     double error = 0;
     double derivative = 0;
@@ -40,7 +40,8 @@ public class Slide {
             derivative = (error - lasterror) / dt;
             integralsum = integralsum + (error * dt);
             slidesholdpower = (P * error) + (I * integralsum) + (D * derivative);
-            slides.setPower(slidesholdpower);
+
+            slides.setPower(Math.min(slidesholdpower,1));
             lasterror = error;
 
     }

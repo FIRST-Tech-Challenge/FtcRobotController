@@ -17,6 +17,7 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
     private Limelight3A limelight;
     double slidestargetposition = 0;
     boolean resettimer = true;
+    double lastTy = 0;
     DcMotor slides;
 
     @Override
@@ -41,6 +42,7 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
         BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Slide slide = new Slide();
         slides = hardwareMap.dcMotor.get("slides");
+        double error = slidestargetposition - slides.getCurrentPosition();
         slides.setDirection(DcMotorSimple.Direction.REVERSE);
         slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -48,6 +50,7 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
         telemetry.update();
         waitForStart();
         while (opModeIsActive()) {
+            error = slidestargetposition - slides.getCurrentPosition();
             if(resettimer == true) {
                 slide.resettimer();
                 resettimer = false;
@@ -58,6 +61,8 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
                 tx = result.getTx(); // How far left or right the target is (degrees)
                 ta = result.getTa(); // How big the target looks (0%-100% of the image)
                 ty = result.getTy();
+                ty = (0.8*ty) + (0.2*lastTy);
+                lastTy = ty;
                 telemetry.addData("Target X", tx);
                 telemetry.addData("Target A", ta);
                 telemetry.addData("Target Y", ty);
@@ -86,9 +91,11 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
                 movepower = -0.7;
             }
 
-            if(Math.abs(ty) >= 3.3) {
-                slidestargetposition = (ty * 19.5) + slides.getCurrentPosition();
-            }
+
+            //move the slide(Slides logic.)
+                        slidestargetposition = slidestargetposition + (ty*0.833f);
+                        slidestargetposition = Math.round(slidestargetposition);
+                        telemetry.addData("Slide target position", slidestargetposition);
             if(result.isValid() == false) {
                 movepower = 0;
                 turnpower = 0;
@@ -96,8 +103,8 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
             if(slidestargetposition >= 2988 &&  slidestargetposition > slides.getCurrentPosition()) {
                 slidestargetposition = 2988;
             }
-            if(slidestargetposition <= 5 && slidestargetposition < slides.getCurrentPosition()) {
-                slidestargetposition = 5;
+            if(slidestargetposition <= 50 && slidestargetposition < slides.getCurrentPosition()) {
+                slidestargetposition = 50;
             }
             telemetry.addData("Slides Current Position", slides.getCurrentPosition());
             telemetry.update();
@@ -106,6 +113,10 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
             FR.setPower(movepower-turnpower);
             BL.setPower(turnpower+movepower);
             BR.setPower(movepower-turnpower);
+
+            //slides.setTargetPosition((int) slidestargetposition);
+            //slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            //slides.setPower(0.4);
             slide.slidego(slidestargetposition, hardwareMap);
 
 
