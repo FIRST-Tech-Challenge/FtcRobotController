@@ -272,36 +272,20 @@ public class PIDCore {
     }
 
 
-    public double outputPID(double setPoint, double feedback) {
-        double currentTime = timer.seconds();
-        double deltaTime = currentTime - lastTime;
-
-        // Prevent a giant deltaTime on the very first loop
-        if (lastTime == 0) {
-            deltaTime = 0;
-        }
-
+    public double outputPositional(double setPoint, double feedback) {
+        timer.reset();
         error = setPoint - feedback;
-
-        // Integral term
-        if (activateIntegral && deltaTime > 0) {
-            integralSum += error * deltaTime;
-        } else if (!activateIntegral) {
+        timeChange = timer.milliseconds();
+        if(activateIntegral){
+            integralSum += error * timer.seconds();
+        }
+        else{
             integralSum = 0;
         }
-
-        // Derivative term
-        double derivative = 0;
-        if (deltaTime > 0) {
-            derivative = (error - lastError) / deltaTime;
-        }
-
-        // Save state for next loop
+        errorChange = (error - lastError);
+        derivative = (error - lastError) / timer.milliseconds();
         lastError = error;
-        lastTime = currentTime;
-
-        // PID output
-        return (Kp * error) + (Ki * integralSum) + (Kd * derivative);
+        return (error * Kp) + (derivative * Kd) + (integralSum * Ki);
     }
 
 
@@ -455,7 +439,7 @@ public class PIDCore {
      * @return combined output value
      */
     public double cascadeOutput(double setPoint, double feedback, double setVelocity, double feedbackVelocity){
-        outputPositionalValue = outputPID(setPoint, feedback);
+        outputPositionalValue = outputPositional(setPoint, feedback);
         outputVelocityValue = outputVelocity(setVelocity, feedbackVelocity);
         return outputPositionalValue + outputVelocityValue;
     }

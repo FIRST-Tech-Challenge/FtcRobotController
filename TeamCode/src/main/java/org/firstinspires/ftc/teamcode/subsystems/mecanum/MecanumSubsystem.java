@@ -199,23 +199,23 @@ class MecanumSubsystem {
     }
 
     //
-    public void partialMove(boolean run, double verticalVel, double horizontalVel, double rotationalVel){
-        if (run){
+    public void partialMove(double verticalVel, double horizontalVel, double rotationalVel){
+
             rbVelMain = (verticalVel * Math.cos(Math.toRadians(45)) + horizontalVel * Math.sin(Math.toRadians(45)) + rotationalVel * Math.sin(Math.toRadians(45)))*(1.41421356237);
             rfVelMain = (-horizontalVel * Math.cos(Math.toRadians(45)) + verticalVel * Math.sin(Math.toRadians(45)) + rotationalVel * Math.sin(Math.toRadians(45)))*(1.41421356237);
             lfVelMain = (verticalVel * Math.cos(Math.toRadians(45)) + horizontalVel * Math.sin(Math.toRadians(45)) - rotationalVel * Math.sin(Math.toRadians(45)))*(1.41421356237);
             lbVelMain = (-horizontalVel * Math.cos(Math.toRadians(45)) + verticalVel * Math.sin(Math.toRadians(45)) - rotationalVel * Math.sin(Math.toRadians(45)))*(1.41421356237);
-        }
+
     }
 
     //PartialMoveAdjustment is used in GridAutoCentering, it allows the robot to auto center to the grid
-    public void partialMoveAdjustment(boolean run, double verticalVel, double horizontalVel, double rotationalVel){
-        if (run){
+    public void partialMoveAdjustment(double verticalVel, double horizontalVel, double rotationalVel){
+
             rbVelAdjustment1 = (verticalVel * Math.cos(Math.toRadians(45)) + horizontalVel * Math.sin(Math.toRadians(45)) + rotationalVel * Math.sin(Math.toRadians(45)))*(1.41421356237);
             rfVelAdjustment1 = (-horizontalVel * Math.cos(Math.toRadians(45)) + verticalVel * Math.sin(Math.toRadians(45)) + rotationalVel * Math.sin(Math.toRadians(45)))*(1.41421356237);
             lfVelAdjustment1 = (verticalVel * Math.cos(Math.toRadians(45)) + horizontalVel * Math.sin(Math.toRadians(45)) - rotationalVel * Math.sin(Math.toRadians(45)))*(1.41421356237);
             lbVelAdjustment1 = (-horizontalVel * Math.cos(Math.toRadians(45)) + verticalVel * Math.sin(Math.toRadians(45)) - rotationalVel * Math.sin(Math.toRadians(45)))*(1.41421356237);
-        }
+
     }
 
     public void turnOffInternalPID() {
@@ -226,26 +226,26 @@ class MecanumSubsystem {
     }
 
     // Basic Mecanum robot movement
-    public void move(boolean run, double vertical, double horizontal, double rotational){
-        if (run){
+    public void move(double vertical, double horizontal, double rotational){
+
             rightFrontMotorOutput = (-horizontal * Math.cos(Math.toRadians(45)) + vertical * Math.sin(Math.toRadians(45)) + rotational * Math.sin(Math.toRadians(45)))*(1.41421356237);
             leftFrontMotorOutput = (vertical * Math.cos(Math.toRadians(45)) + horizontal * Math.sin(Math.toRadians(45)) - rotational * Math.sin(Math.toRadians(45)))*(1.41421356237);
             rightBackMotorOutput = (vertical * Math.cos(Math.toRadians(45)) + horizontal * Math.sin(Math.toRadians(45)) + rotational * Math.sin(Math.toRadians(45)))*(1.41421356237);
             leftBackMotorOutput = (-horizontal * Math.cos(Math.toRadians(45)) + vertical * Math.sin(Math.toRadians(45)) - rotational * Math.sin(Math.toRadians(45)))*(1.41421356237);
 
             setPowers(rightBackMotorOutput,leftBackMotorOutput,rightFrontMotorOutput,leftFrontMotorOutput);
-        }
+
     }
 
-    public void moveToPosition(boolean run, double power, double degree, int position){
-        if (run){
+    public void moveToPosition(double power, double degree, int position){
+
             double y1 = power * Math.sin(Math.toRadians(degree)) * Math.cos(Math.toRadians(45)) - power * Math.cos(Math.toRadians(degree)) * Math.sin(Math.toRadians(45));
             double x1 = power * Math.cos(Math.toRadians(degree)) * Math.cos(Math.toRadians(45)) + power * Math.sin(Math.toRadians(degree)) * Math.sin(Math.toRadians(45));
             double y2 = power * Math.sin(Math.toRadians(degree)) * Math.cos(Math.toRadians(45)) - power * Math.cos(Math.toRadians(degree)) * Math.sin(Math.toRadians(45));
             double x2 = power * Math.cos(Math.toRadians(degree)) * Math.cos(Math.toRadians(45)) + power * Math.sin(Math.toRadians(degree)) * Math.sin(Math.toRadians(45));
             while (hw.rf.getCurrentPosition()<position){
                 setPowers(0,0,0,0);
-            }
+
         setPowers(0,0,0,0);
         }
     }
@@ -259,13 +259,13 @@ class MecanumSubsystem {
 
     // Output Positional Getters for PID controllers
     public double globalXControllerOutputPositional(double XsetPoint, double Xfeedback) {
-        return globalXController.outputPID(XsetPoint, Xfeedback);
+        return globalXController.outputPositional(XsetPoint, Xfeedback);
     }
     public double globalYControllerOutputPositional(double YsetPoint, double Yfeedback) {
-        return globalYController.outputPID(YsetPoint, Yfeedback);
+        return globalYController.outputPositional(YsetPoint, Yfeedback);
     }
     public double globalThetaControllerOutputPositional(double ThetasetPoint, double Thetafeedback) {
-        return globalThetaController.outputPID(ThetasetPoint, Thetafeedback);
+        return globalThetaController.outputPositional(ThetasetPoint, Thetafeedback);
     }
 
     // stop all motors

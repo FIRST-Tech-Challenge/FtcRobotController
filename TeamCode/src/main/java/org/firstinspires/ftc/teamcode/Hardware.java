@@ -9,6 +9,9 @@ import org.firstinspires.ftc.teamcode.util.GoBildaPinpointDriver;
 
 public class Hardware {
 
+    public static final String EXTENSION_MOTOR_MAIN = "lift1";
+    public static final String EXTENSION_MOTOR_AUX1 = "lift2";
+    public static final String EXTENSION_MOTOR_AUX2 = "lift3";
     //singleton
     private static Hardware instance;
 
@@ -33,7 +36,9 @@ public class Hardware {
     // Odometry
     public final GoBildaPinpointDriver pinPointOdo;
 
-    private Hardware(HardwareMap hwMap){
+    public Hardware(HardwareMap hwMap){
+
+
         this.lift1 = hwMap.get(DcMotorEx.class, Specifications.EXTENSION_MOTOR_MAIN);
         this.lift2 = hwMap.get(DcMotorEx.class, Specifications.EXTENSION_MOTOR_AUX1);
         this.lift3 = hwMap.get(DcMotorEx.class, Specifications.EXTENSION_MOTOR_AUX2);

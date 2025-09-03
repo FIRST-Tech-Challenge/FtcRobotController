@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class MecanumCommand {
 
 
+
     // PID controllers for x, y, and heading
     private PIDCore xController;
     private PIDCore yController;
@@ -138,7 +139,7 @@ public class MecanumCommand {
             double angle = Math.PI / 2 - pinPointOdoSubsystem.getHeading();
             double localVertical = vertical * Math.cos(pinPointOdoSubsystem.getHeading()) - horizontal * Math.cos(angle);
             double localHorizontal = vertical * Math.sin(pinPointOdoSubsystem.getHeading()) + horizontal * Math.sin(angle);
-            mecanumSubsystem.partialMove(true, localVertical, localHorizontal, rotational);
+            mecanumSubsystem.partialMove( localVertical, localHorizontal, rotational);
     }
 
     public void resetPinPointOdometry() {
@@ -217,7 +218,15 @@ public class MecanumCommand {
 
 
     public void motorProcess() {
-        mecanumSubsystem.motorProcessNoEncoder();
+        mecanumSubsystem.fieldOrientedMoveExponential(0,5,0,0);
+    }
+
+
+    public void deadReckoning() {
+        pinPointOdoSubsystem.deadReckoning();
+    }
+    public void stop(){
+        mecanumSubsystem.setPowers(0,0,0,0);
     }
 
 }
