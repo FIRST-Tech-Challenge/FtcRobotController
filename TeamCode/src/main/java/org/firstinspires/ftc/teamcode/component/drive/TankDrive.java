@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.drive;
+package org.firstinspires.ftc.teamcode.component.drive;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class TankDrive {
-    private DcMotor leftMotor = null;
-    private DcMotor rightMotor = null;
+    private DcMotor leftMotor;
+    private DcMotor rightMotor;
 
     public TankDrive(DcMotor left, DcMotor right) {
         this.leftMotor = left;
@@ -14,8 +14,8 @@ public class TankDrive {
         //telemetry.addData("status", "Tank Drive Initialized");
     }
 
-    public void drive(double leftPower, double rightPower, double speedFactor) {
-        leftMotor.setPower(leftPower * speedFactor);
-        rightMotor.setPower(rightPower * speedFactor);
+    public void drive(double leftPower, double rightPower, double scaleFactor) {
+        leftMotor.setPower(leftPower * scaleFactor);
+        rightMotor.setPower(rightPower * scaleFactor);
     }
 }
