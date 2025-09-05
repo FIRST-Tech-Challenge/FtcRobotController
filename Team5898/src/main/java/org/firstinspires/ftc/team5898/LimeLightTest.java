@@ -11,7 +11,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
+import org.firstinspires.ftc.vision.VisionPortal;
 
 @Autonomous
 @Config
@@ -19,6 +21,8 @@ public class LimeLightTest extends OpMode {
     private FtcDashboard dashboard;
     private Limelight3A limelight3A;
     public static int pipeLineSelect = 0;
+    private VisionPortal portal;
+
     @Override
     public void init()
     {
@@ -29,13 +33,18 @@ public class LimeLightTest extends OpMode {
         //Limelight Init
         limelight3A = hardwareMap.get(Limelight3A.class, "limelight");
         limelight3A.pipelineSwitch(pipeLineSelect); // 0 is blue & 1 is red & 2 is yellow
+        WebcamName llcam = hardwareMap.get(WebcamName.class,"limelight");
+        portal = new VisionPortal.Builder()
+                .setCamera(llcam)
+                .setAutoStartStreamOnBuild(false)
+                .build();
     }
 
     @Override
     public void start()
     {
         limelight3A.start();
-        dashboard.startCameraStream((CameraStreamSource) limelight3A, 60.0);
+        dashboard.startCameraStream(portal, 60.0); //TODO: To be tested
     }
 
     @Override
