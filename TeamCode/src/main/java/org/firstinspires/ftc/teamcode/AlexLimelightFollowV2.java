@@ -100,7 +100,7 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
                 movepower = 0;
                 turnpower = 0;
             }
-            if(slidestargetposition >= 2988 &&  slidestargetposition > slides.getCurrentPosition()) {
+            if(slidestargetposition >= 2980 &&  slidestargetposition > slides.getCurrentPosition()) {
                 slidestargetposition = 2988;
             }
             if(slidestargetposition <= 50 && slidestargetposition < slides.getCurrentPosition()) {

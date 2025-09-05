@@ -17,9 +17,6 @@ public class PIDSlidesTune extends LinearOpMode{
     FtcDashboard dashboard;
 
     public  static double targetposition = 2000;
-    public  static double P = 0.046;
-    public  static double I = 0.000002;
-    public  static double D = 0.0855;
     public DcMotor slides;
     @Override
     public void runOpMode() throws InterruptedException {
