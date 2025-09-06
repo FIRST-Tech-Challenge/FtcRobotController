@@ -15,7 +15,6 @@ public class FieldCentricDrive extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         robot = new Robot(hardwareMap);
-
         telemetry.addData("Robot status", "succesfully initiated");
         telemetry.update();
 

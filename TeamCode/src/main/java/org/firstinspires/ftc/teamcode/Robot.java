@@ -18,8 +18,7 @@ public class Robot {
 
         drivetrain = new Drivetrain(hardwareMap);
 
-        slides = new Slides(hardwareMap);
-
+        //slides = new Slides(hardwareMap);
     }
 
     public Drivetrain getDrivetrain(){
