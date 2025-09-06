@@ -15,10 +15,10 @@ public class riptideUtil {
 
 
     /** Autonomous Constants */
-    public static final double POINT_TOLERANCE = 0; // UNDETERMINED
+    public static final double POINT_TOLERANCE = 2; // UNDETERMINED
     // Maximums
-    public static double MAX_A_VERT = 0;            // UNDETERMINED
-    public static double MAX_V_VERT = 0;            // UNDETERMINED
+    public static double MAX_A_VERT = 72;            // UNDETERMINED
+    public static double MAX_V_VERT = 96;            // UNDETERMINED
     public static double MAX_A_LAT = 0;             // UNDETERMINED
     public static double MAX_V_LAT = 0;             // UNDETERMINED
 

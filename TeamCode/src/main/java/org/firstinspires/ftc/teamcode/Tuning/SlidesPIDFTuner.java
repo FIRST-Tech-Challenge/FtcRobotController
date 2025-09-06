@@ -52,8 +52,7 @@ public class SlidesPIDFTuner extends LinearOpMode {
             }
 
             slideController.setPID(kp, ki, kd);
-            if(TorF) {currentPosition = robot.getSlides().getSlidePositionAvg();}
-            else{currentPosition = robot.getSlides().getOneSlidePosition();}
+            currentPosition = robot.getSlides().getSlidePosition();
 
             robot.getSlides().setSlidePower(slideController.calculate(currentPosition, goal) + kf);
 
