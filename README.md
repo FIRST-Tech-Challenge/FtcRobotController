@@ -1,6 +1,6 @@
 ## NOTICE
 
-This repository contains the public FTC SDK for the INTO THE DEEP (2024-2025) competition season.
+This repository contains the public FTC SDK for the DECODE (2025-2026) competition season.
 
 ## Welcome!
 This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
@@ -58,6 +58,40 @@ Samples Folder: &nbsp;&nbsp; [/FtcRobotController/src/main/java/org/firstinspire
 The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc/teamcode](TeamCode/src/main/java/org/firstinspires/ftc/teamcode) folder contains an explanation of the sample naming convention, and instructions on how to copy them to your own project space.
 
 # Release Information
+
+## Version 11.0 (20250827-105138)
+
+### Enhancements
+
+* OnBotJava now has the concept of a project.  
+  A project is a collection of related files.  A project may be chosen by selecting 'Example Project'
+  from the 'File type:' dropdown.  Doing so will populate the dropdown to the immediate right with 
+  a list of projects to choose from.
+  When selecting a project all of the related files appear in the left pane of the workspace 
+  underneath a directory with the chosen project name.
+  This is useful for example for ConceptExternalHardwareClass which has a dependency upon
+  RobotHardware.  This feature simplifies the usage of this Concept example by automatically
+  pulling in dependent classes.
+* Adds support for AndyMark ToF, IMU, and Color sensors.
+* The Driver Station app indicates if WiFi is disabled on the device.
+* Adds several features to the Color Processing software:
+  * DECODE colors `ARTIFACT_GREEN` and `ARTIFACT_PURPLE`
+  * Choice of the order of pre-processing steps Erode and Dilate
+  * Best-fit preview shape called `circleFit`, an alternate to the existing `boxFit`
+  * Sample OpMode `ConceptVisionColorLocator_Circle`, an alternate to the renamed `ConceptVisionColorLocator_Rectangle`
+* The Driver Station app play button has a green background with a white play symbol if
+  * the driver station and robot controller are connected and have the same team number
+  * there is at least one gamepad attached
+  * the timer is enabled (for an Autonomous OpMode)
+* Updated AprilTag Library for DECODE. Notably, getCurrentGameTagLibrary() now returns DECODE tags.
+  * Since the AprilTags on the Obelisk should not be used for localization, the ConceptAprilTagLocalization samples only use those tags without the name 'Obelisk' in them.
+* OctoQuad I2C driver updated to support firmware v3.x 
+  * Adds support for odometry localizer on MK2 hardware revision
+  * Adds ability to track position for an absolute encoder across multiple rotations
+  * Note that some driver APIs have changed; minor updates to user software may be required
+  * Requires firmware v3.x. For instructions on updating firmware, see
+    https://github.com/DigitalChickenLabs/OctoQuad/blob/master/documentation/OctoQuadDatasheet_Rev_3.0C.pdf
+
 
 ## Version 10.3 (20250625-090416)
 
