@@ -11,9 +11,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Modules.PIDController;
 import org.firstinspires.ftc.teamcode.Robot;
 
-// gotta rename this but otherwise
-// ----- READY TO TRANSFER ----- //
-
 @Config
 @TeleOp(name = "Vertical slides PIDF Tuner", group = "Tuning")
 public class SlidesPIDFTuner extends LinearOpMode {
