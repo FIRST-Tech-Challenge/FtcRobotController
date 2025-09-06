@@ -11,25 +11,14 @@ public class Robot {
 
     Drivetrain drivetrain;
 
-    Slides slides;
-
     public Robot (HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
 
         drivetrain = new Drivetrain(hardwareMap);
-
-        //slides = new Slides(hardwareMap);
     }
 
     public Drivetrain getDrivetrain(){
         return drivetrain;
     }
-
-    public Slides getSlides(){
-        return slides;
-    }
-
-
-
 
 }
