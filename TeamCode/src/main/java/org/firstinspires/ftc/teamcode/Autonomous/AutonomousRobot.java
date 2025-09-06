@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KD;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KI;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KP;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.MAX_A;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.MAX_V;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.TURN_KD;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.TURN_KI;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.TURN_KP;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.VERT_KD;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.VERT_KI;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.VERT_KP;
+import static org.firstinspires.ftc.teamcode.riptideUtil.LAT_KD;
+import static org.firstinspires.ftc.teamcode.riptideUtil.LAT_KI;
+import static org.firstinspires.ftc.teamcode.riptideUtil.LAT_KP;
+import static org.firstinspires.ftc.teamcode.riptideUtil.MAX_A;
+import static org.firstinspires.ftc.teamcode.riptideUtil.MAX_V;
+import static org.firstinspires.ftc.teamcode.riptideUtil.TURN_KD;
+import static org.firstinspires.ftc.teamcode.riptideUtil.TURN_KI;
+import static org.firstinspires.ftc.teamcode.riptideUtil.TURN_KP;
+import static org.firstinspires.ftc.teamcode.riptideUtil.VERT_KD;
+import static org.firstinspires.ftc.teamcode.riptideUtil.VERT_KI;
+import static org.firstinspires.ftc.teamcode.riptideUtil.VERT_KP;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -18,9 +18,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Modules.PIDController;
 import org.firstinspires.ftc.teamcode.Modules.EditablePose2D;
-import org.firstinspires.ftc.teamcode.Modules.PIDController;
-import org.firstinspires.ftc.teamcode.Modules.Robot;
-import org.firstinspires.ftc.teamcode.Modules.riptideUtil;
+import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.riptideUtil;
 import org.firstinspires.ftc.teamcode.Modules.Drivetrain;
 
 // maybe GOING TO BE REFACTORED, THIS IS GOING TO BE SO DEPRECATED

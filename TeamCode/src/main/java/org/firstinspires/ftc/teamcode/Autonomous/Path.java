@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.Modules.EditablePose2D;
-import org.firstinspires.ftc.teamcode.Modules.Robot;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 // maybe usable, idk  usable, needs some edits.

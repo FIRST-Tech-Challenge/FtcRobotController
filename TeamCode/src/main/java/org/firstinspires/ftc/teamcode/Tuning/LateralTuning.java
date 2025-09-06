@@ -1,15 +1,13 @@
 package org.firstinspires.ftc.teamcode.Tuning;
 
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KD;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KI;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KP;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.MAX_A;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.MAX_V;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.TURN_KP;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.VERT_KD;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.VERT_KP;
-
-import com. acmerobotics. dashboard. canvas. Canvas;
+import static org.firstinspires.ftc.teamcode.riptideUtil.LAT_KD;
+import static org.firstinspires.ftc.teamcode.riptideUtil.LAT_KI;
+import static org.firstinspires.ftc.teamcode.riptideUtil.LAT_KP;
+import static org.firstinspires.ftc.teamcode.riptideUtil.MAX_A;
+import static org.firstinspires.ftc.teamcode.riptideUtil.MAX_V;
+import static org.firstinspires.ftc.teamcode.riptideUtil.TURN_KP;
+import static org.firstinspires.ftc.teamcode.riptideUtil.VERT_KD;
+import static org.firstinspires.ftc.teamcode.riptideUtil.VERT_KP;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -23,8 +21,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Autonomous.TrapezoidalMotionProfile;
 import org.firstinspires.ftc.teamcode.Modules.EditablePose2D;
 import org.firstinspires.ftc.teamcode.Modules.PIDController;
-import org.firstinspires.ftc.teamcode.Modules.Robot;
-import org.firstinspires.ftc.teamcode.Modules.riptideUtil;
+import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.riptideUtil;
 
 
 // ----- READY TO TRANSFER ----- //

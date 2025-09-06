@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode.Tuning;
 
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KD;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KI;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.LAT_KP;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.MAX_A;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.MAX_V;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.TURN_KD;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.TURN_KI;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.TURN_KP;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.VERT_KD;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.VERT_KI;
-import static org.firstinspires.ftc.teamcode.Modules.riptideUtil.VERT_KP;
+import static org.firstinspires.ftc.teamcode.riptideUtil.LAT_KD;
+import static org.firstinspires.ftc.teamcode.riptideUtil.LAT_KI;
+import static org.firstinspires.ftc.teamcode.riptideUtil.LAT_KP;
+import static org.firstinspires.ftc.teamcode.riptideUtil.MAX_A;
+import static org.firstinspires.ftc.teamcode.riptideUtil.MAX_V;
+import static org.firstinspires.ftc.teamcode.riptideUtil.TURN_KD;
+import static org.firstinspires.ftc.teamcode.riptideUtil.TURN_KI;
+import static org.firstinspires.ftc.teamcode.riptideUtil.TURN_KP;
+import static org.firstinspires.ftc.teamcode.riptideUtil.VERT_KD;
+import static org.firstinspires.ftc.teamcode.riptideUtil.VERT_KI;
+import static org.firstinspires.ftc.teamcode.riptideUtil.VERT_KP;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -18,10 +18,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Autonomous.TrapezoidalMotionProfile;
-import org.firstinspires.ftc.teamcode.Modules.Drivetrain;
 import org.firstinspires.ftc.teamcode.Modules.EditablePose2D;
 import org.firstinspires.ftc.teamcode.Modules.PIDController;
-import org.firstinspires.ftc.teamcode.Modules.Robot;
+import org.firstinspires.ftc.teamcode.Robot;
 
 // ----- READY TO TRANFER ----- //
 
