@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Modules.Robot;
+import org.firstinspires.ftc.teamcode.Robot;
 
 // If we're using diffy then this would have to be rewritten a bit but otherwise usefull
 // ----- READY TO TRANSFER ----- //

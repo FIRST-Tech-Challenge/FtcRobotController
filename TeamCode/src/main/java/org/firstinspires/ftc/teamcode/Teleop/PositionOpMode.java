@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Modules.Drivetrain;
 import org.firstinspires.ftc.teamcode.Modules.EditablePose2D;
-import org.firstinspires.ftc.teamcode.Modules.Robot;
+import org.firstinspires.ftc.teamcode.Robot;
 
 // this will probably be usefull
 

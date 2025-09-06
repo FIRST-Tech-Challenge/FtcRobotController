@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.Modules;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Modules.Drivetrain;
+import org.firstinspires.ftc.teamcode.Modules.Slides;
 
 public class Robot {
 
@@ -18,7 +18,7 @@ public class Robot {
 
         drivetrain = new Drivetrain(hardwareMap);
 
-        //slides = new Slides(hardwareMap);
+        slides = new Slides(hardwareMap);
 
     }
 
