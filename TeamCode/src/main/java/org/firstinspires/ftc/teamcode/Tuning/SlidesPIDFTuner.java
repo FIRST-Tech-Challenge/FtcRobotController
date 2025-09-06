@@ -18,10 +18,10 @@ public class SlidesPIDFTuner extends LinearOpMode {
     Telemetry t = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     Robot robot;
 
-    public static double kp = 0.02;
-    public static double ki = 0.3;
-    public static double kd = 0.001;
-    public static double kf = 0;
+    public static double kp = 0.02;     // idfk
+    public static double ki = 0.3;      // dude
+    public static double kd = 0.001;    // eff this sh1t
+    public static double kf = 0;        // /^\  T^T ToT T-T T_T TOT
 
     double currentPosition;
     boolean TorF = false;
@@ -49,8 +49,7 @@ public class SlidesPIDFTuner extends LinearOpMode {
             }
 
             slideController.setPID(kp, ki, kd);
-            if(TorF) {currentPosition = robot.getSlides().getSlidePositionAvg();}
-            else{currentPosition = robot.getSlides().getOneSlidePosition();}
+            currentPosition = robot.getSlides().getSlidePosition();
 
             robot.getSlides().setSlidePower(slideController.calculate(currentPosition, goal) + kf);
 

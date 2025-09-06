@@ -16,7 +16,8 @@ public class Slides {
     //////////////////////////////////////////////
 
     // ---------- SLIDE MOTORS ---------- //
-    private final DcMotor lSlide, rSlide;
+//    private final DcMotor lSlide, rSlide;
+    private final DcMotor slide;
 
     // -------- SLIDE PID STUFF -------- //
     private double slideKP = 0.02; /*Unknown*/
@@ -36,16 +37,19 @@ public class Slides {
 
     public Slides(HardwareMap hardwareMap) {
 
-        rSlide = hardwareMap.dcMotor.get("rSlide");
-        lSlide = hardwareMap.dcMotor.get("lSlide");
+//        rSlide = hardwareMap.dcMotor.get("rSlide");
+//        lSlide = hardwareMap.dcMotor.get("lSlide");
+        slide = hardwareMap.dcMotor.get("slide");
 
         slidePID.setDeadZone(0);
 
-        lSlide.setDirection(DcMotor.Direction.REVERSE);
-        rSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        lSlide.setDirection(DcMotor.Direction.REVERSE);
+//        rSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        lSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        lSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         slidePID.setPID(slideKP,slideKI, slideKD);
     }
@@ -54,8 +58,8 @@ public class Slides {
 
     public double getSlideGoalPosition() {return slideGoal;}
 
-    public double getSlidePositionAvg(){
-        return (double) (rSlide.getCurrentPosition() + lSlide.getCurrentPosition()) /2;
+    public double getSlidePosition(){
+        return (double) slide.getCurrentPosition();
     }
 
     /**
@@ -63,7 +67,7 @@ public class Slides {
      * tuning a PID of a combined encoder output
      */
     public double getOneSlidePosition(){
-        return rSlide.getCurrentPosition();
+        return slide.getCurrentPosition();
     }
 
     // ------------ SETTERS ------------ //
@@ -75,8 +79,9 @@ public class Slides {
     }
 
     public void setSlidePower(double power) {
-        rSlide.setPower(power);
-        lSlide.setPower(power);
+//        rSlide.setPower(power);
+//        lSlide.setPower(power);
+        slide.setPower(power);
     }
 
     /**
@@ -98,10 +103,12 @@ public class Slides {
     }
 
     public void resetSlideEncoders(){
-        rSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+//        rSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        lSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        lSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        lSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 }
