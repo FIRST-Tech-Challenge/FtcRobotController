@@ -6,10 +6,10 @@ TeamCode is where you will put all related code files for controlling the robot.
 only place to store these types of code files.
 
 ## Committing to the remote repository
-The remote repository consists of two main *branches* (independent lines of development):
+The remote repository consists of two main branches (independent lines of development):
 - **master**: This syncs with the base FTCRobotController and is only used to receive necessary
   package upgrades from the base repository. **This should not be committed to.**
-- **competition**: **This is where you will commit new code.** We will use a system of *pull 
+- **competition-code**: **This is where you will commit new code.** We will use a system of *pull 
   requests* and approvals to update and merge code. Make sure your pull requests go towards this branch.
 
 ## Creating your own OpModes
