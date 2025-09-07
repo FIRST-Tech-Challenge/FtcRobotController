@@ -21,7 +21,7 @@ public class OdometryLocalizer implements Runnable {
     private final double C = 2 * Math.PI * ODO_POD_RADIUS / TICKS_PER_REVOLUTION;
 
     private final double X_FACTOR = 1;
-    private final double Y_FACTOR = 1.01818182; // Needs to be set
+    private final double Y_FACTOR = 1; // Needs to be set
     private final double ANGLE_FACTOR = 1; // Needs to be set
 
     private int leftParallelTicks;
