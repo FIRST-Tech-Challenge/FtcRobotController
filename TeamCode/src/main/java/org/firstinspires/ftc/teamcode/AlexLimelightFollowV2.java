@@ -5,14 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "Alex's limelight that is cool")
 public class AlexLimelightFollowV2 extends LinearOpMode{
     double tx = 0; // must define it as double here to make it global
     double ta = 0;
     double ty = 0;
-    double slidespower = 0;
     boolean slidesmove = true;
     private Limelight3A limelight;
     double slidestargetposition = 0;
@@ -42,7 +40,6 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
         BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Slide slide = new Slide();
         slides = hardwareMap.dcMotor.get("slides");
-        double error = slidestargetposition - slides.getCurrentPosition();
         slides.setDirection(DcMotorSimple.Direction.REVERSE);
         slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -50,8 +47,7 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
         telemetry.update();
         waitForStart();
         while (opModeIsActive()) {
-            error = slidestargetposition - slides.getCurrentPosition();
-            if(resettimer == true) {
+            if(resettimer) {
                 slide.resettimer();
                 resettimer = false;
             }
@@ -61,7 +57,7 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
                 tx = result.getTx(); // How far left or right the target is (degrees)
                 ta = result.getTa(); // How big the target looks (0%-100% of the image)
                 ty = result.getTy();
-                ty = (0.8*ty) + (0.2*lastTy);
+                ty = (0.7*ty) + (0.3*lastTy);
                 lastTy = ty;
                 telemetry.addData("Target X", tx);
                 telemetry.addData("Target A", ta);
@@ -96,7 +92,7 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
                         slidestargetposition = slidestargetposition + (ty*0.833f);
                         slidestargetposition = Math.round(slidestargetposition);
                         telemetry.addData("Slide target position", slidestargetposition);
-            if(result.isValid() == false) {
+            if(!result.isValid()) {
                 movepower = 0;
                 turnpower = 0;
             }
@@ -113,10 +109,6 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
             FR.setPower(movepower-turnpower);
             BL.setPower(turnpower+movepower);
             BR.setPower(movepower-turnpower);
-
-            //slides.setTargetPosition((int) slidestargetposition);
-            //slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            //slides.setPower(0.4);
             slide.slidego(slidestargetposition, hardwareMap);
 
 

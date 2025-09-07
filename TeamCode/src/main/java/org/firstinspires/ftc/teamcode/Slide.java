@@ -11,26 +11,18 @@ import com.acmerobotics.dashboard.config.Config;
 
 public class Slide {
     FtcDashboard dashboard;
-    public static double P = 0.012;
-    public static double I = 0.000015;
-    public static double D = 0.001;
+    public static double P = 0.036;
+    public static double D = 0;
 
     double error = 0;
     double derivative = 0;
-    double integralsum = 0;
     double lasterror = 0;
     double slidesholdpower = 0;
-    boolean stopPID = false;
-    boolean resettimer = true;
     private DcMotor slides;
     ElapsedTime timer = new ElapsedTime();
 
     public void resettimer() {
         timer.reset();
-    }
-    public void stopPID() {
-        stopPID = true;
-        slides.setPower(0);
     }
     public void slidego(double targetposition, HardwareMap hardwareMap) {
             slides = hardwareMap.dcMotor.get("slides");
@@ -40,9 +32,7 @@ public class Slide {
             }
             timer.reset();
             error = targetposition - slides.getCurrentPosition();
-            derivative = (error - lasterror) / dt;
-            integralsum = integralsum + (error * dt);
-            slidesholdpower = (P * error) + (I * integralsum) + (D * derivative);
+            slidesholdpower = (P * error);
             if(slidesholdpower < 0) {
                 slides.setPower(Math.max(slidesholdpower,-1));
             } else if (slidesholdpower > 0) {
