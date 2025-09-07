@@ -11,14 +11,36 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Set current date as environment variable
+      run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+    
     - name: set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
-        distribution: 'jetbrains'
+        distribution: 'temurin'
         cache: gradle
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-    - name: Build with Gradle
-      run: ./gradlew build
+
+    # Create the Release APK
+    - name: Build TeamCode release APK
+      run: ./gradlew :TeamCode:assembleRelease --stacktrace --no-daemon --parallel
+
+    - name: Upload TeamCode release APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: TeamCode-release-${{ env.date_today }}
+        path: TeamCode/build/outputs/apk/release/TeamCode-release.apk
+
+    # Create the Debug APK
+    - name: Build TeamCode debug APK
+      run: ./gradlew :TeamCode:assembleDebug --stacktrace --no-daemon --parallel
+
+    - name: Upload TeamCode debug APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: TeamCode-debug-${{ env.date_today }}
+        path: TeamCode/build/outputs/apk/debug/TeamCode-debug.apk
