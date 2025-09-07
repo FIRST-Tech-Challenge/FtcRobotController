@@ -8,49 +8,68 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name = "Alex's limelight that is cool")
 public class AlexLimelightFollowV2 extends LinearOpMode{
-    double tx = 0;
+    double tx = 0; // must define it as double here to make it global
     double ta = 0;
-    double desiredDistance = -2;
+    double ty = 0;
+    boolean slidesmove = true;
     private Limelight3A limelight;
+    double slidestargetposition = 0;
+    boolean resettimer = true;
+    double lastTy = 0;
+    DcMotor slides;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        DcMotor FL = hardwareMap.dcMotor.get("FL");
+        DcMotor FL = hardwareMap.dcMotor.get("FL"); //init motors
         DcMotor FR = hardwareMap.dcMotor.get("FR");
         DcMotor BL = hardwareMap.dcMotor.get("BL");
         DcMotor BR = hardwareMap.dcMotor.get("BR");
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(0);
+        limelight.pipelineSwitch(0); // get the pipeline for limelight
         limelight.setPollRateHz(100);
-        limelight.start();
-        FL.setDirection(DcMotorSimple.Direction.REVERSE);
-        BL.setDirection(DcMotorSimple.Direction.REVERSE);
-        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        limelight.start(); // starts, REQUIRED FOR LIMELIGHT!
+        FL.setDirection(DcMotorSimple.Direction.REVERSE); // regular drivetrain reverse
+        BL.setDirection(DcMotorSimple.Direction.REVERSE); // regular drivetrain reverse
+        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Resets encoder for driving
         FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // sets mode to run without encoder because we don't need to caluclate volocity
         BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        telemetry.addData("Robot is ready!", "Skibidi Toliet Rizz!");
+        Slide slide = new Slide();
+        slides = hardwareMap.dcMotor.get("slides");
+        slides.setDirection(DcMotorSimple.Direction.REVERSE);
+        slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        telemetry.addData("Robot is ready!", "Skibidi Toliet Rizz!"); //hehe
         telemetry.update();
         waitForStart();
         while (opModeIsActive()) {
+            if(resettimer) {
+                slide.resettimer();
+                resettimer = false;
+            }
+            slidesmove = true;
             LLResult result = limelight.getLatestResult();
-            if (result != null && result.isValid()) {
+            if (result != null && result.isValid()) { // if the limelight sees a apriltag
                 tx = result.getTx(); // How far left or right the target is (degrees)
                 ta = result.getTa(); // How big the target looks (0%-100% of the image)
-
+                ty = result.getTy();
+                ty = (0.7*ty) + (0.3*lastTy);
+                lastTy = ty;
                 telemetry.addData("Target X", tx);
                 telemetry.addData("Target A", ta);
+                telemetry.addData("Target Y", ty);
                 telemetry.addData("Target Area", ta);
             } else {
                 telemetry.addData("Limelight", "No Targets");
                 tx = 0;
                 ta = 0;
+                ty = 0;
             }
-            telemetry.update();
+
             double tuningconstant = 0.02;
             double turnpower = tx * tuningconstant;
             if(turnpower >= 0.7) {
@@ -67,16 +86,30 @@ public class AlexLimelightFollowV2 extends LinearOpMode{
             if(movepower <= -0.7) {
                 movepower = -0.7;
             }
-            if(result.isValid() == false) {
+
+
+            //move the slide(Slides logic.)
+                        slidestargetposition = slidestargetposition + (ty*0.833f);
+                        slidestargetposition = Math.round(slidestargetposition);
+                        telemetry.addData("Slide target position", slidestargetposition);
+            if(!result.isValid()) {
                 movepower = 0;
                 turnpower = 0;
             }
+            if(slidestargetposition >= 2980 &&  slidestargetposition > slides.getCurrentPosition()) {
+                slidestargetposition = 2988;
+            }
+            if(slidestargetposition <= 50 && slidestargetposition < slides.getCurrentPosition()) {
+                slidestargetposition = 50;
+            }
+            telemetry.addData("Slides Current Position", slides.getCurrentPosition());
+            telemetry.update();
             movepower = -movepower;
             FL.setPower(turnpower+movepower);
             FR.setPower(movepower-turnpower);
             BL.setPower(turnpower+movepower);
             BR.setPower(movepower-turnpower);
-
+            slide.slidego(slidestargetposition, hardwareMap);
 
 
         }

@@ -15,7 +15,7 @@ public class ViperPosition extends LinearOpMode {
         DcMotor Slides = hardwareMap.dcMotor.get("slides");
         Slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Slides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE );
         telemetry.addData("Robot is ready!", "Skibidi Toliet Rizz!");
         telemetry.update();
         waitForStart();
