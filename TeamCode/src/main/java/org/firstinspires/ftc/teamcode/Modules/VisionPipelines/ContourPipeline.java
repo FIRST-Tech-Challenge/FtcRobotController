@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.VisionPipelines;
+package org.firstinspires.ftc.teamcode.Modules.VisionPipelines;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -13,12 +13,6 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
-
-
-
-
-
-
 
 public class ContourPipeline extends OpenCvPipeline {
     /*

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.VisionPipelines;
+package org.firstinspires.ftc.teamcode.Modules.VisionPipelines;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
