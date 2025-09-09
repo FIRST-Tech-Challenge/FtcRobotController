@@ -2,78 +2,57 @@ package org.firstinspires.ftc.team5898;
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.IMU;
 
-import java.util.List;
+import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 
+// This is for location tracking on the field using AprilTags and the Limelight 3A (MegaTag V2)
 @Autonomous(name="LimeLight Test")
 @Config
-public class LimeLightTest extends OpMode {
-
+public class LimeLightAprilTagTrack extends OpMode {
     FtcDashboard dashboard;
     Limelight3A limelight3A;
-    public static boolean TakeSnapshot = false;
     public static int pipeLineSelect = 0;
+    IMU imu;
 
 
     @Override
     public void init()
     {
-
         dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
-        dashboard.addConfigVariable();
+        imu = hardwareMap.get(IMU.class, "imu");
         limelight3A = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight3A.setPollRateHz(100);
         limelight3A.pipelineSwitch(pipeLineSelect);
-        limelight3A.start();
 
     }
 
     @Override
     public void start()
     {
-
+        limelight3A.start();
+        if (limelight3A instanceof CameraStreamSource) {
+            try {
+                dashboard.startCameraStream((CameraStreamSource) limelight3A, 60);
+            } catch (Throwable ignore) {}
+        }
     }
 
     @Override
     public void loop()
     {
-
         limelight3A.pipelineSwitch(pipeLineSelect);
         TelemetryPacket packet = new TelemetryPacket();
         packet.put("Pipeline", pipeLineSelect);
-        Canvas overlay = packet.fieldOverlay();
 
         LLResult llResult = limelight3A.getLatestResult();
-
-        List<LLResultTypes.ClassifierResult> classifications = llResult.getClassifierResults();
-        for (LLResultTypes.ClassifierResult classifierResult: classifications){
-            String className = classifierResult.getClassName();
-            double confidence = classifierResult.getConfidence();
-            telemetry.addData("Class: ", className);
-            telemetry.addData("Confidence: ", confidence);
-        }
-        long staleness = llResult.getStaleness();
-        if(staleness<100){
-            telemetry.addData("Staleness: ", staleness);
-        } else {
-            telemetry.addData("Staleness: ", "Out of Date, double check connection");
-        }
-
-        if(TakeSnapshot){
-            limelight3A.captureSnapshot("Snapshot " + System.currentTimeMillis());
-            TakeSnapshot = false;
-        }
-
         if (llResult != null && llResult.isValid())
         {
             double tx = llResult.getTx();
