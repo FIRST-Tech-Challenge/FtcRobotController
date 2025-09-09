@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Teleop;
+package org.firstinspires.ftc.teamcode.Tuning;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 // this will probably be usefull
 
 @TeleOp(name = "Odometry Test")
-public class PositionOpMode extends LinearOpMode {
+public class Odemtry extends LinearOpMode {
 
     Robot robot;
     Drivetrain drivetrain;
@@ -79,7 +79,7 @@ public class PositionOpMode extends LinearOpMode {
 
         while(opModeIsActive()) {
 
-            //fieldCentricDrive();
+            fieldCentricDrive();
             EditablePose2D currPos = robot.getDrivetrain().getCurrPos();
 
             telemetry.addData("X Position", currPos.getX(DistanceUnit.INCH));
@@ -87,16 +87,15 @@ public class PositionOpMode extends LinearOpMode {
             telemetry.addData("Orientation (Degrees)", Math.toDegrees(currPos.getH()));
 
             telemetry.addLine("\n Raw Values \n")
-                            .addData("leftEncoder", robot.getDrivetrain().getRobotPos().getLeftEncoder())
-                            .addData("rightEncoder", robot.getDrivetrain().getRobotPos().getRightEncoder())
-                            .addData("perpendicularEncoder", robot.getDrivetrain().getRobotPos().getPerpendicularEncoder());
+                    .addData("leftEncoder", robot.getDrivetrain().getRobotPos().getLeftEncoder())
+                    .addData("rightEncoder", robot.getDrivetrain().getRobotPos().getRightEncoder())
+                    .addData("perpendicularEncoder", robot.getDrivetrain().getRobotPos().getPerpendicularEncoder());
 
             telemetry.addLine("\n IMU measured heading \n")
-                            .addData("Orientation (Degrees)", robot.getDrivetrain().getRobotHeading(AngleUnit.DEGREES));
+                    .addData("Orientation (Degrees)", robot.getDrivetrain().getRobotHeading(AngleUnit.DEGREES));
 
             telemetry.update();
         }
-
     }
 
     public void fieldCentricDrive() {
