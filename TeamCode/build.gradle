@@ -1,4 +1,3 @@
-//
 // build.gradle in TeamCode
 //
 // Most of the definitions for building your module reside in a common, shared
@@ -7,7 +6,6 @@
 // the build definitions, you can place those customizations in this file, but
 // please think carefully as to whether such customizations are really necessary
 // before doing so.
-
 
 // Custom definitions may go here
 
@@ -19,7 +17,17 @@ android {
     namespace = 'org.firstinspires.ftc.teamcode'
 
     packagingOptions {
+        jniLibs {
+            pickFirsts += ['**/*.so']
+        }
         jniLibs.useLegacyPackaging true
+    }
+
+    lintOptions {
+        warningsAsErrors true
+        checkReleaseBuilds false
+        lintConfig file("lint.xml")
+        checkAllWarnings true  // Enable checking all warnings, including deprecation
     }
 }
 
