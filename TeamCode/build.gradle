@@ -17,6 +17,10 @@ apply from: '../build.dependencies.gradle'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
+    compileSdk 35
+    defaultConfig {
+        minSdk 24
+    }
 
     packagingOptions {
         jniLibs.useLegacyPackaging true
@@ -25,4 +29,7 @@ android {
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation files('lib/wpimath-java-2024.3.2.jar')
+    implementation files('lib/wpiunits-java-2024.3.2.jar')
+    implementation "com.bylazar:fullpanels:1.0.4"
 }
