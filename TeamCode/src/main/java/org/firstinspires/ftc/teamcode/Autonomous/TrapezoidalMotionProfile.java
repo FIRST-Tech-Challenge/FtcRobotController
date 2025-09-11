@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
-// ----- READY TO TRANSFER ----- //
-
+/**
+ * Creates a trapezoidal motion profile for 1 dimension.
+ * Usage guide in the documentation on discord
+ */
 public class TrapezoidalMotionProfile {
 
     private double maxA; // Maximum acceleration
@@ -32,6 +34,12 @@ public class TrapezoidalMotionProfile {
 
     // Calculate motion profile based on a goal and a current position.
     // This version calculates using the absolute distance and then re-applies the direction.
+
+    /**
+     * Creates the accelerate/decelerate portions of the path given. Most Crucially, this version stores the direction of travel.
+     * @param goal End distance
+     * @param currPos current position
+     */
     public void calculateProfile(double goal, double currPos) {
         double distance = goal - currPos;
 
@@ -72,6 +80,10 @@ public class TrapezoidalMotionProfile {
         calculateProfile(distance, 0);
     }
 
+    /**
+     * @param time current time, in seconds
+     * @return expectedPosition from Profile
+     */
     public double getExpectedPosition(double time) {
         double pos; // computed position (absolute value)
 
