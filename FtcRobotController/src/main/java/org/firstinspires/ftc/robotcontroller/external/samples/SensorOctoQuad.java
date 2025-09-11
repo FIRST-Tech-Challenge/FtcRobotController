@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 DigitalChickenLabs
+ * Copyright (c) 2025 DigitalChickenLabs
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,20 +25,28 @@ import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /*
- * This OpMode illustrates how to use the DigitalChickenLabs OctoQuad Quadrature Encoder & Pulse Width Interface Module
+ * This OpMode illustrates how to use DigitalChickenLabs OctoQuad Quad Encoder & Pulse Width I/F Module
  *
- * The OctoQuad has 8 input channels that can used to read either Relative Quadrature Encoders or Pulse-Width Absolute Encoder inputs.
- * Relative Quadrature encoders are found on most FTC motors, and some stand-alone position sensors like the REV Thru-Bore encoder.
- * Pulse-Width encoders are less common. The REV Thru-Bore encoder can provide its absolute position via a variable pulse width,
+ * The OctoQuad has 8 input channels that can used to read either Relative Quadrature Encoders or
+ * Pulse-Width Absolute Encoder inputs.  Relative Quadrature encoders are found on most FTC motors,
+ * and some stand-alone position sensors like the REV Thru-Bore encoder.  Pulse-Width encoders are
+ * less common. The REV Thru-Bore encoder can provide its absolute position via a variable pulse width,
  * as can several sonar rangefinders such as the MaxBotix MB1000 series.
  *
- * This basic sample shows how an OctoQuad can be used to read the position three Odometry pods fitted
- * with REV Thru-Bore encoders.  For a more advanced example showing additional OctoQuad capabilities, see the SensorOctoQuadAdv sample.
+ * Note: SDK 11.0+ requires that the OctoQuad is running firmware V3.0 or greater.
+ * Visit https://github.com/DigitalChickenLabs/OctoQuad/tree/master/firmware for instruction
+ * on how to upgrade your OctoQuad's firmware.
  *
- * This OpMode assumes that the OctoQuad is attached to an I2C interface named "octoquad" in the robot configuration.
+ * This basic sample shows how an OctoQuad can be used to read the position of three Odometry pods
+ * fitted with REV Thru-Bore encoders.  For a more advanced example with additional OctoQuad
+ * capabilities, see the SensorOctoQuadAdv sample.
+ *
+ * This OpMode assumes the OctoQuad is attached to an I2C interface named "octoquad" in the robot config.
  *
  * The code assumes the first three OctoQuad inputs are connected as follows
  * - Chan 0: for measuring forward motion on the left side of the robot.
@@ -54,21 +62,24 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  *
  * See the sensor's product page: https://www.tindie.com/products/35114/
  */
-@TeleOp(name = "OctoQuad Basic", group="OctoQuad")
 @Disabled
+@TeleOp(name = "OctoQuad Basic", group="OctoQuad")
 public class SensorOctoQuad extends LinearOpMode {
 
     // Identify which encoder OctoQuad inputs are connected to each odometry pod.
-    private final int ODO_LEFT  = 0; // Facing forward direction on left side of robot (Axial motion)
-    private final int ODO_RIGHT = 1; // Facing forward direction on right side or robot (Axial motion)
-    private final int ODO_PERP  = 2; // Facing perpendicular direction at the center of the robot (Lateral motion)
+    private final int ODO_LEFT  = 0; // Facing forward direction on left side of robot
+    private final int ODO_RIGHT = 1; // Facing forward direction on right side or robot
+    private final int ODO_PERP  = 2; // Facing perpendicular direction at the center of the robot
 
-    // Declare the OctoQuad object and members to store encoder positions and velocities
+    // Declare the OctoQuad object;
     private OctoQuad    octoquad;
 
     private int         posLeft;
     private int         posRight;
     private int         posPerp;
+    private int         velLeft;
+    private int         velRight;
+    private int         velPerp;
 
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
@@ -83,12 +94,15 @@ public class SensorOctoQuad extends LinearOpMode {
         telemetry.addData("OctoQuad Firmware Version ", octoquad.getFirmwareVersion());
 
         // Reverse the count-direction of any encoder that is not what you require.
-        // e.g. if you push the robot forward and the left encoder counts down, then reverse it so it counts up.
+        // e.g. if you push the robot forward and the left encoder counts down, then reverse it.
         octoquad.setSingleEncoderDirection(ODO_LEFT,  OctoQuad.EncoderDirection.REVERSE);
         octoquad.setSingleEncoderDirection(ODO_RIGHT, OctoQuad.EncoderDirection.FORWARD);
         octoquad.setSingleEncoderDirection(ODO_PERP,  OctoQuad.EncoderDirection.FORWARD);
 
-        // Any changes that are made should be saved in FLASH just in case there is a sensor power glitch.
+        // set the interval over which pulses are counted to determine velocity.
+        octoquad.setAllVelocitySampleIntervals(50);  // 50 mSec means 20 velocity updates per second.
+
+        // Save any changes that are made, just in case there is a sensor power glitch.
         octoquad.saveParametersToFlash();
 
         telemetry.addLine("\nPress START to read encoder values");
@@ -98,7 +112,7 @@ public class SensorOctoQuad extends LinearOpMode {
 
         // Configure the telemetry for optimal display of data.
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
-        telemetry.setMsTransmissionInterval(50);
+        telemetry.setMsTransmissionInterval(100);
 
         // Set all the encoder inputs to zero.
         octoquad.resetAllPositions();
@@ -117,25 +131,26 @@ public class SensorOctoQuad extends LinearOpMode {
             readOdometryPods();
 
             // Display the values.
-            telemetry.addData("Left ", "%8d counts", posLeft);
-            telemetry.addData("Right", "%8d counts", posRight);
-            telemetry.addData("Perp ", "%8d counts", posPerp);
+            telemetry.addData("Left  P", "%7d   V :%6d CPS ", posLeft, velLeft);
+            telemetry.addData("Right P", "%7d   V :%6d CPS ", posRight, velRight);
+            telemetry.addData("Perp  P", "%7d   V :%6d CPS ", posPerp, velPerp);
             telemetry.update();
         }
     }
 
     private void readOdometryPods() {
         // For best performance, we should only perform ONE transaction with the OctoQuad each cycle.
-        // Since this example only needs to read positions from a few channels, we could use either
-        //   readPositionRange(idxFirst, idxLast) to get a select number of sequential channels
-        // or
-        //   readAllPositions() to get all 8 encoder readings
+        //  This can be achieved in one of two ways:
+        //   1) by doing a block data read once per control cycle
+        //  or
+        //   2) by doing individual caching reads, but only reading each encoder value ONCE per cycle.
         //
-        // Since both calls take almost the same amount of time, and the actual channels may not end up
-        // being sequential, we will read all of the encoder positions, and then pick out the ones we need.
-        int[] positions = octoquad.readAllPositions();
-        posLeft  = positions[ODO_LEFT];
-        posRight = positions[ODO_RIGHT];
-        posPerp  = positions[ODO_PERP];
+        // Since method 2 is simplest, we will use it here.
+        posLeft  = octoquad.readSinglePosition_Caching(ODO_LEFT);
+        posRight = octoquad.readSinglePosition_Caching(ODO_RIGHT);
+        posPerp  = octoquad.readSinglePosition_Caching(ODO_PERP);
+        velLeft  = octoquad.readSingleVelocity_Caching(ODO_LEFT)  * 20;  // scale up to cps
+        velRight = octoquad.readSingleVelocity_Caching(ODO_RIGHT) * 20;  // scale up to cps
+        velPerp  = octoquad.readSingleVelocity_Caching(ODO_PERP)  * 20;  // scale up to cps
     }
 }
