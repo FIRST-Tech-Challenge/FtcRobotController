@@ -1,4 +1,4 @@
-package Subsystems;
+package Commands;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -23,7 +23,7 @@ public class MechanumDrive {
 
     private double yawOffset;
 
-    public DriveTrain(HardwareMap hardwareMap) {
+    public MechanumDrive(HardwareMap hardwareMap) {
         frontLeft0 = hardwareMap.get(DcMotor.class, DriveTrainConstants.frontLeftMotor);
         frontRight1 = hardwareMap.get(DcMotor.class, DriveTrainConstants.frontRightMotor);
         backLeft2 = hardwareMap.get(DcMotor.class, DriveTrainConstants.backLeftMotor);
@@ -60,8 +60,6 @@ public class MechanumDrive {
 
         double fieldOrientedX = driveX * cos - driveY * sin;
         double fieldOrientedY = driveX * sin + driveY * cos;
-
-        fieldOrientedX *= DriveTrainConstants.strafingBalancer;  // Counteract imperfect strafing
 
         double denominator = Math.max(Math.abs(fieldOrientedY) + Math.abs(fieldOrientedX) + Math.abs(rotation), 1);
 
@@ -114,13 +112,9 @@ public class MechanumDrive {
     public void periodic(Telemetry telemetry) {
         telemetry.addLine("Drive train");
         telemetry.addData("Heading: ", getHeading());
-
         telemetry.addData("Front Left Power: ", frontLeft0.getPower());
-
         telemetry.addData("Front Right Power: ", frontRight1.getPower());
-
         telemetry.addData("Back Left Power: ", backLeft2.getPower());
-
         telemetry.addData("Back Right Power: ", backRight3.getPower());
     }
 }
