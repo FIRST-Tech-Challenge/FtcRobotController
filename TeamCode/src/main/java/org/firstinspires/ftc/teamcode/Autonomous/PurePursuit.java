@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.Modules.EditablePose2D;
+import org.firstinspires.ftc.teamcode.Autonomous.Utils.Waypoint;
+import org.firstinspires.ftc.teamcode.Modules.Utils.EditablePose2D;
 
 import java.util.ArrayList;
 

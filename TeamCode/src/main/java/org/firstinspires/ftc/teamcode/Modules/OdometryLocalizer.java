@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Modules;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Modules.Utils.EditablePose2D;
 
 // ----- READY TO TRANSFER ----- //
 

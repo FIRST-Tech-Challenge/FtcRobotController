@@ -9,10 +9,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Autonomous.AutonomousRobot;
-import org.firstinspires.ftc.teamcode.Autonomous.Path;
-import org.firstinspires.ftc.teamcode.Autonomous.Waypoint;
+import org.firstinspires.ftc.teamcode.Autonomous.Utils.Path;
+import org.firstinspires.ftc.teamcode.Autonomous.Utils.Waypoint;
 import org.firstinspires.ftc.teamcode.Modules.Drivetrain;
-import org.firstinspires.ftc.teamcode.Robot;
 
 @Config
 @Autonomous(name = "TEST AUTO")

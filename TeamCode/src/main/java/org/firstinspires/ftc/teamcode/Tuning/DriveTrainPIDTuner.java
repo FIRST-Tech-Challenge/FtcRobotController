@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Modules.PIDController;
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.Autonomous.TrapezoidalMotionProfile;
+import org.firstinspires.ftc.teamcode.Autonomous.Utils.TrapezoidalMotionProfile;
 import org.firstinspires.ftc.teamcode.riptideUtil;
 
 // ----- READY TO TRANSFER ----- //

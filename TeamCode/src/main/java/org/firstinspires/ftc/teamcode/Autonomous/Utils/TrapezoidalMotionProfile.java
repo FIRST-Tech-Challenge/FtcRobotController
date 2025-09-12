@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode.Autonomous.Utils;
 
 /**
  * Creates a trapezoidal motion profile for 1 dimension.

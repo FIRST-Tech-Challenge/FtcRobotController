@@ -16,8 +16,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Autonomous.Utils.Path;
+import org.firstinspires.ftc.teamcode.Autonomous.Utils.TrapezoidalMotionProfile;
+import org.firstinspires.ftc.teamcode.Autonomous.Utils.Waypoint;
 import org.firstinspires.ftc.teamcode.Modules.PIDController;
-import org.firstinspires.ftc.teamcode.Modules.EditablePose2D;
+import org.firstinspires.ftc.teamcode.Modules.Utils.EditablePose2D;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.riptideUtil;
 import org.firstinspires.ftc.teamcode.Modules.Drivetrain;
