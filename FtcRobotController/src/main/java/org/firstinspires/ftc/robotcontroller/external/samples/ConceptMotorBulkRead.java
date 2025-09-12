@@ -110,7 +110,7 @@ public class ConceptMotorBulkRead extends LinearOpMode {
 
         ElapsedTime timer = new ElapsedTime();
 
-        telemetry.addData(">", "Press play to start tests");
+        telemetry.addData(">", "Press START to start tests");
         telemetry.addData(">", "Test results will update for each access method.");
         telemetry.update();
         waitForStart();

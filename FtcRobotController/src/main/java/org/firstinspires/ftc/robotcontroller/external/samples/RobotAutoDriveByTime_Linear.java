@@ -85,10 +85,10 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         telemetry.addData("Status", "Ready to run");    //
         telemetry.update();
 
-        // Wait for the game to start (driver presses PLAY)
+        // Wait for the game to start (driver presses START)
         waitForStart();
 
-        // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
+        // Step through each leg of the path, ensuring that the OpMode has not been stopped along the way.
 
         // Step 1:  Drive forward for 3 seconds
         leftDrive.setPower(FORWARD_SPEED);

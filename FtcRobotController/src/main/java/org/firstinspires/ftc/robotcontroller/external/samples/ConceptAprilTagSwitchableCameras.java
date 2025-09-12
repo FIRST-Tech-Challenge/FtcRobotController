@@ -77,7 +77,7 @@ public class ConceptAprilTagSwitchableCameras extends LinearOpMode {
 
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch Play to start OpMode");
+        telemetry.addData(">", "Touch START to start OpMode");
         telemetry.update();
         waitForStart();
 
