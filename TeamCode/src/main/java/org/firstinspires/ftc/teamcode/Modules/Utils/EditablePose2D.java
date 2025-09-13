@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.Modules.Utils;
 
+import androidx.annotation.NonNull;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
 
 // ------ READY TO TRANSFER ------ //
@@ -20,8 +24,18 @@ public class EditablePose2D {
 
         this.distanceUnit = distanceUnit;
     }
+    public EditablePose2D(Pose2D pose, DistanceUnit unit) {
+        this.x = pose.getX(unit);
+        this.y = pose.getY(unit);
+        this.h = pose.getHeading(AngleUnit.RADIANS);
 
-    public double getX (DistanceUnit unit) {
+        this.distanceUnit = unit;
+    }
+
+
+
+
+        public double getX (DistanceUnit unit) {
         return unit.fromUnit(this.distanceUnit, x);
     }
 
@@ -53,6 +67,7 @@ public class EditablePose2D {
         return x == other.getX(distanceUnit) && y == other.getY(distanceUnit) && h == other.getH();
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "POSE2D{" +
