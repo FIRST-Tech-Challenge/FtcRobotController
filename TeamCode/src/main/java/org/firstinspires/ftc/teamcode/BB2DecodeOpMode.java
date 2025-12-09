@@ -18,7 +18,7 @@ public class BB2DecodeOpMode extends LinearOpMode {
 
     private static final int autoDistance = 50;
     private static final int autoVelocity = 1400;
-    private static final int bankVelocity = 1500;
+    private static final int bankVelocity = 1100;
     private static final int farVelocity = 2000;
     private static final int maxVelocity = 2200;
     private static final String TELEOP = "TELEOP";
