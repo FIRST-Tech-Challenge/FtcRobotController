@@ -8,6 +8,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.List;
+
 
 @TeleOp
 public class BB2DecodeOpMode extends LinearOpMode {
@@ -16,6 +23,8 @@ public class BB2DecodeOpMode extends LinearOpMode {
     private DcMotor leftDrive;
     private Servo servo;
     private DcMotor rightDrive;
+    private AprilTagProcessor aprilTag;
+    private VisionPortal visionPortal;
     private static final float slowSpeed = 0.3F;
     private static final int autoDistance = 25;
     private static final int nearVelocity = 1300;
@@ -24,6 +33,8 @@ public class BB2DecodeOpMode extends LinearOpMode {
     private static final double nearAngle = 0.0;
     private static final double midAngle = 0.60;
     private static final double farAngle = 0.63;
+    private static final double nearDistance = 0.0;
+    private static final double midDistance = 70.0;
     private static final String TELEOP = "TELEOP";
     private static final String AUTO_BLUE_GOAL = "AUTO BLUE GOAL";
     private static final String AUTO_RED_GOAL = " AUTO RED GOAL";
@@ -34,8 +45,8 @@ public class BB2DecodeOpMode extends LinearOpMode {
     private static final double P = 265;    // Proportional gain to correct error based on how far off the velocity is.
 
     private String operationSelected = TELEOP;
-    private ElapsedTime autoLaunchTimer = new ElapsedTime();
-    private ElapsedTime autoDriveTimer = new ElapsedTime();
+    private final ElapsedTime autoLaunchTimer = new ElapsedTime();
+    private final ElapsedTime autoDriveTimer = new ElapsedTime();
 
     @Override
     public void runOpMode() {
@@ -53,6 +64,8 @@ public class BB2DecodeOpMode extends LinearOpMode {
 
         // Ensures the servo is active and ready
         servo.setPosition(0);
+
+        initAprilTagReader();
 
         // On initilization the Driver Station will prompt for which OpMode should be run - Auto Blue, Auto Red, or TeleOp
         while (opModeInInit()) {
@@ -112,10 +125,9 @@ public class BB2DecodeOpMode extends LinearOpMode {
             while (opModeIsActive()) {
                 // Calling our methods while the OpMode is running
                 splitStickArcadeDrive();
-                setFlywheelVelocity();
+                shotButtons();
                 manualFeederControl();
-                telemetry.addData("Flywheel Velocity", flywheel.getVelocity());
-                telemetry.addData("Flywheel Power", flywheel.getPower());
+                updateAprilTagTelemetry();
                 telemetry.update();
             }
         }
@@ -157,20 +169,49 @@ public class BB2DecodeOpMode extends LinearOpMode {
      * Circle and Square will spin up ONLY the flywheel to the target velocity set.
      * The bumpers will activate the flywheel, Core Hex feeder, and servo to cycle a series of balls.
      */
-    private void setFlywheelVelocity() {
+    private void shotButtons() {
         if (gamepad1.left_bumper) {
             farShot();
         } else if (gamepad1.right_bumper) {
             midShot();
         } else if (gamepad1.square) {
             nearShot();
+        } else if (gamepad1.circle) {
+            autoShot();
         } else {
             flywheel.setVelocity(0);
             coreHex.setPower(0);
         }
+
+        telemetry.addData("Flywheel Velocity", flywheel.getVelocity());
+        telemetry.addData("Flywheel Power", flywheel.getPower());
     }
 
-//Automatic Flywheel controls used in Auto and TeleOp
+    private void autoShot() {
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, 0, 0, F);
+        flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+
+        double distance = 0.0;
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                distance = detection.ftcPose.y;
+            }
+        }
+
+        double angle = (midAngle - nearAngle) / (midDistance - nearDistance) * distance + nearAngle;
+        double velocity = (midVelocity - nearVelocity) / (midDistance - nearDistance) * distance + nearVelocity;
+
+        telemetry.addData("angle: ", angle);
+
+        flywheel.setVelocity(velocity);
+        servo.setPosition(angle);
+        if (flywheel.getVelocity() >= velocity - 100) {
+            coreHex.setPower(1);
+        } else {
+            coreHex.setPower(0);
+        }
+    }
 
     /**
      * The bank shot or near velocity is intended for launching balls touching or a few inches from the goal.
@@ -305,10 +346,53 @@ public class BB2DecodeOpMode extends LinearOpMode {
             autoDrive(1, -45, -45, 5000);
         }
     }
+
     private void doAutoBlueWall() {
         autoDrive(1, 15, 15, 5000);
     }
+
     private void doAutoRedWall() {
         autoDrive(1, 15, 15, 5000);
+    }
+
+    private void initAprilTagReader() {
+
+        // Create the AprilTag processor.
+        aprilTag = new AprilTagProcessor.Builder().build();
+
+        // Create the vision portal by using a builder.
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+
+        // Set the camera
+        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+
+        // Set and enable the processor.
+        builder.addProcessor(aprilTag);
+
+        // Build the Vision Portal, using the above settings.
+        visionPortal = builder.build();
+    }
+
+    private void updateAprilTagTelemetry() {
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        telemetry.addData("# AprilTags Detected", currentDetections.size());
+
+        // Step through the list of detections and display info for each one.
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+            } else {
+                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+            }
+        }   // end for() loop
+
+        // Add "key" information to telemetry
+        telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+        telemetry.addLine("RBE = Range, Bearing & Elevation");
     }
 }
