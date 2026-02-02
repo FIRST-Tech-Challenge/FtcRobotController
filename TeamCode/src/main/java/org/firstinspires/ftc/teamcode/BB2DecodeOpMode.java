@@ -22,6 +22,7 @@ public class BB2DecodeOpMode extends LinearOpMode {
     private DcMotor coreHex;
     private DcMotor leftDrive;
     private Servo servo;
+
     private DcMotor rightDrive;
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
