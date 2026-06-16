@@ -46,7 +46,7 @@ public class Drivetrain {
 
     private void setDirections() {
         leftFrontMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightFrontMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backMotor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 

@@ -28,7 +28,7 @@ public class BomberTeleOp extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            double drive = -gamepad1.left_stick_y;
+            double drive = gamepad1.left_stick_y;
             double turn = gamepad1.right_stick_x;
 
             drivetrain.drive(drive, turn);
