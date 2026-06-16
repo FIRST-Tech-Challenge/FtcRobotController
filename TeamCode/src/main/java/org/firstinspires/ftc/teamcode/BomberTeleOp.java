@@ -9,9 +9,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
  * Simple TeleOp for the MVP drivetrain.
  *
  * Physical wiring:
- *   FrontMotor     - powers both front wheels together
- *   LeftBackMotor  - powers the left rear wheel
- *   RightBackMotor - powers the right rear wheel
+ *   LeftFrontMotor  - powers the left front wheel (steering + drive)
+ *   RightFrontMotor - powers the right front wheel (steering + drive)
+ *   BackMotor       - powers the single rear wheel (drive only, no steering)
  *
  * Controls (Gamepad 1):
  *   Left stick Y  - throttle (forward / reverse)
