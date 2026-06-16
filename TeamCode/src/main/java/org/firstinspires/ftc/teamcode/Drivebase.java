@@ -46,9 +46,9 @@ public class Drivebase extends LinearOpMode {
         rightBack  = hardwareMap.get(DcMotor.class, "RightBackMotor");
 
         // ── Motor directions ──────────────────────────────────────────────────
-        // Left side: reverse so positive power drives the robot forward.
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        // Left side: forward so positive power drives the robot forward.
+        leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Right side: forward so positive power drives the robot forward.
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
