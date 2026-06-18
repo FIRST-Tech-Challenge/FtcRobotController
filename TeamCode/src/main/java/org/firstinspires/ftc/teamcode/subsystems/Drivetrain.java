@@ -26,8 +26,8 @@ public class Drivetrain {
     }
 
     public void drive(double drive, double turn) {
-        double leftPower = drive + turn;
-        double rightPower = drive - turn;
+        double leftPower = drive - turn;
+        double rightPower = drive + turn;
 
         double maxPower = Math.max(Math.abs(leftPower), Math.abs(rightPower));
         if (maxPower > 1.0) {
