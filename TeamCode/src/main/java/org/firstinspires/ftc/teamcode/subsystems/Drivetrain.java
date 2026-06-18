@@ -5,64 +5,42 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Drivetrain {
-    private static final String LEFT_FRONT_MOTOR_NAME = "LeftFrontMotor";
-    private static final String RIGHT_FRONT_MOTOR_NAME = "RightFrontMotor";
-    private static final String BACK_MOTOR_NAME = "BackMotor";
+    private static final String LEFT_MOTOR_NAME = "LeftMotor";
+    private static final String RIGHT_MOTOR_NAME = "RightMotor";
 
-    private final DcMotor leftFrontMotor;
-    private final DcMotor rightFrontMotor;
-    private final DcMotor backMotor;
+    private final DcMotor leftMotor;
+    private final DcMotor rightMotor;
 
     public Drivetrain(HardwareMap hardwareMap) {
-        leftFrontMotor = hardwareMap.get(DcMotor.class, LEFT_FRONT_MOTOR_NAME);
-        rightFrontMotor = hardwareMap.get(DcMotor.class, RIGHT_FRONT_MOTOR_NAME);
-        backMotor = hardwareMap.get(DcMotor.class, BACK_MOTOR_NAME);
+        leftMotor = hardwareMap.get(DcMotor.class, LEFT_MOTOR_NAME);
+        rightMotor = hardwareMap.get(DcMotor.class, RIGHT_MOTOR_NAME);
 
-        setDirections();
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void drive(double drive, double turn) {
-        double leftFrontPower = drive - turn;
-        double rightFrontPower = drive + turn;
+        double leftPower = drive + turn;
+        double rightPower = drive - turn;
 
-        double maxPower = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        double maxPower = Math.max(Math.abs(leftPower), Math.abs(rightPower));
         if (maxPower > 1.0) {
-            leftFrontPower /= maxPower;
-            rightFrontPower /= maxPower;
+            leftPower /= maxPower;
+            rightPower /= maxPower;
         }
 
-        leftFrontMotor.setPower(leftFrontPower);
-        rightFrontMotor.setPower(rightFrontPower);
-        backMotor.setPower(clip(drive));
+        leftMotor.setPower(leftPower);
+        rightMotor.setPower(rightPower);
     }
 
     public void stop() {
-        leftFrontMotor.setPower(0);
-        rightFrontMotor.setPower(0);
-        backMotor.setPower(0);
-    }
-
-    private void setDirections() {
-        leftFrontMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-    }
-
-    private void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
-        leftFrontMotor.setZeroPowerBehavior(zeroPowerBehavior);
-        rightFrontMotor.setZeroPowerBehavior(zeroPowerBehavior);
-        backMotor.setZeroPowerBehavior(zeroPowerBehavior);
-    }
-
-    private void setRunMode(DcMotor.RunMode runMode) {
-        leftFrontMotor.setMode(runMode);
-        rightFrontMotor.setMode(runMode);
-        backMotor.setMode(runMode);
-    }
-
-    private double clip(double value) {
-        return Math.max(-1.0, Math.min(1.0, value));
+        leftMotor.setPower(0);
+        rightMotor.setPower(0);
     }
 }

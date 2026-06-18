@@ -18,7 +18,7 @@ public class BomberTeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
             drivetrain.drive(gamepad1.left_stick_y, gamepad1.right_stick_x);
-            candyCane.setPower(gamepad1.left_trigger);
+            candyCane.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
         }
 
         drivetrain.stop();
