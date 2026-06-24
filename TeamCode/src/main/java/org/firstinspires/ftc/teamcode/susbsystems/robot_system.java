@@ -148,7 +148,12 @@ public class robot_system {
         if (arm_automation) {armToPosition();}
         if (!arm_ready) {armReady();}
         if (fullCycleAutomation) {fullCycle();}
-        tagLocation = vision.GetPos();
+        // tagLocation = vision.GetPos();
+        if(vision.IsFilteredDataReady()) {
+            tagLocation = vision.GetFilteredPos();
+        } else {
+            tagLocation = vision.GetPos(); //fallback to raw during startup
+        }
         tagDetected = vision.isTagDetected();
         tagID = vision.getTagID();
         if(arm_homed){isReadyToTreat = tagToArmTest();}
