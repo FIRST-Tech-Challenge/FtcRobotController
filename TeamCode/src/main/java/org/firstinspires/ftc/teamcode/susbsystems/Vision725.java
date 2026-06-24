@@ -7,6 +7,8 @@ import static org.firstinspires.ftc.teamcode.util.Util.avPoint;
 
 import android.util.Size;
 
+import org.firstinspires.ftc.teamcode.util.VisionFilter;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -49,6 +51,7 @@ public class Vision725 {
     private Position cameraPosition = new Position(DistanceUnit.INCH,0, 0, 0, 0);
     private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,-90, -90, 0, 0);
     private static ElapsedTime visionTimer = new ElapsedTime();
+    private VisionFilter positionFilter; // Smooth AprilTag readings to reduce noise
 
     public Vision725(HardwareMap hm) {
         webcam = hm.get(WebcamName.class, "Webcam 1");
@@ -73,6 +76,7 @@ public class Vision725 {
         builder.addProcessor(processor);
         portal = builder.build();
         visionTimer.reset();
+        positionFilter = new VisionFilter(8); // Buffer size of 8 readings for moving average
     }
     public void Update() {
         if(visionTimer.milliseconds()>150){
@@ -92,6 +96,7 @@ public class Vision725 {
                     tagLocation.x = -detection.ftcPose.y;
                     tagLocation.y = detection.ftcPose.x;
                     tagID = detection.id;
+                    positionFilter.addReading(tagLocation); // Add raw reading to filter
                 }
             }
             }
@@ -99,8 +104,11 @@ public class Vision725 {
             {
                 tagLocation = new Position(DistanceUnit.INCH,0, 0, 0, 0);
                 tagID = -1;
+                positionFilter.clearBuffer(); // Clear the filter buffer when no detections are available to avoid using stale data
+                // positionFilter.addReading(tagLocation); // Add zero reading when no tag detected
             }
-            isTagDetected = tagLocation.x != 0;
+            isTagDetected = (freshDetections != null && !freshDetections.isEmpty()); // Update detection status based on fresh detections
+            // isTagDetected = tagLocation.x != 0;
         }
     }
     public void UsingFreshDetections(boolean bool) {usingFreshDetections=bool;} // Fresh Detections are as implied new detections which are used to prevent re-using the same detection data
@@ -129,6 +137,23 @@ public class Vision725 {
     public ArrayList<AprilTagDetection> GetFreshDetections() { return freshDetections; }
 
     public Position GetPos(){return tagLocation;}
+
+    /**
+     * Get the filtered (smoothed) AprilTag position.
+     * Returns null if buffer is not yet full (startup phase).
+     * @return Smoothed Position with X, Y, Z averaged across last 8 readings
+     */
+    public Position GetFilteredPos() {
+        return positionFilter.getFilteredReading();
+    }
+
+    /**
+     * Check if filter has enough readings for reliable data.
+     * @return true when buffer is full and filtered data is valid
+     */
+    public boolean IsFilteredDataReady() {
+        return positionFilter.isBufferFull();
+    }
 
     private AprilTagDetection averageDetection(AprilTagDetection detection1, AprilTagDetection detection2) {
         Point[] avgCorners;
