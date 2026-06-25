@@ -17,6 +17,7 @@ public class Hello_Bees_Demo3 extends OpMode {
     ButtonBlock stopShoulder,shoulderHome;
     ButtonBlock stopHomeShoulder, homeArm, startStopFogCycle;
     ButtonBlock stopAll,toggle_arm_full;
+    ButtonBlock lockTarget, unlockTarget;
     ButtonBlock dpadUp, dpadDown, dpadLeft, dpadRight;
     ButtonBlock leftbumper, rightbumper;
     boolean arm_full_toggle = true;
@@ -56,6 +57,10 @@ public class Hello_Bees_Demo3 extends OpMode {
                     robot.armHome();});
         startTreatment = new ButtonBlock()
                 .onTrue(()->{robot.startTreatment(arm_full_toggle);});
+        lockTarget = new ButtonBlock()
+                .onTrue(() -> {robot.lockCurrentFilteredTarget();});
+        unlockTarget = new ButtonBlock()
+                .onTrue(() -> {robot.unlockTreatmentTarget();});
         dpadUp = new ButtonBlock().onTrue(() -> {robot.setCyclecount((robot.getCycleTarget()+1));});
         dpadDown = new ButtonBlock().onTrue(() -> {robot.setCyclecount((robot.getCycleTarget()-1));});
         dpadLeft = new ButtonBlock().onTrue(() -> {robot.setFogTime((robot.getFogTime()+1));});
@@ -93,6 +98,8 @@ public class Hello_Bees_Demo3 extends OpMode {
         shoulderHome.update(gamepad2.b);
         homeArm.update(gamepad1.x);
         startTreatment.update(gamepad1.y);
+        lockTarget.update(gamepad2.a);
+        unlockTarget.update(gamepad2.x);
         toggle_arm_full.update(gamepad1.b);
         dpadUp.update(gamepad1.dpad_up);
         dpadDown.update(gamepad1.dpad_down);
@@ -121,6 +128,7 @@ public class Hello_Bees_Demo3 extends OpMode {
         telemetry.addData("[Wrist] H:","%.1f L:%.1f C:%.2f",robot.getWristHeight(),robot.getWristLength(),robot.getWristCalc());
         telemetry.addData("[Shoulder] H:","%.1f, L:%.1f Raw:%.2f",robot.shoulderHeight(),robot.shoulderLength(),robot.shoulderRaw());
         telemetry.addLine(String.format("[TAG] Detected %b x: %.2f y: %.2f z: %.2f", robot.isTagDetected(),robot.getTagLocation().x, robot.getTagLocation().y, robot.getTagLocation().z) );
+        telemetry.addData("[Vision] Locked", robot.isTreatmentTargetLocked() ? "YES" : "NO");
         telemetry.addLine(String.format("[Arm](Homed) Shoulder %b Turret: %b Ext: %b", robot.shoulderIsHomed(),robot.turretIsHomed(),robot.isExtensionHome()) );
         telemetry.addLine(String.format("[Arm](Busy) Sho: %b Tur: %b Ext: %b Wrst: %b Arm: %b ", robot.shoulderIsBusy(),robot.turretIsBusy(),robot.isBusyExtension(), robot.isWristBusy(),robot.isArmBusy()) );
         telemetry.addLine(String.format("[Fog]  %b Count: %d Target: %d", robot.isCycling(),robot.getCyclecount(), robot.getCycleTarget()) );
@@ -132,6 +140,7 @@ public class Hello_Bees_Demo3 extends OpMode {
         telemetry.addLine("(Dpad Up/Down: Cycle Count) (Dpad Left + Right- [Fog Time])");
         telemetry.addLine("(Bumpers Buttons L+ R-: Fan Time)");
         telemetry.addLine("  Controls Guide: Gamepad2");
+        telemetry.addLine("(A:Lock Target) (X:Unlock Target)");
         telemetry.addLine("Left Stick Y: Extension  Right Stick Y: Shoulder");
         telemetry.addLine("Dpad Up/Down: Wrist  Triggers: Turret");
         telemetry.addLine("(B:Home Shoulder)");

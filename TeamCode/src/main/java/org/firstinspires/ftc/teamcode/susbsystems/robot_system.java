@@ -54,6 +54,8 @@ public class robot_system {
     Position tagLocation = new Position(DistanceUnit.INCH,0,0,0,0);
     boolean tagDetected = false;
     int tagID = 0;
+    boolean treatmentTargetLocked = false;
+    Position lockedTargetPosition = new Position(DistanceUnit.INCH, 0, 0, 0, 0);
 
     //ready to treat
     boolean isReadyToTreat = false;
@@ -148,15 +150,21 @@ public class robot_system {
         if (arm_automation) {armToPosition();}
         if (!arm_ready) {armReady();}
         if (fullCycleAutomation) {fullCycle();}
-        // tagLocation = vision.GetPos();
-        if(vision.IsFilteredDataReady()) {
-            tagLocation = vision.GetFilteredPos();
+
+        if (!treatmentTargetLocked) {
+            if (vision.IsFilteredDataReady() && vision.isTagDetected()) {
+                tagLocation = vision.GetFilteredPos();
+            } else {
+                tagLocation = vision.GetPos(); // fallback to raw during startup
+            }
+            tagDetected = vision.isTagDetected();
+            tagID = vision.getTagID();
+            if (arm_homed) {isReadyToTreat = tagToArmTest();}
         } else {
-            tagLocation = vision.GetPos(); //fallback to raw during startup
+            tagLocation = lockedTargetPosition;
+            tagDetected = true;
+            // Maintain the locked target until the current task finishes or is manually released
         }
-        tagDetected = vision.isTagDetected();
-        tagID = vision.getTagID();
-        if(arm_homed){isReadyToTreat = tagToArmTest();}
     }
 
     public void robot_drive(double power, double steering) {
@@ -306,11 +314,27 @@ public class robot_system {
         arm_automation = false;
         arm_homing = false;
         arm_state = 0;
+        treatmentTargetLocked = false;
         wrist.Stop();
         turret.Stop();
         shoulder.Stop();
         turret.Stop();
         extension.Stop();
+    }
+
+    public void lockCurrentFilteredTarget() {
+        if (vision.IsFilteredDataReady() && vision.isTagDetected()) {
+            lockedTargetPosition = vision.GetFilteredPos();
+            treatmentTargetLocked = true;
+        }
+    }
+
+    public void unlockTreatmentTarget() {
+        treatmentTargetLocked = false;
+    }
+
+    public boolean isTreatmentTargetLocked() {
+        return treatmentTargetLocked;
     }
 
     private void init_armToHome() {
@@ -386,6 +410,7 @@ public class robot_system {
             if (arm_state == 5 && !extension.IsBusy()) {
                 arm_state = 0;
                 arm_automation = false;
+                treatmentTargetLocked = false;
             }
         }
         else if(!arm_is_busy && arm_homing){
