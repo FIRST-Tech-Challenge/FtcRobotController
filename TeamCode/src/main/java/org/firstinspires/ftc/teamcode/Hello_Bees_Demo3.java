@@ -58,9 +58,12 @@ public class Hello_Bees_Demo3 extends OpMode {
         startTreatment = new ButtonBlock()
                 .onTrue(()->{robot.startTreatment(arm_full_toggle);});
         lockTarget = new ButtonBlock()
-                .onTrue(() -> {robot.lockCurrentFilteredTarget();});
+                .onTrue(() -> {robot.lockCurrentFilteredTarget(true);});
         unlockTarget = new ButtonBlock()
-                .onTrue(() -> {robot.unlockTreatmentTarget();});
+                .onTrue(() -> {
+                    robot.testStopAutoMove();
+                    robot.unlockTreatmentTarget();
+                });
         dpadUp = new ButtonBlock().onTrue(() -> {robot.setCyclecount((robot.getCycleTarget()+1));});
         dpadDown = new ButtonBlock().onTrue(() -> {robot.setCyclecount((robot.getCycleTarget()-1));});
         dpadLeft = new ButtonBlock().onTrue(() -> {robot.setFogTime((robot.getFogTime()+1));});
@@ -123,6 +126,12 @@ public class Hello_Bees_Demo3 extends OpMode {
         telemetry.addLine("Telemetry: (Arm)");
         telemetry.addData("Auto: (Yes/No)", robot.isArm_automation()+" (Arm State) "+robot.armAutoState()+" (Ready) "+robot.isArm_ready()+" (Full State) "+robot.getFullCycleState());
         telemetry.addData("[Arm]Position:"," (X) %.1f (Y) %.1f (Z) %.1f", robot.getCurrent_Arm_Position().x,robot.getCurrent_Arm_Position().y,robot.getCurrent_Arm_Position().z);
+        telemetry.addData("[FK]Position:"," (X) %.1f (Y) %.1f (Z) %.1f", robot.getComputedEndEffectorPose().x,robot.getComputedEndEffectorPose().y,robot.getComputedEndEffectorPose().z);
+        telemetry.addData("[FK]Delta:"," (X) %.1f (Y) %.1f (Z) %.1f",
+                robot.getCurrent_Arm_Position().x - robot.getComputedEndEffectorPose().x,
+                robot.getCurrent_Arm_Position().y - robot.getComputedEndEffectorPose().y,
+                robot.getCurrent_Arm_Position().z - robot.getComputedEndEffectorPose().z);
+        telemetry.addData("[Test AutoMove]", "Active: %s Phase: %d", robot.isTestAutoMoveActive() ? "YES" : "NO", robot.getTestAutoMovePhase());
         telemetry.addData("[Arm]Target:"," (X) %.1f (Y) %.1f (Z) %.1f (d) %.1f (e) %.1f", robot.getTarget_position().x,robot.getTarget_position().y,robot.getTarget_position().z,robot.getTarget_degrees(),robot.getExtensionLocal_target());
         telemetry.addData("[Arm]Homed: (Yes/No)", robot.isArmHomed()+" (Busy) "+robot.isArmBusy()+" BadPos: "+robot.isArm_last_position_bad());
         telemetry.addData("[Wrist] H:","%.1f L:%.1f C:%.2f",robot.getWristHeight(),robot.getWristLength(),robot.getWristCalc());

@@ -113,6 +113,16 @@ public class robot_system {
     private boolean fullCycleAutomation = false;
     private int fullCycleState = 0;
 
+    // === TESTING ONLY ===
+    // Lock-triggered FK validation and simple movement automation for Phase 1.
+    private boolean testAutoMoveActive = false;
+    private int testAutoMovePhase = 0;
+    private int testTurretTargetDegrees = 135;
+    private double testExtensionTarget = 0;
+    private double testShoulderTargetAngle = 0;
+    private double testWristTargetAngle = 0;
+    private Position computedEndEffectorPose = new Position(DistanceUnit.INCH, 0, 0, 0, System.nanoTime());
+
     public robot_system(HardwareMap hm) {
         pump = new Pump_Subsystem(hm, "pump");
         shoulder = new Arm725(hm);
@@ -150,6 +160,8 @@ public class robot_system {
         if (arm_automation) {armToPosition();}
         if (!arm_ready) {armReady();}
         if (fullCycleAutomation) {fullCycle();}
+        computeForwardKinematics();
+        if (testAutoMoveActive) {testLockedTargetAutoMove();}
 
         if (!treatmentTargetLocked) {
             if (vision.IsFilteredDataReady() && vision.isTagDetected()) {
@@ -315,6 +327,8 @@ public class robot_system {
         arm_homing = false;
         arm_state = 0;
         treatmentTargetLocked = false;
+        testAutoMoveActive = false;
+        testAutoMovePhase = 0;
         wrist.Stop();
         turret.Stop();
         shoulder.Stop();
@@ -323,18 +337,121 @@ public class robot_system {
     }
 
     public void lockCurrentFilteredTarget() {
+        lockCurrentFilteredTarget(false);
+    }
+
+    public void lockCurrentFilteredTarget(boolean shouldStartTestAutoMove) {
         if (vision.IsFilteredDataReady() && vision.isTagDetected()) {
             lockedTargetPosition = vision.GetFilteredPos();
             treatmentTargetLocked = true;
+            if (shouldStartTestAutoMove) {
+                initTestLockedTargetAutoMove();
+            }
         }
     }
 
     public void unlockTreatmentTarget() {
         treatmentTargetLocked = false;
+        testStopAutoMove();
     }
 
     public boolean isTreatmentTargetLocked() {
         return treatmentTargetLocked;
+    }
+
+    // === TESTING ONLY ===
+    private void computeForwardKinematics() {
+        double shoulderLength = shoulder.getExtension();
+        double shoulderHeight = shoulder.GetHeight();
+        double extensionLength = extension.GetPos();
+        double wristLength = wrist.GetLength();
+        double wristHeight = wrist.GetHeight();
+        double turretX = turret.getPosition().x;
+        double turretY = turret.getPosition().y;
+
+        computedEndEffectorPose.x = -(extensionLength + shoulderLength + wristLength - turretX) + TURRENT_TO_CAMERA.x + 10;
+        computedEndEffectorPose.y = turretY + TURRENT_TO_CAMERA.y;
+        computedEndEffectorPose.z = shoulderHeight + wristHeight + TURRENT_TO_CAMERA.z;
+        computedEndEffectorPose.acquisitionTime = System.nanoTime();
+    }
+
+    public Position getComputedEndEffectorPose() {
+        return computedEndEffectorPose;
+    }
+
+    public boolean isTestAutoMoveActive() {
+        return testAutoMoveActive;
+    }
+
+    public int getTestAutoMovePhase() {
+        return testAutoMovePhase;
+    }
+
+    private void initTestLockedTargetAutoMove() {
+        if (!arm_is_busy && arm_ready && arm_homed) {
+            testAutoMoveActive = true;
+            testAutoMovePhase = 1;
+            testTurretTargetDegrees = 135;
+            testExtensionTarget = clamp(extension.GetPos() + 5, 0, EXTENSION_MAX_POSITION);
+            testShoulderTargetAngle = clampShoulderAngle(shoulder.GetPos() + 40);
+            testWristTargetAngle = clamp(wrist.GetAngle() + 30, 36, 180);
+        }
+    }
+
+    public void testStopAutoMove() {
+        testAutoMoveActive = false;
+        testAutoMovePhase = 0;
+        wrist.Stop();
+        turret.Stop();
+        shoulder.Stop();
+        extension.Stop();
+    }
+
+    private void testLockedTargetAutoMove() {
+        if (arm_automation || fullCycleAutomation || cycling || arm_homing) {
+            testStopAutoMove();
+            return;
+        }
+
+        if (testAutoMovePhase == 1 && !turret.IsBusy()) {
+            moveTurret(testTurretTargetDegrees);
+            testAutoMovePhase = 2;
+        }
+        if (testAutoMovePhase == 2 && !turret.IsBusy()) {
+            extension.GoTo(testExtensionTarget);
+            testAutoMovePhase = 3;
+        }
+        if (testAutoMovePhase == 3 && !extension.IsBusy()) {
+            shoulder.GoToAngle(testShoulderTargetAngle);
+            testAutoMovePhase = 4;
+        }
+        if (testAutoMovePhase == 4 && !shoulder.IsBusy()) {
+            wrist.GoToAngle(testWristTargetAngle);
+            testAutoMovePhase = 5;
+        }
+        if (testAutoMovePhase == 5 && !wrist.IsBusy()) {
+            testAutoMoveActive = false;
+            testAutoMovePhase = 0;
+        }
+    }
+
+    private int getNextTestTurretTargetDegrees() {
+        if (target_degrees < 45) return 45;
+        if (target_degrees < 90) return 90;
+        if (target_degrees < 135) return 135;
+        if (target_degrees < 180) return 180;
+        if (target_degrees < 225) return 225;
+        return 0;
+    }
+
+    private double clampShoulderAngle(double angle) {
+        double minAngle = Math.toDegrees(Math.asin(SHOULDER_MIN_HEIGHT / 19));
+        double maxAngle = Math.toDegrees(Math.asin(SHOULDER_MAX_HEIGHT / 19));
+        return clamp(angle, minAngle, maxAngle);
+    }
+
+    private double clamp(double value, double min, double max) {
+        return Math.min(Math.max(value, min), max);
     }
 
     private void init_armToHome() {

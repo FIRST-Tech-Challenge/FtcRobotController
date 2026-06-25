@@ -76,7 +76,7 @@ public class Arm725 {
         shoulder_is_busy = true;
         motor.setTargetPosition(targetPosition);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        currentPower = 1;
+        currentPower = 0.4;
     }
     public void GoToAngle(double target_angle) {
 
