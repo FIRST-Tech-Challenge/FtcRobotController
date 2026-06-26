@@ -22,6 +22,10 @@ public class Hello_Bees_Demo3 extends OpMode {
     ButtonBlock leftbumper, rightbumper;
     boolean arm_full_toggle = true;
     int yPosTarget = 0;
+    private final Position ikTestTargetA = new Position(DistanceUnit.INCH, -32, 0, 10, 0);
+    private final Position ikTestTargetB = new Position(DistanceUnit.INCH, -36, 4, 14, 0);
+    private final Position ikTestTargetC = new Position(DistanceUnit.INCH, -28, -3, 8, 0);
+    private final Position ikTestTargetD = new Position(DistanceUnit.INCH, -40, 7, 18, 0);
 
     @Override
     public void init() {
@@ -132,6 +136,11 @@ public class Hello_Bees_Demo3 extends OpMode {
                 robot.getCurrent_Arm_Position().y - robot.getComputedEndEffectorPose().y,
                 robot.getCurrent_Arm_Position().z - robot.getComputedEndEffectorPose().z);
         telemetry.addData("[Test AutoMove]", "Active: %s Phase: %d", robot.isTestAutoMoveActive() ? "YES" : "NO", robot.getTestAutoMovePhase());
+        telemetry.addLine("Telemetry: (IK Compute Only)");
+        addIKTelemetry("Target A", ikTestTargetA);
+        addIKTelemetry("Target B", ikTestTargetB);
+        addIKTelemetry("Target C", ikTestTargetC);
+        addIKTelemetry("Target D", ikTestTargetD);
         telemetry.addData("[Arm]Target:"," (X) %.1f (Y) %.1f (Z) %.1f (d) %.1f (e) %.1f", robot.getTarget_position().x,robot.getTarget_position().y,robot.getTarget_position().z,robot.getTarget_degrees(),robot.getExtensionLocal_target());
         telemetry.addData("[Arm]Homed: (Yes/No)", robot.isArmHomed()+" (Busy) "+robot.isArmBusy()+" BadPos: "+robot.isArm_last_position_bad());
         telemetry.addData("[Wrist] H:","%.1f L:%.1f C:%.2f",robot.getWristHeight(),robot.getWristLength(),robot.getWristCalc());
@@ -156,5 +165,21 @@ public class Hello_Bees_Demo3 extends OpMode {
 
 
         telemetry.update();
+    }
+
+    private void addIKTelemetry(String label, Position target) {
+        robot_system.IKSolution solution = robot.testIK(target);
+
+        telemetry.addData("[IK] " + label + " Target", "(X) %.1f (Y) %.1f (Z) %.1f", target.x, target.y, target.z);
+        telemetry.addData("[IK] " + label + " Accepted Y Window", "(%.1f, %.1f)", solution.acceptedYMin, solution.acceptedYMax);
+        telemetry.addData("[IK] " + label + " Reachable", solution.reachable ? "YES" : "NO");
+        telemetry.addData("[IK] " + label + " Selected Turret", solution.turretDegrees);
+        telemetry.addData("[IK] " + label + " Turret Target", solution.turretDegrees);
+        telemetry.addData("[IK] " + label + " Shoulder Angle", "%.1f", solution.shoulderAngle);
+        telemetry.addData("[IK] " + label + " Extension Length", "%.1f", solution.extensionLength);
+        telemetry.addData("[IK] " + label + " Wrist Angle", "%.1f", solution.wristAngle);
+        telemetry.addData("[IK] " + label + " Selection Score", "%.3f", solution.selectionScore);
+        telemetry.addData("[IK] " + label + " Candidate Count", solution.candidateCount);
+        telemetry.addData("[IK] " + label + " Failure Reason", solution.failureReason);
     }
 }

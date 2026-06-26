@@ -26,6 +26,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.Constants;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class robot_system {
     // robot constants
     private double y_target_offset = 0;
@@ -122,6 +125,26 @@ public class robot_system {
     private double testShoulderTargetAngle = 0;
     private double testWristTargetAngle = 0;
     private Position computedEndEffectorPose = new Position(DistanceUnit.INCH, 0, 0, 0, System.nanoTime());
+    private static final double TEST_IK_SHOULDER_RADIUS = 19;
+    private static final double TEST_IK_TREATMENT_Y_WINDOW = 5;
+    private static final double TEST_IK_WRIST_LENGTH = Math.abs(WRIST_X_OFFSET);
+    private static final double TEST_IK_WRIST_MIN_ANGLE = -90;
+    private static final double TEST_IK_WRIST_MAX_ANGLE = 90;
+    private static final double TEST_IK_WRIST_ANGLE_STEP = 5;
+    private static final int[] TEST_IK_TURRET_DEGREES = {45, 90, 135, 180, 225};
+
+    public static class IKSolution {
+        public boolean reachable;
+        public int turretDegrees;
+        public double shoulderAngle;
+        public double extensionLength;
+        public double wristAngle;
+        public String failureReason;
+        public double acceptedYMin;
+        public double acceptedYMax;
+        public double selectionScore;
+        public int candidateCount;
+    }
 
     public robot_system(HardwareMap hm) {
         pump = new Pump_Subsystem(hm, "pump");
@@ -364,8 +387,9 @@ public class robot_system {
         double shoulderLength = shoulder.getExtension();
         double shoulderHeight = shoulder.GetHeight();
         double extensionLength = extension.GetPos();
-        double wristLength = wrist.GetLength();
-        double wristHeight = wrist.GetHeight();
+        double wristAngle = wrist.GetAngle();
+        double wristLength = TEST_IK_WRIST_LENGTH * Math.cos(Math.toRadians(wristAngle));
+        double wristHeight = TEST_IK_WRIST_LENGTH * Math.sin(Math.toRadians(wristAngle));
         double turretX = turret.getPosition().x;
         double turretY = turret.getPosition().y;
 
@@ -385,6 +409,173 @@ public class robot_system {
 
     public int getTestAutoMovePhase() {
         return testAutoMovePhase;
+    }
+
+    // === TESTING ONLY ===
+    // Compute-only IK solver. This does not command motors or modify automation state.
+    public IKSolution solveIK(Position target) {
+        List<IKSolution> candidates = new ArrayList<>();
+        double minY = target.y - TEST_IK_TREATMENT_Y_WINDOW;
+        double maxY = target.y + TEST_IK_TREATMENT_Y_WINDOW;
+
+        for (int degrees : TEST_IK_TURRET_DEGREES) {
+            if (candidateWithinTreatmentWindow(target, degrees)) {
+                for (double wristAngle = TEST_IK_WRIST_MIN_ANGLE; wristAngle <= TEST_IK_WRIST_MAX_ANGLE; wristAngle += TEST_IK_WRIST_ANGLE_STEP) {
+                    candidates.add(evaluateCandidate(target, degrees, wristAngle, minY, maxY));
+                }
+            }
+        }
+
+        IKSolution selected = selectBestCandidate(candidates, minY, maxY);
+        selected.candidateCount = candidates.size();
+        return selected;
+    }
+
+    public IKSolution testIK(Position target) {
+        return solveIK(target);
+    }
+
+    private IKSolution evaluateCandidate(Position target, int turretDegrees, double wristAngle, double minY, double maxY) {
+        IKSolution solution = new IKSolution();
+        Position turretOffset = getTestTurretOffset(turretDegrees);
+
+        double wristLength = TEST_IK_WRIST_LENGTH * Math.cos(Math.toRadians(wristAngle));
+        double wristHeight = TEST_IK_WRIST_LENGTH * Math.sin(Math.toRadians(wristAngle));
+        double shoulderHeight = target.z - TURRENT_TO_CAMERA.z - wristHeight;
+        double shoulderRatio = shoulderHeight / TEST_IK_SHOULDER_RADIUS;
+        double shoulderAngle = 0;
+        boolean validShoulderAngle = Math.abs(shoulderRatio) <= 1;
+
+        if (validShoulderAngle) {
+            shoulderAngle = Math.toDegrees(Math.asin(shoulderRatio));
+        }
+
+        double shoulderLength = validShoulderAngle
+                ? TEST_IK_SHOULDER_RADIUS * Math.cos(Math.toRadians(shoulderAngle))
+                : 0;
+        double extensionLength = -(target.x - TURRENT_TO_CAMERA.x - 10)
+                + turretOffset.x
+                - shoulderLength
+                - wristLength;
+
+        solution.turretDegrees = turretDegrees;
+        solution.shoulderAngle = shoulderAngle;
+        solution.extensionLength = extensionLength;
+        solution.wristAngle = wristAngle;
+        solution.reachable = true;
+        solution.failureReason = "OK";
+        solution.acceptedYMin = minY;
+        solution.acceptedYMax = maxY;
+
+        if (!validShoulderAngle) {
+            appendIKFailure(solution, "shoulder angle outside asin range");
+        }
+        if (shoulderHeight < SHOULDER_MIN_HEIGHT || shoulderHeight > SHOULDER_MAX_HEIGHT) {
+            appendIKFailure(solution, "shoulder height outside limit");
+        }
+        if (extensionLength < 0) {
+            appendIKFailure(solution, "extension below minimum");
+        }
+        if (extensionLength > EXTENSION_MAX_POSITION) {
+            appendIKFailure(solution, "extension above maximum");
+        }
+        if (wristAngle < TEST_IK_WRIST_MIN_ANGLE || wristAngle > TEST_IK_WRIST_MAX_ANGLE) {
+            appendIKFailure(solution, "wrist angle outside limit");
+        }
+
+        solution.selectionScore = scoreCandidate(solution);
+        if (!isFiniteSolution(solution)) {
+            appendIKFailure(solution, "non-finite IK value");
+            solution.selectionScore = 1000000;
+        }
+        return solution;
+    }
+
+    private boolean candidateWithinTreatmentWindow(Position target, int turretDegrees) {
+        double turretY = getTestTurretTargetY(turretDegrees);
+        return turretY >= target.y - TEST_IK_TREATMENT_Y_WINDOW
+                && turretY <= target.y + TEST_IK_TREATMENT_Y_WINDOW;
+    }
+
+    private double scoreCandidate(IKSolution candidate) {
+        double reachablePenalty = candidate.reachable ? 0 : 1000000;
+        return reachablePenalty
+                + candidate.extensionLength
+                + (Math.abs(candidate.shoulderAngle) / 1000)
+                + (Math.abs(candidate.wristAngle) / 10000);
+    }
+
+    private IKSolution selectBestCandidate(List<IKSolution> candidates, double minY, double maxY) {
+        if (candidates.isEmpty()) {
+            IKSolution solution = new IKSolution();
+            solution.reachable = false;
+            solution.turretDegrees = 0;
+            solution.shoulderAngle = 0;
+            solution.extensionLength = 0;
+            solution.wristAngle = 0;
+            solution.failureReason = "no turret position inside treatment Y window";
+            solution.acceptedYMin = minY;
+            solution.acceptedYMax = maxY;
+            solution.selectionScore = 1000000;
+            return solution;
+        }
+
+        IKSolution best = candidates.get(0);
+        for (IKSolution candidate : candidates) {
+            if (candidate.selectionScore < best.selectionScore) {
+                best = candidate;
+            }
+        }
+
+        sanitizeIKSolution(best);
+        return best;
+    }
+
+    private boolean isFiniteSolution(IKSolution solution) {
+        return Double.isFinite(solution.shoulderAngle)
+                && Double.isFinite(solution.extensionLength)
+                && Double.isFinite(solution.wristAngle)
+                && Double.isFinite(solution.selectionScore);
+    }
+
+    private void sanitizeIKSolution(IKSolution solution) {
+        if (!Double.isFinite(solution.shoulderAngle)) {
+            solution.shoulderAngle = 0;
+        }
+        if (!Double.isFinite(solution.extensionLength)) {
+            solution.extensionLength = 0;
+        }
+        if (!Double.isFinite(solution.wristAngle)) {
+            solution.wristAngle = 0;
+        }
+        if (!Double.isFinite(solution.selectionScore)) {
+            solution.selectionScore = 1000000;
+        }
+
+        solution.shoulderAngle = clampShoulderAngle(solution.shoulderAngle);
+        solution.extensionLength = clamp(solution.extensionLength, 0, EXTENSION_MAX_POSITION);
+        solution.wristAngle = clamp(solution.wristAngle, TEST_IK_WRIST_MIN_ANGLE, TEST_IK_WRIST_MAX_ANGLE);
+    }
+
+    private Position getTestTurretOffset(int turretDegrees) {
+        if (turretDegrees == 45) return TURRENT_OFFSET_45_X_Y;
+        if (turretDegrees == 90) return TURRENT_OFFSET_90_X_Y;
+        if (turretDegrees == 135) return TURRENT_OFFSET_135_X_Y;
+        if (turretDegrees == 180) return TURRENT_OFFSET_180_X_Y;
+        return TURRENT_OFFSET_225_X_Y;
+    }
+
+    private double getTestTurretTargetY(int turretDegrees) {
+        return getTestTurretOffset(turretDegrees).y + TURRENT_TO_CAMERA.y;
+    }
+
+    private void appendIKFailure(IKSolution solution, String reason) {
+        solution.reachable = false;
+        if (solution.failureReason.equals("OK")) {
+            solution.failureReason = reason;
+        } else {
+            solution.failureReason += "; " + reason;
+        }
     }
 
     private void initTestLockedTargetAutoMove() {
