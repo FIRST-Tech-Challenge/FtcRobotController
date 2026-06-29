@@ -63,8 +63,8 @@ public class Vision725 {
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_25h9)
                 .setTagLibrary(
                         new AprilTagLibrary.Builder()
-                                .addTag(0,"beeHiveTag",1.93,DistanceUnit.INCH)
-                                .addTag(1,"beeHiveTag",1.93,DistanceUnit.INCH)
+                                .addTag(0,"beeHiveTag",77.8,DistanceUnit.MM)
+                                .addTag(1,"beeHiveTag",77.8,DistanceUnit.MM)
                                 .build()
                 )
                 .build();

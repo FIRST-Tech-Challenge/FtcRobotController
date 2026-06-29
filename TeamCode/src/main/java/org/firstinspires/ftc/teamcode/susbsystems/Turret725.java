@@ -42,6 +42,7 @@ public class Turret725 {
     *
     * */
     //POTS Constants
+    //old values with other sensor
     /*private static final double ZERO_DEGREES = .315;
     private static final double FORTYFIVE_DEGREES = .279;
     private static final double NINETY_DEGREES = .255;
@@ -79,6 +80,7 @@ public class Turret725 {
     private double currentPower = 0;
     private double currentAngle = 0;
     private double currentAngleRAD = 0;
+    private double newcurrentAngleDegrees = 0;
     private double currentDegree;
     //represents the direction the turret has last been set to
     private ArrayList<Double> POTS_POSITIONS;
@@ -172,10 +174,11 @@ public class Turret725 {
     }
     public void Update() {
         currentPosition = GetRawPos();
+        newcurrentAngleDegrees = -53.268 * Math.pow(currentPosition,2) + 312.4707*currentPosition - 172.2134;
         setAngle();
         this.currentxyzPosition = new Position(DistanceUnit.INCH,TURRET_LENGTH * Math.cos(currentAngleRAD),TURRET_LENGTH * Math.sin(currentAngleRAD),0,System.nanoTime());
 
-        homed = currentPosition >= Constants.TURRET_MAX_POSITION-TURRET_ERROR;
+        homed = currentPosition <= Constants.TURRET_MIN_POSITION-TURRET_ERROR;
         if (isHoming && homed) {Stop();}
 
         if(isBusy && ((Math.abs(currentPosition - GetRawTargetPos()) < TURRET_ERROR))){Stop();};
@@ -186,7 +189,7 @@ public class Turret725 {
                     currentPower = homePower;
                     //if (homeTime.seconds() > 3) StartHome();
             } else {
-                if(targetPosition<currentPosition)
+                if(targetPosition>currentPosition)
                     currentPower = .18;
                 else{
                     currentPower = - .18;
@@ -194,10 +197,10 @@ public class Turret725 {
             }
         }
         //safety lockouts
-        if (currentPosition <= Constants.TURRET_MIN_POSITION) {
+        if (currentPosition >= Constants.TURRET_MAX_POSITION) {
             currentPower = Math.min(Math.max(currentPower, -1), 0);
         }
-        if (currentPosition >= Constants.TURRET_MAX_POSITION) {
+        if (currentPosition <= Constants.TURRET_MIN_POSITION) {
             currentPower = Math.min(Math.max(currentPower, 0), 1);
         }
         rawSet(currentPower);
@@ -206,4 +209,5 @@ public class Turret725 {
     public double GetPower() {return motor.getPower();}
     public boolean Homed() {return homed;}
     public Position getPosition(){return currentxyzPosition;}
+    public double getNewcurrentAngleDegrees() {return newcurrentAngleDegrees;}
 }

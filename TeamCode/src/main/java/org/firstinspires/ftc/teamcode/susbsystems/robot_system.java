@@ -579,10 +579,17 @@ public class robot_system {
     }
 
     private void initTestLockedTargetAutoMove() {
-        if (!arm_is_busy && arm_ready && arm_homed) {
+//        if (!arm_is_busy && arm_ready && arm_homed) {
+//            testAutoMoveActive = true;
+//            testAutoMovePhase = 3;
+//            testTurretTargetDegrees = 135;
+//            testExtensionTarget = clamp(extension.GetPos() + 5, 0, EXTENSION_MAX_POSITION);
+//            testShoulderTargetAngle = clampShoulderAngle(shoulder.GetPos() + 40);
+//            testWristTargetAngle = clamp(wrist.GetAngle() + 30, 36, 180);
+//        }
+        {
             testAutoMoveActive = true;
-            testAutoMovePhase = 1;
-            testTurretTargetDegrees = 135;
+            testAutoMovePhase = 2;
             testExtensionTarget = clamp(extension.GetPos() + 5, 0, EXTENSION_MAX_POSITION);
             testShoulderTargetAngle = clampShoulderAngle(shoulder.GetPos() + 40);
             testWristTargetAngle = clamp(wrist.GetAngle() + 30, 36, 180);
@@ -599,7 +606,7 @@ public class robot_system {
     }
 
     private void testLockedTargetAutoMove() {
-        if (arm_automation || fullCycleAutomation || cycling || arm_homing) {
+        if (arm_automation || fullCycleAutomation || cycling) {
             testStopAutoMove();
             return;
         }

@@ -47,16 +47,16 @@ public class Constants {
     public static final Position TURRENT_OFFSET_180_X_Y = new Position(DistanceUnit.INCH,-20,2.5,0,0);
     public static final Position TURRENT_OFFSET_225_X_Y = new Position(DistanceUnit.INCH,-18,-6.5,0,0);
 
-    public static final double ZERO_DEGREES = .315;
-    public static final double FORTYFIVE_DEGREES = .279;
-    public static final double NINETY_DEGREES = .255;
-    public static final double ONETHIRTYFIVE_DEGREES = .241;
-    public static final double ONEEIGHTY_DEGREES = .216;
-    public static final double TWOTWENTYFIVE_DEGREES = .195;
+    public static final double ZERO_DEGREES = .589;
+    public static final double FORTYFIVE_DEGREES = .873;
+    public static final double NINETY_DEGREES = .997;
+    public static final double ONETHIRTYFIVE_DEGREES = 1.252;
+    public static final double ONEEIGHTY_DEGREES = 1.466;
+    public static final double TWOTWENTYFIVE_DEGREES = 1.893;
 
     // turret min/max  analog potentiometer values
-    public static final double TURRET_MIN_POSITION = .185;
-    public static final double TURRET_MAX_POSITION = .315;
+    public static final double TURRET_MIN_POSITION = .5; //1.26
+    public static final double TURRET_MAX_POSITION = 2.45;
 
     public static final double TURRET_ERROR = .001;
 }
