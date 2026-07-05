@@ -127,59 +127,83 @@ public class Hello_Bees_Demo3 extends OpMode {
         {
             telemetry.addLine("****** READY Move Arm ONLY ******");
         }
-        telemetry.addLine("Telemetry: (Arm)");
-        telemetry.addData("Auto: (Yes/No)", robot.isArm_automation()+" (Arm State) "+robot.armAutoState()+" (Ready) "+robot.isArm_ready()+" (Full State) "+robot.getFullCycleState());
-        telemetry.addData("[Arm]Position:"," (X) %.1f (Y) %.1f (Z) %.1f", robot.getCurrent_Arm_Position().x,robot.getCurrent_Arm_Position().y,robot.getCurrent_Arm_Position().z);
-        telemetry.addData("[FK]Position:"," (X) %.1f (Y) %.1f (Z) %.1f", robot.getComputedEndEffectorPose().x,robot.getComputedEndEffectorPose().y,robot.getComputedEndEffectorPose().z);
-        telemetry.addData("[FK]Delta:"," (X) %.1f (Y) %.1f (Z) %.1f",
+        telemetry.addLine("Telemetry: Geometry Verification");
+
+        // Verify extension calibration: physical slide extension should match this inch value.
+        telemetry.addLine("===== EXTENSION =====");
+        telemetry.addData("Extension (in)", "%.2f", robot.getExtensionPosition());
+
+        // Verify turret potentiometer conversion and that the shoulder pivot rides at the turret tip.
+        telemetry.addLine("===== TURRET =====");
+        telemetry.addData("Angle", "%.2f", robot.turretAngle());
+        telemetry.addData("Raw Pot", "%.3f", robot.turretPosition());
+        telemetry.addData("Shoulder Pivot X", "%.2f", robot.shoulderPivotX());
+        telemetry.addData("Shoulder Pivot Y", "%.2f", robot.shoulderPivotY());
+        telemetry.addData("Radius", "%.2f", robot.shoulderPivotRadius());
+
+        // Verify shoulder encoder geometry: angle should explain measured vertical height.
+        telemetry.addLine("===== SHOULDER =====");
+        telemetry.addData("Angle", "%.2f", robot.shoulderAngle());
+        telemetry.addData("Height", "%.2f", robot.shoulderHeight());
+
+        // Verify wrist model: wrist motion should change FK but not the pre-wrist arm position.
+        telemetry.addLine("===== WRIST =====");
+        telemetry.addData("Angle", "%.2f", robot.getWristAngle());
+        telemetry.addData("Height", "%.2f", robot.getWristHeight());
+        telemetry.addData("Length", "%.2f", robot.getWristLength());
+
+        // Verify whole-arm geometry: current position is pre-wrist, FK position is nozzle/tip.
+        telemetry.addLine("===== ARM =====");
+        telemetry.addData("Current Position","(X) %.2f (Y) %.2f (Z) %.2f", robot.getCurrent_Arm_Position().x, robot.getCurrent_Arm_Position().y, robot.getCurrent_Arm_Position().z);
+        telemetry.addData("FK Position","(X) %.2f (Y) %.2f (Z) %.2f", robot.getComputedEndEffectorPose().x, robot.getComputedEndEffectorPose().y, robot.getComputedEndEffectorPose().z);
+        telemetry.addData("Delta","(X) %.2f (Y) %.2f (Z) %.2f",
                 robot.getCurrent_Arm_Position().x - robot.getComputedEndEffectorPose().x,
                 robot.getCurrent_Arm_Position().y - robot.getComputedEndEffectorPose().y,
                 robot.getCurrent_Arm_Position().z - robot.getComputedEndEffectorPose().z);
-        telemetry.addData("[Test AutoMove]", "Active: %s Phase: %d", robot.isTestAutoMoveActive() ? "YES" : "NO", robot.getTestAutoMovePhase());
+
+        telemetry.addData("Auto", "Arm %s State %d Ready %s FullState %d", robot.isArm_automation() ? "YES" : "NO", robot.armAutoState(), robot.isArm_ready() ? "YES" : "NO", robot.getFullCycleState());
+        telemetry.addData("Test AutoMove", "Active %s Phase %d", robot.isTestAutoMoveActive() ? "YES" : "NO", robot.getTestAutoMovePhase());
+        // telemetry.addLine(String.format("[TAG] Detected %b x: %.2f y: %.2f z: %.2f", robot.isTagDetected(),robot.getTagLocation().x, robot.getTagLocation().y, robot.getTagLocation().z) );
+        // telemetry.addData("[Vision] Locked", robot.isTreatmentTargetLocked() ? "YES" : "NO");
+        // telemetry.addLine(String.format("[Arm](Homed) Shoulder %b Turret: %b Ext: %b", robot.shoulderIsHomed(),robot.turretIsHomed(),robot.isExtensionHome()) );
+        // telemetry.addLine(String.format("[Arm](Busy) Sho: %b Tur: %b Ext: %b Wrst: %b Arm: %b ", robot.shoulderIsBusy(),robot.turretIsBusy(),robot.isBusyExtension(), robot.isWristBusy(),robot.isArmBusy()) );
+        // telemetry.addLine(String.format("[Fog]  %b Count: %d Target: %d", robot.isCycling(),robot.getCyclecount(), robot.getCycleTarget()) );
+        // telemetry.addLine(String.format("[Fog] Fan: %.0f Fog: %.0f Pump: %.0f", robot.getFanTime(),robot.getFogTime(), robot.getPumpTime()) );
+        // telemetry.addData("[Ready] Treat: ",robot.isReadyToTreat()+" Arm: "+robot.isArmHomed()+" Imp: "+robot.isArmLocationLogicImprovement());
+        // telemetry.addLine("  Controls Guide: Gamepad1");
+        // telemetry.addLine("(A:Stop) (B:Full/Arm Toggle)");
+        // telemetry.addLine("(X:Home Arm) (Y:Start Treatment)");
+        // telemetry.addLine("(Dpad Up/Down: Cycle Count) (Dpad Left + Right- [Fog Time])");
+        // telemetry.addLine("(Bumpers Buttons L+ R-: Fan Time)");
+        // telemetry.addLine("  Controls Guide: Gamepad2");
+        // telemetry.addLine("(A:Lock Target) (X:Unlock Target)");
+        // telemetry.addLine("Left Stick Y: Extension  Right Stick Y: Shoulder");
+        // telemetry.addLine("Dpad Up/Down: Wrist  Triggers: Turret");
+        // telemetry.addLine("(B:Home Shoulder)");
+
         telemetry.addLine("Telemetry: (IK Compute Only)");
         addIKTelemetry("Target A", ikTestTargetA);
         addIKTelemetry("Target B", ikTestTargetB);
         addIKTelemetry("Target C", ikTestTargetC);
         addIKTelemetry("Target D", ikTestTargetD);
-        telemetry.addData("[Arm]Target:"," (X) %.1f (Y) %.1f (Z) %.1f (d) %.1f (e) %.1f", robot.getTarget_position().x,robot.getTarget_position().y,robot.getTarget_position().z,robot.getTarget_degrees(),robot.getExtensionLocal_target());
-        telemetry.addData("[Arm]Homed: (Yes/No)", robot.isArmHomed()+" (Busy) "+robot.isArmBusy()+" BadPos: "+robot.isArm_last_position_bad());
-        telemetry.addData("[Wrist] H:","%.1f L:%.1f C:%.2f",robot.getWristHeight(),robot.getWristLength(),robot.getWristCalc());
-        telemetry.addData("[Shoulder] H:","%.1f, L:%.1f Raw:%.2f",robot.shoulderHeight(),robot.shoulderLength(),robot.shoulderRaw());
-        telemetry.addLine(String.format("[TAG] Detected %b x: %.2f y: %.2f z: %.2f", robot.isTagDetected(),robot.getTagLocation().x, robot.getTagLocation().y, robot.getTagLocation().z) );
-        telemetry.addData("[Vision] Locked", robot.isTreatmentTargetLocked() ? "YES" : "NO");
-        telemetry.addLine(String.format("[Arm](Homed) Shoulder %b Turret: %b Ext: %b", robot.shoulderIsHomed(),robot.turretIsHomed(),robot.isExtensionHome()) );
-        telemetry.addLine(String.format("[Arm](Busy) Sho: %b Tur: %b Ext: %b Wrst: %b Arm: %b ", robot.shoulderIsBusy(),robot.turretIsBusy(),robot.isBusyExtension(), robot.isWristBusy(),robot.isArmBusy()) );
-        telemetry.addLine(String.format("[Fog]  %b Count: %d Target: %d", robot.isCycling(),robot.getCyclecount(), robot.getCycleTarget()) );
-        telemetry.addLine(String.format("[Fog] Fan: %.0f Fog: %.0f Pump: %.0f", robot.getFanTime(),robot.getFogTime(), robot.getPumpTime()) );
-        telemetry.addData("[Ready] Treat: ",robot.isReadyToTreat()+" Arm: "+robot.isArmHomed()+" Imp: "+robot.isArmLocationLogicImprovement());
-        telemetry.addLine("  Controls Guide: Gamepad1");
-        telemetry.addLine("(A:Stop) (B:Full/Arm Toggle)");
-        telemetry.addLine("(X:Home Arm) (Y:Start Treatment)");
-        telemetry.addLine("(Dpad Up/Down: Cycle Count) (Dpad Left + Right- [Fog Time])");
-        telemetry.addLine("(Bumpers Buttons L+ R-: Fan Time)");
-        telemetry.addLine("  Controls Guide: Gamepad2");
-        telemetry.addLine("(A:Lock Target) (X:Unlock Target)");
-        telemetry.addLine("Left Stick Y: Extension  Right Stick Y: Shoulder");
-        telemetry.addLine("Dpad Up/Down: Wrist  Triggers: Turret");
-        telemetry.addLine("(B:Home Shoulder)");
 
 
         telemetry.update();
     }
 
-    private void addIKTelemetry(String label, Position target) {
-        robot_system.IKSolution solution = robot.testIK(target);
+     private void addIKTelemetry(String label, Position target) {
+         robot_system.IKSolution solution = robot.testIK(target);
 
-        telemetry.addData("[IK] " + label + " Target", "(X) %.1f (Y) %.1f (Z) %.1f", target.x, target.y, target.z);
-        telemetry.addData("[IK] " + label + " Accepted Y Window", "(%.1f, %.1f)", solution.acceptedYMin, solution.acceptedYMax);
-        telemetry.addData("[IK] " + label + " Reachable", solution.reachable ? "YES" : "NO");
-        telemetry.addData("[IK] " + label + " Selected Turret", solution.turretDegrees);
-        telemetry.addData("[IK] " + label + " Turret Target", solution.turretDegrees);
-        telemetry.addData("[IK] " + label + " Shoulder Angle", "%.1f", solution.shoulderAngle);
-        telemetry.addData("[IK] " + label + " Extension Length", "%.1f", solution.extensionLength);
-        telemetry.addData("[IK] " + label + " Wrist Angle", "%.1f", solution.wristAngle);
-        telemetry.addData("[IK] " + label + " Selection Score", "%.3f", solution.selectionScore);
-        telemetry.addData("[IK] " + label + " Candidate Count", solution.candidateCount);
-        telemetry.addData("[IK] " + label + " Failure Reason", solution.failureReason);
-    }
+         telemetry.addData("[IK] " + label + " Target", "(X) %.1f (Y) %.1f (Z) %.1f", target.x, target.y, target.z);
+         telemetry.addData("[IK] " + label + " Accepted Y Window", "(%.1f, %.1f)", solution.acceptedYMin, solution.acceptedYMax);
+         telemetry.addData("[IK] " + label + " Reachable", solution.reachable ? "YES" : "NO");
+         telemetry.addData("[IK] " + label + " Selected Turret", solution.turretDegrees);
+         telemetry.addData("[IK] " + label + " Turret Target", solution.turretDegrees);
+         telemetry.addData("[IK] " + label + " Shoulder Angle", "%.1f", solution.shoulderAngle);
+         telemetry.addData("[IK] " + label + " Extension Length", "%.1f", solution.extensionLength);
+         telemetry.addData("[IK] " + label + " Wrist Angle", "%.1f", solution.wristAngle);
+         telemetry.addData("[IK] " + label + " Selection Score", "%.3f", solution.selectionScore);
+         telemetry.addData("[IK] " + label + " Candidate Count", solution.candidateCount);
+         telemetry.addData("[IK] " + label + " Failure Reason", solution.failureReason);
+     }
 }

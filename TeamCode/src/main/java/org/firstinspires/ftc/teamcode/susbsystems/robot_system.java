@@ -6,14 +6,7 @@ import static org.firstinspires.ftc.teamcode.Constants.SHOULDER_MIN_HEIGHT;
 import static org.firstinspires.ftc.teamcode.Constants.TAG_ID_1_Y_MAX;
 import static org.firstinspires.ftc.teamcode.Constants.TAG_ID_1_Y_MIN;
 import static org.firstinspires.ftc.teamcode.Constants.TAG_ID_1_Z_OFFSET;
-import static org.firstinspires.ftc.teamcode.Constants.TURRENT_OFFSET_135_X_Y;
-import static org.firstinspires.ftc.teamcode.Constants.TURRENT_OFFSET_180_X_Y;
-import static org.firstinspires.ftc.teamcode.Constants.TURRENT_OFFSET_225_X_Y;
-import static org.firstinspires.ftc.teamcode.Constants.TURRENT_OFFSET_45_X_Y;
-import static org.firstinspires.ftc.teamcode.Constants.TURRENT_OFFSET_90_X_Y;
 import static org.firstinspires.ftc.teamcode.Constants.TURRENT_TO_CAMERA;
-import static org.firstinspires.ftc.teamcode.Constants.WRIST_X_OFFSET;
-import static org.firstinspires.ftc.teamcode.Constants.WRIST_Z_OFFSET;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -127,11 +120,14 @@ public class robot_system {
     private Position computedEndEffectorPose = new Position(DistanceUnit.INCH, 0, 0, 0, System.nanoTime());
     private static final double TEST_IK_SHOULDER_RADIUS = 19;
     private static final double TEST_IK_TREATMENT_Y_WINDOW = 5;
-    private static final double TEST_IK_WRIST_LENGTH = Math.abs(WRIST_X_OFFSET);
-    private static final double TEST_IK_WRIST_MIN_ANGLE = -90;
+    // IK evaluates possible wrist angles, so it needs the same wrist radius used by Wrist.java.
+    private static final double TEST_IK_WRIST_RADIUS = 7.338;
+    private static final double TEST_IK_WRIST_MIN_ANGLE = 0;
     private static final double TEST_IK_WRIST_MAX_ANGLE = 90;
     private static final double TEST_IK_WRIST_ANGLE_STEP = 5;
     private static final int[] TEST_IK_TURRET_DEGREES = {45, 90, 135, 180, 225};
+    // The shoulder joint is mounted at the far end of the rotating turret, not at the turret pivot.
+    private static final double AUTOMATION_TURRET_LENGTH = 10.2362;
 
     public static class IKSolution {
         public boolean reachable;
@@ -310,9 +306,10 @@ public class robot_system {
         // y forward / backward from robot - forward is positive
         // z up is positive
         // y, x, z 0,0,0 is camera zip tied to robot frame
+        Position turretOffset = getAutomationTurretOffset(); // turrent offset based on angle
         arm_position.z = shoulder.GetHeight() + TURRENT_TO_CAMERA.z; //7.5 is the height of shoulder rotation above the camera
-        arm_position.y = turret.getPosition().y + TURRENT_TO_CAMERA.y; //4.5 is how far the end of the arm is in front of the camera
-        arm_position.x = -(extension.GetPos() + shoulder.getExtension() - turret.getPosition().x)+TURRENT_TO_CAMERA.x+10; // -8 for camera adjustment added 10 for no clear reason
+        arm_position.y = turretOffset.y + TURRENT_TO_CAMERA.y; //4.5 is how far the end of the arm is in front of the camera
+        arm_position.x = -(extension.GetPos() + shoulder.getExtension() - turretOffset.x)+TURRENT_TO_CAMERA.x+10; // -8 for camera adjustment added 10 for no clear reason (may be for the extension length)
         if (arm_automation) {
             if (!shoulder.IsBusy() && !turret.IsBusy() && !extension.IsBusy() && arm_state == 0) {
                 arm_automation = false;
@@ -324,6 +321,28 @@ public class robot_system {
             if(arm_ready){arm_homed = true;}
         }
         else arm_homed = false;
+    }
+
+    private Position getAutomationTurretOffset() {
+        return getAutomationTurretOffset(turret.getNewcurrentAngleDegrees());
+    }
+
+    private Position getAutomationTurretOffset(double turretDegrees) {
+        double turretRadians = Math.toRadians(turretDegrees);
+        return new Position(
+                DistanceUnit.INCH,
+                AUTOMATION_TURRET_LENGTH * Math.cos(turretRadians),
+                AUTOMATION_TURRET_LENGTH * Math.sin(turretRadians),
+                0,
+                System.nanoTime());
+    }
+
+    private double getAutomationTurretTargetY(double turretDegrees) {
+        return getAutomationTurretOffset(turretDegrees).y + TURRENT_TO_CAMERA.y;
+    }
+
+    private double getAutomationTurretTargetX(double turretDegrees) {
+        return getAutomationTurretOffset(turretDegrees).x + TURRENT_TO_CAMERA.x;
     }
 
     public void startarmToPosition(Position target) {
@@ -387,15 +406,19 @@ public class robot_system {
         double shoulderLength = shoulder.getExtension();
         double shoulderHeight = shoulder.GetHeight();
         double extensionLength = extension.GetPos();
-        double wristAngle = wrist.GetAngle();
-        double wristLength = TEST_IK_WRIST_LENGTH * Math.cos(Math.toRadians(wristAngle));
-        double wristHeight = TEST_IK_WRIST_LENGTH * Math.sin(Math.toRadians(wristAngle));
-        double turretX = turret.getPosition().x;
-        double turretY = turret.getPosition().y;
+        double wristLength = wrist.GetLength();
+        double wristHeight = wrist.GetHeight();
+        Position turretOffset = getAutomationTurretOffset();
 
-        computedEndEffectorPose.x = -(extensionLength + shoulderLength + wristLength - turretX) + TURRENT_TO_CAMERA.x + 10;
-        computedEndEffectorPose.y = turretY + TURRENT_TO_CAMERA.y;
-        computedEndEffectorPose.z = shoulderHeight + wristHeight + TURRENT_TO_CAMERA.z;
+        // FK starts at the shoulder joint, after extension plus the rotated 10.2362 inch turret offset.
+        double preWristX = -(extensionLength + shoulderLength - turretOffset.x) + TURRENT_TO_CAMERA.x + 10;
+        double preWristY = turretOffset.y + TURRENT_TO_CAMERA.y;
+        double preWristZ = shoulderHeight + TURRENT_TO_CAMERA.z;
+
+        // Wrist length is signed. Negative wrist length means farther out in robot X.
+        computedEndEffectorPose.x = preWristX + wristLength;
+        computedEndEffectorPose.y = preWristY;
+        computedEndEffectorPose.z = preWristZ + wristHeight;
         computedEndEffectorPose.acquisitionTime = System.nanoTime();
     }
 
@@ -439,8 +462,8 @@ public class robot_system {
         IKSolution solution = new IKSolution();
         Position turretOffset = getTestTurretOffset(turretDegrees);
 
-        double wristLength = TEST_IK_WRIST_LENGTH * Math.cos(Math.toRadians(wristAngle));
-        double wristHeight = TEST_IK_WRIST_LENGTH * Math.sin(Math.toRadians(wristAngle));
+        double wristLength = TEST_IK_WRIST_RADIUS * Math.cos(Math.toRadians(wristAngle));
+        double wristHeight = TEST_IK_WRIST_RADIUS * Math.sin(Math.toRadians(wristAngle));
         double shoulderHeight = target.z - TURRENT_TO_CAMERA.z - wristHeight;
         double shoulderRatio = shoulderHeight / TEST_IK_SHOULDER_RADIUS;
         double shoulderAngle = 0;
@@ -558,11 +581,7 @@ public class robot_system {
     }
 
     private Position getTestTurretOffset(int turretDegrees) {
-        if (turretDegrees == 45) return TURRENT_OFFSET_45_X_Y;
-        if (turretDegrees == 90) return TURRENT_OFFSET_90_X_Y;
-        if (turretDegrees == 135) return TURRENT_OFFSET_135_X_Y;
-        if (turretDegrees == 180) return TURRENT_OFFSET_180_X_Y;
-        return TURRENT_OFFSET_225_X_Y;
+        return getAutomationTurretOffset(turretDegrees);
     }
 
     private double getTestTurretTargetY(int turretDegrees) {
@@ -589,10 +608,11 @@ public class robot_system {
 //        }
         {
             testAutoMoveActive = true;
-            testAutoMovePhase = 2;
+            testAutoMovePhase = 1;
+            testTurretTargetDegrees = 135;
             testExtensionTarget = clamp(extension.GetPos() + 5, 0, EXTENSION_MAX_POSITION);
-            testShoulderTargetAngle = clampShoulderAngle(shoulder.GetPos() + 40);
-            testWristTargetAngle = clamp(wrist.GetAngle() + 30, 36, 180);
+            testShoulderTargetAngle = clampShoulderAngle(shoulder.GetPos() + 15);
+            testWristTargetAngle = clamp(wrist.GetAngle() - 30, 36, 180);
         }
     }
 
@@ -719,7 +739,7 @@ public class robot_system {
             }
             if (arm_state == 4 && !wrist.IsBusy()) {
                 arm_state = 5;
-                extension_target = Math.abs(target_position.x)-(Math.abs(WRIST_X_OFFSET)+Math.abs(arm_position.x)+1);
+                extension_target = Math.abs(target_position.x)-(Math.abs(wrist.GetLength())+Math.abs(arm_position.x)+1);
                 extension.GoTo(extension_target);
             }
             if (arm_state == 5 && !extension.IsBusy()) {
@@ -766,6 +786,7 @@ public class robot_system {
 
     public boolean shoulderIsBusy() {return shoulder.IsBusy();}
     public double shoulderHeight(){return shoulder.GetHeight();}
+    public double shoulderAngle(){return shoulder.GetPos();}
     public double shoulderLength(){return shoulder.getExtension();}
     public double shoulderRaw(){return shoulder.GetRawPos();}
     public boolean shoulderIsHomed(){
@@ -776,8 +797,15 @@ public class robot_system {
     //**************************************************************************************
     public boolean turretIsBusy(){return turret.IsBusy();}
     public boolean turretIsHomed(){return turret.Homed();}
+    public double turretAngle(){return turret.getNewcurrentAngleDegrees();}
     public double turretPosition(){return turret.GetRawPos();}
     public double turretTargetPosition(){return turret.GetTargetPosition();}
+    public double shoulderPivotX(){return getAutomationTurretOffset().x;}
+    public double shoulderPivotY(){return getAutomationTurretOffset().y;}
+    public double shoulderPivotRadius(){
+        Position turretOffset = getAutomationTurretOffset();
+        return Math.sqrt((turretOffset.x * turretOffset.x) + (turretOffset.y * turretOffset.y));
+    }
     public void moveTurretManual(double power){
         if (!turret.IsBusy()) turret.SetPower(power);
         else if (Math.abs(power) > 0) {
@@ -811,6 +839,7 @@ public class robot_system {
     //**************************************************************************************
     //**************************************************************************************
     public double getExtensionTarget() {return extension.GetTargetPos();}
+    public double getExtensionPosition() {return extension.GetPos();}
     public double getExtensionLocal_target(){return extension_target;}
 
     public boolean isBusyExtension() {return extension.IsBusy();}
@@ -827,6 +856,7 @@ public class robot_system {
     //**************************************************************************************
     public double getWristHeight() {return wrist.GetHeight();}
     public double getWristLength() {return wrist.GetLength();}
+    public double getWristAngle() {return wrist.GetAngle();}
     public double getWristCalc() {return wrist.GetCalcPos();}
     public boolean isWristBusy() {return wrist.IsBusy();}
 
@@ -903,16 +933,16 @@ public class robot_system {
         //tag ID 1 is left
         if(tagID ==1 && arm_homed) {
             //target_position = tagLocation;
-            target_position.z = tagLocation.z + TAG_ID_1_Z_OFFSET - WRIST_Z_OFFSET;
+            target_position.z = tagLocation.z + TAG_ID_1_Z_OFFSET - wrist.GetHeight();
             if(target_position.z > SHOULDER_MAX_HEIGHT || target_position.z < SHOULDER_MIN_HEIGHT) {
                 target_position.z = 0;
                 return ready;
             }
-            if(tagLocation.y >TURRENT_OFFSET_90_X_Y.y+TURRENT_TO_CAMERA.y+TAG_ID_1_Y_MAX) {
+            if(tagLocation.y > getAutomationTurretTargetY(90)+TAG_ID_1_Y_MAX) {
                 target_position.y = 0;
                 return ready;
             }
-            if(tagLocation.y<TURRENT_OFFSET_225_X_Y.y+TURRENT_TO_CAMERA.y+TAG_ID_1_Y_MIN) {
+            if(tagLocation.y < getAutomationTurretTargetY(225)+TAG_ID_1_Y_MIN) {
                 target_position.y =0;
                 return ready;
             }
@@ -928,29 +958,29 @@ public class robot_system {
             target_position.x = tagLocation.x;
             armLocationLogicImprovement = false;
             //if it gets here then it should work or I have my bounds checking wrong.
-            if(tagLocation.y < TURRENT_OFFSET_90_X_Y.y+TURRENT_TO_CAMERA.y+TAG_ID_1_Y_MAX && tagLocation.y > TURRENT_OFFSET_135_X_Y.y+TURRENT_TO_CAMERA.y+TAG_ID_1_Y_MAX){
+            if(tagLocation.y < getAutomationTurretTargetY(90)+TAG_ID_1_Y_MAX && tagLocation.y > getAutomationTurretTargetY(135)+TAG_ID_1_Y_MAX){
                 ready = true;
                 target_degrees = 90;
-                target_position.y = TURRENT_OFFSET_90_X_Y.y+TURRENT_TO_CAMERA.y;
+                target_position.y = getAutomationTurretTargetY(90);
                 target_position.x = tagLocation.x+2;
             }
-            if(tagLocation.y < TAG_ID_1_Y_MAX+TURRENT_TO_CAMERA.y && tagLocation.y > TAG_ID_1_Y_MIN+TURRENT_TO_CAMERA.y && tagLocation.x <TURRENT_TO_CAMERA.x + TURRENT_OFFSET_180_X_Y.x){
+            if(tagLocation.y < TAG_ID_1_Y_MAX+TURRENT_TO_CAMERA.y && tagLocation.y > TAG_ID_1_Y_MIN+TURRENT_TO_CAMERA.y && tagLocation.x < getAutomationTurretTargetX(180)){
                 ready = true;
                 target_degrees = 180;
-                target_position.y = TURRENT_OFFSET_180_X_Y.y+TURRENT_TO_CAMERA.y;
+                target_position.y = getAutomationTurretTargetY(180);
                 target_position.x = tagLocation.x+2;
             }
-            if(tagLocation.y < TURRENT_OFFSET_135_X_Y.y+TURRENT_TO_CAMERA.y+TAG_ID_1_Y_MAX && tagLocation.y > TURRENT_OFFSET_180_X_Y.y+TURRENT_TO_CAMERA.y+TAG_ID_1_Y_MAX){
+            if(tagLocation.y < getAutomationTurretTargetY(135)+TAG_ID_1_Y_MAX && tagLocation.y > getAutomationTurretTargetY(180)+TAG_ID_1_Y_MAX){
                 ready = true;
                 target_degrees = 135;
                 //target_position.z = target_position.z +3;  //adjust for arm drop or something
-                target_position.y = TURRENT_OFFSET_135_X_Y.y+TURRENT_TO_CAMERA.y;
+                target_position.y = getAutomationTurretTargetY(135);
                 target_position.x = tagLocation.x+2;
             }
-            if(tagLocation.y < TURRENT_OFFSET_180_X_Y.y+TURRENT_TO_CAMERA.y+TAG_ID_1_Y_MAX && tagLocation.y > TURRENT_OFFSET_225_X_Y.y+TURRENT_TO_CAMERA.y+TAG_ID_1_Y_MAX){
+            if(tagLocation.y < getAutomationTurretTargetY(180)+TAG_ID_1_Y_MAX && tagLocation.y > getAutomationTurretTargetY(225)+TAG_ID_1_Y_MAX){
                 ready = true;
                 target_degrees = 225;
-                target_position.y = TURRENT_OFFSET_135_X_Y.y+TURRENT_TO_CAMERA.y;
+                target_position.y = getAutomationTurretTargetY(225);
                 target_position.x = tagLocation.x+2;
             }
             if(!ready) armLocationLogicImprovement = true;

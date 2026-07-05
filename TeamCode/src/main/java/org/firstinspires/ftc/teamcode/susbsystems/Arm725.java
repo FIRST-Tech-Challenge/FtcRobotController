@@ -43,7 +43,7 @@ public class Arm725 {
     public boolean AUTOSTOP = true;
   */
     //Shoulder Constants
-    private static final double DEG_TO_TICKS = 11.05;
+    private static final double DEG_TO_TICKS = 8.05; //
     private static final double SHOULDER_RADIUS = 19;
 
 
