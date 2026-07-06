@@ -78,8 +78,8 @@ class ArmAutomation {
                 RobotGeometry.TEST_IK_SHOULDER_MAX_ANGLE);
         robot.testWristTargetAngle = RobotGeometry.clamp(
                 solution.wristAngle,
-                RobotGeometry.TEST_IK_WRIST_MIN_ANGLE,
-                RobotGeometry.TEST_IK_WRIST_MAX_ANGLE);
+                0,
+                270);
 
         if (!solution.reachable) {
             robot.testAutoMoveActive = false;
@@ -111,18 +111,19 @@ class ArmAutomation {
             robot.testAutoMovePhase = 2;
         }
         if (robot.testAutoMovePhase == 2 && !robot.turret.IsBusy()) {
-            robot.extension.GoTo(robot.testExtensionTarget);
+            robot.shoulder.GoToAngle(robot.testShoulderTargetAngle);
             robot.testAutoMovePhase = 3;
         }
-        if (robot.testAutoMovePhase == 3 && !robot.extension.IsBusy()) {
-            robot.shoulder.GoToAngle(robot.testShoulderTargetAngle);
+        if (robot.testAutoMovePhase == 3 && !robot.shoulder.IsBusy()) {
+            // Wrist follows the shoulder angle so the nozzle stays level instead of solving height.
+            robot.wrist.SetLevel(robot.testShoulderTargetAngle);
             robot.testAutoMovePhase = 4;
         }
-        if (robot.testAutoMovePhase == 4 && !robot.shoulder.IsBusy()) {
-            robot.wrist.GoToAngle(robot.testWristTargetAngle);
+        if (robot.testAutoMovePhase == 4 && !robot.wrist.IsBusy()) {
+            robot.extension.GoTo(robot.testExtensionTarget);
             robot.testAutoMovePhase = 5;
         }
-        if (robot.testAutoMovePhase == 5 && !robot.wrist.IsBusy()) {
+        if (robot.testAutoMovePhase == 5 && !robot.extension.IsBusy()) {
             robot.testAutoMoveActive = false;
             robot.testAutoMovePhase = 0;
         }

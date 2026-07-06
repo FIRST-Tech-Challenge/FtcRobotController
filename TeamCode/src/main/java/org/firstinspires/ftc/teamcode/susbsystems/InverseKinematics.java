@@ -15,6 +15,10 @@ import java.util.List;
  *
  * This class intentionally does not command motors. It only evaluates candidate
  * turret/shoulder/extension/wrist solutions and returns the best result.
+ *
+ * Wrist policy: the wrist is not allowed to solve vertical reach. IK keeps the
+ * nozzle level, solves vertical reach with the shoulder, then asks Wrist for
+ * the command angle needed to stay level at that shoulder angle.
  */
 class InverseKinematics {
     robot_system.IKSolution solve(Position target) {
@@ -24,11 +28,7 @@ class InverseKinematics {
 
         for (int degrees : RobotGeometry.TEST_IK_TURRET_DEGREES) {
             if (candidateWithinTreatmentWindow(target, degrees)) {
-                for (double wristAngle = RobotGeometry.TEST_IK_WRIST_MIN_ANGLE;
-                     wristAngle <= RobotGeometry.TEST_IK_WRIST_MAX_ANGLE;
-                     wristAngle += RobotGeometry.TEST_IK_WRIST_ANGLE_STEP) {
-                    candidates.add(evaluateCandidate(target, degrees, wristAngle, minY, maxY));
-                }
+                candidates.add(evaluateCandidate(target, degrees, minY, maxY));
             }
         }
 
@@ -37,12 +37,14 @@ class InverseKinematics {
         return selected;
     }
 
-    private robot_system.IKSolution evaluateCandidate(Position target, int turretDegrees, double wristAngle, double minY, double maxY) {
+    private robot_system.IKSolution evaluateCandidate(Position target, int turretDegrees, double minY, double maxY) {
         robot_system.IKSolution solution = new robot_system.IKSolution();
         Position turretOffset = RobotGeometry.turretOffset(turretDegrees);
 
-        double wristLength = RobotGeometry.TEST_IK_WRIST_RADIUS * Math.cos(Math.toRadians(wristAngle));
-        double wristHeight = RobotGeometry.TEST_IK_WRIST_RADIUS * Math.sin(Math.toRadians(wristAngle));
+        // The nozzle is intended to stay level, so geometry uses the calibrated horizontal wrist pose.
+        double wristPoseAngle = RobotGeometry.TEST_IK_LEVEL_WRIST_POSE_ANGLE;
+        double wristLength = RobotGeometry.TEST_IK_WRIST_RADIUS * Math.cos(Math.toRadians(wristPoseAngle));
+        double wristHeight = RobotGeometry.TEST_IK_WRIST_RADIUS * Math.sin(Math.toRadians(wristPoseAngle));
         double shoulderHeight = target.z - TURRENT_TO_CAMERA.z - wristHeight;
         double shoulderRatio = shoulderHeight / RobotGeometry.SHOULDER_RADIUS;
         double shoulderAngle = 0;
@@ -52,6 +54,7 @@ class InverseKinematics {
             shoulderAngle = Math.toDegrees(Math.asin(shoulderRatio));
         }
 
+        double wristAngle = Wrist.levelAngleForShoulder(shoulderAngle);
         double shoulderLength = validShoulderAngle
                 ? RobotGeometry.SHOULDER_RADIUS * Math.cos(Math.toRadians(shoulderAngle))
                 : 0;
@@ -94,9 +97,6 @@ class InverseKinematics {
         }
         if (extensionLength > EXTENSION_MAX_POSITION) {
             appendIKFailure(solution, "extension above maximum");
-        }
-        if (wristAngle < RobotGeometry.TEST_IK_WRIST_MIN_ANGLE || wristAngle > RobotGeometry.TEST_IK_WRIST_MAX_ANGLE) {
-            appendIKFailure(solution, "wrist angle outside limit");
         }
 
         solution.selectionScore = scoreCandidate(solution);
@@ -173,10 +173,6 @@ class InverseKinematics {
 
         solution.shoulderAngle = clampShoulderAngle(solution.shoulderAngle);
         solution.extensionLength = RobotGeometry.clamp(solution.extensionLength, 0, EXTENSION_MAX_POSITION);
-        solution.wristAngle = RobotGeometry.clamp(
-                solution.wristAngle,
-                RobotGeometry.TEST_IK_WRIST_MIN_ANGLE,
-                RobotGeometry.TEST_IK_WRIST_MAX_ANGLE);
     }
 
     private double clampShoulderAngle(double angle) {

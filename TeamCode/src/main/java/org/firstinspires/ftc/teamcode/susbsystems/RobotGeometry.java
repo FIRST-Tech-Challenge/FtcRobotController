@@ -16,6 +16,8 @@ class RobotGeometry {
     static final double TURRET_LENGTH = 10.2362;
     static final double TEST_IK_TREATMENT_Y_WINDOW = 5;
     static final double TEST_IK_WRIST_RADIUS = 7.338;
+    // Geometry pose for a level/horizontal nozzle. The command angle is calculated from shoulder angle by Wrist.
+    static final double TEST_IK_LEVEL_WRIST_POSE_ANGLE = 183.88;
     // Test IK uses the calibrated wrist angle range: vertical is about 93.85, horizontal is about 183.88.
     static final double TEST_IK_WRIST_MIN_ANGLE = 93.85;
     static final double TEST_IK_WRIST_MAX_ANGLE = 183.88;

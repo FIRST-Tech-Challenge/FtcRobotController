@@ -128,9 +128,14 @@ public class Wrist {
         wrist_servo.setPosition(power);
     }
     public void SetLevel(double shoulder_angle){
-        //math from hadley that he indicates will calculate the correct servo positon
-        calcPosition = -.004*(Math.pow(shoulder_angle,2))-(1.194*shoulder_angle)+205.84;
+        // Shoulder-compensation calibration: returns the wrist command that keeps the nozzle level.
+        calcPosition = levelAngleForShoulder(shoulder_angle);
         GoToAngle(calcPosition);
+    }
+
+    public static double levelAngleForShoulder(double shoulder_angle) {
+        // Math from Hadley: shoulder angle -> wrist command angle for a level nozzle.
+        return -.004*(Math.pow(shoulder_angle,2))-(1.194*shoulder_angle)+205.84;
     }
     public void Stop() {
         wrist_is_busy = false;

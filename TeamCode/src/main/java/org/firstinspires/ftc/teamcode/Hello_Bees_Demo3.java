@@ -181,7 +181,7 @@ public class Hello_Bees_Demo3 extends OpMode {
         telemetry.addLine("===== IK BEST ANSWER =====");
         telemetry.addData("Selected Turret", "%d", lastIK.turretDegrees);
         telemetry.addData("Selected Shoulder Angle", "%.2f", lastIK.shoulderAngle);
-        telemetry.addData("Selected Wrist Angle", "%.2f", lastIK.wristAngle);
+        telemetry.addData("Level Wrist Command", "%.2f", lastIK.wristAngle);
         telemetry.addData("Selected Extension", "%.2f", lastIK.extensionLength);
         telemetry.addData("Needed Raw Extension", "%.2f", lastIK.rawExtensionLength);
 
@@ -190,7 +190,7 @@ public class Hello_Bees_Demo3 extends OpMode {
         telemetry.addData("Turret Target", "%d", robot.getTestTurretTargetDegrees());
         telemetry.addData("Extension Target", "%.2f", robot.getTestExtensionTarget());
         telemetry.addData("Shoulder Target", "%.2f", robot.getTestShoulderTargetAngle());
-        telemetry.addData("Wrist Target", "%.2f", robot.getTestWristTargetAngle());
+        telemetry.addData("Wrist Level Command", "%.2f", robot.getTestWristTargetAngle());
 
         // Verify the geometry terms used inside IK before clamping.
         telemetry.addLine("===== IK GEOMETRY BREAKDOWN =====");
