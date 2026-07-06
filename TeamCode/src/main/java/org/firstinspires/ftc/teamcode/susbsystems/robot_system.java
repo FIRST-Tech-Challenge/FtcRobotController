@@ -108,6 +108,7 @@ public class robot_system {
     double testExtensionTarget = 0;
     double testShoulderTargetAngle = 0;
     double testWristTargetAngle = 0;
+    IKSolution lastIKSolution = new IKSolution();
     private Position computedEndEffectorPose = new Position(DistanceUnit.INCH, 0, 0, 0, System.nanoTime());
 
     public static class IKSolution {
@@ -121,6 +122,16 @@ public class robot_system {
         public double acceptedYMax;
         public double selectionScore;
         public int candidateCount;
+        public double targetX;
+        public double targetY;
+        public double targetZ;
+        public double turretOffsetX;
+        public double turretOffsetY;
+        public double wristLength;
+        public double wristHeight;
+        public double shoulderHeight;
+        public double shoulderLength;
+        public double rawExtensionLength;
     }
 
     public robot_system(HardwareMap hm) {
@@ -322,7 +333,8 @@ public class robot_system {
 
     public void lockCurrentFilteredTarget(boolean shouldStartTestAutoMove) {
         if (vision.IsFilteredDataReady() && vision.isTagDetected()) {
-            lockedTargetPosition = vision.GetFilteredPos();
+            // Correct the locked IK target only; keep raw vision telemetry unchanged for measurement checks.
+            lockedTargetPosition = RobotGeometry.correctedIKTarget(vision.GetFilteredPos());
             treatmentTargetLocked = true;
             if (shouldStartTestAutoMove) {
                 armAutomationController.initTestLockedTargetAutoMove();
@@ -337,6 +349,10 @@ public class robot_system {
 
     public boolean isTreatmentTargetLocked() {
         return treatmentTargetLocked;
+    }
+
+    public double getIKCameraXCorrection() {
+        return RobotGeometry.TEST_IK_CAMERA_X_CORRECTION;
     }
 
     // === TESTING ONLY ===
@@ -360,6 +376,26 @@ public class robot_system {
 
     public int getTestAutoMovePhase() {
         return testAutoMovePhase;
+    }
+
+    public IKSolution getLastIKSolution() {
+        return lastIKSolution;
+    }
+
+    public int getTestTurretTargetDegrees() {
+        return testTurretTargetDegrees;
+    }
+
+    public double getTestExtensionTarget() {
+        return testExtensionTarget;
+    }
+
+    public double getTestShoulderTargetAngle() {
+        return testShoulderTargetAngle;
+    }
+
+    public double getTestWristTargetAngle() {
+        return testWristTargetAngle;
     }
 
     // === TESTING ONLY ===

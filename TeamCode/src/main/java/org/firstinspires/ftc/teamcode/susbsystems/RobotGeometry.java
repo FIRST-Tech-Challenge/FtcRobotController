@@ -16,9 +16,15 @@ class RobotGeometry {
     static final double TURRET_LENGTH = 10.2362;
     static final double TEST_IK_TREATMENT_Y_WINDOW = 5;
     static final double TEST_IK_WRIST_RADIUS = 7.338;
-    static final double TEST_IK_WRIST_MIN_ANGLE = 0;
-    static final double TEST_IK_WRIST_MAX_ANGLE = 90;
+    // Test IK uses the calibrated wrist angle range: vertical is about 93.85, horizontal is about 183.88.
+    static final double TEST_IK_WRIST_MIN_ANGLE = 93.85;
+    static final double TEST_IK_WRIST_MAX_ANGLE = 183.88;
     static final double TEST_IK_WRIST_ANGLE_STEP = 5;
+    // Test IK should not command outside the mechanically verified shoulder range.
+    static final double TEST_IK_SHOULDER_MIN_ANGLE = -60;
+    static final double TEST_IK_SHOULDER_MAX_ANGLE = 40;
+    // Temporary camera correction: camera reads about 2 inches too far in negative X.
+    static final double TEST_IK_CAMERA_X_CORRECTION = 3.25;
     static final int[] TEST_IK_TURRET_DEGREES = {45, 90, 135, 180, 225};
 
     private RobotGeometry() {
@@ -40,6 +46,15 @@ class RobotGeometry {
 
     static double turretTargetX(double turretDegrees) {
         return turretOffset(turretDegrees).x + TURRENT_TO_CAMERA.x;
+    }
+
+    static Position correctedIKTarget(Position cameraTarget) {
+        return new Position(
+                DistanceUnit.INCH,
+                cameraTarget.x + TEST_IK_CAMERA_X_CORRECTION,
+                cameraTarget.y,
+                cameraTarget.z,
+                System.nanoTime());
     }
 
     static double shoulderMinAngle(double shoulderMinHeight) {

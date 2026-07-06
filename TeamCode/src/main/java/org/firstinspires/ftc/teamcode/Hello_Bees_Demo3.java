@@ -22,10 +22,10 @@ public class Hello_Bees_Demo3 extends OpMode {
     ButtonBlock leftbumper, rightbumper;
     boolean arm_full_toggle = true;
     int yPosTarget = 0;
-    private final Position ikTestTargetA = new Position(DistanceUnit.INCH, -32, 0, 10, 0);
-    private final Position ikTestTargetB = new Position(DistanceUnit.INCH, -36, 4, 14, 0);
-    private final Position ikTestTargetC = new Position(DistanceUnit.INCH, -28, -3, 8, 0);
-    private final Position ikTestTargetD = new Position(DistanceUnit.INCH, -40, 7, 18, 0);
+    // private final Position ikTestTargetA = new Position(DistanceUnit.INCH, -32, 0, 10, 0);
+    // private final Position ikTestTargetB = new Position(DistanceUnit.INCH, -36, 4, 14, 0);
+    // private final Position ikTestTargetC = new Position(DistanceUnit.INCH, -28, -3, 8, 0);
+    // private final Position ikTestTargetD = new Position(DistanceUnit.INCH, -40, 7, 18, 0);
 
     @Override
     public void init() {
@@ -161,9 +161,47 @@ public class Hello_Bees_Demo3 extends OpMode {
                 robot.getCurrent_Arm_Position().y - robot.getComputedEndEffectorPose().y,
                 robot.getCurrent_Arm_Position().z - robot.getComputedEndEffectorPose().z);
 
+        robot_system.IKSolution lastIK = robot.getLastIKSolution();
+
+        // Verify locked-target IK: if lock does not move, this explains which geometry limit blocked it.
+        telemetry.addLine("===== IK DEBUG =====");
+        telemetry.addData("Reachable", lastIK.reachable ? "YES" : "NO");
+        telemetry.addData("Move Allowed", lastIK.reachable ? "YES" : "NO");
+        telemetry.addData("Failure", lastIK.failureReason == null ? "No IK run yet" : lastIK.failureReason);
+        telemetry.addData("Candidate Count", lastIK.candidateCount);
+        telemetry.addData("Selection Score", "%.3f", lastIK.selectionScore);
+
+        // Verify the camera/target point used by the solver.
+        telemetry.addLine("===== IK TARGET =====");
+        telemetry.addData("Target", "(X) %.2f (Y) %.2f (Z) %.2f", lastIK.targetX, lastIK.targetY, lastIK.targetZ);
+        telemetry.addData("Camera X Correction", "%.2f", robot.getIKCameraXCorrection());
+        telemetry.addData("Accepted Y Window", "%.2f to %.2f", lastIK.acceptedYMin, lastIK.acceptedYMax);
+
+        // Best answer from the solver, even when it fails a safety/reachability check.
+        telemetry.addLine("===== IK BEST ANSWER =====");
+        telemetry.addData("Selected Turret", "%d", lastIK.turretDegrees);
+        telemetry.addData("Selected Shoulder Angle", "%.2f", lastIK.shoulderAngle);
+        telemetry.addData("Selected Wrist Angle", "%.2f", lastIK.wristAngle);
+        telemetry.addData("Selected Extension", "%.2f", lastIK.extensionLength);
+        telemetry.addData("Needed Raw Extension", "%.2f", lastIK.rawExtensionLength);
+
+        // Verify the chosen robot commands before they are sent to the subsystems.
+        telemetry.addLine("===== IK COMMAND TARGETS =====");
+        telemetry.addData("Turret Target", "%d", robot.getTestTurretTargetDegrees());
+        telemetry.addData("Extension Target", "%.2f", robot.getTestExtensionTarget());
+        telemetry.addData("Shoulder Target", "%.2f", robot.getTestShoulderTargetAngle());
+        telemetry.addData("Wrist Target", "%.2f", robot.getTestWristTargetAngle());
+
+        // Verify the geometry terms used inside IK before clamping.
+        telemetry.addLine("===== IK GEOMETRY BREAKDOWN =====");
+        telemetry.addData("Turret Offset", "(X) %.2f (Y) %.2f", lastIK.turretOffsetX, lastIK.turretOffsetY);
+        telemetry.addData("Shoulder", "(Length) %.2f (Height) %.2f", lastIK.shoulderLength, lastIK.shoulderHeight);
+        telemetry.addData("Wrist", "(Length) %.2f (Height) %.2f", lastIK.wristLength, lastIK.wristHeight);
+        telemetry.addData("Raw Extension", "%.2f", lastIK.rawExtensionLength);
+
         telemetry.addData("Auto", "Arm %s State %d Ready %s FullState %d", robot.isArm_automation() ? "YES" : "NO", robot.armAutoState(), robot.isArm_ready() ? "YES" : "NO", robot.getFullCycleState());
         telemetry.addData("Test AutoMove", "Active %s Phase %d", robot.isTestAutoMoveActive() ? "YES" : "NO", robot.getTestAutoMovePhase());
-        // telemetry.addLine(String.format("[TAG] Detected %b x: %.2f y: %.2f z: %.2f", robot.isTagDetected(),robot.getTagLocation().x, robot.getTagLocation().y, robot.getTagLocation().z) );
+        telemetry.addLine(String.format("[TAG] Detected %b x: %.2f y: %.2f z: %.2f", robot.isTagDetected(),robot.getTagLocation().x, robot.getTagLocation().y, robot.getTagLocation().z) );
         // telemetry.addData("[Vision] Locked", robot.isTreatmentTargetLocked() ? "YES" : "NO");
         // telemetry.addLine(String.format("[Arm](Homed) Shoulder %b Turret: %b Ext: %b", robot.shoulderIsHomed(),robot.turretIsHomed(),robot.isExtensionHome()) );
         // telemetry.addLine(String.format("[Arm](Busy) Sho: %b Tur: %b Ext: %b Wrst: %b Arm: %b ", robot.shoulderIsBusy(),robot.turretIsBusy(),robot.isBusyExtension(), robot.isWristBusy(),robot.isArmBusy()) );
@@ -181,29 +219,29 @@ public class Hello_Bees_Demo3 extends OpMode {
         // telemetry.addLine("Dpad Up/Down: Wrist  Triggers: Turret");
         // telemetry.addLine("(B:Home Shoulder)");
 
-        telemetry.addLine("Telemetry: (IK Compute Only)");
-        addIKTelemetry("Target A", ikTestTargetA);
-        addIKTelemetry("Target B", ikTestTargetB);
-        addIKTelemetry("Target C", ikTestTargetC);
-        addIKTelemetry("Target D", ikTestTargetD);
+        // telemetry.addLine("Telemetry: (IK Compute Only)");
+        // addIKTelemetry("Target A", ikTestTargetA);
+        // addIKTelemetry("Target B", ikTestTargetB);
+        // addIKTelemetry("Target C", ikTestTargetC);
+        // addIKTelemetry("Target D", ikTestTargetD);
 
 
         telemetry.update();
     }
 
-     private void addIKTelemetry(String label, Position target) {
-         robot_system.IKSolution solution = robot.testIK(target);
+    //  private void addIKTelemetry(String label, Position target) {
+    //      robot_system.IKSolution solution = robot.testIK(target);
 
-         telemetry.addData("[IK] " + label + " Target", "(X) %.1f (Y) %.1f (Z) %.1f", target.x, target.y, target.z);
-         telemetry.addData("[IK] " + label + " Accepted Y Window", "(%.1f, %.1f)", solution.acceptedYMin, solution.acceptedYMax);
-         telemetry.addData("[IK] " + label + " Reachable", solution.reachable ? "YES" : "NO");
-         telemetry.addData("[IK] " + label + " Selected Turret", solution.turretDegrees);
-         telemetry.addData("[IK] " + label + " Turret Target", solution.turretDegrees);
-         telemetry.addData("[IK] " + label + " Shoulder Angle", "%.1f", solution.shoulderAngle);
-         telemetry.addData("[IK] " + label + " Extension Length", "%.1f", solution.extensionLength);
-         telemetry.addData("[IK] " + label + " Wrist Angle", "%.1f", solution.wristAngle);
-         telemetry.addData("[IK] " + label + " Selection Score", "%.3f", solution.selectionScore);
-         telemetry.addData("[IK] " + label + " Candidate Count", solution.candidateCount);
-         telemetry.addData("[IK] " + label + " Failure Reason", solution.failureReason);
-     }
+    //      telemetry.addData("[IK] " + label + " Target", "(X) %.1f (Y) %.1f (Z) %.1f", target.x, target.y, target.z);
+    //      telemetry.addData("[IK] " + label + " Accepted Y Window", "(%.1f, %.1f)", solution.acceptedYMin, solution.acceptedYMax);
+    //      telemetry.addData("[IK] " + label + " Reachable", solution.reachable ? "YES" : "NO");
+    //      telemetry.addData("[IK] " + label + " Selected Turret", solution.turretDegrees);
+    //      telemetry.addData("[IK] " + label + " Turret Target", solution.turretDegrees);
+    //      telemetry.addData("[IK] " + label + " Shoulder Angle", "%.1f", solution.shoulderAngle);
+    //      telemetry.addData("[IK] " + label + " Extension Length", "%.1f", solution.extensionLength);
+    //      telemetry.addData("[IK] " + label + " Wrist Angle", "%.1f", solution.wristAngle);
+    //      telemetry.addData("[IK] " + label + " Selection Score", "%.3f", solution.selectionScore);
+    //      telemetry.addData("[IK] " + label + " Candidate Count", solution.candidateCount);
+    //      telemetry.addData("[IK] " + label + " Failure Reason", solution.failureReason);
+    //  }
 }

@@ -65,13 +65,30 @@ class ArmAutomation {
     }
 
     void initTestLockedTargetAutoMove() {
-        // Temporary lock-test move: this is intentionally simple until true IK replaces it.
+        // Lock-test automation now uses the IK result for the locked camera target.
+        robot_system.IKSolution solution = robot.solveIK(robot.lockedTargetPosition);
+        robot.lastIKSolution = solution;
+
+        // Always store the best IK answer for telemetry, even when it is not safe to command.
+        robot.testTurretTargetDegrees = solution.turretDegrees;
+        robot.testExtensionTarget = RobotGeometry.clamp(solution.extensionLength, 0, EXTENSION_MAX_POSITION);
+        robot.testShoulderTargetAngle = RobotGeometry.clamp(
+                solution.shoulderAngle,
+                RobotGeometry.TEST_IK_SHOULDER_MIN_ANGLE,
+                RobotGeometry.TEST_IK_SHOULDER_MAX_ANGLE);
+        robot.testWristTargetAngle = RobotGeometry.clamp(
+                solution.wristAngle,
+                RobotGeometry.TEST_IK_WRIST_MIN_ANGLE,
+                RobotGeometry.TEST_IK_WRIST_MAX_ANGLE);
+
+        if (!solution.reachable) {
+            robot.testAutoMoveActive = false;
+            robot.testAutoMovePhase = 0;
+            return;
+        }
+
         robot.testAutoMoveActive = true;
         robot.testAutoMovePhase = 1;
-        robot.testTurretTargetDegrees = 135;
-        robot.testExtensionTarget = RobotGeometry.clamp(robot.extension.GetPos() + 5, 0, EXTENSION_MAX_POSITION);
-        robot.testShoulderTargetAngle = clampShoulderAngle(robot.shoulder.GetPos() + 15);
-        robot.testWristTargetAngle = RobotGeometry.clamp(robot.wrist.GetAngle() - 30, 36, 180);
     }
 
     void testStopAutoMove() {

@@ -32,7 +32,7 @@ class InverseKinematics {
             }
         }
 
-        robot_system.IKSolution selected = selectBestCandidate(candidates, minY, maxY);
+        robot_system.IKSolution selected = selectBestCandidate(target, candidates, minY, maxY);
         selected.candidateCount = candidates.size();
         return selected;
     }
@@ -68,9 +68,23 @@ class InverseKinematics {
         solution.failureReason = "OK";
         solution.acceptedYMin = minY;
         solution.acceptedYMax = maxY;
+        solution.targetX = target.x;
+        solution.targetY = target.y;
+        solution.targetZ = target.z;
+        solution.turretOffsetX = turretOffset.x;
+        solution.turretOffsetY = turretOffset.y;
+        solution.wristLength = wristLength;
+        solution.wristHeight = wristHeight;
+        solution.shoulderHeight = shoulderHeight;
+        solution.shoulderLength = shoulderLength;
+        solution.rawExtensionLength = extensionLength;
 
         if (!validShoulderAngle) {
             appendIKFailure(solution, "shoulder angle outside asin range");
+        }
+        if (shoulderAngle < RobotGeometry.TEST_IK_SHOULDER_MIN_ANGLE
+                || shoulderAngle > RobotGeometry.TEST_IK_SHOULDER_MAX_ANGLE) {
+            appendIKFailure(solution, "shoulder angle outside test limit");
         }
         if (shoulderHeight < SHOULDER_MIN_HEIGHT || shoulderHeight > SHOULDER_MAX_HEIGHT) {
             appendIKFailure(solution, "shoulder height outside limit");
@@ -107,7 +121,7 @@ class InverseKinematics {
                 + (Math.abs(candidate.wristAngle) / 10000);
     }
 
-    private robot_system.IKSolution selectBestCandidate(List<robot_system.IKSolution> candidates, double minY, double maxY) {
+    private robot_system.IKSolution selectBestCandidate(Position target, List<robot_system.IKSolution> candidates, double minY, double maxY) {
         if (candidates.isEmpty()) {
             robot_system.IKSolution solution = new robot_system.IKSolution();
             solution.reachable = false;
@@ -118,6 +132,9 @@ class InverseKinematics {
             solution.failureReason = "no turret position inside treatment Y window";
             solution.acceptedYMin = minY;
             solution.acceptedYMax = maxY;
+            solution.targetX = target.x;
+            solution.targetY = target.y;
+            solution.targetZ = target.z;
             solution.selectionScore = 1000000;
             return solution;
         }
@@ -165,8 +182,8 @@ class InverseKinematics {
     private double clampShoulderAngle(double angle) {
         return RobotGeometry.clamp(
                 angle,
-                RobotGeometry.shoulderMinAngle(SHOULDER_MIN_HEIGHT),
-                RobotGeometry.shoulderMaxAngle(SHOULDER_MAX_HEIGHT));
+                RobotGeometry.TEST_IK_SHOULDER_MIN_ANGLE,
+                RobotGeometry.TEST_IK_SHOULDER_MAX_ANGLE);
     }
 
     private void appendIKFailure(robot_system.IKSolution solution, String reason) {
