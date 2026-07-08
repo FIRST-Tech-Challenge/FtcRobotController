@@ -78,8 +78,8 @@ class ArmAutomation {
                 RobotGeometry.TEST_IK_SHOULDER_MAX_ANGLE);
         robot.testWristTargetAngle = RobotGeometry.clamp(
                 solution.wristAngle,
-                0,
-                270);
+                93.85,
+                183.88);
 
         if (!solution.reachable) {
             robot.testAutoMoveActive = false;
@@ -107,7 +107,7 @@ class ArmAutomation {
         }
 
         if (robot.testAutoMovePhase == 1 && !robot.turret.IsBusy()) {
-            robot.moveTurret(robot.testTurretTargetDegrees);
+            moveTestTurretToDegrees(robot.testTurretTargetDegrees);
             robot.testAutoMovePhase = 2;
         }
         if (robot.testAutoMovePhase == 2 && !robot.turret.IsBusy()) {
@@ -321,5 +321,11 @@ class ArmAutomation {
                 angle,
                 RobotGeometry.shoulderMinAngle(SHOULDER_MIN_HEIGHT),
                 RobotGeometry.shoulderMaxAngle(SHOULDER_MAX_HEIGHT));
+    }
+
+    private void moveTestTurretToDegrees(double degrees) {
+        // Test automation uses continuous degree targets, so convert to pot here
+        // instead of using robot_system.moveTurret(), which only supports fixed angles.
+        robot.turret.GoTo(TurretKinematics.potForDegrees(degrees));
     }
 }

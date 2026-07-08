@@ -141,6 +141,15 @@ public class Hello_Bees_Demo3 extends OpMode {
         telemetry.addData("Shoulder Pivot Y", "%.2f", robot.shoulderPivotY());
         telemetry.addData("Radius", "%.2f", robot.shoulderPivotRadius());
 
+        // Verify continuous turret targeting: formula pot should match the raw pot when the turret finishes.
+        telemetry.addLine("===== TURRET TARGET DEBUG =====");
+        telemetry.addData("Busy", robot.turretIsBusy() ? "YES" : "NO");
+        telemetry.addData("IK Target Degrees", "%.1f", robot.getTestTurretTargetDegrees());
+        telemetry.addData("Formula Target Pot", "%.3f", robot.getTestTurretTargetPot());
+        telemetry.addData("Current Raw Pot", "%.3f", robot.turretPosition());
+        telemetry.addData("Formula Pot Error", "%.3f", Math.abs(robot.turretPosition() - robot.getTestTurretTargetPot()));
+        telemetry.addData("Turret Internal Target Pot", "%.3f", robot.turretTargetPosition());
+
         // Verify shoulder encoder geometry: angle should explain measured vertical height.
         telemetry.addLine("===== SHOULDER =====");
         telemetry.addData("Angle", "%.2f", robot.shoulderAngle());
@@ -179,7 +188,8 @@ public class Hello_Bees_Demo3 extends OpMode {
 
         // Best answer from the solver, even when it fails a safety/reachability check.
         telemetry.addLine("===== IK BEST ANSWER =====");
-        telemetry.addData("Selected Turret", "%d", lastIK.turretDegrees);
+        telemetry.addData("Selected Turret", "%.1f", lastIK.turretDegrees);
+        telemetry.addData("Selected Turret Pot", "%.3f", lastIK.turretPotTarget);
         telemetry.addData("Selected Shoulder Angle", "%.2f", lastIK.shoulderAngle);
         telemetry.addData("Level Wrist Command", "%.2f", lastIK.wristAngle);
         telemetry.addData("Selected Extension", "%.2f", lastIK.extensionLength);
@@ -187,7 +197,8 @@ public class Hello_Bees_Demo3 extends OpMode {
 
         // Verify the chosen robot commands before they are sent to the subsystems.
         telemetry.addLine("===== IK COMMAND TARGETS =====");
-        telemetry.addData("Turret Target", "%d", robot.getTestTurretTargetDegrees());
+        telemetry.addData("Turret Target Degrees", "%.1f", robot.getTestTurretTargetDegrees());
+        telemetry.addData("Turret Target Pot", "%.3f", robot.getTestTurretTargetPot());
         telemetry.addData("Extension Target", "%.2f", robot.getTestExtensionTarget());
         telemetry.addData("Shoulder Target", "%.2f", robot.getTestShoulderTargetAngle());
         telemetry.addData("Wrist Level Command", "%.2f", robot.getTestWristTargetAngle());
@@ -199,11 +210,25 @@ public class Hello_Bees_Demo3 extends OpMode {
         telemetry.addData("Wrist", "(Length) %.2f (Height) %.2f", lastIK.wristLength, lastIK.wristHeight);
         telemetry.addData("Raw Extension", "%.2f", lastIK.rawExtensionLength);
 
+        // Use this section to find which subsystem is blocking the next auto phase.
+        telemetry.addLine("===== AUTOMATION STATE DEBUG =====");
+        telemetry.addData("Test AutoMove", "Active %s Phase %d", robot.isTestAutoMoveActive() ? "YES" : "NO", robot.getTestAutoMovePhase());
+        telemetry.addData("Subsystem Busy", "Tur %s Sho %s Wri %s Ext %s Arm %s",
+                robot.turretIsBusy() ? "YES" : "NO",
+                robot.shoulderIsBusy() ? "YES" : "NO",
+                robot.isWristBusy() ? "YES" : "NO",
+                robot.isBusyExtension() ? "YES" : "NO",
+                robot.isArmBusy() ? "YES" : "NO");
+        telemetry.addData("Other Automation", "Arm %s Full %s Cycle %s",
+                robot.isArm_automation() ? "YES" : "NO",
+                robot.isFullCycleAutomation() ? "YES" : "NO",
+                robot.isCycling() ? "YES" : "NO");
+
         telemetry.addData("Auto", "Arm %s State %d Ready %s FullState %d", robot.isArm_automation() ? "YES" : "NO", robot.armAutoState(), robot.isArm_ready() ? "YES" : "NO", robot.getFullCycleState());
         telemetry.addData("Test AutoMove", "Active %s Phase %d", robot.isTestAutoMoveActive() ? "YES" : "NO", robot.getTestAutoMovePhase());
         telemetry.addLine(String.format("[TAG] Detected %b x: %.2f y: %.2f z: %.2f", robot.isTagDetected(),robot.getTagLocation().x, robot.getTagLocation().y, robot.getTagLocation().z) );
-        // telemetry.addData("[Vision] Locked", robot.isTreatmentTargetLocked() ? "YES" : "NO");
-        // telemetry.addLine(String.format("[Arm](Homed) Shoulder %b Turret: %b Ext: %b", robot.shoulderIsHomed(),robot.turretIsHomed(),robot.isExtensionHome()) );
+        telemetry.addData("[Vision] Locked", robot.isTreatmentTargetLocked() ? "YES" : "NO");
+        telemetry.addLine(String.format("[Arm](Homed) Shoulder %b Turret: %b Ext: %b", robot.shoulderIsHomed(),robot.turretIsHomed(),robot.isExtensionHome()) );
         // telemetry.addLine(String.format("[Arm](Busy) Sho: %b Tur: %b Ext: %b Wrst: %b Arm: %b ", robot.shoulderIsBusy(),robot.turretIsBusy(),robot.isBusyExtension(), robot.isWristBusy(),robot.isArmBusy()) );
         // telemetry.addLine(String.format("[Fog]  %b Count: %d Target: %d", robot.isCycling(),robot.getCyclecount(), robot.getCycleTarget()) );
         // telemetry.addLine(String.format("[Fog] Fan: %.0f Fog: %.0f Pump: %.0f", robot.getFanTime(),robot.getFogTime(), robot.getPumpTime()) );

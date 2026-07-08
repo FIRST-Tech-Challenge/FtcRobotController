@@ -26,7 +26,9 @@ class InverseKinematics {
         double minY = target.y - RobotGeometry.TEST_IK_TREATMENT_Y_WINDOW;
         double maxY = target.y + RobotGeometry.TEST_IK_TREATMENT_Y_WINDOW;
 
-        for (int degrees : RobotGeometry.TEST_IK_TURRET_DEGREES) {
+        for (double degrees = RobotGeometry.TEST_IK_TURRET_MIN_DEGREES;
+             degrees <= RobotGeometry.TEST_IK_TURRET_MAX_DEGREES;
+             degrees += RobotGeometry.TEST_IK_TURRET_STEP_DEGREES) {
             if (candidateWithinTreatmentWindow(target, degrees)) {
                 candidates.add(evaluateCandidate(target, degrees, minY, maxY));
             }
@@ -37,7 +39,7 @@ class InverseKinematics {
         return selected;
     }
 
-    private robot_system.IKSolution evaluateCandidate(Position target, int turretDegrees, double minY, double maxY) {
+    private robot_system.IKSolution evaluateCandidate(Position target, double turretDegrees, double minY, double maxY) {
         robot_system.IKSolution solution = new robot_system.IKSolution();
         Position turretOffset = RobotGeometry.turretOffset(turretDegrees);
 
@@ -64,10 +66,12 @@ class InverseKinematics {
                 - wristLength;
 
         solution.turretDegrees = turretDegrees;
+        solution.turretPotTarget = TurretKinematics.potForDegrees(turretDegrees);
         solution.shoulderAngle = shoulderAngle;
         solution.extensionLength = extensionLength;
         solution.wristAngle = wristAngle;
         solution.reachable = true;
+
         solution.failureReason = "OK";
         solution.acceptedYMin = minY;
         solution.acceptedYMax = maxY;
@@ -107,7 +111,7 @@ class InverseKinematics {
         return solution;
     }
 
-    private boolean candidateWithinTreatmentWindow(Position target, int turretDegrees) {
+    private boolean candidateWithinTreatmentWindow(Position target, double turretDegrees) {
         double turretY = RobotGeometry.turretTargetY(turretDegrees);
         return turretY >= target.y - RobotGeometry.TEST_IK_TREATMENT_Y_WINDOW
                 && turretY <= target.y + RobotGeometry.TEST_IK_TREATMENT_Y_WINDOW;
@@ -126,6 +130,7 @@ class InverseKinematics {
             robot_system.IKSolution solution = new robot_system.IKSolution();
             solution.reachable = false;
             solution.turretDegrees = 0;
+            solution.turretPotTarget = TurretKinematics.potForDegrees(0);
             solution.shoulderAngle = 0;
             solution.extensionLength = 0;
             solution.wristAngle = 0;

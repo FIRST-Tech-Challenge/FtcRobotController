@@ -104,7 +104,7 @@ public class robot_system {
     // Lock-triggered FK validation and simple movement automation for Phase 1.
     boolean testAutoMoveActive = false;
     int testAutoMovePhase = 0;
-    int testTurretTargetDegrees = 135;
+    double testTurretTargetDegrees = 135;
     double testExtensionTarget = 0;
     double testShoulderTargetAngle = 0;
     double testWristTargetAngle = 0;
@@ -113,7 +113,8 @@ public class robot_system {
 
     public static class IKSolution {
         public boolean reachable;
-        public int turretDegrees;
+        public double turretDegrees;
+        public double turretPotTarget;
         public double shoulderAngle;
         public double extensionLength;
         public double wristAngle;
@@ -382,8 +383,12 @@ public class robot_system {
         return lastIKSolution;
     }
 
-    public int getTestTurretTargetDegrees() {
+    public double getTestTurretTargetDegrees() {
         return testTurretTargetDegrees;
+    }
+
+    public double getTestTurretTargetPot() {
+        return TurretKinematics.potForDegrees(testTurretTargetDegrees);
     }
 
     public double getTestExtensionTarget() {

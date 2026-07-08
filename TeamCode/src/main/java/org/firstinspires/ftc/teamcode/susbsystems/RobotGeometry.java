@@ -27,7 +27,10 @@ class RobotGeometry {
     static final double TEST_IK_SHOULDER_MAX_ANGLE = 40;
     // Temporary camera correction: camera reads about 2 inches too far in negative X.
     static final double TEST_IK_CAMERA_X_CORRECTION = 3.25;
-    static final int[] TEST_IK_TURRET_DEGREES = {45, 90, 135, 180, 225};
+    // Continuous turret search for IK. Keep the first pass in the proven working range.
+    static final double TEST_IK_TURRET_MIN_DEGREES = 45;
+    static final double TEST_IK_TURRET_MAX_DEGREES = 225;
+    static final double TEST_IK_TURRET_STEP_DEGREES = 5;
 
     private RobotGeometry() {
     }
