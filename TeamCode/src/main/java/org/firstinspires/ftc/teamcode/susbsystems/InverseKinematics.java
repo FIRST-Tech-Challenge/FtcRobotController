@@ -30,7 +30,11 @@ class InverseKinematics {
              degrees <= RobotGeometry.TEST_IK_TURRET_MAX_DEGREES;
              degrees += RobotGeometry.TEST_IK_TURRET_STEP_DEGREES) {
             if (candidateWithinTreatmentWindow(target, degrees)) {
-                candidates.add(evaluateCandidate(target, degrees, minY, maxY));
+                for (double shoulderAngle = RobotGeometry.TEST_IK_SHOULDER_MIN_ANGLE;
+                     shoulderAngle <= RobotGeometry.TEST_IK_SHOULDER_MAX_ANGLE;
+                     shoulderAngle += RobotGeometry.TEST_IK_SHOULDER_STEP_DEGREES) {
+                    candidates.add(evaluateCandidate(target, degrees, shoulderAngle, minY, maxY));
+                }
             }
         }
 
@@ -39,31 +43,26 @@ class InverseKinematics {
         return selected;
     }
 
-    private robot_system.IKSolution evaluateCandidate(Position target, double turretDegrees, double minY, double maxY) {
+    private robot_system.IKSolution evaluateCandidate(Position target, double turretDegrees, double shoulderAngle, double minY, double maxY) {
         robot_system.IKSolution solution = new robot_system.IKSolution();
         Position turretOffset = RobotGeometry.turretOffset(turretDegrees);
 
-        // The nozzle is intended to stay level, so geometry uses the calibrated horizontal wrist pose.
-        double wristPoseAngle = RobotGeometry.TEST_IK_LEVEL_WRIST_POSE_ANGLE;
-        double wristLength = RobotGeometry.TEST_IK_WRIST_RADIUS * Math.cos(Math.toRadians(wristPoseAngle));
-        double wristHeight = RobotGeometry.TEST_IK_WRIST_RADIUS * Math.sin(Math.toRadians(wristPoseAngle));
-        double shoulderHeight = target.z - TURRENT_TO_CAMERA.z - wristHeight;
-        double shoulderRatio = shoulderHeight / RobotGeometry.SHOULDER_RADIUS;
-        double shoulderAngle = 0;
-        boolean validShoulderAngle = Math.abs(shoulderRatio) <= 1;
-
-        if (validShoulderAngle) {
-            shoulderAngle = Math.toDegrees(Math.asin(shoulderRatio));
-        }
-
         double wristAngle = Wrist.levelAngleForShoulder(shoulderAngle);
-        double shoulderLength = validShoulderAngle
-                ? RobotGeometry.SHOULDER_RADIUS * Math.cos(Math.toRadians(shoulderAngle))
-                : 0;
+        double wristLength = RobotGeometry.TEST_IK_WRIST_RADIUS * Math.cos(Math.toRadians(wristAngle));
+        double wristHeight = RobotGeometry.TEST_IK_WRIST_RADIUS * Math.sin(Math.toRadians(wristAngle));
+        double shoulderHeight = RobotGeometry.SHOULDER_RADIUS * Math.sin(Math.toRadians(shoulderAngle));
+        double shoulderLength = RobotGeometry.SHOULDER_RADIUS * Math.cos(Math.toRadians(shoulderAngle));
+        double predictedY = RobotGeometry.turretTargetY(turretDegrees);
+        double predictedZ = TURRENT_TO_CAMERA.z + shoulderHeight + wristHeight;
+        double targetErrorY = Math.abs(target.y - predictedY);
+        double targetErrorZ = Math.abs(target.z - predictedZ);
+
+        // This is the inverse of ForwardKinematics.computeEndEffectorPose().
+        // FK: x = -extension - shoulderLength + turretOffset.x + 2 + wristLength
         double extensionLength = -(target.x - TURRENT_TO_CAMERA.x - 10)
                 + turretOffset.x
                 - shoulderLength
-                - wristLength;
+                + wristLength;
 
         solution.turretDegrees = turretDegrees;
         solution.turretPotTarget = TurretKinematics.potForDegrees(turretDegrees);
@@ -85,13 +84,15 @@ class InverseKinematics {
         solution.shoulderHeight = shoulderHeight;
         solution.shoulderLength = shoulderLength;
         solution.rawExtensionLength = extensionLength;
+        solution.targetErrorY = targetErrorY;
+        solution.targetErrorZ = targetErrorZ;
 
-        if (!validShoulderAngle) {
-            appendIKFailure(solution, "shoulder angle outside asin range");
-        }
         if (shoulderAngle < RobotGeometry.TEST_IK_SHOULDER_MIN_ANGLE
                 || shoulderAngle > RobotGeometry.TEST_IK_SHOULDER_MAX_ANGLE) {
             appendIKFailure(solution, "shoulder angle outside test limit");
+        }
+        if (targetErrorZ > RobotGeometry.TEST_IK_Z_TOLERANCE) {
+            appendIKFailure(solution, "height residual too high");
         }
         if (shoulderHeight < SHOULDER_MIN_HEIGHT || shoulderHeight > SHOULDER_MAX_HEIGHT) {
             appendIKFailure(solution, "shoulder height outside limit");
@@ -120,6 +121,8 @@ class InverseKinematics {
     private double scoreCandidate(robot_system.IKSolution candidate) {
         double reachablePenalty = candidate.reachable ? 0 : 1000000;
         return reachablePenalty
+                + (candidate.targetErrorY * 100)
+                + (candidate.targetErrorZ * 100)
                 + candidate.extensionLength
                 + (Math.abs(candidate.shoulderAngle) / 1000)
                 + (Math.abs(candidate.wristAngle) / 10000);

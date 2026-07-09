@@ -78,8 +78,8 @@ class ArmAutomation {
                 RobotGeometry.TEST_IK_SHOULDER_MAX_ANGLE);
         robot.testWristTargetAngle = RobotGeometry.clamp(
                 solution.wristAngle,
-                93.85,
-                183.88);
+                RobotGeometry.TEST_IK_WRIST_MIN_ANGLE,
+                RobotGeometry.TEST_IK_WRIST_MAX_ANGLE);
 
         if (!solution.reachable) {
             robot.testAutoMoveActive = false;

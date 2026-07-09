@@ -160,6 +160,9 @@ public class Hello_Bees_Demo3 extends OpMode {
         telemetry.addData("Angle", "%.2f", robot.getWristAngle());
         telemetry.addData("Height", "%.2f", robot.getWristHeight());
         telemetry.addData("Length", "%.2f", robot.getWristLength());
+        telemetry.addData("Level Calc Angle", "%.2f", robot.getWristCalc());
+        telemetry.addData("Servo Target Angle", "%.2f", robot.getWristTargetAngle());
+        telemetry.addData("Servo Raw Target", "%.3f", robot.getWristRawTargetPosition());
 
         // Verify whole-arm geometry: current position is pre-wrist, FK position is nozzle/tip.
         telemetry.addLine("===== ARM =====");
@@ -194,6 +197,7 @@ public class Hello_Bees_Demo3 extends OpMode {
         telemetry.addData("Level Wrist Command", "%.2f", lastIK.wristAngle);
         telemetry.addData("Selected Extension", "%.2f", lastIK.extensionLength);
         telemetry.addData("Needed Raw Extension", "%.2f", lastIK.rawExtensionLength);
+        telemetry.addData("Target Error", "(Y) %.2f (Z) %.2f", lastIK.targetErrorY, lastIK.targetErrorZ);
 
         // Verify the chosen robot commands before they are sent to the subsystems.
         telemetry.addLine("===== IK COMMAND TARGETS =====");
@@ -208,6 +212,8 @@ public class Hello_Bees_Demo3 extends OpMode {
         telemetry.addData("Turret Offset", "(X) %.2f (Y) %.2f", lastIK.turretOffsetX, lastIK.turretOffsetY);
         telemetry.addData("Shoulder", "(Length) %.2f (Height) %.2f", lastIK.shoulderLength, lastIK.shoulderHeight);
         telemetry.addData("Wrist", "(Length) %.2f (Height) %.2f", lastIK.wristLength, lastIK.wristHeight);
+        telemetry.addData("Wrist X Included", "%.2f", lastIK.wristLength);
+        telemetry.addData("IK Residual", "(Y) %.2f (Z) %.2f", lastIK.targetErrorY, lastIK.targetErrorZ);
         telemetry.addData("Raw Extension", "%.2f", lastIK.rawExtensionLength);
 
         // Use this section to find which subsystem is blocking the next auto phase.

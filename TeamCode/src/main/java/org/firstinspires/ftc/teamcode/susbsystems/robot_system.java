@@ -133,6 +133,8 @@ public class robot_system {
         public double shoulderHeight;
         public double shoulderLength;
         public double rawExtensionLength;
+        public double targetErrorY;
+        public double targetErrorZ;
     }
 
     public robot_system(HardwareMap hm) {
@@ -509,6 +511,8 @@ public class robot_system {
     public double getWristLength() {return wrist.GetLength();}
     public double getWristAngle() {return wrist.GetAngle();}
     public double getWristCalc() {return wrist.GetCalcPos();}
+    public double getWristTargetAngle() {return wrist.GetTargetPos();}
+    public double getWristRawTargetPosition() {return wrist.GetRawTargetPos();}
     public boolean isWristBusy() {return wrist.IsBusy();}
 
     public void moveWristManual(double power) {

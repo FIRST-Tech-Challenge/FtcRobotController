@@ -27,6 +27,7 @@ public class Wrist {
     private static final double WRIST_MIN_HEIGHT = 4;
     private static final double WRIST_MAX_POSITION = 1;
     private static final double WRIST_MIN_POSITION = .2;
+    private static final double WRIST_PHYSICAL_SEARCH_STEP = .001;
     //wrist angle constants
     private static final double a = 64; //Unit: mm
     private static final double b = 104;//Unit: mm
@@ -69,6 +70,16 @@ public class Wrist {
     public void GoToAngle(double target_angle) {
 
         this.targetPosition =  target_angle/DEG_TO_SERVO_POS;
+        this.SetPos(targetPosition);
+        wrist_is_busy = true;
+        wristStopwatch.reset();
+    }
+
+    public void GoToPhysicalAngle(double target_angle) {
+        // GetAngle() is linkage angle, while GoToAngle() is a servo-command angle.
+        // This helper searches the servo range for the raw position that best produces
+        // the requested physical linkage angle used by IK and telemetry.
+        this.targetPosition = servoPositionForPhysicalAngle(target_angle);
         this.SetPos(targetPosition);
         wrist_is_busy = true;
         wristStopwatch.reset();
@@ -130,12 +141,48 @@ public class Wrist {
     public void SetLevel(double shoulder_angle){
         // Shoulder-compensation calibration: returns the wrist command that keeps the nozzle level.
         calcPosition = levelAngleForShoulder(shoulder_angle);
-        GoToAngle(calcPosition);
+        GoToPhysicalAngle(calcPosition);
     }
 
     public static double levelAngleForShoulder(double shoulder_angle) {
-        // Math from Hadley: shoulder angle -> wrist command angle for a level nozzle.
-        return -.004*(Math.pow(shoulder_angle,2))-(1.194*shoulder_angle)+205.84;
+        // Leveling rule: start from horizontal wrist, then offset by shoulder angle
+        // so the wrist rotates with the shoulder and stays parallel to the ground.
+        double levelAngle = RobotGeometry.TEST_IK_LEVEL_WRIST_POSE_ANGLE + shoulder_angle;
+        return RobotGeometry.clamp(
+                levelAngle,
+                RobotGeometry.TEST_IK_WRIST_MIN_ANGLE,
+                RobotGeometry.TEST_IK_WRIST_MAX_ANGLE);
+    }
+
+    public static double servoPositionForPhysicalAngle(double targetAngle) {
+        double bestPosition = WRIST_MIN_POSITION;
+        double bestError = Double.MAX_VALUE;
+
+        for (double position = WRIST_MIN_POSITION; position <= WRIST_MAX_POSITION; position += WRIST_PHYSICAL_SEARCH_STEP) {
+            double angle = physicalAngleForServoPosition(position);
+            double error = Math.abs(angle - targetAngle);
+            if (error < bestError) {
+                bestError = error;
+                bestPosition = position;
+            }
+        }
+
+        return bestPosition;
+    }
+
+    private static double physicalAngleForServoPosition(double servoPosition) {
+        double wristServoAngle = (180 - (servoPosition * DEG_TO_SERVO_POS)) + 73.8;
+        double localA = (2*c*d)-(2*a*c*(Math.cos(Math.toRadians(260.5377-wristServoAngle))));
+        double localB = -(2*a*c*(Math.sin(Math.toRadians(260.5377-wristServoAngle))));
+        double localC = Math.pow(a,2)-Math.pow(b,2)+Math.pow(c,2)+Math.pow(d,2)
+                -(2*d*a*(Math.cos(Math.toRadians(wristServoAngle-260.5377))));
+
+        double discriminant = Math.pow(localB, 2) - Math.pow(localC, 2) + Math.pow(localA, 2);
+        if (discriminant < 0) {
+            return Double.NaN;
+        }
+
+        return 226.9955 - (2*(Math.toDegrees(Math.atan(((-1*localB)-Math.sqrt(discriminant))/(localC-localA)))));
     }
     public void Stop() {
         wrist_is_busy = false;
