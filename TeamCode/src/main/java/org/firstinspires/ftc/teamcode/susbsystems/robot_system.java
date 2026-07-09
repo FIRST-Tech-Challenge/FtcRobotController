@@ -103,6 +103,7 @@ public class robot_system {
     // === TESTING ONLY ===
     // Lock-triggered FK validation and simple movement automation for Phase 1.
     boolean testAutoMoveActive = false;
+    boolean testAutoMoveCompleted = false;
     int testAutoMovePhase = 0;
     double testTurretTargetDegrees = 135;
     double testExtensionTarget = 0;
@@ -326,6 +327,10 @@ public class robot_system {
         armAutomationController.initArmToHome();
     }
 
+    public void testReturnHome() {
+        armAutomationController.initTestReturnHome();
+    }
+
     public void stopArmToPosition() {
         armAutomationController.stopArmToPosition();
     }
@@ -358,6 +363,10 @@ public class robot_system {
         return RobotGeometry.TEST_IK_CAMERA_X_CORRECTION;
     }
 
+    public double getIKCameraZCorrection() {
+        return RobotGeometry.TEST_IK_CAMERA_Z_CORRECTION;
+    }
+
     // === TESTING ONLY ===
     private void computeForwardKinematics() {
         computedEndEffectorPose = ForwardKinematics.computeEndEffectorPose(
@@ -375,6 +384,10 @@ public class robot_system {
 
     public boolean isTestAutoMoveActive() {
         return testAutoMoveActive;
+    }
+
+    public boolean isTestAutoMoveCompleted() {
+        return testAutoMoveCompleted;
     }
 
     public int getTestAutoMovePhase() {
@@ -502,6 +515,9 @@ public class robot_system {
 
     public boolean isBusyExtension() {return extension.IsBusy();}
     public void moveExtensionManual(double power) {
+        if (Math.abs(power) < 0.05) {
+            power = 0;
+        }
         if (!extension.IsBusy()) extension.SetPower(power);
         else if (Math.abs(power) > 0) {
             extension.Stop();

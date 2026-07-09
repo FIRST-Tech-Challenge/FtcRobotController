@@ -139,12 +139,16 @@ public class Arm725 {
 
         currentPosition = motor.getCurrentPosition();
         if (shoulder_is_busy) {
-            // Some RUN_TO_POSITION cases can report not busy before the arm is
-            // actually near the requested angle. Only release automation when
-            // the encoder is also inside our explicit shoulder tolerance.
-            if (!motor.isBusy()) {
+            // Treat encoder error as the source of truth. Some RUN_TO_POSITION
+            // cases can report not busy while the shoulder is still several
+            // ticks away from the requested angle.
+            if (Math.abs(GetTargetErrorTicks()) <= TARGET_TOLERANCE_TICKS) {
                 shoulder_is_busy = false;
                 motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            } else if (!motor.isBusy()) {
+                // If the motor controller relaxes early, re-arm the same target.
+                motor.setTargetPosition(targetPosition);
+                motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
         }
         //safety checks

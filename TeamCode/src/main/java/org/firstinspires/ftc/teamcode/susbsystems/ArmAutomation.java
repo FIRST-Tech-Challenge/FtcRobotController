@@ -56,6 +56,7 @@ class ArmAutomation {
         robot.arm_state = 0;
         robot.treatmentTargetLocked = false;
         robot.testAutoMoveActive = false;
+        robot.testAutoMoveCompleted = false;
         robot.testAutoMovePhase = 0;
         robot.wrist.Stop();
         robot.turret.Stop();
@@ -68,6 +69,7 @@ class ArmAutomation {
         // Lock-test automation now uses the IK result for the locked camera target.
         robot_system.IKSolution solution = robot.solveIK(robot.lockedTargetPosition);
         robot.lastIKSolution = solution;
+        robot.testAutoMoveCompleted = false;
 
         // Always store the best IK answer for telemetry, even when it is not safe to command.
         robot.testTurretTargetDegrees = solution.turretDegrees;
@@ -83,6 +85,7 @@ class ArmAutomation {
 
         if (!solution.reachable) {
             robot.testAutoMoveActive = false;
+            robot.testAutoMoveCompleted = false;
             robot.testAutoMovePhase = 0;
             return;
         }
@@ -93,6 +96,7 @@ class ArmAutomation {
 
     void testStopAutoMove() {
         robot.testAutoMoveActive = false;
+        robot.testAutoMoveCompleted = false;
         robot.testAutoMovePhase = 0;
         robot.wrist.Stop();
         robot.turret.Stop();
@@ -125,6 +129,7 @@ class ArmAutomation {
         }
         if (robot.testAutoMovePhase == 5 && !robot.extension.IsBusy()) {
             robot.testAutoMoveActive = false;
+            robot.testAutoMoveCompleted = true;
             robot.testAutoMovePhase = 0;
         }
     }
@@ -134,7 +139,19 @@ class ArmAutomation {
             robot.arm_automation = true;
             robot.arm_homing = true;
             robot.extension.StartHome();
-            robot.wrist.SetPos(.9);
+            robot.arm_state = 1;
+        }
+    }
+
+    void initTestReturnHome() {
+        if (!robot.testAutoMoveActive && robot.testAutoMoveCompleted) {
+            // Reuse the existing home sequence after the lock-target test move.
+            // Start it directly here instead of calling initArmToHome(), because
+            // arm_is_busy can be stale for one loop when the button is pressed.
+            robot.testAutoMoveCompleted = false;
+            robot.arm_automation = true;
+            robot.arm_homing = true;
+            robot.extension.StartHome();
             robot.arm_state = 1;
         }
     }
@@ -201,12 +218,15 @@ class ArmAutomation {
         else if(!robot.arm_is_busy && robot.arm_homing){
             if (robot.arm_state == 1 &&!robot.extension.IsBusy()) {
                 robot.arm_state = 2;
+                // Extension must be home before the arm and turret move back.
+                // This keeps the long reach tucked in before the rest of homing.
+                robot.wrist.SetPos(.9);
                 robot.shoulder.GoToEncoderPosition(0);
                 robot.shoulder.Update();
             }
             if (robot.arm_state == 2 && !robot.shoulder.IsBusy()) {
                 robot.arm_state = 3;
-                robot.turret.GoTo(Constants.TURRET_MAX_POSITION);
+                robot.turret.GoTo(Constants.ZERO_DEGREES);
             }
             if (robot.arm_state == 3 && !robot.turret.IsBusy()) {
                 robot.arm_state = 0;
