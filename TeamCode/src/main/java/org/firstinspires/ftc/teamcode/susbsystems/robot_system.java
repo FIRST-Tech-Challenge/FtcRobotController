@@ -442,6 +442,11 @@ public class robot_system {
     public double shoulderAngle(){return shoulder.GetPos();}
     public double shoulderLength(){return shoulder.getExtension();}
     public double shoulderRaw(){return shoulder.GetRawPos();}
+    public double shoulderTargetAngle(){return shoulder.GetTargetPos();}
+    public double shoulderRawTarget(){return shoulder.GetRawTargetPos();}
+    public double shoulderTargetErrorDegrees(){return shoulder.GetTargetErrorDegrees();}
+    public double shoulderTargetErrorTicks(){return shoulder.GetTargetErrorTicks();}
+    public double shoulderPower(){return shoulder.GetPower();}
     public boolean shoulderIsHomed(){
         return shoulder.GetRawPos() < 25 && shoulder.GetRawPos() > -25;
     }

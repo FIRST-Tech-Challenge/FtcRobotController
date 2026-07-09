@@ -43,8 +43,9 @@ public class Arm725 {
     public boolean AUTOSTOP = true;
   */
     //Shoulder Constants
-    private static final double DEG_TO_TICKS = 8.05; //
-    private static final double SHOULDER_RADIUS = 19;
+    private static final double DEG_TO_TICKS = 9.6; //
+    private static final double SHOULDER_RADIUS = 21.5; // changed from 19 to 21.5 because of wrist linkage is after 2.5 inches of wrist
+    private static final int TARGET_TOLERANCE_TICKS = 5;
 
 
     //Shoulder private variables
@@ -62,6 +63,7 @@ public class Arm725 {
     private void init(HardwareMap hm) {
         motor = hm.get(DcMotorEx.class, "shouldergobilda");
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor.setTargetPositionTolerance(TARGET_TOLERANCE_TICKS);
         ResetEncoder();
     }
 
@@ -84,14 +86,14 @@ public class Arm725 {
         shoulder_is_busy = true;
         motor.setTargetPosition((int) targetPosition);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        currentPower = 1;
+        currentPower = 0.5;
     }
     public void GoToEncoderPosition(int ticks) {
         targetPosition = ticks;
         shoulder_is_busy = true;
         motor.setTargetPosition(ticks);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        currentPower = 1;
+        currentPower = 0.5;
     }
     public double GetPos() {return currentPosition / DEG_TO_TICKS;}
     public double GetHeight() {
@@ -111,6 +113,8 @@ public class Arm725 {
     public double GetRawPos() {return currentPosition;}
     public double GetTargetPos() {return (targetPosition) / DEG_TO_TICKS;}
     public double GetRawTargetPos() {return targetPosition;}
+    public double GetTargetErrorTicks() {return targetPosition - currentPosition;}
+    public double GetTargetErrorDegrees() {return GetTargetPos() - GetPos();}
     public boolean IsBusy() {return shoulder_is_busy;}
     private void rawSet(double power) {
         motor.setPower(Util.IntClamp(power));
@@ -135,6 +139,9 @@ public class Arm725 {
 
         currentPosition = motor.getCurrentPosition();
         if (shoulder_is_busy) {
+            // Some RUN_TO_POSITION cases can report not busy before the arm is
+            // actually near the requested angle. Only release automation when
+            // the encoder is also inside our explicit shoulder tolerance.
             if (!motor.isBusy()) {
                 shoulder_is_busy = false;
                 motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

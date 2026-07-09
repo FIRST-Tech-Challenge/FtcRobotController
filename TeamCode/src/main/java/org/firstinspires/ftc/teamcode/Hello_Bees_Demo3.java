@@ -84,11 +84,22 @@ public class Hello_Bees_Demo3 extends OpMode {
         buttonEvents();
         robot.robot_drive(gamepad1.left_stick_y, gamepad1.right_stick_x);
 
-        if (!robot.shoulderIsBusy()) robot.shoulderSetPower(-gamepad2.right_stick_y);
-        else if (Math.abs(gamepad2.right_stick_y) > 0) {
-            robot.shoulderStop();
-            robot.shoulderSetPower(-gamepad2.right_stick_y);
+        double shoulderStick = gamepad2.right_stick_y;
+        if (Math.abs(shoulderStick) < 0.05) {
+        shoulderStick = 0;
         }
+
+        if (!robot.shoulderIsBusy()) {
+                robot.shoulderSetPower(-shoulderStick);
+        } else if (Math.abs(shoulderStick) > 0) {
+                robot.shoulderStop();
+                robot.shoulderSetPower(-shoulderStick);
+        }
+        // if (!robot.shoulderIsBusy()) robot.shoulderSetPower(-gamepad2.right_stick_y);
+        // else if (Math.abs(gamepad2.right_stick_y) > 0) {
+        //     robot.shoulderStop();
+        //     robot.shoulderSetPower(-gamepad2.right_stick_y);
+        // }
         if(gamepad2.dpad_up){robot.moveWristManual(.5);}
         if(gamepad2.dpad_down){robot.moveWristManual(-.5);}
         robot.moveExtensionManual(gamepad2.left_stick_y);
@@ -154,6 +165,12 @@ public class Hello_Bees_Demo3 extends OpMode {
         telemetry.addLine("===== SHOULDER =====");
         telemetry.addData("Angle", "%.2f", robot.shoulderAngle());
         telemetry.addData("Height", "%.2f", robot.shoulderHeight());
+        telemetry.addData("Target Angle", "%.2f", robot.shoulderTargetAngle());
+        telemetry.addData("Error Deg", "%.2f", robot.shoulderTargetErrorDegrees());
+        telemetry.addData("Raw Current", "%.0f", robot.shoulderRaw());
+        telemetry.addData("Raw Target", "%.0f", robot.shoulderRawTarget());
+        telemetry.addData("Error Ticks", "%.0f", robot.shoulderTargetErrorTicks());
+        telemetry.addData("Power", "%.2f", robot.shoulderPower());
 
         // Verify wrist model: raw values come from linkage angle; level values are used by IK/FK.
         telemetry.addLine("===== WRIST =====");
