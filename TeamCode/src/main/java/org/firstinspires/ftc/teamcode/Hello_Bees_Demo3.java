@@ -155,11 +155,13 @@ public class Hello_Bees_Demo3 extends OpMode {
         telemetry.addData("Angle", "%.2f", robot.shoulderAngle());
         telemetry.addData("Height", "%.2f", robot.shoulderHeight());
 
-        // Verify wrist model: wrist motion should change FK but not the pre-wrist arm position.
+        // Verify wrist model: raw values come from linkage angle; level values are used by IK/FK.
         telemetry.addLine("===== WRIST =====");
         telemetry.addData("Angle", "%.2f", robot.getWristAngle());
-        telemetry.addData("Height", "%.2f", robot.getWristHeight());
-        telemetry.addData("Length", "%.2f", robot.getWristLength());
+        telemetry.addData("Raw Height", "%.2f", robot.getWristHeight());
+        telemetry.addData("Raw Length", "%.2f", robot.getWristLength());
+        telemetry.addData("Level FK Height", "%.2f", robot.getLevelWristHeight());
+        telemetry.addData("Level FK Length", "%.2f", robot.getLevelWristLength());
         telemetry.addData("Level Calc Angle", "%.2f", robot.getWristCalc());
         telemetry.addData("Servo Target Angle", "%.2f", robot.getWristTargetAngle());
         telemetry.addData("Servo Raw Target", "%.3f", robot.getWristRawTargetPosition());

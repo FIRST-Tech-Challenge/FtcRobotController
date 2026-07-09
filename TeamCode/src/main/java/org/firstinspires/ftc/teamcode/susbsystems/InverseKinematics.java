@@ -48,8 +48,10 @@ class InverseKinematics {
         Position turretOffset = RobotGeometry.turretOffset(turretDegrees);
 
         double wristAngle = Wrist.levelAngleForShoulder(shoulderAngle);
-        double wristLength = RobotGeometry.TEST_IK_WRIST_RADIUS * Math.cos(Math.toRadians(wristAngle));
-        double wristHeight = RobotGeometry.TEST_IK_WRIST_RADIUS * Math.sin(Math.toRadians(wristAngle));
+        // wristAngle is the command that keeps the nozzle level. The IK geometry
+        // should use the level world-space nozzle projection, not the command angle.
+        double wristLength = RobotGeometry.levelWristLength();
+        double wristHeight = RobotGeometry.levelWristHeight();
         double shoulderHeight = RobotGeometry.SHOULDER_RADIUS * Math.sin(Math.toRadians(shoulderAngle));
         double shoulderLength = RobotGeometry.SHOULDER_RADIUS * Math.cos(Math.toRadians(shoulderAngle));
         double predictedY = RobotGeometry.turretTargetY(turretDegrees);

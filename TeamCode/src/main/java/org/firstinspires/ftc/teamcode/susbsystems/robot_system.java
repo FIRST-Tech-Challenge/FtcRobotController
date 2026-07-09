@@ -364,8 +364,8 @@ public class robot_system {
                 extension.GetPos(),
                 shoulder.getExtension(),
                 shoulder.GetHeight(),
-                wrist.GetLength(),
-                wrist.GetHeight(),
+                RobotGeometry.levelWristLength(),
+                RobotGeometry.levelWristHeight(),
                 getAutomationTurretOffset());
     }
 
@@ -509,6 +509,8 @@ public class robot_system {
     //**************************************************************************************
     public double getWristHeight() {return wrist.GetHeight();}
     public double getWristLength() {return wrist.GetLength();}
+    public double getLevelWristHeight() {return RobotGeometry.levelWristHeight();}
+    public double getLevelWristLength() {return RobotGeometry.levelWristLength();}
     public double getWristAngle() {return wrist.GetAngle();}
     public double getWristCalc() {return wrist.GetCalcPos();}
     public double getWristTargetAngle() {return wrist.GetTargetPos();}

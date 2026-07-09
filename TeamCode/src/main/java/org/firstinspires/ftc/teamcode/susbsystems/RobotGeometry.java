@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
  * use the same robot model.
  */
 class RobotGeometry {
-    static final double SHOULDER_RADIUS = 19;
+    static final double SHOULDER_RADIUS = 21.5;
     static final double TURRET_LENGTH = 10.2362;
     static final double TEST_IK_TREATMENT_Y_WINDOW = 5;
     static final double TEST_IK_WRIST_RADIUS = 7.338;
@@ -53,6 +53,18 @@ class RobotGeometry {
 
     static double turretTargetX(double turretDegrees) {
         return turretOffset(turretDegrees).x + TURRENT_TO_CAMERA.x;
+    }
+
+    static double levelWristLength() {
+        // The wrist command angle changes to cancel shoulder motion, but the
+        // nozzle is intended to stay level. Use this world-space projection for
+        // IK/FK instead of splitting the command angle into length and height.
+        return TEST_IK_WRIST_RADIUS * Math.cos(Math.toRadians(TEST_IK_LEVEL_WRIST_POSE_ANGLE));
+    }
+
+    static double levelWristHeight() {
+        // Small calibrated vertical offset of the level nozzle pose.
+        return TEST_IK_WRIST_RADIUS * Math.sin(Math.toRadians(TEST_IK_LEVEL_WRIST_POSE_ANGLE));
     }
 
     static Position correctedIKTarget(Position cameraTarget) {
