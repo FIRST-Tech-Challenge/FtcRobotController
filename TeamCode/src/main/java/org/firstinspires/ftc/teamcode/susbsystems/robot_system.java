@@ -43,6 +43,9 @@ public class robot_system {
     int tagID = 0;
     boolean treatmentTargetLocked = false;
     Position lockedTargetPosition = new Position(DistanceUnit.INCH, 0, 0, 0, 0);
+    private String lockedTargetSource = "NONE";
+    // Edit this coordinate during robot testing to verify IK without camera measurement error.
+    private static final Position MANUAL_TEST_TARGET = new Position(DistanceUnit.INCH, -31.8, -7.2, -10.2, 0);
 
     //ready to treat
     boolean isReadyToTreat = false;
@@ -343,6 +346,7 @@ public class robot_system {
         if (vision.IsFilteredDataReady() && vision.isTagDetected()) {
             // Correct the locked IK target only; keep raw vision telemetry unchanged for measurement checks.
             lockedTargetPosition = RobotGeometry.correctedIKTarget(vision.GetFilteredPos());
+            lockedTargetSource = "CAMERA";
             treatmentTargetLocked = true;
             if (shouldStartTestAutoMove) {
                 armAutomationController.initTestLockedTargetAutoMove();
@@ -350,13 +354,32 @@ public class robot_system {
         }
     }
 
+    public void lockManualTestTarget(boolean shouldStartTestAutoMove) {
+        // Manual coordinates are already physical robot-space targets, so do not apply camera correction.
+        lockedTargetPosition = MANUAL_TEST_TARGET;
+        lockedTargetSource = "MANUAL TEST";
+        treatmentTargetLocked = true;
+        if (shouldStartTestAutoMove) {
+            armAutomationController.initTestLockedTargetAutoMove();
+        }
+    }
+
     public void unlockTreatmentTarget() {
         treatmentTargetLocked = false;
+        lockedTargetSource = "NONE";
         testStopAutoMove();
     }
 
     public boolean isTreatmentTargetLocked() {
         return treatmentTargetLocked;
+    }
+
+    public String getLockedTargetSource() {
+        return lockedTargetSource;
+    }
+
+    public Position getManualTestTarget() {
+        return MANUAL_TEST_TARGET;
     }
 
     public double getIKCameraXCorrection() {

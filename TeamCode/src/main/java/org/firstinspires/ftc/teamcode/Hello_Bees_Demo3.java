@@ -17,7 +17,7 @@ public class Hello_Bees_Demo3 extends OpMode {
     ButtonBlock stopShoulder,shoulderHome;
     ButtonBlock stopHomeShoulder, homeArm, startStopFogCycle;
     ButtonBlock stopAll,toggle_arm_full;
-    ButtonBlock lockTarget, unlockTarget;
+    ButtonBlock lockTarget, lockManualTarget, unlockTarget;
     ButtonBlock dpadUp, dpadDown, dpadLeft, dpadRight;
     ButtonBlock leftbumper, rightbumper;
     boolean arm_full_toggle = true;
@@ -63,6 +63,8 @@ public class Hello_Bees_Demo3 extends OpMode {
                 .onTrue(()->{robot.startTreatment(arm_full_toggle);});
         lockTarget = new ButtonBlock()
                 .onTrue(() -> {robot.lockCurrentFilteredTarget(true);});
+        lockManualTarget = new ButtonBlock()
+                .onTrue(() -> {robot.lockManualTestTarget(true);});
         unlockTarget = new ButtonBlock()
                 .onTrue(() -> {
                     robot.testStopAutoMove();
@@ -117,6 +119,7 @@ public class Hello_Bees_Demo3 extends OpMode {
         homeArm.update(gamepad1.x);
         startTreatment.update(gamepad1.y);
         lockTarget.update(gamepad2.a);
+        lockManualTarget.update(gamepad2.y);
         unlockTarget.update(gamepad2.x);
         toggle_arm_full.update(gamepad1.b);
         dpadUp.update(gamepad1.dpad_up);
@@ -204,6 +207,11 @@ public class Hello_Bees_Demo3 extends OpMode {
 
         // Verify the camera/target point used by the solver.
         telemetry.addLine("===== IK TARGET =====");
+        telemetry.addData("Target Source", robot.getLockedTargetSource());
+        telemetry.addData("Manual Test Target", "(X) %.2f (Y) %.2f (Z) %.2f",
+                robot.getManualTestTarget().x,
+                robot.getManualTestTarget().y,
+                robot.getManualTestTarget().z);
         telemetry.addData("Target", "(X) %.2f (Y) %.2f (Z) %.2f", lastIK.targetX, lastIK.targetY, lastIK.targetZ);
         telemetry.addData("Camera X Correction", "%.2f", robot.getIKCameraXCorrection());
         telemetry.addData("Camera Z Correction", "%.2f", robot.getIKCameraZCorrection());
