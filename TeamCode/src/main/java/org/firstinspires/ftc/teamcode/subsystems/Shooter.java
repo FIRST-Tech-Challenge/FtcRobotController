@@ -1,28 +1,33 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class Turret {
-    private static final String SHOOTER_MOTOR_NAME  = "TurretMotor"; // port 3
+public class Shooter {
+    private static final String SHOOTER_MOTOR_NAME  = "ShooterMotor"; // port 3
     private static final String TURRET_SERVO_NAME   = "TurretServo";
     private static final double TICKS_PER_REV        = 28.0; // GoBILDA 5203 6000 RPM
-    private static final double PEAK_RPM             = 6000.0;
+    private static final double PEAK_RPM             = 3000.0;
     private static final double AT_SPEED_FRACTION    = 0.95;
     private static final double FULL_SPEED_DELAY_SEC = 2.0;
-    private static final double TURRET_SERVO_STEP    = 0.008;
+    private static final double TURRET_SERVO_POWER   = 0.5;
+    private static final double TURRET_FULL_TRAVEL_SEC = 2.0;
     private static final double TRIGGER_DEADBAND     = 0.05;
+    private static final double RPM_SMOOTHING        = 0.20;
 
     public enum State { IDLE, REVVING, AT_FULL_SPEED }
 
-    private final DcMotor shooterMotor;
-    private final Servo   turretServo;
+    private final DcMotorEx shooterMotor;
+    private final CRServo   turretServo;
 
     private int     maxSpeedPercent = 100;
-    private double  turretPosition  = 0.5;
+    private double  turretPower     = 0.0;
+    private double  turretPosition  = 0.0;
+    private double  targetRPM       = 0.0;
     private State   state           = State.IDLE;
     private boolean fireLatch       = false;
 
@@ -32,21 +37,18 @@ public class Turret {
     private boolean prevDpadDown = false;
     private boolean prevX        = false;
 
-    private int    lastEncoderTicks;
-    private long   lastTimeMs;
+    private long lastTurretUpdateMs;
     private double currentRPM = 0;
 
-    public Turret(HardwareMap hardwareMap) {
-        shooterMotor = hardwareMap.get(DcMotor.class, SHOOTER_MOTOR_NAME);
-        turretServo  = hardwareMap.get(Servo.class, TURRET_SERVO_NAME);
+    public Shooter(HardwareMap hardwareMap) {
+        shooterMotor = hardwareMap.get(DcMotorEx.class, SHOOTER_MOTOR_NAME);
+        turretServo  = hardwareMap.get(CRServo.class, TURRET_SERVO_NAME);
 
         shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        lastEncoderTicks = shooterMotor.getCurrentPosition();
-        lastTimeMs = System.currentTimeMillis();
-
-        turretServo.setPosition(turretPosition);
+        turretServo.setPower(0);
+        lastTurretUpdateMs = System.currentTimeMillis();
     }
 
     public void update(Gamepad gamepad) {
@@ -68,16 +70,22 @@ public class Turret {
         prevDpadDown = dpadDown;
         prevX        = xBtn;
 
+        updateTurretPositionEstimate();
+
         // --- Turret rotation (hold dpad left/right) ---
-        if (gamepad.dpad_left)  turretPosition -= TURRET_SERVO_STEP;
-        if (gamepad.dpad_right) turretPosition += TURRET_SERVO_STEP;
-        turretPosition = Math.max(0.0, Math.min(1.0, turretPosition));
-        turretServo.setPosition(turretPosition);
+        if (gamepad.dpad_left && !gamepad.dpad_right && turretPosition > 0.0) {
+            turretPower = -TURRET_SERVO_POWER;
+        } else if (gamepad.dpad_right && !gamepad.dpad_left && turretPosition < 1.0) {
+            turretPower = TURRET_SERVO_POWER;
+        } else {
+            turretPower = 0;
+        }
+        turretServo.setPower(turretPower);
 
         // --- Shooter state machine (right trigger) ---
         double trigger     = gamepad.right_trigger;
         double targetPower = trigger * (maxSpeedPercent / 100.0);
-        double targetRPM   = PEAK_RPM * targetPower;
+        targetRPM = PEAK_RPM * targetPower;
 
         switch (state) {
             case IDLE:
@@ -130,24 +138,29 @@ public class Turret {
     }
 
     public double  getRPM()             { return currentRPM; }
+    public double  getTargetRPM()       { return targetRPM; }
     public State   getState()           { return state; }
     public int     getMaxSpeedPercent() { return maxSpeedPercent; }
+    public double  getTurretPower()     { return turretPower; }
     public double  getTurretPosition()  { return turretPosition; }
 
     public void stop() {
         shooterMotor.setPower(0);
+        turretServo.setPower(0);
+        turretPower = 0;
     }
 
     private void updateRPM() {
-        int  currentTicks = shooterMotor.getCurrentPosition();
+        double rawRPM = Math.abs(shooterMotor.getVelocity()) / TICKS_PER_REV * 60.0;
+        currentRPM += (rawRPM - currentRPM) * RPM_SMOOTHING;
+    }
+
+    private void updateTurretPositionEstimate() {
         long currentTimeMs = System.currentTimeMillis();
+        double deltaSeconds = (currentTimeMs - lastTurretUpdateMs) / 1000.0;
+        lastTurretUpdateMs = currentTimeMs;
 
-        double deltaTicks  = Math.abs(currentTicks - lastEncoderTicks);
-        double deltaTimeMs = currentTimeMs - lastTimeMs;
-
-        lastEncoderTicks = currentTicks;
-        lastTimeMs       = currentTimeMs;
-
-        currentRPM = deltaTimeMs > 0 ? (deltaTicks / TICKS_PER_REV) * (60000.0 / deltaTimeMs) : 0;
+        turretPosition += Math.signum(turretPower) * deltaSeconds / TURRET_FULL_TRAVEL_SEC;
+        turretPosition = Math.max(0.0, Math.min(1.0, turretPosition));
     }
 }

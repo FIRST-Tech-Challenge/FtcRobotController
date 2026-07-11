@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
-import org.firstinspires.ftc.teamcode.subsystems.Spindexer;
-import org.firstinspires.ftc.teamcode.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.subsystems.Indexer;
+import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 
 @TeleOp(name = "Fighter", group = "TeleOp")
 public class FighterTeleop extends LinearOpMode {
@@ -13,25 +13,27 @@ public class FighterTeleop extends LinearOpMode {
     @Override
     public void runOpMode() {
         Drivetrain drivetrain = new Drivetrain(hardwareMap);
-        Turret     turret     = new Turret(hardwareMap);
-        Spindexer  spindexer  = new Spindexer(hardwareMap);
+        Shooter    shooter    = new Shooter(hardwareMap);
+        Indexer    indexer    = new Indexer(hardwareMap);
 
         waitForStart();
 
         while (opModeIsActive()) {
             drivetrain.drive(gamepad1.left_stick_y, gamepad1.right_stick_x);
-            turret.update(gamepad1);
-            spindexer.update(turret.getRPM(), turret.consumeFire());
+            shooter.update(gamepad1);
+            indexer.update(shooter.getRPM(), shooter.consumeFire());
 
-            telemetry.addData("Shooter RPM",    "%.0f", turret.getRPM());
-            telemetry.addData("Max Speed",       "%d%%", turret.getMaxSpeedPercent());
-            telemetry.addData("Shoot State",     turret.getState());
-            telemetry.addData("Turret Position", "%.3f", turret.getTurretPosition());
+            telemetry.addData("Shooter RPM",    "%.0f", shooter.getRPM());
+            telemetry.addData("Target RPM",     "%.0f", shooter.getTargetRPM());
+            telemetry.addData("Max Speed",       "%d%%", shooter.getMaxSpeedPercent());
+            telemetry.addData("Shoot State",     shooter.getState());
+            telemetry.addData("Turret Power",    "%.2f", shooter.getTurretPower());
+            telemetry.addData("Turret Estimate", "%.2f", shooter.getTurretPosition());
             telemetry.update();
         }
 
         drivetrain.stop();
-        turret.stop();
-        spindexer.stop();
+        shooter.stop();
+        indexer.stop();
     }
 }
