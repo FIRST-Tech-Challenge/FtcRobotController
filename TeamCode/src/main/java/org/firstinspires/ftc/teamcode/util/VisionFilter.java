@@ -48,6 +48,9 @@ public class VisionFilter {
         if (reading == null) {
             return; // Ignore null readings
         }
+        if (reading.x == 0 && reading.y == 0 && reading.z == 0) {
+            return; // Ignore zero readings from missed/invalid AprilTag frames
+        }
 
         readingBuffer.offer(reading);
 
@@ -65,6 +68,10 @@ public class VisionFilter {
      */
     public boolean isBufferFull() {
         return readingBuffer.size() == bufferSize;
+    }
+
+    public boolean hasData() {
+        return !readingBuffer.isEmpty();
     }
 
     /**

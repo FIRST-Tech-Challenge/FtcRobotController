@@ -28,10 +28,11 @@ class RobotGeometry {
     static final double TEST_IK_SHOULDER_STEP_DEGREES = 0.5;
     static final double TEST_IK_Z_TOLERANCE = 0.5;
     // Temporary camera correction: camera reads about 2 inches too far in negative X.
-    static final double TEST_IK_CAMERA_X_CORRECTION = 3.25;
+    static final double TEST_IK_CAMERA_X_CORRECTION = 0.5;
     // Temporary camera/geometry correction: measured FK ends about 1 inch high,
     // so lower the IK target by 1 inch until the physical Z reference is retuned.
-    static final double TEST_IK_CAMERA_Z_CORRECTION = 0.0;
+    static final double TEST_IK_CAMERA_Z_CORRECTION = -10.2;
+    static final double TEST_IK_CAMERA_Y_CORRECTION = -7; // new CAMERA is place in different postion in y axis + offset error for camera
     // Continuous turret search for IK. Keep the first pass in the proven working range.
     static final double TEST_IK_TURRET_MIN_DEGREES = 45;
     static final double TEST_IK_TURRET_MAX_DEGREES = 225;
@@ -74,7 +75,7 @@ class RobotGeometry {
         return new Position(
                 DistanceUnit.INCH,
                 cameraTarget.x + TEST_IK_CAMERA_X_CORRECTION,
-                cameraTarget.y,
+                cameraTarget.y + TEST_IK_CAMERA_Y_CORRECTION,
                 cameraTarget.z + TEST_IK_CAMERA_Z_CORRECTION,
                 System.nanoTime());
     }

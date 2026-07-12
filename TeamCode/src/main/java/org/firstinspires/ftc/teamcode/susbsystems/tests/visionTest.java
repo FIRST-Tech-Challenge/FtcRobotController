@@ -36,19 +36,38 @@ public class visionTest extends OpMode {
         toggleUFD.update(gamepad1.b);
         vision.Update();
         ArrayList<AprilTagDetection> detections = vision.GetDetections();
+        ArrayList<AprilTagDetection> freshDetections = vision.GetFreshDetections();
+
+        telemetry.addLine("===== APRILTAG VERIFICATION =====");
+        telemetry.addData("Detections Size", detections == null ? -1 : detections.size());
+        telemetry.addData("Fresh Detections Size", freshDetections == null ? -1 : freshDetections.size());
+        telemetry.addData("Vision725 isTagDetected", vision.isTagDetected());
+        telemetry.addLine("If detections > 0 but fresh = 0, the tag is visible but no new frame was returned this loop.");
+
         if (detections != null)
             for (AprilTagDetection detection : detections) {
                 if (detection == null || detection.robotPose == null || detection.robotPose.getPosition() == null) continue;
+                telemetry.addLine("----- Detection Detail -----");
+                telemetry.addData("ID", detection.id);
+                telemetry.addData("Metadata Present", detection.metadata != null ? "YES" : "NO");
                 Position detPose = detection.robotPose.getPosition();
                 telemetry.addLine(String.format("Robot id: %03d x: %.2f y: %.2f z: %.2f", detection.id, detPose.x, detPose.y, detPose.z) );
-                AprilTagPoseFtc tagdetPose = detection.ftcPose;
-                telemetry.addLine(String.format("FTC id: %03d x: %.2f y: %.2f z: %.2f", detection.id, tagdetPose.x, tagdetPose.y, tagdetPose.z) );
-                tagLocation.z = detection.ftcPose.z;
-                tagLocation.x = -detection.ftcPose.y;
-                tagLocation.y = detection.ftcPose.x;
-                telemetry.addLine(String.format("FTC-Corrected id: %03d x: %.2f y: %.2f z: %.2f", detection.id, tagLocation.x, tagLocation.y, tagLocation.z) );
-                AprilTagPoseRaw rawdetpose = detection.rawPose;
-                telemetry.addLine(String.format("Raw id: %03d x: %.2f y: %.2f z: %.2f", detection.id, rawdetpose.x, rawdetpose.y, rawdetpose.z) );
+                if (detection.ftcPose != null) {
+                    AprilTagPoseFtc tagdetPose = detection.ftcPose;
+                    telemetry.addLine(String.format("FTC id: %03d x: %.2f y: %.2f z: %.2f", detection.id, tagdetPose.x, tagdetPose.y, tagdetPose.z) );
+                    tagLocation.z = detection.ftcPose.z;
+                    tagLocation.x = -detection.ftcPose.y;
+                    tagLocation.y = detection.ftcPose.x;
+                    telemetry.addLine(String.format("FTC-Corrected id: %03d x: %.2f y: %.2f z: %.2f", detection.id, tagLocation.x, tagLocation.y, tagLocation.z) );
+                } else {
+                    telemetry.addLine("FTC Pose: NULL");
+                }
+                if (detection.rawPose != null) {
+                    AprilTagPoseRaw rawdetpose = detection.rawPose;
+                    telemetry.addLine(String.format("Raw id: %03d x: %.2f y: %.2f z: %.2f", detection.id, rawdetpose.x, rawdetpose.y, rawdetpose.z) );
+                } else {
+                    telemetry.addLine("Raw Pose: NULL");
+                }
             }
        /* ArrayList<AprilTagDetection> freshDetections = vision.GetFreshDetections();
         if (freshDetections != null)
@@ -75,7 +94,10 @@ public class visionTest extends OpMode {
             telemetry.addLine("Null Tag Position");
         }*/
         detTagPose = vision.GetPos();
-        telemetry.addLine(String.format("[TAG] Detected %b x: %.2f y: %.2f z: %.2f", vision.isTagDetected(),tagLocation.x, tagLocation.y, tagLocation.z) );
+        telemetry.addLine("===== VISION725 STORED POSITION =====");
+        telemetry.addLine(String.format("[Loop Computed] x: %.2f y: %.2f z: %.2f", tagLocation.x, tagLocation.y, tagLocation.z) );
+        telemetry.addLine(String.format("[Vision725 GetPos] Detected %b x: %.2f y: %.2f z: %.2f", vision.isTagDetected(),detTagPose.x, detTagPose.y, detTagPose.z) );
+        telemetry.addLine("If Loop Computed is non-zero but GetPos is zero, Vision725.Update() is resetting stored position.");
         telemetry.update();
     }
     private void toggleAvg() {

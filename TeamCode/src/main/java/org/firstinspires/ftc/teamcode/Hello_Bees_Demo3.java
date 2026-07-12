@@ -78,7 +78,7 @@ public class Hello_Bees_Demo3 extends OpMode {
         rightbumper = new ButtonBlock().onTrue(() -> {robot.setFanTime((robot.getFanTime()-1));});
         robot.wristGoPos(.9);
         telemetry.addLine("Initialized");
-        telemetry.update();
+         telemetry.update();
 
     }
     @Override
