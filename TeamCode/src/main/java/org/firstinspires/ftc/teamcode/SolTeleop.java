@@ -7,8 +7,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Indexer;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 
-@TeleOp(name = "Fighter", group = "TeleOp")
-public class FighterTeleop extends LinearOpMode {
+@TeleOp(name = "Sol", group = "TeleOp")
+public class SolTeleop extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -18,10 +18,15 @@ public class FighterTeleop extends LinearOpMode {
 
         waitForStart();
 
+        boolean prevB = false;
+
         while (opModeIsActive()) {
+            boolean bPressed = gamepad1.b && !prevB;
+            prevB = gamepad1.b;
+
             drivetrain.drive(gamepad1.left_stick_y, gamepad1.right_stick_x);
             shooter.update(gamepad1);
-            indexer.update(shooter.getRPM(), shooter.consumeFire());
+            indexer.update(shooter.getRPM(), shooter.consumeFire(), bPressed);
 
             telemetry.addData("Shooter RPM",    "%.0f", shooter.getRPM());
             telemetry.addData("Target RPM",     "%.0f", shooter.getTargetRPM());

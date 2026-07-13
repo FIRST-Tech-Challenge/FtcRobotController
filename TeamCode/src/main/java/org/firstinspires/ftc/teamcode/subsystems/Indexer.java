@@ -10,7 +10,7 @@ public class Indexer {
     private static final String SPINDEXER_SERVO_NAME    = "SpindexerServo";
     private static final double SHOOTER_RPM_THRESHOLD   = 500.0; // 1/3 of 6000 RPM peak
     // Time for one 72-degree advance at ~60 RPM CRServo no-load. Calibrate physically.
-    private static final double FEED_PULSE_SEC          = 0.70;
+    private static final double FEED_PULSE_SEC          = 0.315;
 
     private final DcMotor    feederMotor;
     private final CRServo    spindexerServo;
@@ -28,16 +28,12 @@ public class Indexer {
 
     // shooterRPM: live RPM from the shooter motor encoder.
     // fire: one-shot signal from Shooter.consumeFire() - true for exactly one loop when ready.
-    public void update(double shooterRPM, boolean fire) {
-        if (shooterRPM < SHOOTER_RPM_THRESHOLD) {
-            stop();
-            feeding = false;
-            return;
-        }
+    // manualFire: one-shot signal (button B) - runs spindexer pulse regardless of RPM.
+    public void update(double shooterRPM, boolean fire, boolean manualFire) {
+        boolean aboveThreshold = shooterRPM >= SHOOTER_RPM_THRESHOLD;
+        feederMotor.setPower(aboveThreshold ? 1.0 : 0.0);
 
-        feederMotor.setPower(1.0);
-
-        if (fire && !feeding) {
+        if (!feeding && ((fire && aboveThreshold) || manualFire)) {
             spindexerServo.setPower(-1.0);
             feedTimer.reset();
             feeding = true;
