@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.DriveHardware;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystems.drive.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystems.intake.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.common.subsystems.vision.VisionSubsystem;
 import org.firstinspires.ftc.teamcode.core.robot.Robot;
 
 /**
@@ -19,6 +20,7 @@ public class TeamARobot extends Robot {
     private final RobotHardware robotHardware;
     private final DriveSubsystem driveSubsystem;
     private final IntakeSubsystem intakeSubsystem;
+    private final VisionSubsystem visionSubsystem;
     private boolean hardwareInitialized;
 
     /** Creates Team A's robot with the shared baseline hardware composition. */
@@ -39,8 +41,10 @@ public class TeamARobot extends Robot {
         this.robotHardware = robotHardware;
         driveSubsystem = new DriveSubsystem(robotHardware.getDriveHardware());
         intakeSubsystem = new IntakeSubsystem(robotHardware.getIntakeHardware());
+        visionSubsystem = new VisionSubsystem(robotHardware.getVisionHardware());
         registerSubsystem(driveSubsystem);
         registerSubsystem(intakeSubsystem);
+        registerSubsystem(visionSubsystem);
     }
 
     /**
@@ -98,6 +102,16 @@ public class TeamARobot extends Robot {
         intakeSubsystem.eject();
     }
 
+    /** Requests vision searching when optional vision hardware is available. */
+    public void enableVision() {
+        visionSubsystem.enableVision();
+    }
+
+    /** Requests the safe disabled vision behavior. */
+    public void disableVision() {
+        visionSubsystem.disableVision();
+    }
+
     /** Returns the active drivetrain state name for telemetry. */
     public String getDriveStateName() {
         return driveSubsystem.getCurrentStateName();
@@ -139,6 +153,16 @@ public class TeamARobot extends Robot {
     /** Returns whether the optional intake hardware was found during initialization. */
     public boolean isIntakeAvailable() {
         return intakeSubsystem.isAvailable();
+    }
+
+    /** Returns the active vision state name for telemetry. */
+    public String getVisionStateName() {
+        return visionSubsystem.getCurrentStateName();
+    }
+
+    /** Returns whether optional vision hardware is available. */
+    public boolean isVisionAvailable() {
+        return visionSubsystem.isAvailable();
     }
 
     @Override

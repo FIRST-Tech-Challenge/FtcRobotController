@@ -47,6 +47,12 @@ public class TeamATeleOp extends OpMode {
             robot.enableManualDrive();
         }
 
+        if (driverInput.wasLeftBumperJustPressed()) {
+            robot.disableVision();
+        } else if (driverInput.wasRightBumperJustPressed()) {
+            robot.enableVision();
+        }
+
         if (operatorInput.wasAJustPressed()) {
             robot.startIntake();
         } else if (operatorInput.wasBJustPressed()) {
@@ -81,6 +87,8 @@ public class TeamATeleOp extends OpMode {
         telemetry.addData("Rear Right Power", robot.getRearRightMotorPower());
         telemetry.addData("Intake State", robot.getIntakeStateName());
         telemetry.addData("Intake Available", robot.isIntakeAvailable());
+        telemetry.addData("Vision State", robot.getVisionStateName());
+        telemetry.addData("Vision Available", robot.isVisionAvailable());
         telemetry.update();
     }
 }
