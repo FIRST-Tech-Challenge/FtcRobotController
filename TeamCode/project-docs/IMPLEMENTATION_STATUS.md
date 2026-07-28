@@ -6,8 +6,8 @@ PVI-FTC | Editable master guide
 
 ## Repository baseline
 - Source repository: PVI-FTC fork of FtcRobotController
-- Current sequential prompt: Prompt 5 complete
-- Last completed prompt: Prompt 5: Implement the drive subsystem and drive FSM.
+- Current sequential prompt: Prompt 6 complete
+- Last completed prompt: Prompt 6: Create Team A robot composition.
 - Last verified commit: 7d11d07 (Prompt 1 package-structure merge)
 ## Completed work
 - Added repository instructions and architecture documentation.
@@ -59,6 +59,15 @@ PVI-FTC | Editable master guide
   fallback with no IMU target or correction; IMU heading correction remains deferred.
 - Drive requests made before initialization are stored safely. The FSM initializes in disabled
   mode, and transitions are registered in deterministic order.
+- Completed Prompt 6: added `TeamARobot` in `robots.teamA` as the Team A composition root.
+- `TeamARobot` owns a `RobotHardware` composition and one registered `DriveSubsystem`. Its
+  `initialize(HardwareMap)` method initializes hardware first and then invokes the inherited
+  subsystem lifecycle once, preventing duplicate initialization on repeated calls.
+- OpModes use Team A's public drive request methods rather than accessing mechanisms directly.
+  Telemetry can read the drivetrain state, requested inputs, and last commanded motor powers
+  without access to the drive FSM.
+- During stop, the inherited Robot lifecycle stops the registered subsystem before Team A's
+  `onStop()` calls `RobotHardware.stopAll()` once for robot-wide hardware safety.
 ## Current public APIs
 - `org.firstinspires.ftc.teamcode.core.robot.Subsystem`
   - `initialize()`, `update()`, `stop()`, and `getName()`
@@ -93,6 +102,11 @@ PVI-FTC | Editable master guide
 - `org.firstinspires.ftc.teamcode.common.subsystems.drive.DisabledDriveState`,
   `ManualDriveState`, and `HeadingHoldState`
   - public `State` implementations with `DriveSubsystem` constructors
+- `org.firstinspires.ftc.teamcode.robots.teamA.TeamARobot`
+  - `TeamARobot()`, `TeamARobot(RobotHardware)`, and `initialize(HardwareMap)`
+  - `drive(double, double, double)`, `enableManualDrive()`, `disableDrive()`, and
+    `enableHeadingHold()`
+  - drivetrain state, requested-input, and last-commanded-power telemetry getters
 ## Build status
 - Approved JDK: Record the team-approved version here.
 - Android Studio version: Record the team-approved version here.
@@ -100,7 +114,7 @@ PVI-FTC | Editable master guide
 - TeamCode build command (Windows): `.\gradlew.bat TeamCode:assembleDebug`
 - Last result: Not independently verified by Codex because its shell session has no configured JDK
   (`JAVA_HOME` and `java` are unavailable). The student confirmed the baseline build works; run
-  the documented command in a configured local environment to verify Prompt 5.
+  the documented command in a configured local environment to verify Prompt 6.
 ## Known limitations and TODO items
 - Configure branch protection and pull-request review.
 - Consider adding compile-only GitHub Actions validation.
@@ -109,7 +123,7 @@ PVI-FTC | Editable master guide
 - IMU heading correction remains intentionally deferred. `HeadingHoldState` currently provides a
   safe manual-drive fallback.
 ## Next planned task
-Prompt 6: To be assigned.
+Prompt 7: To be assigned.
 ## Update instructions
 After every completed prompt, replace or extend the sections above with:
 - prompt number and title;
