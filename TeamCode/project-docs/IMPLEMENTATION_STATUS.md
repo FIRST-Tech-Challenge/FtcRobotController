@@ -6,8 +6,8 @@ PVI-FTC | Editable master guide
 
 ## Repository baseline
 - Source repository: PVI-FTC fork of FtcRobotController
-- Current sequential prompt: Prompt 11 complete
-- Last completed prompt: Prompt 11: Implement the vision subsystem FSM as a safe skeleton.
+- Current sequential prompt: Prompt 12 complete
+- Last completed prompt: Prompt 12: Integrate Team A vision through Robot and TeleOp.
 - Last verified commit: 7d11d07 (Prompt 1 package-structure merge)
 ## Completed work
 - Added repository instructions and architecture documentation.
@@ -116,6 +116,14 @@ PVI-FTC | Editable master guide
 - Policy: TargetAcquired lasts one update cycle before Tracking; LostTarget lasts one update cycle
   before Searching resumes. Searching, TargetAcquired, Tracking, and LostTarget update the
   VisionHardware lifecycle while active.
+- Completed Prompt 12: Team A now composes and registers one `VisionSubsystem` after its drive
+  and intake subsystems, using `RobotHardware`'s optional `VisionHardware` wrapper.
+- `TeamARobot` exposes narrow `enableVision()` and `disableVision()` requests plus read-only
+  vision state and availability diagnostics. It does not expose vision FSM or state instances.
+- `TeamATeleOp` maps gamepad1 right-bumper press to enable vision and left-bumper press to disable
+  it. No TeleOp target reports are generated. Vision state and availability are now telemetry
+  items; drive and intake controls remain unchanged.
+- Missing vision hardware remains safe and does not prevent Team A drive or intake initialization.
 ## Current public APIs
 - `org.firstinspires.ftc.teamcode.core.robot.Subsystem`
   - `initialize()`, `update()`, `stop()`, and `getName()`
@@ -157,6 +165,7 @@ PVI-FTC | Editable master guide
   - drivetrain state, requested-input, and last-commanded-power telemetry getters
   - `startIntake()`, `stopIntake()`, `holdIntake()`, `ejectIntake()`, `getIntakeStateName()`,
     and `isIntakeAvailable()`
+  - `enableVision()`, `disableVision()`, `getVisionStateName()`, and `isVisionAvailable()`
 - `org.firstinspires.ftc.teamcode.core.input.InputManager`
   - `InputManager(Gamepad)` and `update()` once per TeleOp loop
   - held, just-pressed, and just-released button queries for A, B, X, Y, and both bumpers
@@ -182,7 +191,7 @@ PVI-FTC | Editable master guide
 - TeamCode build command (Windows): `.\gradlew.bat TeamCode:assembleDebug`
 - Last result: Not independently verified by Codex because its shell session has no configured JDK
   (`JAVA_HOME` and `java` are unavailable). The student confirmed the baseline build works; run
-  the documented command in a configured local environment to verify Prompt 11.
+  the documented command in a configured local environment to verify Prompt 12.
 ## Known limitations and TODO items
 - Configure branch protection and pull-request review.
 - Consider adding compile-only GitHub Actions validation.
@@ -193,7 +202,7 @@ PVI-FTC | Editable master guide
 - Intake holding power remains zero until a future mechanism prompt defines the physical holding
   requirement.
 ## Next planned task
-Prompt 12: To be assigned.
+Prompt 13: To be assigned.
 ## Update instructions
 After every completed prompt, replace or extend the sections above with:
 - prompt number and title;
