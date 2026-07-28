@@ -6,8 +6,8 @@ PVI-FTC | Editable master guide
 
 ## Repository baseline
 - Source repository: PVI-FTC fork of FtcRobotController
-- Current sequential prompt: Prompt 13 complete
-- Last completed prompt: Prompt 13: Implement beginner-readable autonomous sequencing.
+- Current sequential prompt: Prompt 14 complete
+- Last completed prompt: Prompt 14: Implement Team A Autonomous OpMode.
 - Last verified commit: 7d11d07 (Prompt 1 package-structure merge)
 ## Completed work
 - Added repository instructions and architecture documentation.
@@ -133,6 +133,13 @@ PVI-FTC | Editable master guide
   requested mechanism on completion or cancellation.
 - `AutonomousRobotControl` is the narrow shared API used by timed steps. TeamARobot implements it,
   keeping shared autonomous code independent of Team A while avoiding direct hardware or FSM use.
+- Completed Prompt 14: added the iterative `TeamAAutoOpMode` in `opmodes.autonomous`.
+- The cautious demonstration sequence drives forward at low power, stops drive through its timed
+  step, runs intake, stops intake through its timed step, waits briefly, and finishes safely.
+- The OpMode starts the sequence after requesting safe drive and intake modes. Every loop updates
+  the sequence and `robot.update()` without blocking; after completion it continues telemetry while
+  repeatedly requesting safe drive and intake behavior. Stop cancels the sequence and stops robot
+  hardware.
 ## Current public APIs
 - `org.firstinspires.ftc.teamcode.core.robot.Subsystem`
   - `initialize()`, `update()`, `stop()`, and `getName()`
@@ -203,6 +210,8 @@ PVI-FTC | Editable master guide
   - non-blocking baseline timed steps
 - `org.firstinspires.ftc.teamcode.common.autonomous.AutonomousRobotControl`
   - narrow drive and intake requests implemented by TeamARobot
+- `org.firstinspires.ftc.teamcode.opmodes.autonomous.TeamAAutoOpMode`
+  - iterative non-blocking Team A demonstration autonomous sequence
 ## Build status
 - Approved JDK: Record the team-approved version here.
 - Android Studio version: Record the team-approved version here.
@@ -210,7 +219,7 @@ PVI-FTC | Editable master guide
 - TeamCode build command (Windows): `.\gradlew.bat TeamCode:assembleDebug`
 - Last result: Not independently verified by Codex because its shell session has no configured JDK
   (`JAVA_HOME` and `java` are unavailable). The student confirmed the baseline build works; run
-  the documented command in a configured local environment to verify Prompt 13.
+  the documented command in a configured local environment to verify Prompt 14.
 ## Known limitations and TODO items
 - Configure branch protection and pull-request review.
 - Consider adding compile-only GitHub Actions validation.
@@ -221,7 +230,7 @@ PVI-FTC | Editable master guide
 - Intake holding power remains zero until a future mechanism prompt defines the physical holding
   requirement.
 ## Next planned task
-Prompt 14: To be assigned.
+Prompt 15: To be assigned.
 ## Update instructions
 After every completed prompt, replace or extend the sections above with:
 - prompt number and title;
