@@ -6,8 +6,9 @@ PVI-FTC | Editable master guide
 
 ## Repository baseline
 - Source repository: PVI-FTC fork of FtcRobotController
-- Current sequential prompt: Prompt 15 complete
-- Last completed prompt: Prompt 15: Create Team B and Team C robot skeletons.
+- Current sequential prompt: Prompt 16 complete
+- Last completed prompt: Prompt 16: Create Team B/C TeleOp skeletons and perform the
+  architecture audit.
 - Last verified commit: 7d11d07 (Prompt 1 package-structure merge)
 ## Completed work
 - Added repository instructions and architecture documentation.
@@ -140,6 +141,22 @@ PVI-FTC | Editable master guide
   the sequence and `robot.update()` without blocking; after completion it continues telemetry while
   repeatedly requesting safe drive and intake behavior. Stop cancels the sequence and stops robot
   hardware.
+- Completed Prompt 15: added `TeamBRobot` and `TeamCRobot` as minimal team-specific composition
+  roots. Each currently reuses the shared required drive, optional intake, and optional vision
+  hardware and subsystem policy while leaving team-specific hardware and mechanisms as TODO items.
+- Completed Prompt 16: added iterative `TeamBTeleOp` and `TeamCTeleOp` skeletons. Each owns its
+  corresponding robot and one driver `InputManager`, initializes through the robot boundary,
+  snapshots input in `start()`, applies the cautious common mecanum mapping in `loop()`, calls
+  `robot.update()` once per loop, publishes drive/intake/vision state and optional-hardware
+  availability, and calls `robot.stop()` during FTC stop.
+- Team B and Team C mechanism and mode-selection mappings remain clearly marked TODO items; no
+  intake, vision, heading-hold, or team-specific mechanism mapping was invented.
+- Prompt 16 architecture audit found no clear local violations requiring code changes. FTC SDK
+  modules have no PVI changes in the audited history; hardware access remains in wrappers;
+  gamepad access remains in InputManager and TeleOps; FSMs are not exposed by robot APIs or
+  manipulated by OpModes; autonomous remains non-blocking and does not use InputManager; mecanum
+  calculation and subsystem lifecycle ownership are not duplicated; shared packages contain no
+  Team A class dependency; and optional intake/vision failures do not disable required drive.
 ## Current public APIs
 - `org.firstinspires.ftc.teamcode.core.robot.Subsystem`
   - `initialize()`, `update()`, `stop()`, and `getName()`
@@ -212,14 +229,20 @@ PVI-FTC | Editable master guide
   - narrow drive and intake requests implemented by TeamARobot
 - `org.firstinspires.ftc.teamcode.opmodes.autonomous.TeamAAutoOpMode`
   - iterative non-blocking Team A demonstration autonomous sequence
+- `org.firstinspires.ftc.teamcode.robots.teamB.TeamBRobot` and
+  `org.firstinspires.ftc.teamcode.robots.teamC.TeamCRobot`
+  - constructors, `initialize(HardwareMap)`, public drive/intake/vision requests, state and
+    availability diagnostics, inherited `update()` and `stop()`
+- `org.firstinspires.ftc.teamcode.opmodes.teleop.TeamBTeleOp` and
+  `org.firstinspires.ftc.teamcode.opmodes.teleop.TeamCTeleOp`
+  - iterative drive-only TeleOp lifecycles using the corresponding robot public API
 ## Build status
-- Approved JDK: Record the team-approved version here.
+- Approved JDK: Record the team-approved version here. Prompt 16 validation used Java 17.0.12.
 - Android Studio version: Record the team-approved version here.
 - FTC SDK version or tag: Record here.
 - TeamCode build command (Windows): `.\gradlew.bat TeamCode:assembleDebug`
-- Last result: Not independently verified by Codex because its shell session has no configured JDK
-  (`JAVA_HOME` and `java` are unavailable). The student confirmed the baseline build works; run
-  the documented command in a configured local environment to verify Prompt 14.
+- Prompt 16 pre-edit baseline result: `BUILD SUCCESSFUL` (49 tasks executed).
+- Prompt 16 final result: `BUILD SUCCESSFUL` (9 tasks executed, 40 up-to-date).
 ## Known limitations and TODO items
 - Configure branch protection and pull-request review.
 - Consider adding compile-only GitHub Actions validation.
@@ -229,8 +252,16 @@ PVI-FTC | Editable master guide
   safe manual-drive fallback.
 - Intake holding power remains zero until a future mechanism prompt defines the physical holding
   requirement.
+- Team B and Team C currently assume the shared hardware policy: required `frontLeft`,
+  `frontRight`, `rearLeft`, and `rearRight` drive motors, optional `intake`, and unavailable
+  lifecycle-only vision. Confirm each team's wiring, motor directions, geometry, and controls
+  before field use.
+- Team B and Team C currently expose only the common drive mapping in TeleOp. Their mechanism and
+  mode-selection mappings remain TODO items.
+- Deferred architecture review: no larger or ambiguous Prompt 16 findings require a speculative
+  refactor at this time.
 ## Next planned task
-Prompt 15: To be assigned.
+Prompt 17: To be assigned.
 ## Update instructions
 After every completed prompt, replace or extend the sections above with:
 - prompt number and title;
