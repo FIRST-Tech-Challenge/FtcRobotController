@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.common.hardware.DriveHardware;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystems.drive.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.common.subsystems.intake.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.core.robot.Robot;
 
 /**
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.core.robot.Robot;
 public class TeamARobot extends Robot {
     private final RobotHardware robotHardware;
     private final DriveSubsystem driveSubsystem;
+    private final IntakeSubsystem intakeSubsystem;
     private boolean hardwareInitialized;
 
     /** Creates Team A's robot with the shared baseline hardware composition. */
@@ -36,7 +38,9 @@ public class TeamARobot extends Robot {
 
         this.robotHardware = robotHardware;
         driveSubsystem = new DriveSubsystem(robotHardware.getDriveHardware());
+        intakeSubsystem = new IntakeSubsystem(robotHardware.getIntakeHardware());
         registerSubsystem(driveSubsystem);
+        registerSubsystem(intakeSubsystem);
     }
 
     /**
@@ -74,6 +78,26 @@ public class TeamARobot extends Robot {
         driveSubsystem.enableHeadingHold();
     }
 
+    /** Requests normal forward intake behavior. */
+    public void startIntake() {
+        intakeSubsystem.startIntake();
+    }
+
+    /** Requests the safe stopped intake behavior. */
+    public void stopIntake() {
+        intakeSubsystem.stopIntake();
+    }
+
+    /** Requests the baseline intake holding behavior. */
+    public void holdIntake() {
+        intakeSubsystem.hold();
+    }
+
+    /** Requests reverse intake eject behavior. */
+    public void ejectIntake() {
+        intakeSubsystem.eject();
+    }
+
     /** Returns the active drivetrain state name for telemetry. */
     public String getDriveStateName() {
         return driveSubsystem.getCurrentStateName();
@@ -105,6 +129,16 @@ public class TeamARobot extends Robot {
 
     public double getRearRightMotorPower() {
         return getDriveHardware().getRearRightPower();
+    }
+
+    /** Returns the active intake state name for telemetry. */
+    public String getIntakeStateName() {
+        return intakeSubsystem.getCurrentStateName();
+    }
+
+    /** Returns whether the optional intake hardware was found during initialization. */
+    public boolean isIntakeAvailable() {
+        return intakeSubsystem.isAvailable();
     }
 
     @Override

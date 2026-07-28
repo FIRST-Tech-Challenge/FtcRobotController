@@ -15,13 +15,15 @@ import org.firstinspires.ftc.teamcode.robots.teamA.TeamARobot;
 @TeleOp(name = "Team A Mecanum Drive", group = "Team A")
 public class TeamATeleOp extends OpMode {
     private TeamARobot robot;
-    private InputManager inputManager;
+    private InputManager driverInput;
+    private InputManager operatorInput;
 
     @Override
     public void init() {
         robot = new TeamARobot();
         robot.initialize(hardwareMap);
-        inputManager = new InputManager(gamepad1);
+        driverInput = new InputManager(gamepad1);
+        operatorInput = new InputManager(gamepad2);
 
         telemetry.addData("Status", "Team A robot initialized");
         telemetry.update();
@@ -29,22 +31,34 @@ public class TeamATeleOp extends OpMode {
 
     @Override
     public void start() {
-        inputManager.update();
+        driverInput.update();
+        operatorInput.update();
         robot.enableManualDrive();
     }
 
     @Override
     public void loop() {
-        inputManager.update();
+        driverInput.update();
+        operatorInput.update();
 
-        if (inputManager.wasYJustPressed()) {
+        if (driverInput.wasYJustPressed()) {
             robot.enableHeadingHold();
-        } else if (inputManager.wasXJustPressed()) {
+        } else if (driverInput.wasXJustPressed()) {
             robot.enableManualDrive();
         }
 
-        robot.drive(-inputManager.getLeftStickY(), inputManager.getLeftStickX(),
-                inputManager.getRightStickX());
+        if (operatorInput.wasAJustPressed()) {
+            robot.startIntake();
+        } else if (operatorInput.wasBJustPressed()) {
+            robot.stopIntake();
+        } else if (operatorInput.wasXJustPressed()) {
+            robot.ejectIntake();
+        } else if (operatorInput.wasYJustPressed()) {
+            robot.holdIntake();
+        }
+
+        robot.drive(-driverInput.getLeftStickY(), driverInput.getLeftStickX(),
+                driverInput.getRightStickX());
         robot.update();
         publishDriveTelemetry();
     }
@@ -65,6 +79,8 @@ public class TeamATeleOp extends OpMode {
         telemetry.addData("Front Right Power", robot.getFrontRightMotorPower());
         telemetry.addData("Rear Left Power", robot.getRearLeftMotorPower());
         telemetry.addData("Rear Right Power", robot.getRearRightMotorPower());
+        telemetry.addData("Intake State", robot.getIntakeStateName());
+        telemetry.addData("Intake Available", robot.isIntakeAvailable());
         telemetry.update();
     }
 }
