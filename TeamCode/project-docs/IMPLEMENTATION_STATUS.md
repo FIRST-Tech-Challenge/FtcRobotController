@@ -6,8 +6,8 @@ PVI-FTC | Editable master guide
 
 ## Repository baseline
 - Source repository: PVI-FTC fork of FtcRobotController
-- Current sequential prompt: Prompt 8 complete
-- Last completed prompt: Prompt 8: Implement Team A TeleOp with four-wheel mecanum drive.
+- Current sequential prompt: Prompt 9 complete
+- Last completed prompt: Prompt 9: Implement the intake subsystem FSM.
 - Last verified commit: 7d11d07 (Prompt 1 package-structure merge)
 ## Completed work
 - Added repository instructions and architecture documentation.
@@ -84,6 +84,16 @@ PVI-FTC | Editable master guide
 - A Y just-press requests the current heading-hold placeholder; an X just-press returns to manual
   drive. The OpMode publishes drive state, requests, and all four commanded wheel powers through
   TeamARobot's read-only diagnostics, then calls `robot.stop()` during FTC stop.
+- Completed Prompt 9: added the shared `IntakeSubsystem` and `IdleIntakeState`, `IntakingState`,
+  `HoldingState`, and `EjectingState` in `common.subsystems.intake`.
+- `IntakeSubsystem` owns the reusable FSM and accepts only public mode requests: `startIntake()`,
+  `stopIntake()`, `hold()`, and `eject()`. It exposes current state and availability for
+  telemetry, but does not expose concrete state selection.
+- Idle and holding stop the intake output. Intaking and ejecting use the named configurable
+  `INTAKE_POWER` and `EJECT_POWER` constants. Holding deliberately uses zero power until a future
+  mechanism prompt defines a physical low-power holding requirement.
+- The optional intake remains safe when unavailable: all state output calls reach IntakeHardware's
+  safe no-op behavior and do not affect drivetrain operation.
 ## Current public APIs
 - `org.firstinspires.ftc.teamcode.core.robot.Subsystem`
   - `initialize()`, `update()`, `stop()`, and `getName()`
@@ -129,6 +139,12 @@ PVI-FTC | Editable master guide
   - left/right stick-axis and trigger getters
 - `org.firstinspires.ftc.teamcode.opmodes.teleop.TeamATeleOp`
   - iterative TeleOp lifecycle mapping `gamepad1` to TeamARobot's public drivetrain API
+- `org.firstinspires.ftc.teamcode.common.subsystems.intake.IntakeSubsystem`
+  - `IntakeSubsystem(IntakeHardware)`, lifecycle methods, `startIntake()`, `stopIntake()`,
+    `hold()`, `eject()`, `getCurrentStateName()`, and `isAvailable()`
+- `org.firstinspires.ftc.teamcode.common.subsystems.intake.IdleIntakeState`, `IntakingState`,
+  `HoldingState`, and `EjectingState`
+  - public `State` implementations with `IntakeSubsystem` constructors
 ## Build status
 - Approved JDK: Record the team-approved version here.
 - Android Studio version: Record the team-approved version here.
@@ -136,7 +152,7 @@ PVI-FTC | Editable master guide
 - TeamCode build command (Windows): `.\gradlew.bat TeamCode:assembleDebug`
 - Last result: Not independently verified by Codex because its shell session has no configured JDK
   (`JAVA_HOME` and `java` are unavailable). The student confirmed the baseline build works; run
-  the documented command in a configured local environment to verify Prompt 8.
+  the documented command in a configured local environment to verify Prompt 9.
 ## Known limitations and TODO items
 - Configure branch protection and pull-request review.
 - Consider adding compile-only GitHub Actions validation.
@@ -144,8 +160,10 @@ PVI-FTC | Editable master guide
   processor requirements.
 - IMU heading correction remains intentionally deferred. `HeadingHoldState` currently provides a
   safe manual-drive fallback.
+- Intake holding power remains zero until a future mechanism prompt defines the physical holding
+  requirement.
 ## Next planned task
-Prompt 9: To be assigned.
+Prompt 10: To be assigned.
 ## Update instructions
 After every completed prompt, replace or extend the sections above with:
 - prompt number and title;
