@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robots.teamA;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.common.autonomous.AutonomousRobotControl;
 import org.firstinspires.ftc.teamcode.common.hardware.DriveHardware;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystems.drive.DriveSubsystem;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.core.robot.Robot;
  * keeps FTC entry points focused on mapping controls, while the robot and subsystem layers retain
  * responsibility for behavior and hardware access.</p>
  */
-public class TeamARobot extends Robot {
+public class TeamARobot extends Robot implements AutonomousRobotControl {
     private final RobotHardware robotHardware;
     private final DriveSubsystem driveSubsystem;
     private final IntakeSubsystem intakeSubsystem;
