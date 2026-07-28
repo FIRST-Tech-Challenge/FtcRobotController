@@ -6,8 +6,8 @@ PVI-FTC | Editable master guide
 
 ## Repository baseline
 - Source repository: PVI-FTC fork of FtcRobotController
-- Current sequential prompt: Prompt 10 complete
-- Last completed prompt: Prompt 10: Integrate Team A intake through Robot and TeleOp.
+- Current sequential prompt: Prompt 11 complete
+- Last completed prompt: Prompt 11: Implement the vision subsystem FSM as a safe skeleton.
 - Last verified commit: 7d11d07 (Prompt 1 package-structure merge)
 ## Completed work
 - Added repository instructions and architecture documentation.
@@ -104,6 +104,18 @@ PVI-FTC | Editable master guide
   availability are included in telemetry.
 - Because `IntakeHardware` is optional, its unavailable state initializes safely and leaves Team A
   drive behavior unaffected.
+- Completed Prompt 11: added the shared `VisionSubsystem` and its `VisionDisabledState`,
+  `SearchingState`, `TargetAcquiredState`, `TrackingState`, and `LostTargetState` in
+  `common.subsystems.vision`.
+- `VisionSubsystem` owns the reusable FSM and exposes `enableVision()`, `disableVision()`, and
+  `reportTargetDetected(boolean)` without exposing states. It reports current state and hardware
+  availability for telemetry.
+- This is a lifecycle-only skeleton: it creates no camera or processor and never invents target
+  data. When unavailable, enable requests remain safely disabled and reported availability is
+  false. A future processor supplies observations through `reportTargetDetected`.
+- Policy: TargetAcquired lasts one update cycle before Tracking; LostTarget lasts one update cycle
+  before Searching resumes. Searching, TargetAcquired, Tracking, and LostTarget update the
+  VisionHardware lifecycle while active.
 ## Current public APIs
 - `org.firstinspires.ftc.teamcode.core.robot.Subsystem`
   - `initialize()`, `update()`, `stop()`, and `getName()`
@@ -157,6 +169,12 @@ PVI-FTC | Editable master guide
 - `org.firstinspires.ftc.teamcode.common.subsystems.intake.IdleIntakeState`, `IntakingState`,
   `HoldingState`, and `EjectingState`
   - public `State` implementations with `IntakeSubsystem` constructors
+- `org.firstinspires.ftc.teamcode.common.subsystems.vision.VisionSubsystem`
+  - `VisionSubsystem(VisionHardware)`, lifecycle methods, `enableVision()`, `disableVision()`,
+    `reportTargetDetected(boolean)`, `getCurrentStateName()`, and `isAvailable()`
+- `org.firstinspires.ftc.teamcode.common.subsystems.vision.VisionDisabledState`,
+  `SearchingState`, `TargetAcquiredState`, `TrackingState`, and `LostTargetState`
+  - public `State` implementations with `VisionSubsystem` constructors
 ## Build status
 - Approved JDK: Record the team-approved version here.
 - Android Studio version: Record the team-approved version here.
@@ -164,7 +182,7 @@ PVI-FTC | Editable master guide
 - TeamCode build command (Windows): `.\gradlew.bat TeamCode:assembleDebug`
 - Last result: Not independently verified by Codex because its shell session has no configured JDK
   (`JAVA_HOME` and `java` are unavailable). The student confirmed the baseline build works; run
-  the documented command in a configured local environment to verify Prompt 10.
+  the documented command in a configured local environment to verify Prompt 11.
 ## Known limitations and TODO items
 - Configure branch protection and pull-request review.
 - Consider adding compile-only GitHub Actions validation.
@@ -175,7 +193,7 @@ PVI-FTC | Editable master guide
 - Intake holding power remains zero until a future mechanism prompt defines the physical holding
   requirement.
 ## Next planned task
-Prompt 11: To be assigned.
+Prompt 12: To be assigned.
 ## Update instructions
 After every completed prompt, replace or extend the sections above with:
 - prompt number and title;
