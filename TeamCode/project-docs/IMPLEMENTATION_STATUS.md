@@ -6,8 +6,8 @@ PVI-FTC | Editable master guide
 
 ## Repository baseline
 - Source repository: PVI-FTC fork of FtcRobotController
-- Current sequential prompt: Prompt 7 complete
-- Last completed prompt: Prompt 7: Implement the TeleOp InputManager.
+- Current sequential prompt: Prompt 8 complete
+- Last completed prompt: Prompt 8: Implement Team A TeleOp with four-wheel mecanum drive.
 - Last verified commit: 7d11d07 (Prompt 1 package-structure merge)
 ## Completed work
 - Added repository instructions and architecture documentation.
@@ -76,6 +76,14 @@ PVI-FTC | Editable master guide
 - The manager exposes held, just-pressed, and just-released queries for A, B, X, Y, and both
   bumpers, plus all requested stick and trigger values. It has no robot, hardware, subsystem,
   FSM, telemetry, or autonomous dependency.
+- Completed Prompt 8: added the iterative `TeamATeleOp` FTC entry point in `opmodes.teleop`.
+- `TeamATeleOp` initializes Team A through `TeamARobot.initialize(hardwareMap)`, initializes the
+  gamepad edge snapshot in `start()`, and updates input once per loop before mapping to the robot
+  public API. It inverts left-stick Y for forward, uses left-stick X for strafe, and right-stick X
+  for rotation.
+- A Y just-press requests the current heading-hold placeholder; an X just-press returns to manual
+  drive. The OpMode publishes drive state, requests, and all four commanded wheel powers through
+  TeamARobot's read-only diagnostics, then calls `robot.stop()` during FTC stop.
 ## Current public APIs
 - `org.firstinspires.ftc.teamcode.core.robot.Subsystem`
   - `initialize()`, `update()`, `stop()`, and `getName()`
@@ -119,6 +127,8 @@ PVI-FTC | Editable master guide
   - `InputManager(Gamepad)` and `update()` once per TeleOp loop
   - held, just-pressed, and just-released button queries for A, B, X, Y, and both bumpers
   - left/right stick-axis and trigger getters
+- `org.firstinspires.ftc.teamcode.opmodes.teleop.TeamATeleOp`
+  - iterative TeleOp lifecycle mapping `gamepad1` to TeamARobot's public drivetrain API
 ## Build status
 - Approved JDK: Record the team-approved version here.
 - Android Studio version: Record the team-approved version here.
@@ -126,7 +136,7 @@ PVI-FTC | Editable master guide
 - TeamCode build command (Windows): `.\gradlew.bat TeamCode:assembleDebug`
 - Last result: Not independently verified by Codex because its shell session has no configured JDK
   (`JAVA_HOME` and `java` are unavailable). The student confirmed the baseline build works; run
-  the documented command in a configured local environment to verify Prompt 7.
+  the documented command in a configured local environment to verify Prompt 8.
 ## Known limitations and TODO items
 - Configure branch protection and pull-request review.
 - Consider adding compile-only GitHub Actions validation.
@@ -135,7 +145,7 @@ PVI-FTC | Editable master guide
 - IMU heading correction remains intentionally deferred. `HeadingHoldState` currently provides a
   safe manual-drive fallback.
 ## Next planned task
-Prompt 8: To be assigned.
+Prompt 9: To be assigned.
 ## Update instructions
 After every completed prompt, replace or extend the sections above with:
 - prompt number and title;
