@@ -6,8 +6,8 @@ PVI-FTC | Editable master guide
 
 ## Repository baseline
 - Source repository: PVI-FTC fork of FtcRobotController
-- Current sequential prompt: Prompt 14 complete
-- Last completed prompt: Prompt 14: Implement Team A Autonomous OpMode.
+- Current sequential prompt: Prompt 15 complete
+- Last completed prompt: Prompt 15: Create Team B and Team C robot skeletons.
 - Last verified commit: 7d11d07 (Prompt 1 package-structure merge)
 ## Completed work
 - Added repository instructions and architecture documentation.
