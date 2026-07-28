@@ -6,8 +6,8 @@ PVI-FTC | Editable master guide
 
 ## Repository baseline
 - Source repository: PVI-FTC fork of FtcRobotController
-- Current sequential prompt: Prompt 12 complete
-- Last completed prompt: Prompt 12: Integrate Team A vision through Robot and TeleOp.
+- Current sequential prompt: Prompt 13 complete
+- Last completed prompt: Prompt 13: Implement beginner-readable autonomous sequencing.
 - Last verified commit: 7d11d07 (Prompt 1 package-structure merge)
 ## Completed work
 - Added repository instructions and architecture documentation.
@@ -124,6 +124,15 @@ PVI-FTC | Editable master guide
   it. No TeleOp target reports are generated. Vision state and availability are now telemetry
   items; drive and intake controls remain unchanged.
 - Missing vision hardware remains safe and does not prevent Team A drive or intake initialization.
+- Completed Prompt 13: added non-blocking autonomous sequencing in `common.autonomous`:
+  `AutoStep`, `AutoSequence`, `WaitStep`, `TimedDriveStep`, and `TimedIntakeStep`.
+- `AutoSequence` runs one step at a time. Empty sequences finish immediately; repeated starts do
+  nothing; updates before start or after completion do nothing; and stopping stops the active step
+  and finishes the sequence.
+- Timed steps use FTC `ElapsedTime`, never blocking waits. Drive and intake steps stop their
+  requested mechanism on completion or cancellation.
+- `AutonomousRobotControl` is the narrow shared API used by timed steps. TeamARobot implements it,
+  keeping shared autonomous code independent of Team A while avoiding direct hardware or FSM use.
 ## Current public APIs
 - `org.firstinspires.ftc.teamcode.core.robot.Subsystem`
   - `initialize()`, `update()`, `stop()`, and `getName()`
@@ -184,6 +193,16 @@ PVI-FTC | Editable master guide
 - `org.firstinspires.ftc.teamcode.common.subsystems.vision.VisionDisabledState`,
   `SearchingState`, `TargetAcquiredState`, `TrackingState`, and `LostTargetState`
   - public `State` implementations with `VisionSubsystem` constructors
+- `org.firstinspires.ftc.teamcode.common.autonomous.AutoStep`
+  - `start()`, `update()`, `isFinished()`, `stop()`, and `getName()`
+- `org.firstinspires.ftc.teamcode.common.autonomous.AutoSequence`
+  - empty and varargs constructors, `addStep(AutoStep)`, `start()`, `update()`, `stop()`,
+    `isFinished()`, and `getCurrentStepName()`
+- `org.firstinspires.ftc.teamcode.common.autonomous.WaitStep`, `TimedDriveStep`, and
+  `TimedIntakeStep`
+  - non-blocking baseline timed steps
+- `org.firstinspires.ftc.teamcode.common.autonomous.AutonomousRobotControl`
+  - narrow drive and intake requests implemented by TeamARobot
 ## Build status
 - Approved JDK: Record the team-approved version here.
 - Android Studio version: Record the team-approved version here.
@@ -191,7 +210,7 @@ PVI-FTC | Editable master guide
 - TeamCode build command (Windows): `.\gradlew.bat TeamCode:assembleDebug`
 - Last result: Not independently verified by Codex because its shell session has no configured JDK
   (`JAVA_HOME` and `java` are unavailable). The student confirmed the baseline build works; run
-  the documented command in a configured local environment to verify Prompt 12.
+  the documented command in a configured local environment to verify Prompt 13.
 ## Known limitations and TODO items
 - Configure branch protection and pull-request review.
 - Consider adding compile-only GitHub Actions validation.
@@ -202,7 +221,7 @@ PVI-FTC | Editable master guide
 - Intake holding power remains zero until a future mechanism prompt defines the physical holding
   requirement.
 ## Next planned task
-Prompt 13: To be assigned.
+Prompt 14: To be assigned.
 ## Update instructions
 After every completed prompt, replace or extend the sections above with:
 - prompt number and title;
