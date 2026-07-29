@@ -30,7 +30,6 @@ public class SolTeleop extends LinearOpMode {
 
             telemetry.addData("Shooter RPM",    "%.0f", shooter.getRPM());
             telemetry.addData("Target RPM",     "%.0f", shooter.getTargetRPM());
-            telemetry.addData("Max Speed",       "%d%%", shooter.getMaxSpeedPercent());
             telemetry.addData("Shoot State",     shooter.getState());
             telemetry.addData("Turret Power",    "%.2f", shooter.getTurretPower());
             telemetry.addData("Turret Estimate", "%.2f", shooter.getTurretPosition());

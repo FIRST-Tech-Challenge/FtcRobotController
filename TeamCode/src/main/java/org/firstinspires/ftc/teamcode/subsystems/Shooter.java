@@ -6,46 +6,57 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 public class Shooter {
-    private static final String SHOOTER_MOTOR_NAME  = "ShooterMotor"; // port 3
-    private static final String TURRET_SERVO_NAME   = "TurretServo";
-    private static final double TICKS_PER_REV        = 28.0; // GoBILDA 5203 6000 RPM
-    private static final double PEAK_RPM             = 3000.0;
-    private static final double AT_SPEED_FRACTION    = 0.95;
+    private static final String SHOOTER_MOTOR_NAME = "ShooterMotor"; // port 3
+    private static final String TURRET_SERVO_NAME = "TurretServo";
+    private static final double TICKS_PER_REV = 28.0; // GoBILDA 5203 6000 RPM
+    private static final double BASE_RPM = 3000.0;
+    private static final double RPM_STEP = 100.0;
+    private static final double AT_SPEED_FRACTION = 0.98;
     private static final double FULL_SPEED_DELAY_SEC = 2.0;
-    private static final double TURRET_SERVO_POWER   = 0.5;
+    private static final double TURRET_SERVO_POWER = 0.5;
     private static final double TURRET_FULL_TRAVEL_SEC = 2.0;
-    private static final double TRIGGER_DEADBAND     = 0.05;
-    private static final double RPM_SMOOTHING        = 0.20;
+    private static final double TRIGGER_DEADBAND = 0.05;
+    private static final double RPM_SMOOTHING = 0.50;
 
-    public enum State { IDLE, REVVING, AT_FULL_SPEED }
+    // 4500 RPM is the true physical max under load (2100 ticks/sec). Perfect F = 15.6.
+    // Spin-up profile (I=0.0) prevents massive windup overshoot during acceleration.
+    public static PIDFCoefficients SHOOTER_PIDF_SPINUP = new PIDFCoefficients(5.0, 0.0, 0, 15.6);
+    // Steady-state profile (I=3.0) engages only when close to target to close the final gap.
+    public static PIDFCoefficients SHOOTER_PIDF_STEADY = new PIDFCoefficients(5.0, 3.0, 0, 15.6);
+
+    public enum State {
+        IDLE, REVVING, AT_FULL_SPEED
+    }
 
     private final DcMotorEx shooterMotor;
-    private final CRServo   turretServo;
+    private final CRServo turretServo;
 
-    private int     maxSpeedPercent = 100;
-    private double  turretPower     = 0.0;
-    private double  turretPosition  = 0.0;
-    private double  targetRPM       = 0.0;
-    private State   state           = State.IDLE;
-    private boolean fireLatch       = false;
+    private double turretPower = 0.0;
+    private double turretPosition = 0.0;
+    private double targetRPM = BASE_RPM;
+    private State state = State.IDLE;
+    private boolean fireLatch = false;
+    private boolean iZoneEngaged = false;
 
     private final ElapsedTime stateTimer = new ElapsedTime();
 
-    private boolean prevDpadUp   = false;
+    private boolean prevDpadUp = false;
     private boolean prevDpadDown = false;
-    private boolean prevX        = false;
+    private boolean prevX = false;
 
     private long lastTurretUpdateMs;
     private double currentRPM = 0;
 
     public Shooter(HardwareMap hardwareMap) {
         shooterMotor = hardwareMap.get(DcMotorEx.class, SHOOTER_MOTOR_NAME);
-        turretServo  = hardwareMap.get(CRServo.class, TURRET_SERVO_NAME);
+        turretServo = hardwareMap.get(CRServo.class, TURRET_SERVO_NAME);
 
         shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, SHOOTER_PIDF_SPINUP);
 
         turretServo.setPower(0);
         lastTurretUpdateMs = System.currentTimeMillis();
@@ -54,21 +65,21 @@ public class Shooter {
     public void update(Gamepad gamepad) {
         updateRPM();
 
-        // --- Max speed (edge-triggered, dpad up/down; x resets) ---
-        boolean dpadUp   = gamepad.dpad_up;
+        // --- Target RPM adjustment (edge-triggered, dpad up/down; x resets) ---
+        boolean dpadUp = gamepad.dpad_up;
         boolean dpadDown = gamepad.dpad_down;
-        boolean xBtn     = gamepad.x;
+        boolean xBtn = gamepad.x;
 
-        if (dpadUp && !prevDpadUp && maxSpeedPercent < 100)
-            maxSpeedPercent = Math.min(100, maxSpeedPercent + 10);
-        if (dpadDown && !prevDpadDown && maxSpeedPercent > 10)
-            maxSpeedPercent = Math.max(10, maxSpeedPercent - 10);
+        if (dpadUp && !prevDpadUp)
+            targetRPM += RPM_STEP;
+        if (dpadDown && !prevDpadDown)
+            targetRPM = Math.max(0, targetRPM - RPM_STEP);
         if (xBtn && !prevX)
-            maxSpeedPercent = 100;
+            targetRPM = BASE_RPM;
 
-        prevDpadUp   = dpadUp;
+        prevDpadUp = dpadUp;
         prevDpadDown = dpadDown;
-        prevX        = xBtn;
+        prevX = xBtn;
 
         updateTurretPositionEstimate();
 
@@ -82,15 +93,32 @@ public class Shooter {
         }
         turretServo.setPower(turretPower);
 
+        // --- Dynamic iZone Management ---
+        // If we are far from the target, disable the I-term to prevent massive windup.
+        // If we are close (within 10%), enable the I-term to close the steady-state gap.
+        if (state != State.IDLE && targetRPM > 0) {
+            double errorRPM = Math.abs(currentRPM - targetRPM);
+            if (!iZoneEngaged && errorRPM <= targetRPM * 0.10) {
+                shooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, SHOOTER_PIDF_STEADY);
+                iZoneEngaged = true;
+            } else if (iZoneEngaged && errorRPM > targetRPM * 0.15) {
+                shooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, SHOOTER_PIDF_SPINUP);
+                iZoneEngaged = false;
+            }
+        }
+
         // --- Shooter state machine (right trigger) ---
-        double trigger     = gamepad.right_trigger;
-        double targetPower = trigger * (maxSpeedPercent / 100.0);
-        targetRPM = PEAK_RPM * targetPower;
+        double trigger = gamepad.right_trigger;
+        double targetVelocityTicks = (targetRPM / 60.0) * TICKS_PER_REV;
 
         switch (state) {
             case IDLE:
                 if (trigger > TRIGGER_DEADBAND) {
-                    shooterMotor.setPower(targetPower);
+                    // Reset iZone state on fresh spin-up
+                    iZoneEngaged = false;
+                    shooterMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, SHOOTER_PIDF_SPINUP);
+                    
+                    shooterMotor.setVelocity(targetVelocityTicks);
                     state = State.REVVING;
                 }
                 break;
@@ -101,8 +129,13 @@ public class Shooter {
                     state = State.IDLE;
                     break;
                 }
-                shooterMotor.setPower(targetPower);
-                if (targetRPM > 0 && currentRPM >= targetRPM * AT_SPEED_FRACTION) {
+                shooterMotor.setVelocity(targetVelocityTicks);
+
+                // Only transition to AT_FULL_SPEED if we are within a +/- 5% tolerance of
+                // target
+                // This prevents firing when we overshoot the target during spin-up.
+                double revvingTolerance = targetRPM * (1.0 - AT_SPEED_FRACTION);
+                if (targetRPM > 0 && Math.abs(currentRPM - targetRPM) <= revvingTolerance) {
                     stateTimer.reset();
                     state = State.AT_FULL_SPEED;
                 }
@@ -115,11 +148,16 @@ public class Shooter {
                     state = State.IDLE;
                     break;
                 }
-                shooterMotor.setPower(targetPower);
-                if (targetRPM > 0 && currentRPM < targetRPM * AT_SPEED_FRACTION * 0.9) {
+                shooterMotor.setVelocity(targetVelocityTicks);
+
+                // Drop back to REVVING if we fall outside a slightly wider tolerance (e.g. 10%)
+                double fullSpeedTolerance = targetRPM * (1.0 - AT_SPEED_FRACTION) * 2.0;
+                if (targetRPM > 0 && Math.abs(currentRPM - targetRPM) > fullSpeedTolerance) {
                     state = State.REVVING;
                     break;
                 }
+
+                // Once we are stable in AT_FULL_SPEED, wait the delay before allowing a fire
                 if (!fireLatch && stateTimer.seconds() >= FULL_SPEED_DELAY_SEC) {
                     fireLatch = true;
                 }
@@ -137,15 +175,28 @@ public class Shooter {
         return false;
     }
 
-    public double  getRPM()             { return currentRPM; }
-    public double  getTargetRPM()       { return targetRPM; }
-    public State   getState()           { return state; }
-    public int     getMaxSpeedPercent() { return maxSpeedPercent; }
-    public double  getTurretPower()     { return turretPower; }
-    public double  getTurretPosition()  { return turretPosition; }
+    public double getRPM() {
+        return currentRPM;
+    }
+
+    public double getTargetRPM() {
+        return targetRPM;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public double getTurretPower() {
+        return turretPower;
+    }
+
+    public double getTurretPosition() {
+        return turretPosition;
+    }
 
     public void stop() {
-        shooterMotor.setPower(0);
+        shooterMotor.setVelocity(0);
         turretServo.setPower(0);
         turretPower = 0;
     }
