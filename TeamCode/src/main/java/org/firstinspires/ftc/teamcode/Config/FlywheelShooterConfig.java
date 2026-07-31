@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode.Config;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+@Config
 public class FlywheelShooterConfig {
     public static double IDLE_VELOCITY = 1200;
     public static double SHOOTING_VELOCITY = 2000;
     public static double STALLED_VELOCITY = 0;
     public static double RPM_THRESHOLD = 100;
+
+    public static double TUNING_VELOCITY = 2000;
 
     public static double kP = 0.0;
     public static double kV = 0.0;

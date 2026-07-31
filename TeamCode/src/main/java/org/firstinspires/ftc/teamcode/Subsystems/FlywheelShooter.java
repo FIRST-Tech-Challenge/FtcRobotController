@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import static org.firstinspires.ftc.teamcode.Config.FlywheelShooterConfig.*;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public abstract class FlywheelShooter {
     public enum ShooterState {
         STALLED, CHARGING, READY, IDLE
@@ -61,5 +63,14 @@ public abstract class FlywheelShooter {
 
     public void stop() {
         shooterState = ShooterState.STALLED;
+    }
+
+    public void debug(Telemetry telemetry) {
+        telemetry.addData("Current Velocity", getVelocity());
+        telemetry.addData("Is Shooter RPM Ready", isShooterRpmReady());
+    }
+
+    public void tune() {
+        setVelocity(TUNING_VELOCITY);
     }
 }
