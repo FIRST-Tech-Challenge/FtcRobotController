@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+# Superseded runs on the same branch are pointless; cancel them.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Verify, test, lint, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # The Android SDK packages (~500MB) are installed *into* the mise tool
+      # directory by `mise run setup-sdk`, so they are cached separately from the
+      # tool install that mise-action manages. Restoring before mise-action runs
+      # lets both see an already-populated directory.
+      - name: Cache Android SDK packages
+        uses: actions/cache@v6
+        with:
+          path: ~/.local/share/mise/installs/android-sdk
+          key: android-sdk-${{ runner.os }}-${{ hashFiles('mise.toml', 'build.common.gradle') }}
+
+      - name: Install toolchain
+        uses: jdx/mise-action@v4
+
+      - name: Install Android SDK packages
+        run: mise run setup-sdk
+
+      # Gradle build cache and dependency cache.
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      # Asserts the JDK and SDK can actually build this project. The Android
+      # Studio half of the check reports "skip" here: every IDE-side input
+      # (.gradle/, local.properties, .idea/) is gitignored and absent in CI.
+      - name: Verify toolchain
+        run: mise run verify-toolchain
+
+      # Currently NO-SOURCE - there are no test sources. Wired up so the gate
+      # begins enforcing as soon as a test lands.
+      - name: Test
+        run: mise run test
+
+      - name: Lint
+        run: mise run lint
+
+      - name: Upload lint report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lint-report
+          path: TeamCode/build/reports/lint-results-debug.html
+          if-no-files-found: warn
+
+      - name: Build APK
+        run: mise run build
+
+      # Lets a team member download a installable APK straight from the run
+      # instead of needing a local Android toolchain.
+      - name: Upload APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: TeamCode-debug-apk
+          path: TeamCode/build/outputs/apk/debug/*.apk
+          if-no-files-found: error

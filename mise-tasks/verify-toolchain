@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+#MISE description="Assert the CLI and Android Studio toolchains are each able to build this project"
+#
+# The CLI (mise) and Android Studio currently use different JDKs and may use
+# different SDKs -- not because the split is wanted, but because pointing the IDE
+# at mise's versioned install paths is fiddly and breaks on every version bump.
+# So this checks capability rather than equality: what matters is that neither
+# side drifts outside the window where this project actually builds.
+#
+# Every IDE-side input (.gradle/, local.properties, .idea/) is gitignored, so in
+# CI those checks report "not configured" and skip. The CLI side is always checked.
+
+set -euo pipefail
+
+# --- Constraints, derived from the build itself where possible -----------------
+
+# AGP 8.7.0 requires JDK 17+. Gradle 8.9 cannot read class file major version 69,
+# so JDK 25 breaks any build script it compiles fresh; 21 is the newest LTS that
+# both accept.
+readonly JDK_MIN=17
+readonly JDK_MAX=21
+
+# compileSdkVersion is the source of truth for the platform.
+REQUIRED_PLATFORM="android-$(sed -nE 's/^[[:space:]]*compileSdkVersion[[:space:]]+([0-9]+).*/\1/p' build.common.gradle | head -1)"
+readonly REQUIRED_PLATFORM
+
+# AGP 8.7.0's default build-tools revision (confirmed via android.buildToolsVersion).
+readonly REQUIRED_BUILD_TOOLS="34.0.0"
+
+failures=0
+
+pass() { printf '  ok    %s\n' "$1"; }
+skip() { printf '  skip  %s\n' "$1"; }
+fail() { printf '  FAIL  %s\n' "$1"; failures=$((failures + 1)); }
+
+# --- Resolvers -----------------------------------------------------------------
+
+jdk_major() {
+  local home="$1" version=""
+  if [[ -r "$home/release" ]]; then
+    version="$(sed -nE 's/^JAVA_VERSION="?([0-9]+).*/\1/p' "$home/release" | head -1)"
+  fi
+  if [[ -z "$version" && -x "$home/bin/java" ]]; then
+    version="$("$home/bin/java" -version 2>&1 | sed -nE 's/.*version "([0-9]+).*/\1/p' | head -1)"
+  fi
+  printf '%s' "$version"
+}
+
+# sdk.dir in local.properties overrides ANDROID_HOME for both Gradle and the IDE,
+# so a commented-out line is meaningful: it means ANDROID_HOME governs.
+ide_sdk_path() {
+  local path=""
+  if [[ -r local.properties ]]; then
+    path="$(sed -nE 's/^[[:space:]]*sdk\.dir[[:space:]]*=[[:space:]]*(.+)/\1/p' local.properties | head -1)"
+  fi
+  if [[ -z "$path" ]]; then
+    # Glob into an array: the Studio config path contains spaces, so an unquoted
+    # glob variable would word-split before it ever expanded.
+    local -a options=()
+    shopt -s nullglob
+    options=("$HOME/Library/Application Support/Google/AndroidStudio"*/options/android.sdk.path.xml)
+    shopt -u nullglob
+    if ((${#options[@]} > 0)); then
+      # Newest Studio config wins if several are installed.
+      local newest="${options[${#options[@]} - 1]}"
+      path="$(sed -nE 's/.*androidSdkAbsolutePath" value="([^"]+)".*/\1/p' "$newest" | head -1)"
+      path="${path/\$USER_HOME\$/$HOME}"
+    fi
+  fi
+  printf '%s' "$path"
+}
+
+ide_java_home() {
+  [[ -r .gradle/config.properties ]] || return 0
+  sed -nE 's/^java\.home=(.+)/\1/p' .gradle/config.properties | head -1
+}
+
+# --- Checks --------------------------------------------------------------------
+
+check_jdk() {
+  local label="$1" home="$2"
+  if [[ -z "$home" ]]; then
+    skip "$label JDK: not configured"
+    return
+  fi
+  if [[ ! -d "$home" ]]; then
+    fail "$label JDK: path does not exist: $home"
+    return
+  fi
+  local major
+  major="$(jdk_major "$home")"
+  if [[ -z "$major" ]]; then
+    fail "$label JDK: could not determine version at $home"
+  elif ((major < JDK_MIN || major > JDK_MAX)); then
+    fail "$label JDK: $major is outside the supported ${JDK_MIN}-${JDK_MAX} window ($home)"
+  else
+    pass "$label JDK: $major ($home)"
+  fi
+}
+
+check_sdk() {
+  local label="$1" root="$2"
+  if [[ -z "$root" ]]; then
+    skip "$label SDK: not configured"
+    return
+  fi
+  if [[ ! -d "$root" ]]; then
+    fail "$label SDK: path does not exist: $root"
+    return
+  fi
+  local missing=()
+  [[ -d "$root/platforms/$REQUIRED_PLATFORM" ]] || missing+=("platforms;$REQUIRED_PLATFORM")
+  [[ -d "$root/build-tools/$REQUIRED_BUILD_TOOLS" ]] || missing+=("build-tools;$REQUIRED_BUILD_TOOLS")
+  if ((${#missing[@]} > 0)); then
+    fail "$label SDK: missing ${missing[*]} ($root)"
+  else
+    pass "$label SDK: $REQUIRED_PLATFORM + build-tools $REQUIRED_BUILD_TOOLS ($root)"
+  fi
+}
+
+# --- Run -----------------------------------------------------------------------
+
+printf 'Requires JDK %s-%s, platform %s, build-tools %s\n\n' \
+  "$JDK_MIN" "$JDK_MAX" "$REQUIRED_PLATFORM" "$REQUIRED_BUILD_TOOLS"
+
+printf 'CLI (mise)\n'
+check_jdk "CLI" "${JAVA_HOME:-}"
+check_sdk "CLI" "${ANDROID_HOME:-}"
+
+printf '\nAndroid Studio\n'
+check_jdk "IDE" "$(ide_java_home)"
+check_sdk "IDE" "$(ide_sdk_path)"
+
+printf '\n'
+if ((failures > 0)); then
+  printf 'toolchain drift: %d check(s) failed\n' "$failures"
+  exit 1
+fi
+printf 'toolchains aligned\n'

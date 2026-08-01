@@ -1,0 +1,16 @@
+version: 2
+
+updates:
+  # Keep the CI actions current. This is the one ecosystem here that is safe to
+  # bump automatically.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+
+# Deliberately no gradle ecosystem entry. The org.firstinspires.ftc.* artifacts in
+# build.dependencies.gradle are locked to the competition season's SDK release and
+# must be bumped together, as a deliberate SDK upgrade merged from upstream --
+# never one artifact at a time by a bot.

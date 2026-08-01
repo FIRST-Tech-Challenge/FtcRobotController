@@ -1,0 +1,49 @@
+[tools]
+# Gradle 8.9 (see gradle/wrapper) cannot read class file major version 69, so the
+# system JDK 25 breaks any Groovy build script it has to compile fresh. AGP 8.7.0
+# requires JDK 17+. 21 is the LTS both support.
+java = "temurin-21"
+
+# Pinned, not "latest": the plugin ships cmdline-tools only, and the platform and
+# build-tools installed underneath it live in the versioned install directory.
+# Bumping this version yields an empty SDK until `mise run setup-sdk` reruns.
+android-sdk = "22.0"
+
+# Tasks run inside the mise env, so JAVA_HOME and ANDROID_HOME are already set and
+# no `mise exec --` prefix is needed. Extra flags pass through: `mise run build --info`.
+#
+# TeamCode is the only application module (FtcRobotController is com.android.library),
+# so the :TeamCode: prefix builds the robot APK without assembling anything extra.
+
+[tasks.check]
+description = "Compile TeamCode - fastest correctness check while editing OpModes"
+run = "./gradlew :TeamCode:compileDebugJavaWithJavac"
+
+[tasks.build]
+description = "Build the debug APK"
+run = "./gradlew :TeamCode:assembleDebug"
+
+[tasks.install]
+description = "Build and adb install to a connected Robot Controller device"
+run = "./gradlew :TeamCode:installDebug"
+
+[tasks.test]
+# No test sources exist yet, so this reports NO-SOURCE and passes. It is wired up
+# so the CI gate starts enforcing the moment someone adds a test.
+description = "Run TeamCode unit tests"
+run = "./gradlew :TeamCode:testDebugUnitTest"
+
+[tasks.lint]
+description = "Run Android lint on TeamCode"
+run = "./gradlew :TeamCode:lintDebug"
+
+[tasks.clean]
+description = "Delete build outputs"
+run = "./gradlew clean"
+
+[tasks.setup-sdk]
+description = "Install the SDK packages the build needs into the mise-managed ANDROID_HOME"
+run = """
+yes | sdkmanager --sdk_root="$ANDROID_HOME" --licenses > /dev/null
+sdkmanager --sdk_root="$ANDROID_HOME" "platforms;android-30" "build-tools;34.0.0" "platform-tools"
+"""
