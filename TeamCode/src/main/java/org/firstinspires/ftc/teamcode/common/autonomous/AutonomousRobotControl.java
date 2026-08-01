@@ -8,6 +8,7 @@ package org.firstinspires.ftc.teamcode.common.autonomous;
  */
 public interface AutonomousRobotControl {
     void drive(double forward, double strafe, double rotate);
+    void enableManualDrive();
     void disableDrive();
     void startIntake();
     void stopIntake();

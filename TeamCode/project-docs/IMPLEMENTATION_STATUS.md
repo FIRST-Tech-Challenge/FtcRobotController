@@ -6,9 +6,8 @@ PVI-FTC | Editable master guide
 
 ## Repository baseline
 - Source repository: PVI-FTC fork of FtcRobotController
-- Current sequential prompt: Prompt 16 complete
-- Last completed prompt: Prompt 16: Create Team B/C TeleOp skeletons and perform the
-  architecture audit.
+- Current sequential prompt: Autonomous drivetrain activation fix complete
+- Last completed prompt: Fixed Team A autonomous drivetrain activation.
 - Last verified commit: 7d11d07 (Prompt 1 package-structure merge)
 ## Completed work
 - Added repository instructions and architecture documentation.
@@ -157,6 +156,10 @@ PVI-FTC | Editable master guide
   manipulated by OpModes; autonomous remains non-blocking and does not use InputManager; mecanum
   calculation and subsystem lifecycle ownership are not duplicated; shared packages contain no
   Team A class dependency; and optional intake/vision failures do not disable required drive.
+- Fixed Team A autonomous drivetrain activation: `TimedDriveStep` now requests the robot's
+  manual-drive mode before applying its timed drive request. Previously, `TeamAAutoOpMode`
+  started by disabling drive and the timed step updated only the requested inputs, so
+  `DisabledDriveState` continuously commanded zero motor power.
 ## Current public APIs
 - `org.firstinspires.ftc.teamcode.core.robot.Subsystem`
   - `initialize()`, `update()`, `stop()`, and `getName()`
@@ -226,7 +229,7 @@ PVI-FTC | Editable master guide
   `TimedIntakeStep`
   - non-blocking baseline timed steps
 - `org.firstinspires.ftc.teamcode.common.autonomous.AutonomousRobotControl`
-  - narrow drive and intake requests implemented by TeamARobot
+  - narrow drive-mode, drive, and intake requests implemented by TeamARobot
 - `org.firstinspires.ftc.teamcode.opmodes.autonomous.TeamAAutoOpMode`
   - iterative non-blocking Team A demonstration autonomous sequence
 - `org.firstinspires.ftc.teamcode.robots.teamB.TeamBRobot` and
