@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class Intake extends OpMode {
     private DcMotor rightFront, leftFront, rightBack, leftBack, intake;
+    private Servo rightIntake, leftIntake;
     private double power;
     private double theta;
     private double sin;
@@ -48,6 +50,8 @@ public class Intake extends OpMode {
         leftBack.setPower(-leftBackPower);
         rightBack.setPower(rightBackPower);
 
+        rightIntake.setPosition(gamepad1.right_bumper? 5: 0.5);
+        leftIntake.setPosition(gamepad1.left_bumper? 5:0.5);
     }
 
     public void hardwareInit() {
@@ -55,6 +59,9 @@ public class Intake extends OpMode {
         intake = hardwareMap.get(DcMotor.class, "leftFront");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
+
+        rightIntake = hardwareMap.get(Servo.class,"rightintake");
+        leftIntake = hardwareMap.get(Servo.class,"leftIntake");
 
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
