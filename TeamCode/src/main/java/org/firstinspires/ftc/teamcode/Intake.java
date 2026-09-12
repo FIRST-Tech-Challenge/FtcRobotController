@@ -60,7 +60,7 @@ public class Intake extends OpMode {
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
 
-        rightIntake = hardwareMap.get(Servo.class,"rightintake");
+        rightIntake = hardwareMap.get(Servo.class,"rightIntake");
         leftIntake = hardwareMap.get(Servo.class,"leftIntake");
 
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
