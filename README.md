@@ -9,7 +9,7 @@ This is the official software repo for team 31830. This codebase contains all th
 3. **Task assignment** - tasks are delegated by an internal issue tracker
 
 ## Quick start:
-1. `git clone https://github.com/nan0b1t/ftc-team-31830-code.git
+1. `git clone https://github.com/nan0b1t/ftc-team-31830-code.git`
 2. Open in android studio or other editor/Ide
 3. Let gradle sync
 4. Use built in Android Studio tools or `./gradlew assembleDebug` to build code
