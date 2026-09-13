@@ -14,3 +14,6 @@ This is the official software repo for team 31830. This codebase contains all th
 3. Let gradle sync
 4. Use built in Android Studio tools or `./gradlew assembleDebug` to build code
 5. Use built in tools or `./gradlew installDebug` to run
+
+## Structure:
+All code goes in `TeamCode/src/main/java/org/firstinspires/ftc/teamcode`
