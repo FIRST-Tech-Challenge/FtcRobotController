@@ -7,14 +7,22 @@ import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.Robot;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
 
 public class MyRobot extends Robot {
 
     private final OpMode opMode;
 
+    public final DriveSubsystem driveSubsystem;
+
     public MyRobot(OpMode opMode) {
         this.opMode = opMode;
-        CommandScheduler.getInstance().reset();
+
+        CommandScheduler scheduler = CommandScheduler.getInstance();
+        scheduler.reset();
+
+        driveSubsystem = new DriveSubsystem(this);
+        scheduler.registerSubsystem(driveSubsystem);
     }
 
     public Telemetry telemetry() {
