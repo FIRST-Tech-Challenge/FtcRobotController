@@ -17,8 +17,6 @@
 
 import java.util.regex.Pattern
 
-apply plugin: 'com.android.application'
-
 android {
 
     compileSdk 34

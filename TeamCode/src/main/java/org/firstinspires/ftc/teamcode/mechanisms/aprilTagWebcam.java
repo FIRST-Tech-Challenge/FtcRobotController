@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-@Disabled
+/*@Disabled
 public class aprilTagWebcam {
     private static final Logger log = LoggerFactory.getLogger(aprilTagWebcam.class);
     private AprilTagProcessor aprilTagProcessor;
@@ -60,7 +60,7 @@ public class aprilTagWebcam {
 
     }
 
-    public List<AprilTagDetection> getDetectedTags() {
+ /*   public List<AprilTagDetection> getDetectedTags() {
         return detectedTags;
     }
 
@@ -120,3 +120,4 @@ public class aprilTagWebcam {
 
 
 
+*/

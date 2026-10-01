@@ -112,9 +112,9 @@ public class MecanumTeleOp extends LinearOpMode {
                 hoodPos = 0;
                 hood.setPosition(0);
                 init = true;
-            }
+            }}}}
             // -------- Vision Toggle --------
-            AprilTagDetection targetTag = null;
+     /*       AprilTagDetection targetTag = null;
 
             if (gamepad1.right_bumper || gamepad2.right_trigger >= 0.05) {
                 for (AprilTagDetection tag : aprilTag.getDetections()) {
@@ -164,7 +164,7 @@ public class MecanumTeleOp extends LinearOpMode {
                 hood.setPosition(hoodPos);
             }*/
 
-            if (gamepad2.right_trigger >= 0.05 && targetTag != null) {
+      /*      if (gamepad2.right_trigger >= 0.05 && targetTag != null) {
                 double dist = targetTag.ftcPose.range;
                 if (dist >= 90) {
                     hoodPos = 1;
@@ -228,4 +228,4 @@ public class MecanumTeleOp extends LinearOpMode {
             telemetry.update();
         }
     }
-}
+}*/
