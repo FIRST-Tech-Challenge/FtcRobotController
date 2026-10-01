@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @TeleOp
 public class MecanumDrive extends OpMode {
 
-    private DcMotor intake;
+    //private DcMotor intake;
     private DcMotor frontLeftMotor;
     private DcMotor frontRightMotor;
     private DcMotor backLeftMotor;
@@ -23,7 +23,7 @@ public class MecanumDrive extends OpMode {
     @Override
     public void init() {
 
-        intake = hardwareMap.get(DcMotor.class, "intake");
+        //intake = hardwareMap.get(DcMotor.class, "intake");
         frontLeftMotor = hardwareMap.get(DcMotor.class, "fLW");
         frontRightMotor = hardwareMap.get(DcMotor.class, "fRW");
         backLeftMotor = hardwareMap.get(DcMotor.class, "bLW");
@@ -32,11 +32,11 @@ public class MecanumDrive extends OpMode {
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        intake.setDirection(DcMotor.Direction.FORWARD);
+        //intake.setDirection(DcMotor.Direction.FORWARD);
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
 
-        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -44,11 +44,7 @@ public class MecanumDrive extends OpMode {
 
         imu = hardwareMap.get(IMU.class, "imu");
 
-        RevHubOrientationOnRobot revOrientation =
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.UP
-                );
+        RevHubOrientationOnRobot revOrientation = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP);
 
         imu.initialize(new IMU.Parameters(revOrientation));
 
@@ -63,16 +59,9 @@ public class MecanumDrive extends OpMode {
         double frontRightPower = forward - strafe - rotate;
         double backRightPower = forward + strafe - rotate;
 
-        double maxPower = Math.max(
-                Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
-                Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))
-        );
+        double maxPower = Math.max(Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)), Math.max(Math.abs(backLeftPower), Math.abs(backRightPower)));
 
-        if (maxPower > 1.0) {
-            frontLeftPower /= maxPower;
-            frontRightPower /= maxPower;
-            backLeftPower /= maxPower;
-            backRightPower /= maxPower;
+        if (maxPower > 1.0) {frontLeftPower /= maxPower;frontRightPower /= maxPower;backLeftPower /= maxPower;backRightPower /= maxPower;
         }
 
         frontLeftMotor.setPower(frontLeftPower);
@@ -83,16 +72,11 @@ public class MecanumDrive extends OpMode {
 
     public void driveFieldRelative(double forward, double strafe, double rotate) {
 
-        double robotYaw = imu.getRobotYawPitchRollAngles()
-                .getYaw(AngleUnit.RADIANS);
+        double robotYaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-        double newForward =
-                forward * Math.cos(robotYaw)
-                        + strafe * Math.sin(robotYaw);
+        double newForward = forward * Math.cos(robotYaw) + strafe * Math.sin(robotYaw);
 
-        double newStrafe =
-                -forward * Math.sin(robotYaw)
-                        + strafe * Math.cos(robotYaw);
+        double newStrafe = -forward * Math.sin(robotYaw) + strafe * Math.cos(robotYaw);
 
         drive(newForward, newStrafe, rotate);
     }
@@ -100,11 +84,13 @@ public class MecanumDrive extends OpMode {
     @Override
     public void loop() {
 
+/*
 if (gamepad1.dpad_left) {
     intake.setPower(1);
 } else {
     intake.setPower(0);
 }
+*/
         double forward = -gamepad1.left_stick_y;
         double strafe = gamepad1.left_stick_x;
         double rotate = gamepad1.right_stick_x;
