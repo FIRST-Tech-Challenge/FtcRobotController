@@ -17,63 +17,62 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
+
 @Autonomous
 public class AutonExample extends OpMode {
 
     private Follower follower;
-    private final PoseFactory poseFactory = PoseFactory.degrees();
 
-    private final Pose start = poseFactory.of(56, 8, 90);
-    private final Pose point1 = poseFactory.of(56, 36.27, 270);
-    private final Pose point2 = poseFactory.of(13.3302, 46.8445, 180);
-    private final Pose point3 = poseFactory.of(56, 36, 270);
-    private final Pose point4 = poseFactory.of(10.9714, 15.5239, -90.6702);
-    private final Pose point4Control1 = poseFactory.of(10.6212, 4.9246, 0);
-    private final Pose point5Start = poseFactory.of(10.9714, 15.5239, 0);
-    private final Pose point5 = poseFactory.of(56, 36, 270);
+    private final PoseFactory pf = PoseFactory.degrees();//new posefactory thingy; it is supposed to help reduce the length of pose lines
 
-    public Path path1() {
-        return line(start, point1).constant(point1);
+    private final Pose startPose = pf.of(72, 72, 90);
+    private final Pose pose1 = pf.of(120, 96, 0);
+
+    private final Pose pose2 = pf.of(72, 24, 56);
+
+    private final Pose pose3 = pf.of(72, 120, 90);
+
+    private final Pose pose4 = new Pose(72, 48);
+
+    private final Pose controlPose2 = new Pose(15, 86);
+
+    private Path startPath() {
+        return line(startPose, pose1).linear(startPose, pose1);
+    }
+    private Path path1(){
+        return line(pose1, pose2).reverseTangent();
+    }
+    private Path path2(){
+        return curve(pose2, controlPose2, pose3).linear(pose2, pose3);
+    }
+    private Path endPath(){
+        return line(pose3, pose4).reverseTangent();
     }
 
-    public Path path2() {
 
-        return line(point1, point2).linear(point2, point1);
-    }
-
-    public Path path3() {
-        return line(point2, point3).linear(point3, point2);
-    }
-
-    public Path path4() {
-        return curve(point3, point4Control1, point4).reverseTangent();
-    }
-
-    public Path path5() {
-        return line(point5Start, point5).linear(point5, point5Start);
-    }
 
     private Command autoRoutine() {
         return sequential(
+                follow(follower, startPath()),
                 follow(follower, path1()),
                 follow(follower, path2()),
-                follow(follower, path3()),
-                follow(follower, path4()),
-                follow(follower, path5())
+                follow(follower, endPath())
         );
     }
+
 
     @Override
     public void init() {
         Scheduler.reset();
 
         follower = Constants.create(hardwareMap);
-        follower.setPose(start);
+        follower.setPose(startPose);
     }
 
     @Override
-    public void start() {
+    public void start () {
         schedule(autoRoutine());
+
     }
 
     @Override
@@ -81,8 +80,8 @@ public class AutonExample extends OpMode {
         follower.update();
         Scheduler.execute();
 
-        telemetry.addLine("running fine :)");
+        telemetry.addLine("running fine  :)");
         telemetry.addLine("B-K, Have it your way, you rule!");
-        telemetry.update();
+
     }
 }
