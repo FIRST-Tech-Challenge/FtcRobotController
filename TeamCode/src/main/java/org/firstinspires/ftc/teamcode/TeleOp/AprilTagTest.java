@@ -1,31 +1,36 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.sensors.AprilTagLogi;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
-@TeleOp(name = "AprilTag Test", group = "Test")
+@Autonomous
 public class AprilTagTest extends LinearOpMode {
 
-    private final AprilTagLogi aprilTag = new AprilTagLogi();
+    AprilTagLogi aprilTag = new AprilTagLogi();
 
     @Override
     public void runOpMode() {
         aprilTag.init(hardwareMap, telemetry);
 
-        telemetry.addLine("AprilTag initialized. Waiting for start...");
+        telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         waitForStart();
 
         while (opModeIsActive()) {
             aprilTag.update();
-            aprilTag.displayAllDetections();
+            AprilTagDetection id20 = aprilTag.getTagBySpecificID(20);
+
+            if (id20 != null) {
+                telemetry.addData("id20 String", id20.toString());
+            } else {
+                telemetry.addData("id20", "Not visible");
+            }
+
             telemetry.update();
         }
-
-        aprilTag.halt();
     }
 }
