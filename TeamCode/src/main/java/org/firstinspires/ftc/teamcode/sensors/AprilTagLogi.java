@@ -37,7 +37,6 @@ public class AprilTagLogi {
         VisionPortal.Builder builder = new VisionPortal.Builder();
         builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam #1"));
         builder.setCameraResolution(new Size(640, 480));
-        builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG); // yo Rituraj; i change this cuz MJPEG uses less USB bandwidth. This means higher frame rate and steadier
         builder.addProcessor(atProcessor);
 
         vp = builder.build();
@@ -79,7 +78,6 @@ public class AprilTagLogi {
         return detectedTags;
     }
 
-    public AprilTagDetection getTagById(int id) { // small edit
         for (AprilTagDetection detection : detectedTags) {
             if (detection.id == id) {
                 return detection;
