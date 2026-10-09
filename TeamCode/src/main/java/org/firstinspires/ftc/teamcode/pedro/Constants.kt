@@ -88,6 +88,6 @@ object Constants {
     )
 
     fun newDrivetrain(hardwaremap: HardwareMap) = Mecanum(hardwaremap, drivetrainConfig)
-    fun newLocalizer(hardwaremap: HardwareMap) = PinpointLocalizer(hardwaremap, localizerConfig)
+    fun newLocalizer(hardwaremap: HardwareMap) = PlottingLocalizer(PinpointLocalizer(hardwaremap, localizerConfig))
     fun newForesight() = Foresight(foresightConfig)
 }

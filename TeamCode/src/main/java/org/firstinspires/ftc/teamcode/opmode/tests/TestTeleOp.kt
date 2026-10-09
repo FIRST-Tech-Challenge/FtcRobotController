@@ -11,11 +11,12 @@ import org.firstinspires.ftc.teamcode.subsystem.FieldDrawing
 
 @TeleOp(name = "TeleOp Test", group = "Test")
 class TestTeleOp: OpMode() {
-    private var follower: Follower? = null
+    private lateinit var follower: Follower
     val fieldDrawing = FieldDrawing()
 
     override fun init() {
         follower = Constants.create(hardwareMap)
+        follower.localizer.setPose(Pose(-45.0, -45.0, 0.0))
     }
 
     override fun start() {
@@ -23,14 +24,11 @@ class TestTeleOp: OpMode() {
 
     override fun loop() {
         ManualDrive.driveOrHold(
-            follower!!,
+            follower,
             -gamepad1.left_stick_y.toDouble(),
             -gamepad1.left_stick_x.toDouble(),
             gamepad1.right_stick_x.toDouble()
         );
-        follower!!.update()
-
-        val robotPose: Pose = follower!!.pose()
-        fieldDrawing.drawRobot(robotPose, 0.0)
+        follower.update()
     }
 }
