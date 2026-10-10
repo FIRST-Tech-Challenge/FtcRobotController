@@ -2,7 +2,7 @@
 // This class controls the flywheel motor, including PIDF configuration and speed control.
 // It provides methods to set and get the flywheel's speed, and to check if the flywheel is at the target speed.
 
-package org.firstinspires.ftc.teamcode.Firmware.Systems;
+package org.firstinspires.ftc.teamcode.robot.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,12 +13,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 //TODO: These are a lot of unused imports. Should we delete these?
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Resources.PIDController;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
 
 /**
  * Flywheel subsystem for controlling a shooter or similar mechanism.
