@@ -1,8 +1,28 @@
+import org.gradle.api.initialization.resolve.RepositoriesMode
+
 pluginManagement {
     repositories {
         google()
         mavenCentral()
         gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url = uri("https://maven.pkg.github.com/FTC-21430/SWEEPDevelopment")
+            credentials {
+                username = "FriendlyGuardian"
+                password = "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"
+            }
+        }
+        maven {
+            url = "https://repo.dairy.foundation/releases"
+        }
     }
 }
 
