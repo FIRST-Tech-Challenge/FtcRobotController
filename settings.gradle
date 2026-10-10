@@ -17,7 +17,7 @@ dependencyResolutionManagement {
             url = uri("https://maven.pkg.github.com/FTC-21430/SWEEPDevelopment")
             credentials {
                 username = "FriendlyGuardian"
-                password = "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"
+                password = "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"
             }
         }
         maven {
