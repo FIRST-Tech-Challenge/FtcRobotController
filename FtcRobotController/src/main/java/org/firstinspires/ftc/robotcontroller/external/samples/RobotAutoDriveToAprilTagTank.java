@@ -39,10 +39,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagClusterDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.vision.apriltag.AprilTagSingleDetection;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -111,12 +109,11 @@ public class RobotAutoDriveToAprilTagTank extends LinearOpMode
 
     private final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
     private final int DESIRED_TAG_ID = -1;    // The tag you want to approach, or set to -1 for ANY tag.
-    private final String DESIRED_CLUSTER_NAME = null; // The cluster name you want to approach, or set null for ANY cluster.
 
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
 
-    private boolean targetFound  = false;    // Set to true when an AprilTag/Cluster target is detected
+    private boolean targetFound  = false;    // Set to true when an AprilTag target is detected
     private String targetName    = "none";
     private int    targetID      = 0;
     private double targetRange   = 0;
@@ -160,42 +157,25 @@ public class RobotAutoDriveToAprilTagTank extends LinearOpMode
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
             for (AprilTagDetection detection : currentDetections) {
 
-                if (detection instanceof AprilTagSingleDetection) {
-                    AprilTagSingleDetection singleDetection = (AprilTagSingleDetection) detection;
-
-                    // Look to see if we have size info on this tag.
-                    if (singleDetection.metadata != null) {
-                        //  Check to see if we want to track towards this tag.
-                        if ((DESIRED_TAG_ID < 0) || (singleDetection.id == DESIRED_TAG_ID)) {
-                            // Yes, we want to use this tag.
-                            targetName    = singleDetection.metadata.name;
-                            targetID      = singleDetection.id;
-                            targetRange   = singleDetection.ftcPose.range;
-                            targetBearing = singleDetection.ftcPose.bearing;
-                            targetYaw     = singleDetection.ftcPose.yaw;
-                            targetFound = true;
-                            break;  // don't look any further.
-                        } else {
-                            // This tag is in the library, but we do not want to track it right now.
-                            telemetry.addData("Skipping", "Tag ID %d is not desired", singleDetection.id);
-                        }
-                    } else {
-                        // This tag is NOT in the library, so we don't have enough information to track to it.
-                        telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", singleDetection.id);
-                    }
-                }  else {
-                    AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
-
-                    if (DESIRED_CLUSTER_NAME == null || clusterDet.metadata.shortName.equals(DESIRED_CLUSTER_NAME) ) {
+                // Look to see if we have size info on this tag.
+                if (detection.metadata != null) {
+                    //  Check to see if we want to track towards this tag.
+                    if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
                         // Yes, we want to use this tag.
-                        targetName    = clusterDet.metadata.shortName;
-                        targetID      = -1;
-                        targetRange   = clusterDet.ftcPose.range;
-                        targetBearing = clusterDet.ftcPose.bearing;
-                        targetYaw     = clusterDet.ftcPose.yaw;
+                        targetName    = detection.metadata.name;
+                        targetID      = detection.id;
+                        targetRange   = detection.ftcPose.range;
+                        targetBearing = detection.ftcPose.bearing;
+                        targetYaw     = detection.ftcPose.yaw;
                         targetFound = true;
                         break;  // don't look any further.
+                    } else {
+                        // This tag is in the library, but we do not want to track it right now.
+                        telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
                     }
+                } else {
+                    // This tag is NOT in the library, so we don't have enough information to track to it.
+                    telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
                 }
             }
 

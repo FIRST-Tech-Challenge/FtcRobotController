@@ -1,17 +1,31 @@
 repositories {
+    google() // Google Maven (often accessible when mavenCentral isn't)
     mavenCentral()
-    google() // Needed for androidx
+    // Fallback: If mavenCentral is blocked, try these mirrors
+    // maven { url 'https://maven.aliyun.com/repository/public' } // Aliyun mirror
+    // maven { url 'https://repo.huaweicloud.com/repository/maven/' } // Huawei mirror
+    // maven { url 'https://mirrors.cloud.tencent.com/nexus/repository/maven-public/' } // Tencent mirror
+    maven { url = 'https://maven.brott.dev/' }
 }
 
 dependencies {
-    implementation 'org.firstinspires.ftc:Inspection:12.0.0'
-    implementation 'org.firstinspires.ftc:Blocks:12.0.0'
-    implementation 'org.firstinspires.ftc:RobotCore:12.0.0'
-    implementation 'org.firstinspires.ftc:RobotServer:12.0.0'
-    implementation 'org.firstinspires.ftc:OnBotJava:12.0.0'
-    implementation 'org.firstinspires.ftc:Hardware:12.0.0'
-    implementation 'org.firstinspires.ftc:FtcCommon:12.0.0'
-    implementation 'org.firstinspires.ftc:Vision:12.0.0'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.6.0'
+    implementation 'org.firstinspires.ftc:Inspection:11.2.1'
+    implementation 'org.firstinspires.ftc:Blocks:11.2.1'
+    implementation 'org.firstinspires.ftc:RobotCore:11.2.1'
+    implementation 'org.firstinspires.ftc:RobotServer:11.2.1'
+    implementation 'org.firstinspires.ftc:OnBotJava:11.2.1'
+    implementation 'org.firstinspires.ftc:Hardware:11.2.1'
+    implementation 'org.firstinspires.ftc:FtcCommon:11.2.1'
+    implementation 'org.firstinspires.ftc:Vision:11.2.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
+    // FTCLib for command-based framework (Maven Central - was JitPack)
+    implementation 'org.ftclib.ftclib:core:2.1.1'
+    // JUnit 4 for testing (test files use org.junit.* imports)
+    testImplementation 'junit:junit:4.13.2'
+    // JUnit 5 (Vintage engine allows running JUnit 4 tests if needed)
+    testImplementation 'org.junit.vintage:junit-vintage-engine:5.10.0'
+    // Mockito for mocking
+    testImplementation 'org.mockito:mockito-core:5.10.0'
 }
 
