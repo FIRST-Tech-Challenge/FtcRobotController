@@ -35,14 +35,15 @@ public class snap_Mecanum_mover extends OpMode {
     // This declares the IMU needed to get the current direction the robot is facing
     IMU imu;
 
-    private static final double LEFT_TRIGGER_TARGET_RADIANS = -Math.PI / 2.0;
-    private static final double RIGHT_TRIGGER_TARGET_RADIANS = Math.PI / 2.0;
-    private static final double TURN_STOP_DEADBAND_RADIANS = Math.toRadians(4.0);
+    private static final double RIGHT_TRIGGER_TARGET_RADIANS = -Math.PI / 2.0;
+    private static final double LEFT_TRIGGER_TARGET_RADIANS = Math.PI / 2.0;
+    private static final double TURN_STOP_DEADBAND_RADIANS = Math.toRadians(1.0);
     private static final double SETTLE_TOLERANCE_RADIANS = Math.toRadians(2.0);
     private static final double BRAKE_ZONE_RADIANS = Math.toRadians(45.0);
     private static final double FINE_CONTROL_ZONE_RADIANS = Math.toRadians(6.0);
     private static final double SNAP_TURN_KP = 0.70;
-    private static final double SNAP_TURN_KD = 0.60;
+    //private static final double SNAP_TURN_KD = 0.60;
+    private static final double SNAP_TURN_KD = 0.35;
     private static final double SNAP_TURN_MAX_POWER = 0.70;
     private static final double SNAP_TURN_BRAKE_MAX_POWER = 0.28;
     private static final double SNAP_TURN_SETTLE_MAX_POWER = 0.14;
@@ -114,9 +115,9 @@ public class snap_Mecanum_mover extends OpMode {
         boolean leftTriggerPressed = gamepad1.left_trigger > TRIGGER_THRESHOLD;
         boolean rightTriggerPressed = gamepad1.right_trigger > TRIGGER_THRESHOLD;
 
-        if (leftTriggerPressed && !leftTriggerWasPressed) {
+        if (leftTriggerPressed && !rightTriggerWasPressed) {
             startSnapTurn(LEFT_TRIGGER_TARGET_RADIANS);
-        } else if (rightTriggerPressed && !rightTriggerWasPressed) {
+        } else if (rightTriggerPressed && !leftTriggerWasPressed) {
             startSnapTurn(RIGHT_TRIGGER_TARGET_RADIANS);
         }
 
@@ -127,7 +128,7 @@ public class snap_Mecanum_mover extends OpMode {
         if (Math.abs(rotateCommand) > MANUAL_ROTATE_DEADBAND) {
             snapTurnActive = false;
         } else if (snapTurnActive) {
-            rotateCommand = getSnapTurnCommand();
+            rotateCommand = -getSnapTurnCommand();
         }
 
         telemetry.addData("Heading (deg)", Math.toDegrees(getCurrentHeadingRadians()));
@@ -174,7 +175,8 @@ public class snap_Mecanum_mover extends OpMode {
             deltaTimeSeconds = 0.001;
         }
 
-        double errorRate = (headingError - previousHeadingErrorRadians) / deltaTimeSeconds;
+        double errorDeltaRadians = AngleUnit.normalizeRadians(headingError - previousHeadingErrorRadians);
+        double errorRate = errorDeltaRadians / deltaTimeSeconds;
         lastTurnRateRadiansPerSecond = -errorRate;
 
         if (Math.abs(headingError) <= TURN_STOP_DEADBAND_RADIANS) {
