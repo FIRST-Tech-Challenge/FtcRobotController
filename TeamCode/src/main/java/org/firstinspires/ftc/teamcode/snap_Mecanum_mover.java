@@ -45,7 +45,7 @@ public class snap_Mecanum_mover extends OpMode {
     //private static final double SNAP_TURN_KD = 0.60;
     private static final double SNAP_TURN_KD = 0.35;
     private static final double SNAP_TURN_MAX_POWER = 0.70;
-    private static final double SNAP_TURN_BRAKE_MAX_POWER = 0.28;
+    private static final double SNAP_TURN_BRAKE_MAX_POWER = 0.70;
     private static final double SNAP_TURN_SETTLE_MAX_POWER = 0.14;
     private static final double SNAP_TURN_MIN_POWER = 0.14;
     private static final double SNAP_TURN_BRAKE_MIN_POWER = 0.08;
