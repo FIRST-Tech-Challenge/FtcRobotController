@@ -37,10 +37,19 @@ public class snap_Mecanum_mover extends OpMode {
 
     private static final double LEFT_TRIGGER_TARGET_RADIANS = -Math.PI / 2.0;
     private static final double RIGHT_TRIGGER_TARGET_RADIANS = Math.PI / 2.0;
-    private static final double HEADING_TOLERANCE_RADIANS = Math.toRadians(2.0);
-    private static final double SNAP_TURN_KP = 0.9;
-    private static final double SNAP_TURN_MAX_POWER = 0.6;
-    private static final double SNAP_TURN_MIN_POWER = 0.18;
+    private static final double TURN_STOP_DEADBAND_RADIANS = Math.toRadians(4.0);
+    private static final double SETTLE_TOLERANCE_RADIANS = Math.toRadians(2.0);
+    private static final double BRAKE_ZONE_RADIANS = Math.toRadians(45.0);
+    private static final double FINE_CONTROL_ZONE_RADIANS = Math.toRadians(6.0);
+    private static final double SNAP_TURN_KP = 0.70;
+    private static final double SNAP_TURN_KD = 0.60;
+    private static final double SNAP_TURN_MAX_POWER = 0.70;
+    private static final double SNAP_TURN_BRAKE_MAX_POWER = 0.28;
+    private static final double SNAP_TURN_SETTLE_MAX_POWER = 0.14;
+    private static final double SNAP_TURN_MIN_POWER = 0.14;
+    private static final double SNAP_TURN_BRAKE_MIN_POWER = 0.08;
+    private static final double MAX_SETTLED_TURN_RATE_RADIANS = Math.toRadians(5.0);
+    private static final int REQUIRED_SETTLED_LOOPS = 7;
     private static final double TRIGGER_THRESHOLD = 0.5;
     private static final double MANUAL_ROTATE_DEADBAND = 0.05;
 
@@ -48,6 +57,11 @@ public class snap_Mecanum_mover extends OpMode {
     private double targetHeadingRadians = 0.0;
     private boolean leftTriggerWasPressed = false;
     private boolean rightTriggerWasPressed = false;
+    private double previousHeadingErrorRadians = 0.0;
+    private long previousSnapUpdateTimeNanos = 0L;
+    private double lastTurnRateRadiansPerSecond = 0.0;
+    private boolean snapTurnSettling = false;
+    private int settledLoopCount = 0;
 
     @Override
     public void init() {
@@ -120,6 +134,9 @@ public class snap_Mecanum_mover extends OpMode {
         telemetry.addData("Snap turn", snapTurnActive ? "ACTIVE" : "OFF");
         if (snapTurnActive) {
             telemetry.addData("Target heading (deg)", Math.toDegrees(targetHeadingRadians));
+            telemetry.addData("Heading error (deg)", Math.toDegrees(AngleUnit.normalizeRadians(targetHeadingRadians - getCurrentHeadingRadians())));
+            telemetry.addData("Turn rate (deg/s)", Math.toDegrees(lastTurnRateRadiansPerSecond));
+            telemetry.addData("Settling", snapTurnSettling ? "YES" : "NO");
         }
 
         // If you press the left bumper, you get a drive from the point of view of the robot
@@ -133,23 +150,95 @@ public class snap_Mecanum_mover extends OpMode {
 
     private void startSnapTurn(double headingRadians) {
         targetHeadingRadians = AngleUnit.normalizeRadians(headingRadians);
+        previousHeadingErrorRadians = AngleUnit.normalizeRadians(targetHeadingRadians - getCurrentHeadingRadians());
+        previousSnapUpdateTimeNanos = System.nanoTime();
+        lastTurnRateRadiansPerSecond = 0.0;
+        snapTurnSettling = false;
+        settledLoopCount = 0;
         snapTurnActive = true;
     }
 
     private double getSnapTurnCommand() {
         double headingError = AngleUnit.normalizeRadians(targetHeadingRadians - getCurrentHeadingRadians());
+        telemetry.addData("heading error value", Math.abs(headingError));
+        telemetry.addData("deadband", TURN_STOP_DEADBAND_RADIANS);
+        telemetry.addData("settled loop count", settledLoopCount);
 
-        if (Math.abs(headingError) <= HEADING_TOLERANCE_RADIANS) {
+
+
+
+        long nowNanos = System.nanoTime();
+        double deltaTimeSeconds = (nowNanos - previousSnapUpdateTimeNanos) / 1_000_000_000.0;
+
+        if (deltaTimeSeconds <= 0.0) {
+            deltaTimeSeconds = 0.001;
+        }
+
+        double errorRate = (headingError - previousHeadingErrorRadians) / deltaTimeSeconds;
+        lastTurnRateRadiansPerSecond = -errorRate;
+
+        if (Math.abs(headingError) <= TURN_STOP_DEADBAND_RADIANS) {
             snapTurnActive = false;
+            snapTurnSettling = false;
+            settledLoopCount = 0;
+            previousHeadingErrorRadians = headingError;
+            previousSnapUpdateTimeNanos = nowNanos;
+            lastTurnRateRadiansPerSecond = 0.0;
             return 0.0;
         }
 
-        double rotateCommand = Range.clip(headingError * SNAP_TURN_KP,
-                -SNAP_TURN_MAX_POWER, SNAP_TURN_MAX_POWER);
-
-        if (Math.abs(rotateCommand) < SNAP_TURN_MIN_POWER) {
-            rotateCommand = Math.copySign(SNAP_TURN_MIN_POWER, rotateCommand);
+        boolean overshotTarget = Math.signum(previousHeadingErrorRadians) != Math.signum(headingError)
+                && Math.abs(previousHeadingErrorRadians) > TURN_STOP_DEADBAND_RADIANS;
+        if (overshotTarget || Math.abs(headingError) <= FINE_CONTROL_ZONE_RADIANS) {
+            snapTurnSettling = true;
         }
+
+        boolean headingWithinTolerance = Math.abs(headingError) <= SETTLE_TOLERANCE_RADIANS;
+        boolean turnRateIsLow = Math.abs(lastTurnRateRadiansPerSecond) <= MAX_SETTLED_TURN_RATE_RADIANS;
+
+        if (headingWithinTolerance && turnRateIsLow) {
+            settledLoopCount++;
+        } else {
+            settledLoopCount = 0;
+        }
+
+        if (settledLoopCount >= REQUIRED_SETTLED_LOOPS
+                && Math.abs(headingError) <= TURN_STOP_DEADBAND_RADIANS) {
+            snapTurnActive = false;
+            snapTurnSettling = false;
+            settledLoopCount = 0;
+            previousHeadingErrorRadians = headingError;
+            previousSnapUpdateTimeNanos = nowNanos;
+            lastTurnRateRadiansPerSecond = 0.0;
+            return 0.0;
+        }
+
+        double rotateCommand = (headingError * SNAP_TURN_KP) + (errorRate * SNAP_TURN_KD);
+
+        double absoluteError = Math.abs(headingError);
+        double maxAllowedPower;
+        double minAllowedPower = 0.0;
+
+        if (snapTurnSettling) {
+            maxAllowedPower = SNAP_TURN_SETTLE_MAX_POWER;
+        } else if (absoluteError <= BRAKE_ZONE_RADIANS) {
+            double brakeBlend = Range.clip(absoluteError / BRAKE_ZONE_RADIANS, 0.0, 1.0);
+            maxAllowedPower = SNAP_TURN_BRAKE_MAX_POWER
+                    + (SNAP_TURN_MAX_POWER - SNAP_TURN_BRAKE_MAX_POWER) * brakeBlend;
+            minAllowedPower = SNAP_TURN_BRAKE_MIN_POWER * brakeBlend;
+        } else {
+            maxAllowedPower = SNAP_TURN_MAX_POWER;
+            minAllowedPower = SNAP_TURN_MIN_POWER;
+        }
+
+        rotateCommand = Range.clip(rotateCommand, -maxAllowedPower, maxAllowedPower);
+
+        if (minAllowedPower > 0.0 && Math.abs(rotateCommand) < minAllowedPower) {
+            rotateCommand = Math.copySign(minAllowedPower, rotateCommand);
+        }
+
+        previousHeadingErrorRadians = headingError;
+        previousSnapUpdateTimeNanos = nowNanos;
 
         return rotateCommand;
     }
