@@ -25,7 +25,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  */
 @TeleOp(name = "Robot: snap Mecanum Drive", group = "Robot")
 
-public class snap_Mecanum_mover extends OpMode {
+public class snap_Mecanum_mover_old extends OpMode {
     // This declares the four motors needed
     DcMotor frontLeftDrive;
     DcMotor frontRightDrive;

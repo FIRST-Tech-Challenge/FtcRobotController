@@ -18,6 +18,6 @@ public class AprilTagWebcamEg extends OpMode {
 
     @Override
     public void loop() {
-        aprilTagWebcam.updateDetections();
+        boolean tag_outcome = aprilTagWebcam.updateDetections();
     }
 }
