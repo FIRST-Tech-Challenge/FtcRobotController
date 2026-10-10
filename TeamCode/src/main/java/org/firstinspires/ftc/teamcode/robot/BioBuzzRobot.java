@@ -71,7 +71,6 @@ public class BioBuzzRobot extends SWEEPRobot {
      * Simplified example action which used default parameters
      * @return new exampleAction
      */
-    //testing
     public ExampleAction exampleAction(){
         return new ExampleAction(this, null, getDefaultActionTime(), getDefaultActionRange());
     }
