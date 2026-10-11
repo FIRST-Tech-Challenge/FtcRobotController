@@ -23,8 +23,8 @@ public class ExampleAuto extends OpMode {
 
     // Poses
     private final Pose startPose = poseFactory.of(0, 0, 0);
-    private final Pose scorePose = poseFactory.of(40, 0, 90);
-    private final Pose parkPose = poseFactory.of(0, 0, 0);
+    private final Pose scorePose = poseFactory.of(20, 0, 90);
+    private final Pose parkPose = poseFactory.of(0, 20, 0);
 
     // Path methods
     private Path startToScore() {

@@ -136,10 +136,10 @@ public class ThreeWheelIMUTuner extends Procedure {
                         "    c.rightEncoderName.set(\"" + rightEncoderName + "\");\n" +
                         "    c.strafeEncoderName.set(\"" + strafeEncoderName + "\");\n" +
                         "    c.imuName.set(\"" + imuName + "\");\n" +
-                        "    c.imuOrientation.set(new RevHubOrientationOnRobot(\n" +
-                        "            RevHubOrientationOnRobot.LogoFacingDirection." + logoDirection.name() + ",\n" +
-                        "            RevHubOrientationOnRobot.UsbFacingDirection." + usbDirection.name() + "\n" +
-                        "    ));\n" +
+                        "    c.imu.set(new RevHubIMU(new RevHubOrientationOnRobot(\n" +
+                        "            RevHubOrientationOnRobot.LogoFacingDirection." + logoDirection + ",\n" +
+                        "            RevHubOrientationOnRobot.UsbFacingDirection." + usbDirection + "\n" +
+                        "    )));\n" +
                         "    c.leftPodY.set(" + leftOffsets.get(0) + ");\n" +
                         "    c.rightPodY.set(" + rightOffsets.get(0) + ");\n" +
                         "    c.strafePodX.set(" + strafeX + ");\n" +

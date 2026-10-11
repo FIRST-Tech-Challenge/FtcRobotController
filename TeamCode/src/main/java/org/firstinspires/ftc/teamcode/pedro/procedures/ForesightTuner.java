@@ -287,6 +287,8 @@ class ForwardDeceleration extends TuningOpMode<Double> {
 
                 stopping = true;
                 drivetrain.stop(false);
+            } else {
+                drivetrain.drive(power, false);
             }
         }
 
@@ -294,6 +296,7 @@ class ForwardDeceleration extends TuningOpMode<Double> {
 
         while (!end) {
             localizer.update();
+            drivetrain.stop(false);
             double currentVelocity = localizer.twist().toVector2D().x();
             long currentTimeNano = System.nanoTime();
             double dt = (currentTimeNano - previousTimeNano) / 1e9;
@@ -378,12 +381,15 @@ class StrafeDeceleration extends TuningOpMode<Double> {
 
                 stopping = true;
                 drivetrain.stop(false);
+            } else {
+                drivetrain.drive(power, false);
             }
         }
 
         boolean end = false;
 
         while (!end) {
+            drivetrain.stop(false);
             localizer.update();
             double currentVelocity = localizer.twist().toVector2D().y();
             long currentTimeNano = System.nanoTime();
@@ -633,6 +639,8 @@ class HeadingTuner extends TuningOpMode<Double> {
                     done = true;
                     systemIdentification();
                     drivetrain.drive(new DrivePowers(0.0, 0.0, 0.0), false);
+                } else {
+                    drivetrain.drive(new DrivePowers(0.0, 0.0, POWER), false);
                 }
             }
         }
@@ -1084,6 +1092,8 @@ class ForwardTranslational extends TuningOpMode<List<Double>> {
                     done = true;
                     systemIdentification();
                     drivetrain.drive(new DrivePowers(0.0, 0.0, 0.0), false);
+                } else {
+                    drivetrain.drive(new DrivePowers(POWER, 0.0, 0.0), false);
                 }
             }
         }
@@ -1202,6 +1212,8 @@ class StrafeTranslational extends TuningOpMode<List<Double>> {
                     done = true;
                     systemIdentification();
                     drivetrain.drive(new DrivePowers(0.0, 0.0, 0.0), false);
+                } else {
+                    drivetrain.drive(new DrivePowers(0.0, POWER, 0.0), false);
                 }
             }
         }

@@ -9,7 +9,6 @@ enum Direction {
     @DisplayName("Reversed") REVERSE
 }
 
-
 public class MecanumTuner extends Procedure {
     public MecanumTuner() {
         super("Mecanum Tuner", "A procedure to find the directions of mecanum wheels.");
