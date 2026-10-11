@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedro;
 
+import com.pedropathing.algorithm.Foresight;
 import com.pedropathing.algorithm.ForesightConfig;
 import com.pedropathing.controllers.Controller;
 import com.pedropathing.follower.Follower;
@@ -32,8 +33,8 @@ public class Constants {
         c.podType.set(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         c.xPodOffset.set(-3.6085158821166035);
         c.yPodOffset.set(2.231271999088798);
-        c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
-        c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.REVERSED);
+        c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.REVERSED);
         c.globalDistanceUnit.set(DistanceUnit.INCH);
         c.offsetUnits.set(DistanceUnit.INCH);
     });
@@ -42,7 +43,7 @@ public class Constants {
         return new Follower(
                 new PinpointLocalizer(h, localizerConfig),
                 new Mecanum(h, drivetrainConfig),
-                null
+                new Foresight(foresightConfig)
         );
     }
     public static ForesightConfig foresightConfig = new ForesightConfig(
