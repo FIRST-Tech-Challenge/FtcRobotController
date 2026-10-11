@@ -62,7 +62,7 @@ public class Auton1 extends OpMode {
 
     }
 
-    public Command shoot() {
+    /*public Command shoot() {
         return Command.build()
                 .setStart(
             shootTime.reset();
@@ -73,7 +73,7 @@ public class Auton1 extends OpMode {
             outtake.setPower(0);
             intake.setPower(0);
         }
-    }
+    }*/
 }
 
 
