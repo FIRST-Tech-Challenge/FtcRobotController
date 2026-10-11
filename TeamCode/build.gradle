@@ -15,15 +15,6 @@ apply plugin: 'com.android.application'
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
-apply plugin: 'kotlin-android'
-
-// Keep the Kotlin bytecode target in step with the Java 8 source/targetCompatibility that
-// build.common.gradle sets; otherwise AGP fails the build on a JVM-target mismatch.
-kotlin {
-    compilerOptions {
-        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8
-    }
-}
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
