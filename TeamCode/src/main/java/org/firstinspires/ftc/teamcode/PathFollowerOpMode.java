@@ -17,9 +17,9 @@ public class PathFollowerOpMode extends LinearOpMode {
     //private static final double MAX_ANGULAR = 7.4; //radians/sec   (depends on bot)
 
     // 25 pound, 312 rpm, 144 wheel diameter
-    private static final double MAX_VEL = 93.25;   //in/sec        (depends on bot)
-    private static final double MAX_ACCEL = 489.65; //in/sec^2     (depends on bot)
-    private static final double MAX_ANGULAR = 7.4; //radians/sec   (depends on bot)
+    private static final double MAX_VEL = 46;   //in/sec        (depends on bot)
+    private static final double MAX_ACCEL = 40; //in/sec^2     (depends on bot)
+    private static final double MAX_ANGULAR = 3.3; //radians/sec   (depends on bot)
 // Target arrival thresholds (Tolerances for completion check)
     private static final double DIST_TOL = 1.0;   //finish if within 1 inch of target
     private static final double ANG_TOL = 0.06;   //finish if within 0.06 radians (~3 deg) of target
@@ -37,8 +37,15 @@ public class PathFollowerOpMode extends LinearOpMode {
         batterySensor = hardwareMap.voltageSensor.iterator().next();
 
 ///check
-        fL.setDirection(DcMotor.Direction.FORWARD);
-        bL.setDirection(DcMotor.Direction.FORWARD);
+        // Same as DriverAssistOpMode. With all four FORWARD, a "go forward" command makes the left wheels spin the wrong way and the robot just rotates.
+        fL.setDirection(DcMotor.Direction.REVERSE);
+        bL.setDirection(DcMotor.Direction.REVERSE);
+
+        // Without this the motors coast when power hits zero instead of resisting, which is the "spins a bit before stopping".
+        fL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 // Build our position mapping trackers
         Localizer localizer = createLocalizer();
@@ -48,38 +55,8 @@ public class PathFollowerOpMode extends LinearOpMode {
                 QuinticHermitePath.fromTans(
                         new Vec2(-56, -56), new Vec2(90, 0), // Start position and path exit direction vector
                         new Vec2(0, -24), new Vec2(90, 0)), // Spline midpoint destination and entry direction vector
-                new LinePath(new Vec2(0, -24), new Vec2(48, -24)) {
-                    @Override
-                    public Vec2 pointAt(double t) {
-                        return null;
-                    }
-                } // Connect a straight line to the end zone
-        ) {
-            @Override
-            public Vec2 pos(double t) {
-                return null;
-            }
-
-            @Override
-            public Vec2 vel(double t) {
-                return null;
-            }
-
-            @Override
-            public Vec2 acc(double t) {
-                return null;
-            }
-
-            @Override
-            public Vec2[] pts() {
-                return new Vec2[0];
-            }
-
-            @Override
-            public void setPt(int idx, Vec2 p) {
-
-            }
-        };
+                new LinePath(new Vec2(0, -24), new Vec2(48, -24)) // Connect a straight line to the end zone
+        );
 
 // Run structural seam validation scans across joints before starting the match
         for (PathChain.Joint j : route.validate()) {
@@ -104,6 +81,10 @@ public class PathFollowerOpMode extends LinearOpMode {
         }
 
 // Snap a baseline coordinate read and push our path shape goals directly to the tracker memory
+        // Tell odometry where the robot really starts. Without this it reads (0, 0) while the path starts at (-56, -56),
+        // so the first thing the follower does is try to drive about 80 inches to "catch up" to the path.
+        Vec2 startPt = route.pos(0.0);
+        localizer.setPose(new Pose(startPt.x, startPt.y, 0));
         localizer.update();
         follower.followPath(route, 0, Math.PI / 2); // Follow path, start facing 0 rad, end facing 90 deg (PI/2)
 

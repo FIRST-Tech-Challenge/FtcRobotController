@@ -10,12 +10,10 @@ public class DriverAssist {
 
     public DriverAssist(double iQ, double iR, double iDt, double iMaxAV, double iHA) {
         if (iHA <= 0 || iHA >= 1) {
-            System.err.println("ERROR: headingAuthority must be between 0 and 1 (exclusive)");
-            return;
+            throw new IllegalArgumentException("headingAuthority must be between 0 and 1 (exclusive)");
         }
         if (iMaxAV <= 0) {
-            System.err.println("ERROR: maxAngularVelocity must be greater than 0");
-            return;
+            throw new IllegalArgumentException("maxAngularVelocity must be greater than 0");
         }
 
         // to calculate and save the LQR heading gain put input variables into the LQR math formula
@@ -91,7 +89,9 @@ public class DriverAssist {
         else {
             double err = LQRPathFollower.normalizeAngle(lockedHeading - heading);
             double omega = hGain * err;
-            r = omega / maxAV;
+            // heading is counterclockwise positive but a positive r in the mixer below turns the robot CLOCKWISE,
+            // so the correction has to be negated or the lock pushes away from the target and the robot spins/jitters
+            r = -omega / maxAV;
             r = Math.max(-headingAuthority, Math.min(headingAuthority, r));
 
             // this reserves the power frfr rest is js there
@@ -99,8 +99,10 @@ public class DriverAssist {
         }
 
         // Robot-Centric Driving Layout
-        double vx = stickX * tScale;
-        double vy = stickY * tScale;
+        // stickY is the forward/back stick so it drives vx (all four wheels the same way),
+        // stickX is the left/right stick so it drives vy (strafe). These were swapped before.
+        double vx = stickY * tScale;
+        double vy = stickX * tScale;
 
         double[] p = new double[]{
                 vx + vy + r,
@@ -127,19 +129,11 @@ public class DriverAssist {
         double handle = Math.max(4.0, dist * 0.4);
 
         // with no empty overrides blocking the internal arithmetic engine!
-         new CubicBezierPath(
+        return new CubicBezierPath(
                  new Vec2(curX, curY), // Start Point
                  new Vec2(curX + Math.cos(curHeading) * handle, curY + Math.sin(curHeading) * handle), // Exit Guide Vector
                  new Vec2(tX - Math.cos(tHeading) * handle, tY - Math.sin(tHeading) * handle), // Entry Guide Vector
                  new Vec2(tX, tY) // Scoring Destination Target
-         ) {
-             @Override
-             public Vec2 pointAt(double t) {
-                 return null;
-             }
-         };
-        return null;
+         );
     }
 }
-
-

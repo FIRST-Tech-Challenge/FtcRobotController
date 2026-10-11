@@ -21,9 +21,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class DriverAssistOpMode extends LinearOpMode {
 
     // Safety limitations and stick configurations parameters
-    private static final double MAX_V = 93.25;
-    private static final double MAX_A = 489.65;
-    private static final double MAX_ANG = 7.4;
+    // 312 rpm numbers, same as PathFollowerOpMode (these were the 435 rpm numbers)
+    private static final double MAX_V = 46.0;
+    private static final double MAX_A = 40.0;
+    private static final double MAX_ANG = 3.3;
 
     private static final double SCORE_X = 48.0;
     private static final double SCORE_Y = 24.0;
@@ -44,6 +45,12 @@ public class DriverAssistOpMode extends LinearOpMode {
         // Drivetrain direction mapping parameters
         fL.setDirection(DcMotor.Direction.REVERSE);
         bL.setDirection(DcMotor.Direction.REVERSE);
+
+        // Without this the motors coast when power hits zero instead of resisting, which is the "spins a bit before stopping".
+        fL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Core calculation helper subsystems
         Localizer localizer = createLocalizer();
@@ -136,28 +143,9 @@ public class DriverAssistOpMode extends LinearOpMode {
      * Example: return new LocalizerAdapters.PinpointLocalizer(hardwareMap, "pinpoint");
      */
     private Localizer createLocalizer() {
-        return new Localizer() {
-            private Pose p = new Pose(0, 0, 0);
-
-            @Override
-            public void update() { }
-
-            @Override
-            public Pose getPose() {
-                return p;
-            }
-
-            @Override
-            public void setPose(Pose pose) {
-                p = pose;
-            }
-
-            // Fixed: Aligned the interface methods to return the correct Velocity object structure
-            @Override
-            public Velocity getVelocity() {
-                return null;
-            }
-        };
+        // This used to return a fake localizer whose pose was always (0, 0, 0). Heading never changed,
+        // so every heading lock thought the robot was still facing 0 and spun it forever.
+        return new LocalizerAdapters.PinpointLocalizer(hardwareMap, "pinpoint");
     }
 
     // Direct wheel updating pipeline mapping

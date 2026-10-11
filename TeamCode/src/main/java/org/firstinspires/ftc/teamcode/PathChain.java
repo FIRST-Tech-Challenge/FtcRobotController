@@ -7,7 +7,7 @@ import java.util.List;
 //// Path Chain System
 /// Links multiple separate lines and curves into one long, continuous autonomous path.
 
-public abstract class PathChain implements HolonomicPath {
+public class PathChain implements HolonomicPath {
 
     // Storage buckets for tracking path pieces
     private final List<HolonomicPath> segs = new ArrayList<>();   // The shape segments

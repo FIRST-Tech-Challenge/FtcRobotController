@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.util.ElapsedTime;
-
 public class LQRPathFollower {
 
     private final double maxV;
@@ -120,7 +118,7 @@ public class LQRPathFollower {
 
     public double[] update(Localizer localizer, double dt, double batteryVoltage) {
         Pose pose = localizer.getPose();
-        return update(pose.x, pose.y, pose.heading, dt, batteryVoltage);
+        return update(pose.x, pose.y, pose.h, dt, batteryVoltage);
     }
 
     public double[] update(double measuredX, double measuredY, double measuredHeading, double dt, double batteryVoltage) {
@@ -194,11 +192,16 @@ public class LQRPathFollower {
         double vy = vyRobot / maxV;
         double w  = omega / maxAngV;
 
+        // vy points LEFT and w is counterclockwise here (same as the path and the odometry),
+        // so these are the right handed mecanum signs: left strafe = FL back, FR forward, BL forward, BR back;
+        // counterclockwise = left wheels back, right wheels forward.
+        // The old signs (vx + vy + w ...) are the stick style ones where vy is RIGHT and w is clockwise,
+        // which made lateral and heading feedback push away from the path.
         double[] p = new double[4];
-        p[0] = vx + vy + w;
-        p[1] = vx - vy - w;
-        p[2] = vx - vy + w;
-        p[3] = vx + vy - w;
+        p[0] = vx - vy - w;
+        p[1] = vx + vy + w;
+        p[2] = vx + vy - w;
+        p[3] = vx - vy + w;
 
         double rawMax = 0;
         for (double v : p) {

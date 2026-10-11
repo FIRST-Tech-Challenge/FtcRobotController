@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode;
 
 // path rules for the robot to follow
@@ -34,7 +33,13 @@ public interface HolonomicPath {
         return new Vec2(d.x / m, d.y / m);
     }
 
-    Vec2 pointAt(double t);
+    // Same job as pos(t); kept so anything still calling the old name works.
+    // An earlier version of this left pointAt as its own unimplemented method,
+    // separate from pos(t), so none of the three classes below ever satisfied
+    // it. That's why none of them could be built with plain new (...): a class
+    // with an unimplemented interface method has to be marked abstract, and an
+    // abstract class can never be instantiated directly, anywhere.
+    default Vec2 pointAt(double t) { return pos(t); }
 }
 
 // Storable (X, Y) coordinate points or vector arrows
@@ -71,7 +76,7 @@ final class Vec2 {
 }
 
 // A straight line path from a start point to an end point
-abstract class LinePath implements HolonomicPath {
+class LinePath implements HolonomicPath {
     private Vec2 p0, p1; // Start and End points
 
     LinePath(Vec2 startPoint, Vec2 endPoint) {
@@ -103,7 +108,7 @@ abstract class LinePath implements HolonomicPath {
 }
 
 // A curved spline shaped by stretching lines toward pull anchors
-abstract class CubicBezierPath implements HolonomicPath {
+class CubicBezierPath implements HolonomicPath {
     private final Vec2[] p = new Vec2[4]; // Array storing the 4 shape points
 
     CubicBezierPath(Vec2 p0, Vec2 p1, Vec2 p2, Vec2 p3) { p[0] = p0; p[1] = p1; p[2] = p2; p[3] = p3; }
@@ -142,7 +147,7 @@ abstract class CubicBezierPath implements HolonomicPath {
 }
 
 // Ultra smooth spline defined directly by speed and acceleration targets
-abstract class QuinticHermitePath implements HolonomicPath {
+class QuinticHermitePath implements HolonomicPath {
     private Vec2 p0, v0, a0, p1, v1, a1; // Start/End coordinates, velocities, and accelerations
     private double[] cx = new double[6]; // Horizontal math settings
     private double[] cy = new double[6]; // Vertical math settings
@@ -154,14 +159,14 @@ abstract class QuinticHermitePath implements HolonomicPath {
 
     // Creates a spline setting endpoints with directions but zero starting acceleration
     static QuinticHermitePath fromTans(Vec2 s, Vec2 st, Vec2 e, Vec2 et) {
+        // No longer needs the anonymous override that used to sit here: that
+        // override replaced the real position with a hardcoded null, so any
+        // path built through this method would crash the moment anything
+        // called .pointAt() on it. Removed now that pointAt isn't a separate
+        // unimplemented method anymore.
         return new QuinticHermitePath(s, st,
                 new Vec2(0, 0), e, et,
-                new Vec2(0, 0)) {
-            @Override
-            public Vec2 pointAt(double t) {
-                return null;
-            }
-        };
+                new Vec2(0, 0));
     }
 
     // Refreshes the math curves whenever parameters change
