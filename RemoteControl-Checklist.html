@@ -8,7 +8,6 @@
   body { font-family: Segoe UI, Arial, sans-serif; margin: 0; padding: 16px; background: #f4f6f8; color: #1b1f24; }
   main { max-width: 900px; margin: 0 auto; }
   h1 { margin: 0 0 4px; font-size: 1.6rem; }
-  p.sub { margin: 0 0 16px; color: #555; }
   .progress { background: #fff; border: 1px solid #d0d7de; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; }
   .bar { height: 14px; background: #e9eef3; border-radius: 7px; overflow: hidden; margin-top: 8px; }
   .bar > div { height: 100%; width: 0; background: #1a7f37; transition: width .25s; }
@@ -33,6 +32,7 @@
   pre.code { margin: 8px 0 0; padding: 10px 14px; background: #1f2430; color: #e6edf3; border-radius: 6px; font-family: Consolas, monospace; font-size: .9rem; overflow-x: auto; }
   .all-done { display: none; background: #1a7f37; color: #fff; border-radius: 10px; padding: 14px 16px; font-weight: 700; text-align: center; margin-bottom: 12px; }
   button { font: inherit; padding: 6px 14px; border: 1px solid #d0d7de; border-radius: 6px; background: #fff; cursor: pointer; }
+  footer { margin-top: 8px; color: #57606a; font-size: .85rem; text-align: right; }
 </style>
 </head>
 <body>
@@ -49,6 +49,7 @@
   <div id="list"></div>
 
   <p><button id="reset">Uncheck everything</button></p>
+  <footer>v20261005-02</footer>
 </main>
 
 <script>
@@ -56,186 +57,34 @@
   // "steps" and "hint" are optional. "section" and "sectionIntro" start a new heading above an item.
   const items = [
     {
-      section: "Part 1: RockinBot.java",
-      id: "remove-unused-imports",
-      title: "Remove the unused import statements in RockinBot",
-      why: "Use Android studio to find all the imports that you don't need and then delete them.",
-    },
-    {
-      id: "remove-robottype-parameter",
-      title: "Remove the robotType parameter from the RockinBot constructor",
-      why: "The RockinBot constructor takes the opMode, which is needed, and a robotType String that we don't need. The only caller always passes \"Shooter\", so the check on it is always true.",
-    },
-    {
-      id: "update-last-updated-rockinbot",
-      title: 'Update the <span class="file">This code was last updated</span> date',
-      code: "o.telemetry.addData(\"This code was last updated\", \"8/18/2025, 2:45 pm\");"
-    },
-    {
-      id: "move-hardware-initialized-log",
-      title: 'Move <span class="file">RobotLog.vv("Rockin\' Robots", "Hardware Initialized");</span> to the end of initializeDrivingVar()',
-      why: "It is in the middle of the method and it should be at the bottom, after you are done with all of the initialization.",
-      code: "RobotLog.vv(\"Rockin' Robots\", \"Hardware Initialized\");"
-    },
-    {
-      id: "delete-pidf-comment",
-      title: 'Delete the comment that says: <span class="file">// The velocity PIDF only takes effect when the shooter runs with its encoder</span>',
-      why: "It is probably AI slop",
-      code: "// The velocity PIDF only takes effect when the shooter runs with its encoder"
-    },
-    {
-      id: "rename-start-to-limelight-start",
-      title: "Rename start() in to something like limelightStart()",
-      why: "The name start() is too general. It sounds like it starts the whole robot, but it only starts the Limelight camera.",
+      section: "RemoteControl.java",
+      id: "remove-park-button-controls",
+      title: "Remove the unused D-pad park button controls",
+      why: "Delete the park variable and the D-pad Down/D-pad Up block because the park value is never used and the buttons do not change the robot's behavior.",
       code: [
-        "// public void start()",
-        "// {",
-        "//     limelight.start();",
-        "// }"
-      ].join("\n"),
-    },
-    {
-      id: "rename-loop-to-limelight-loop",
-      title: "Rename loop() to something like limelightLoop()",
-      why: "Same as above.",
-      code: [
-        "// public void loop(){",
-        "//     odo.update();",
-        "//     limelight.updateRobotOrientation(odo.getHeading());",
-        "//     LLResult result = limelight.getLatestResult();",
-        "//     if(result != null && result.isValid())",
-        "//     {",
-        "//         o.telemetry.addData(\"X\", result.getTx());",
-        "//         o.telemetry.addData(\"Y\", result.getTy());",
-        "//         o.telemetry.addData(\"A\", result.getTa());",
-        "//         o.telemetry.addData(\"BotPose\", botPose);",
-        "//         o.telemetry.addData(\"Yaw\", botPose.getOrientation().getYaw());",
-        "//         getPinpointPosition();",
-        "//     }",
-        "// }"
-      ].join("\n"),
-    },
-    {
-      id: "remove-park-wheel-speed",
-      title: "Remove the separate wheel speed for park",
-      why: "We don't need a park mode this season so you should delete it.",
-      code: [
-        "if(park){",
-        "    wheelMultiplier = 0.25;",
-        "}"
-      ].join("\n"),
-    },
-    {
-      id: "delete-orphan-driving-comments",
-      title: "Delete the leftover \"Driving functions\" comments ",
-      code: [
-        "// Driving functions",
+        "boolean park = false;",
         "",
-        "// noStop=true skips the stopMoving() call at the end so the robot rolls",
-        "// straight into the next driveToPos without braking (saves time when",
-        "// chaining moves). Heading/accuracy still need to be reached (or maxDuration/stall)."
-      ].join("\n"),
-      },
-    {
-      id: "comment-ftc-dashboard-block",
-      title: "Add a comment this is for FTC Dashboard",
-      code: [
-        "/*dashboardTelemetry = dashboard.getTelemetry();",
-        "dashboardTelemetry.addData(\"Left Launcher:\", leftLauncherVelocity);",
-        "dashboardTelemetry.addData(\"Right Launcher:\", rightLauncherVelocity);",
-        "dashboardTelemetry.addData(\"Intake\", intakePower);",
-        "dashboardTelemetry.addData(\"Left Front Wheel\", leftFrontPower);",
-        "dashboardTelemetry.addData(\"Right Front Wheel\", rightFrontPower);",
-        "dashboardTelemetry.addData(\"Left Back Wheel\", leftBackPower);",
-        "dashboardTelemetry.addData(\"Right Back Wheel\", rightBackPower);",
-        "dashboardTelemetry.update();*/"
-      ].join("\n"),
-    },
-    {
-      section: "Part 2: RemoteControlShooter.java",
-      id: "rename-remote-control",
-      title: "Rename RemoteControlShooter() to RemoteControl()",
-      why: "The name RemoteControlShooter comes from an old version of the robot that didn't have a shooter.",
-      code: [
-        "@TeleOp(name=\"Remote Control Shooter\", group=\"Linear OpMode\")",
-        "public class RemoteControlShooter extends LinearOpMode {"
-      ].join("\n"),
-    },
-    {
-      id: "remove-rc-variables-comment",
-      title: "Delete the \"THESE ARE THE VARIABLES THAT ARE RUNNING DURING RC\" comment",
-      why: "This comment is not needed in the Remote Control code, so it should be removed.",
-      code: [
-        "// THESE ARE THE VARIABLES THAT ARE RUNNING DURING RC, NOT THE ONES IN ROCKINBOT!!"
-      ].join("\n"),
-    },
-    {
-      id: "trim-defaults-comment",
-      title: "Remove \"Their values can be modified by RC inputs\"",
-      why: "The second sentence doesn't tell the reader anything useful, it is probably AI slop.",
-      code: [
-        "// These are the defaults that run when the program starts. Their values can be modified by RC inputs\\"
-      ].join("\n"),
-    },
-    {
-      id: "comment-default-shooter-speed",
-      title: "Add a comment explaining the default shooter speed of 0.66",
-      code: [
-        "double shooterSpeed = 0.66;"
-      ].join("\n"),
-    },
-    {
-      id: "update-last-updated-remote-control",
-      title: 'Update the <span class="file">This code was last updated</span> date',
-      code: "telemetry.addData(\"This code was last updated\", \"1/8/2026, 4:35 pm\"); // Todo: Update this date when the code is updated"
-    },
-    {
-      id: "simplify-trigger-power",
-      title: "Simplify the trigger code to set the trigger power to 1 or -1",
-      why: "This is probably AI-slop. We shoul just set the trigger power to 1 or -1.",
-      code: [
-        "double triggerPower = gamepad1.right_trigger - gamepad1.left_trigger;",
-        "if (Math.abs(triggerPower) < 0.05) {",
-        "    triggerPower = 0;",
-        "}",
-        "r.triggerPower(triggerPower);"
-      ].join("\n"),
-    },
-    {
-      id: "shooter-speed-step-1-percent",
-      title: "Change the shooter speed step from 5% to 1%",
-      code: [
-        "if (gamepad1.right_bumper && !previousRightBumper) {",
-        "    shooterSpeed = Math.min(1.0, shooterSpeed + 0.05);",
-        "    speedChanged = true;",
-        "}",
-        "if (gamepad1.left_bumper && !previousLeftBumper) {",
-        "    shooterSpeed = Math.max(0.0, shooterSpeed - 0.05);",
-        "    speedChanged = true;",
+        "if(gamepad1.dpad_down) {",
+        "    park = true;",
+        "} else if(gamepad1.dpad_up) {",
+        "    park = false;",
         "}"
       ].join("\n"),
     },
     {
-      id: "pick-gamepad-for-pvalue-and-speed",
-      title: "Control the P value and shooter speed from only one gamepad",
-      why: "There are two different pieces of code for changing the shooter's P value and speed: live code that uses gamepad1, and an old commented-out block that uses gamepad2. We don't need both. Decide which gamepad should do this, then keep only that one.",
+      id: "reassign-shooter-stop-button",
+      title: "Move the shooter stop control to a safer button",
+      why: "Pressing the right stick can happen accidentally while turning the robot, which could unexpectedly stop the shooter. Choose a different button that is less likely to be pressed by mistake.",
       code: [
-        "/*if(gamepad2.dpad_down) {",
-        "            r.adjustpValue(-0.1);",
-        "} else if(gamepad2.dpad_up) {",
-        "            r.adjustpValue(0.1);",
-        "} else if(gamepad2.dpad_right) {",
-        "            launcherSpeed += 10;",
-        "            r.launcherVelocity(launcherSpeed);",
-        "} else if(gamepad2.dpad_left) {",
-        "            launcherSpeed -= 10;",
-        "            r.launcherVelocity(launcherSpeed);",
-        "}*/"
+        "if (gamepad1.right_stick_button) {",
+        "    shooterSpeed = 0.0;",
+        "    speedChanged = true;",
+        "}"
       ].join("\n"),
     }
   ];
 
-  const KEY = "remoteControlChecklist.v1";
+  const KEY = "remoteControlChecklist.v2";
   let saved = {};
   try { saved = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { saved = {}; }
 

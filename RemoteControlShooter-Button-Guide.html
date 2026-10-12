@@ -264,7 +264,7 @@
             <circle class="dot" cx="797" cy="413" r="8"></circle>
             <rect class="callout drive" x="500" y="650" width="400" height="105" rx="12"></rect>
             <text class="label-title" x="514" y="676">Driving</text>
-            <text class="label-detail" x="514" y="701">Left stick: forward/back + strafe</text>
+            <text class="label-detail" x="514" y="701">Left stick: flipped-front drive + strafe</text>
             <text class="label-detail" x="514" y="729">Right stick: turn left/right</text>
           </g>
 
@@ -274,9 +274,9 @@
             <circle class="dot" cx="479" cy="331" r="8"></circle>
             <circle class="dot" cx="549" cy="331" r="8"></circle>
             <rect class="callout tuning" x="0" y="250" width="330" height="105" rx="12"></rect>
-            <text class="label-title" x="14" y="276">P-Value Tuning</text>
-            <text class="label-detail" x="14" y="301">D-pad Left: decrease by 2</text>
-            <text class="label-detail" x="14" y="329">D-pad Right: increase by 2</text>
+            <text class="label-title" x="14" y="276">Lumberjack</text>
+            <text class="label-detail" x="14" y="301">D-pad Left: position 0.18</text>
+            <text class="label-detail" x="14" y="329">D-pad Right: position 0.66</text>
           </g>
 
           <g>
@@ -327,24 +327,27 @@
     <section aria-labelledby="startup-heading">
       <h2 id="startup-heading">Starting Settings</h2>
       <div class="startup">
-        <div><strong>Shooter power:</strong> 73%</div>
-        <div><strong>Shooter P value:</strong> 50</div>
+        <div><strong>Shooter power:</strong> 76%</div>
+        <div><strong>Shooter P value:</strong> 60</div>
         <div><strong>Intake:</strong> Reverse at full power</div>
         <div><strong>Trigger motor:</strong> Stopped</div>
+        <div><strong>Gamepad 2 left bumper:</strong> Decrease shooter P by 2</div>
+        <div><strong>Gamepad 2 right bumper:</strong> Increase shooter P by 2</div>
       </div>
     </section>
 
     <section aria-labelledby="notes-heading">
       <h2 id="notes-heading">Important Control Details</h2>
       <div class="notes">
-        <div><strong>Bumpers, Triangle, and D-pad tuning:</strong> Each action occurs once per press, not continuously while held.</div>
+        <div><strong>Bumpers, Triangle, and D-pad:</strong> Each action occurs once per press, not continuously while held.</div>
         <div><strong>Triggers:</strong> The trigger motor runs only while a trigger is held and stops when both are released. If both are held, reverse wins.</div>
         <div><strong>Drive orientation:</strong> The intake side is the back of the robot; the opposite side is the front.</div>
+        <div><strong>Lumberjack:</strong> The servo releases and can move freely after Remote Control stops.</div>
         <div><strong>No park mode:</strong> The wheel controls always use their normal full range.</div>
       </div>
     </section>
 
-    <footer>v20261007-07</footer>
+    <footer>v20261011-01</footer>
   </main>
 </body>
 </html>
