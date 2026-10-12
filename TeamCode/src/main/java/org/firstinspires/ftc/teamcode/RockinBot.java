@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoController;
+import com.qualcomm.robotcore.hardware.ServoControllerEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -39,6 +42,7 @@ public class RockinBot {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private DcMotor trigger = null;
+    private Servo lumberjack = null;
     // private Limelight3A limelight;
     public GoBildaPinpointDriver odo = null;
     private double leftFrontPower = 0;
@@ -60,7 +64,7 @@ public class RockinBot {
 
     public RockinBot(LinearOpMode opMode) {
         o = opMode;
-        o.telemetry.addData("This code was last updated", "10/8/2026, 4:55 pm"); // Todo: Update this date when the code is updated
+        o.telemetry.addData("This code was last updated", "10/11/2026, 5:17 pm"); // Todo: Update this date when the code is updated
         o.telemetry.update();
         initializeDrivingVar();
     }
@@ -105,6 +109,8 @@ public class RockinBot {
         trigger = o.hardwareMap.get(DcMotorEx.class, "trigger");
         trigger.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         trigger.setDirection(DcMotor.Direction.REVERSE);
+
+        lumberjack = o.hardwareMap.get(Servo.class, "lumberjack");
 
         RobotLog.vv("Rockin' Robots", "Hardware Initialized");
     }
@@ -174,6 +180,22 @@ public class RockinBot {
         pidf.p = Math.max(0.0, pValue);
         shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
         RobotLog.vv("Rockin' Robots", "PIDF changed. New p value: " + pidf.p);
+    }
+
+    public void setLumberjackPosition(double position) {
+        lumberjack.setPosition(position);
+        RobotLog.vv("Rockin' Robots", "Lumberjack position: %.2f", position);
+    }
+
+    public void releaseLumberjack() {
+        ServoController controller = lumberjack.getController();
+        if (!(controller instanceof ServoControllerEx)) {
+            RobotLog.ee("Rockin' Robots", "Cannot release only the lumberjack: servo controller does not support per-port PWM");
+            return;
+        }
+
+        ((ServoControllerEx) controller).setServoPwmDisable(lumberjack.getPortNumber());
+        RobotLog.vv("Rockin' Robots", "Lumberjack PWM disabled");
     }
 
     public void shooterPower(double speed) {
@@ -253,6 +275,54 @@ public class RockinBot {
         stopMoving();
     }
 
+    public boolean driveForwardMm(double distanceMm) {
+        if (distanceMm < 0) {
+            throw new IllegalArgumentException("distanceMm must not be negative");
+        }
+        if (!getPinpointPosition()) {
+            return false;
+        }
+
+        double targetX = xLoc - distanceMm;
+        ElapsedTime driveTimer = new ElapsedTime();
+        while (o.opModeIsActive() && driveTimer.seconds() < 5 && Math.abs(targetX - xLoc) > 10) {
+            double error = targetX - xLoc;
+            double power = Math.max(0.18, Math.min(0.45, Math.abs(error) / 300.0));
+            setWheelPower(Math.copySign(power, error), 0, 0);
+            if (!getPinpointPosition()) {
+                stopMoving();
+                return false;
+            }
+            o.idle();
+        }
+        stopMoving();
+        return Math.abs(targetX - xLoc) <= 10;
+    }
+
+    public boolean strafeRightMm(double distanceMm) {
+        if (distanceMm < 0) {
+            throw new IllegalArgumentException("distanceMm must not be negative");
+        }
+        if (!getPinpointPosition()) {
+            return false;
+        }
+
+        double targetY = yLoc + distanceMm;
+        ElapsedTime driveTimer = new ElapsedTime();
+        while (o.opModeIsActive() && driveTimer.seconds() < 5 && Math.abs(targetY - yLoc) > 10) {
+            double error = targetY - yLoc;
+            double power = Math.max(0.18, Math.min(0.45, Math.abs(error) / 300.0));
+            setWheelPower(0, -Math.copySign(power, error), 0);
+            if (!getPinpointPosition()) {
+                stopMoving();
+                return false;
+            }
+            o.idle();
+        }
+        stopMoving();
+        return Math.abs(targetY - yLoc) <= 10;
+    }
+
     public void intakePower(double speed) {
         RobotLog.vv("Rockin' Robots", "intakePower(%.2f)", speed);
         intakeSpeed = speed;
@@ -279,6 +349,7 @@ public class RockinBot {
         o.telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         o.telemetry.addData("Back left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
         o.telemetry.addData("P value", "%.2f", shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).p);
+        o.telemetry.addData("Lumberjack position", "%.2f", lumberjack.getPosition());
         // loop();
 
         o.telemetry.update();

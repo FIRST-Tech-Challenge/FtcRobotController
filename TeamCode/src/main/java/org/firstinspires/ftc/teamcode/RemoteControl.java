@@ -16,11 +16,11 @@ public class RemoteControl extends LinearOpMode {
         // Create a LinearOpModeVariable and pass it to the RockinBot constructor
         LinearOpMode o = this;
         RockinBot r = new RockinBot(o);
-        r.setpValue(50);
+        r.setpValue(60);
 
         double intakeSpeed = -1;
         //Starting robot shooter speed. Ideal for shooting. Can be adjusted in-game.
-        double shooterSpeed = 0.73;
+        double shooterSpeed = 0.76;
         int shooterDirection = 1;
         double triggerPower = 0;
         boolean previousRightBumper = false;
@@ -28,11 +28,13 @@ public class RemoteControl extends LinearOpMode {
         boolean previousTriangle = false;
         boolean previousDpadRight = false;
         boolean previousDpadLeft = false;
+        boolean previousRightBumper2 = false;
+        boolean previousLeftBumper2 = false;
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Remote Control Ready", "press PLAY");
         RobotLog.vv("Rockin' Robots", "Remote Control Ready");
-        telemetry.addData("This code was last updated", "10/8/2026, 4:55 pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "10/11/2026, 5:17 pm"); // Todo: Update this date when the code is updated
         telemetry.update();
         waitForStart();
         r.intakePower(intakeSpeed);
@@ -95,11 +97,17 @@ public class RemoteControl extends LinearOpMode {
                 speedChanged = true;
             }
 
-            if (gamepad1.dpad_right && !previousDpadRight) {
+            if (gamepad2.right_bumper && !previousRightBumper2) {
                 r.adjustpValue(2);
             }
-            if (gamepad1.dpad_left && !previousDpadLeft) {
+            if (gamepad2.left_bumper && !previousLeftBumper2) {
                 r.adjustpValue(-2);
+            }
+            if (gamepad1.dpad_right && !previousDpadRight) {
+                r.setLumberjackPosition(0.66);
+            }
+            if (gamepad1.dpad_left && !previousDpadLeft) {
+                r.setLumberjackPosition(0.18);
             }
 
             if (speedChanged) {
@@ -111,12 +119,16 @@ public class RemoteControl extends LinearOpMode {
             previousTriangle = gamepad1.triangle;
             previousDpadRight = gamepad1.dpad_right;
             previousDpadLeft = gamepad1.dpad_left;
+            previousRightBumper2 = gamepad2.right_bumper;
+            previousLeftBumper2 = gamepad2.left_bumper;
 
             // Show the elapsed game time and wheel power, but only every half-second.
             if (telemetryTimer.seconds() >= 0.5) {
                 r.printDataOnScreen();
                 telemetryTimer.reset();
             }
+            idle();
         }
+        r.releaseLumberjack();
     }
 }
