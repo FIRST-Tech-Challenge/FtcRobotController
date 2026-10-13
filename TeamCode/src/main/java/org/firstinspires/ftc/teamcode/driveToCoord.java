@@ -122,6 +122,17 @@ public class driveToCoord extends LinearOpMode {
 
 
 //f means specific to this method
+
+    //used to convert the values we are using to the ones the yaw will output and the reverse
+    //we use one that goes from 0 to 360 ccw. yaw is 180 to -180 ccw
+
+    public double reverseConvert(double practicalAngle){
+        return practicalAngle - 180;
+    }
+    //reverse. converts yaw values into practical, usable values.
+    public double convertAngle(double yawf) {
+        return yawf + 180;
+    }
     public double[] findLocation(double startingHeadingf, double currentXf, double currentYf,
                                  double distanceTraveledf, double yawf) {
         //starting heading will probably be 90, 180 or 0
@@ -411,6 +422,7 @@ public class driveToCoord extends LinearOpMode {
         while (opModeInInit()) {
             //may need to loop to get starting heading, but this is a good start
             //this probably isnt allowed by rules
+            /*
             telemetry.addData("", telemetryMessage); //must have at least 2 strings
             telemetry.update();
             if (gamepad1.a) {
@@ -433,6 +445,8 @@ public class driveToCoord extends LinearOpMode {
             telemetry.addData("Starting heading set to: ", startingHeading);
             telemetry.update();
 
+             */
+
         }
         
         if (opModeIsActive()) {
@@ -441,6 +455,8 @@ public class driveToCoord extends LinearOpMode {
                 robotOrientation = imu.getRobotYawPitchRollAngles();
                 yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
                 currentFieldHeading = yaw+startingHeading;
+
+                //april tag & camera method
 
                 
             }
