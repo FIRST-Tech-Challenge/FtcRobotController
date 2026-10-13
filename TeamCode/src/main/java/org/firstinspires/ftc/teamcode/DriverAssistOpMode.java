@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -16,6 +16,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * - Left Bumper: Snap to the nearest 90-degree angle
  * - Right Bumper: Turn off the heading lock (Returns full control to right stick)
  * - Right Trigger: HOLD to automatically score (Drives straight toward target)
+ *
+ * Mechanisms (same controller):
+ * - Left Trigger: Intake in
+ * - D-pad Left: Intake reverse (clears a jam)
+ * - D-pad Up: Flywheel on / off (toggle)
+ * - D-pad Right: HOLD to open the gate and feed balls to the flywheel (stays shut until the flywheel is spun up)
  */
 @TeleOp(name = "LQR Driver Assist")
 public class DriverAssistOpMode extends LinearOpMode {
@@ -31,8 +37,16 @@ public class DriverAssistOpMode extends LinearOpMode {
     private static final double SCORE_HEADING = Math.PI / 2.0;
     private static final double STICK_D = 0.05;
 
+    // Mechanism tuning. These are STARTING VALUES, not measured ones. Test each with the robot on blocks.
+    private static final double INTAKE_POWER = 1.0;
+    private static final double FLYWHEEL_POWER = 0.85;    // raise or lower until shots land where you want
+    private static final double FLYWHEEL_SPINUP_S = 1.5;  // the gate stays shut this long after the flywheel turns on
+    private static final double GATE_CLOSED = 0.0;        // servo position that blocks balls from reaching the flywheel
+    private static final double GATE_OPEN = 0.5;          // servo position that lets balls through
+
     // Drivetrain hardware references
-    private DcMotor fL, fR, bL, bR;
+    private Servo intakeGate;
+    private DcMotor fL, fR, bL, bR, fW, intake;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -41,16 +55,24 @@ public class DriverAssistOpMode extends LinearOpMode {
         fR = hardwareMap.get(DcMotor.class, "fR");
         bL = hardwareMap.get(DcMotor.class, "bL");
         bR = hardwareMap.get(DcMotor.class, "bR");
+        fW = hardwareMap.get(DcMotor.class, "fW");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        intakeGate = hardwareMap.get(Servo.class, "intakeGate");
+        intakeGate.setPosition(GATE_CLOSED); // gate starts shut so balls can't slip into the flywheel
+
 
         // Drivetrain direction mapping parameters
         fL.setDirection(DcMotor.Direction.REVERSE);
         bL.setDirection(DcMotor.Direction.REVERSE);
 
-        // Without this the motors coast when power hits zero instead of resisting, which is the "spins a bit before stopping".
+        // Set explicitly so stopping never depends on whatever the default happens to be.
         fL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // The flywheel coasts down on purpose. Braking a spinning flywheel slams the motor and the gears.
+        fW.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         // Core calculation helper subsystems
         Localizer localizer = createLocalizer();
@@ -59,6 +81,10 @@ public class DriverAssistOpMode extends LinearOpMode {
 
         boolean macroActive = false;
         ElapsedTime loopTimer = new ElapsedTime();
+
+        boolean flywheelOn = false;
+        boolean prevToggle = false; // lets the bumper flip the flywheel once per press instead of every loop
+        ElapsedTime flywheelTimer = new ElapsedTime();
 
         waitForStart();
         loopTimer.reset();
@@ -120,15 +146,46 @@ public class DriverAssistOpMode extends LinearOpMode {
             // Distribute calculated powers out to the electrical motor outputs
             setMotorPowers(powers[0], powers[1], powers[2], powers[3]);
 
-            // Feed running metrics down to the driver station telemetry console
+            // Flywheel: D-pad up toggles it, and the spin-up timer restarts each time it turns on
+            boolean toggle = gamepad1.dpad_up;
+            if (toggle && !prevToggle) {
+                flywheelOn = !flywheelOn;
+                if (flywheelOn) {
+                    flywheelTimer.reset();
+                }
+            }
+            prevToggle = toggle;
+            fW.setPower(flywheelOn ? FLYWHEEL_POWER : 0);
+
+            boolean flywheelReady = flywheelOn && flywheelTimer.seconds() >= FLYWHEEL_SPINUP_S;
+            boolean wantFeed = gamepad1.dpad_right;
+            boolean feeding = wantFeed && flywheelReady;
+            intakeGate.setPosition(feeding ? GATE_OPEN : GATE_CLOSED);
+
+            double intakePower = 0;
+            if (gamepad1.left_trigger > 0.1) {
+                intakePower = INTAKE_POWER;
+            } else if (gamepad1.dpad_left) {
+                intakePower = -INTAKE_POWER;
+            }
+            if (feeding) {
+                intakePower = INTAKE_POWER;
+            }
+            intake.setPower(intakePower);
+
             telemetry.addData("Pose", pose.toString());
             telemetry.addData("Heading lock", assist.isLocked()
                     ? String.format("%.0f deg", Math.toDegrees(assist.lockedHeading())) : "off");
+            telemetry.addData("Flywheel", !flywheelOn ? "off" : (flywheelReady ? "READY" : "spinning up"));
+            telemetry.addData("Gate", feeding ? "OPEN" : (wantFeed ? "LOCKED, flywheel not ready" : "closed"));
             telemetry.update();
         }
 
         // Safety: Hard stop all wheels upon completion
         setMotorPowers(0, 0, 0, 0);
+        fW.setPower(0);
+        intake.setPower(0);
+        intakeGate.setPosition(GATE_CLOSED);
     }
 
     /** Filters out minor hardware joystick wiggle drifts */
