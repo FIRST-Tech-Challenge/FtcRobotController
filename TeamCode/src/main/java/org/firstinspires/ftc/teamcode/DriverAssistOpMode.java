@@ -58,7 +58,7 @@ public class DriverAssistOpMode extends LinearOpMode {
         fW = hardwareMap.get(DcMotor.class, "fW");
         intake = hardwareMap.get(DcMotor.class, "intake");
         intakeGate = hardwareMap.get(Servo.class, "intakeGate");
-        intakeGate.setPosition(GATE_CLOSED); // gate starts shut so balls can't slip into the flywheel
+        intakeGate.setPosition(0);
 
 
         // Drivetrain direction mapping parameters
@@ -73,6 +73,7 @@ public class DriverAssistOpMode extends LinearOpMode {
 
         // The flywheel coasts down on purpose. Braking a spinning flywheel slams the motor and the gears.
         fW.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
 
         // Core calculation helper subsystems
         Localizer localizer = createLocalizer();
@@ -91,6 +92,9 @@ public class DriverAssistOpMode extends LinearOpMode {
 
         while (opModeIsActive()) {
             // Calculate active runtime clock delta intervals
+
+            intakeGate.setPosition(0);
+
             double dt = loopTimer.seconds();
             loopTimer.reset();
             if (dt <= 0) {
