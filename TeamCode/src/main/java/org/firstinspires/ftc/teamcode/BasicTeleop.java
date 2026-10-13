@@ -16,9 +16,13 @@ public class BasicTeleop extends OpMode {
     private Localizer loc;
     private State currentState;
     List<PathPoint> list = new ArrayList<PathPoint>(); // each is "x" , "y" , "h" and is where the robot should move
+    List<PathPoint> startLocs = new ArrayList<PathPoint>();
     int occ; // New Variable for which occurence in the List<String> the robot should move to.
     private PathPoint goTo;
     private final int BASETIMELIM; // The base time limit in miliseconds for PathPoint until the robot moves to the next location requested to go
+    private final int SIDEON; // 0 = red team 1 = blue team
+    private final int STARTON;
+    
     
     private enum State {
         STOP,
@@ -38,7 +42,7 @@ public class BasicTeleop extends OpMode {
         drive = new MecanumDrive(hardwareMap, loc);
         currentState = State.STOP;
         occ = 0;
-        AddPaths();
+        addPaths();
         BASETIMELIM = 2000; // 2 seconds
         
         // Tell the driver that initialization is complete.
@@ -48,6 +52,25 @@ public class BasicTeleop extends OpMode {
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit START
     @Override
     public void init_loop() {
+        while(SIDEON = null){
+            if (gamepad1.b){
+                giveStartLocs(0);
+                SIDEON = 0;
+            }
+            if (gamepad1.x){
+                giveStartLocs(1);
+                SIDEON = 1;
+            }
+        }
+        // TODO create location method where the robot knows where it starts on a cordinate field in MM
+        if (gamepad1.dpad_up){
+            // STARTON = 0;
+            // loc.startAt.startLocs.get(STARTON).giveX();
+        }
+        if (gamepad1.dpad_down){
+            //STARTON = 1;
+            //loc.startAt.startLocs.get(STARTON).giveX();
+        }
     }
 
     //Code to run ONCE when the driver hits START
@@ -106,7 +129,7 @@ public class BasicTeleop extends OpMode {
 
 
     // Adds different locations for robot to attempt to go to, may not be needed for competition
-    public void AddPaths() {
+    public void addPaths() {
         goTo =  new PathPoint(0,100,0,BASETIMELIM);
         list.add(goTo);
         goTo = new PathPoint(100,0,0,BASETIMELIM);
@@ -115,6 +138,21 @@ public class BasicTeleop extends OpMode {
         list.add(goTo);
         goTo = new PathPoint(-100,0,0,BASETIMELIM);
         list.add(goTo);
+    }
+
+    // TODO improve loc system to tell robot where it starts 
+    public void giveStartLocs(int side){
+        if (side == 0){
+            goTo = new PathPoint(null,null,null,null);
+            startLocs.add(goTo);
+            goTo = new PathPoint(null,null,null,null);
+            startLocs.add(goTo);
+        }else if (side == 1){
+            goTo = new PathPoint(null,null,null,null);
+            startLocs.add(goTo);
+            goTo = new PathPoint(null,null,null,null);
+            startLocs.add(goTo);
+        }
     }
 
 }
