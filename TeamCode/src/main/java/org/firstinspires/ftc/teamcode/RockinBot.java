@@ -64,7 +64,7 @@ public class RockinBot {
 
     public RockinBot(LinearOpMode opMode) {
         o = opMode;
-        o.telemetry.addData("This code was last updated", "10/11/2026, 5:17 pm"); // Todo: Update this date when the code is updated
+        o.telemetry.addData("Version", "v20261013-03");
         o.telemetry.update();
         initializeDrivingVar();
     }
@@ -88,6 +88,22 @@ public class RockinBot {
 
         // Initializes the pinpoint
         odo = o.hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+
+        // TODO: Measure from the robot center to each pod and replace these zeros.
+        // X pod: left is positive, right is negative.
+        // Y pod: forward is positive, backward is negative.
+        final double X_POD_OFFSET_MM = 0;
+        final double Y_POD_OFFSET_MM = 0;
+        odo.setOffsets(X_POD_OFFSET_MM, Y_POD_OFFSET_MM);
+
+        odo.setEncoderResolution(
+                GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+
+        // TODO: If forward decreases X or left decreases Y, reverse that encoder here.
+        odo.setEncoderDirections(
+                GoBildaPinpointDriver.EncoderDirection.FORWARD,
+                GoBildaPinpointDriver.EncoderDirection.FORWARD);
+
         odo.resetPosAndIMU();
         odo.update();
 
@@ -223,7 +239,7 @@ public class RockinBot {
         do {
             odo.update();
             pos = odo.getPosition();
-            xLoc = pos.getX(DistanceUnit.MM);
+            xLoc = -pos.getX(DistanceUnit.MM);
             yLoc = pos.getY(DistanceUnit.MM);
             hLoc = pos.getHeading(AngleUnit.DEGREES);
             if (!Double.isNaN(xLoc) && !Double.isNaN(yLoc) && !Double.isNaN(hLoc)) {
@@ -275,52 +291,75 @@ public class RockinBot {
         stopMoving();
     }
 
-    public boolean driveForwardMm(double distanceMm) {
-        if (distanceMm < 0) {
-            throw new IllegalArgumentException("distanceMm must not be negative");
-        }
+    public void driveToPos(double xTarget, double yTarget, double hTarget,
+                           double xyAccuracy, double hAccuracy, double maxDuration) {
         if (!getPinpointPosition()) {
-            return false;
+            RobotLog.vv("Rockin' Robots", "driveToPos ABORT: initial Pinpoint read failed");
+            return;
         }
 
-        double targetX = xLoc - distanceMm;
-        ElapsedTime driveTimer = new ElapsedTime();
-        while (o.opModeIsActive() && driveTimer.seconds() < 5 && Math.abs(targetX - xLoc) > 10) {
-            double error = targetX - xLoc;
-            double power = Math.max(0.18, Math.min(0.45, Math.abs(error) / 300.0));
-            setWheelPower(Math.copySign(power, error), 0, 0);
-            if (!getPinpointPosition()) {
-                stopMoving();
-                return false;
+        double xDistance = xTarget - xLoc;
+        double yDistance = yTarget - yLoc;
+        double hDistance = hTarget - hLoc;
+        if (hDistance > 180) hDistance -= 360;
+        if (hDistance < -180) hDistance += 360;
+
+        runtime.reset();
+        while (o.opModeIsActive()
+                && runtime.seconds() < maxDuration
+                && (Math.abs(xDistance) > xyAccuracy
+                || Math.abs(yDistance) > xyAccuracy
+                || Math.abs(hDistance) > hAccuracy)) {
+            double angleRadians = Math.toRadians(hLoc);
+            double xRotatedDistance = xDistance * Math.cos(angleRadians)
+                    + yDistance * Math.sin(angleRadians);
+            double yRotatedDistance = -xDistance * Math.sin(angleRadians)
+                    + yDistance * Math.cos(angleRadians);
+
+            double xCmd = xRotatedDistance * 0.003;
+            double yCmd = yRotatedDistance * 0.003;
+            double hCmd = hDistance * 0.03;
+
+            leftFrontPower = yCmd + xCmd - hCmd;
+            rightFrontPower = yCmd - xCmd + hCmd;
+            leftBackPower = yCmd - xCmd - hCmd;
+            rightBackPower = yCmd + xCmd + hCmd;
+
+            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+            max = Math.max(max, Math.abs(leftBackPower));
+            max = Math.max(max, Math.abs(rightBackPower));
+            if (max > 1.0) {
+                leftFrontPower /= max;
+                rightFrontPower /= max;
+                leftBackPower /= max;
+                rightBackPower /= max;
+            } else if (max > 0.001 && max < 0.15) {
+                double boost = 0.15 / max;
+                leftFrontPower *= boost;
+                rightFrontPower *= boost;
+                leftBackPower *= boost;
+                rightBackPower *= boost;
             }
+
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
+
+            if (!getPinpointPosition()) {
+                RobotLog.vv("Rockin' Robots", "driveToPos ABORT: Pinpoint read failed mid-move");
+                stopMoving();
+                return;
+            }
+
+            xDistance = xTarget - xLoc;
+            yDistance = yTarget - yLoc;
+            hDistance = hTarget - hLoc;
+            if (hDistance > 180) hDistance -= 360;
+            if (hDistance < -180) hDistance += 360;
             o.idle();
         }
         stopMoving();
-        return Math.abs(targetX - xLoc) <= 10;
-    }
-
-    public boolean strafeRightMm(double distanceMm) {
-        if (distanceMm < 0) {
-            throw new IllegalArgumentException("distanceMm must not be negative");
-        }
-        if (!getPinpointPosition()) {
-            return false;
-        }
-
-        double targetY = yLoc + distanceMm;
-        ElapsedTime driveTimer = new ElapsedTime();
-        while (o.opModeIsActive() && driveTimer.seconds() < 5 && Math.abs(targetY - yLoc) > 10) {
-            double error = targetY - yLoc;
-            double power = Math.max(0.18, Math.min(0.45, Math.abs(error) / 300.0));
-            setWheelPower(0, -Math.copySign(power, error), 0);
-            if (!getPinpointPosition()) {
-                stopMoving();
-                return false;
-            }
-            o.idle();
-        }
-        stopMoving();
-        return Math.abs(targetY - yLoc) <= 10;
     }
 
     public void intakePower(double speed) {

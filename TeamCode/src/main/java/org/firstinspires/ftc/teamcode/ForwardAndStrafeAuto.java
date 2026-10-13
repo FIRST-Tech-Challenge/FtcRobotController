@@ -3,14 +3,14 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name="Forward 10cm Right 30cm", group="Robot")
+@Autonomous(name="Forward 20cm Right 20cm", group="Robot")
 public class ForwardAndStrafeAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
         RockinBot robot = new RockinBot(this);
 
-        telemetry.addData("Autonomous Ready", "Forward 10 cm, then right 30 cm");
-        telemetry.addData("This code was last updated", "10/11/2026, 5:10 pm");
+        telemetry.addData("Autonomous Ready", "Forward and right 20 cm diagonally");
+        telemetry.addData("This code was last updated", "10/11/2026, 6:43 pm");
         telemetry.update();
         waitForStart();
 
@@ -18,17 +18,7 @@ public class ForwardAndStrafeAuto extends LinearOpMode {
             return;
         }
 
-        if (!robot.driveForwardMm(300)) {
-            telemetry.addData("Autonomous", "Stopped: forward movement did not reach its target");
-            telemetry.update();
-            return;
-        }
-
-        if (!robot.strafeRightMm(600)) {
-            telemetry.addData("Autonomous", "Stopped: right strafe did not reach its target");
-            telemetry.update();
-            return;
-        }
+        robot.driveToPos(100, 100, 0, 10, 2, 4);
 
         telemetry.addData("Autonomous", "Complete");
         telemetry.update();
