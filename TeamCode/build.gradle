@@ -46,11 +46,6 @@ android {
 dependencies {
     implementation project(':FtcRobotController')
 
-    // NextFTC
-    implementation 'dev.nextftc.v2:control:0.2.1'
-    implementation 'dev.nextftc.v2:hardware:0.2.1'
-    implementation 'dev.nextftc.v2:robot:0.2.1'
-
     //Psliynx
     implementation 'org.psilynx.psikit:core:0.2.0'
     implementation 'org.psilynx.psikit:ftc:0.2.0'
