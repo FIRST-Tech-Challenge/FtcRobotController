@@ -19,11 +19,38 @@ apply from: '../build.dependencies.gradle'
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
 
+    // build.common.gradle pins compileSdkVersion 30, but Panels' androidx dependencies refuse
+    // to be consumed below 34. Overridden here for TeamCode only so the upstream SDK files stay
+    // untouched. This only changes which APIs are visible at compile time - minSdk (24) and
+    // targetSdk (28) are unchanged, so on-robot behavior is the same.
+    compileSdk 36
+
     packagingOptions {
         jniLibs.useLegacyPackaging true
     }
 }
 
+repositories {
+    // Panels is not on Maven Central; it is published to bylazar's own repo.
+    maven { url = "https://mymaven.bylazar.com/releases" }
+
+    // Pedro 3's AutoTune pulls in dev.frozenmilk.sinister:Sloth, which lives here rather than
+    // on Maven Central. Pedro itself resolves from mavenCentral().
+    maven { url = "https://repo.dairy.foundation/releases/" }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
+
+    // Pedro Pathing 3 - path following / odometry. Resolved from mavenCentral(),
+    // which build.dependencies.gradle already declares. 'revhub' replaces the 2.x 'ftc'
+    // artifact; 'tuning' is AutoTune, the robot-hosted tuner served at
+    // http://192.168.43.1:10158 (see pedroPathing/Tuning.java).
+    implementation 'com.pedropathing:revhub:3.0.0'
+    implementation 'com.pedropathing:tuning:1.0.0'
+
+    // Panels - on-robot dashboard used to tune Pedro and view telemetry/field position.
+    // pedropathing:telemetry is the adapter that lets Pedro draw to Panels.
+    implementation 'com.pedropathing:telemetry:1.0.0'
+    implementation 'com.bylazar:fullpanels:1.0.12'
 }

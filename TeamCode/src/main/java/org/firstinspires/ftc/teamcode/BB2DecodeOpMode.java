@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -18,6 +19,7 @@ import java.util.List;
 
 
 @TeleOp
+@Disabled
 public class BB2DecodeOpMode extends LinearOpMode {
     private DcMotorEx flywheel;
     private DcMotor coreHex;
