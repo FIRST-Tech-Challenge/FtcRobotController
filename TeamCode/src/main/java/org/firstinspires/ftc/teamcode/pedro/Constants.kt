@@ -37,8 +37,8 @@ object Constants {
     var localizerConfig: PinpointConfig = PinpointConfig(Configuration { c: PinpointConfig? ->
         c!!.name.set("odo")
         c.podType.set(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-        c.xPodOffset.set(7.2664864607683315)
-        c.yPodOffset.set(-5.7934666430856305)
+        c.xPodOffset.set(-7.0)
+        c.yPodOffset.set(6.5)
         c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.REVERSED)
         c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.REVERSED)
         c.globalDistanceUnit.set(DistanceUnit.INCH)

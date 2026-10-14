@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode.tests
 
+import com.pedropathing.api.Paths
 import com.pedropathing.api.Paths.line
 import com.pedropathing.api.PoseFactory
 import com.pedropathing.follower.Follower
@@ -19,25 +20,34 @@ class TestAuto: OpMode() {
     private lateinit var follower: Follower
 
     // Create waypoints along path
-    private val p: PoseFactory = PoseFactory.degrees()
+    private val poseFactory = PoseFactory.degrees()
 
-    private val startPose: Pose? = p.of(24.0, 24.0, 0.0)
-    private val scorePose: Pose? = p.of(48.0, 48.0, 90.0)
-    private val parkPose: Pose? = p.of(72.0, 48.0, 90.0)
+    private val start = poseFactory.of(23.6633, 117.8144, 90.0)
+    private val path1 = poseFactory.of(118.069, 117.8183, -26.3499)
+    private val path1Control1 = poseFactory.of(32.2462, 117.6388, 0.0)
+    private val path1Control2 = poseFactory.of(70.5491, 141.7883, 0.0)
+    private val point2 = poseFactory.of(118.0429, 24.6465, -117.4387)
+    private val point2Control1 = poseFactory.of(142.1887, 70.681, 0.0)
+    private val point3 = poseFactory.of(24.1572, 24.0207, 153.4895)
+    private val point3Control1 = poseFactory.of(71.2132, 0.309, 0.0)
+    private val point4 = poseFactory.of(23.25, 117.3367, 63.3031)
+    private val point4Control1 = poseFactory.of(-0.227, 71.1319, 0.0)
 
-    // Create paths between waypoints
-    private fun startToScore(): Path {
-        return line(startPose, scorePose).linear(startPose, scorePose)
-    }
-    private fun park(): Path {
-        return line(scorePose, parkPose).linear(scorePose, parkPose)
-    }
+    fun path1(): Path = Paths.curve(start, path1Control1, path1Control2, path1).tangent()
+
+    fun path2(): Path = Paths.curve(path1, point2Control1, point2).tangent()
+
+    fun path3(): Path = Paths.curve(point2, point3Control1, point3).tangent()
+
+    fun path4(): Path = Paths.curve(point3, point4Control1, point4).tangent()
 
     // Tell Ivy what order to follow the paths
     private fun autoRoutine(): Command {
         return sequential(
-            follow(follower, startToScore()),
-            follow(follower, park())
+            follow(follower, path1()),
+            follow(follower, path2()),
+            follow(follower, path3()),
+            follow(follower, path4())
         )
     }
 
@@ -49,7 +59,7 @@ class TestAuto: OpMode() {
         Scheduler.reset()
 
         follower = Constants.create(hardwareMap)
-        follower.setPose(startPose)
+        follower.setPose(start)
         follower.update()
     }
 
