@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name="Forward 20cm Right 20cm", group="Robot")
-public class ForwardAndStrafeAuto extends LinearOpMode {
+public class ParkAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
         RockinBot robot = new RockinBot(this);
