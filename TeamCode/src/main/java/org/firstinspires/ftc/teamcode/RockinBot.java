@@ -293,6 +293,12 @@ public class RockinBot {
 
     public void driveToPos(double xTarget, double yTarget, double hTarget,
                            double xyAccuracy, double hAccuracy, double maxDuration) {
+        driveToPos(xTarget, yTarget, hTarget, xyAccuracy, hAccuracy, maxDuration, 1.0);
+    }
+
+    public void driveToPos(double xTarget, double yTarget, double hTarget,
+                           double xyAccuracy, double hAccuracy, double maxDuration,
+                           double maxDriveSpeed) {
         if (!getPinpointPosition()) {
             RobotLog.vv("Rockin' Robots", "driveToPos ABORT: initial Pinpoint read failed");
             return;
@@ -328,11 +334,12 @@ public class RockinBot {
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
             max = Math.max(max, Math.abs(leftBackPower));
             max = Math.max(max, Math.abs(rightBackPower));
-            if (max > 1.0) {
-                leftFrontPower /= max;
-                rightFrontPower /= max;
-                leftBackPower /= max;
-                rightBackPower /= max;
+            if (max > maxDriveSpeed) {
+                double scale = maxDriveSpeed / max;
+                leftFrontPower *= scale;
+                rightFrontPower *= scale;
+                leftBackPower *= scale;
+                rightBackPower *= scale;
             } else if (max > 0.001 && max < 0.15) {
                 double boost = 0.15 / max;
                 leftFrontPower *= boost;

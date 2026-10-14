@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+
 @Autonomous(name="Shoot and Park", group="Robot")
 public class ShootPark extends LinearOpMode {
     private static final double SHOOTER_POWER = 0.8;
@@ -15,13 +19,9 @@ public class ShootPark extends LinearOpMode {
 
         telemetry.addData("Autonomous Ready", "Shoot, then park");
         telemetry.addData("Route", "(500, -800) to (1150, -2050) mm");
-        telemetry.addData("Version", "v20261013-07");
+        telemetry.addData("Version", "v20261013-10");
         telemetry.update();
         waitForStart();
-
-        if (!opModeIsActive()) {
-            return;
-        }
 
         // Start motors
         robot.intakePower(-0.8);
@@ -43,9 +43,14 @@ public class ShootPark extends LinearOpMode {
         // Park
         robot.intakePower(0);
         robot.shooterPower(0);
-        robot.driveToPos(1000, -600, 0, 10, 2, 6); // Waypoint to avoid pole
-        robot.driveToPos(1500, -2000, 0, 10, 2, 10);
+        robot.driveToPos(900, -300, 0, 50, 2, 2, 0.5); // Waypoint to avoid pole
+        robot.driveToPos(1200, -2100, 0, 50, 2, 4, 0.5);
 
+        robot.odo.update();
+        Pose2D pose = robot.odo.getPosition();
+        telemetry.addData("X (mm)", "%.1f", -pose.getX(DistanceUnit.MM));
+        telemetry.addData("Y (mm)", "%.1f", pose.getY(DistanceUnit.MM));
+        telemetry.addData("Heading (degrees)", "%.1f", pose.getHeading(AngleUnit.DEGREES));
         telemetry.addData("Autonomous", "Complete");
         telemetry.update();
     }
