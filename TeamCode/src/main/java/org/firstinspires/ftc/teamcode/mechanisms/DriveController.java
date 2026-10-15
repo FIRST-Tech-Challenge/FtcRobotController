@@ -37,6 +37,7 @@ public final class DriveController implements Mechanism {
     private double lastError;
     private long lastTime = System.nanoTime();
     private boolean hasLastAimError;
+    private boolean lastAimUsedLimelight;
     private final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
     public DriveController(KronBot robot) {
@@ -187,10 +188,16 @@ public final class DriveController implements Mechanism {
         }
 
         Pose pose = robot.follower.getPose();
-        double txDeg = LimelightController.getTx();
+        double txDeg = LimelightController.getAimTx();
+        boolean usingLimelight = Double.isFinite(txDeg);
+        if (hasLastAimError && usingLimelight != lastAimUsedLimelight) {
+            // Do not carry integral or derivative history between error sources.
+            resetAimPid();
+        }
+        lastAimUsedLimelight = usingLimelight;
         double desiredHeading;
 
-        if (LimelightController.seesArpilTag()) {
+        if (usingLimelight) {
             desiredHeading = pose.getHeading() - Math.toRadians(txDeg);
         } else {
             desiredHeading = Math.atan2(
@@ -221,7 +228,11 @@ public final class DriveController implements Mechanism {
         lastError = error;
         hasLastAimError = true;
 
-        double output = AIM_KP * error + AIM_KI * integral + AIM_KD * derivative;
+        double kP = usingLimelight ? Constants.LIMELIGHT_AIM_KP : AIM_KP;
+        double kI = usingLimelight ? Constants.LIMELIGHT_AIM_KI : AIM_KI;
+        double kD = usingLimelight ? Constants.LIMELIGHT_AIM_KD : AIM_KD;
+        double output = kP * error + kI * integral + kD * derivative;
+        panelsTelemetry.addData("Aim PID source", usingLimelight ? "Limelight" : "Odometry");
         panelsTelemetry.addData("Aim Error", error);
         panelsTelemetry.addData("Aim Desired", desiredHeading);
         panelsTelemetry.addData("Aim Output", output);
