@@ -10,11 +10,14 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 public class TestMotors extends LinearOpMode {
 
     DcMotor outtake;
+    DcMotor intake;
 
     @Override
     public void runOpMode() throws InterruptedException {
         outtake = hardwareMap.get(DcMotor.class, "Outtake");
+        intake = hardwareMap.get(DcMotor.class, "Intake");
         outtake.setDirection(DcMotor.Direction.REVERSE);
+        intake.setDirection(DcMotorSimple.Direction.FORWARD);
         waitForStart();
         if(isStopRequested()) return;
 
@@ -24,19 +27,27 @@ public class TestMotors extends LinearOpMode {
 
         while(opModeIsActive()){
             if(gamepad1.left_bumper) {
-                power += 0.1;
+                power += 0.11;
             } else if(gamepad1.right_bumper) {
                 power -= 0.1;
             }
+
             if(gamepad1.a) {
                 outtake.setDirection(DcMotorSimple.Direction.FORWARD);
                 outtake.setPower(power);
             } else if(gamepad1.b) {
-                outtake.setDirection(DcMotorSimple.Direction.REVERSE);
-                outtake.setPower(power);
+                outtake.setPower(-power);
             } else {
                 outtake.setPower(0);
             }
+            if(gamepad1.x) {
+                intake.setPower(power);
+            } else if(gamepad1.y) {
+                intake.setPower(-power);
+            } else {
+                intake.setPower(0);
+            }
+
             telemetry.addData("Power: ", power);
             telemetry.update();
         }
