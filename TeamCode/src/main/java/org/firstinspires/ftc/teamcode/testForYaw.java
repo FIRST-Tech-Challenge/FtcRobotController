@@ -26,6 +26,7 @@ public class testForYaw extends LinearOpMode {
                             RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
                     )
             );
+            imu.initialize(myIMUparameters);
         }
         waitForStart();
             if (opModeIsActive()) {
