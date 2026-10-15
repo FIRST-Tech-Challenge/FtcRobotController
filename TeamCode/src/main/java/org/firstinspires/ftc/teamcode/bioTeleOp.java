@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 
-@TeleOp(name="teleOp")
-public class workableTeleOp extends LinearOpMode {
+@TeleOp(name="bioTeleOp")
+public class bioTeleOp extends LinearOpMode {
 
     private DcMotor BL;
     private DcMotor BR;
@@ -17,9 +17,9 @@ public class workableTeleOp extends LinearOpMode {
     private DcMotor FR;
 
     private DcMotor intakemotor;
-    
 
-    
+
+
 
     @Override
     public void runOpMode() {
@@ -29,10 +29,10 @@ public class workableTeleOp extends LinearOpMode {
         FL = hardwareMap.get(DcMotor.class, "drive_front_left");
         FR = hardwareMap.get(DcMotor.class, "drive_front_right");
         intakemotor = hardwareMap.get(DcMotor.class, "intake_motor");
-        
 
 
-        
+
+
 
         BL.setDirection(REVERSE);
         FL.setDirection(REVERSE);
@@ -48,9 +48,9 @@ public class workableTeleOp extends LinearOpMode {
                 double rx = gamepad1.right_stick_x;
 
 
-                
 
-                
+
+
 
                 double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
                 double frontLeftPow = (y + x + rx) / denominator;
@@ -63,8 +63,17 @@ public class workableTeleOp extends LinearOpMode {
                 BL.setPower(backLeftPow);
                 BR.setPower(backRightPow);
 
-                if (gamepad1.aWasPressed()) {
+                if (gamepad1.right_trigger_pressed) {
+                    intakemotor.setPower(-1);
+                }
+                if (!gamepad1.right_trigger_pressed) {
+                    intakemotor.setPower(0);
+                }
+                if (gamepad1.left_trigger_pressed) {
                     intakemotor.setPower(1);
+                }
+                if (!gamepad1.left_trigger_pressed) {
+                    intakemotor.setPower(0);
                 }
             }
         }
