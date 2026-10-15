@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.utils.Constants.AIM_INTEGRAL_LIMIT;
 import static org.firstinspires.ftc.teamcode.utils.Constants.AIM_KD;
 import static org.firstinspires.ftc.teamcode.utils.Constants.AIM_KI;
 import static org.firstinspires.ftc.teamcode.utils.Constants.AIM_KP;
+
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.geometry.BezierLine;
@@ -18,8 +19,9 @@ import org.firstinspires.ftc.teamcode.utils.Controls;
 
 import java.util.function.DoubleSupplier;
 
-/** Drive mechanism restored from FTC_TestRobot commit dc80737. */
-public final class DriveController {
+import dev.nextftc.robot.Mechanism;
+
+public final class DriveController implements Mechanism {
     private final KronBot robot;
     private Pose targetPose;
     private boolean fieldCentric;
@@ -46,6 +48,8 @@ public final class DriveController {
         fieldCentric = false;
         aimingAtTarget = false;
         selectedAimTarget = 0;
+        robot.follower.setMaxPowerScaling(1.0);
+        robot.follower.startTeleopDrive(true);
         resetAimPid();
     }
 
@@ -63,35 +67,36 @@ public final class DriveController {
         resetAimPid();
     }
 
-    public void startManual() {
-        targetPose = null;
-        robot.follower.setMaxPowerScaling(1.0);
-        robot.follower.startTeleopDrive(true);
-    }
+//    public void startManual() {
+//        targetPose = null;
+//
+//    }
 
     public void runManual(Controls controls) {
-        if (!isManual()) return;
+        if (!isManual()) {
+            return;
+        }
 
-        robot.follower.setTeleOpDrive(
-                Constants.applyDeadzone(-controls.leftStickY),
-                Constants.applyDeadzone(-controls.leftStickX),
-                aimingAtTarget
-                        ? getAimTurn()
-                        : Constants.applyDeadzone(-controls.rightStickX),
-                !fieldCentric);
+        double forward = Constants.applyDeadzone(-controls.leftStickY);
+        double strafe = Constants.applyDeadzone(-controls.leftStickX);
+        double turn = aimingAtTarget
+                ? getAimTurn()
+                : Constants.applyDeadzone(-controls.rightStickX);
+
+        robot.follower.setTeleOpDrive(forward, strafe, turn, !fieldCentric);
     }
 
-    public void driveTo(Pose destination) {
-        Pose currentPose = robot.follower.getPose();
-        targetPose = new Pose(destination.getX(), destination.getY(), destination.getHeading());
-
-        PathChain path = robot.follower.pathBuilder()
-                .addPath(new BezierLine(currentPose, targetPose))
-                .setLinearHeadingInterpolation(currentPose.getHeading(), targetPose.getHeading())
-                .build();
-
-        robot.follower.followPath(path, Constants.PATH_MAX_POWER, true);
-    }
+//    public void driveTo(Pose destination) {
+//        Pose currentPose = robot.follower.getPose();
+//        targetPose = new Pose(destination.getX(), destination.getY(), destination.getHeading());
+//
+//        PathChain path = robot.follower.pathBuilder()
+//                .addPath(new BezierLine(currentPose, targetPose))
+//                .setLinearHeadingInterpolation(currentPose.getHeading(), targetPose.getHeading())
+//                .build();
+//
+//        robot.follower.followPath(path, Constants.PATH_MAX_POWER, true);
+//    }
 
     public void toggleFieldCentric() {
         fieldCentric = !fieldCentric;
@@ -127,7 +132,9 @@ public final class DriveController {
 
     public void toggleAimingTarget() {
         selectedAimTarget = 1 - selectedAimTarget;
-        if (!loadSelectedAimTarget()) aimingAtTarget = false;
+        if (!loadSelectedAimTarget()) {
+            aimingAtTarget = false;
+        }
         resetAimPid();
     }
 
@@ -140,11 +147,15 @@ public final class DriveController {
     }
 
     public void stop() {
-        if (robot.follower != null) robot.follower.breakFollowing();
+        if (robot.follower != null) {
+            robot.follower.breakFollowing();
+        }
     }
 
     public void telemetry(Telemetry telemetry) {
-        if (robot.follower == null) return;
+        if (robot.follower == null) {
+            return;
+        }
         Pose pose = robot.follower.getPose();
         String mode = isManual()
                 ? "Manual"
@@ -174,8 +185,20 @@ public final class DriveController {
             resetAimPid();
             return 0.0;
         }
+
         Pose pose = robot.follower.getPose();
-        double desiredHeading = Math.atan2(targetY - pose.getY(), targetX - pose.getX());
+        double txDeg = LimelightController.getTx();
+        double desiredHeading;
+
+        if (LimelightController.seesArpilTag()) {
+            desiredHeading = pose.getHeading() - Math.toRadians(txDeg);
+        } else {
+            desiredHeading = Math.atan2(
+                    targetY - pose.getY(),
+                    targetX - pose.getX()
+            );
+        }
+
         double error = wrap(desiredHeading - pose.getHeading());
 
         long now = System.nanoTime();
@@ -189,7 +212,9 @@ public final class DriveController {
             return 0.0;
         }
 
-        if (dt <= 0 || dt > 0.1) dt = 0.01;
+        if (dt <= 0 || dt > 0.1) {
+            dt = 0.01;
+        }
         integral = clamp(integral + error * dt, AIM_INTEGRAL_LIMIT);
 
         double derivative = hasLastAimError ? wrap(error - lastError) / dt : 0.0;
@@ -200,6 +225,7 @@ public final class DriveController {
         panelsTelemetry.addData("Aim Error", error);
         panelsTelemetry.addData("Aim Desired", desiredHeading);
         panelsTelemetry.addData("Aim Output", output);
+        panelsTelemetry.addData("TX deg", txDeg);
         panelsTelemetry.update();
         return clamp(output, 1.0);
     }
@@ -211,9 +237,14 @@ public final class DriveController {
         hasLastAimError = false;
     }
 
+    public boolean isUsingFirstAimTarget() {
+        return robot.follower.getPose().getY() < 72.0;
+    }
+
     private boolean loadSelectedAimTarget() {
-        targetX = (robot.follower.getPose().getY() < 72 ? target1X : target2X).getAsDouble();
-        targetY = (robot.follower.getPose().getY() < 72 ? target1Y : target2Y).getAsDouble();
+        boolean useFirstBasket = isUsingFirstAimTarget();
+        targetX = (useFirstBasket ? target1X : target2X).getAsDouble();
+        targetY = (useFirstBasket ? target1Y : target2Y).getAsDouble();
         return Double.isFinite(targetX) && Double.isFinite(targetY);
     }
 

@@ -6,7 +6,6 @@ import com.bylazar.configurables.annotations.Configurable;
 public final class Constants {
     public static final String MAIN_GROUP = "KronBot";
 
-    // Drivetrain
     public static double CONTROLLER_DEADZONE = 0.05;
     public static double MANUAL_SPEED = 1.0;
     public static double PATH_MAX_POWER = 0.8;
@@ -24,7 +23,6 @@ public final class Constants {
     public static double AIM_DEADBAND_RAD = Math.toRadians(1.5);
     public static double AIM_INTEGRAL_LIMIT = 0.5;
 
-    // Assisted-driving poses.
     public static double LEFT_START_X = 9.0;
     public static double RIGHT_START_X = 135.0;
     public static double START_Y = 9.0;
@@ -33,11 +31,16 @@ public final class Constants {
     public static double CENTER_Y = 72.0;
     public static double CENTER_HEADING_DEG = 90.0;
 
-    // Optional intake.
     public static double INTAKE_POWER = 0.3;
 
-    public static final int LIMELIGHT_DEFAULT_PIPELINE = 3;
-    public static final int LIMELIGHT_ALTERNATE_PIPELINE = 4;
+    public static final int LIMELIGHT_RED_1_PIPELINE = 1;
+
+    public static final int LIMELIGHT_RED_2_PIPELINE = 2;
+
+    public static final int LIMELIGHT_BLUE_1_PIPELINE = 3;
+    public static final int LIMELIGHT_BLUE_2_PIPELINE = 4;
+
+    public static final int LIMELIGHT_CORRECTION_DEADBAND = 10; // 10 grade, +- 5
 
     private Constants() {}
 

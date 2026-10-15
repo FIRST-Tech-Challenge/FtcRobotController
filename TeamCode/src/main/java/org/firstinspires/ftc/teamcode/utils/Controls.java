@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.utils;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-/** Snapshot of driver inputs with rising-edge button detection. */
 public final class Controls {
     private final Gamepad gamepad;
 
