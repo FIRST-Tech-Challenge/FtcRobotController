@@ -15,6 +15,8 @@ public class workableTeleOp extends LinearOpMode {
     private DcMotor BR;
     private DcMotor FL;
     private DcMotor FR;
+
+    private DcMotor intakemotor;
     
 
     
@@ -26,6 +28,7 @@ public class workableTeleOp extends LinearOpMode {
         BR = hardwareMap.get(DcMotor.class, "drive_back_right");
         FL = hardwareMap.get(DcMotor.class, "drive_front_left");
         FR = hardwareMap.get(DcMotor.class, "drive_front_right");
+        intakemotor = hardwareMap.get(DcMotor.class, "intake_motor");
         
 
 
@@ -59,6 +62,10 @@ public class workableTeleOp extends LinearOpMode {
                 FR.setPower(frontRightPow);
                 BL.setPower(backLeftPow);
                 BR.setPower(backRightPow);
+
+                if (gamepad1.aWasPressed()) {
+                    intakemotor.setPower(1);
+                }
             }
         }
     }
