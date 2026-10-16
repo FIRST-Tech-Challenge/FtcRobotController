@@ -5,9 +5,15 @@
  */
 
 buildscript {
+    ext {
+        kotlin_version = '2.3.10'
+    }
     repositories {
         mavenCentral()
         google()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
