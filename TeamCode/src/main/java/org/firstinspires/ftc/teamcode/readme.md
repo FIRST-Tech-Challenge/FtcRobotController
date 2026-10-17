@@ -6,6 +6,35 @@ This module, TeamCode, is the place where you will write/paste the code for your
 robot controller App. This module is currently empty (a clean slate) but the
 process for adding OpModes is straightforward.
 
+## Dashboard testing and shared configuration
+
+This project uses [Slothboard](https://github.com/Dairy-Foundation/Sloth#ftc-dashboard),
+the Sloth-compatible FTC Dashboard replacement. Pedro's tuning dependency brings
+in Sloth, so use Slothboard rather than installing standard FTC Dashboard alongside
+it. The dependency is declared in `build.dependencies.gradle` and uses the existing
+Dairy Maven repository. Java imports remain under `com.acmerobotics.dashboard`.
+
+To try live configuration without moving any hardware:
+
+1. Fully deploy TeamCode from Android Studio after changing dependencies.
+2. Connect your computer to the Control Hub's Wi-Fi and open
+   <http://192.168.43.1:8080/dash>.
+3. Select **Dashboard Test** on the Driver Station and press **INIT** or start it.
+4. In the dashboard's Configuration panel, edit **RobotConfig > TEST_VALUE** or
+   **DashboardTest > OP_MODE_TEST_VALUE**, then use that panel's **Save Changes**
+   button.
+5. Verify that the corresponding telemetry value changes on both the dashboard
+   and Driver Station. The loop count and elapsed seconds indicate live telemetry.
+
+Put shared tunable fields in `RobotConfig` so any OpMode can read them directly,
+for example `RobotConfig.TEST_VALUE`. Dashboard fields must be `public static`
+and not `final`, and the enclosing class must have `@Config`. Read the field
+where it is used instead of copying it once during initialization. Browser edits
+do not modify Java source defaults or persist across app restarts.
+
+Build the app locally with `./gradlew :TeamCode:assembleDebug` from the repository
+root.
+
 ## Creating your own OpModes
 
 The easiest way to create your own OpMode is to copy a Sample OpMode and make it your own.
