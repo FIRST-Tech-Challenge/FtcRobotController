@@ -48,6 +48,8 @@ public class TestMotors extends LinearOpMode {
                 intake.setPower(0);
             }
 
+
+
             telemetry.addData("Power: ", power);
             telemetry.update();
         }

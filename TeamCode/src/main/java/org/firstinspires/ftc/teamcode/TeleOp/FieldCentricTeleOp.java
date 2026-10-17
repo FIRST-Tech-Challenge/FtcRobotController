@@ -11,12 +11,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Field Centric")
-public class TeleOp extends LinearOpMode {
+public class FieldCentricTeleOp extends LinearOpMode {
 
     private DcMotor leftFront;
     private DcMotor rightFront;
     private DcMotor leftBack;
     private DcMotor rightBack;
+    private DcMotor outtake;
+    private DcMotor intake;
+
+    private DcMotor transfer;
 
     //pinpoint
     private GoBildaPinpointDriver odo;
@@ -27,6 +31,10 @@ public class TeleOp extends LinearOpMode {
         rightFront = hardwareMap.get(DcMotor.class, "rf");
         leftBack = hardwareMap.get(DcMotor.class, "lb");
         rightBack = hardwareMap.get(DcMotor.class ,"rb");
+        outtake = hardwareMap.get(DcMotor.class, "outtake");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        transfer = hardwareMap.get(DcMotor.class, "transfer");
+
         odo =  hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
         odo.setOffsets(-3, -3.5, DistanceUnit.INCH);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
@@ -40,6 +48,11 @@ public class TeleOp extends LinearOpMode {
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        outtake.setDirection(DcMotorSimple.Direction.FORWARD);
+        intake.setDirection(DcMotorSimple.Direction.FORWARD);
+        transfer.setDirection(DcMotorSimple.Direction.FORWARD);
+
+
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -101,11 +114,31 @@ public class TeleOp extends LinearOpMode {
             double lbPower = roty - rotx + r;
             double rfPower = roty - rotx - r;
             double rbPower = roty + rotx - r;
-            //Mecanum power formulas, it just works
+            //Mecanum power formulas, it just works, oui oui baguette
             leftFront.setPower(lfPower);
             leftBack.setPower(lbPower);
             rightFront.setPower(rfPower);
             rightBack.setPower(rbPower);
+
+            if(gamepad2.left_trigger_pressed) {
+                outtake.setPower(0.9);
+                transfer.setPower(1);
+            } else if(gamepad2.right_trigger_pressed) {
+                outtake.setPower(0.5);
+                transfer.setPower(0.7);
+            } else {
+                outtake.setPower(0);
+                transfer.setPower(0);
+
+            }
+            if(gamepad2.a) {
+                intake.setPower(0.9);
+            } else if(gamepad2.b) {
+                intake.setPower(0.5);
+            } else {
+                intake.setPower(0);
+            }
+
 
             telemetry.addLine("its running");
             telemetry.addData("stateA: ", stateA);
