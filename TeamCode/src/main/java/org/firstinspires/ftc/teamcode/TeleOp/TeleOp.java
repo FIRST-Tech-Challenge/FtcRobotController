@@ -4,11 +4,13 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Field Centric")
 public class TeleOp extends LinearOpMode {
@@ -17,6 +19,10 @@ public class TeleOp extends LinearOpMode {
     private DcMotor rightFront;
     private DcMotor leftBack;
     private DcMotor rightBack;
+    DcMotor outtake;
+    DcMotor intake;
+    CRServo left;
+    CRServo right;
 
     //pinpoint
     private GoBildaPinpointDriver odo;
@@ -59,16 +65,30 @@ public class TeleOp extends LinearOpMode {
             double x = gamepad1.left_stick_x;
             double ry = -gamepad1.right_stick_y;
             double rx = gamepad1.right_stick_x;
-            boolean padA = gamepad1.a;
-            if(padA != prevA){
-                if (padA) {
-                    stateA = true;
-                } else {
-                    stateA = false;
-                }
-            }
-            prevA = padA;
+//            boolean padA = gamepad1.a;
+//            if(padA != prevA){
+//                if (padA) {
+//                    stateA = true;
+//                } else {
+//                    stateA = false;
+//                }
+//            }
+//            prevA = padA;
 
+            if(gamepad1.x) {
+                intake.setPower(1);
+                left.setPower(1);
+                right.setPower(-1);
+            } else {
+                intake.setPower(0);
+                left.setPower(0);
+                right.setPower(0);
+            }
+            if(gamepad1.a) {
+                outtake.setPower(0.9);
+            } else {
+                outtake.setPower(0);
+                }
             odo.update();
             double heading = odo.getHeading(AngleUnit.RADIANS);
             /* Used later for properly rotating Cartesian coordinates (normal coordinate plane)
