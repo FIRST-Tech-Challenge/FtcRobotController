@@ -25,15 +25,22 @@ public class TestMotors extends LinearOpMode {
 
         power = 0;
 
+        boolean leftBumper = false;
+        boolean rightBumper = false;
+
         while(opModeIsActive()){
-            if(gamepad1.left_bumper) {
-                power += 0.11;
-            } else if(gamepad1.right_bumper) {
-                power -= 0.1;
+
+
+            if(gamepad1.left_bumper && !leftBumper) {
+                power += 0.05;
+
+            } else if(gamepad1.right_bumper && !rightBumper) {
+                power -= 0.05;
             }
 
+            leftBumper = gamepad1.left_bumper;
+            rightBumper = gamepad1.right_bumper;
             if(gamepad1.a) {
-                outtake.setDirection(DcMotorSimple.Direction.FORWARD);
                 outtake.setPower(power);
             } else if(gamepad1.b) {
                 outtake.setPower(-power);
@@ -48,7 +55,7 @@ public class TestMotors extends LinearOpMode {
                 intake.setPower(0);
             }
 
-            telemetry.addData("Power: ", power);
+            telemetry.addData("Power", power);
             telemetry.update();
         }
 
