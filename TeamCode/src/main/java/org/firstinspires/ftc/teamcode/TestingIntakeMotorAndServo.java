@@ -46,8 +46,8 @@ public class TestingIntakeMotorAndServo extends LinearOpMode {
             lastButtonState = currentButtonState;
 
             if (motorIsSpinning) {
-                intakeMotor.setPower(1.0);
-                elevatorMotor.setPower(1.0);
+                intakeMotor.setPower(-1.0);
+                elevatorMotor.setPower(RobotConfig.ELEVATOR_POWER);
             } else {
                 intakeMotor.setPower(0.0);
                 elevatorMotor.setPower(0.0);
@@ -73,6 +73,7 @@ public class TestingIntakeMotorAndServo extends LinearOpMode {
             telemetry.addData("Servo Position", intakeServo.getPosition());
             telemetry.addData("Motor Spinning", motorIsSpinning);
             telemetry.addData("Runtime", runtime.toString());
+            telemetry.addData("Elevator Power", RobotConfig.ELEVATOR_POWER);
             telemetry.update();
         }
     }
