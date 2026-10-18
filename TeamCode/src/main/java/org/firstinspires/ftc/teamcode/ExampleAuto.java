@@ -23,22 +23,27 @@ public class ExampleAuto extends OpMode {
 
     // Poses
     private final Pose startPose = poseFactory.of(0, 0, 0);
-    private final Pose scorePose = poseFactory.of(20, 0, 90);
-    private final Pose parkPose = poseFactory.of(0, 20, 0);
+    private final Pose scorePose = poseFactory.of(40, 0, 90);
+    private final Pose midPose = poseFactory.of(10,0,90);
+    private final Pose parkPose = poseFactory.of(0, 46, 90);
+
 
     // Path methods
     private Path startToScore() {
         return line(startPose, scorePose).linear(startPose, scorePose);
     }
 
-    private Path park(){
-        return line(scorePose, parkPose).linear(scorePose, parkPose);
+    private Path midPose(){
+        return line(scorePose, midPose).linear(scorePose,midPose);
     }
-
+    private Path park(){
+        return line(midPose, parkPose).linear(midPose,parkPose);
+    }
     private Command autoRoutine() {
         return sequential(
                 follow(follower, startToScore()),
                 // Add mechanism commands here.
+                follow(follower, midPose()),
                 follow(follower, park())
         );
     }
@@ -67,5 +72,10 @@ public class ExampleAuto extends OpMode {
         telemetry.addData("Heading", Math.toDegrees(follower.pose().heading()));
         telemetry.addData("Follower Mode", follower.mode());
         telemetry.update();
+
+    }
+
+    public Pose getMidPose() {
+        return midPose;
     }
 }
