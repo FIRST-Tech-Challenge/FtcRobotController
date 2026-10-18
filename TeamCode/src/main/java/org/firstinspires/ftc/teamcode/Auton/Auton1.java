@@ -36,12 +36,14 @@ public class Auton1 extends OpMode {
     private DcMotor outtake = hardwareMap.get(DcMotor.class, "outtake");
     private DcMotor intake = hardwareMap.get(DcMotor.class, "intake");
 
+    //no need for servos because we are not intaking anything.
+
     private DcMotor transfer = hardwareMap.get(DcMotor.class, "transfer");
 
 
-    private final Pose startPose = p.of(82, 12, 90);
+    private final Pose startPose = p.of(12, 12, 90);
 
-    private final Pose endPose = p.of(82, 24, 90);
+    private final Pose endPose = p.of(60, 12, 90);
 
 
     public Path path1() {
