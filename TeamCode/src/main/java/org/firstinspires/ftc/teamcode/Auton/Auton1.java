@@ -65,9 +65,8 @@ public class Auton1 extends OpMode {
 
     @Override
     public void loop() {
-        follower.update();
-        Scheduler.execute();
         follower.follow(path1());
+        follower.update();
         shoot();
 
     }
@@ -80,7 +79,7 @@ public class Auton1 extends OpMode {
                     intake.setPower(1);
                     transfer.setPower(1);
                 })
-                .setDone(() -> shootTime.milliseconds() >= 500) // pick your shoot duration
+                .setDone(() -> shootTime.milliseconds() >= 10000)
                 .setEnd(interrupted -> {
                     outtake.setPower(0);
                     intake.setPower(0);
