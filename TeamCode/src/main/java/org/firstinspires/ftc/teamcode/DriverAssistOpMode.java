@@ -39,10 +39,10 @@ public class DriverAssistOpMode extends LinearOpMode {
 
     // Mechanism tuning. These are STARTING VALUES, not measured ones. Test each with the robot on blocks.
     private static final double INTAKE_POWER = 1.0;
-    private static final double FLYWHEEL_POWER = 0.85;    // raise or lower until shots land where you want
+    private static final double FLYWHEEL_POWER = 1;    // raise or lower until shots land where you want
     private static final double FLYWHEEL_SPINUP_S = 1.5;  // the gate stays shut this long after the flywheel turns on
-    private static final double GATE_CLOSED = 0.0;        // servo position that blocks balls from reaching the flywheel
-    private static final double GATE_OPEN = 0.5;          // servo position that lets balls through
+    private static final double GATE_CLOSED = 0.01;        // servo position that blocks balls from reaching the flywheel
+    private static final double GATE_OPEN = 0.2;          // servo position that lets balls through
 
     // Drivetrain hardware references
     private Servo intakeGate;
@@ -58,8 +58,7 @@ public class DriverAssistOpMode extends LinearOpMode {
         fW = hardwareMap.get(DcMotor.class, "fW");
         intake = hardwareMap.get(DcMotor.class, "intake");
         intakeGate = hardwareMap.get(Servo.class, "intakeGate");
-        intakeGate.setPosition(0);
-
+        intakeGate.setPosition(0.01);
 
         // Drivetrain direction mapping parameters
         fL.setDirection(DcMotor.Direction.REVERSE);
@@ -93,7 +92,6 @@ public class DriverAssistOpMode extends LinearOpMode {
         while (opModeIsActive()) {
             // Calculate active runtime clock delta intervals
 
-            intakeGate.setPosition(0);
 
             double dt = loopTimer.seconds();
             loopTimer.reset();
@@ -189,7 +187,6 @@ public class DriverAssistOpMode extends LinearOpMode {
         setMotorPowers(0, 0, 0, 0);
         fW.setPower(0);
         intake.setPower(0);
-        intakeGate.setPosition(GATE_CLOSED);
     }
 
     /** Filters out minor hardware joystick wiggle drifts */

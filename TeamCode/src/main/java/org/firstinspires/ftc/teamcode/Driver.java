@@ -19,7 +19,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
             while (opModeIsActive()){
 
-                intakeGate.setPosition(0);
+                intakeGate.setPosition(.01);
             }
 
 
