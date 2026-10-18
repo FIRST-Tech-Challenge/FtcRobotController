@@ -11,7 +11,6 @@ public class TestMotors extends LinearOpMode {
     DcMotor intake;
     CRServo left;
     CRServo right;
-
     DcMotor transfer;
     @Override
     public void runOpMode() throws InterruptedException {
