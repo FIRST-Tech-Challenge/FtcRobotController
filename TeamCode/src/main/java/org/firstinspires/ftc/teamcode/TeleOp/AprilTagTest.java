@@ -27,6 +27,12 @@ public class AprilTagTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             aprilTagWebcam.update();
+            telemetry.addData("Detections", aprilTagWebcam.getDetectedTags().size());
+            for (AprilTagDetection d : aprilTagWebcam.getDetectedTags()) {
+                telemetry.addData("Seen ID", aprilTagWebcam.getDetectedTags());
+            }
+            telemetry.update();
+            aprilTagWebcam.update();
             AprilTagDetection id30 = aprilTagWebcam.getSpecificID(30);
             aprilTagWebcam.myIphone(id30);
 

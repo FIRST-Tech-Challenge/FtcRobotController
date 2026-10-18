@@ -11,13 +11,17 @@ public class TestMotors extends LinearOpMode {
 
     DcMotor outtake;
     DcMotor intake;
+    DcMotor transfer;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
         outtake = hardwareMap.get(DcMotor.class, "Outtake");
         intake = hardwareMap.get(DcMotor.class, "Intake");
-        outtake.setDirection(DcMotor.Direction.REVERSE);
+        transfer = hardwareMap.get(DcMotor.class, "Transfer");
+        outtake.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
+        transfer.setDirection(DcMotorSimple.Direction.FORWARD);
         waitForStart();
         if(isStopRequested()) return;
 
@@ -41,11 +45,14 @@ public class TestMotors extends LinearOpMode {
             leftBumper = gamepad1.left_bumper;
             rightBumper = gamepad1.right_bumper;
             if(gamepad1.a) {
-                outtake.setPower(power);
+                outtake.setPower(0.9);
+                transfer.setPower(1);
             } else if(gamepad1.b) {
-                outtake.setPower(-power);
+                outtake.setPower(-0.9);
+                transfer.setPower(-1);
             } else {
                 outtake.setPower(0);
+                transfer.setPower(0);
             }
             if(gamepad1.x) {
                 intake.setPower(power);

@@ -36,6 +36,8 @@ public class Auton1 extends OpMode {
     private DcMotor outtake = hardwareMap.get(DcMotor.class, "outtake");
     private DcMotor intake = hardwareMap.get(DcMotor.class, "intake");
 
+    private DcMotor transfer = hardwareMap.get(DcMotor.class, "transfer");
+
 
     private final Pose startPose = p.of(82, 12, 90);
 
@@ -53,27 +55,37 @@ public class Auton1 extends OpMode {
         outtake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Scheduler.reset();
+
+        follower = Constants.create(hardwareMap);
+        follower.setPose(startPose);
 
     }
 
 
     @Override
     public void loop() {
+        follower.update();
+        Scheduler.execute();
+        follower.follow(path1());
+        shoot();
 
     }
 
-    /*public Command shoot() {
+    public Command shoot() {
         return Command.build()
-                .setStart(
-            shootTime.reset();
-            outtake.setPower(1);
-            intake.setPower(1);
-        )
-        if (shootTime.milliseconds() == 5) {
-            outtake.setPower(0);
-            intake.setPower(0);
-        }
-    }*/
+                .setStart(() -> {
+                    shootTime.reset();
+                    outtake.setPower(0.85);
+                    intake.setPower(1);
+                    transfer.setPower(1);
+                })
+                .setDone(() -> shootTime.milliseconds() >= 500) // pick your shoot duration
+                .setEnd(interrupted -> {
+                    outtake.setPower(0);
+                    intake.setPower(0);
+                });
+    }
 }
 
 
