@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.sensors;
+/*package org.firstinspires.ftc.teamcode.sensors;
 
 import android.util.Size;
 
@@ -37,11 +37,6 @@ public class AprilTagLogi {
         VisionPortal.Builder builder = new VisionPortal.Builder();
         builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam #1"));
         builder.setCameraResolution(new Size(640, 480));
-        
-        /*MJEPG uses less USB bandwidth,so I added this line cuz that means higher quality
-        and steadier framerate: tags detct faster and less lag*/
-        builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG); 
-        
         builder.addProcessor(atProcessor);
 
         vp = builder.build();
@@ -83,7 +78,6 @@ public class AprilTagLogi {
         return detectedTags;
     }
 
-    public AprilTagDetection getTagById(int id) { //small edit ig
         for (AprilTagDetection detection : detectedTags) {
             if (detection.id == id) {
                 return detection;
@@ -97,4 +91,4 @@ public class AprilTagLogi {
             vp.close();
         }
     }
-}
+}*/

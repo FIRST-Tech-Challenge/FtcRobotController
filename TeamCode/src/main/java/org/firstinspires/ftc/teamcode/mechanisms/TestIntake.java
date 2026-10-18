@@ -11,8 +11,8 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name = "Test Intake", group = "Test")
 public class TestIntake extends LinearOpMode {
     DcMotor intake;
-    CRServo intakeServo1;
     CRServo intakeServo2;
+    CRServo intakeServo1;
 
     @Override
     public void runOpMode() throws InterruptedException {
