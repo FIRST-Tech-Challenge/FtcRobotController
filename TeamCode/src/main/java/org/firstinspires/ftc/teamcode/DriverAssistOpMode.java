@@ -38,14 +38,14 @@ public class DriverAssistOpMode extends LinearOpMode {
     private static final double STICK_D = 0.05;
 
     // Mechanism tuning. These are STARTING VALUES, not measured ones. Test each with the robot on blocks.
-    private static final double INTAKE_POWER = 1.0;
-    private static final double FLYWHEEL_POWER = 1;    // raise or lower until shots land where you want
+    private static final double INTAKE_POWER = .83;
+    private static final double FLYWHEEL_POWER = .73;    // raise or lower until shots land where you want
     private static final double FLYWHEEL_SPINUP_S = 1.5;  // the gate stays shut this long after the flywheel turns on
     private static final double GATE_CLOSED = 0.01;        // servo position that blocks balls from reaching the flywheel
     private static final double GATE_OPEN = 0.2;          // servo position that lets balls through
 
     // Drivetrain hardware references
-    private Servo intakeGate;
+    private Servo intakeGate, funnelL, funnelR, armL, armR;
     private DcMotor fL, fR, bL, bR, fW, intake;
 
     @Override
@@ -57,8 +57,15 @@ public class DriverAssistOpMode extends LinearOpMode {
         bR = hardwareMap.get(DcMotor.class, "bR");
         fW = hardwareMap.get(DcMotor.class, "fW");
         intake = hardwareMap.get(DcMotor.class, "intake");
-        intakeGate = hardwareMap.get(Servo.class, "intakeGate");
+        funnelL = hardwareMap.get(Servo.class, "funnelL");
+        funnelR = hardwareMap.get(Servo.class, "funnelR");
+        armL = hardwareMap.get(Servo.class, "armL");
+        armR = hardwareMap.get(Servo.class, "armR");
         intakeGate.setPosition(0.01);
+        funnelL.setPosition(0);
+        funnelR.setPosition(0);
+        armL.setPosition(0); 
+        armR.setPosition(0);
 
         // Drivetrain direction mapping parameters
         fL.setDirection(DcMotor.Direction.REVERSE);
