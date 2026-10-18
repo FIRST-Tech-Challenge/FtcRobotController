@@ -24,10 +24,10 @@ public class MecanumDrivetrainTeleop extends LinearOpMode {
 
     public void runOpMode() {
         // Map the Motors to there respective Hardware 
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_drive");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
-        backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
-        backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_motor");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_motor");
+        backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_motor");
+        backRightDrive = hardwareMap.get(DcMotor.class, "back_right_motor");
 
         // Set Motor Direction -- TEST ON ROBOT AND UPDATE ACORDINGLY
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
