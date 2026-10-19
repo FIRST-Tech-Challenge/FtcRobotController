@@ -18,23 +18,30 @@ public class RemoteControl extends LinearOpMode {
         RockinBot r = new RockinBot(o);
         r.setpValue(60);
 
-        double intakeSpeed = -1;
+        double intakeSpeed = 0.5;
         //Starting robot shooter speed. Ideal for shooting. Can be adjusted in-game.
         double shooterSpeed = 0.76;
         int shooterDirection = 1;
+        double triggerSpeed = 1.0;
         double triggerPower = 0;
         boolean previousRightBumper = false;
         boolean previousLeftBumper = false;
         boolean previousTriangle = false;
         boolean previousDpadRight = false;
         boolean previousDpadLeft = false;
+        boolean previousDpadDown = false;
         boolean previousRightBumper2 = false;
         boolean previousLeftBumper2 = false;
+        boolean previousDpadUp2 = false;
+        boolean previousDpadDown2 = false;
+        boolean previousCircle2 = false;
+        boolean previousSquare2 = false;
+        boolean halfWheelSpeed = false;
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Remote Control Ready", "press PLAY");
         RobotLog.vv("Rockin' Robots", "Remote Control Ready");
-        telemetry.addData("This code was last updated", "10/11/2026, 5:17 pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "10/18/2026, 4:44 pm"); // Todo: Update this date when the code is updated
         telemetry.update();
         waitForStart();
         r.intakePower(intakeSpeed);
@@ -47,22 +54,36 @@ public class RemoteControl extends LinearOpMode {
         while (opModeIsActive()) {
             // r.start();
             boolean speedChanged = false;
-
+            
             if(gamepad1.dpad_up) {
                 shooterSpeed = 0.0;
                 speedChanged = true;
             }
-            r.setWheelPower(-gamepad1.left_stick_y, -gamepad1.left_stick_x, gamepad1.right_stick_x);
+            if (gamepad1.dpad_down && !previousDpadDown) {
+                halfWheelSpeed = !halfWheelSpeed;
+            }
+            double wheelSpeedMultiplier = halfWheelSpeed ? 0.5 : 1.0;
+            r.setWheelPower(
+                    -gamepad1.left_stick_y * wheelSpeedMultiplier,
+                    -gamepad1.left_stick_x * wheelSpeedMultiplier,
+                    gamepad1.right_stick_x * wheelSpeedMultiplier);
+
+            if (gamepad2.dpad_up && !previousDpadUp2) {
+                triggerSpeed = Math.min(1.0, triggerSpeed + 0.05);
+            }
+            if (gamepad2.dpad_down && !previousDpadDown2) {
+                triggerSpeed = Math.max(0.0, triggerSpeed - 0.05);
+            }
 
             if(gamepad1.right_trigger > 0)
             {
-                triggerPower = 1;
+                triggerPower = triggerSpeed;
                 r.triggerPower(triggerPower);
             }
 
             if(gamepad1.left_trigger > 0)
             {
-                triggerPower = -1;
+                triggerPower = -triggerSpeed;
                 r.triggerPower(triggerPower);
             }
 
@@ -72,11 +93,11 @@ public class RemoteControl extends LinearOpMode {
             }
 
             if(gamepad1.circle){
-                intakeSpeed = 1;
+                intakeSpeed = 0.5;
                 r.intakePower(intakeSpeed);
             }
             else if(gamepad1.square){
-                intakeSpeed = -1;
+                intakeSpeed = -0.5;
                 r.intakePower(intakeSpeed);
             }
             else if(gamepad1.cross){
@@ -104,10 +125,19 @@ public class RemoteControl extends LinearOpMode {
                 r.adjustpValue(-2);
             }
             if (gamepad1.dpad_right && !previousDpadRight) {
-                r.setLumberjackPosition(0.66);
+                r.setLumberjackPosition(0.65);
             }
             if (gamepad1.dpad_left && !previousDpadLeft) {
-                r.setLumberjackPosition(0.18);
+                r.setLumberjackPosition(0.06);
+            }
+
+            if (gamepad2.circle && !previousCircle2) {
+                intakeSpeed = Math.min(1, intakeSpeed + 0.05);
+                r.intakePower(intakeSpeed);
+            }
+            if (gamepad2.square && !previousSquare2) {
+                intakeSpeed = Math.max(-1, intakeSpeed - 0.05);
+                r.intakePower(intakeSpeed);
             }
 
             if (speedChanged) {
@@ -119,11 +149,18 @@ public class RemoteControl extends LinearOpMode {
             previousTriangle = gamepad1.triangle;
             previousDpadRight = gamepad1.dpad_right;
             previousDpadLeft = gamepad1.dpad_left;
+            previousDpadDown = gamepad1.dpad_down;
             previousRightBumper2 = gamepad2.right_bumper;
             previousLeftBumper2 = gamepad2.left_bumper;
+            previousDpadUp2 = gamepad2.dpad_up;
+            previousDpadDown2 = gamepad2.dpad_down;
+            previousCircle2 = gamepad2.circle;
+            previousSquare2 = gamepad2.square;
 
             // Show the elapsed game time and wheel power, but only every half-second.
             if (telemetryTimer.seconds() >= 0.5) {
+                telemetry.addData("Trigger speed setting", "%.0f%%", triggerSpeed * 100);
+                telemetry.addData("Intake speed setting", "%.0f%%", intakeSpeed * 100);
                 r.printDataOnScreen();
                 telemetryTimer.reset();
             }
