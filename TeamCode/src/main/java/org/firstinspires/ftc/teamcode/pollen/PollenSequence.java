@@ -4,15 +4,17 @@ package org.firstinspires.ftc.teamcode.pollen;
 public final class PollenSequence {
     public static final class Step {
         public final String name;
-        public final double seconds, forward, strafe, turn;
+        public final double seconds, forward, strafe, turn, maxFeedWindow;
         public final boolean shoot;
 
         private Step(String name, double seconds, double forward, double strafe,
-                     double turn, boolean shoot) {
+                     double turn, boolean shoot, double maxFeedWindow) {
             if (name == null || !Double.isFinite(seconds) || seconds <= 0
                     || !Double.isFinite(forward) || !Double.isFinite(strafe)
                     || !Double.isFinite(turn) || Math.abs(forward) > 1
-                    || Math.abs(strafe) > 1 || Math.abs(turn) > 1) {
+                    || Math.abs(strafe) > 1 || Math.abs(turn) > 1
+                    || !Double.isFinite(maxFeedWindow)
+                    || (shoot && maxFeedWindow < seconds)) {
                 throw new IllegalArgumentException("Invalid route step");
             }
             this.name = name;
@@ -21,48 +23,58 @@ public final class PollenSequence {
             this.strafe = strafe;
             this.turn = turn;
             this.shoot = shoot;
+            this.maxFeedWindow = maxFeedWindow;
         }
 
         public static Step drive(String name, double seconds, double forward,
                                  double strafe, double turn) {
-            return new Step(name, seconds, forward, strafe, turn, false);
+            return new Step(name, seconds, forward, strafe, turn, false, 0);
         }
 
-        /** seconds is the maximum feeding window, not a projectile count. */
-        public static Step shoot(double seconds) {
-            return new Step("SHOOT", seconds, 0, 0, 0, true);
+        /** Count commanded feed time; bound all recovery pauses with a wall-clock window. */
+        public static Step shoot(double activeSeconds, double maxFeedWindow) {
+            return new Step("SHOOT", activeSeconds, 0, 0, 0, true, maxFeedWindow);
         }
     }
 
     public static final class Output {
         public String phase;
-        public double forward, strafe, turn, launcherVelocity, feederPower;
+        public double forward, strafe, turn, launcherVelocity, feederPower, activeFeedSeconds;
         public boolean finished;
         private Output(String phase) { this.phase = phase; }
     }
 
     private final Step[] steps;
-    private final double targetVelocity, minVelocity, spinupTimeout, stableTime, deadline;
+    private final double targetVelocity, minVelocity, spinupTimeout, stableTime, deadline, startDelay;
     private int index;
     private double startedAt, stepStartedAt, stableSince = Double.NaN;
     private double feedingSince = Double.NaN, previousTime;
+    private double activeFeedSeconds;
+    private boolean wasFeeding;
     private boolean started, finished;
     private String result = "READY";
     private String warning = "";
 
     public PollenSequence(Step[] steps, double targetVelocity, double minVelocity,
                           double spinupTimeout, double stableTime, double deadline) {
+        this(steps, targetVelocity, minVelocity, spinupTimeout, stableTime, deadline, 0);
+    }
+
+    public PollenSequence(Step[] steps, double targetVelocity, double minVelocity,
+                          double spinupTimeout, double stableTime, double deadline,
+                          double startDelay) {
         if (steps == null || steps.length == 0 || !Double.isFinite(targetVelocity)
                 || !Double.isFinite(minVelocity) || !Double.isFinite(spinupTimeout)
                 || !Double.isFinite(stableTime) || !Double.isFinite(deadline)
                 || minVelocity <= 0 || targetVelocity < minVelocity || stableTime <= 0
-                || spinupTimeout <= stableTime || deadline <= 0) {
+                || spinupTimeout <= stableTime || deadline <= 0
+                || !Double.isFinite(startDelay) || startDelay < 0) {
             throw new IllegalArgumentException("Invalid sequence settings");
         }
-        double worstCase = 0;
+        double worstCase = startDelay;
         for (Step step : steps) {
             if (step == null) throw new IllegalArgumentException("Null step");
-            worstCase += step.seconds + (step.shoot ? spinupTimeout : 0);
+            worstCase += step.shoot ? spinupTimeout + step.maxFeedWindow : step.seconds;
         }
         // Leave room for transition loops; the independent deadline always stops outputs.
         if (worstCase >= deadline - 1) {
@@ -74,12 +86,16 @@ public final class PollenSequence {
         this.spinupTimeout = spinupTimeout;
         this.stableTime = stableTime;
         this.deadline = deadline;
+        this.startDelay = startDelay;
     }
 
     public void start(double now) {
         if (!Double.isFinite(now)) throw new IllegalArgumentException("Invalid time");
         index = 0;
-        startedAt = stepStartedAt = previousTime = now;
+        startedAt = previousTime = now;
+        stepStartedAt = now + startDelay;
+        activeFeedSeconds = 0;
+        wasFeeding = false;
         stableSince = feedingSince = Double.NaN;
         finished = false;
         started = true;
@@ -92,8 +108,10 @@ public final class PollenSequence {
         if (finished) return terminal();
         if (!started) return new Output("READY - waiting for START");
         if (!Double.isFinite(now) || now < previousTime) return stop("INVALID CLOCK");
+        double elapsedSinceTick = now - previousTime;
         previousTime = now;
         if (now - startedAt >= deadline) return stop("TIME LIMIT - STOPPED");
+        if (now - startedAt < startDelay) return new Output("START DELAY");
         Step step = steps[index];
         Output out = new Output(step.name);
         if (!step.shoot) {
@@ -106,20 +124,32 @@ public final class PollenSequence {
 
         out.phase = "SPINUP";
         out.launcherVelocity = targetVelocity;
+        // Count the time for which the preceding loop actually requested feeding.
+        // This measures commands, not balls or verified physical feeder motion.
+        if (wasFeeding) activeFeedSeconds += elapsedSinceTick;
+        wasFeeding = false;
+        out.activeFeedSeconds = activeFeedSeconds;
         boolean ready = Double.isFinite(measuredVelocity) && measuredVelocity >= minVelocity;
+        if (!ready) stableSince = Double.NaN;
+        else if (Double.isNaN(stableSince)) stableSince = now;
+        boolean stable = ready && now - stableSince >= stableTime;
+
         if (Double.isNaN(feedingSince)) {
             if (now - stepStartedAt >= spinupTimeout) {
                 warning = "Launcher not ready: shot skipped; continuing route";
                 return advance(now);
             }
-            if (!ready) stableSince = Double.NaN;
-            else if (Double.isNaN(stableSince)) stableSince = now;
-            else if (now - stableSince >= stableTime) feedingSince = now;
+            if (stable) feedingSince = now;
         }
         if (!Double.isNaN(feedingSince)) {
-            if (now - feedingSince >= step.seconds) return advance(now);
-            out.phase = ready ? "FEED" : "FEED PAUSED - low launcher speed";
-            out.feederPower = ready ? 1 : 0;
+            if (activeFeedSeconds >= step.seconds) return advance(now);
+            if (now - feedingSince >= step.maxFeedWindow) {
+                warning = "Feed recovery timeout: shot incomplete; continuing route";
+                return advance(now);
+            }
+            out.phase = stable ? "FEED" : "FEED PAUSED - waiting for stable speed";
+            out.feederPower = stable ? 1 : 0;
+            wasFeeding = stable;
         }
         return out;
     }
@@ -128,6 +158,8 @@ public final class PollenSequence {
         index++;
         stepStartedAt = now;
         stableSince = feedingSince = Double.NaN;
+        activeFeedSeconds = 0;
+        wasFeeding = false;
         if (index == steps.length) return stop("DONE - all outputs zero");
         return new Output("NEXT: " + steps[index].name); // Zero outputs between steps.
     }

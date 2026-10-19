@@ -121,10 +121,10 @@ the physical wheel layout and direction configuration match the assumed layout.
 | --- | --- | --- | --- |
 | Basic driving | Timed movement | Timed movement | Keep the first routine simple. |
 | Execution | `LinearOpMode`; a method waits for its action to finish before returning | Iterative `OpMode`; each loop checks the current action and time | Run the same decision logic on a computer or a hub. |
-| Selection | `MecanumOpMode` is `@TeleOp`; the PS/Home button cycles through modes during INIT | Separate `@Autonomous` entries for park, shoot, and bench tests | Make each choice visible directly in the autonomous list; no gamepad needed for selection. |
-| Hardware initialization | The OpMode initializes drivetrain, launcher, and camera | Park needs drivetrain only; bench modes look up no hardware | Test parts independently, including without motors. |
+| Selection | `MecanumOpMode` is `@TeleOp`; the PS/Home button cycles through modes during INIT | Separate `@Autonomous` entries for park and shoot; bench entries hidden by default | Make each choice visible directly in the autonomous list; no gamepad needed for selection. |
+| Hardware initialization | The OpMode initializes drivetrain, launcher, and camera | Park needs drivetrain only; shooting INIT can fall back to park; bench maps no hardware | Test parts independently, including without motors. |
 | Shooting mechanism | `flywheel`, angle `servo`, and `coreHex` feeder | StarterBot `launcher`, `windmillServo`, and intake devices | Match the StarterBot mechanism rather than the older launcher. |
-| Shooting timing | One overall timed shooting window | Separate bounded spinup and feeding windows | Make readiness and timeout behavior explicit. |
+| Shooting timing | One overall timed shooting window | Bounded spinup, active-feed target, and recovery timeout | Make readiness and timeout behavior explicit. |
 | Route editing | Change method calls in `Auto.java` | Change step lists in `PollenConfig.java` | Keep the route and tuning values together. |
 
 The existing timed driving and shooting methods already check
@@ -146,26 +146,51 @@ not a requirement imposed by FTC.
    second, taken from the starter example and still needing robot validation.
 4. If speed does not qualify within four seconds, the launcher is stopped,
    a warning is shown, and the routine continues to its parking leg.
-5. Once feeding starts, a two-second feeding window runs. Feeding pauses whenever
-   speed is too low; that pause does not extend the window.
+5. Once feeding starts, count two seconds of commanded feeding. Low or invalid
+   speed pauses feeding; speed must stabilize again before resuming. Pauses do
+   not spend the active-feed allowance, but a separate six-second wall-clock
+   window limits the total time after feeding first begins. On expiry, report
+   an incomplete shot and continue to parking.
 6. Launcher and feeder commands return to zero before movement to parking.
 
-`Step.shoot(2.0)` means a two-second feeding window after successful spinup,
-not two projectiles and not two seconds for the whole shooting operation.
+`Step.shoot(2.0, 6.0)` requests two seconds of active feeding, with at most six
+seconds elapsed after feeding first starts. Spinup has its own four-second
+timeout. These values do not specify a projectile count. Timing is sampled each
+loop and counts the preceding feeder command, not measured feeder motion.
 There is no projectile counter, automatic aiming, or confirmation of a scored shot.
 The route also has a 27-second command cutoff; it stops output, but cannot
 guarantee parking after a delay or failure. This is a local guard, not a statement
 of game rules.
 
+## Why fallback only during INIT?
+
+If shooter initialization throws, the code tries to stop every mapped shooter
+motor and servo. When those commands succeed, it selects the park-only route
+and displays the reason. Drive initialization failure or a failed shooter stop
+blocks the run. Both routes must share the same starting pose.
+
+After movement starts, a hardware exception stops the routine. Switching to the
+original park-only route at that point would assume the robot was still at its
+starting position. A normal spinup/recovery timeout instead continues the
+shooting route's own parking leg from the shooting position.
+
+Some hub failures do not throw an exception, or prevent the SDK from starting
+an OpMode. The fallback is not a substitute for checking hub connectivity.
+
 ## What are the BENCH modes?
 
 | Driver Hub choice | What it exercises |
 | --- | --- |
-| `Pollen BENCH Park` | Movement/hold/completion sequence with displayed commands only. |
-| `Pollen BENCH Shoot` | Shooting sequence with simulated launcher speed. |
-| `Pollen BENCH Timeout` | Launcher stays at simulated zero speed; verify no feeding and continuation to parking. |
-| `Pollen ROBOT Park` | Actual drivetrain commands, once enabled. |
-| `Pollen ROBOT Shoot` | Actual drivetrain and StarterBot mechanism commands, once enabled. |
+| `Pollen BENCH Park` (disabled) | Movement/hold/completion sequence with displayed commands only. |
+| `Pollen BENCH Shoot` (disabled) | Shooting sequence with simulated launcher speed. |
+| `Pollen BENCH Timeout` (disabled) | Launcher stays at simulated zero speed; verify no feeding and continuation to parking. |
+| `Pollen ROBOT Park` | Actual drivetrain commands after START. |
+| `Pollen ROBOT Shoot` | Actual drivetrain and StarterBot mechanism commands after START. |
+
+BENCH classes carry `@Disabled` so they cannot be selected accidentally in a
+match. Temporarily remove it for bench tests, then restore it and redeploy.
+ROBOT modes have no compile-time enable locks and preselect `BioBuzz StarterBot`
+for TeleOp.
 
 Bench and robot modes use the same `PollenSequence` logic. Bench modes do not
 call `hardwareMap.get` or send motor/servo commands. Their numbers on screen are
@@ -180,7 +205,7 @@ All new Java files are under
 
 | File | Role | Usually edited when |
 | --- | --- | --- |
-| `PollenConfig.java` | Names, directions, enabling flags, launcher settings, and both route lists | Calibrating the robot and route. Start here. |
+| `PollenConfig.java` | Names, directions, start delay, launcher settings, and both route lists | Calibrating the robot and route. Start here. |
 | `PollenSequence.java` | Decide which action is active and what commands it requests | Changing sequence behavior. |
 | `PollenAutoBase.java` | Connect the sequencer to FTC hardware or simulated telemetry | Adapting the mechanism or hardware interface. |
 | `PollenBench*.java` and `PollenRobot*.java` | Small classes that register Driver Hub choices | Adding or changing selectable modes. |
@@ -211,6 +236,22 @@ so it needs its own calibration.
 
 The supplied software has computer tests and can be built before practice;
 those checks do not establish that the robot drives, parks, or scores correctly.
+
+## Improvements to evaluate after calibration
+
+- **Pre-spin:** may save some approach/spinup time per shooting step, not per ball.
+  Verify the launcher can run safely during approach before adding overlap.
+- **Alliance mirroring:** negating strafe and turn assumes reflected starting
+  poses/headings and equivalent paths. Test both field routes before registering
+  red/blue choices; a color label alone does not establish a valid route.
+- **Voltage compensation:** a raw `12 / voltage` multiplier is not a distance
+  controller. It needs valid sensor readings, bounded powers, and tests across
+  battery states. Keep the baseline unchanged until drift is measured.
+- **Acceleration ramps:** can reduce slip at higher power but change travel for
+  every timed leg. Add and recalibrate together if testing demonstrates a need.
+- **Odometry:** reuse ideas from the existing Pinpoint/Pedro work, but verify
+  hardware, pod offsets, direction conventions, and tuning for this robot.
+  Constants for another robot do not establish localization on this chassis.
 
 ## FTC reference
 
