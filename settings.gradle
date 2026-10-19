@@ -6,12 +6,5 @@ pluginManagement {
     }
 }
 
-dependencyResolutionManagement {
-    versionCatalogs {
-        build {
-            from files('gradle/build.versions.toml')
-        }
-    }
-}
 include ':FtcRobotController'
 include ':TeamCode'

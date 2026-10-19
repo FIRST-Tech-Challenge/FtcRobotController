@@ -38,14 +38,14 @@ public class DriverAssistOpMode extends LinearOpMode {
 
     private static final double STICK_D = 0.05; // ignore tiny stick drift
 
-    // shooter numbers. these are just starting guesses, test them with the bot on blocks
-    private static final double IN_PWR = 1.0;
-    private static final double FW_PWR = 0.85;  // change this till the shots land
+    private static final double IN_PWR = .75;
+    private static final double FWL_PWR = 0.6;
+    private static final double FWR_PWR = 0.45;
     private static final double SPIN_S = 1.5;   // gate stays shut this long after the flywheel starts
-    private static final double G_SHUT = 0.0;   // gate position that blocks the balls
-    private static final double G_OPEN = 0.5;   // gate position that lets them through
+    private static final double G_SHUT = 0.01;   // gate position that lets them through
+    private static final double G_OPEN = 0.5;   // gate position that blocks the balls
 
-    private Servo gate;
+    private Servo intakeGate, funnelL, funnelR, armL, armR;
     private DcMotor fL, fR, bL, bR, fwL, fwR, intake;
 
     @Override
@@ -58,18 +58,24 @@ public class DriverAssistOpMode extends LinearOpMode {
         fwL = hardwareMap.get(DcMotor.class, "fwL");
         fwR = hardwareMap.get(DcMotor.class, "fwR");
         intake = hardwareMap.get(DcMotor.class, "intake");
-        gate = hardwareMap.get(Servo.class, "intakeGate");
-        gate.setPosition(G_SHUT); // starts shut so no balls sneak into the flywheel
+        intakeGate = hardwareMap.get(Servo.class, "intakeGate");
+        funnelL = hardwareMap.get(Servo.class, "funnelL");
+        funnelR = hardwareMap.get(Servo.class, "funnelR");
+        armL = hardwareMap.get(Servo.class, "armL");
+        armR = hardwareMap.get(Servo.class, "armR");
 
-        // left side is flipped so positive power means forward on every wheel
+        intakeGate.setPosition(G_SHUT); // starts shut so no balls sneak into the flywheel
+        funnelL.setPosition(0);
+        funnelR.setPosition(0.01);
+        armL.setPosition(0);
+        armR.setPosition(0);
+
         fL.setDirection(DcMotor.Direction.REVERSE);
         bL.setDirection(DcMotor.Direction.REVERSE);
 
-        // the two flywheel motors face opposite ways, so flip the right one.
-        // now + power spins BOTH forward and every setPower below can use the same number
         fwR.setDirection(DcMotor.Direction.REVERSE);
+        fwL.setDirection(DcMotor.Direction.REVERSE);
 
-        // brake on purpose so stopping never depends on whatever the default is
         fL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -87,21 +93,19 @@ public class DriverAssistOpMode extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime();
 
         boolean fwOn = false;
-        boolean lastUp = false; // so one press flips the flywheel once, not every loop
+        boolean lastUp = false;
         ElapsedTime fwTimer = new ElapsedTime();
 
         waitForStart();
         timer.reset();
 
         while (opModeIsActive()) {
-            // how long the last loop took
             double dt = timer.seconds();
             timer.reset();
             if (dt <= 0) {
                 dt = 0.02;
             }
 
-            // where are we right now
             loc.update();
             Pose pose = loc.getPose();
 
@@ -119,7 +123,6 @@ public class DriverAssistOpMode extends LinearOpMode {
                 assist.release();
             }
 
-            // hold right trigger to drive to the scoring spot
             boolean macroBtn = gamepad1.right_trigger > 0.5;
 
             if (macroBtn && !macroOn) {
@@ -154,15 +157,15 @@ public class DriverAssistOpMode extends LinearOpMode {
                 }
             }
             lastUp = upNow;
-            fwL.setPower(fwOn ? FW_PWR : 0);
-            fwR.setPower(fwOn ? FW_PWR : 0);
+            fwL.setPower(fwOn ? FWL_PWR : 0);
+            fwR.setPower(fwOn ? FWR_PWR : 0);
 
             // gate only opens if d-pad right is held AND the flywheel had time to spin up
             // (holding it too early does nothing, so a ball can't hit a flywheel that isn't ready)
             boolean fwReady = fwOn && fwTimer.seconds() >= SPIN_S;
             boolean feedBtn = gamepad1.dpad_right;
             boolean feeding = feedBtn && fwReady;
-            gate.setPosition(feeding ? G_OPEN : G_SHUT);
+            intakeGate.setPosition(feeding ? G_OPEN : G_SHUT);
 
             // intake: left trigger in, d-pad left out. feeding forces it in so the balls actually reach the gate
             double inPwr = 0;
@@ -190,7 +193,7 @@ public class DriverAssistOpMode extends LinearOpMode {
         fwL.setPower(0);
         fwR.setPower(0);
         intake.setPower(0);
-        gate.setPosition(G_SHUT);
+        intakeGate.setPosition(G_SHUT);
     }
 
     // kills the little bit of stick drift
