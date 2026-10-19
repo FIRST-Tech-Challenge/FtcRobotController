@@ -115,6 +115,7 @@ public class RockinBot {
 
         intake = o.hardwareMap.get(DcMotorEx.class, "intake");
         intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        intake.setDirection(DcMotor.Direction.REVERSE);
 
         shooter = o.hardwareMap.get(DcMotorEx.class, "shooter");
         shooter.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
