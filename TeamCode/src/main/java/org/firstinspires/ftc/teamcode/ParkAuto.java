@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name="Forward 20cm Right 20cm", group="Robot") // todo: change the name that shows up on the driver station
+@Autonomous(name="Park Auto", group="Robot")
 public class ParkAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
