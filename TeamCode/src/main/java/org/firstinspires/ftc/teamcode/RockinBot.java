@@ -66,11 +66,11 @@ public class RockinBot {
         o = opMode;
         o.telemetry.addData("Version", "v20261013-03");
         o.telemetry.update();
-        initializeDrivingVar();
+        initializeVars();
     }
 
     // Allow driving and braking
-    public void initializeDrivingVar() {
+    public void initializeVars() {
         // Wheel variables
         leftFrontDrive = o.hardwareMap.get(DcMotor.class, "left_front_drive");
         leftBackDrive = o.hardwareMap.get(DcMotor.class, "left_back_drive");
@@ -107,12 +107,6 @@ public class RockinBot {
         odo.resetPosAndIMU();
         odo.update();
 
-        // limelight = o.hardwareMap.get(Limelight3A.class, "limelight");
-        // limelight.pipelineSwitch(0);
-        // RevHubOrientationOnRobot revHubOrientationOnRobot = new RevHubOrientationOnRobot(
-        //         RevHubOrientationOnRobot.LogoFacingDirection.UP,
-        //         RevHubOrientationOnRobot.UsbFacingDirection.RIGHT);
-
         intake = o.hardwareMap.get(DcMotorEx.class, "intake");
         intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         intake.setDirection(DcMotor.Direction.REVERSE);
@@ -128,6 +122,12 @@ public class RockinBot {
         trigger.setDirection(DcMotor.Direction.REVERSE);
 
         lumberjack = o.hardwareMap.get(Servo.class, "lumberjack");
+
+        // limelight = o.hardwareMap.get(Limelight3A.class, "limelight");
+        // limelight.pipelineSwitch(0);
+        // RevHubOrientationOnRobot revHubOrientationOnRobot = new RevHubOrientationOnRobot(
+        //         RevHubOrientationOnRobot.LogoFacingDirection.UP,
+        //         RevHubOrientationOnRobot.UsbFacingDirection.RIGHT);
 
         RobotLog.vv("Rockin' Robots", "Hardware Initialized");
     }
