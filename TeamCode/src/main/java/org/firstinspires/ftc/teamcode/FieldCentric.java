@@ -29,8 +29,8 @@ public class FieldCentric extends OpMode {
 
         follower.manual(powers);
         follower.update();
-        telemetry.addData("gamepad1_left_stick_y","%4.2f, %4.2f", gamepad1.left_stick_y);
-        telemetry.addData("gamepad1_left_stick_x", "%4.2f, %4.2f", gamepad1.left_stick_x);
-        telemetry.addData("gamepad1_right_stick_x","%4.2f, %4.2f", gamepad1.right_stick_x);
+        telemetry.addData("gamepad1_left_stick_y", gamepad1.left_stick_y);
+        telemetry.addData("gamepad1_left_stick_x", gamepad1.left_stick_x);
+        telemetry.addData("gamepad1_right_stick_x", gamepad1.right_stick_x);
         telemetry.update();
     }}
