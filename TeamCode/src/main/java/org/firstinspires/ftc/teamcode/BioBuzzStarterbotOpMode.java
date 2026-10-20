@@ -47,7 +47,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
  * we will also need to adjust the "PIDF" coefficients with some that are a better fit for our application.
  */
 
-@TeleOp(name = "BioBuzz StarterBot")
+@TeleOp(name = "PollenBot")
 //@Disabled
 public class BioBuzzStarterbotOpMode extends OpMode {
 
@@ -58,9 +58,9 @@ public class BioBuzzStarterbotOpMode extends OpMode {
     private DcMotor rightBackDrive = null;
     private DcMotorEx launcher = null;
     private DcMotor intake = null;
+    private DcMotor agitator = null;
     private CRServo leftIntakeServo = null;
     private CRServo rightIntakeServo = null;
-    private CRServo windmillServo = null;
 
 
     /*
@@ -105,11 +105,11 @@ public class BioBuzzStarterbotOpMode extends OpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
         leftBackDrive = hardwareMap.get(DcMotor.class, "backLeft");
         rightBackDrive = hardwareMap.get(DcMotor.class, "backRight");
+        agitator = hardwareMap.get(DcMotor.class, "agitator");
         intake = hardwareMap.get(DcMotor.class, "intake");
-        launcher = hardwareMap.get(DcMotorEx.class, "launcher");
-        windmillServo = hardwareMap.get(CRServo.class, "windmillServo");
-        leftIntakeServo = hardwareMap.get(CRServo.class, "leftIntakeServo");
-        rightIntakeServo = hardwareMap.get(CRServo.class, "rightIntakeServo");
+        launcher = hardwareMap.get(DcMotorEx.class, "pollenLauncher");
+//        leftIntakeServo = hardwareMap.get(CRServo.class, "leftIntakeServo");
+//        rightIntakeServo = hardwareMap.get(CRServo.class, "rightIntakeServo");
 
         /*
          * To drive forward, most robots need the motor on one side to be reversed,
@@ -120,8 +120,10 @@ public class BioBuzzStarterbotOpMode extends OpMode {
          */
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        agitator.setDirection(DcMotor.Direction.REVERSE);
+        launcher.setDirection(DcMotor.Direction.REVERSE);
 
         /*
          * Setting zeroPowerBehavior to BRAKE enables a "brake mode". This causes the motor to
@@ -132,10 +134,11 @@ public class BioBuzzStarterbotOpMode extends OpMode {
         rightFrontDrive.setZeroPowerBehavior(BRAKE);
         leftBackDrive.setZeroPowerBehavior(BRAKE);
         rightBackDrive.setZeroPowerBehavior(BRAKE);
+        agitator.setZeroPowerBehavior(BRAKE);
         intake.setZeroPowerBehavior(BRAKE);
 
         /*
-         * Here we set our launcher to the RUN_USING_ENCODER runmode.
+         * Here we set our launcher to the RUN_USING_ENCODER runmode.dddd
          * If you notice that you have no control over the velocity of the motor, it just jumps
          * right to a number much higher than your set point, make sure that your encoders are plugged
          * into the port right beside the motor itself. And that the motors polarity is consistent
@@ -143,22 +146,19 @@ public class BioBuzzStarterbotOpMode extends OpMode {
          */
 
         launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(40, 0, 0, 12.5));
 
         /*
          * set Feeders to an initial value to initialize the servo controller
          */
-        leftIntakeServo.setPower(0);
-        rightIntakeServo.setPower(0);
-        windmillServo.setPower(0);
+//        leftIntakeServo.setPower(0);
+//        rightIntakeServo.setPower(0);
 
         /*
          * Much like our drivetrain motors, we set the right intake servo to reverse so that both
          * servos work to pull elements into the intake.
          */
-        rightIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
-        windmillServo.setDirection(DcMotorSimple.Direction.REVERSE);
+//        rightIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
 
         /*
          * Tell the driver that initialization is complete.
@@ -221,9 +221,10 @@ public class BioBuzzStarterbotOpMode extends OpMode {
          * variable before we write it to our motor and servos.
          */
 
+        agitator.setPower(intakePower);
         intake.setPower(intakePower);
-        leftIntakeServo.setPower(intakePower);
-        rightIntakeServo.setPower(intakePower);
+//        leftIntakeServo.setPower(intakePower);
+//        rightIntakeServo.setPower(intakePower);
 
         /*
          * Show motor powers on the Driver Station via telemetry.
@@ -288,10 +289,10 @@ public class BioBuzzStarterbotOpMode extends OpMode {
          * inside the hopper.
          */
         if (gamepad1.right_bumper && launcher.getVelocity() > LAUNCHER_MIN_VELOCITY) {
-            windmillServo.setPower(1);
+            //agitator.setPower(1);
             intakePower += 0.5;
         } else {
-            windmillServo.setPower(0);
+            //agitator.setPower(0);
         }
     }
 }
