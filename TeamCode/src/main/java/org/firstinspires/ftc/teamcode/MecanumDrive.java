@@ -14,8 +14,8 @@ public class MecanumDrive {
     private final double WINDUP_LIMIT = 100; // caps integral sum to prevent windup
     private double integralSum = 0;
     private double lastError = 0;
-    private double closeEnoughXY = 20; // prev 1.5
-    private double closeEnoughH = 2.0; // prev = 0.001
+    private double closeEnoughXY = 10; // prev 1.5
+    private double closeEnoughH = 1; // prev = 0.001
     
     private MotorPowerController frontLeft;
     private MotorPowerController frontRight;
@@ -85,7 +85,6 @@ public class MecanumDrive {
         double deltaHeading = targetHeading - currentHeading;
 
          // ignore minor errors to prevent hunting behavior
-         // TODO test and fix these magic numbers
         if (Math.abs(deltaX) < closeEnoughXY) {
             deltaX = 0;
         }
