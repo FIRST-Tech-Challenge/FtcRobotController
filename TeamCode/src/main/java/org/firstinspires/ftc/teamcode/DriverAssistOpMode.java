@@ -38,9 +38,9 @@ public class DriverAssistOpMode extends LinearOpMode {
 
     private static final double STICK_D = 0.05; // ignore tiny stick drift
 
-    private static final double IN_PWR = .75;
-    private static final double FWL_PWR = 0.6;
-    private static final double FWR_PWR = 0.45;
+    private static final double IN_PWR = .85;
+    private static final double FWL_PWR = 0.65;
+    private static final double FWR_PWR = 0.55;
     private static final double SPIN_S = 1.5;   // gate stays shut this long after the flywheel starts
     private static final double G_SHUT = 0.01;   // gate position that lets them through
     private static final double G_OPEN = 0.5;   // gate position that blocks the balls
@@ -110,10 +110,13 @@ public class DriverAssistOpMode extends LinearOpMode {
             Pose pose = loc.getPose();
 
             // face buttons lock the heading
-            if (gamepad1.y) assist.lockHeading(0);
-            if (gamepad1.b) assist.lockHeading(Math.PI / 2);
-            if (gamepad1.a) assist.lockHeading(Math.PI);
-            if (gamepad1.x) assist.lockHeading(-Math.PI / 2);
+            //if (gamepad1.y) assist.lockHeading(0);
+            if (gamepad1.b) {
+                armL.setPosition(.4);
+                armR.setPosition(.4);
+            }
+            //if (gamepad1.a) assist.lockHeading(Math.PI);
+           // if (gamepad1.x) assist.lockHeading(-Math.PI / 2);
 
             // left bumper snaps to the closest 90, right bumper lets go of the lock
             if (gamepad1.left_bumper) {
