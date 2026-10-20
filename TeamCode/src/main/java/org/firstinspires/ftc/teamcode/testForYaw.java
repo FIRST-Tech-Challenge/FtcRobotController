@@ -16,8 +16,10 @@ public class testForYaw extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
+        IMU imu = hardwareMap.get(IMU.class, "imu");
         while (opModeInInit()){
+
+
             IMU.Parameters myIMUparameters;
 
             myIMUparameters = new IMU.Parameters(
@@ -29,19 +31,21 @@ public class testForYaw extends LinearOpMode {
             imu.initialize(myIMUparameters);
         }
         waitForStart();
-            if (opModeIsActive()) {
-                while (opModeIsActive()) {
-                    // Create Orientation variable
-                    Orientation myRobotOrientation;
+        if (opModeIsActive()) {
+            while (opModeIsActive()) {
+                // Create Orientation variable
+                Orientation myRobotOrientation;
 
-// Get Robot Orientation
-                    myRobotOrientation = imu.getRobotOrientation(
-                            AxesReference.INTRINSIC,
-                            AxesOrder.XYZ,
-                            AngleUnit.DEGREES
-                    );
-                }
+                // Get Robot Orientation
+                myRobotOrientation = imu.getRobotOrientation(
+                        AxesReference.INTRINSIC,
+                        AxesOrder.XYZ,
+                        AngleUnit.DEGREES
+                );
+                telemetry.addData("Values: ", myRobotOrientation);
+            }
         }
+
     }
 
 }
