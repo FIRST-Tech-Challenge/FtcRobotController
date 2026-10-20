@@ -7,7 +7,9 @@ public final class PollenConfig {
     // Team's BioBuzzStarterbotOpMode mapping (not the download's underscore names).
     public static final String[] DRIVE_NAMES = {"frontLeft", "frontRight", "backLeft", "backRight"};
     // PROVISIONAL: matches the new StarterBot TeleOp. Other repo classes disagree.
-    public static final boolean[] DRIVE_REVERSED = {true, false, true, false};
+    public static final boolean[] DRIVE_REVERSED = {
+            true, false, false, true
+    };
 
     // Launcher values from goBILDA 3200-2627-0004 / BioBuzzStarterbotOpMode (MIT).
     // NOT a verified scoring distance for the team's robot.
