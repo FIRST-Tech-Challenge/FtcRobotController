@@ -16,13 +16,22 @@ public class BasicTeleop extends OpMode {
     private Localizer loc;
     private State currentState;
     List<PathPoint> list = new ArrayList<PathPoint>(); // each is "x" , "y" , "h" and is where the robot should move
+    List<PathPoint> startLocs = new ArrayList<PathPoint>();
     int occ; // New Variable for which occurence in the List<String> the robot should move to.
     private PathPoint goTo;
     private final int BASETIMELIM; // The base time limit in miliseconds for PathPoint until the robot moves to the next location requested to go
+    private final int SIDEON; // 0 = red team 1 = blue team
+    private final int STARTON;
+    
     
     private enum State {
         STOP,
-        FOLLOWPATH
+        FOLLOWPATH,
+        OBSERVEBALL,
+        MOVETOBALL,
+        CAPTUREBALL,
+        MOVETOBUCKET,
+        SHOOTBALL
     }
     
     // Code to run ONCE when the driver hits INIT
@@ -33,8 +42,8 @@ public class BasicTeleop extends OpMode {
         drive = new MecanumDrive(hardwareMap, loc);
         currentState = State.STOP;
         occ = 0;
-        AddPaths();
-        BASETIMELIM = 2000;
+        addPaths();
+        BASETIMELIM = 2000; // 2 seconds
         
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Init OK");
@@ -43,6 +52,25 @@ public class BasicTeleop extends OpMode {
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit START
     @Override
     public void init_loop() {
+        while(SIDEON = null){
+            if (gamepad1.b){
+                giveStartLocs(0);
+                SIDEON = 0;
+            }
+            if (gamepad1.x){
+                giveStartLocs(1);
+                SIDEON = 1;
+            }
+        }
+        // TODO create location method where the robot knows where it starts on a cordinate field in MM
+        if (gamepad1.dpad_up){
+            // STARTON = 0;
+            // loc.startAt.startLocs.get(STARTON).giveX();
+        }
+        if (gamepad1.dpad_down){
+            //STARTON = 1;
+            //loc.startAt.startLocs.get(STARTON).giveX();
+        }
     }
 
     //Code to run ONCE when the driver hits START
@@ -59,6 +87,7 @@ public class BasicTeleop extends OpMode {
         loc.update();
         Pose2D currentLoc = loc.getPosition();
         telemetry.addData("Current: ", currentLoc);
+        telemetry.addData("\nCurrent State: ", currentState);
         double x = gamepad1.left_stick_y;   // gamepad 'up' (+y) is robot +X
         double y = -gamepad1.left_stick_x;  // gamepad 'left' (-x) is robot +y
         double r = -gamepad1.right_stick_x; // gamepad 'left' (-x) is positive rotation
@@ -72,24 +101,14 @@ public class BasicTeleop extends OpMode {
             drive.move(x, y, r);
         }
         if (currentState == State.FOLLOWPATH){
-            if((drive.moveTo(list.get(occ).giveX() , list.get(occ).giveY() , list.get(occ).giveH())) && ((occ+1) < list.size())){ //&& ((occ+3) < list.size()-1)
+            if((drive.moveTo(list.get(occ).giveX() , list.get(occ).giveY() , list.get(occ).giveH())) && ((occ+1) < list.size()) || (clock.milliseconds() >= list.get(occ).giveTimeLim()) && ((occ+1) < list.size())){ 
                clock.reset();
                occ++;
-            }else if((clock.milliseconds() >= list.get(occ).giveTimeLim()) && ((occ+1) < list.size())){
-                clock.reset();
-                occ++;
-
-            }else if ((clock.milliseconds() >= list.get(occ).giveTimeLim()) && (occ == list.size()-1)){
+            }else if ((clock.milliseconds() >= list.get(occ).giveTimeLim()) && (occ == list.size()-1) || (drive.moveTo(list.get(occ).giveX() , list.get(occ).giveY() , list.get(occ).giveH()) && (occ == list.size()-1))){
                 clock.reset();
                 occ = 0;
                 currentState = State.STOP;
             }
-            else if (drive.moveTo(list.get(occ).giveX() , list.get(occ).giveY() , list.get(occ).giveH()) && (occ == list.size()-1)){
-                clock.reset();
-                occ = 0;
-                currentState = State.STOP;
-            }
-
             drive.moveTo(list.get(occ).giveX() , list.get(occ).giveY() , list.get(occ).giveH());
             if(gamepad1.x) {
                 clock.reset();
@@ -110,7 +129,7 @@ public class BasicTeleop extends OpMode {
 
 
     // Adds different locations for robot to attempt to go to, may not be needed for competition
-    public void AddPaths() {
+    public void addPaths() {
         goTo =  new PathPoint(0,100,0,BASETIMELIM);
         list.add(goTo);
         goTo = new PathPoint(100,0,0,BASETIMELIM);
@@ -119,6 +138,21 @@ public class BasicTeleop extends OpMode {
         list.add(goTo);
         goTo = new PathPoint(-100,0,0,BASETIMELIM);
         list.add(goTo);
+    }
+
+    // TODO improve loc system to tell robot where it starts 
+    public void giveStartLocs(int side){
+        if (side == 0){
+            goTo = new PathPoint(null,null,null,null);
+            startLocs.add(goTo);
+            goTo = new PathPoint(null,null,null,null);
+            startLocs.add(goTo);
+        }else if (side == 1){
+            goTo = new PathPoint(null,null,null,null);
+            startLocs.add(goTo);
+            goTo = new PathPoint(null,null,null,null);
+            startLocs.add(goTo);
+        }
     }
 
 }

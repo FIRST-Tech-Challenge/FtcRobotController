@@ -6,7 +6,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
 // Creates a destination in X Y Heading(or H) and time to get to location in seconds and returns values when asked
-// TODO add time in seconds to get to location
 public class PathPoint {
 
     private int x;
