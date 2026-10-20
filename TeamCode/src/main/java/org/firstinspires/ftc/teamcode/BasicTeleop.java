@@ -62,8 +62,7 @@ public class BasicTeleop extends OpMode {
                 SIDEON = 1;
             }
         }
-        // TODO create location method where the robot knows where it starts on a cordinate field in MM
-        if (gamepad1.dpad_up){
+                if (gamepad1.dpad_up){
             // STARTON = 0;
             // loc.startAt.startLocs.get(STARTON).giveX();
         }
@@ -116,17 +115,14 @@ public class BasicTeleop extends OpMode {
                 currentState = State.STOP;
             }
         }
-        // set actuators here
-        // drive.move(x, y, r); moved under State.STOP
-        
     }
 
     // Code to run ONCE after the driver hits STOP
     // Use to set safe shutdown position if needed, but keep it quick
     @Override
     public void stop() {
+    
     }
-
 
     // Adds different locations for robot to attempt to go to, may not be needed for competition
     public void addPaths() {
@@ -140,7 +136,6 @@ public class BasicTeleop extends OpMode {
         list.add(goTo);
     }
 
-    // TODO improve loc system to tell robot where it starts 
     public void giveStartLocs(int side){
         if (side == 0){
             goTo = new PathPoint(null,null,null,null);
@@ -156,22 +151,3 @@ public class BasicTeleop extends OpMode {
     }
 
 }
-
-
-
-
-/**
- * int occ = 2; // at Start not in method loop
- * 
- *      if((drive.moveTo(Integer.parseInt(list.get(occ-2)) , Integer.parseInt(list.get(occ-1)) , Integer.parseInt(list.get(occ)))) && ((occ+2) < list.size()-1)){
- *              occ+=2;
- *       } else if (drive.moveTo(Integer.parseInt(list.get(occ-2)) , Integer.parseInt(list.get(occ-1)) , Integer.parseInt(list.get(occ))) && (occ == list.size()-1)){
- *              currentState = State.STOP;
- *       }
- *      drive.moveTo(Integer.parseInt(list.get(occ-2)) , Integer.parseInt(list.get(occ-1)) , Integer.parseInt.list.get((occ)));
- * 
- * 
- * Integer.parseInt()
- * 
- * 
- */
