@@ -162,6 +162,23 @@ The route also has a 27-second command cutoff; it stops output, but cannot
 guarantee parking after a delay or failure. This is a local guard, not a statement
 of game rules.
 
+## One parking routine, two physical starting placements
+
+The robot does not need to know which end of the loading zone it approaches.
+Humans place and angle it at one of two measured starts. Both use the same
+`PARK_FORWARD_POWER` and `PARK_FORWARD_SECONDS`, followed by a zero-output hold.
+These are timed commands, not measured-distance control.
+
+During INIT, Gamepad 1 D-pad up/down changes only the starting delay, in
+half-second increments. `PollenStartDelay` ignores held-button repeats, bounds
+the delay by the route budget (at most 20 seconds), and locks on START. A fresh
+INIT returns to the configured default. Neither heading nor motor signs change.
+The shooting modes retain their separate route and configured delay.
+
+Coordinate the partner's full path, timing, and finishing footprint. A delay
+can separate a crossing in time; it cannot make an occupied starting or parking
+position compatible. The program does not sense the partner or guarantee clearance.
+
 ## Why fallback only during INIT?
 
 If shooter initialization throws, the code tries to stop every mapped shooter
@@ -206,6 +223,7 @@ All new Java files are under
 | File | Role | Usually edited when |
 | --- | --- | --- |
 | `PollenConfig.java` | Names, directions, start delay, launcher settings, and both route lists | Calibrating the robot and route. Start here. |
+| `PollenStartDelay.java` | INIT delay selection and locking | Changing driver controls. |
 | `PollenSequence.java` | Decide which action is active and what commands it requests | Changing sequence behavior. |
 | `PollenAutoBase.java` | Connect the sequencer to FTC hardware or simulated telemetry | Adapting the mechanism or hardware interface. |
 | `PollenBench*.java` and `PollenRobot*.java` | Small classes that register Driver Hub choices | Adding or changing selectable modes. |

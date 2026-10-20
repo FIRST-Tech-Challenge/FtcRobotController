@@ -3,7 +3,7 @@
 Two ROBOT modes execute timed example routes: park, or shoot then park. **They
 command real hardware on START; there are no compile-time enable flags.** The
 routes are not calibrated field paths. Establish an exact start, heading, and
-finish on the physical robot before competition use. Build telemetry: `pollen-prep-v2`.
+finish on the physical robot before competition use. Build telemetry: `pollen-prep-v3`.
 For the design and comparison with existing team code, see
 [POLLEN_AUTONOMOUS_EXPLAINED.md](POLLEN_AUTONOMOUS_EXPLAINED.md).
 
@@ -57,6 +57,33 @@ START runs, DONE zeros requests, and STOP interrupts driving/spinup/feeding.
 **Restore `@Disabled`, rebuild, and install the final app before competition.**
 Bench telemetry is simulated; it proves neither wiring nor physical stopping.
 
+## Select the parking delay without rebuilding
+
+Use `Pollen ROBOT Park` (or temporarily enabled `Pollen BENCH Park`). Connect a
+controller to the Driver Hub and assign it as **Gamepad 1**. After INIT:
+
+- Tap D-pad UP to add 0.5 seconds; DOWN to subtract 0.5 seconds.
+- Release between presses. Holding a direction does not repeat the change.
+- Telemetry shows the delay and maximum. It cannot exceed 20 seconds and is
+  reduced automatically if the route needs more of the 27-second budget.
+- START freezes the delay, waits with zero outputs, executes the same forward
+  movement and hold, then remains stopped. Gamepad input cannot change it after START.
+- STOP interrupts the delay or movement. A fresh INIT resets to the configured
+  `START_DELAY_SECONDS` default (normally zero); it does not remember the last match.
+- Without a controller, the configured default still works.
+
+There is no position, angle, or alliance selector. Humans select and reproduce
+one of the calibrated physical starts and coordinate the entire route with the
+partner. The bot performs the same forward movement from either placement.
+`PARK_FORWARD_SECONDS` and `PARK_FORWARD_POWER` are the shared calibration values;
+the supplied 0.75 seconds / 0.20 power is still an example, not an 11-inch guarantee.
+The shooting OpModes retain their configured delay and separate route.
+
+Hub-only check: in BENCH Park select 2.0 seconds, START, and verify zero requests
+for the delay, then the usual forward/hold/DONE sequence. Repeat with STOP during
+the delay; re-INIT and verify the default returns. Check input locking on the
+motorless bench setup only, not by touching controls during a competition AUTO.
+
 ## Device table
 
 Names must match the active Robot Controller configuration exactly. Java looks
@@ -101,8 +128,9 @@ verify them against this robot, not another robot's helper classes.
    use the SAME initial pose so the INIT-time fallback is valid. The example
    reverse leg returns toward the start; it is not a proven scoring park.
 8. Coordinate paths, final footprints, and arrival order with the alliance partner.
-   Set `START_DELAY_SECONDS` if needed, rebuild, and retest. It is included in the
-   route's worst-case budget. No automatic alliance mirroring is implemented.
+   Select the Park delay during INIT and retest the coordinated sequence. The
+   selected wait is included in the route budget. No software mirroring is needed
+   for the same forward command from manually mirrored starts.
 9. Verify STOP during motion, spinup, and feeding. Keep the validated park-only
    option available. Hide BENCH modes and verify the exact deployed menu before use.
 

@@ -44,6 +44,8 @@ public abstract class PollenAutoBase extends OpMode {
     private CRServo windmill, leftIntake, rightIntake;
     private final ElapsedTime clock = new ElapsedTime();
     private PollenSequence sequence;
+    private PollenSequence.Step[] route;
+    private PollenStartDelay startDelay;
     private String blocked;
     private String fallback;
     private boolean activeShoot;
@@ -52,6 +54,8 @@ public abstract class PollenAutoBase extends OpMode {
 
     @Override public final void init() {
         blocked = fallback = null;
+        startDelay = null;
+        sequence = null;
         activeShoot = shoot();
         try {
             if (!bench()) {
@@ -69,15 +73,36 @@ public abstract class PollenAutoBase extends OpMode {
                     }
                 }
             }
-            sequence = new PollenSequence(activeShoot ? PollenConfig.shootRoute() : PollenConfig.parkRoute(),
-                    PollenConfig.LAUNCHER_TARGET, PollenConfig.LAUNCHER_MIN,
-                    PollenConfig.SPINUP_TIMEOUT, PollenConfig.SPEED_STABLE_TIME,
-                    PollenConfig.TOTAL_TIME_LIMIT, PollenConfig.START_DELAY_SECONDS);
+            route = activeShoot ? PollenConfig.shootRoute() : PollenConfig.parkRoute();
+            // Park has a selectable delay. Shoot retains its configured route and delay.
+            if (!shoot()) {
+                startDelay = new PollenStartDelay(PollenConfig.START_DELAY_SECONDS,
+                        PollenSequence.worstCaseDuration(route, PollenConfig.SPINUP_TIMEOUT),
+                        PollenConfig.TOTAL_TIME_LIMIT);
+            }
+            sequence = newSequence(selectedDelay());
         } catch (RuntimeException ex) {
             blocked = ex.getMessage() == null ? ex.toString() : ex.getMessage();
             zeroHardware();
         }
         init_loop();
+    }
+
+    private double selectedDelay() {
+        return startDelay == null ? PollenConfig.START_DELAY_SECONDS : startDelay.delaySeconds();
+    }
+
+    private PollenSequence newSequence(double delay) {
+        return new PollenSequence(route, PollenConfig.LAUNCHER_TARGET, PollenConfig.LAUNCHER_MIN,
+                PollenConfig.SPINUP_TIMEOUT, PollenConfig.SPEED_STABLE_TIME,
+                PollenConfig.TOTAL_TIME_LIMIT, delay);
+    }
+
+    private void showDelay() {
+        if (startDelay == null) return;
+        telemetry.addData("Start delay / maximum", "%.1f / %.1f seconds",
+                startDelay.delaySeconds(), startDelay.maximumDelaySeconds());
+        telemetry.addData("Selection", startDelay.locked() ? "LOCKED" : "Adjust on Gamepad 1 before START");
     }
 
     private void mapDrive() {
@@ -115,10 +140,18 @@ public abstract class PollenAutoBase extends OpMode {
     }
 
     @Override public final void init_loop() {
-        telemetry.addData("Build", "pollen-prep-v2");
+        if (startDelay != null && gamepad1 != null) {
+            startDelay.update(gamepad1.dpad_up, gamepad1.dpad_down);
+        }
+        telemetry.addData("Build", "pollen-prep-v3");
         telemetry.addData("Mode", bench() ? "BENCH - NO HARDWARE COMMANDS" : "ROBOT TEST");
         telemetry.addData("Active route", activeShoot ? "move / shoot / park" : "move / park");
-        telemetry.addData("Start delay seconds", PollenConfig.START_DELAY_SECONDS);
+        telemetry.addData("Start delay seconds", selectedDelay());
+        showDelay();
+        if (startDelay != null && !startDelay.locked()) {
+            telemetry.addData("D-pad", "UP/DOWN=delay +/-0.5s per press");
+            telemetry.addData("Placement", "Set starting position and angle by hand before START.");
+        }
         if (fallback != null) telemetry.addData("FALLBACK", fallback);
         telemetry.addData("Status", blocked == null ? "READY - waiting for START" : "BLOCKED: " + blocked);
         telemetry.addData("Calibration", "Example route; actual field path still needs tuning");
@@ -129,7 +162,17 @@ public abstract class PollenAutoBase extends OpMode {
         clock.reset();
         simulatedVelocity = 0;
         simulatedSpinupStarted = Double.NaN;
-        if (blocked == null) sequence.start(0);
+        if (startDelay != null) startDelay.lock();
+        if (blocked == null) {
+            try {
+                sequence = newSequence(selectedDelay()); // Snapshot of INIT selections.
+                sequence.start(0);
+            } catch (RuntimeException ex) {
+                blocked = ex.toString();
+                zeroHardware();
+                requestOpModeStop();
+            }
+        }
     }
 
     @Override public final void loop() {
@@ -158,9 +201,12 @@ public abstract class PollenAutoBase extends OpMode {
                     rightIntake.setPower(0.5 * out.feederPower);
                 }
             }
-            telemetry.addData("Build", "pollen-prep-v2");
+            telemetry.addData("Build", "pollen-prep-v3");
             telemetry.addData("Mode", bench() ? "BENCH - simulated, no hardware commands" : "ROBOT TEST");
+            showDelay();
             telemetry.addData("Phase", out.phase);
+            telemetry.addData("Delay remaining", "%.1f seconds",
+                    out.finished ? 0 : Math.max(0, selectedDelay() - now));
             telemetry.addData("Elapsed seconds", "%.2f", now);
             telemetry.addData("Requested FL FR BL BR", "%.2f %.2f %.2f %.2f",
                     powers[0], powers[1], powers[2], powers[3]);
@@ -182,6 +228,7 @@ public abstract class PollenAutoBase extends OpMode {
     }
 
     @Override public final void stop() {
+        if (startDelay != null) startDelay.lock();
         if (sequence != null) sequence.stop("STOPPED");
         zeroHardware();
     }

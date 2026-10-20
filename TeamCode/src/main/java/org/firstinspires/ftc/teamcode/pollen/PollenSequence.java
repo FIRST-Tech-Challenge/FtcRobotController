@@ -71,11 +71,7 @@ public final class PollenSequence {
                 || !Double.isFinite(startDelay) || startDelay < 0) {
             throw new IllegalArgumentException("Invalid sequence settings");
         }
-        double worstCase = startDelay;
-        for (Step step : steps) {
-            if (step == null) throw new IllegalArgumentException("Null step");
-            worstCase += step.shoot ? spinupTimeout + step.maxFeedWindow : step.seconds;
-        }
+        double worstCase = startDelay + worstCaseDuration(steps, spinupTimeout);
         // Leave room for transition loops; the independent deadline always stops outputs.
         if (worstCase >= deadline - 1) {
             throw new IllegalArgumentException("Route exceeds autonomous time budget");
@@ -87,6 +83,19 @@ public final class PollenSequence {
         this.stableTime = stableTime;
         this.deadline = deadline;
         this.startDelay = startDelay;
+    }
+
+    /** Route wall-clock allowance, excluding start delay and loop-transition reserve. */
+    public static double worstCaseDuration(Step[] steps, double spinupTimeout) {
+        if (steps == null || steps.length == 0 || !Double.isFinite(spinupTimeout) || spinupTimeout <= 0) {
+            throw new IllegalArgumentException("Invalid route budget");
+        }
+        double seconds = 0;
+        for (Step step : steps) {
+            if (step == null) throw new IllegalArgumentException("Null step");
+            seconds += step.shoot ? spinupTimeout + step.maxFeedWindow : step.seconds;
+        }
+        return seconds;
     }
 
     public void start(double now) {

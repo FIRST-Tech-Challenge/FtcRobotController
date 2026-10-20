@@ -17,14 +17,19 @@ public final class PollenConfig {
     public static final double SPEED_STABLE_TIME = 0.25;
     public static final double ACTIVE_FEED_SECONDS = 2.0;
     public static final double MAX_FEED_WINDOW = 6.0; // includes recovery pauses; tune on robot
-    public static final double START_DELAY_SECONDS = 0.0; // coordinate with alliance partner
+    public static final double START_DELAY_SECONDS = 0.0; // default; Park can override during INIT
     public static final double TOTAL_TIME_LIMIT = 27.0; // local guard, not a rule claim
+
+    // Tune these on the actual robot; seconds are NOT a measured distance.
+    // The two manually mirrored start poses use this same forward-only route.
+    public static final double PARK_FORWARD_SECONDS = 0.75;
+    public static final double PARK_FORWARD_POWER = 0.20;
 
     // Short, low-power EXAMPLES for initial testing. Positive = forward/right/clockwise.
     // Replace with the measured route from your chosen start and heading to the park zone.
     public static PollenSequence.Step[] parkRoute() {
         return new PollenSequence.Step[] {
-                PollenSequence.Step.drive("MOVE TO PARK (example)", 0.75, 0.20, 0, 0),
+                PollenSequence.Step.drive("FORWARD TO PARK", PARK_FORWARD_SECONDS, PARK_FORWARD_POWER, 0, 0),
                 PollenSequence.Step.drive("PARK / HOLD", 0.5, 0, 0, 0)
         };
     }
