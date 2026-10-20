@@ -69,8 +69,8 @@ public class Basic_Auto4Blue extends OpMode
     private DcMotor Intake = null;
     private DcMotorEx Outtake = null;
     private CRServo BallKicker = null;
-    private  CRServo IntakeRight = null;
-    private CRServo IntakeLeft = null;
+    //private  CRServo IntakeRight = null;
+    //private CRServo IntakeLeft = null;
     private ElapsedTime autoTimer = new ElapsedTime();
 
 
@@ -96,8 +96,8 @@ public class Basic_Auto4Blue extends OpMode
         backRightDrive = hardwareMap.get(DcMotor.class, "br");
         Intake = hardwareMap.get(DcMotor.class, "Intake");
         Outtake = hardwareMap.get(DcMotorEx.class, "Outtake");
-        IntakeLeft = hardwareMap.get(CRServo.class, "servoIntakeleft");
-        IntakeRight = hardwareMap.get(CRServo.class, "servoIntakeright");
+        //IntakeLeft = hardwareMap.get(CRServo.class, "servoIntakeleft");
+       // IntakeRight = hardwareMap.get(CRServo.class, "servoIntakeright");
         //shootTimer = new Timer();
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -151,7 +151,7 @@ public class Basic_Auto4Blue extends OpMode
         else if (autoTimer.seconds() < 2.72)
         {
             MoveRobot(0,0,0);
-            if (IsFlywheelUpToSpeed() == true)
+            if (IsFlywheelUpToSpeed())
             {
                 Intake.setPower(1);
                 BallKicker.setPower(1);

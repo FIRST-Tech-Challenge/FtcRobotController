@@ -78,7 +78,6 @@ public class BasicTeleop4BasicBot extends OpMode
     private CRServo BallKicker = null;
     private  CRServo IntakeRight = null;
     private CRServo IntakeLeft = null;
-
     private ElapsedTime shootTimer = new ElapsedTime();
 
     boolean isUpToSpeed;
@@ -195,6 +194,8 @@ public class BasicTeleop4BasicBot extends OpMode
         {
             Outtake.setVelocity(0);
         }
+
+
         if (gamepad2.y)
         {
             Intake.setPower(-1);
