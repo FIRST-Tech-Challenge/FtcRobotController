@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 500" width="760" height="500" role="img" aria-labelledby="title desc">
+  <title id="title">One loop of driving: from the stick to the wheels</title>
+  <desc id="desc">Each loop, Drive_Manual first reads gamepad 1: it remembers the sticks and picks a speed limit. Then it acts: MecanumMath turns the sticks and the heading into four wheel powers, they are multiplied by the speed limit, Drive.LimitPower applies Safe Mode, MotorSlewRate smooths the change, and the power goes to the four drive motors.</desc>
+  <style>
+    /* Light theme. Dark theme is at the bottom of this block. */
+    .panel { fill: #ffffff; stroke: #d3dae2; }
+    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; fill: #1b2838; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    .title { font-weight: 700; }
+    .sub { fill: #566475; }
+    .label { font-size: 11.5px; fill: #33475c; }
+    .group { font-size: 10.5px; fill: #566475; letter-spacing: 0.04em; }
+    .heading { font-size: 13px; font-weight: 700; }
+    .accent-text { fill: #8a5a00; font-weight: 600; }
+    .node text, .chip text { text-anchor: middle; }
+    .ours { fill: #e6f0fa; stroke: #2c6aa3; stroke-width: 1.5; }
+    .plain { fill: #f4f6f8; stroke: #8794a3; stroke-width: 1.25; }
+    .sdk { fill: #eceef1; stroke: #6f7c8a; stroke-width: 1.25; }
+    .lib { fill: #eceef1; stroke: #6f7c8a; stroke-width: 1.25; stroke-dasharray: 5 3; }
+    .world { fill: #ffffff; stroke: #1b2838; stroke-width: 1.5; }
+    .key { fill: #ffe7ad; stroke: #b37400; stroke-width: 2; }
+    .frame { fill: none; stroke: #a3afbc; stroke-width: 1.25; stroke-dasharray: 5 4; }
+    .rule { stroke: #a3afbc; stroke-width: 1; }
+    .edge { fill: none; stroke: #33475c; stroke-width: 1.5; stroke-linejoin: round; }
+    .dashed { stroke-dasharray: 5 4; }
+    .accent { stroke: #b37400; stroke-width: 2; }
+    .head { fill: #33475c; }
+    .head-accent { fill: #b37400; }
+    @media (prefers-color-scheme: dark) {
+      .panel { fill: #151b23; stroke: #2a3441; }
+      text { fill: #e4e9ef; }
+      .sub { fill: #9ba8b7; }
+      .label { fill: #c3ccd6; }
+      .group { fill: #9ba8b7; }
+      .accent-text { fill: #f2b23a; }
+      .ours { fill: #1b2f45; stroke: #74aee4; }
+      .plain { fill: #1c232c; stroke: #6b7786; }
+      .sdk { fill: #232a33; stroke: #8f9baa; }
+      .lib { fill: #232a33; stroke: #8f9baa; }
+      .world { fill: #151b23; stroke: #e4e9ef; }
+      .key { fill: #4a3608; stroke: #f2b23a; }
+      .frame { stroke: #4b5868; }
+      .rule { stroke: #4b5868; }
+      .edge { stroke: #c3ccd6; }
+      .accent { stroke: #f2b23a; }
+      .head { fill: #c3ccd6; }
+      .head-accent { fill: #f2b23a; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path class="head" d="M0 0 L10 5 L0 10 z"/>
+    </marker>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="head-accent" d="M0 0 L10 5 L0 10 z"/>
+    </marker>
+  </defs>
+
+  <rect class="panel" x="0.5" y="0.5" width="759" height="499" rx="10"/>
+  <text class="heading mono" x="24" y="40">Drive_Manual, one loop</text>
+  <text class="label" x="24" y="58">Read first. Then act.</text>
+
+  <!-- Inputs -->
+  <g class="node">
+    <rect class="world" x="24" y="150" width="132" height="66" rx="18"/>
+    <text class="title" font-size="13" x="90" y="172.6">Gamepad 1</text>
+    <text class="sub" font-size="11.5" x="90" y="188.0">sticks, triggers,</text>
+    <text class="sub" font-size="11.5" x="90" y="203.0">circle</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="568" y="16" width="168" height="48" rx="8"/>
+    <text class="title mono" font-size="13" x="652" y="37.0">Imu.GetYaw()</text>
+    <text class="sub" font-size="11.5" x="652" y="52.5">heading, in degrees</text>
+  </g>
+
+  <!-- Read -->
+  <rect class="frame" x="184" y="96" width="228" height="176" rx="10"/>
+  <text class="group mono" x="196" y="114">read: HandleUserInput()</text>
+  <g class="node">
+    <rect class="plain" x="198" y="124" width="200" height="52" rx="8"/>
+    <text class="title" font-size="13" x="298" y="147.1">remember the sticks</text>
+    <text class="sub" font-size="11.5" x="298" y="162.5">drive, strafe, rotate</text>
+  </g>
+  <g class="node">
+    <rect class="plain" x="198" y="194" width="200" height="52" rx="8"/>
+    <text class="title" font-size="13" x="298" y="217.1">pick the speed limit</text>
+    <text class="sub" font-size="11.5" x="298" y="232.5">slow 0.25, normal 1, boost 1</text>
+  </g>
+  <path class="edge" d="M156 183 L184 183" marker-end="url(#arrow)"/>
+
+  <!-- Act -->
+  <rect class="frame" x="440" y="96" width="296" height="316" rx="10"/>
+  <text class="group mono" x="452" y="114">act: Process()</text>
+  <g class="node">
+    <rect class="ours" x="456" y="124" width="264" height="52" rx="8"/>
+    <text class="title mono" font-size="13" x="588" y="147.1">MecanumMath.FieldCentric()</text>
+    <text class="sub" font-size="11.5" x="588" y="162.5">four wheel powers</text>
+  </g>
+  <g class="node">
+    <rect class="plain" x="456" y="194" width="264" height="52" rx="8"/>
+    <text class="title" font-size="13" x="588" y="224.6">multiply by the speed limit</text>
+  </g>
+  <g class="node">
+    <rect class="key" x="456" y="264" width="264" height="52" rx="8"/>
+    <text class="title mono" font-size="13" x="588" y="287.1">Drive.LimitPower()</text>
+    <text class="sub" font-size="11.5" x="588" y="302.5">Safe Mode: a quarter of the power</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="456" y="334" width="264" height="52" rx="8"/>
+    <text class="title mono" font-size="13" x="588" y="357.1">MotorSlewRate.Set()</text>
+    <text class="sub" font-size="11.5" x="588" y="372.5">change by 0.2 per loop at most</text>
+  </g>
+  <path class="edge" d="M588 176 L588 194" marker-end="url(#arrow)"/>
+  <path class="edge" d="M588 246 L588 264" marker-end="url(#arrow)"/>
+  <path class="edge" d="M588 316 L588 334" marker-end="url(#arrow)"/>
+  <path class="edge" d="M398 150 L456 150" marker-end="url(#arrow)"/>
+  <path class="edge" d="M398 220 L456 220" marker-end="url(#arrow)"/>
+  <path class="edge" d="M696 64 L696 124" marker-end="url(#arrow)"/>
+  <text class="label" x="688" y="84" text-anchor="end">yaw</text>
+
+  <!-- Output -->
+  <g class="node">
+    <rect class="world" x="456" y="440" width="264" height="44" rx="18"/>
+    <text class="title" font-size="13" x="588" y="466.6">the 4 drive motors</text>
+  </g>
+  <path class="edge" d="M588 386 L588 440" marker-end="url(#arrow)"/>
+  <text class="label mono" x="578" y="431" text-anchor="end">DcMotorEx.setPower()</text>
+</svg>

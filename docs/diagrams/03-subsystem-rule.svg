@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 436" width="760" height="436" role="img" aria-labelledby="title desc">
+  <title id="title">Every part follows the Subsystem rule</title>
+  <desc id="desc">Subsystem is an interface with three methods: Init, HandleUserInput and Process. SafeModeKey, Drive and Launcher implement it. Drive_Manual extends Drive. Imu is an interface that extends Subsystem and adds Ready, GetYaw and ResetYaw; Imu_Pinpoint and Imu_Hub implement Imu. The Bot keeps a list of Subsystems.</desc>
+  <style>
+    /* Light theme. Dark theme is at the bottom of this block. */
+    .panel { fill: #ffffff; stroke: #d3dae2; }
+    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; fill: #1b2838; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    .title { font-weight: 700; }
+    .sub { fill: #566475; }
+    .label { font-size: 11.5px; fill: #33475c; }
+    .group { font-size: 10.5px; fill: #566475; letter-spacing: 0.04em; }
+    .heading { font-size: 13px; font-weight: 700; }
+    .accent-text { fill: #8a5a00; font-weight: 600; }
+    .node text, .chip text { text-anchor: middle; }
+    .ours { fill: #e6f0fa; stroke: #2c6aa3; stroke-width: 1.5; }
+    .plain { fill: #f4f6f8; stroke: #8794a3; stroke-width: 1.25; }
+    .sdk { fill: #eceef1; stroke: #6f7c8a; stroke-width: 1.25; }
+    .lib { fill: #eceef1; stroke: #6f7c8a; stroke-width: 1.25; stroke-dasharray: 5 3; }
+    .world { fill: #ffffff; stroke: #1b2838; stroke-width: 1.5; }
+    .key { fill: #ffe7ad; stroke: #b37400; stroke-width: 2; }
+    .frame { fill: none; stroke: #a3afbc; stroke-width: 1.25; stroke-dasharray: 5 4; }
+    .rule { stroke: #a3afbc; stroke-width: 1; }
+    .edge { fill: none; stroke: #33475c; stroke-width: 1.5; stroke-linejoin: round; }
+    .dashed { stroke-dasharray: 5 4; }
+    .accent { stroke: #b37400; stroke-width: 2; }
+    .head { fill: #33475c; }
+    .head-accent { fill: #b37400; }
+    @media (prefers-color-scheme: dark) {
+      .panel { fill: #151b23; stroke: #2a3441; }
+      text { fill: #e4e9ef; }
+      .sub { fill: #9ba8b7; }
+      .label { fill: #c3ccd6; }
+      .group { fill: #9ba8b7; }
+      .accent-text { fill: #f2b23a; }
+      .ours { fill: #1b2f45; stroke: #74aee4; }
+      .plain { fill: #1c232c; stroke: #6b7786; }
+      .sdk { fill: #232a33; stroke: #8f9baa; }
+      .lib { fill: #232a33; stroke: #8f9baa; }
+      .world { fill: #151b23; stroke: #e4e9ef; }
+      .key { fill: #4a3608; stroke: #f2b23a; }
+      .frame { stroke: #4b5868; }
+      .rule { stroke: #4b5868; }
+      .edge { stroke: #c3ccd6; }
+      .accent { stroke: #f2b23a; }
+      .head { fill: #c3ccd6; }
+      .head-accent { fill: #f2b23a; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path class="head" d="M0 0 L10 5 L0 10 z"/>
+    </marker>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="head-accent" d="M0 0 L10 5 L0 10 z"/>
+    </marker>
+  </defs>
+
+  <rect class="panel" x="0.5" y="0.5" width="759" height="435" rx="10"/>
+  <g class="node">
+    <rect class="ours" x="24" y="54" width="140" height="48" rx="8"/>
+    <text class="title mono" font-size="13" x="94" y="82.5">Bot</text>
+  </g>
+  <g class="card">
+    <rect class="ours" x="280" y="20" width="260" height="113" rx="8"/>
+    <text class="sub" font-size="10.5" text-anchor="middle" x="410" y="37">interface</text>
+    <text class="title mono" font-size="13" text-anchor="middle" x="410" y="55">Subsystem</text>
+    <line class="rule" x1="290" y1="65" x2="530" y2="65"/>
+    <text class="mono" font-size="11.5" x="294" y="83">boolean Init()</text>
+    <text class="mono" font-size="11.5" x="294" y="100">void HandleUserInput()</text>
+    <text class="mono" font-size="11.5" x="294" y="117">void Process()</text>
+  </g>
+  <path class="edge" d="M164 78 L280 78" marker-end="url(#arrow)"/>
+  <text class="label" x="222" y="70" text-anchor="middle">keeps a list of</text>
+  <text class="label" x="564" y="66">The Bot calls these three</text>
+  <text class="label" x="564" y="82">methods on every part.</text>
+
+  <!-- Classes that follow the rule -->
+  <g class="node">
+    <rect class="ours" x="24" y="212" width="140" height="44" rx="8"/>
+    <text class="title mono" font-size="13" x="94" y="238.6">SafeModeKey</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="182" y="212" width="140" height="44" rx="8"/>
+    <text class="title mono" font-size="13" x="252" y="238.6">Drive</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="340" y="212" width="140" height="44" rx="8"/>
+    <text class="title mono" font-size="13" x="410" y="238.6">Launcher</text>
+  </g>
+  <g class="card">
+    <rect class="ours" x="504" y="212" width="232" height="113" rx="8"/>
+    <text class="sub" font-size="10.5" text-anchor="middle" x="620" y="229">interface</text>
+    <text class="title mono" font-size="13" text-anchor="middle" x="620" y="247">Imu</text>
+    <line class="rule" x1="514" y1="257" x2="726" y2="257"/>
+    <text class="mono" font-size="11.5" x="518" y="275">boolean Ready()</text>
+    <text class="mono" font-size="11.5" x="518" y="292">double GetYaw()</text>
+    <text class="mono" font-size="11.5" x="518" y="309">void ResetYaw()</text>
+  </g>
+
+  <!-- One shared line up to Subsystem -->
+  <path class="edge" d="M94 212 L94 172"/>
+  <text class="label mono" x="102" y="196">implements</text>
+  <path class="edge" d="M252 212 L252 172"/>
+  <text class="label mono" x="260" y="196">implements</text>
+  <path class="edge" d="M410 212 L410 172"/>
+  <text class="label mono" x="418" y="196">implements</text>
+  <path class="edge" d="M620 212 L620 172"/>
+  <text class="label mono" x="628" y="196">extends</text>
+  <path class="edge" d="M94 172 L620 172"/>
+  <path class="edge" d="M410 172 L410 133" marker-end="url(#arrow)"/>
+
+  <!-- Classes built on top of those -->
+  <g class="node">
+    <rect class="ours" x="182" y="372" width="140" height="44" rx="8"/>
+    <text class="title mono" font-size="13" x="252" y="398.6">Drive_Manual</text>
+  </g>
+  <path class="edge" d="M252 372 L252 256" marker-end="url(#arrow)"/>
+  <text class="label mono" x="260" y="318">extends</text>
+  <g class="node">
+    <rect class="ours" x="504" y="372" width="112" height="44" rx="8"/>
+    <text class="title mono" font-size="13" x="560" y="398.6">Imu_Pinpoint</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="624" y="372" width="112" height="44" rx="8"/>
+    <text class="title mono" font-size="13" x="680" y="398.6">Imu_Hub</text>
+  </g>
+  <path class="edge" d="M560 372 L560 325" marker-end="url(#arrow)"/>
+  <path class="edge" d="M680 372 L680 325" marker-end="url(#arrow)"/>
+  <text class="label mono" x="620" y="356" text-anchor="middle">both: implements</text>
+
+  <!-- Drive_Manual uses whichever Imu it is handed -->
+  <path class="edge dashed" d="M322 394 L478 394 L478 300 L504 300" marker-end="url(#arrow)"/>
+  <text class="label" x="400" y="386" text-anchor="middle">asks for the heading</text>
+</svg>

@@ -1,5 +1,7 @@
 repositories {
     mavenCentral()
+    maven { url 'https://repo.dairy.foundation/releases/' } // Pedro Pathing
+    maven { url 'https://maven.brott.dev/' } // FTC Dashboard
     google() // Needed for androidx
 }
 
@@ -13,5 +15,15 @@ dependencies {
     implementation 'org.firstinspires.ftc:FtcCommon:12.0.0'
     implementation 'org.firstinspires.ftc:Vision:12.0.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
+
+    // Pedro Pathing 3: path following for autonomous. See docs/decisions/0008.
+    implementation 'com.pedropathing:revhub:3.0.1'
+    implementation 'com.pedropathing:tuning:1.0.1'
+
+    // FTC Dashboard: live graphs and a camera stream at http://192.168.43.1:8080/dash.
+    // The dashboard's own copy of the SDK is left out so ours (12.0.0) is used. See 0012.
+    implementation('com.acmerobotics.dashboard:dashboard:0.6.0') {
+        exclude group: 'org.firstinspires.ftc'
+    }
 }
 

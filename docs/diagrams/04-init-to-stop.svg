@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 372" width="760" height="372" role="img" aria-labelledby="title desc">
+  <title id="title">What runs between INIT and STOP</title>
+  <desc id="desc">Pressing INIT runs set-up once: build the Bot, then Init. Then the OpMode repeats StartLoop, ShowStatus, EndLoop while waiting. Pressing START begins the run loop, about 50 times a second: StartLoop, HandleUserInput, Process, EndLoop. STOP ends it.</desc>
+  <style>
+    /* Light theme. Dark theme is at the bottom of this block. */
+    .panel { fill: #ffffff; stroke: #d3dae2; }
+    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; fill: #1b2838; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    .title { font-weight: 700; }
+    .sub { fill: #566475; }
+    .label { font-size: 11.5px; fill: #33475c; }
+    .group { font-size: 10.5px; fill: #566475; letter-spacing: 0.04em; }
+    .heading { font-size: 13px; font-weight: 700; }
+    .accent-text { fill: #8a5a00; font-weight: 600; }
+    .node text, .chip text { text-anchor: middle; }
+    .ours { fill: #e6f0fa; stroke: #2c6aa3; stroke-width: 1.5; }
+    .plain { fill: #f4f6f8; stroke: #8794a3; stroke-width: 1.25; }
+    .sdk { fill: #eceef1; stroke: #6f7c8a; stroke-width: 1.25; }
+    .lib { fill: #eceef1; stroke: #6f7c8a; stroke-width: 1.25; stroke-dasharray: 5 3; }
+    .world { fill: #ffffff; stroke: #1b2838; stroke-width: 1.5; }
+    .key { fill: #ffe7ad; stroke: #b37400; stroke-width: 2; }
+    .frame { fill: none; stroke: #a3afbc; stroke-width: 1.25; stroke-dasharray: 5 4; }
+    .rule { stroke: #a3afbc; stroke-width: 1; }
+    .edge { fill: none; stroke: #33475c; stroke-width: 1.5; stroke-linejoin: round; }
+    .dashed { stroke-dasharray: 5 4; }
+    .accent { stroke: #b37400; stroke-width: 2; }
+    .head { fill: #33475c; }
+    .head-accent { fill: #b37400; }
+    @media (prefers-color-scheme: dark) {
+      .panel { fill: #151b23; stroke: #2a3441; }
+      text { fill: #e4e9ef; }
+      .sub { fill: #9ba8b7; }
+      .label { fill: #c3ccd6; }
+      .group { fill: #9ba8b7; }
+      .accent-text { fill: #f2b23a; }
+      .ours { fill: #1b2f45; stroke: #74aee4; }
+      .plain { fill: #1c232c; stroke: #6b7786; }
+      .sdk { fill: #232a33; stroke: #8f9baa; }
+      .lib { fill: #232a33; stroke: #8f9baa; }
+      .world { fill: #151b23; stroke: #e4e9ef; }
+      .key { fill: #4a3608; stroke: #f2b23a; }
+      .frame { stroke: #4b5868; }
+      .rule { stroke: #4b5868; }
+      .edge { stroke: #c3ccd6; }
+      .accent { stroke: #f2b23a; }
+      .head { fill: #c3ccd6; }
+      .head-accent { fill: #f2b23a; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path class="head" d="M0 0 L10 5 L0 10 z"/>
+    </marker>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="head-accent" d="M0 0 L10 5 L0 10 z"/>
+    </marker>
+  </defs>
+
+  <rect class="panel" x="0.5" y="0.5" width="759" height="371" rx="10"/>
+
+  <!-- The time line, with the Driver Station buttons on it -->
+  <path class="edge" d="M24 39 L736 39" marker-end="url(#arrow)"/>
+  <g class="node">
+    <rect class="world" x="24" y="24" width="84" height="30" rx="15"/>
+    <text class="title" font-size="12.5" x="66" y="43.4">INIT</text>
+  </g>
+  <g class="node">
+    <rect class="world" x="488" y="24" width="84" height="30" rx="15"/>
+    <text class="title" font-size="12.5" x="530" y="43.4">START</text>
+  </g>
+  <g class="node">
+    <rect class="world" x="644" y="24" width="84" height="30" rx="15"/>
+    <text class="title" font-size="12.5" x="686" y="43.4">STOP</text>
+  </g>
+  <text class="label" x="298" y="30" text-anchor="middle">time</text>
+
+  <!-- Three phases -->
+  <rect class="plain" x="24" y="96" width="224" height="138" rx="8"/>
+  <text class="title" font-size="12.5" x="38" y="120">Set up (runs once)</text>
+  <text class="title mono" font-size="12" x="38" y="152">new Bot(this, properties)</text>
+  <text class="sub" font-size="11.5" x="38" y="168">builds parts, reads the key</text>
+  <text class="title mono" font-size="12" x="38" y="198">bot.Init()</text>
+  <text class="sub" font-size="11.5" x="38" y="214">waits until each part is ready</text>
+  <rect class="plain" x="268" y="96" width="224" height="184" rx="8"/>
+  <text class="title" font-size="12.5" x="282" y="120">Wait for START (repeats)</text>
+  <text class="title mono" font-size="12" x="282" y="152">bot.StartLoop()</text>
+  <text class="sub" font-size="11.5" x="282" y="168">fresh sensor readings</text>
+  <text class="title mono" font-size="12" x="282" y="198">bot.ShowStatus()</text>
+  <text class="sub" font-size="11.5" x="282" y="214">Safe Mode and the heading</text>
+  <text class="title mono" font-size="12" x="282" y="244">bot.EndLoop()</text>
+  <text class="sub" font-size="11.5" x="282" y="260">telemetry is sent</text>
+  <path class="edge" d="M466 240 L478 240 L478 148 L466 148" marker-end="url(#arrow)"/>
+  <rect class="plain" x="512" y="96" width="224" height="230" rx="8"/>
+  <text class="title" font-size="12.5" x="526" y="120">Run (repeats)</text>
+  <text class="title mono" font-size="12" x="526" y="152">bot.StartLoop()</text>
+  <text class="sub" font-size="11.5" x="526" y="168">fresh sensor readings</text>
+  <text class="title mono" font-size="12" x="526" y="198">bot.HandleUserInput()</text>
+  <text class="sub" font-size="11.5" x="526" y="214">parts read the gamepads</text>
+  <text class="title mono" font-size="12" x="526" y="244">bot.Process()</text>
+  <text class="sub" font-size="11.5" x="526" y="260">parts do their work</text>
+  <text class="title mono" font-size="12" x="526" y="290">bot.EndLoop()</text>
+  <text class="sub" font-size="11.5" x="526" y="306">telemetry is sent</text>
+  <path class="edge" d="M710 286 L722 286 L722 148 L710 148" marker-end="url(#arrow)"/>
+
+  <!-- What moves the program from one phase to the next -->
+  <path class="edge" d="M66 54 L66 96" marker-end="url(#arrow)"/>
+  <path class="edge" d="M248 116 L268 116" marker-end="url(#arrow)"/>
+  <path class="edge" d="M530 54 L530 96" marker-end="url(#arrow)"/>
+  <path class="edge" d="M686 54 L686 96" marker-end="url(#arrow)"/>
+  <text class="label accent-text" x="24" y="262">Nothing moves before START.</text>
+  <text class="label" x="24" y="278">INIT only sets things up.</text>
+  <text class="label" x="676" y="80" text-anchor="end">ends the loop</text>
+  <text class="label" x="512" y="346">This loop runs about 50 times a second.</text>
+</svg>

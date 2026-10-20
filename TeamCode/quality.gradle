@@ -1,0 +1,67 @@
+//
+// quality.gradle — local test and static-analysis suite for FTC 23623 Hydra Dragons
+//
+// PORTABLE: this file plus TeamCode/src/test/ and config/quality/ are the whole suite.
+// To enable it in another season's repo, copy those, then add ONE line to
+// TeamCode/build.gradle:
+//
+//     apply from: 'quality.gradle'
+//
+// Nothing here modifies production code, and no task here fails the build except a
+// genuinely failing unit test.
+//
+
+// ---------------------------------------------------------------------------
+// Dependency versions
+//
+// These are pinned to versions verified to work on BOTH:
+//   - Decode  : AGP 8.7.0  / Gradle 8.9  (SDK 11.1)
+//   - BioBuzz : AGP 8.13.2 / Gradle 9.1  (SDK 12.0)
+// Keep them identical in both repos so a test that passes in one passes in the other.
+// ---------------------------------------------------------------------------
+ext.qualityVersions = [
+        junit  : '5.11.4',
+        mockito: '5.14.2',
+        jqwik  : '1.9.2',
+]
+
+android {
+    testOptions {
+        unitTests {
+            // Android framework methods return 0/false/null instead of throwing
+            // "Method ... not mocked". Lets us touch SDK types from host-side tests.
+            returnDefaultValues = true
+
+            all {
+                // JUnit 5 runs on the JUnit Platform. Done here rather than via the
+                // mannodermaus android-junit5 plugin so there is one less plugin whose
+                // AGP compatibility we have to track across two repos.
+                useJUnitPlatform()
+
+                testLogging {
+                    events 'passed', 'skipped', 'failed'
+                    exceptionFormat = 'full'
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    // --- JUnit 5 -----------------------------------------------------------
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${qualityVersions.junit}"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${qualityVersions.junit}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${qualityVersions.junit}"
+
+    // Required on the runtime classpath for Gradle to launch the JUnit Platform.
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+
+    // --- Mockito -----------------------------------------------------------
+    // Used for the Phase 3 FakeRobot harness (mocked HardwareMap) and for
+    // mockConstruction() where production code news up its own ElapsedTime.
+    testImplementation "org.mockito:mockito-core:${qualityVersions.mockito}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${qualityVersions.mockito}"
+
+    // --- jqwik (property-based testing) ------------------------------------
+    testImplementation "net.jqwik:jqwik:${qualityVersions.jqwik}"
+}

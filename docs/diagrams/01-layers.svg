@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 696" width="760" height="696" role="img" aria-labelledby="title desc">
+  <title id="title">The four layers of the robot code</title>
+  <desc id="desc">The Driver Station starts HyDrive, the OpMode. HyDrive makes a BotProperties and builds a Bot. The Bot runs the parts: SafeModeKey, Imu, Drive_Manual and Launcher. The parts call the FTC SDK, and the FTC SDK talks to the real hardware.</desc>
+  <style>
+    /* Light theme. Dark theme is at the bottom of this block. */
+    .panel { fill: #ffffff; stroke: #d3dae2; }
+    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; fill: #1b2838; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    .title { font-weight: 700; }
+    .sub { fill: #566475; }
+    .label { font-size: 11.5px; fill: #33475c; }
+    .group { font-size: 10.5px; fill: #566475; letter-spacing: 0.04em; }
+    .heading { font-size: 13px; font-weight: 700; }
+    .accent-text { fill: #8a5a00; font-weight: 600; }
+    .node text, .chip text { text-anchor: middle; }
+    .ours { fill: #e6f0fa; stroke: #2c6aa3; stroke-width: 1.5; }
+    .plain { fill: #f4f6f8; stroke: #8794a3; stroke-width: 1.25; }
+    .sdk { fill: #eceef1; stroke: #6f7c8a; stroke-width: 1.25; }
+    .lib { fill: #eceef1; stroke: #6f7c8a; stroke-width: 1.25; stroke-dasharray: 5 3; }
+    .world { fill: #ffffff; stroke: #1b2838; stroke-width: 1.5; }
+    .key { fill: #ffe7ad; stroke: #b37400; stroke-width: 2; }
+    .frame { fill: none; stroke: #a3afbc; stroke-width: 1.25; stroke-dasharray: 5 4; }
+    .rule { stroke: #a3afbc; stroke-width: 1; }
+    .edge { fill: none; stroke: #33475c; stroke-width: 1.5; stroke-linejoin: round; }
+    .dashed { stroke-dasharray: 5 4; }
+    .accent { stroke: #b37400; stroke-width: 2; }
+    .head { fill: #33475c; }
+    .head-accent { fill: #b37400; }
+    @media (prefers-color-scheme: dark) {
+      .panel { fill: #151b23; stroke: #2a3441; }
+      text { fill: #e4e9ef; }
+      .sub { fill: #9ba8b7; }
+      .label { fill: #c3ccd6; }
+      .group { fill: #9ba8b7; }
+      .accent-text { fill: #f2b23a; }
+      .ours { fill: #1b2f45; stroke: #74aee4; }
+      .plain { fill: #1c232c; stroke: #6b7786; }
+      .sdk { fill: #232a33; stroke: #8f9baa; }
+      .lib { fill: #232a33; stroke: #8f9baa; }
+      .world { fill: #151b23; stroke: #e4e9ef; }
+      .key { fill: #4a3608; stroke: #f2b23a; }
+      .frame { stroke: #4b5868; }
+      .rule { stroke: #4b5868; }
+      .edge { stroke: #c3ccd6; }
+      .accent { stroke: #f2b23a; }
+      .head { fill: #c3ccd6; }
+      .head-accent { fill: #f2b23a; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path class="head" d="M0 0 L10 5 L0 10 z"/>
+    </marker>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="head-accent" d="M0 0 L10 5 L0 10 z"/>
+    </marker>
+  </defs>
+
+  <rect class="panel" x="0.5" y="0.5" width="759" height="695" rx="10"/>
+
+  <!-- Layer names, down the left edge -->
+  <text class="group mono" x="24" y="144">1  OpMode</text>
+  <text class="group mono" x="24" y="256">2  Bot</text>
+  <text class="group mono" x="24" y="392">3  Parts</text>
+  <text class="group mono" x="24" y="538">4  FTC SDK</text>
+
+  <!-- Outside the code: the Driver Station -->
+  <g class="node">
+    <rect class="world" x="132" y="16" width="250" height="52" rx="18"/>
+    <text class="title" font-size="13" x="257" y="39.0">Driver Station</text>
+    <text class="sub" font-size="11.5" x="257" y="54.5">INIT, START, STOP, two gamepads</text>
+  </g>
+
+  <!-- Layer 1: the OpMode -->
+  <g class="node">
+    <rect class="ours" x="132" y="112" width="250" height="56" rx="8"/>
+    <text class="title mono" font-size="13" x="257" y="137.1">HyDrive</text>
+    <text class="sub" font-size="11.5" x="257" y="152.5">the OpMode. It owns the loop.</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="486" y="112" width="250" height="56" rx="8"/>
+    <text class="title mono" font-size="13" x="611" y="137.1">BotProperties</text>
+    <text class="sub" font-size="11.5" x="611" y="152.5">every setting, with its normal value</text>
+  </g>
+  <path class="edge" d="M257 68 L257 112" marker-end="url(#arrow)"/>
+  <text class="label" x="267" y="94">INIT, START, STOP</text>
+  <path class="edge" d="M382 140 L486 140" marker-end="url(#arrow)"/>
+  <text class="label" x="434" y="132" text-anchor="middle">makes</text>
+
+  <!-- Layer 2: the Bot -->
+  <g class="node">
+    <rect class="ours" x="132" y="224" width="604" height="56" rx="8"/>
+    <text class="title mono" font-size="13" x="434" y="249.1">Bot</text>
+    <text class="sub" font-size="11.5" x="434" y="264.5">this season's robot, as one object</text>
+  </g>
+  <path class="edge" d="M257 168 L257 224" marker-end="url(#arrow)"/>
+  <text class="label" x="267" y="200">builds it, then gives it orders</text>
+  <path class="edge" d="M611 168 L611 224" marker-end="url(#arrow)"/>
+  <text class="label" x="621" y="200">settings</text>
+
+  <!-- Layer 3: the parts -->
+  <rect class="frame" x="132" y="336" width="604" height="104" rx="10"/>
+  <text class="group mono" x="144" y="354">the parts: each one is a Subsystem</text>
+  <path class="edge" d="M434 280 L434 336" marker-end="url(#arrow)"/>
+  <text class="label" x="444" y="312">Init(), HandleUserInput(), Process()</text>
+  <g class="node">
+    <rect class="ours" x="146" y="366" width="135" height="58" rx="8"/>
+    <text class="title mono" font-size="13" x="213.5" y="392.1">SafeModeKey</text>
+    <text class="sub" font-size="11.5" x="213.5" y="407.5">Safe Mode</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="293" y="366" width="135" height="58" rx="8"/>
+    <text class="title mono" font-size="13" x="360.5" y="392.1">Imu</text>
+    <text class="sub" font-size="11.5" x="360.5" y="407.5">heading</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="440" y="366" width="135" height="58" rx="8"/>
+    <text class="title mono" font-size="13" x="507.5" y="392.1">Drive_Manual</text>
+    <text class="sub" font-size="11.5" x="507.5" y="407.5">driver control</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="587" y="366" width="135" height="58" rx="8"/>
+    <text class="title mono" font-size="13" x="654.5" y="392.1">Launcher</text>
+    <text class="sub" font-size="11.5" x="654.5" y="407.5">launcher wheel</text>
+  </g>
+
+  <!-- Layer 4: the FTC SDK -->
+  <rect class="frame" x="132" y="496" width="604" height="76" rx="10"/>
+  <text class="group mono" x="144" y="514">FTC SDK: the library FIRST gives every team</text>
+  <path class="edge" d="M434 440 L434 496" marker-end="url(#arrow)"/>
+  <text class="label" x="444" y="472">calls like setPower() and getVelocity()</text>
+  <g class="chip">
+    <rect class="sdk" x="176" y="526" width="81" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="216.5" y="543.0">DcMotorEx</text>
+  </g>
+  <g class="chip">
+    <rect class="sdk" x="267" y="526" width="46" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="290" y="543.0">IMU</text>
+  </g>
+  <g class="chip">
+    <rect class="sdk" x="323" y="526" width="67" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="356.5" y="543.0">Gamepad</text>
+  </g>
+  <g class="chip">
+    <rect class="sdk" x="400" y="526" width="81" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="440.5" y="543.0">Telemetry</text>
+  </g>
+  <g class="chip">
+    <rect class="sdk" x="492" y="526" width="95" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="539.5" y="543.0">HardwareMap</text>
+  </g>
+  <g class="chip">
+    <rect class="sdk" x="597" y="526" width="95" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="644.5" y="543.0">TouchSensor</text>
+  </g>
+
+  <!-- Outside the code: the real hardware -->
+  <g class="node">
+    <rect class="world" x="309" y="628" width="250" height="52" rx="18"/>
+    <text class="title" font-size="13" x="434" y="651.0">Real hardware</text>
+    <text class="sub" font-size="11.5" x="434" y="666.5">motors, sensors, hubs</text>
+  </g>
+  <path class="edge" d="M434 572 L434 628" marker-end="url(#arrow)"/>
+  <text class="label" x="444" y="604">USB and wires</text>
+</svg>

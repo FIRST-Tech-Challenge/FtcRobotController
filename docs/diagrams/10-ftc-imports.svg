@@ -1,0 +1,191 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 548" width="760" height="548" role="img" aria-labelledby="title desc">
+  <title id="title">Which FTC classes each of our classes imports</title>
+  <desc id="desc">OpModes import LinearOpMode, @TeleOp and @Autonomous. Bot imports LinearOpMode, ElapsedTime and LynxModule. HydraOpMode imports HardwareMap, Telemetry and Gamepad. Drive and Launcher import DcMotorEx. Imu_Hub imports IMU and RevHubOrientationOnRobot. Imu_Pinpoint imports GoBildaPinpointDriver. SafeModeKey imports TouchSensor. The pedro folder uses Pedro Pathing, which is not part of FTC. Subsystem, Imu, MecanumMath, Debouncer, VelocityController and Alliance import nothing from FTC.</desc>
+  <style>
+    /* Light theme. Dark theme is at the bottom of this block. */
+    .panel { fill: #ffffff; stroke: #d3dae2; }
+    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; fill: #1b2838; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    .title { font-weight: 700; }
+    .sub { fill: #566475; }
+    .label { font-size: 11.5px; fill: #33475c; }
+    .group { font-size: 10.5px; fill: #566475; letter-spacing: 0.04em; }
+    .heading { font-size: 13px; font-weight: 700; }
+    .accent-text { fill: #8a5a00; font-weight: 600; }
+    .node text, .chip text { text-anchor: middle; }
+    .ours { fill: #e6f0fa; stroke: #2c6aa3; stroke-width: 1.5; }
+    .plain { fill: #f4f6f8; stroke: #8794a3; stroke-width: 1.25; }
+    .sdk { fill: #eceef1; stroke: #6f7c8a; stroke-width: 1.25; }
+    .lib { fill: #eceef1; stroke: #6f7c8a; stroke-width: 1.25; stroke-dasharray: 5 3; }
+    .world { fill: #ffffff; stroke: #1b2838; stroke-width: 1.5; }
+    .key { fill: #ffe7ad; stroke: #b37400; stroke-width: 2; }
+    .frame { fill: none; stroke: #a3afbc; stroke-width: 1.25; stroke-dasharray: 5 4; }
+    .rule { stroke: #a3afbc; stroke-width: 1; }
+    .edge { fill: none; stroke: #33475c; stroke-width: 1.5; stroke-linejoin: round; }
+    .dashed { stroke-dasharray: 5 4; }
+    .accent { stroke: #b37400; stroke-width: 2; }
+    .head { fill: #33475c; }
+    .head-accent { fill: #b37400; }
+    @media (prefers-color-scheme: dark) {
+      .panel { fill: #151b23; stroke: #2a3441; }
+      text { fill: #e4e9ef; }
+      .sub { fill: #9ba8b7; }
+      .label { fill: #c3ccd6; }
+      .group { fill: #9ba8b7; }
+      .accent-text { fill: #f2b23a; }
+      .ours { fill: #1b2f45; stroke: #74aee4; }
+      .plain { fill: #1c232c; stroke: #6b7786; }
+      .sdk { fill: #232a33; stroke: #8f9baa; }
+      .lib { fill: #232a33; stroke: #8f9baa; }
+      .world { fill: #151b23; stroke: #e4e9ef; }
+      .key { fill: #4a3608; stroke: #f2b23a; }
+      .frame { stroke: #4b5868; }
+      .rule { stroke: #4b5868; }
+      .edge { stroke: #c3ccd6; }
+      .accent { stroke: #f2b23a; }
+      .head { fill: #c3ccd6; }
+      .head-accent { fill: #f2b23a; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path class="head" d="M0 0 L10 5 L0 10 z"/>
+    </marker>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="head-accent" d="M0 0 L10 5 L0 10 z"/>
+    </marker>
+  </defs>
+
+  <rect class="panel" x="0.5" y="0.5" width="759" height="547" rx="10"/>
+  <text class="group mono" x="24" y="34">OUR CLASS</text>
+  <text class="group mono" x="330" y="34">WHAT IT IMPORTS FROM FTC</text>
+
+  <!-- One row per class: ours on the left, what it imports on the right -->
+  <g class="node">
+    <rect class="ours" x="24" y="48" width="240" height="38" rx="8"/>
+    <text class="title mono" font-size="12" x="144" y="71.2">OpModes: HyDrive, tests, autos</text>
+  </g>
+  <path class="edge" d="M264 67 L322 67" marker-end="url(#arrow)"/>
+  <g class="chip">
+    <rect class="sdk" x="330" y="54" width="102.2" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="381.1" y="71.0">LinearOpMode</text>
+  </g>
+  <g class="chip">
+    <rect class="sdk" x="440.2" y="54" width="67.1" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="473.7" y="71.0">@TeleOp</text>
+  </g>
+  <g class="chip">
+    <rect class="sdk" x="515.3" y="54" width="95.2" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="562.9" y="71.0">@Autonomous</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="24" y="98" width="240" height="38" rx="8"/>
+    <text class="title mono" font-size="12" x="144" y="121.2">Bot</text>
+  </g>
+  <path class="edge" d="M264 117 L322 117" marker-end="url(#arrow)"/>
+  <g class="chip">
+    <rect class="sdk" x="330" y="104" width="102.2" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="381.1" y="121.0">LinearOpMode</text>
+  </g>
+  <g class="chip">
+    <rect class="sdk" x="440.2" y="104" width="95.2" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="487.8" y="121.0">ElapsedTime</text>
+  </g>
+  <g class="chip">
+    <rect class="sdk" x="543.3" y="104" width="88.1" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="587.4" y="121.0">LynxModule</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="24" y="148" width="240" height="38" rx="8"/>
+    <text class="title mono" font-size="12" x="144" y="171.2">HydraOpMode</text>
+  </g>
+  <path class="edge" d="M264 167 L322 167" marker-end="url(#arrow)"/>
+  <g class="chip">
+    <rect class="sdk" x="330" y="154" width="95.2" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="377.6" y="171.0">HardwareMap</text>
+  </g>
+  <g class="chip">
+    <rect class="sdk" x="433.2" y="154" width="81.1" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="473.7" y="171.0">Telemetry</text>
+  </g>
+  <g class="chip">
+    <rect class="sdk" x="522.3" y="154" width="67.1" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="555.9" y="171.0">Gamepad</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="24" y="198" width="240" height="38" rx="8"/>
+    <text class="title mono" font-size="12" x="144" y="221.2">Drive, Launcher</text>
+  </g>
+  <path class="edge" d="M264 217 L322 217" marker-end="url(#arrow)"/>
+  <g class="chip">
+    <rect class="sdk" x="330" y="204" width="81.1" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="370.6" y="221.0">DcMotorEx</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="24" y="248" width="240" height="38" rx="8"/>
+    <text class="title mono" font-size="12" x="144" y="271.2">Imu_Hub</text>
+  </g>
+  <path class="edge" d="M264 267 L322 267" marker-end="url(#arrow)"/>
+  <g class="chip">
+    <rect class="sdk" x="330" y="254" width="46" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="353" y="271.0">IMU</text>
+  </g>
+  <g class="chip">
+    <rect class="sdk" x="384" y="254" width="186.4" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="477.2" y="271.0">RevHubOrientationOnRobot</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="24" y="298" width="240" height="38" rx="8"/>
+    <text class="title mono" font-size="12" x="144" y="321.2">Imu_Pinpoint</text>
+  </g>
+  <path class="edge" d="M264 317 L322 317" marker-end="url(#arrow)"/>
+  <g class="chip">
+    <rect class="sdk" x="330" y="304" width="165.3" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="412.7" y="321.0">GoBildaPinpointDriver</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="24" y="348" width="240" height="38" rx="8"/>
+    <text class="title mono" font-size="12" x="144" y="371.2">SafeModeKey</text>
+  </g>
+  <path class="edge" d="M264 367 L322 367" marker-end="url(#arrow)"/>
+  <g class="chip">
+    <rect class="sdk" x="330" y="354" width="95.2" height="26" rx="2"/>
+    <text class="mono" font-size="11.5" x="377.6" y="371.0">TouchSensor</text>
+  </g>
+
+  <!-- The pedro folder uses a library that is not FTC's -->
+  <g class="node">
+    <rect class="ours" x="24" y="398" width="240" height="38" rx="8"/>
+    <text class="title mono" font-size="12" x="144" y="421.2">pedro/ folder</text>
+  </g>
+  <path class="edge" d="M264 417 L322 417" marker-end="url(#arrow)"/>
+  <text class="label" x="330" y="421">Pedro Pathing: a separate library, not part of FTC</text>
+
+  <!-- Classes that need no robot at all -->
+  <rect class="frame" x="24" y="456" width="712" height="66" rx="10"/>
+  <text class="group mono" x="36" y="474">no FTC imports: plain Java, tested on a laptop</text>
+  <g class="chip">
+    <rect class="ours" x="94" y="484" width="81" height="26" rx="6"/>
+    <text class="mono" font-size="11.5" x="134.5" y="501.0">Subsystem</text>
+  </g>
+  <g class="chip">
+    <rect class="ours" x="185" y="484" width="46" height="26" rx="6"/>
+    <text class="mono" font-size="11.5" x="208" y="501.0">Imu</text>
+  </g>
+  <g class="chip">
+    <rect class="ours" x="241" y="484" width="95" height="26" rx="6"/>
+    <text class="mono" font-size="11.5" x="288.5" y="501.0">MecanumMath</text>
+  </g>
+  <g class="chip">
+    <rect class="ours" x="346" y="484" width="81" height="26" rx="6"/>
+    <text class="mono" font-size="11.5" x="386.5" y="501.0">Debouncer</text>
+  </g>
+  <g class="chip">
+    <rect class="ours" x="438" y="484" width="144" height="26" rx="6"/>
+    <text class="mono" font-size="11.5" x="510" y="501.0">VelocityController</text>
+  </g>
+  <g class="chip">
+    <rect class="ours" x="592" y="484" width="74" height="26" rx="6"/>
+    <text class="mono" font-size="11.5" x="629" y="501.0">Alliance</text>
+  </g>
+</svg>

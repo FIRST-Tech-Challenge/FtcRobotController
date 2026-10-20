@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 296" width="760" height="296" role="img" aria-labelledby="title desc">
+  <title id="title">Swap point: Pinpoint or hub IMU for the heading</title>
+  <desc id="desc">ImuSelector.Pick checks the robot configuration. If a device named pinpoint is there it builds an Imu_Pinpoint, otherwise an Imu_Hub. Both implement the Imu interface, so Drive_Manual calls GetYaw without knowing which one it has.</desc>
+  <style>
+    /* Light theme. Dark theme is at the bottom of this block. */
+    .panel { fill: #ffffff; stroke: #d3dae2; }
+    text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; fill: #1b2838; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    .title { font-weight: 700; }
+    .sub { fill: #566475; }
+    .label { font-size: 11.5px; fill: #33475c; }
+    .group { font-size: 10.5px; fill: #566475; letter-spacing: 0.04em; }
+    .heading { font-size: 13px; font-weight: 700; }
+    .accent-text { fill: #8a5a00; font-weight: 600; }
+    .node text, .chip text { text-anchor: middle; }
+    .ours { fill: #e6f0fa; stroke: #2c6aa3; stroke-width: 1.5; }
+    .plain { fill: #f4f6f8; stroke: #8794a3; stroke-width: 1.25; }
+    .sdk { fill: #eceef1; stroke: #6f7c8a; stroke-width: 1.25; }
+    .lib { fill: #eceef1; stroke: #6f7c8a; stroke-width: 1.25; stroke-dasharray: 5 3; }
+    .world { fill: #ffffff; stroke: #1b2838; stroke-width: 1.5; }
+    .key { fill: #ffe7ad; stroke: #b37400; stroke-width: 2; }
+    .frame { fill: none; stroke: #a3afbc; stroke-width: 1.25; stroke-dasharray: 5 4; }
+    .rule { stroke: #a3afbc; stroke-width: 1; }
+    .edge { fill: none; stroke: #33475c; stroke-width: 1.5; stroke-linejoin: round; }
+    .dashed { stroke-dasharray: 5 4; }
+    .accent { stroke: #b37400; stroke-width: 2; }
+    .head { fill: #33475c; }
+    .head-accent { fill: #b37400; }
+    @media (prefers-color-scheme: dark) {
+      .panel { fill: #151b23; stroke: #2a3441; }
+      text { fill: #e4e9ef; }
+      .sub { fill: #9ba8b7; }
+      .label { fill: #c3ccd6; }
+      .group { fill: #9ba8b7; }
+      .accent-text { fill: #f2b23a; }
+      .ours { fill: #1b2f45; stroke: #74aee4; }
+      .plain { fill: #1c232c; stroke: #6b7786; }
+      .sdk { fill: #232a33; stroke: #8f9baa; }
+      .lib { fill: #232a33; stroke: #8f9baa; }
+      .world { fill: #151b23; stroke: #e4e9ef; }
+      .key { fill: #4a3608; stroke: #f2b23a; }
+      .frame { stroke: #4b5868; }
+      .rule { stroke: #4b5868; }
+      .edge { stroke: #c3ccd6; }
+      .accent { stroke: #f2b23a; }
+      .head { fill: #c3ccd6; }
+      .head-accent { fill: #f2b23a; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path class="head" d="M0 0 L10 5 L0 10 z"/>
+    </marker>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="head-accent" d="M0 0 L10 5 L0 10 z"/>
+    </marker>
+  </defs>
+
+  <rect class="panel" x="0.5" y="0.5" width="759" height="295" rx="10"/>
+  <g class="node">
+    <rect class="key" x="24" y="104" width="176" height="72" rx="8"/>
+    <text class="title mono" font-size="13" x="112" y="129.6">ImuSelector.Pick()</text>
+    <text class="sub" font-size="11.5" x="112" y="145.0">is a device named</text>
+    <text class="sub" font-size="11.5" x="112" y="160.0">'pinpoint' configured?</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="262" y="40" width="220" height="72" rx="8"/>
+    <text class="title mono" font-size="13" x="372" y="65.5">Imu_Pinpoint</text>
+    <text class="sub" font-size="11.5" x="372" y="81.0">the goBILDA Pinpoint</text>
+    <text class="sub mono" font-size="11" x="372" y="95.8">uses GoBildaPinpointDriver</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="262" y="168" width="220" height="72" rx="8"/>
+    <text class="title mono" font-size="13" x="372" y="193.6">Imu_Hub</text>
+    <text class="sub" font-size="11.5" x="372" y="209.0">the IMU inside the Control Hub</text>
+    <text class="sub mono" font-size="11" x="372" y="223.8">uses IMU</text>
+  </g>
+  <g class="card">
+    <rect class="ours" x="566" y="84" width="170" height="113" rx="8"/>
+    <text class="sub" font-size="10.5" text-anchor="middle" x="651" y="101">interface</text>
+    <text class="title mono" font-size="13" text-anchor="middle" x="651" y="119">Imu</text>
+    <line class="rule" x1="576" y1="129" x2="726" y2="129"/>
+    <text class="mono" font-size="11.5" x="580" y="147">Ready()</text>
+    <text class="mono" font-size="11.5" x="580" y="164">GetYaw()</text>
+    <text class="mono" font-size="11.5" x="580" y="181">ResetYaw()</text>
+  </g>
+  <g class="node">
+    <rect class="ours" x="566" y="232" width="170" height="48" rx="8"/>
+    <text class="title mono" font-size="13" x="651" y="253.1">Drive_Manual</text>
+    <text class="sub" font-size="11.5" x="651" y="268.5">only ever sees an Imu</text>
+  </g>
+
+  <!-- The choice -->
+  <path class="edge" d="M200 128 L231 128 L231 76 L262 76" marker-end="url(#arrow)"/>
+  <text class="label" x="238" y="68">yes</text>
+  <path class="edge" d="M200 152 L231 152 L231 204 L262 204" marker-end="url(#arrow)"/>
+  <text class="label" x="238" y="220">no</text>
+
+  <!-- Both options follow the same rule -->
+  <path class="edge" d="M482 76 L524 76 L524 122 L566 122" marker-end="url(#arrow)"/>
+  <text class="label mono" x="490" y="68">implements</text>
+  <path class="edge" d="M482 204 L524 204 L524 162 L566 162" marker-end="url(#arrow)"/>
+  <text class="label mono" x="490" y="220">implements</text>
+
+  <!-- The drive only knows the rule -->
+  <path class="edge" d="M651 232 L651 197" marker-end="url(#arrow)"/>
+  <text class="label mono" x="659" y="222">GetYaw()</text>
+</svg>

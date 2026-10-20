@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>How the Robot Code Fits Together</title>
+<style>
+  /* Layout: a sticky section rail beside one 760px column. Text keeps to about 66
+     characters; figures and tables use the whole column.
+     No web fonts and no scripts: this page has to open with no internet, on the robot's Wi-Fi.
+     The colors match the ones inside docs/diagrams/*.svg. Change both together. */
+  :root {
+    color-scheme: light dark;
+    --bg: #f1f4f7;
+    --surface: #ffffff;
+    --ink: #1b2838;
+    --muted: #566475;
+    --rule: #d3dae2;
+    --ours: #2c6aa3;
+    --ours-bg: #e6f0fa;
+    --sdk: #6f7c8a;
+    --sdk-bg: #eceef1;
+    --step: #8794a3;
+    --step-bg: #f4f6f8;
+    --accent: #8a5a00;
+    --accent-line: #b37400;
+    --accent-bg: #ffe7ad;
+    --link: #1f5c94;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1319;
+      --surface: #151b23;
+      --ink: #e4e9ef;
+      --muted: #9ba8b7;
+      --rule: #2a3441;
+      --ours: #74aee4;
+      --ours-bg: #1b2f45;
+      --sdk: #8f9baa;
+      --sdk-bg: #232a33;
+      --step: #6b7786;
+      --step-bg: #1c232c;
+      --accent: #f2b23a;
+      --accent-line: #f2b23a;
+      --accent-bg: #4a3608;
+      --link: #8cc0f0;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.6 var(--sans);
+  }
+  .page { max-width: 1080px; margin-inline: auto; padding-inline: 20px; padding-block: 40px 96px; }
+
+  /* ---- Top of the page ---- */
+  .masthead { display: flex; flex-direction: column; gap: 14px; padding-bottom: 36px; border-bottom: 1px solid var(--rule); }
+  .buttons { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font: 700 0.76rem/1 var(--mono); letter-spacing: 0.08em; color: var(--muted); }
+  .buttons b { padding: 6px 12px; border: 1.5px solid var(--ink); border-radius: 999px; background: var(--surface); color: var(--ink); }
+  h1 { margin: 0; max-width: 18ch; font-size: clamp(2rem, 6vw, 3rem); line-height: 1.05; font-weight: 800; letter-spacing: -0.025em; text-wrap: balance; }
+  .lede { margin: 0; max-width: 46ch; font-size: 1.2rem; line-height: 1.45; color: var(--muted); }
+  .team { margin: 0; font: 0.8rem/1.4 var(--mono); color: var(--muted); }
+
+  /* ---- Rail and column ---- */
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; padding-top: 32px; }
+  .toc { font-size: 0.92rem; }
+  .toc h2 { margin: 0 0 8px; font: 700 0.72rem/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .toc ol { margin: 0; padding: 0; list-style: none; counter-reset: toc; display: flex; flex-wrap: wrap; gap: 4px 20px; }
+  .toc li { counter-increment: toc; }
+  .toc li::before { content: counter(toc); display: inline-block; width: 1.4em; font: 700 0.8rem/1 var(--mono); color: var(--accent); }
+  .toc a { color: var(--ink); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  @media (min-width: 1040px) {
+    .layout { grid-template-columns: 200px minmax(0, 760px); gap: 56px; }
+    .toc { position: sticky; top: 24px; align-self: start; }
+    .toc ol { flex-direction: column; gap: 8px; }
+  }
+  main { min-width: 0; display: flex; flex-direction: column; gap: 72px; }
+  main > section { display: flex; flex-direction: column; gap: 18px; scroll-margin-top: 20px; }
+
+  /* ---- Text ---- */
+  h2 { margin: 0; font-size: 1.6rem; line-height: 1.2; font-weight: 800; letter-spacing: -0.015em; text-wrap: balance; }
+  h2 .num { display: block; margin-bottom: 4px; font: 700 0.76rem/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+  h3 { margin: 22px 0 0; font-size: 1.15rem; line-height: 1.3; font-weight: 700; text-wrap: balance; scroll-margin-top: 20px; }
+  p { margin: 0; max-width: 66ch; }
+  ul.points { margin: 0; padding-left: 1.15em; max-width: 66ch; display: flex; flex-direction: column; gap: 8px; }
+  a { color: var(--link); text-underline-offset: 2px; text-decoration-thickness: 1px; }
+  a:focus-visible { outline: 2px solid var(--accent-line); outline-offset: 2px; border-radius: 2px; }
+  code { font: 0.88em/1.4 var(--mono); padding: 1px 5px; border-radius: 4px; background: var(--sdk-bg); }
+  a code { color: inherit; }
+  .must { max-width: 66ch; padding: 12px 16px; border: 1.5px solid var(--accent-line); border-radius: 8px; background: var(--accent-bg); }
+  .must code { background: transparent; padding: 0; font-weight: 700; }
+
+  /* ---- Figures ---- */
+  figure { margin: 6px 0; display: flex; flex-direction: column; gap: 10px; }
+  .fig-scroll { overflow-x: auto; border-radius: 10px; }
+  .fig-scroll img { display: block; width: 100%; min-width: 620px; max-width: 760px; height: auto; }
+  figcaption { max-width: 66ch; font-size: 0.92rem; line-height: 1.45; color: var(--muted); }
+  figcaption b { color: var(--ink); }
+
+  /* ---- The key to the diagrams ---- */
+  .legend { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px 24px; font-size: 0.92rem; }
+  .legend li { display: flex; align-items: center; gap: 10px; }
+  .sw { flex: none; width: 34px; height: 20px; border: 1.5px solid; border-radius: 6px; }
+  .sw-ours { background: var(--ours-bg); border-color: var(--ours); }
+  .sw-step { background: var(--step-bg); border-color: var(--step); }
+  .sw-sdk { background: var(--sdk-bg); border-color: var(--sdk); border-radius: 2px; }
+  .sw-lib { background: var(--sdk-bg); border-color: var(--sdk); border-radius: 2px; border-style: dashed; }
+  .sw-world { background: var(--surface); border-color: var(--ink); border-radius: 999px; }
+  .sw-key { background: var(--accent-bg); border-color: var(--accent-line); border-width: 2px; }
+
+  /* ---- Tables and code ---- */
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; min-width: 600px; border-collapse: collapse; font-size: 0.92rem; line-height: 1.45; }
+  table code { overflow-wrap: normal; }
+  th, td { padding: 9px 14px 9px 0; text-align: left; vertical-align: top; border-bottom: 1px solid var(--rule); }
+  thead th { font: 700 0.72rem/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); border-bottom-color: var(--muted); white-space: nowrap; }
+  thead th code { font-size: 0.82rem; letter-spacing: 0; text-transform: none; }
+  tbody th { font-weight: 700; }
+  td:last-child, th:last-child { padding-right: 0; }
+  .nowrap { white-space: nowrap; }
+  pre { margin: 0; padding: 14px 16px; overflow-x: auto; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); font: 0.86rem/1.55 var(--mono); }
+  pre code { padding: 0; background: none; font: inherit; overflow-wrap: normal; }
+  .cmt { color: var(--muted); }
+
+  footer { margin-top: 72px; padding-top: 20px; border-top: 1px solid var(--rule); font-size: 0.88rem; color: var(--muted); }
+  footer p { max-width: 70ch; }
+
+  @media print {
+    body { background: #fff; font-size: 11pt; }
+    .toc { display: none; }
+    .layout { display: block; }
+    main { gap: 28pt; }
+    figure, table, pre, .must { break-inside: avoid; }
+    .fig-scroll img { min-width: 0; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <div class="buttons" aria-hidden="true"><b>INIT</b> then <b>START</b> then <b>STOP</b></div>
+    <h1>How the robot code fits together</h1>
+    <p class="lede">From pressing INIT on the Driver Station down to a wheel turning.</p>
+    <p>Read it top to bottom once. After that, jump to the section you need.</p>
+    <p class="team">FTC 23623 Hydra. Every team file lives under <code>TeamCode/<wbr>src/<wbr>main/<wbr>java/<wbr>org/<wbr>firstinspires/<wbr>ftc/<wbr>teamcode/</code></p>
+  </header>
+
+  <div class="layout">
+
+    <nav class="toc" aria-label="Sections">
+      <h2>On this page</h2>
+      <ol>
+        <li><a href="#short-version">The short version</a></li>
+        <li><a href="#who-is-who">Who is who</a></li>
+        <li><a href="#who-builds-what">Who builds what</a></li>
+        <li><a href="#init-to-stop">From INIT to STOP</a></li>
+        <li><a href="#one-loop">One loop of driving</a></li>
+        <li><a href="#swap-points">Swap points</a></li>
+        <li><a href="#from-ftc">What comes from FTC</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <!-- ================= 1 ================= -->
+      <section id="short-version">
+        <h2><span class="num">Section 1</span>The short version</h2>
+        <p>A robot program is a loop: read the sensors and gamepads, decide, move, repeat. About 50 times a second.</p>
+        <p>The code is four layers. Each layer only talks to the one below it.</p>
+
+        <figure>
+          <div class="fig-scroll">
+            <img src="diagrams/01-layers.svg" width="760" height="696"
+                 alt="Four layers, top to bottom. The Driver Station starts HyDrive, the OpMode. HyDrive makes a BotProperties and builds the Bot. The Bot runs the parts: SafeModeKey, Imu, Drive_Manual and Launcher. The parts call the FTC SDK. The FTC SDK talks to the real hardware.">
+          </div>
+          <figcaption><b>Figure 1.</b> Four layers. An order travels down from the OpMode to the hardware, and nothing skips a layer.</figcaption>
+        </figure>
+
+        <ul class="points">
+          <li><strong>The OpMode</strong> is short. It makes the settings, builds the Bot, and runs the loop.</li>
+          <li><strong>The Bot</strong> knows which parts this robot has. It passes each order on to every part.</li>
+          <li><strong>A part</strong> owns its own motors and sensors. Nothing else touches them.</li>
+          <li><strong>The FTC SDK</strong> is the only layer that talks to real hardware.</li>
+        </ul>
+
+        <h3>How to read every diagram on this page</h3>
+        <ul class="legend">
+          <li><span class="sw sw-ours"></span>A class our team wrote</li>
+          <li><span class="sw sw-sdk"></span>A class from the FTC SDK</li>
+          <li><span class="sw sw-lib"></span>A class from Pedro Pathing</li>
+          <li><span class="sw sw-step"></span>A step, in plain words</li>
+          <li><span class="sw sw-world"></span>Outside the code: people and hardware</li>
+          <li><span class="sw sw-key"></span>The thing that figure is about</li>
+        </ul>
+      </section>
+
+      <!-- ================= 2 ================= -->
+      <section id="who-is-who">
+        <h2><span class="num">Section 2</span>Who is who</h2>
+        <p>Every class, and the one job it has. Each name opens the file.</p>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Class</th><th>Folder</th><th>Its job</th></tr></thead>
+            <tbody>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/opMode/HyDrive.java"><code>HyDrive</code></a></th><td><code>opMode/</code></td><td>The TeleOp the drivers pick. Makes the settings, builds the Bot, runs the loop.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/bot/BotProperties.java"><code>BotProperties</code></a></th><td><code>bot/</code></td><td>Every setting, with a name and its normal value. An OpMode changes only what it needs.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/bot/Bot.java"><code>Bot</code></a></th><td><code>bot/</code></td><td>This season's robot. Builds the parts and passes each order on to them.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/objects/HydraOpMode.java"><code>HydraOpMode</code></a></th><td><code>objects/</code></td><td>What every part needs from the OpMode, in one object: telemetry, the hardware map, both gamepads, the Safe Mode flag.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/objects/Subsystem.java"><code>Subsystem</code></a></th><td><code>objects/</code></td><td>The rule every part follows: <code>Init()</code>, <code>HandleUserInput()</code>, <code>Process()</code>.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/subsystems/SafeModeKey.java"><code>SafeModeKey</code></a></th><td><code>subsystems/</code></td><td>Reads the Safe Mode key one time and sets the Safe Mode flag.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/subsystems/Imu.java"><code>Imu</code></a></th><td><code>subsystems/</code></td><td>The rule for "something that knows which way the robot faces".</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/subsystems/Imu_Pinpoint.java"><code>Imu_Pinpoint</code></a><br><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/subsystems/Imu_Hub.java"><code>Imu_Hub</code></a></th><td><code>subsystems/</code></td><td>Two parts that follow the <code>Imu</code> rule. The robot uses one of them.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/subsystems/ImuSelector.java"><code>ImuSelector</code></a></th><td><code>subsystems/</code></td><td>Picks which of the two to use.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/subsystems/Drive.java"><code>Drive</code></a></th><td><code>subsystems/</code></td><td>Owns the four drive motors. Applies the Safe Mode limit.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/subsystems/Drive_Manual.java"><code>Drive_Manual</code></a></th><td><code>subsystems/</code></td><td><code>Drive</code>, plus driver control from the gamepad.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/subsystems/Launcher.java"><code>Launcher</code></a></th><td><code>subsystems/</code></td><td>The launcher wheel, held at a target speed.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/subsystems/Vision.java"><code>Vision</code></a></th><td><code>subsystems/</code></td><td>The rule for "something that sees AprilTags": is there a tag, which way, how far.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/subsystems/Vision_Limelight.java"><code>Vision_Limelight</code></a><br><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/subsystems/Vision_Webcam.java"><code>Vision_Webcam</code></a><br><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/subsystems/Vision_None.java"><code>Vision_None</code></a></th><td><code>subsystems/</code></td><td>Three parts that follow the <code>Vision</code> rule: a Limelight, a webcam, or no camera at all.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/subsystems/VisionSelector.java"><code>VisionSelector</code></a></th><td><code>subsystems/</code></td><td>Picks which of the three to use.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/objects/AimAssist.java"><code>AimAssist</code></a></th><td><code>objects/</code></td><td>The turn that points the robot at a tag. Math only.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/objects/MecanumMath.java"><code>MecanumMath</code></a></th><td><code>objects/</code></td><td>Turns "drive, strafe, rotate" into four wheel powers. Math only.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/objects/Debouncer.java"><code>Debouncer</code></a></th><td><code>objects/</code></td><td>Turns a held button into one clean press.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/objects/MotorSlewRate.java"><code>MotorSlewRate</code></a></th><td><code>objects/</code></td><td>Changes a motor's power a little at a time, so the robot does not jerk.</td></tr>
+              <tr><th><a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/objects/VelocityController.java"><code>VelocityController</code></a></th><td><code>objects/</code></td><td>Picks the power that holds a wheel at a speed. Math only.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= 3 ================= -->
+      <section id="who-builds-what">
+        <h2><span class="num">Section 3</span>Who builds what</h2>
+        <p><code>HyDrive</code> makes two objects. The <code>Bot</code> makes everything else.</p>
+
+        <figure>
+          <div class="fig-scroll">
+            <img src="diagrams/02-who-builds-what.svg" width="760" height="524"
+                 alt="HyDrive first makes a BotProperties, then builds the Bot and hands it the settings. The Bot builds five things in order: a, HydraOpMode. b, SafeModeKey. c, ImuSelector, which returns an Imu. d, Drive_Manual, with four motors and a Debouncer. e, Launcher, with one motor, a VelocityController and two Debouncers. Columns a and b are always built. Columns c and d are left out when driveDisabled is true. Column e is left out when launcherDisabled is true.">
+          </div>
+          <figcaption><b>Figure 2.</b> The Bot builds its parts in order, a to e. Two settings decide which columns are left out.</figcaption>
+        </figure>
+
+        <ul class="points">
+          <li><strong>a and b always happen.</strong> No OpMode can forget to check the Safe Mode key.</li>
+          <li><strong>c and d are left out</strong> when <code>properties.driveDisabled</code> is true.</li>
+          <li><strong>The camera is built too</strong>, before the drive, unless <code>properties.visionDisabled</code> is true. It is not in the picture yet.</li>
+          <li><strong>e is left out</strong> when <code>properties.launcherDisabled</code> is true. <code>HyDrive</code> sets this today: the launcher is not part of HyDrive yet (<a href="decisions/0009-launcher-velocity-control.md">decision 0009</a>).</li>
+          <li><strong>A part that is left out is never built.</strong> Its motors do not even have to be in the robot configuration.</li>
+          <li><strong>The order matters.</strong> Parts run each loop in the order they were built. The <code>Imu</code> is built before <code>Drive_Manual</code>, so the drive always sees this loop's heading.</li>
+        </ul>
+
+        <h3>Every part follows the same rule</h3>
+        <p>The Bot does not know what a launcher is. It keeps a list of <code>Subsystem</code>s and calls the same three methods on each one.</p>
+
+        <figure>
+          <div class="fig-scroll">
+            <img src="diagrams/03-subsystem-rule.svg" width="760" height="436"
+                 alt="Subsystem is an interface with three methods: Init, HandleUserInput and Process. The Bot keeps a list of Subsystems. SafeModeKey, Drive and Launcher implement Subsystem. Drive_Manual extends Drive. Imu is an interface that extends Subsystem and adds Ready, GetYaw and ResetYaw. Imu_Pinpoint and Imu_Hub both implement Imu. Drive_Manual asks the Imu for the heading.">
+          </div>
+          <figcaption><b>Figure 3.</b> The Bot only knows the <code>Subsystem</code> rule. Every part promises to follow it.</figcaption>
+        </figure>
+
+        <p>The words on the arrows are the same words you will see in the Java files:</p>
+        <ul class="points">
+          <li><strong><code>implements</code></strong> means "follows this rule". <code>class Launcher implements Subsystem</code> is a promise that <code>Launcher</code> has all three methods.</li>
+          <li><strong><code>extends</code></strong> means "is this, plus more". <code>class Drive_Manual extends Drive</code> is a <code>Drive</code> with driver control added.</li>
+        </ul>
+      </section>
+
+      <!-- ================= 4 ================= -->
+      <section id="init-to-stop">
+        <h2><span class="num">Section 4</span>From INIT to STOP</h2>
+        <p>The Driver Station has three buttons. Each one moves the program to its next phase.</p>
+
+        <figure>
+          <div class="fig-scroll">
+            <img src="diagrams/04-init-to-stop.svg" width="760" height="372"
+                 alt="A time line with three buttons. INIT starts set-up, which runs once: build the Bot, then call Init. After set-up the OpMode waits for START, repeating StartLoop, ShowStatus, EndLoop. START begins the run loop, which repeats about 50 times a second: StartLoop, HandleUserInput, Process, EndLoop. STOP ends the loop. Nothing moves before START.">
+          </div>
+          <figcaption><b>Figure 4.</b> INIT only sets things up. The robot moves in the run loop, after START.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Bot method</th><th>What it does</th><th>Why</th></tr></thead>
+            <tbody>
+              <tr><th class="nowrap"><code>new Bot(...)</code></th><td>Builds the parts. Checks the Safe Mode key.</td><td>Set up without moving.</td></tr>
+              <tr><th class="nowrap"><code>Init()</code></th><td>Asks every part to get ready, and waits until they all are.</td><td>A Pinpoint needs the robot still for about a quarter second.</td></tr>
+              <tr><th class="nowrap"><code>ShowStatus()</code></th><td>Shows Safe Mode, the heading, and which parts are off.</td><td>Check the robot before pressing START.</td></tr>
+              <tr><th class="nowrap"><code>StartLoop()</code></th><td>Throws away last loop's sensor readings. Times the loop.</td><td>Every part sees fresh readings.</td></tr>
+              <tr><th class="nowrap"><code>HandleUserInput()</code></th><td>Every part reads the gamepads.</td><td>TeleOp only. An auto has no gamepads.</td></tr>
+              <tr><th class="nowrap"><code>Process()</code></th><td>Every part does its work for one loop.</td><td>TeleOp and Auto.</td></tr>
+              <tr><th class="nowrap"><code>EndLoop()</code></th><td>Sends this loop's telemetry to the Driver Station.</td><td>One update per loop.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="must"><code>bot.StartLoop()</code> must be the first line of every loop. Without it, the sensors keep returning old readings.</p>
+      </section>
+
+      <!-- ================= 5 ================= -->
+      <section id="one-loop">
+        <h2><span class="num">Section 5</span>One loop of driving</h2>
+        <p>A stick push becomes wheel power in two steps. First the drive <strong>reads</strong>. Then it <strong>acts</strong>.</p>
+
+        <figure>
+          <div class="fig-scroll">
+            <img src="diagrams/05-drive-loop.svg" width="760" height="500"
+                 alt="Drive_Manual, one loop. Read: HandleUserInput remembers the sticks, as drive, strafe and rotate, and picks a speed limit: slow 0.25, normal 1 or boost 1. Act: Process runs four steps. One, MecanumMath.FieldCentric turns the sticks and the yaw from the Imu into four wheel powers. Two, multiply by the speed limit. Three, Drive.LimitPower applies Safe Mode, a quarter of the power. Four, MotorSlewRate.Set changes the power by 0.2 per loop at most. Then DcMotorEx.setPower goes to the four drive motors.">
+          </div>
+          <figcaption><b>Figure 5.</b> A stick push passes four steps before it reaches a motor. Safe Mode is step three.</figcaption>
+        </figure>
+
+        <ul class="points">
+          <li><strong>The stick values and the heading</strong> both go into <code>MecanumMath</code>. The speed limit picked in the read step is used in the multiply step.</li>
+          <li><strong>Every drive power goes through <code>Drive.LimitPower()</code>.</strong> That is the one place Safe Mode is applied to driver control.</li>
+          <li><strong>No heading yet?</strong> <code>Drive_Manual</code> uses 0, so the robot drives as if it faces forward.</li>
+          <li><strong>Circle</strong> (B on an Xbox pad) makes the way the robot faces now count as forward.</li>
+          <li><strong>Left bumper, held:</strong> aim assist. The turn comes from <code>AimAssist</code> and the nearest tag the <code>Vision</code> sees, instead of the right stick. See <a href="decisions/0011-vision-aim-assist.md">decision 0011</a>.</li>
+        </ul>
+
+        <h3>The launcher's loop</h3>
+        <p>The launcher is a second part with the same shape: read, then act.</p>
+
+        <figure>
+          <div class="fig-scroll">
+            <img src="diagrams/06-launcher-loop.svg" width="760" height="420"
+                 alt="Launcher, one loop. Read: HandleUserInput notes the bumpers, which move the target speed up or down 50 RPM, and whether the right trigger is held. Act, every 50 milliseconds: measure the wheel's speed with DcMotorEx.getVelocity, ask VelocityController for the power that reaches the target, then use that power if the trigger is held, or power 0 if not. The power goes to the launcher motor, and its new speed is measured the next time around.">
+          </div>
+          <figcaption><b>Figure 6.</b> The launcher measures its own speed and corrects the power every 50 ms. The amber line is the feedback.</figcaption>
+        </figure>
+
+        <ul class="points">
+          <li><strong>It is a feedback loop.</strong> Measure, correct, measure again. That is how the wheel holds its speed as the battery drains.</li>
+          <li><strong>Safe Mode does not limit the launcher.</strong> It only limits the drive.</li>
+        </ul>
+
+        <h3>How it holds an RPM, with real numbers</h3>
+        <p>Every 50 ms the <code>VelocityController</code> adds up three parts. The biggest part, feed forward, comes from the target alone. The others correct what is wrong right now and what has been wrong for a while.</p>
+
+        <figure>
+          <div class="fig-scroll">
+            <img src="diagrams/07-launcher-rpm-control.svg" width="760" height="464"
+                 alt="One update of VelocityController.Calculate with example numbers. Target 1000 RPM, measured 900 RPM. Error is target minus measured, 100. Feed forward is kF times target, 0.000242 times 1000, 0.242. Proportional is kP times error, 0.003 times 100, 0.300. Integral is kI times the error added up over time, 0. Power is the sum, 0.542, kept between 0 and 1. If the right trigger is held the power goes to the launcher motor, otherwise 0. The wheel spins, its speed is measured from the encoder, ticks per second divided by 28 times 60, and that measured RPM feeds back into the next update.">
+          </div>
+          <figcaption><b>Figure 7.</b> One update with real numbers. The wheel is 100 RPM slow, so 0.300 is added to the feed forward of 0.242.</figcaption>
+        </figure>
+
+        <ul class="points">
+          <li><strong>Feed forward does most of the work.</strong> At 1000 RPM it asks for 0.242 power before anything is measured.</li>
+          <li><strong>Proportional fixes what is wrong now.</strong> 100 RPM slow adds 0.300. Too fast would subtract.</li>
+          <li><strong>Integral is off for now</strong> (<code>launcherKI</code> is 0). Turn it up only if the wheel settles a little below the target and stays there.</li>
+          <li><strong>Every number has a name</strong> in <code>BotProperties</code>. Tuning order: <code>launcherKF</code> first, then <code>launcherKP</code>. See <a href="decisions/0009-launcher-velocity-control.md">decision 0009</a>.</li>
+        </ul>
+      </section>
+
+      <!-- ================= 6 ================= -->
+      <section id="swap-points">
+        <h2><span class="num">Section 6</span>Swap points</h2>
+        <p>A swap point is a place where two different parts can do the same job, and the code around them does not change.</p>
+
+        <h3 id="swap-heading">Heading: Pinpoint or the hub's IMU</h3>
+        <p><code>Drive_Manual</code> needs one number: which way the robot faces. Two parts can give it.</p>
+
+        <figure>
+          <div class="fig-scroll">
+            <img src="diagrams/08-swap-heading.svg" width="760" height="296"
+                 alt="ImuSelector.Pick asks: is a device named pinpoint configured? If yes it builds an Imu_Pinpoint, which uses GoBildaPinpointDriver. If no it builds an Imu_Hub, which uses the IMU inside the Control Hub. Both implement the Imu interface: Ready, GetYaw and ResetYaw. Drive_Manual calls GetYaw and only ever sees an Imu.">
+          </div>
+          <figcaption><b>Figure 8.</b> Two heading sources, one rule. The robot configuration decides which one is built.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th></th><th><code>Imu_Pinpoint</code></th><th><code>Imu_Hub</code></th></tr></thead>
+            <tbody>
+              <tr><th>Hardware</th><td>goBILDA Pinpoint odometry computer</td><td>The IMU inside the Control Hub</td></tr>
+              <tr><th>FTC class</th><td><code>GoBildaPinpointDriver</code></td><td><code>IMU</code>, set up with <code>RevHubOrientationOnRobot</code></td></tr>
+              <tr><th>Name in the robot configuration</th><td><code>pinpoint</code></td><td><code>imu</code></td></tr>
+              <tr><th>Ready when</th><td>It finishes calibrating. Keep the robot still.</td><td>Right away. If it fails to start, INIT still finishes.</td></tr>
+              <tr><th>How it reads the heading</th><td><code>update()</code>, then <code>getHeading()</code></td><td><code>getRobotYawPitchRollAngles()<wbr>.getYaw()</code></td></tr>
+              <tr><th>How it resets to 0</th><td>Remembers the heading now, and subtracts it later</td><td>Tells the IMU to <code>resetYaw()</code></td></tr>
+              <tr><th>Settings in <code>BotProperties</code></th><td><code>cfgPinpoint</code>, <code>pinpointInPerTick</code>, <code>pinpointParYTicks</code>, <code>pinpointPerpXTicks</code></td><td><code>cfgHubImu</code>, <code>hubLogoFacing</code>, <code>hubUsbFacing</code></td></tr>
+              <tr><th>Good to know</th><td>More accurate. Can also give position later.</td><td>Drifts more. Press circle to re-set forward now and then.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ul class="points">
+          <li><strong>To swap:</strong> add a Pinpoint to the robot configuration and name it <code>pinpoint</code>. No code changes. The Driver Station says which one was picked ("Heading from: ..."). See <a href="decisions/0005-hub-imu-fallback.md">decision 0005</a>.</li>
+          <li><strong>Why it works:</strong> both classes say <code>implements Imu</code>. <code>Drive_Manual</code> is handed "an Imu" and calls <code>GetYaw()</code>. It never learns which kind it got.</li>
+        </ul>
+
+        <h3 id="swap-wheels">Who drives the wheels: the driver or a path</h3>
+        <p>Only one thing may drive the wheels at a time.</p>
+
+        <figure>
+          <div class="fig-scroll">
+            <img src="diagrams/09-swap-wheels.svg" width="760" height="330"
+                 alt="Two lanes that end at the same four drive motors. TeleOp, the normal setting: gamepad 1 feeds Drive_Manual, then Drive.LimitPower applies the Safe Mode limit. Auto, with driveDisabled set to true: the auto OpMode's own paths feed Pedro Pathing's Follower, which learns where the robot is from TwoWheelLocalizer, two pods and the hub IMU, then SafeModeMecanum applies the Safe Mode limit.">
+          </div>
+          <figcaption><b>Figure 9.</b> Two ways to drive the same four motors. Safe Mode sits at the end of both.</figcaption>
+        </figure>
+
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th></th><th>TeleOp</th><th>Auto</th></tr></thead>
+            <tbody>
+              <tr><th>Who decides where to go</th><td>The driver</td><td>The path</td></tr>
+              <tr><th>Class that drives the wheels</th><td><code>Drive_Manual</code></td><td>Pedro's <code>Follower</code>, through <a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/pedro/SafeModeMecanum.java"><code>SafeModeMecanum</code></a></td></tr>
+              <tr><th>Where the heading comes from</th><td>Our <code>Imu</code></td><td>Pedro's own localizer</td></tr>
+              <tr><th>Where Safe Mode is applied</th><td><code>Drive.LimitPower()</code></td><td><code>SafeModeMecanum.applyDrive()</code></td></tr>
+              <tr><th>How the OpMode asks for it</th><td>Nothing to do. It is the normal setting.</td><td><code>properties.driveDisabled = true;</code> then <code>bot.CreateFollower()</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>An auto sets <code>driveDisabled</code> so that <code>Drive_Manual</code> is never built. Otherwise it would set the wheels to 0 every loop and fight the Follower. See <a href="../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/opMode/PedroAuto.java"><code>PedroAuto</code></a> and <a href="decisions/0008-pedro-pathing-autos.md">decision 0008</a>.</p>
+
+        <h3 id="swap-table">Every swap point, in one table</h3>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>What you want to swap</th><th>Where the switch is</th><th>What stays the same</th></tr></thead>
+            <tbody>
+              <tr><td>Pinpoint or hub IMU for the heading</td><td>The robot configuration: is there a <code>pinpoint</code>?</td><td><code>Drive_Manual</code></td></tr>
+              <tr><td>Limelight, webcam or no camera for the tags</td><td>The robot configuration: is there a <code>limelight</code>, or a <code>Webcam 1</code>?</td><td><code>Drive_Manual</code> and aim assist</td></tr>
+              <tr><td>Driver control or path following</td><td><code>driveDisabled</code> in the OpMode</td><td>The 4 motors, their names, Safe Mode</td></tr>
+              <tr><td>Field-centric or robot-centric driving</td><td><code>fieldCentricDrive</code> in <code>BotProperties</code></td><td>Everything after <code>MecanumMath</code></td></tr>
+              <tr><td>Leave the drive out of an OpMode</td><td><code>driveDisabled</code> in the OpMode</td><td>The other parts</td></tr>
+              <tr><td>Leave the launcher out of an OpMode</td><td><code>launcherDisabled</code> in the OpMode</td><td>The other parts</td></tr>
+              <tr><td>Touch sensor or magnetic switch for the Safe Mode key</td><td><code>cfgSafeModeKey</code> and <code>keyPressedMeansKeyIn</code> in <code>BotProperties</code></td><td><code>SafeModeKey</code>. Both sensors are an FTC <code>TouchSensor</code>.</td></tr>
+              <tr><td>Pinpoint instead of two pods for auto position</td><td><code>PedroConstants.CreateFollower()</code></td><td>The paths and the autos</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>A change made in an OpMode only counts in that OpMode:</p>
+<pre><code>BotProperties properties = new BotProperties();
+properties.driveDisabled = true;       <span class="cmt">// this OpMode leaves the drive out</span>
+Bot bot = new Bot(this, properties);</code></pre>
+        <p>To change a setting for every OpMode, change its normal value in <code>BotProperties</code>.</p>
+      </section>
+
+      <!-- ================= 7 ================= -->
+      <section id="from-ftc">
+        <h2><span class="num">Section 7</span>What comes from FTC</h2>
+        <p>The FTC SDK is the library FIRST gives every team. It knows how to talk to hubs, motors, sensors and the Driver Station. We <code>import</code> its classes. We never change them.</p>
+
+        <figure>
+          <div class="fig-scroll">
+            <img src="diagrams/10-ftc-imports.svg" width="760" height="548"
+                 alt="Our classes on the left, what each imports from FTC on the right. OpModes import LinearOpMode, @TeleOp and @Autonomous. Bot imports LinearOpMode, ElapsedTime and LynxModule. HydraOpMode imports HardwareMap, Telemetry and Gamepad. Drive and Launcher import DcMotorEx. Imu_Hub imports IMU and RevHubOrientationOnRobot. Imu_Pinpoint imports GoBildaPinpointDriver. SafeModeKey imports TouchSensor. The pedro folder uses Pedro Pathing, a separate library. Subsystem, Imu, MecanumMath, Debouncer, VelocityController and Alliance import nothing from FTC.">
+          </div>
+          <figcaption><b>Figure 10.</b> What each of our classes imports from the FTC SDK. The bottom row imports nothing.</figcaption>
+        </figure>
+
+        <h3>The FTC classes we use</h3>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>FTC class</th><th>What it is</th><th>Who uses it</th><th>Package</th></tr></thead>
+            <tbody>
+              <tr><th><code>LinearOpMode</code></th><td>The base of every OpMode. Gives us <code>runOpMode()</code>, <code>opModeInInit()</code>, <code>opModeIsActive()</code>.</td><td>Every OpMode, <code>Bot</code></td><td><code>com.<wbr>qualcomm.<wbr>robotcore.<wbr>eventloop.<wbr>opmode</code></td></tr>
+              <tr><th><code>@TeleOp</code><br><code>@Autonomous</code></th><td>Puts an OpMode in the Driver Station's list.</td><td>Every OpMode</td><td>same</td></tr>
+              <tr><th><code>HardwareMap</code></th><td>Looks up a device by its name in the robot configuration.</td><td><code>HydraOpMode</code>, then every part</td><td><code>com.<wbr>qualcomm.<wbr>robotcore.<wbr>hardware</code></td></tr>
+              <tr><th><code>Gamepad</code></th><td>One controller: sticks, triggers, buttons.</td><td><code>HydraOpMode</code>, <code>Drive_Manual</code>, <code>Launcher</code></td><td>same</td></tr>
+              <tr><th><code>DcMotorEx</code><br><code>DcMotor</code></th><td>A motor: <code>setPower()</code>, <code>getVelocity()</code>, run modes.</td><td><code>Drive</code>, <code>Launcher</code>, <code>MotorSlewRate</code>, <code>DriveMotorTest</code></td><td>same</td></tr>
+              <tr><th><code>IMU</code></th><td>The heading sensor inside the Control Hub.</td><td><code>Imu_Hub</code></td><td>same</td></tr>
+              <tr><th><code>TouchSensor</code></th><td>A sensor that is pressed or not.</td><td><code>SafeModeKey</code></td><td>same</td></tr>
+              <tr><th><code>Telemetry</code></th><td>Text on the Driver Station screen.</td><td><code>HydraOpMode</code>, then every part</td><td><code>org.<wbr>firstinspires.<wbr>ftc.<wbr>robotcore.<wbr>external</code></td></tr>
+              <tr><th><code>AngleUnit</code><br><code>DistanceUnit</code></th><td>Degrees, radians, millimeters, inches.</td><td><code>Imu_Hub</code>, <code>Imu_Pinpoint</code></td><td><code>org.<wbr>firstinspires.<wbr>ftc.<wbr>robotcore.<wbr>external.<wbr>navigation</code></td></tr>
+              <tr><th><code>ElapsedTime</code></th><td>A stopwatch.</td><td><code>Bot</code>, <code>Launcher</code></td><td><code>com.<wbr>qualcomm.<wbr>robotcore.<wbr>util</code></td></tr>
+              <tr><th><code>LynxModule</code></th><td>A REV hub. Lets us read all its sensors in one trip per loop.</td><td><code>Bot</code></td><td><code>com.<wbr>qualcomm.<wbr>hardware.<wbr>lynx</code></td></tr>
+              <tr><th><code>RevHubOrientationOnRobot</code></th><td>Which way the hub is mounted on the robot.</td><td><code>BotProperties</code>, <code>Imu_Hub</code>, <code>PedroConstants</code></td><td><code>com.<wbr>qualcomm.<wbr>hardware.<wbr>rev</code></td></tr>
+              <tr><th><code>GoBildaPinpointDriver</code></th><td>The goBILDA Pinpoint.</td><td><code>Imu_Pinpoint</code>, <code>ImuSelector</code></td><td><code>com.<wbr>qualcomm.<wbr>hardware.<wbr>gobilda</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Packages that start <code>com.qualcomm.robotcore</code> or <code>org.firstinspires.ftc.robotcore</code> come from the SDK's <strong>RobotCore</strong> library. Packages that start <code>com.qualcomm.hardware</code> come from its <strong>Hardware</strong> library. Both are version 12.0.0, set in <code>build.dependencies.gradle</code>.</p>
+
+        <h3>Our classes with no FTC import at all</h3>
+        <p><code>Subsystem</code>, <code>Imu</code>, <code>MecanumMath</code>, <code>Debouncer</code>, <code>VelocityController</code>, <code>Alliance</code>.</p>
+        <p>These are plain Java. They need no robot, so their tests run on a laptop in a few seconds. That is on purpose: the hard math lives where it is easy to check.</p>
+
+        <h3>Pedro Pathing</h3>
+        <p>The <code>pedro/</code> folder uses Pedro Pathing, a path-following library that is <strong>not</strong> part of the FTC SDK. Pedro then uses the same FTC motors and IMU that we do. Its main classes for us are <code>Follower</code>, <code>Path</code>, <code>Pose</code>, <code>Mecanum</code> and <code>TwoWheelLocalizer</code>.</p>
+      </section>
+
+      <!-- ================= Read next ================= -->
+      <section id="read-next">
+        <h2><span class="num">After this page</span>Read next</h2>
+        <ul class="points">
+          <li><a href="decisions/0010-bot-and-bot-properties.md">Decision 0010</a>: why OpModes talk to a Bot, and why settings live in <code>BotProperties</code>.</li>
+          <li><a href="decisions/0005-hub-imu-fallback.md">Decision 0005</a>: the hub IMU as a stand-in for the Pinpoint.</li>
+          <li><a href="decisions/0008-pedro-pathing-autos.md">Decision 0008</a>: Pedro Pathing and the practice autos.</li>
+          <li><a href="decisions/0007-safe-mode-key.md">Decision 0007</a>: the Safe Mode key.</li>
+        </ul>
+      </section>
+
+    </main>
+  </div>
+
+  <footer>
+    <p>The ten diagrams are SVG files in <code>docs/diagrams/</code>. Each one is plain text: open it in Android Studio to change a label or move a box. When the code changes, change the picture too.</p>
+  </footer>
+
+</div>
+</body>
+</html>
