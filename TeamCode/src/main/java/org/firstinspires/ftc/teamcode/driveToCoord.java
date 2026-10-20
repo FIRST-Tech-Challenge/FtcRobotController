@@ -154,7 +154,7 @@ public class driveToCoord extends LinearOpMode {
         yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
         //while loop rotates robot until its pointed north (90 degrees)
         //margin of error may be necessary
-        while (currentFieldHeading != 90) {
+        while (reverseConvert(currentFieldHeading) != 90) {
             BL.setPower(.2);
             FL.setPower(.2);
             BR.setPower(-.2);
@@ -164,7 +164,7 @@ public class driveToCoord extends LinearOpMode {
             yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
             currentFieldHeading = yaw + startingHeading;
             //UPDATE currentFieldHeading AT END OF METHOD
-            if (currentFieldHeading == 90) {
+            if (reverseConvert(currentFieldHeading) == 90) {
                 FL.setPower(0);
                 BR.setPower(0);
                 BL.setPower(0);
@@ -188,7 +188,7 @@ public class driveToCoord extends LinearOpMode {
         if ((distanceX < 0 && distanceY > 0) || (distanceX < 0 && distanceY < 0)) { //left side of || is quadrant 2
             double goalFieldHeading = (atan(distanceY / distanceX)) + 180; //atan returns -value for q2 and ppsiitve for q3
             //rotates until achieves goal heading (margin of error maybe necessary
-            while (currentFieldHeading != goalFieldHeading) {
+            while (reverseConvert(currentFieldHeading) != goalFieldHeading) {
                 BL.setPower(.2);
                 FL.setPower(.2);
                 BR.setPower(-.2);
@@ -198,7 +198,7 @@ public class driveToCoord extends LinearOpMode {
                 yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
                 currentFieldHeading = yaw + startingHeading;
                 //UPDATE currentFieldHeading AT END OF METHOD
-                if (currentFieldHeading == 90) {
+                if (reverseConvert(currentFieldHeading) == 90) {
                     FL.setPower(0);
                     BR.setPower(0);
                     BL.setPower(0);
@@ -211,7 +211,7 @@ public class driveToCoord extends LinearOpMode {
         else if (distanceX > 0 && distanceY < 0) {
             double goalFieldHeading = (atan(distanceY / distanceX)) + 360;
             //rotates until achieves goal heading (margin of error maybe necessary
-            while (currentFieldHeading != goalFieldHeading) {
+            while (reverseConvert(currentFieldHeading) != goalFieldHeading) {
                 BL.setPower(.2);
                 FL.setPower(.2);
                 BR.setPower(-.2);
@@ -221,7 +221,7 @@ public class driveToCoord extends LinearOpMode {
                 yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
                 currentFieldHeading = yaw + startingHeading;
                 //UPDATE currentFieldHeading AT END OF METHOD
-                if (currentFieldHeading == 90) {
+                if (reverseConvert(currentFieldHeading) == 90) {
                     FL.setPower(0);
                     BR.setPower(0);
                     BL.setPower(0);
@@ -232,7 +232,7 @@ public class driveToCoord extends LinearOpMode {
         //quadrant 1
         else if (distanceX > 0 && distanceY > 0) {
             double goalFieldHeading = atan(distanceY / distanceX);
-            while (currentFieldHeading != goalFieldHeading) {
+            while (reverseConvert(currentFieldHeading) != goalFieldHeading) {
                 BL.setPower(.2);
                 FL.setPower(.2);
                 BR.setPower(-.2);
@@ -242,7 +242,7 @@ public class driveToCoord extends LinearOpMode {
                 yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
                 currentFieldHeading = yaw + startingHeading;
                 //UPDATE currentFieldHeading AT END OF METHOD
-                if (currentFieldHeading == 90) {
+                if (reverseConvert(currentFieldHeading) == 90) {
                     FL.setPower(0);
                     BR.setPower(0);
                     BL.setPower(0);
@@ -254,7 +254,7 @@ public class driveToCoord extends LinearOpMode {
         else if (distanceX == 0 && distanceY > 0) {
             double goalFieldHeading = 90; //North, robot should already be pointed there
             //rotate
-            while (currentFieldHeading != goalFieldHeading) {
+            while (reverseConvert(currentFieldHeading) != goalFieldHeading) {
                 BL.setPower(.2);
                 FL.setPower(.2);
                 BR.setPower(-.2);
@@ -264,7 +264,7 @@ public class driveToCoord extends LinearOpMode {
                 yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
                 currentFieldHeading = yaw + startingHeading;
                 //UPDATE currentFieldHeading AT END OF METHOD
-                if (currentFieldHeading == 90) {
+                if (reverseConvert(currentFieldHeading) == 90) {
                     FL.setPower(0);
                     BR.setPower(0);
                     BL.setPower(0);
@@ -275,7 +275,7 @@ public class driveToCoord extends LinearOpMode {
         //straight east
         else if (distanceY == 0 && distanceX > 0) {
             double goalFieldHeading = 0;
-            while (currentFieldHeading != goalFieldHeading) {
+            while (reverseConvert(currentFieldHeading) != goalFieldHeading) {
                 BL.setPower(.2);
                 FL.setPower(.2);
                 BR.setPower(-.2);
@@ -285,7 +285,7 @@ public class driveToCoord extends LinearOpMode {
                 yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
                 currentFieldHeading = yaw + startingHeading;
                 //UPDATE currentFieldHeading AT END OF METHOD
-                if (currentFieldHeading == 90) {
+                if (reverseConvert(currentFieldHeading) == 90) {
                     FL.setPower(0);
                     BR.setPower(0);
                     BL.setPower(0);
@@ -296,7 +296,7 @@ public class driveToCoord extends LinearOpMode {
         //straight south
         else if (distanceX == 0 && distanceY < 0) {
             double goalFieldHeading = 270;
-            while (currentFieldHeading != goalFieldHeading) {
+            while (reverseConvert(currentFieldHeading) != goalFieldHeading) {
                 BL.setPower(.2);
                 FL.setPower(.2);
                 BR.setPower(-.2);
@@ -306,7 +306,7 @@ public class driveToCoord extends LinearOpMode {
                 yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
                 currentFieldHeading = yaw + startingHeading;
                 //UPDATE currentFieldHeading AT END OF METHOD
-                if (currentFieldHeading == 90) {
+                if (reverseConvert(currentFieldHeading) == 90) {
                     FL.setPower(0);
                     BR.setPower(0);
                     BL.setPower(0);
@@ -317,7 +317,7 @@ public class driveToCoord extends LinearOpMode {
         //straight west
         else if (distanceY == 0 && distanceX < 0) {
             double goalFieldHeading = 180;
-            while (currentFieldHeading != goalFieldHeading) {
+            while (reverseConvert(currentFieldHeading) != goalFieldHeading) {
                 BL.setPower(.2);
                 FL.setPower(.2);
                 BR.setPower(-.2);
@@ -327,7 +327,7 @@ public class driveToCoord extends LinearOpMode {
                 yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
                 currentFieldHeading = yaw + startingHeading;
                 //UPDATE currentFieldHeading AT END OF METHOD
-                if (currentFieldHeading == 90) {
+                if (reverseConvert(currentFieldHeading) == 90) {
                     FL.setPower(0);
                     BR.setPower(0);
                     BL.setPower(0);
@@ -354,13 +354,13 @@ public class driveToCoord extends LinearOpMode {
         //ticks dont scale at the same speed because to go soem diretions, it doesnt go forward, it actually goes backwards.
         double tickAverage = (BL.getCurrentPosition() + BR.getCurrentPosition()+ FR.getCurrentPosition()+ FL.getCurrentPosition()) / 4;
         double rawTickDistance = (hypotenuse / 2.5) * ticksPerInch; //2.5 = 360/144, so its inches * ticksPerInch
-        double ticksToGo = tickAverage + rawTickDistance;
+        double targetTicks = tickAverage + rawTickDistance;
         //checks if goal has been met
-        while (ticksToGo <= (tickAverage-2) || ticksToGo >= (tickAverage+2)) { //idk if getCurrentPosition will update automatically, different way of checking goal may be needed
-            BL.setTargetPosition((int) ticksToGo);
-            FL.setTargetPosition((int) ticksToGo);
-            BR.setTargetPosition((int) ticksToGo);
-            FR.setTargetPosition((int) ticksToGo);
+        while (targetTicks <= (tickAverage-2) || targetTicks >= (tickAverage+2)) { //idk if getCurrentPosition will update automatically, different way of checking goal may be needed
+            BL.setTargetPosition((int) targetTicks);
+            FL.setTargetPosition((int) targetTicks);
+            BR.setTargetPosition((int) targetTicks);
+            FR.setTargetPosition((int) targetTicks);
 
             BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -371,7 +371,7 @@ public class driveToCoord extends LinearOpMode {
             FL.setPower(.5);
             BR.setPower(.5);
             FR.setPower(.5);
-            if (ticksToGo > (tickAverage-2) && ticksToGo < (tickAverage+2)) {
+            if (targetTicks > (tickAverage-2) && targetTicks < (tickAverage+2)) {
                 FR.setPower(0);
                 FL.setPower(0);
                 BR.setPower(0);

@@ -25,7 +25,7 @@ public class testForYaw extends LinearOpMode {
             myIMUparameters = new IMU.Parameters(
                     new RevHubOrientationOnRobot(
                             RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD,
-                            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                            RevHubOrientationOnRobot.UsbFacingDirection.UP
                     )
             );
             imu.initialize(myIMUparameters);
@@ -43,6 +43,7 @@ public class testForYaw extends LinearOpMode {
                         AngleUnit.DEGREES
                 );
                 telemetry.addData("Values: ", myRobotOrientation);
+                telemetry.update();
             }
         }
 
