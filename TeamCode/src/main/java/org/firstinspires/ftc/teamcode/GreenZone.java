@@ -58,7 +58,7 @@ public class GreenZone extends LinearOpMode {
 
     static final double IDEAL_RANGE = 50; // inches
     static final double IDEAL_BEARING = 5; // degrees
-    static final double IDEAL_ELEVATION = 15; // degrees
+    static final double IDEAL_ELEVATION = 20; // degrees
     static final double IDEAL_YAW = 0; // degrees
 
     /**
