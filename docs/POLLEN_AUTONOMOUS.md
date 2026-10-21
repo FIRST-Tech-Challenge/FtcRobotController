@@ -1,113 +1,178 @@
-# Pollen autonomous runbook
+# Pollen autonomous operating manual
 
-Choose **Pollen ROBOT Park** for Option A or **Pollen ROBOT Shoot + Park** for
-Option B. Both command real motors after START and preselect `PollenBot` for
-TeleOp. The Driver Station autonomous timer must be enabled. A menu name or
-successful build does not establish that a route reaches the loading zone.
+**For drivers and students.** Covers the cleanup build `pollen-prep-v3.3-clean`.
+Keep this manual in the same branch as the code installed on the robot.
+For installation or code changes, use the [programmer README](../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/pollen/README.md).
 
-Option A remains the forward-only routine already used for calibration.
-For Option B's end-wall starting pose, continuous shooting, controller settings,
-geometry assumptions and ordered tests, read [POLLEN_SHOOT_FIRST.md](POLLEN_SHOOT_FIRST.md).
-The two modes do not share the same physical starting pose.
+## Choose the routine
 
-For students comparing with last year's functions, see
-[POLLEN_AUTONOMOUS_EXPLAINED.md](POLLEN_AUTONOMOUS_EXPLAINED.md).
-
-## Build and deploy
-
-From the repository root on the Mac, use the existing `ftcgradle` function:
-
-```bash
-PATH="/Applications/Android Studio.app/Contents/jbr/Contents/Home/bin:$PATH" \
-  bash tools/test-pollen-sequence.sh &&
-ftcgradle :TeamCode:assembleDebug
-```
-
-If the function is not available in this shell, define it:
-
-```bash
-ftcgradle() {
-  local ftc_jdk="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
-  JAVA_HOME="$ftc_jdk" bash ./gradlew \
-    "-Dorg.gradle.java.home=$ftc_jdk" "$@"
-}
-```
-
-Use the already-working Wi-Fi connection to the powered Control Hub. Deploy
-Android Studio's **TeamCode** run configuration to the Control Hub, not the
-Driver Hub. Retain the robot's active hardware configuration. A laptop build
-needs no robot; normal Control Hub operation needs the robot's 12 V battery.
-
-Select the intended mode, INIT, and inspect build, settings and any failure
-message. INIT does not start the route. START locks the settings and begins;
-STOP interrupts it. New Option B telemetry identifies `pollen-prep-v3.2.2-diagonal`;
-Option A retains `pollen-prep-v3.1-tuning`.
-
-## Option A: controller calibration
-
-Use Gamepad 1 during INIT in **Pollen ROBOT Park**:
-
-| Control | Change |
-| --- | --- |
-| D-pad UP / DOWN | Start delay + / - 0.5 seconds |
-| D-pad RIGHT / LEFT | Forward drive duration + / - 0.05 seconds |
-| R1 / L1 | Drive power + / - 0.05 |
-| Triangle | Restore the values in `PollenConfig` |
-
-Tap and release; held buttons do not repeat. Power is bounded to 0.05–0.50;
-duration to 0.05–5 seconds. Delay is capped by the remaining sequence budget.
-The screen reports the values and whether they are locked. Power/time persist
-through STOP/INIT while the Robot Controller app remains open; delay resets
-each INIT. Reboot, app restart or reinstall loses remembered settings.
-
-Position and aim the robot manually. It always drives forward; it does not know
-start A/B or alliance. Coordinate the whole path and destination with the
-partner. Use the team's empirical estimate as a starting point:
-
-`distance_cm = seconds * power * 150`, measured at **12.86 V**.
-
-This is timed control, not distance feedback. Validate at the battery voltages,
-surface and load used in practice. Copy successful values to `PollenConfig`
-when ready to make them permanent, then rebuild once.
-
-## Hardware
-
-Java looks up the existing configuration names; it does not assign names to ports.
-
-| Name | Device/direction | Required by |
+| Choice on the Driver Hub | What happens after START | How to position the robot |
 | --- | --- | --- |
-| `frontLeft` | Drive motor, REVERSE | A and B |
-| `frontRight` | Drive motor, FORWARD | A and B |
-| `backLeft` | Drive motor, FORWARD | A and B |
-| `backRight` | Drive motor, REVERSE | A and B |
-| `pollenLauncher` | DC motor with encoder, REVERSE | B shooting |
-| `intake` | DC motor, FORWARD | B shooting |
-| `agitator` | DC motor, REVERSE | B shooting |
+| **Pollen ROBOT Park** — Option A | Wait, drive straight forward, stop | Aim the robot along the team's tested straight path to park. |
+| **Pollen ROBOT Shoot + Park** — Option B | Wait, spin up, feed while stationary, stop the shooter, drive diagonally forward-left, stop | Start at the end wall, square to it and facing the hive, in the team's tested shooting position. |
 
-The directions match the team's current `BioBuzzStarterbotOpMode` / `PollenBot`
-TeleOp. Option B maps no windmill or intake servos. Seven DC motors normally
-require the Control Hub plus Expansion Hub. Option A needs only its four drives.
+The modes use **different starting poses and different controller controls**.
+Option B translates without turning the chassis. Left always means the robot's
+own left. For the corresponding opposite-alliance shooting start, rotate the
+whole starting pose 180 degrees; the same code still drives forward-left.
+There is no alliance or start-position selector.
 
-## Bench choices and failures
+Neither routine detects the parking zone, other robots, or obstacles. Humans
+choose and verify the starting position, path and destination. Agree on the
+whole route and delay with your partner; a delay alone does not ensure clearance.
+Use the current event rules to confirm starting placement and ball loading.
 
-Bench modes are hidden by `@Disabled`. If needed, temporarily enable only the
-chosen bench class, build/install, test, then restore it for the match build.
-They display simulated commands and map no hardware; they do not test wiring.
+## Before every run
 
-| Hidden mode | Exercises |
+1. Connect a charged robot battery, power on the robot and Driver Hub, and wait
+   for the Driver Station to connect to the Control Hub. Use the existing robot
+   configuration. The laptop is not needed to change the settings below.
+2. Confirm Gamepad 1 is connected and assigned. Select the intended routine in
+   the autonomous list. Enable the Driver Station autonomous timer.
+3. Put the robot in the marked starting position for **that routine**. Clear
+   the route and shooting area; have someone ready to press Driver Hub STOP.
+4. Press **INIT**. Motors should remain stopped. Check the build identifier,
+   status and every setting against your team's verified settings record.
+5. Adjust settings using the tables below. **Tap and release** for each change;
+   holding a button does not repeat. Check the displayed value after editing.
+6. Read any warning before START. A shooter failure can leave Option B ready to
+   **move without shooting**; that is not a successful shooting initialization.
+7. At the appropriate start signal, press **START**. Settings are now locked.
+   The programmed sequence runs without controller steering or further input.
+8. Watch the phase and robot. **STOP** interrupts the routine. At DONE, motor
+   commands stay zero. Press STOP before setting up another test.
+
+Both routines preselect **PollenBot** for TeleOp. That does not start TeleOp;
+select/check, INIT and START it at the appropriate time. For another autonomous
+trial, reselect the intended autonomous routine before INIT.
+
+## Option A controls: Pollen ROBOT Park
+
+Use Gamepad 1 between INIT and START.
+
+| Button | Action |
 | --- | --- |
-| `Pollen BENCH Park` | Option A settings and forward/hold/STOP |
-| `Pollen BENCH Shoot First` | Current Option B settings, continuous shooting, diagonal departure |
-| `Pollen BENCH Shoot` / `Pollen BENCH Timeout` | Legacy speed-gated shooting example; not current Option B |
+| D-pad UP / DOWN | Increase / decrease start delay by 0.5 seconds |
+| D-pad RIGHT / LEFT | Increase / decrease forward drive time by 0.05 seconds |
+| R1 / L1 | Increase / decrease drive power by 0.05 |
+| Triangle | Restore all Option A code defaults |
 
-A missing drive device blocks either physical mode. Option B can skip shooting
-on a shooter INIT exception only if all mapped shooter devices accept stop
-commands; it then uses its own diagonal departure. It never invokes Option A's
-route from the end-wall shooting pose. A runtime hardware exception stops all
-available motors individually and requests OpMode stop. A four-second spinup
-timeout skips feeding and continues Option B's departure. Inspect the persistent
-telemetry warnings. Some electrical/SDK failures cannot be recovered in an OpMode.
+| Setting | Code default | Adjustment limits |
+| --- | ---: | --- |
+| Drive time | 2.00 seconds | 0.05–5.00 seconds |
+| Drive power | 0.20 | 0.05–0.50 |
+| Start delay | 0 seconds | Up to 20 seconds, subject to the time budget |
 
-The independent 27-second command cutoff does not guarantee parking after a
-failure or prevent physical coasting. Test STOP, actual direction, shot behavior,
-route clearance and endpoint on the robot. Keep results tied to a commit.
+It drives forward for the chosen time, holds zero commands for 0.5 seconds,
+then enters DONE. Increasing drive time can reduce an excessive selected delay;
+check both displayed values afterward. There is no distance entry in Option A.
+
+For a first estimate only, the team's forward experiment at **12.86 V** gave:
+
+`distance in cm = drive time in seconds × power × 150`
+
+For example, 2 seconds at 0.20 estimates 60 cm. Measure the actual endpoint on
+our robot; battery voltage, floor and load affect timed travel.
+
+## Option B controls: Pollen ROBOT Shoot + Park
+
+Use Gamepad 1 between INIT and START:
+
+- **D-pad UP / DOWN:** select a row (marked `>` on the screen).
+- **D-pad RIGHT / LEFT:** increase / decrease the selected value.
+- **Triangle:** restore all Option B defaults, including the short two-foot move.
+
+| Screen row | Code default | Change per tap | Limits / special meaning |
+| --- | ---: | ---: | --- |
+| Flywheel ticks/s | 1250 | 50 | 500–2500; encoder ticks per second, not RPM |
+| Feed seconds (0 = skip shot) | 10 seconds | 0.5 seconds | 0–20; zero skips spinup and feeding |
+| Travel cm (0 = shoot only) | 60.96 cm | 5 cm | 0–350; zero skips driving |
+| Drive vector power | 0.20 | 0.05 | 0.10–0.50 |
+| Intake + agitator power | 0.50 | 0.05 | 0.10–1.00; both feed motors use this power |
+| Start delay seconds | 0 seconds | 0.5 seconds | 0–20, subject to the time budget |
+
+**60.96 cm is the short two-foot test default, not a full-field parking setting.**
+Defaults are not a substitute for your team's verified match settings.
+
+The flywheel first runs alone. After it reaches at least 96% of the selected
+speed for 0.25 seconds, the main intake and agitator run with it for the chosen
+feed duration. At the default, this is **10 seconds of feeding plus spinup**.
+Ordinary speed dips during feeding do not pause it. There is no ball counter:
+feed time means motor-running time, not proof that all balls were launched.
+The outside ball must be within intake reach while the robot stays stationary.
+
+The shooter then stops and the robot drives forward-left at a fixed commanded
+angle of **25.87 degrees**, with no chassis turn. Travel distance adjusts how
+long it drives. It then holds zero commands for 0.5 seconds and enters DONE.
+The [calibration reference](POLLEN_SHOOT_FIRST.md) explains the estimate and
+why the full route needs a field clearance test.
+
+If an edit would use 26 seconds or more in the worst case, it is rejected and
+the old value stays. Read the notice; reduce the requested duration, distance or
+delay. Changing drive power also changes travel and requires a physical retest.
+
+## Settings memory: check every INIT
+
+Settings are remembered separately for A and B while the Robot Controller app
+stays running. **Start delay resets each INIT** (zero in this build).
+Rebooting, restarting the app or installing an APK loses remembered settings.
+Triangle restores code defaults, not your last successful match setup.
+
+Photograph the settings screen and keep a written record. To make tested values
+survive an app restart, a programmer must update defaults, rebuild and install.
+
+## What warnings mean
+
+| Screen / behavior | Meaning and action |
+| --- | --- |
+| BLOCKED | Initialization failed. Do not START expecting a route; read the error and have a programmer check the configuration or hardware. |
+| READY FOR DEPARTURE ONLY - SHOOTER FAILED | Option B could not initialize shooting but could stop the mapped shooter devices. START will run its selected diagonal departure without shooting. Before START, decide whether that result is acceptable from this pose. |
+| SPINUP, then a timeout warning | Initial speed did not qualify within 4 seconds. Feeding is skipped automatically and Option B continues its selected diagonal departure. No driver intervention is required. |
+| CONTINUOUS FEED - speed below target band | Feeding continues as requested. Record the result; change settings before a later run if needed. |
+| Hardware error / mode stops | The code attempts to stop each device and ends the mode. Diagnose before retrying. |
+| DONE | The programmed steps finished with zero motor commands. This does not confirm physical parking or successful shots. |
+
+A 27-second software cutoff also stops commands. STOP and software cutoffs cannot
+prevent physical coasting or guarantee recovery from an electrical failure.
+
+## Final robot check after the cleanup installation
+
+Use short trials first. Record the installed commit and photograph the settings.
+
+1. **INIT check:** verify both menus, build identifier, settings changes, delay
+   reset and no movement before START.
+2. **A:** use the known short forward settings on a clear floor. Check direction,
+   distance, stopping and a repeat run. Test STOP during a short movement.
+3. **B departure only:** set feed duration to zero and travel to 60.96 cm.
+   Verify forward-left travel without chassis turning. Measure forward and
+   sideways displacement and the endpoint; test STOP.
+4. **B shooting only:** set travel to zero. Begin without balls and a short feed
+   duration, then use a suitable catch area and the tested shooting settings.
+   Confirm the flywheel, intake and agitator work, including the outside ball.
+   Test STOP during shooting. Allow mechanisms to stop before handling them.
+5. **B combined:** restore the chosen feed duration and short departure distance.
+   Verify that feeding finishes before driving and repeat with the expected load.
+6. **Field check:** mark starts and endpoints, check the full robot footprint
+   along each path, then test full travel and partner timing for both alliance
+   placements. Only record a route as field-verified after these checks.
+
+Setting both B feed duration and distance to zero only waits/holds. Check these
+values again after isolated tests. Zero settings do not bypass hardware checks.
+
+## Team settings record
+
+Fill this out from actual tests; blank means not yet recorded. Keep separate
+records if different starting positions require different settings.
+
+- Installed commit / build: __________
+- Date, tester, battery voltage, floor and load: __________
+- Starting position / orientation (attach a photo or marked diagram): __________
+- Alliance placement and partner route: __________
+- A: drive seconds _____; power _____; start delay _____
+- B: flywheel ticks/s _____; feed seconds _____; intake + agitator power _____;
+  travel cm _____; drive vector power _____; start delay _____
+- Actual endpoint, shot results and STOP check: __________
+- Full field route verified by / date: __________
+
+Update this manual in the same commit whenever menu names, controls or behavior
+change. Documentation-only changes do not require a robot rebuild or installation.

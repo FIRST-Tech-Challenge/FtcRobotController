@@ -1,3 +1,7 @@
+> Historical preparation notes. For current build, controls and robot tests, use
+> [POLLEN_AUTONOMOUS.md](POLLEN_AUTONOMOUS.md) and
+> [POLLEN_SHOOT_FIRST.md](POLLEN_SHOOT_FIRST.md). Old patch commands below are superseded.
+
 # Pollen autonomous: plan for Lev's review
 
 Prepared Monday evening, October 19, 2026. Target: Wednesday practice, October 21.

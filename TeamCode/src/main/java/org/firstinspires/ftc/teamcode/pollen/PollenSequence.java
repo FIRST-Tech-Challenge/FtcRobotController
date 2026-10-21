@@ -4,17 +4,15 @@ package org.firstinspires.ftc.teamcode.pollen;
 public final class PollenSequence {
     public static final class Step {
         public final String name;
-        public final double seconds, forward, strafe, turn, maxFeedWindow;
-        public final boolean shoot, continuousFeed;
+        public final double seconds, forward, strafe, turn;
+        public final boolean shoot;
 
         private Step(String name, double seconds, double forward, double strafe,
-                     double turn, boolean shoot, double maxFeedWindow, boolean continuousFeed) {
+                     double turn, boolean shoot) {
             if (name == null || !Double.isFinite(seconds) || seconds <= 0
                     || !Double.isFinite(forward) || !Double.isFinite(strafe)
                     || !Double.isFinite(turn) || Math.abs(forward) > 1
-                    || Math.abs(strafe) > 1 || Math.abs(turn) > 1
-                    || !Double.isFinite(maxFeedWindow)
-                    || (shoot && maxFeedWindow < seconds)) {
+                    || Math.abs(strafe) > 1 || Math.abs(turn) > 1) {
                 throw new IllegalArgumentException("Invalid route step");
             }
             this.name = name;
@@ -23,23 +21,16 @@ public final class PollenSequence {
             this.strafe = strafe;
             this.turn = turn;
             this.shoot = shoot;
-            this.maxFeedWindow = maxFeedWindow;
-            this.continuousFeed = continuousFeed;
         }
 
         public static Step drive(String name, double seconds, double forward,
                                  double strafe, double turn) {
-            return new Step(name, seconds, forward, strafe, turn, false, 0, false);
-        }
-
-        /** Count commanded feed time; bound all recovery pauses with a wall-clock window. */
-        public static Step shoot(double activeSeconds, double maxFeedWindow) {
-            return new Step("SHOOT", activeSeconds, 0, 0, 0, true, maxFeedWindow, false);
+            return new Step(name, seconds, forward, strafe, turn, false);
         }
 
         /** Qualify speed once, then feed continuously for this wall-clock duration. */
         public static Step continuousShoot(double seconds) {
-            return new Step("SHOOT", seconds, 0, 0, 0, true, seconds, true);
+            return new Step("SHOOT", seconds, 0, 0, 0, true);
         }
     }
 
@@ -60,6 +51,15 @@ public final class PollenSequence {
     private boolean started, finished;
     private String result = "READY";
     private String warning = "";
+
+    /** Drive-only route: callers do not need irrelevant launcher settings. */
+    public static PollenSequence park(Step[] steps, double deadline, double startDelay) {
+        if (steps != null) for (Step step : steps) {
+            if (step != null && step.shoot) throw new IllegalArgumentException("Park route cannot shoot");
+        }
+        // Valid placeholders are unused because this route contains no shooting.
+        return new PollenSequence(steps, 1, 1, 1, .25, deadline, startDelay);
+    }
 
     public PollenSequence(Step[] steps, double targetVelocity, double minVelocity,
                           double spinupTimeout, double stableTime, double deadline) {
@@ -99,7 +99,7 @@ public final class PollenSequence {
         double seconds = 0;
         for (Step step : steps) {
             if (step == null) throw new IllegalArgumentException("Null step");
-            seconds += step.shoot ? spinupTimeout + step.maxFeedWindow : step.seconds;
+            seconds += step.shoot ? spinupTimeout + step.seconds : step.seconds;
         }
         return seconds;
     }
@@ -139,7 +139,7 @@ public final class PollenSequence {
 
         out.phase = "SPINUP";
         out.launcherVelocity = targetVelocity;
-        if (step.continuousFeed && !Double.isFinite(measuredVelocity)) {
+        if (!Double.isFinite(measuredVelocity)) {
             return stop("INVALID LAUNCHER VELOCITY - STOPPED");
         }
         // Count the time for which the preceding loop actually requested feeding.
@@ -160,21 +160,10 @@ public final class PollenSequence {
             if (stable) feedingSince = now;
         }
         if (!Double.isNaN(feedingSince)) {
-            if (step.continuousFeed) {
-                if (now - feedingSince >= step.seconds) return advance(now);
-                out.phase = ready ? "CONTINUOUS FEED" : "CONTINUOUS FEED - speed below target band";
-                out.feederPower = 1;
-                wasFeeding = true;
-                return out;
-            }
-            if (activeFeedSeconds >= step.seconds) return advance(now);
-            if (now - feedingSince >= step.maxFeedWindow) {
-                warning = "Feed recovery timeout: shot incomplete; continuing route";
-                return advance(now);
-            }
-            out.phase = stable ? "FEED" : "FEED PAUSED - waiting for stable speed";
-            out.feederPower = stable ? 1 : 0;
-            wasFeeding = stable;
+            if (now - feedingSince >= step.seconds) return advance(now);
+            out.phase = ready ? "CONTINUOUS FEED" : "CONTINUOUS FEED - speed below target band";
+            out.feederPower = 1;
+            wasFeeding = true;
         }
         return out;
     }

@@ -31,33 +31,13 @@ initialization failure, unsuccessful shooter stop, or runtime hardware exception
 stops the whole mode. Some disconnected-hub failures occur before the OpMode or
 do not throw; this cannot guarantee recovery from every electrical failure.
 
-## Controller programming during INIT
+## Operator instructions
 
-Use Gamepad 1. **D-pad UP/DOWN selects a row; LEFT/RIGHT changes its value.**
-Tap and release for each change; holding does not repeat. These controls differ
-from Option A's direct time/power controls.
-
-| Row | Default | Step | Limits |
-| --- | ---: | ---: | --- |
-| Flywheel speed | 1250 ticks/s | 50 ticks/s | 500–2500 ticks/s |
-| Feed duration | 10 s | 0.5 s | 0–20 s; zero skips shooting |
-| Travel distance | 60.96 cm | 5 cm | 0–350 cm; zero is a stationary shooting test |
-| Drive vector power | 0.20 | 0.05 | 0.10–0.50 |
-| Intake + agitator power | 0.50 | 0.05 | 0.10–1.00 |
-| Start delay | 0 s | 0.5 s | Limited by remaining route budget |
-
-- **Triangle = restore defaults**, including the two-foot distance.
-- START freezes everything. Inputs after START do not change the run.
-- Values remain in memory across STOP/INIT while the Robot
-  Controller app stays open. Start delay resets to zero each INIT. Reinstalling,
-  restarting the app or rebooting loses remembered values.
-- Telemetry rejects edits that would consume 26 seconds or more in the worst
-  case (including the full 4-second spinup timeout). It retains the previous
-  value; it does not silently shorten shooting or distance. An independent
-  27-second software cutoff remains active. The Driver Station AUTO timer
-  should also be enabled.
-- Speed and power bounds are software adjustment limits, not evidence that
-  every setting is physically useful or calibrated.
+Use the [operating manual](POLLEN_AUTONOMOUS.md) for the current controller
+settings table, pre-run checks, warning meanings and ordered robot tests.
+Use the [code README](../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/pollen/README.md)
+for architecture, hardware details, build and deployment. This document preserves
+the geometry assumptions and calibration reasoning behind Option B.
 
 ## Starting pose, alliance and the provisional geometry
 
@@ -137,58 +117,11 @@ Record voltage after shooting too: ten seconds of launcher/intake load may
 change departure behavior. A short diagonal test is required before extrapolation.
 Changing distance cannot correct an incorrect travel angle.
 
-## Test in this order
+## Validation status
 
-1. Build/install once over the working Wi-Fi connection. Check build telemetry
-   `pollen-prep-v3.2.2-diagonal`. Connect Gamepad 1 and press INIT. Verify no
-   mechanisms move; exercise every setting and STOP/INIT memory.
-2. Set **distance = 0** and a short **feed duration = 1 second**. With no balls,
-   START: confirm flywheel direction and positive measured speed, then intake
-   and agitator pulling toward the launcher. STOP must stop all commands.
-3. Keep distance zero. Set the experimental flywheel speed and feed duration
-   10 seconds. Load into a suitable catch area. Position the outside ball
-   touching the robot and within reach of its intake. Confirm it enters while
-   the chassis stays stationary; otherwise this requested routine needs a
-   pickup movement or a different preload arrangement. Observe whether the
-   hive tipping would invalidate subsequent shots at the same target.
-4. Set **feed duration = 0** and restore distance **60.96 cm** (Triangle restores
-   all defaults, then reduce feed to zero). On a clear floor, test the diagonal
-   departure and STOP with no balls. Measure forward and lateral displacement,
-   not just total distance. Ideal estimates are about 54.85 cm forward and
-   26.60 cm left; neither is a guarantee. Check the blue physical start by
-   rotating the robot 180 degrees; it should still go left
-   relative to its own front.
-5. Combine the 10-second shot with the short departure. Check repeatability
-   and stopping, including at a lower normal battery voltage. Save the chosen
-   speed and feed-power readings.
-6. On the field, lay out the full route and sweep the robot footprint past
-   obstacles before powering a full-length run. Measure the actual park endpoint
-   and the required wall gap. Only then increase distance toward the geometry
-   estimate and tune it. If the fixed angle fails, revise the route first.
-7. Verify the outside preload meets setup requirements: exactly four preloads
-   contact the robot, all within your alliance half. Agree on the final route
-   and delay with the partner and test both alliance placements.
-
-## Code and optional hub-only check
-
-`PollenShootTuning.java` holds defaults, controller editing, geometry and the
-formula. `PollenShootFirstAuto.java` maps the actual three motors and executes
-the sequence. It uses `pollenLauncher` (REVERSE, encoder velocity PIDF
-40/0/0/12.5), `intake` (FORWARD), `agitator` (REVERSE), and the same four drive
-motor names/directions as Option A. No windmill or intake servos are mapped.
-
-`PollenBenchShootFirst` uses the same settings and sequencer with simulated
-flywheel speed and no hardware calls. It is hidden with `@Disabled`; temporarily
-remove that annotation only if a powered-hub-only test is needed, then restore
-it before the match build. Older BENCH Shoot/Timeout entries exercise the older
-speed-gated example sequence, not this continuous-feed mode.
-
-Run the host tests and Android build from the repository root:
-
-```bash
-PATH="/Applications/Android Studio.app/Contents/jbr/Contents/Home/bin:$PATH" \
-  bash tools/test-pollen-sequence.sh &&
-ftcgradle :TeamCode:assembleDebug
-```
-
-Host tests verify logic, not motor wiring, physical trajectories or scoring.
+The team reported that the calibrated movement worked. That does not establish
+full-field clearance or confirm the final cleanup installation's robot tests.
+Record those results against the installed commit in the
+[operating manual](POLLEN_AUTONOMOUS.md#team-settings-record).
+The nominal full-field distance above remains a planning estimate until measured
+on the actual field with the complete robot footprint and partner route.

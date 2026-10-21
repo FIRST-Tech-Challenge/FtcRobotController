@@ -3,9 +3,9 @@
 This document explains the pollen autonomous code for students and mentors.
 The current Option B is **Pollen ROBOT Shoot + Park**: start already aimed at
 the hive, shoot while stationary, then translate diagonally. Its current
-controls and field assumptions are in [POLLEN_SHOOT_FIRST.md](POLLEN_SHOOT_FIRST.md).
-For installation and the bench/robot test procedure, see
-[POLLEN_AUTONOMOUS.md](POLLEN_AUTONOMOUS.md).
+controls are in the [operating manual](POLLEN_AUTONOMOUS.md), and field assumptions
+are in [POLLEN_SHOOT_FIRST.md](POLLEN_SHOOT_FIRST.md). For installation and laptop
+tests, see the [code README](../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/pollen/README.md).
 
 The comparison is with the existing `Auto.java`, `MecanumOpMode.java`,
 `MecanumDriveTrain.java`, and `Launcher.java` in this repository. It describes
@@ -80,7 +80,8 @@ The `3` selects the existing launcher's **far-shot preset**; it is not a shot co
 The `7000` gives the shooting method a seven-second overall window, including
 time spent waiting for launcher speed.
 
-The new `parkRoute()` and `shootRoute()` also describe actions in order. They
+Option A's `parkRoute()` and Option B's `PollenShootTuning.sequence()` also
+describe actions in order. They
 create a list of steps instead of immediately calling each hardware method.
 The sequencer executes that list after START.
 
@@ -124,8 +125,8 @@ the physical wheel layout and direction configuration match the assumed layout.
 | --- | --- | --- | --- |
 | Basic driving | Timed movement | Timed movement | Keep the first routine simple. |
 | Execution | `LinearOpMode`; a method waits for its action to finish before returning | Iterative `OpMode`; each loop checks the current action and time | Run the same decision logic on a computer or a hub. |
-| Selection | `MecanumOpMode` is `@TeleOp`; the PS/Home button cycles through modes during INIT | Separate `@Autonomous` entries for park and shoot; bench entries hidden by default | Make each choice visible directly in the autonomous list; no gamepad needed for selection. |
-| Hardware initialization | The OpMode initializes drivetrain, launcher, and camera | Park needs drivetrain only; shooting INIT can fall back to park; bench maps no hardware | Test parts independently, including without motors. |
+| Selection | `MecanumOpMode` is `@TeleOp`; the PS/Home button cycles through modes during INIT | Two `@Autonomous` entries: park and shoot + park | Make each choice visible directly in the autonomous list; no gamepad needed for selection. |
+| Hardware initialization | The OpMode initializes drivetrain, launcher, and camera | Park needs drivetrain only; shooting INIT can fall back to its own departure | Keep the basic park mode independent of shooting hardware. |
 | Shooting mechanism | `flywheel`, angle `servo`, and `coreHex` feeder | Current team `pollenLauncher`, `intake`, and `agitator` motors | Match the StarterBot mechanism rather than the older launcher. |
 | Shooting timing | One overall timed shooting window | Bounded spinup followed by a continuous, adjustable feed window | Make readiness and timeout behavior explicit. |
 | Route editing | Change method calls in `Auto.java` | INIT controller tuning; geometry/defaults in `PollenShootTuning.java` for B | Keep the route and tuning values together. |
@@ -150,10 +151,9 @@ and translates diagonally with no chassis turn. It does not count balls or
 confirm a scored shot. A spinup timeout skips feeding and continues departure;
 invalid velocity data or a hardware exception stops the routine.
 
-The earlier `Step.shoot(2, 6)` still exists for the disabled legacy BENCH modes.
-It counts active feed time and pauses for speed recovery. That earlier behavior
-is deliberately different from the team's requested continuous-feed Option B.
-Both use the nonblocking sequencer and its independent 27-second cutoff.
+The earlier pause-and-recover shooting example has been removed. The sequencer
+now supports timed drive steps and the continuous-feed shooting behavior used
+by the current robot, with the same independent 27-second cutoff.
 
 ## One parking routine, two physical starting placements
 
@@ -163,7 +163,7 @@ Humans place and angle it at one of two measured starts. Both use the same
 These are timed commands, not measured-distance control.
 
 During INIT, Gamepad 1 D-pad up/down changes only the starting delay, in
-half-second increments. `PollenStartDelay` ignores held-button repeats, bounds
+half-second increments. `PollenParkTuning` ignores held-button repeats, bounds
 the delay by the route budget (at most 20 seconds), and locks on START. A fresh
 INIT returns to the configured default. Neither heading nor motor signs change.
 Option B has its own INIT menu, starting pose, delay and diagonal departure.
@@ -188,27 +188,14 @@ shooting route's own parking leg from the shooting position.
 Some hub failures do not throw an exception, or prevent the SDK from starting
 an OpMode. The fallback is not a substitute for checking hub connectivity.
 
-## What are the BENCH modes?
+## Which modes are on the Driver Hub?
 
-| Driver Hub choice | What it exercises |
-| --- | --- |
-| `Pollen BENCH Park` (disabled) | Movement/hold/completion sequence with displayed commands only. |
-| `Pollen BENCH Shoot` (disabled) | Shooting sequence with simulated launcher speed. |
-| `Pollen BENCH Timeout` (disabled) | Launcher stays at simulated zero speed; verify no feeding and continuation to parking. |
-| `Pollen ROBOT Park` | Actual drivetrain commands after START. |
-| `Pollen ROBOT Shoot + Park` | Current end-wall shooting and diagonal departure after START. |
-| `Pollen BENCH Shoot First` (disabled) | Current Option B with simulated speed and no hardware. |
+- **Pollen ROBOT Park:** forward-only Option A, with INIT controls for time, power and delay.
+- **Pollen ROBOT Shoot + Park:** stationary shooting and calibrated diagonal departure.
 
-BENCH classes carry `@Disabled` so they cannot be selected accidentally in a
-match. Temporarily remove it for bench tests, then restore it and redeploy.
-ROBOT modes have no compile-time enable locks and preselect `PollenBot`
-for TeleOp.
-
-Bench and robot modes use the same `PollenSequence` logic. Bench modes do not
-call `hardwareMap.get` or send motor/servo commands. Their numbers on screen are
-requests from the simulated sequence, not measurements of physical movement.
-Running BENCH on the hub still requires a powered Control Hub and a valid hub
-configuration. The separate Java test script runs on a computer without either hub.
+Both command real hardware after START and preselect `PollenBot` for TeleOp.
+Earlier BENCH/simulation modes were removed after physical robot testing. The
+laptop test script still exercises the logic without either hub or motors.
 
 ## Which files should students read or edit?
 
@@ -217,13 +204,12 @@ All new Java files are under
 
 | File | Role | Usually edited when |
 | --- | --- | --- |
-| `PollenConfig.java` | Shared drive mapping and Option A defaults; legacy example routes | Permanent Option A calibration. |
-| `PollenShootTuning.java` | Current B defaults, INIT settings, geometry and time conversion | Permanent B calibration and route geometry. |
-| `PollenShootFirstAuto.java` | Current B hardware adapter for launcher, intake and agitator | Current shooting hardware. |
-| `PollenStartDelay.java` | INIT delay selection and locking | Changing driver controls. |
-| `PollenSequence.java` | Decide which action is active and what commands it requests | Changing sequence behavior. |
-| `PollenAutoBase.java` | Connect the sequencer to FTC hardware or simulated telemetry | Adapting the mechanism or hardware interface. |
-| `PollenBench*.java` and `PollenRobot*.java` | Small classes that register Driver Hub choices | Adding or changing selectable modes. |
+| `PollenRobotPark.java` | Option A hardware and lifecycle | Changing the park mode's hardware behavior. |
+| `PollenRobotShoot.java` | Option B hardware and lifecycle | Changing the shooting mode's hardware behavior. |
+| `PollenConfig.java` | Shared drive mapping and Option A defaults | Saving permanent Option A defaults. |
+| `PollenParkTuning.java` | Option A INIT controls and memory | Changing its controller settings. |
+| `PollenShootTuning.java` | Option B INIT controls, calibration and route | Saving permanent B defaults or calibrating travel. |
+| `PollenSequence.java` | Shared timed drive / spinup / feed execution | Changing sequencing or stop behavior. |
 
 For routine tuning, use the INIT controls; save validated defaults in the
 corresponding configuration class when ready.

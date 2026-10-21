@@ -1,3 +1,14 @@
+# Team 31452 — Pollen robot
+
+- **Drivers and students:** [Pollen autonomous operating manual](docs/POLLEN_AUTONOMOUS.md).
+- **Programmers:** [Pollen autonomous code README](TeamCode/src/main/java/org/firstinspires/ftc/teamcode/pollen/README.md).
+- **More context:** [Documentation index](docs/README.md).
+
+Use the documentation from the branch/commit installed on the robot. The current
+manual covers the cleanup build; short test defaults are not verified match settings.
+
+---
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the BIOBUZZ (2026-2027) competition season.

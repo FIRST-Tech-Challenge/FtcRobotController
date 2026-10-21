@@ -1,5 +1,6 @@
 import org.firstinspires.ftc.teamcode.pollen.PollenConfig;
 import org.firstinspires.ftc.teamcode.pollen.PollenSequence;
+import org.firstinspires.ftc.teamcode.pollen.PollenShootTuning;
 
 /** Run with tools/test-pollen-sequence.sh. No Android SDK or simulated FTC classes. */
 public final class PollenSequenceTest {
@@ -16,7 +17,7 @@ public final class PollenSequenceTest {
         return new PollenSequence(route, 1250, 1200, 4, 0.25, 27);
     }
     private static PollenSequence shot() {
-        return sequence(new PollenSequence.Step[]{PollenSequence.Step.shoot(2, 6),
+        return sequence(new PollenSequence.Step[]{PollenSequence.Step.continuousShoot(2),
                 PollenSequence.Step.drive("PARK", 1, 0.2, 0, 0)});
     }
     public static void main(String[] args) {
@@ -38,25 +39,13 @@ public final class PollenSequenceTest {
         check(shot.tick(.25, 0, false).feederPower == 0, "Reset stability on dip");
         shot.tick(.5, 1250, false);
         check(shot.tick(.75, 1250, false).feederPower == 1, "Feed after stable speed");
-        PollenSequence.Output paused = shot.tick(1, 1100, false);
-        check(paused.feederPower == 0, "Pause feeding on low speed");
-        check(paused.activeFeedSeconds == .25, "Account for previous commanded feed interval");
-        check(shot.tick(1.25, Double.NaN, false).feederPower == 0, "No feed on invalid velocity");
-        check(shot.tick(2, 1250, false).feederPower == 0, "Recovery must stabilize again");
-        check(shot.tick(2.25, 1250, false).feederPower == 1, "Resume after stable recovery");
-        check(shot.tick(2.75, 1250, false).feederPower == 1, "Pause does not spend active-feed budget");
-        zero(shot.tick(4, 1250, false));
-        check(shot.tick(4.01, 0, false).forward == .2, "Park after active feed completes");
-        check(shot.tick(5, 0, false).finished, "Shot route completes");
-
-        PollenSequence recovery = shot(); recovery.start(0);
-        recovery.tick(0, 1250, false);
-        check(recovery.tick(.25, 1250, false).feederPower == 1, "Begin feed for recovery timeout");
-        recovery.tick(.5, 0, false);
-        check(recovery.tick(6.24, 0, false).feederPower == 0, "No feed during prolonged dip");
-        zero(recovery.tick(6.25, 0, false));
-        check(recovery.warning().contains("Feed recovery timeout"), "Bounded recovery reports incomplete shot");
-        check(recovery.tick(6.26, 0, false).forward == .2, "Recovery timeout continues parking leg");
+        PollenSequence.Output feeding = shot.tick(1, 1100, false);
+        check(feeding.feederPower == 1, "Continuous feeding survives an ordinary speed dip");
+        check(feeding.activeFeedSeconds == .25, "Count the previous commanded feed interval");
+        check(shot.tick(2.74, 1250, false).feederPower == 1, "Full feed window after spinup");
+        zero(shot.tick(2.75, 1250, false));
+        check(shot.tick(2.76, 0, false).forward == .2, "Park after continuous feed completes");
+        check(shot.tick(3.75, 0, false).finished, "Shot route completes");
 
         PollenSequence delayed = new PollenSequence(new PollenSequence.Step[]{
                 PollenSequence.Step.drive("MOVE", 1, .2, 0, 0)}, 1250, 1200, 4, .25, 27, 2);
@@ -77,7 +66,7 @@ public final class PollenSequenceTest {
 
         // Stop before start, during driving, spinup, feeding, and parking must latch zero.
         for (double stopAt : new double[]{0, 0.5, 1.5, 2.8, 4.5, 6.0}) {
-            PollenSequence s = sequence(PollenConfig.shootRoute()); s.start(0);
+            PollenSequence s = shot(); s.start(0);
             for (double t = 0; t < stopAt; t += 0.02) s.tick(t, 1250, false);
             zero(s.tick(stopAt, 1250, true));
             PollenSequence.Output stopped = s.tick(stopAt + 0.1, 1250, false);
@@ -112,13 +101,12 @@ public final class PollenSequenceTest {
         // End-to-end both real route definitions with successful / failed simulated shooter.
         for (boolean shoot : new boolean[]{false, true}) {
             for (boolean failure : new boolean[]{false, true}) {
-                PollenSequence s = new PollenSequence(shoot ? PollenConfig.shootRoute() : PollenConfig.parkRoute(),
-                        PollenConfig.LAUNCHER_TARGET, PollenConfig.LAUNCHER_MIN,
-                        PollenConfig.SPINUP_TIMEOUT, PollenConfig.SPEED_STABLE_TIME,
-                        PollenConfig.TOTAL_TIME_LIMIT, PollenConfig.START_DELAY_SECONDS);
+                PollenSequence s = shoot ? new PollenShootTuning(null).sequence()
+                        : PollenSequence.park(PollenConfig.parkRoute(),
+                                PollenConfig.TOTAL_TIME_LIMIT, PollenConfig.START_DELAY_SECONDS);
                 s.start(0); boolean finished = false; boolean fed = false;
                 for (double t = 0; t < PollenConfig.TOTAL_TIME_LIMIT + 1; t += .02) {
-                    PollenSequence.Output out = s.tick(t, failure ? 0 : PollenConfig.LAUNCHER_TARGET, false);
+                    PollenSequence.Output out = s.tick(t, failure ? 0 : 1250, false);
                     fed |= out.feederPower > 0;
                     if (out.finished) { zero(out); finished = true; break; }
                 }
@@ -127,17 +115,21 @@ public final class PollenSequenceTest {
             }
         }
         rejected = false;
-        try { sequence(new PollenSequence.Step[]{PollenSequence.Step.shoot(2, 23)}); }
+        try { sequence(new PollenSequence.Step[]{PollenSequence.Step.continuousShoot(23)}); }
         catch (IllegalArgumentException expected) { rejected = true; }
-        check(rejected, "Budget includes recovery window, not just active feeding");
+        check(rejected, "Budget includes spinup plus continuous feed");
         rejected = false;
-        try { PollenSequence.Step.shoot(2, 1); }
+        try { PollenSequence.Step.continuousShoot(0); }
         catch (IllegalArgumentException expected) { rejected = true; }
-        check(rejected, "Reject feed window shorter than target");
+        check(rejected, "Reject zero-length shot step");
         rejected = false;
-        try { PollenSequence.Step.shoot(2, Double.NaN); }
+        try { PollenSequence.Step.continuousShoot(Double.NaN); }
         catch (IllegalArgumentException expected) { rejected = true; }
-        check(rejected, "Reject invalid recovery window");
+        check(rejected, "Reject invalid feed duration");
+        rejected = false;
+        try { PollenSequence.park(new PollenSequence.Step[]{PollenSequence.Step.continuousShoot(1)}, 27, 0); }
+        catch (IllegalArgumentException expected) { rejected = true; }
+        check(rejected, "Drive-only sequence rejects shooting steps");
         for (double delay : new double[]{-1, Double.NaN, 25}) {
             rejected = false;
             try { new PollenSequence(new PollenSequence.Step[]{PollenSequence.Step.drive("MOVE", 1, .2, 0, 0)},

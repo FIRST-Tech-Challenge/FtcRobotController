@@ -84,8 +84,8 @@ public final class PollenParkTuningTest {
         catch (IllegalArgumentException expected) { rejected = true; }
         check(rejected, "Invalid default rejected");
 
-        PollenSequence sequence = new PollenSequence(PollenConfig.parkRoute(t.seconds(), t.power()),
-                1250, 1200, 4, 0.25, 27, t.delaySeconds());
+        PollenSequence sequence = PollenSequence.park(PollenConfig.parkRoute(t.seconds(), t.power()),
+                27, t.delaySeconds());
         sequence.start(0);
         equal(sequence.tick(0.49, 0, false).forward, 0, "No output during selected delay");
         equal(sequence.tick(0.5, 0, false).forward, 0.25, "Route uses selected power");
