@@ -46,7 +46,7 @@ while autonomous is running.
 
 **A:** selected delay → timed forward drive → 0.5-second zero-output hold → DONE.
 
-**B:** selected delay → spinup → continuous feed → diagonal drive → hold → DONE.
+**B:** selected delay → spinup → continuous feed → drive at selected angle → hold → DONE.
 A zero feed duration removes the shot; zero distance removes the drive. Both
 zero leave delay/hold only. Hardware initialization still runs.
 
@@ -58,7 +58,7 @@ Normal speed dips do not pause feeding. A nonfinite velocity stops the sequence.
 The shoot OpMode sends the mechanism outputs before the drive outputs, so the
 shooting motors are commanded stopped before departure begins.
 
-A spinup timeout skips feeding and continues B's own diagonal departure. If
+A spinup timeout skips feeding and continues B's own selected departure. If
 shooter setup throws during INIT, fallback is allowed only when every mapped
 shooting device accepts its stop command. The warning remains visible and the
 shot is omitted. **Fallback does not use A's route**, because A assumes a

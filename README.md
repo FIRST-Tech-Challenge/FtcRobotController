@@ -5,7 +5,8 @@
 - **More context:** [Documentation index](docs/README.md).
 
 Use the documentation from the branch/commit installed on the robot. The current
-manual covers the cleanup build; short test defaults are not verified match settings.
+manual covers Park and Shoot + Park with controller angle tuning; short test
+defaults are not verified match settings.
 
 ---
 

@@ -13,7 +13,7 @@ These modes have different starting poses. Neither detects a parking zone.
    Both feed motors default to 0.50 power, matching the current TeleOp's neutral
    trigger / right-bumper feed command. Change their shared power in INIT if needed.
 4. Stop all three shooting mechanisms. Translate at the selected angle (default forward-left) without
-   turning the chassis, for the selected estimated distance. Default: **60.96 cm
+   commanding chassis rotation, for the selected estimated distance. Default: **60.96 cm
    (2 feet)** at vector power 0.20, estimated **2.363 seconds**.
 5. Hold still, then remain in DONE with zero commands until STOP.
 
@@ -23,7 +23,7 @@ continuous run. There is no ball counter, jam detection, hive-tip detection or
 shot-success detection. A nonfinite velocity reading stops the sequence.
 
 If initial speed never qualifies within 4 seconds, skip feeding and continue
-this mode's diagonal departure with a warning. If shooter mapping/configuration
+this mode's selected departure with a warning. If shooter mapping/configuration
 throws during INIT, attempt to stop each mapped mechanism. If that succeeds,
 telemetry says **READY FOR DEPARTURE ONLY - SHOOTER FAILED**. The fallback uses
 this mode's selected departure, never Option A's forward-only route. A drive
@@ -46,7 +46,8 @@ and shoot toward the robot's calibrated forward direction.** Keep the chassis
 square to that wall, centered on the hive axis; angling it to aim changes the
 departure heading too.
 
-Use the orientation in BIOBUZZ manual figure 9-2 (red driver area on the left):
+The table describes the default +25.87-degree departure using the orientation
+in BIOBUZZ manual figure 9-2 (red driver area on the left):
 
 | Alliance | Starting wall and heading | Field departure | Robot-relative departure |
 | --- | --- | --- | --- |
@@ -54,7 +55,8 @@ Use the orientation in BIOBUZZ manual figure 9-2 (red driver area on the left):
 | Blue | Top end wall, facing down toward blue hive | Down and right | Forward-left |
 
 The blue pose is the red pose rotated 180 degrees. Both starts use the same
-robot-relative forward-left command, so **there is no alliance selector**.
+selected robot-relative command (forward-left by default), so **there is no
+alliance selector**.
 Square and Circle do nothing. The program trusts the humans' starting orientation;
 there is no field-coordinate transform or IMU requirement. Shooting settings and
 travel distance work the same on both alliances.
@@ -108,7 +110,8 @@ run was not reported. Option A retains its earlier forward calibration.
 If 86 cm was straight-line displacement, the inferred lateral displacement
 is 40.25 cm and the observed angle is about 27.9 degrees left of forward.
 The default commanded angle remains 25.87 degrees; the controller can now
-select another angle before START. This changes translation, not chassis heading.
+select another angle before START. This changes the translation command. Rotation stays commanded to zero; there
+is no heading feedback to correct physical drift.
 
 For diagonal motion, power means the magnitude of the forward/strafe command
 vector, not the largest individual motor power. At default settings the mixer
@@ -124,8 +127,9 @@ but was fitted near the default, not across the full adjustment range.
 
 ## Validation status
 
-The team reported that the calibrated movement worked. That does not establish
-full-field clearance or confirm the final cleanup installation's robot tests.
+The team reported successful robot tests of the calibrated movement, the cleanup
+build and controller-adjustable angle. These reports do not include a full-field
+clearance record or measurements covering every selectable angle.
 Record those results against the installed commit in the
 [operating manual](POLLEN_AUTONOMOUS.md#team-settings-record).
 The nominal full-field distance above remains a planning estimate until measured

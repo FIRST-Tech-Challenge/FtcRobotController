@@ -22,7 +22,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Build a Follower with:
  *     Follower follower = Constants.create(hardwareMap);
  *
- * The drivetrain and localizer below are real values for this robot. THE FORESIGHT CONSTANTS
+ * The drivetrain and localizer below are configured for Lox; verify them before reuse
+ * on another chassis. THE FORESIGHT CONSTANTS
  * ARE NOT - they are the example numbers from Pedro's docs, measured on somebody else's robot,
  * and they are here only so that create() returns a usable Follower and so AutoTune has
  * something to paste over. Paths will not track accurately until they are replaced.
@@ -57,10 +58,11 @@ public class Constants {
     );
 
     /*
-     * Taken from the values already tuned in SensorGoBildaPinpoint:
-     *     setOffsets(154.0, -81.0, DistanceUnit.MM)
+     * Current configured values (verify against the installed Lox hardware):
+     *     setOffsets(156.0, -81.0, DistanceUnit.MM)
      *     setEncoderResolution(goBILDA_4_BAR_POD)
-     *     setEncoderDirections(FORWARD, FORWARD)
+     *     setEncoderDirections(REVERSED, REVERSED)
+     * These describe the assignments below, not proof of calibration on the Pollen bot.
      *
      * PinpointLocalizer passes xPodOffset and yPodOffset straight through to the driver's
      * setOffsets(x, y, unit), so these map one-to-one. offsetUnits applies only to the two

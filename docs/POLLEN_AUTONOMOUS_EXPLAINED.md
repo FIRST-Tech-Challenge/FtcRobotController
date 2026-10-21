@@ -2,7 +2,7 @@
 
 This document explains the pollen autonomous code for students and mentors.
 The current Option B is **Pollen ROBOT Shoot + Park**: start already aimed at
-the hive, shoot while stationary, then translate diagonally. Its current
+the hive, shoot while stationary, then translate at the angle selected during INIT. Its current
 controls are in the [operating manual](POLLEN_AUTONOMOUS.md), and field assumptions
 are in [POLLEN_SHOOT_FIRST.md](POLLEN_SHOOT_FIRST.md). For installation and laptop
 tests, see the [code README](../TeamCode/src/main/java/org/firstinspires/ftc/teamcode/pollen/README.md).
@@ -21,11 +21,15 @@ There are two choices:
 
 Both use timed driving, like the existing autonomous routines. Neither measures
 the robot's driving position or detects that it has arrived at a parking zone.
-The initial durations and directions are short examples requiring physical
-calibration. A step labeled “PARK” does not establish that the robot is parked.
+The team has reported successful robot testing of the movement calibration,
+cleanup build and controller-adjustable angle. This confirms the tested setups;
+it does not establish every selectable angle or a full-field parking route.
+Short code defaults remain distinct from verified match settings. A step labeled
+“PARK” does not establish that the robot is parked.
 
-The optional shooting routine assumes the goBILDA StarterBot mechanism reflected
-in `BioBuzzStarterbotOpMode.java`. Confirm that this matches the actual pollen bot.
+The shooting routine uses the current PollenBot motor mapping reflected in
+`BioBuzzStarterbotOpMode.java`: `pollenLauncher`, `intake` and `agitator`.
+There is no windmill feeder or feeder servo in this implementation.
 
 ## Who assigns the motor names?
 
@@ -116,8 +120,11 @@ combined wheel commands proportionally if any would exceed magnitude 1. Thus
 high-power diagonal or combined movements need particular care when comparing
 the versions; their limiting behavior differs.
 
-Positive inputs mean robot-forward, robot-right, and clockwise turn, provided
-the physical wheel layout and direction configuration match the assumed layout.
+Positive drive inputs mean robot-forward, robot-right, and clockwise turn,
+provided the wheel layout and direction configuration match the assumed layout.
+The operator's **travel angle** uses a different convention: positive degrees
+mean left of forward. `PollenShootTuning` converts a positive angle into a negative
+right-strafe command. These are two representations of the same movement.
 
 ## What changed, and why?
 
@@ -143,11 +150,13 @@ not a requirement imposed by FTC.
 
 ## What happens in the current shooting step?
 
-The new `Step.continuousShoot(10)` qualifies flywheel speed once (96% of the
+The default `Step.continuousShoot(10)` qualifies flywheel speed once (96% of the
 chosen target for 0.25 seconds), then requests ten continuous seconds of intake,
-agitator and flywheel operation. Spinup is additional, bounded to four seconds.
+agitator and flywheel operation. INIT can change that feed duration; zero skips
+the shot. Spinup is additional, bounded to four seconds.
 Normal speed dips during feeding do not pause it. It then zeros the mechanisms
-and translates diagonally with no chassis turn. It does not count balls or
+and translates at the selected angle with zero commanded rotation. There is no
+heading correction if the chassis drifts. It does not count balls or
 confirm a scored shot. A spinup timeout skips feeding and continues departure;
 invalid velocity data or a hardware exception stops the routine.
 
@@ -155,28 +164,64 @@ The earlier pause-and-recover shooting example has been removed. The sequencer
 now supports timed drive steps and the continuous-feed shooting behavior used
 by the current robot, with the same independent 27-second cutoff.
 
-## One parking routine, two physical starting placements
+## Starting placements and INIT settings
 
-The robot does not need to know which end of the loading zone it approaches.
-Humans place and angle it at one of two measured starts. Both use the same
-`PARK_FORWARD_POWER` and `PARK_FORWARD_SECONDS`, followed by a zero-output hold.
-These are timed commands, not measured-distance control.
+**Option A** always commands forward movement. Humans choose and mark a starting
+pose that points along the tested path. Either physical start can use this same
+routine; verify each path and endpoint rather than assuming two placements are
+equivalent. `PARK_FORWARD_POWER` and `PARK_FORWARD_SECONDS` supply defaults,
+which the operator can change before START.
 
-During INIT, Gamepad 1 D-pad up/down changes only the starting delay, in
-half-second increments. `PollenParkTuning` ignores held-button repeats, bounds
-the delay by the route budget (at most 20 seconds), and locks on START. A fresh
-INIT returns to the configured default. Neither heading nor motor signs change.
-Option B has its own INIT menu, starting pose, delay and diagonal departure.
+During INIT, Gamepad 1 D-pad up/down adjusts delay, right/left adjusts drive
+time, and R1/L1 adjusts power. Tap and release; held buttons do not repeat.
+START locks the settings. **Only delay resets each INIT**; power and time remain
+in memory until the Robot Controller app restarts. Triangle restores all defaults.
+See the [operating manual](POLLEN_AUTONOMOUS.md) for increments and bounds.
+
+**Option B** has its own shooting start and menu. Up/down selects a row and
+right/left edits it. The travel angle defaults to +25.87 degrees, with positive
+left, zero forward and negative right. START locks it along with the other
+settings. Selected values remain in process memory except for delay, which resets
+each INIT; an app restart loses that memory.
+
+The corresponding B starts on opposite alliances are related by a 180-degree
+rotation of the whole starting pose. The same robot-relative commands work for
+both; no alliance selector or automatic sign reversal is needed for those poses.
+A different route or starting orientation requires its own validation.
 
 Coordinate the partner's full path, timing, and finishing footprint. A delay
 can separate a crossing in time; it cannot make an occupied starting or parking
 position compatible. The program does not sense the partner or guarantee clearance.
 
-## Why fallback only during INIT?
+## Why the distance setting depends on calibration
+
+Option B converts the selected distance into a duration:
+
+`drive_seconds = selected_distance_cm / (129 * selected_power)`
+
+Angle changes the forward/sideways command mixture, but does not change this
+duration. The coefficient 129 was fitted near the default angle. It is not a
+calibration for every direction, power, surface or battery voltage. Likewise,
+the selected angle describes the command, not a measured travel heading.
+
+For example, 100 cm at power 0.20 requests about 3.876 seconds at every angle.
+If the earlier forward-only coefficient of 150 at 12.86 V still applies, that
+would predict about 116 cm at zero degrees. This is an illustration of the
+model's limitation, not a new measured result.
+
+For the current route, keep power fixed, measure forward and left displacement,
+adjust angle for direction, then adjust distance for the endpoint. Repeat the
+combined shooting/departure run under representative conditions. Entering
+forward/left distances instead would describe the destination differently; it
+would not by itself correct timed-driving errors. Separate forward/strafe
+calibrations could improve an estimate, but would still need diagonal validation.
+See the [calibration reference](POLLEN_SHOOT_FIRST.md) for the measured data.
+
+## Shooter initialization fallback and runtime failures
 
 If shooter initialization throws, the code tries to stop every mapped shooter
 motor. When those commands succeed, current Option B skips its shooting step
-and uses its own diagonal departure, displaying the reason. It never substitutes
+and uses its own selected departure, displaying the reason. It never substitutes
 Option A, which has a different starting pose. Drive initialization failure or
 a failed shooter stop blocks the run.
 
@@ -191,7 +236,7 @@ an OpMode. The fallback is not a substitute for checking hub connectivity.
 ## Which modes are on the Driver Hub?
 
 - **Pollen ROBOT Park:** forward-only Option A, with INIT controls for time, power and delay.
-- **Pollen ROBOT Shoot + Park:** stationary shooting and calibrated diagonal departure.
+- **Pollen ROBOT Shoot + Park:** stationary shooting followed by travel at the selected angle and estimated distance.
 
 Both command real hardware after START and preselect `PollenBot` for TeleOp.
 Earlier BENCH/simulation modes were removed after physical robot testing. The
@@ -215,7 +260,7 @@ For routine tuning, use the INIT controls; save validated defaults in the
 corresponding configuration class when ready.
 Keep the existing tested TeleOp available while checking the autonomous settings.
 
-## What still needs the real robot?
+## What testing establishes
 
 The source includes different wheel-direction conventions:
 
@@ -225,35 +270,41 @@ The source includes different wheel-direction conventions:
 | `MecanumDrive` | frontLeft, backRight |
 | `MecanumDriveTrain` | frontLeft, frontRight |
 
-The new configuration provisionally follows `BioBuzzStarterbotOpMode`. This is
-not evidence that the other configurations were wrong for their original robots.
-Use the TeleOp that actually drives this pollen bot correctly as the reference,
-then verify names, wiring, and wheel directions with the wheels lifted.
+The Pollen configuration matches the current `BioBuzzStarterbotOpMode` and has
+been exercised on the robot. Different conventions in older classes are not
+evidence that those configurations were wrong for their original robots.
+After wiring or direction changes, recheck the drivetrain before reusing a route.
 
-Before treating either route as ready, establish the chosen starting position
-and heading, measure driving behavior, verify the real parking destination,
-and repeat the parking test. Only then validate launcher/feeder operation and
-the optional shooting route. Its parking leg starts from the shooting position,
-so it needs its own calibration.
+The team reported successful tests, but this document does not contain the
+measured endpoints, battery conditions or a full-field clearance record. Keep
+those results with the installed commit in the operating manual's settings record.
+Option B's departure starts from the shooting position, so Option A's successful
+parking test does not validate it. Retest after changing angle, power, starting
+pose or hardware. Computer tests verify logic; physical trials establish travel
+and shooting results.
 
-The supplied software has computer tests and can be built before practice;
-those checks do not establish that the robot drives, parks, or scores correctly.
+## Keep the next development step focused
 
-## Improvements to evaluate after calibration
+The current routine starts at its shooting position. It has no approach leg in
+which to pre-spin, and its paired starting poses do not need an alliance selector.
+Keep the tested controls while measuring the actual route; add ramps or voltage
+compensation only if measurements justify changing and recalibrating movement.
 
-- **Pre-spin:** may save some approach/spinup time per shooting step, not per ball.
-  Verify the launcher can run safely during approach before adding overlap.
-- **Alliance mirroring:** negating strafe and turn assumes reflected starting
-  poses/headings and equivalent paths. Test both field routes before registering
-  red/blue choices; a color label alone does not establish a valid route.
-- **Voltage compensation:** a raw `12 / voltage` multiplier is not a distance
-  controller. It needs valid sensor readings, bounded powers, and tests across
-  battery states. Keep the baseline unchanged until drift is measured.
-- **Acceleration ramps:** can reduce slip at higher power but change travel for
-  every timed leg. Add and recalibrate together if testing demonstrates a need.
-- **Odometry:** reuse ideas from the existing Pinpoint/Pedro work, but verify
-  hardware, pod offsets, direction conventions, and tuning for this robot.
-  Constants for another robot do not establish localization on this chassis.
+For longer routines, the useful upgrade is position feedback. First verify
+reported position and heading while moving the robot manually. Then make one
+short movement stop at a measured destination, with a timeout, before combining
+travel with flower collection and repeated shooting.
+
+Keep hardware control, mechanism actions and route sequencing separate. A future
+movement action can use measured position to decide when it has arrived instead
+of relying solely on elapsed time. Limelight observations, odometry and heading
+information will need consistent coordinates and handling for unavailable or
+stale measurements. None of that localization is implemented in these Pollen modes.
+
+The repository's Pedro/Pinpoint material is a starting reference, not a ready
+configuration for this robot. Verify the installed sensor hardware, pod offsets,
+directions and units. Its Foresight values are explicitly marked as placeholders
+and must be tuned before relying on path following.
 
 ## FTC reference
 

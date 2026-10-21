@@ -19,9 +19,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 /**
- * Checks that Pedro Pathing is wired up correctly on Lox before any path following is attempted.
- * This deliberately does not follow a path - it only drives the robot and reports the pose the
- * Pinpoint reports, so it does not depend on any of the untuned Foresight constants.
+ * Provides manual localization checks and optional button-triggered path tests on Lox.
+ * Manual driving reports the Pinpoint pose without following a path. Holding A or B
+ * runs the path tests described below; those DO depend on the Foresight tuning.
  *
  * AutoTune has a Tests -> Localization procedure (http://192.168.43.1:10158) that also drives the
  * robot and reports the pose, but it prints the pose as text to the Driver Station and nothing

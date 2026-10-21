@@ -13,7 +13,8 @@ For installation or code changes, use the [programmer README](../TeamCode/src/ma
 | **Pollen ROBOT Shoot + Park** — Option B | Wait, spin up, feed while stationary, stop the shooter, drive at the selected angle (default forward-left), stop | Start at the end wall, square to it and facing the hive, in the team's tested shooting position. |
 
 The modes use **different starting poses and different controller controls**.
-Option B translates without turning the chassis. Left always means the robot's
+Option B commands translation with zero rotation; it does not correct heading
+drift. Left always means the robot's
 own left. For the corresponding opposite-alliance shooting start, rotate the
 whole starting pose 180 degrees; the same selected angle gives the corresponding robot-relative departure.
 There is no alliance or start-position selector.
@@ -136,8 +137,8 @@ survive an app restart, a programmer must update defaults, rebuild and install.
 | Screen / behavior | Meaning and action |
 | --- | --- |
 | BLOCKED | Initialization failed. Do not START expecting a route; read the error and have a programmer check the configuration or hardware. |
-| READY FOR DEPARTURE ONLY - SHOOTER FAILED | Option B could not initialize shooting but could stop the mapped shooter devices. START will run its selected diagonal departure without shooting. Before START, decide whether that result is acceptable from this pose. |
-| SPINUP, then a timeout warning | Initial speed did not qualify within 4 seconds. Feeding is skipped automatically and Option B continues its selected diagonal departure. No driver intervention is required. |
+| READY FOR DEPARTURE ONLY - SHOOTER FAILED | Option B could not initialize shooting but could stop the mapped shooter devices. START will run its selected departure without shooting. Before START, decide whether that result is acceptable from this pose. |
+| SPINUP, then a timeout warning | Initial speed did not qualify within 4 seconds. Feeding is skipped automatically and Option B continues its selected departure. No driver intervention is required. |
 | CONTINUOUS FEED - speed below target band | Feeding continues as requested. Record the result; change settings before a later run if needed. |
 | Hardware error / mode stops | The code attempts to stop each device and ends the mode. Diagnose before retrying. |
 | DONE | The programmed steps finished with zero motor commands. This does not confirm physical parking or successful shots. |
@@ -145,9 +146,12 @@ survive an app restart, a programmer must update defaults, rebuild and install.
 A 27-second software cutoff also stops commands. STOP and software cutoffs cannot
 prevent physical coasting or guarantee recovery from an electrical failure.
 
-## Final robot check after the cleanup installation
+## Robot verification after changes
 
-Use short trials first. Record the installed commit and photograph the settings.
+The team reported successful testing of the cleanup and adjustable-angle builds.
+Use this checklist after further changes or to validate a new route; it is not a
+record that every field configuration has been tested. Start with short trials.
+Record the installed commit and photograph the settings.
 
 1. **INIT check:** verify both menus, build identifier, settings changes, delay
    reset and no movement before START.
