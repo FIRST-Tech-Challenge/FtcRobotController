@@ -68,7 +68,7 @@ public class ShootParkAuto extends LinearOpMode {
 */
         robot.odo.update();
         Pose2D pose = robot.odo.getPosition();
-        telemetry.addData("X (mm)", "%.1f", -pose.getX(DistanceUnit.MM));
+        telemetry.addData("X (mm)", "%.1f", pose.getX(DistanceUnit.MM));
         telemetry.addData("Y (mm)", "%.1f", pose.getY(DistanceUnit.MM));
         telemetry.addData("Heading (degrees)", "%.1f", pose.getHeading(AngleUnit.DEGREES));
         telemetry.addData("Autonomous", "Complete");

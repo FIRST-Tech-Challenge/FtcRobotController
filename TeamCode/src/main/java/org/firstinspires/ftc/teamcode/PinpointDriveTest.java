@@ -14,6 +14,7 @@ public class PinpointDriveTest extends LinearOpMode {
         RockinBot robot = new RockinBot(this);
 
         telemetry.addData("Pinpoint Drive Test", "Ready");
+        telemetry.addData("Coordinates", "X forward, Y left, heading counterclockwise");
         telemetry.addData("Reset pose", "Press gamepad 1 Options");
         telemetry.addData("Version", "v20261013-03");
         telemetry.update();
@@ -33,7 +34,7 @@ public class PinpointDriveTest extends LinearOpMode {
 
             robot.odo.update();
             Pose2D pose = robot.odo.getPosition();
-            telemetry.addData("X (mm)", "%.1f", -pose.getX(DistanceUnit.MM));
+            telemetry.addData("X (mm)", "%.1f", pose.getX(DistanceUnit.MM));
             telemetry.addData("Y (mm)", "%.1f", pose.getY(DistanceUnit.MM));
             telemetry.addData("Heading (degrees)", "%.1f", pose.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Pinpoint status", robot.odo.getDeviceStatus());
