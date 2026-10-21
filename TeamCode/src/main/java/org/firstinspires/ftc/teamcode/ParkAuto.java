@@ -14,7 +14,7 @@ public class ParkAuto extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        robot.driveToPos(100, 100, 0, 10, 2, 4);
+        robot.driveToPos(200, 200, 0, 10, 2, 4);
 
         telemetry.addData("Autonomous", "Complete");
         telemetry.update();
