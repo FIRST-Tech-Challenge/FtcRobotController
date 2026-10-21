@@ -45,7 +45,10 @@ public abstract class PollenAutoBase extends OpMode {
     private final ElapsedTime clock = new ElapsedTime();
     private PollenSequence sequence;
     private PollenSequence.Step[] route;
-    private PollenStartDelay startDelay;
+    // Process-local memory: persists through STOP/INIT, not an app restart or reinstall.
+    // Bench adjustments must never change the remembered robot settings.
+    private static PollenParkTuning.Snapshot rememberedRobotPark, rememberedBenchPark;
+    private PollenParkTuning parkTuning;
     private String blocked;
     private String fallback;
     private boolean activeShoot;
@@ -54,7 +57,7 @@ public abstract class PollenAutoBase extends OpMode {
 
     @Override public final void init() {
         blocked = fallback = null;
-        startDelay = null;
+        parkTuning = null;
         sequence = null;
         activeShoot = shoot();
         try {
@@ -74,11 +77,13 @@ public abstract class PollenAutoBase extends OpMode {
                 }
             }
             route = activeShoot ? PollenConfig.shootRoute() : PollenConfig.parkRoute();
-            // Park has a selectable delay. Shoot retains its configured route and delay.
+            // Only Park has controller tuning. Shoot retains its configured route and delay.
             if (!shoot()) {
-                startDelay = new PollenStartDelay(PollenConfig.START_DELAY_SECONDS,
-                        PollenSequence.worstCaseDuration(route, PollenConfig.SPINUP_TIMEOUT),
-                        PollenConfig.TOTAL_TIME_LIMIT);
+                parkTuning = new PollenParkTuning(PollenConfig.PARK_FORWARD_POWER,
+                        PollenConfig.PARK_FORWARD_SECONDS, PollenConfig.START_DELAY_SECONDS,
+                        PollenConfig.TOTAL_TIME_LIMIT, PollenConfig.PARK_HOLD_SECONDS,
+                        bench() ? rememberedBenchPark : rememberedRobotPark);
+                route = PollenConfig.parkRoute(parkTuning.seconds(), parkTuning.power());
             }
             sequence = newSequence(selectedDelay());
         } catch (RuntimeException ex) {
@@ -89,7 +94,7 @@ public abstract class PollenAutoBase extends OpMode {
     }
 
     private double selectedDelay() {
-        return startDelay == null ? PollenConfig.START_DELAY_SECONDS : startDelay.delaySeconds();
+        return parkTuning == null ? PollenConfig.START_DELAY_SECONDS : parkTuning.delaySeconds();
     }
 
     private PollenSequence newSequence(double delay) {
@@ -99,10 +104,14 @@ public abstract class PollenAutoBase extends OpMode {
     }
 
     private void showDelay() {
-        if (startDelay == null) return;
+        if (parkTuning == null) return;
+        telemetry.addData("Park power / drive seconds", "%.2f / %.2f s",
+                parkTuning.power(), parkTuning.seconds());
         telemetry.addData("Start delay / maximum", "%.1f / %.1f seconds",
-                startDelay.delaySeconds(), startDelay.maximumDelaySeconds());
-        telemetry.addData("Selection", startDelay.locked() ? "LOCKED" : "Adjust on Gamepad 1 before START");
+                parkTuning.delaySeconds(), parkTuning.maximumDelaySeconds());
+        telemetry.addData("Selection", parkTuning.locked() ? "LOCKED" : "Adjust on Gamepad 1 before START");
+        telemetry.addData("Keep these values", "PARK_FORWARD_POWER=%.2f; PARK_FORWARD_SECONDS=%.2f",
+                parkTuning.power(), parkTuning.seconds());
     }
 
     private void mapDrive() {
@@ -140,16 +149,23 @@ public abstract class PollenAutoBase extends OpMode {
     }
 
     @Override public final void init_loop() {
-        if (startDelay != null && gamepad1 != null) {
-            startDelay.update(gamepad1.dpad_up, gamepad1.dpad_down);
+        if (parkTuning != null && gamepad1 != null) {
+            parkTuning.update(gamepad1.dpad_up, gamepad1.dpad_down,
+                    gamepad1.dpad_left, gamepad1.dpad_right,
+                    gamepad1.left_bumper, gamepad1.right_bumper, gamepad1.triangle);
+            if (bench()) rememberedBenchPark = parkTuning.snapshot();
+            else rememberedRobotPark = parkTuning.snapshot();
         }
-        telemetry.addData("Build", "pollen-prep-v3");
+        telemetry.addData("Build", "pollen-prep-v3.1-tuning");
         telemetry.addData("Mode", bench() ? "BENCH - NO HARDWARE COMMANDS" : "ROBOT TEST");
         telemetry.addData("Active route", activeShoot ? "move / shoot / park" : "move / park");
         telemetry.addData("Start delay seconds", selectedDelay());
         showDelay();
-        if (startDelay != null && !startDelay.locked()) {
-            telemetry.addData("D-pad", "UP/DOWN=delay +/-0.5s per press");
+        if (parkTuning != null && !parkTuning.locked()) {
+            telemetry.addData("D-pad", "UP/DOWN delay +/-0.5s; RIGHT/LEFT drive +/-0.05s");
+            telemetry.addData("L1 / R1", "Decrease / increase power by 0.05 (range 0.05-0.50)");
+            telemetry.addData("Triangle", "Reset power, time, delay to code defaults");
+            telemetry.addData("Memory", "Power/time kept until app restarts; delay resets each INIT");
             telemetry.addData("Placement", "Set starting position and angle by hand before START.");
         }
         if (fallback != null) telemetry.addData("FALLBACK", fallback);
@@ -162,7 +178,10 @@ public abstract class PollenAutoBase extends OpMode {
         clock.reset();
         simulatedVelocity = 0;
         simulatedSpinupStarted = Double.NaN;
-        if (startDelay != null) startDelay.lock();
+        if (parkTuning != null) {
+            parkTuning.lock();
+            route = PollenConfig.parkRoute(parkTuning.seconds(), parkTuning.power());
+        }
         if (blocked == null) {
             try {
                 sequence = newSequence(selectedDelay()); // Snapshot of INIT selections.
@@ -201,7 +220,7 @@ public abstract class PollenAutoBase extends OpMode {
                     rightIntake.setPower(0.5 * out.feederPower);
                 }
             }
-            telemetry.addData("Build", "pollen-prep-v3");
+            telemetry.addData("Build", "pollen-prep-v3.1-tuning");
             telemetry.addData("Mode", bench() ? "BENCH - simulated, no hardware commands" : "ROBOT TEST");
             showDelay();
             telemetry.addData("Phase", out.phase);
@@ -228,7 +247,7 @@ public abstract class PollenAutoBase extends OpMode {
     }
 
     @Override public final void stop() {
-        if (startDelay != null) startDelay.lock();
+        if (parkTuning != null) parkTuning.lock();
         if (sequence != null) sequence.stop("STOPPED");
         zeroHardware();
     }

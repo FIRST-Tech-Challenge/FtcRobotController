@@ -24,15 +24,22 @@ public final class PollenConfig {
 
     // Tune these on the actual robot; seconds are NOT a measured distance.
     // The two manually mirrored start poses use this same forward-only route.
-    public static final double PARK_FORWARD_SECONDS = 0.75;
+    public static final double PARK_FORWARD_SECONDS = 2;
     public static final double PARK_FORWARD_POWER = 0.20;
 
     // Short, low-power EXAMPLES for initial testing. Positive = forward/right/clockwise.
     // Replace with the measured route from your chosen start and heading to the park zone.
     public static PollenSequence.Step[] parkRoute() {
+        return parkRoute(PARK_FORWARD_SECONDS, PARK_FORWARD_POWER);
+    }
+
+    public static final double PARK_HOLD_SECONDS = 0.5;
+
+    /** Snapshot of the settings selected before START. */
+    public static PollenSequence.Step[] parkRoute(double seconds, double power) {
         return new PollenSequence.Step[] {
-                PollenSequence.Step.drive("FORWARD TO PARK", PARK_FORWARD_SECONDS, PARK_FORWARD_POWER, 0, 0),
-                PollenSequence.Step.drive("PARK / HOLD", 0.5, 0, 0, 0)
+                PollenSequence.Step.drive("FORWARD TO PARK", seconds, power, 0, 0),
+                PollenSequence.Step.drive("PARK / HOLD", PARK_HOLD_SECONDS, 0, 0, 0)
         };
     }
 
