@@ -209,10 +209,10 @@ public class RockinBot {
         RobotLog.vv("Rockin' Robots", "Lumberjack PWM disabled");
     }
 
-    public void shooterPower(double speed) {
-        RobotLog.vv("Rockin' Robots", "shooterPower(%.2f)", speed);
-        shooterSpeed = speed;
-        shooter.setPower(speed);
+    public void shooterVelocity(double vel) {
+        RobotLog.vv("Rockin' Robots", "shooterPower(%.2f)", vel);
+        shooterSpeed = vel;
+        shooter.setVelocity(vel);
     }
 
     public boolean getPinpointPosition() {     // Finds robot position

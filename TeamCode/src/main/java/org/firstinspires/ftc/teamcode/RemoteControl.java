@@ -15,7 +15,7 @@ public class RemoteControl extends LinearOpMode {
 
         double intakeSpeed = 0.85;
         double triggerSpeed = 0.5;
-        double shooterSpeed = 0.71;
+        double shooterVelocity = 1675;
         double pValue = 90;
         boolean halfWheelSpeed = false;
         double wheelSpeedMultiplier = 1.0;
@@ -33,7 +33,7 @@ public class RemoteControl extends LinearOpMode {
 
         waitForStart();
         r.intakePower(intakeSpeed);
-        r.shooterPower(shooterSpeed);
+        r.shooterVelocity(shooterVelocity);
         ElapsedTime telemetryTimer = new ElapsedTime();
 
         // Run until the end of the match (driver presses STOP)
@@ -68,19 +68,19 @@ public class RemoteControl extends LinearOpMode {
 
             // Control the shooter
             if (gamepad1.triangleWasReleased()) {
-                shooterSpeed *= -1;
-                r.shooterPower(shooterSpeed);
+                shooterVelocity *= -1;
+                r.shooterVelocity(shooterVelocity);
             }
             if(gamepad1.dpad_up) {
-                r.shooterPower(0);
+                r.shooterVelocity(0);
             }
             if (gamepad1.rightBumperWasReleased()) {
-                shooterSpeed = Math.min(1.0, shooterSpeed + 0.01);
-                r.shooterPower(shooterSpeed);
+                shooterVelocity = shooterVelocity + 5;
+                r.shooterVelocity(shooterVelocity);
             }
             if (gamepad1.leftBumperWasReleased()) {
-                shooterSpeed = Math.max(-1.0, shooterSpeed - 0.01);
-                r.shooterPower(shooterSpeed);
+                shooterVelocity = shooterVelocity - 5;
+                r.shooterVelocity(shooterVelocity);
             }
 
             if (gamepad1.dpadDownWasReleased()) {

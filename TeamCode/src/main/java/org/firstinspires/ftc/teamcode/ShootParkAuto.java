@@ -10,8 +10,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
 @Autonomous(name="Shoot and Park Auto", group="Robot")
 public class ShootParkAuto extends LinearOpMode {
-    private static final double SHOOTER_POWER = 0.76;
+    private static final double SHOOTER_VELOCITY = 1750;
     private static final double TRIGGER_POWER = 1;
+    private static final double INTAKE_POWER = 0.8;
 
     @Override
     public void runOpMode() {
@@ -19,17 +20,17 @@ public class ShootParkAuto extends LinearOpMode {
 
         telemetry.addData("Autonomous Ready", "Shoot, then park");
         telemetry.addData("Route", "(500, -800) to (1150, -2050) mm");
-        telemetry.addData("Version", "v20261020-14");
+        telemetry.addData("Version", "v20261021-15");
         telemetry.update();
         waitForStart();
 
-/*        // Start motors
-        robot.shooterPower(SHOOTER_POWER);
+        // Start motors
+        robot.shooterVelocity(SHOOTER_VELOCITY);
         robot.setpValue(70);
         sleep(3000); // let shooters get up to speed
 
         // Shoot 1st round: balls 1 & 2
-        robot.intakePower(0.8);
+        robot.intakePower(INTAKE_POWER);
         robot.triggerPower(TRIGGER_POWER);
         sleep(100);
         robot.triggerPower(0);
@@ -40,14 +41,15 @@ public class ShootParkAuto extends LinearOpMode {
         sleep(500);
         robot.triggerPower(0);
         sleep(1000);
-*/
+
+        // This is good
         robot.driveToPos(0, -150, 0, 25, 5, 1, 0.4); // Waypoint to get off the wall
-        robot.driveToPos(600, -100, -90, 50,2, 3, 0.6); // Move to collect balls
-        robot.driveToPos(900, -50, -90, 50, 2, 2, 0.3); // Collect them
-/*
-        robot.driveToPos(0, 0, 0, 50, 2, 4); // Go back to shooting position
+        robot.driveToPos(400, -20, -85, 50,2, 3, 0.7); // Move to collect balls
+        robot.driveToPos(1100, 0, -85, 50, 2, 2, 0.2); // Collect them
+        sleep(1000);
+        robot.driveToPos(0, 0, 0, 20, 1, 4); // Go back to shooting position
+
         // Shoot 3rd round: balls 5 & 6
-        robot.intakePower(0.8);
         robot.triggerPower(TRIGGER_POWER);
         sleep(100);
         robot.triggerPower(0);
@@ -58,10 +60,10 @@ public class ShootParkAuto extends LinearOpMode {
         sleep(500);
         robot.triggerPower(0);
         sleep(1000);
-
+/*
         // Park
         robot.intakePower(0);
-        robot.shooterPower(0);
+        robot.shooterVelocity(0);
         RobotLog.vv("Rockin' Robots", "Drive to the waypoint");
         robot.driveToPos(900, -300, 0, 50, 2, 2, 0.6); // Waypoint to avoid pole
         RobotLog.vv("Rockin' Robots", "Drive to the parking box");
