@@ -1,6 +1,9 @@
 # Pollen autonomous: how it works and how it compares
 
-This document explains the initial pollen autonomous code for students and mentors.
+This document explains the pollen autonomous code for students and mentors.
+The current Option B is **Pollen ROBOT Shoot + Park**: start already aimed at
+the hive, shoot while stationary, then translate diagonally. Its current
+controls and field assumptions are in [POLLEN_SHOOT_FIRST.md](POLLEN_SHOOT_FIRST.md).
 For installation and the bench/robot test procedure, see
 [POLLEN_AUTONOMOUS.md](POLLEN_AUTONOMOUS.md).
 
@@ -13,8 +16,8 @@ the source code, not a claim that every old routine was used in competition.
 There are two choices:
 
 1. **Park:** move from a chosen start to the parking location, then stop.
-2. **Shoot, then park:** move to a shooting position, stop and shoot, then move
-   to the parking location and stop.
+2. **Shoot, then park:** start at the end wall already aimed at the hive, spin
+   up and feed continuously, then translate toward the parking location and stop.
 
 Both use timed driving, like the existing autonomous routines. Neither measures
 the robot's driving position or detects that it has arrived at a parking zone.
@@ -123,9 +126,9 @@ the physical wheel layout and direction configuration match the assumed layout.
 | Execution | `LinearOpMode`; a method waits for its action to finish before returning | Iterative `OpMode`; each loop checks the current action and time | Run the same decision logic on a computer or a hub. |
 | Selection | `MecanumOpMode` is `@TeleOp`; the PS/Home button cycles through modes during INIT | Separate `@Autonomous` entries for park and shoot; bench entries hidden by default | Make each choice visible directly in the autonomous list; no gamepad needed for selection. |
 | Hardware initialization | The OpMode initializes drivetrain, launcher, and camera | Park needs drivetrain only; shooting INIT can fall back to park; bench maps no hardware | Test parts independently, including without motors. |
-| Shooting mechanism | `flywheel`, angle `servo`, and `coreHex` feeder | StarterBot `launcher`, `windmillServo`, and intake devices | Match the StarterBot mechanism rather than the older launcher. |
-| Shooting timing | One overall timed shooting window | Bounded spinup, active-feed target, and recovery timeout | Make readiness and timeout behavior explicit. |
-| Route editing | Change method calls in `Auto.java` | Change step lists in `PollenConfig.java` | Keep the route and tuning values together. |
+| Shooting mechanism | `flywheel`, angle `servo`, and `coreHex` feeder | Current team `pollenLauncher`, `intake`, and `agitator` motors | Match the StarterBot mechanism rather than the older launcher. |
+| Shooting timing | One overall timed shooting window | Bounded spinup followed by a continuous, adjustable feed window | Make readiness and timeout behavior explicit. |
+| Route editing | Change method calls in `Auto.java` | INIT controller tuning; geometry/defaults in `PollenShootTuning.java` for B | Keep the route and tuning values together. |
 
 The existing timed driving and shooting methods already check
 `opModeIsActive()`. The old launcher already gates feeding on measured speed.
@@ -137,30 +140,20 @@ The additional structure primarily supports hardware-free tests and separates
 the route decisions from the actual motor commands. It is a design choice,
 not a requirement imposed by FTC.
 
-## What happens in the new shooting step?
+## What happens in the current shooting step?
 
-1. The drivetrain stops for shooting.
-2. The launcher is commanded to the configured target velocity.
-3. Speed must remain at or above the configured minimum for 0.25 seconds before
-   feeding begins. The supplied target/minimum are 1250/1200 encoder ticks per
-   second, taken from the starter example and still needing robot validation.
-4. If speed does not qualify within four seconds, the launcher is stopped,
-   a warning is shown, and the routine continues to its parking leg.
-5. Once feeding starts, count two seconds of commanded feeding. Low or invalid
-   speed pauses feeding; speed must stabilize again before resuming. Pauses do
-   not spend the active-feed allowance, but a separate six-second wall-clock
-   window limits the total time after feeding first begins. On expiry, report
-   an incomplete shot and continue to parking.
-6. Launcher and feeder commands return to zero before movement to parking.
+The new `Step.continuousShoot(10)` qualifies flywheel speed once (96% of the
+chosen target for 0.25 seconds), then requests ten continuous seconds of intake,
+agitator and flywheel operation. Spinup is additional, bounded to four seconds.
+Normal speed dips during feeding do not pause it. It then zeros the mechanisms
+and translates diagonally with no chassis turn. It does not count balls or
+confirm a scored shot. A spinup timeout skips feeding and continues departure;
+invalid velocity data or a hardware exception stops the routine.
 
-`Step.shoot(2.0, 6.0)` requests two seconds of active feeding, with at most six
-seconds elapsed after feeding first starts. Spinup has its own four-second
-timeout. These values do not specify a projectile count. Timing is sampled each
-loop and counts the preceding feeder command, not measured feeder motion.
-There is no projectile counter, automatic aiming, or confirmation of a scored shot.
-The route also has a 27-second command cutoff; it stops output, but cannot
-guarantee parking after a delay or failure. This is a local guard, not a statement
-of game rules.
+The earlier `Step.shoot(2, 6)` still exists for the disabled legacy BENCH modes.
+It counts active feed time and pauses for speed recovery. That earlier behavior
+is deliberately different from the team's requested continuous-feed Option B.
+Both use the nonblocking sequencer and its independent 27-second cutoff.
 
 ## One parking routine, two physical starting placements
 
@@ -173,7 +166,7 @@ During INIT, Gamepad 1 D-pad up/down changes only the starting delay, in
 half-second increments. `PollenStartDelay` ignores held-button repeats, bounds
 the delay by the route budget (at most 20 seconds), and locks on START. A fresh
 INIT returns to the configured default. Neither heading nor motor signs change.
-The shooting modes retain their separate route and configured delay.
+Option B has its own INIT menu, starting pose, delay and diagonal departure.
 
 Coordinate the partner's full path, timing, and finishing footprint. A delay
 can separate a crossing in time; it cannot make an occupied starting or parking
@@ -182,13 +175,14 @@ position compatible. The program does not sense the partner or guarantee clearan
 ## Why fallback only during INIT?
 
 If shooter initialization throws, the code tries to stop every mapped shooter
-motor and servo. When those commands succeed, it selects the park-only route
-and displays the reason. Drive initialization failure or a failed shooter stop
-blocks the run. Both routes must share the same starting pose.
+motor. When those commands succeed, current Option B skips its shooting step
+and uses its own diagonal departure, displaying the reason. It never substitutes
+Option A, which has a different starting pose. Drive initialization failure or
+a failed shooter stop blocks the run.
 
 After movement starts, a hardware exception stops the routine. Switching to the
 original park-only route at that point would assume the robot was still at its
-starting position. A normal spinup/recovery timeout instead continues the
+starting position. A normal spinup timeout instead continues the
 shooting route's own parking leg from the shooting position.
 
 Some hub failures do not throw an exception, or prevent the SDK from starting
@@ -202,11 +196,12 @@ an OpMode. The fallback is not a substitute for checking hub connectivity.
 | `Pollen BENCH Shoot` (disabled) | Shooting sequence with simulated launcher speed. |
 | `Pollen BENCH Timeout` (disabled) | Launcher stays at simulated zero speed; verify no feeding and continuation to parking. |
 | `Pollen ROBOT Park` | Actual drivetrain commands after START. |
-| `Pollen ROBOT Shoot` | Actual drivetrain and StarterBot mechanism commands after START. |
+| `Pollen ROBOT Shoot + Park` | Current end-wall shooting and diagonal departure after START. |
+| `Pollen BENCH Shoot First` (disabled) | Current Option B with simulated speed and no hardware. |
 
 BENCH classes carry `@Disabled` so they cannot be selected accidentally in a
 match. Temporarily remove it for bench tests, then restore it and redeploy.
-ROBOT modes have no compile-time enable locks and preselect `BioBuzz StarterBot`
+ROBOT modes have no compile-time enable locks and preselect `PollenBot`
 for TeleOp.
 
 Bench and robot modes use the same `PollenSequence` logic. Bench modes do not
@@ -222,13 +217,16 @@ All new Java files are under
 
 | File | Role | Usually edited when |
 | --- | --- | --- |
-| `PollenConfig.java` | Names, directions, start delay, launcher settings, and both route lists | Calibrating the robot and route. Start here. |
+| `PollenConfig.java` | Shared drive mapping and Option A defaults; legacy example routes | Permanent Option A calibration. |
+| `PollenShootTuning.java` | Current B defaults, INIT settings, geometry and time conversion | Permanent B calibration and route geometry. |
+| `PollenShootFirstAuto.java` | Current B hardware adapter for launcher, intake and agitator | Current shooting hardware. |
 | `PollenStartDelay.java` | INIT delay selection and locking | Changing driver controls. |
 | `PollenSequence.java` | Decide which action is active and what commands it requests | Changing sequence behavior. |
 | `PollenAutoBase.java` | Connect the sequencer to FTC hardware or simulated telemetry | Adapting the mechanism or hardware interface. |
 | `PollenBench*.java` and `PollenRobot*.java` | Small classes that register Driver Hub choices | Adding or changing selectable modes. |
 
-For routine route tuning, students should normally only need `PollenConfig.java`.
+For routine tuning, use the INIT controls; save validated defaults in the
+corresponding configuration class when ready.
 Keep the existing tested TeleOp available while checking the autonomous settings.
 
 ## What still needs the real robot?
@@ -237,7 +235,7 @@ The source includes different wheel-direction conventions:
 
 | Existing class | Motors set to REVERSE |
 | --- | --- |
-| `BioBuzzStarterbotOpMode` | frontLeft, backLeft |
+| `BioBuzzStarterbotOpMode` (current PollenBot) | frontLeft, backRight |
 | `MecanumDrive` | frontLeft, backRight |
 | `MecanumDriveTrain` | frontLeft, frontRight |
 

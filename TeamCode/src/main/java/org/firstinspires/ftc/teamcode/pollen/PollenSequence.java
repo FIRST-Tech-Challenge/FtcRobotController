@@ -5,10 +5,10 @@ public final class PollenSequence {
     public static final class Step {
         public final String name;
         public final double seconds, forward, strafe, turn, maxFeedWindow;
-        public final boolean shoot;
+        public final boolean shoot, continuousFeed;
 
         private Step(String name, double seconds, double forward, double strafe,
-                     double turn, boolean shoot, double maxFeedWindow) {
+                     double turn, boolean shoot, double maxFeedWindow, boolean continuousFeed) {
             if (name == null || !Double.isFinite(seconds) || seconds <= 0
                     || !Double.isFinite(forward) || !Double.isFinite(strafe)
                     || !Double.isFinite(turn) || Math.abs(forward) > 1
@@ -24,16 +24,22 @@ public final class PollenSequence {
             this.turn = turn;
             this.shoot = shoot;
             this.maxFeedWindow = maxFeedWindow;
+            this.continuousFeed = continuousFeed;
         }
 
         public static Step drive(String name, double seconds, double forward,
                                  double strafe, double turn) {
-            return new Step(name, seconds, forward, strafe, turn, false, 0);
+            return new Step(name, seconds, forward, strafe, turn, false, 0, false);
         }
 
         /** Count commanded feed time; bound all recovery pauses with a wall-clock window. */
         public static Step shoot(double activeSeconds, double maxFeedWindow) {
-            return new Step("SHOOT", activeSeconds, 0, 0, 0, true, maxFeedWindow);
+            return new Step("SHOOT", activeSeconds, 0, 0, 0, true, maxFeedWindow, false);
+        }
+
+        /** Qualify speed once, then feed continuously for this wall-clock duration. */
+        public static Step continuousShoot(double seconds) {
+            return new Step("SHOOT", seconds, 0, 0, 0, true, seconds, true);
         }
     }
 
@@ -133,6 +139,9 @@ public final class PollenSequence {
 
         out.phase = "SPINUP";
         out.launcherVelocity = targetVelocity;
+        if (step.continuousFeed && !Double.isFinite(measuredVelocity)) {
+            return stop("INVALID LAUNCHER VELOCITY - STOPPED");
+        }
         // Count the time for which the preceding loop actually requested feeding.
         // This measures commands, not balls or verified physical feeder motion.
         if (wasFeeding) activeFeedSeconds += elapsedSinceTick;
@@ -151,6 +160,13 @@ public final class PollenSequence {
             if (stable) feedingSince = now;
         }
         if (!Double.isNaN(feedingSince)) {
+            if (step.continuousFeed) {
+                if (now - feedingSince >= step.seconds) return advance(now);
+                out.phase = ready ? "CONTINUOUS FEED" : "CONTINUOUS FEED - speed below target band";
+                out.feederPower = 1;
+                wasFeeding = true;
+                return out;
+            }
             if (activeFeedSeconds >= step.seconds) return advance(now);
             if (now - feedingSince >= step.maxFeedWindow) {
                 warning = "Feed recovery timeout: shot incomplete; continuing route";
