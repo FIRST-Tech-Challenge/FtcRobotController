@@ -89,20 +89,14 @@ public class RockinBot {
         // Initializes the pinpoint
         odo = o.hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
-        // TODO: Measure from the robot center to each pod and replace these zeros.
-        // X pod: left is positive, right is negative.
-        // Y pod: forward is positive, backward is negative.
-        final double X_POD_OFFSET_MM = -120.65;
+        final double X_POD_OFFSET_MM = 114.3;
         final double Y_POD_OFFSET_MM = -165.1;
         odo.setOffsets(X_POD_OFFSET_MM, Y_POD_OFFSET_MM);
-
+        odo.setEncoderDirections(
+                GoBildaPinpointDriver.EncoderDirection.REVERSED,
+                GoBildaPinpointDriver.EncoderDirection.FORWARD);
         odo.setEncoderResolution(
                 GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-
-        // TODO: If forward decreases X or left decreases Y, reverse that encoder here.
-        odo.setEncoderDirections(
-                GoBildaPinpointDriver.EncoderDirection.FORWARD,
-                GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
         odo.resetPosAndIMU();
         odo.update();
@@ -327,10 +321,10 @@ public class RockinBot {
             double yCmd = yRotatedDistance * 0.003;
             double hCmd = hDistance * 0.03;
 
-            leftFrontPower = xCmd - yCmd - hCmd;
-            rightFrontPower = xCmd + yCmd + hCmd;
-            leftBackPower = xCmd + yCmd - hCmd;
-            rightBackPower = xCmd - yCmd + hCmd;
+            leftFrontPower = yCmd + xCmd - hCmd;
+            rightFrontPower = yCmd - xCmd + hCmd;
+            leftBackPower = yCmd - xCmd - hCmd;
+            rightBackPower = yCmd + xCmd + hCmd;
 
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
             max = Math.max(max, Math.abs(leftBackPower));

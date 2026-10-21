@@ -41,9 +41,9 @@ public class ShootParkAuto extends LinearOpMode {
         robot.triggerPower(0);
         sleep(1000);
 */
-        robot.driveToPos(0, 150, 0, 25, 5, 1); // Waypoint to get off the wall
-        robot.driveToPos(-400, 100, -90, 50,2, 3, 0.6); // Move to collect balls
-        robot.driveToPos(-750, 80, -90, 50, 2, 2, 0.3); // Collect them
+        robot.driveToPos(0, -150, 0, 25, 5, 1, 0.4); // Waypoint to get off the wall
+        robot.driveToPos(600, -100, -90, 50,2, 3, 0.6); // Move to collect balls
+        robot.driveToPos(900, -50, -90, 50, 2, 2, 0.3); // Collect them
 /*
         robot.driveToPos(0, 0, 0, 50, 2, 4); // Go back to shooting position
         // Shoot 3rd round: balls 5 & 6
