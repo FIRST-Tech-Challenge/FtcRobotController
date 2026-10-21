@@ -36,7 +36,7 @@ import static org.firstinspires.ftc.teamcode.pollen.PollenShootTuning.Field.*;
 /** Shoot from the end wall, then translate diagonally without changing heading. */
 @Autonomous(name = "Pollen ROBOT Shoot + Park", group = "Pollen", preselectTeleOp = "PollenBot")
 public final class PollenRobotShoot extends OpMode {
-    private static final String BUILD = "pollen-prep-v3.3-clean";
+    private static final String BUILD = "pollen-prep-v3.4-angle";
     private static PollenShootTuning.Snapshot remembered;
     private final DcMotor[] drive = new DcMotor[4];
     private DcMotorEx launcher;
@@ -121,10 +121,10 @@ public final class PollenRobotShoot extends OpMode {
         for (PollenShootTuning.Field f : PollenShootTuning.Field.values()) {
             telemetry.addData((f == tuning.selected() ? "> " : "  ") + f.label, "%.2f", tuning.value(f));
         }
-        telemetry.addData("Travel", "%.2f ft / %.2f estimated seconds; forward-left %.2f degrees; NO TURN",
-                tuning.value(DISTANCE_CM) / 30.48, tuning.driveSeconds(), PollenShootTuning.PARK_ANGLE_DEGREES);
+        telemetry.addData("Travel", "%.2f ft / %.2f estimated seconds; angle %+.2f deg (+left/-right); NO TURN",
+                tuning.value(DISTANCE_CM) / 30.48, tuning.driveSeconds(), tuning.value(TRAVEL_ANGLE));
         telemetry.addData("Worst case / limit", "%.2f / %.0f seconds", tuning.worstCaseSeconds(), PollenShootTuning.DEADLINE);
-        telemetry.addData("Calibration", "Diagonal factor 129: 100 cm selected measured 86 cm; repeat to verify");
+        telemetry.addData("Calibration", "Factor 129 fitted near 25.87 deg; remeasure distance when angle changes");
         if (fallback != null) telemetry.addData("SHOOTER INIT FAILED", fallback);
         if (!tuning.notice().isEmpty()) telemetry.addData("Settings notice", tuning.notice());
     }

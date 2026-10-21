@@ -1,7 +1,8 @@
 # Pollen autonomous code
 
 Two standalone FTC autonomous OpModes implement timed parking and shoot-first
-parking. This README covers `pollen-prep-v3.3-clean` after the cleanup patch.
+parking. Park remains `pollen-prep-v3.3-clean`; Shoot + Park is
+`pollen-prep-v3.4-angle`, adding INIT-only travel angle selection after cleanup.
 For Driver Hub operation, controller tables and test records, read the
 [operating manual](../../../../../../../../../docs/POLLEN_AUTONOMOUS.md).
 
@@ -13,7 +14,7 @@ For Driver Hub operation, controller tables and test records, read the
 | [PollenRobotShoot.java](PollenRobotShoot.java) | Option B: same integration plus launcher/intake/agitator setup, velocity readback and shooter initialization fallback. |
 | [PollenConfig.java](PollenConfig.java) | Shared drive names/directions, Option A defaults and forward route construction. |
 | [PollenParkTuning.java](PollenParkTuning.java) | Hardware-free Option A controller editing, limits, locking and settings snapshot. |
-| [PollenShootTuning.java](PollenShootTuning.java) | Hardware-free Option B settings, distance-to-time calculation, fixed angle and route construction. |
+| [PollenShootTuning.java](PollenShootTuning.java) | Hardware-free Option B settings, distance-to-time calculation, selected angle and route construction. |
 | [PollenSequence.java](PollenSequence.java) | Hardware-free state machine: delay, timed drive, spinup, continuous feed, deadlines, STOP and mecanum mixing. |
 
 The two OpModes call the FTC SDK. The other four classes can run in laptop Java
@@ -105,30 +106,40 @@ A uses time and power directly. The team's forward estimate is
 `distance_cm = seconds * power * 150`, measured at 12.86 V; the factor is not
 used to close a feedback loop.
 
-B's active constants are **129 cm/second per unit power** and **25.87 degrees**:
+B uses **129 cm/second per unit power**, with a selectable angle defaulting to
+**+25.87 degrees**. Positive is left, negative right, and zero forward:
 
 ```text
 drive_seconds = selected_distance_cm / (129 * selected_vector_power)
-forward = selected_vector_power * cos(25.87 degrees)
-strafe  = -selected_vector_power * sin(25.87 degrees)
+forward = selected_vector_power * cos(selected_angle_degrees)
+strafe  = -selected_vector_power * sin(selected_angle_degrees)
 turn = 0
 ```
 
-This preserves the calibration in the pushed branch plus cleanup. The original
+`TRAVEL_ANGLE` ranges from −90 to +90 degrees. The first edit from the fractional
+default goes to the next whole degree in that direction (RIGHT → 26, LEFT → 25),
+then edits step by one degree. Snapshot, reset and START-lock behavior are shared
+with the other fields. The OpMode reports the selected signed angle in telemetry.
+
+The default preserves the calibration in the pushed branch plus cleanup. The original
 100-cm diagonal request traveled 86 cm, with 76 cm forward, leading to the scalar
 factor `150 * 0.86 = 129`. That trial's voltage was not reported. At power 0.20,
 100 cm now requests about 3.876 seconds; the 60.96-cm default requests 2.363 seconds.
 Power here is the forward/strafe vector magnitude, not each wheel's power.
 
 There is no alliance transform: the paired physical starting poses are related
-by a 180-degree rotation, so both use robot-relative forward-left. Humans place
+by a 180-degree rotation, so both use the same robot-relative selected angle
+(default forward-left). Humans place
 and aim the robot. The nominal 280.88-cm full-field geometry is a planning value,
 **not an approved route or the default**. See the
 [geometry and calibration reference](../../../../../../../../../docs/POLLEN_SHOOT_FIRST.md)
 for assumptions and required footprint/clearance checks.
 
 Timed travel has no distance feedback, voltage compensation, heading correction,
-obstacle avoidance or parking detection. Preserve a known calibration unless
+obstacle avoidance or parking detection. The same distance coefficient is used
+at all selected angles; it has not been fitted over that range. Measure travel
+again after changing angle, particularly near pure forward or pure strafe.
+Preserve a known calibration unless
 new measured evidence justifies changing it. Record voltage, power, surface,
 load, starting orientation, forward displacement and sideways displacement.
 
@@ -175,7 +186,8 @@ The Android build checks SDK integration and creates the APK.
 
 Use the team's working Wi-Fi connection to deploy Android Studio's **TeamCode**
 run configuration to the **Control Hub**, not the Driver Hub. Keep the active
-hardware configuration. Check `pollen-prep-v3.3-clean` in INIT telemetry and run
+hardware configuration. Check `pollen-prep-v3.3-clean` for Park or
+`pollen-prep-v3.4-angle` for Shoot + Park in INIT telemetry and run
 the ordered physical checks in the operating manual. Laptop logic tests and
 APK compilation need no powered robot; normal hub operation needs its battery.
 

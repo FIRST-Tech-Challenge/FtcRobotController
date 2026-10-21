@@ -12,7 +12,7 @@ These modes have different starting poses. Neither detects a parking zone.
    duration: **10 seconds by default, starting after speed qualification**.
    Both feed motors default to 0.50 power, matching the current TeleOp's neutral
    trigger / right-bumper feed command. Change their shared power in INIT if needed.
-4. Stop all three shooting mechanisms. Translate diagonally forward-left without
+4. Stop all three shooting mechanisms. Translate at the selected angle (default forward-left) without
    turning the chassis, for the selected estimated distance. Default: **60.96 cm
    (2 feet)** at vector power 0.20, estimated **2.363 seconds**.
 5. Hold still, then remain in DONE with zero commands until STOP.
@@ -69,7 +69,9 @@ inches use x to the right, y downward in figure 9-2:
 - Straight-line length: `hypot(48.25, 99.5) * 2.54 = 280.88 cm`, about 9.22 ft.
 - Angle: `atan2(48.25, 99.5) = 25.87 degrees` left of forward.
 
-The code fixes this angle and comments the nominal full-field distance. At 0.20
+The code defaults to this angle and allows INIT adjustment from −90° (right)
+to +90° (left), with 0° forward. These geometry estimates describe only the
+default angle. The code comments the nominal full-field distance. At 0.20
 vector power, the formula estimates 10.89 seconds for 280.88 cm. Default worst
 case would be approximately 25.39 seconds including spinup, feed and hold, with
 no start delay. The nominal destination leaves about 2 inches between an
@@ -105,7 +107,8 @@ run was not reported. Option A retains its earlier forward calibration.
 
 If 86 cm was straight-line displacement, the inferred lateral displacement
 is 40.25 cm and the observed angle is about 27.9 degrees left of forward.
-The commanded 25.87-degree angle is unchanged pending repeat measurements.
+The default commanded angle remains 25.87 degrees; the controller can now
+select another angle before START. This changes translation, not chassis heading.
 
 For diagonal motion, power means the magnitude of the forward/strafe command
 vector, not the largest individual motor power. At default settings the mixer
@@ -115,7 +118,9 @@ Strafe efficiency, wheel slip, battery voltage and acceleration can change both
 distance and angle. The code neither measures distance nor compensates voltage.
 Record voltage after shooting too: ten seconds of launcher/intake load may
 change departure behavior. A short diagonal test is required before extrapolation.
-Changing distance cannot correct an incorrect travel angle.
+Changing distance cannot correct an incorrect travel angle. Angle adjustment
+also requires rechecking distance: factor 129 remains in use for all angles,
+but was fitted near the default, not across the full adjustment range.
 
 ## Validation status
 

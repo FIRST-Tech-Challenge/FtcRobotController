@@ -10,6 +10,7 @@ public final class PollenShootTuning {
         FEED_SECONDS("Feed seconds (0 = skip shot)", 0, 20, .5, 10),
         DISTANCE_CM("Travel cm (0 = shoot only)", 0, 350, 5, 60.96),
         DRIVE_POWER("Drive vector power", .10, .50, .05, .20),
+        TRAVEL_ANGLE("Travel angle deg (+left)", -90, 90, 1, PARK_ANGLE_DEGREES),
         FEED_POWER("Intake + agitator power", .10, 1, .05, .50),
         START_DELAY("Start delay seconds", 0, 20, .5, 0);
 
@@ -30,7 +31,8 @@ public final class PollenShootTuning {
     // This ratio does not require assuming the test's power. Its voltage was not
     // reported. Provisional single-run fit: repeat at the intended power/load.
     // The observed direction was about 27.9 degrees left if 86 cm is straight-line
-    // displacement. Retain the 25.87-degree command pending repeated angle tests.
+    // displacement. Retain 25.87 degrees as the default; INIT can select another angle.
+    // Factor 129 was fitted near that angle, not across the full adjustment range.
     // Option A's forward-only settings and calibration are unchanged.
     public static final double CM_PER_SECOND_PER_POWER = 129;
 
@@ -96,8 +98,13 @@ public final class PollenShootTuning {
     private void adjust(int sign) {
         Field f = selected();
         double old = value(f);
-        values[selected] = Math.max(f.min, Math.min(f.max,
-                Math.round((old + sign * f.step) * 100.0) / 100.0));
+        // Preserve the tested fractional default; first angle edit reaches the
+        // next whole degree in the requested direction, then steps by one degree.
+        // This lets the operator select exactly zero without extra controls.
+        double next = f == Field.TRAVEL_ANGLE
+                ? (sign > 0 ? Math.floor(old) + 1 : Math.ceil(old) - 1)
+                : Math.round((old + sign * f.step) * 100.0) / 100.0;
+        values[selected] = Math.max(f.min, Math.min(f.max, next));
         if (worstCaseSeconds() >= DEADLINE - 1) {
             values[selected] = old;
             notice = "Change rejected: needs >=26s. Reduce feed/delay/distance or increase drive power.";
@@ -123,10 +130,10 @@ public final class PollenShootTuning {
     // Both alliance starts are related by a 180-degree rotation. Humans position
     // the robot facing its hive; the same robot-relative vector works on either side.
     public double forward() {
-        return value(Field.DRIVE_POWER) * Math.cos(Math.toRadians(PARK_ANGLE_DEGREES));
+        return value(Field.DRIVE_POWER) * Math.cos(Math.toRadians(value(Field.TRAVEL_ANGLE)));
     }
     public double strafe() {
-        return -value(Field.DRIVE_POWER) * Math.sin(Math.toRadians(PARK_ANGLE_DEGREES));
+        return -value(Field.DRIVE_POWER) * Math.sin(Math.toRadians(value(Field.TRAVEL_ANGLE)));
     }
 
     public PollenSequence sequence() {
