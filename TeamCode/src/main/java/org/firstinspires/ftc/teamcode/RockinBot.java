@@ -115,7 +115,7 @@ public class RockinBot {
         shooter.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pidf = shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-        setpValue(50);
+        setpValue(55);
 
         trigger = o.hardwareMap.get(DcMotorEx.class, "trigger");
         trigger.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -245,7 +245,7 @@ public class RockinBot {
             hLoc = pos.getHeading(AngleUnit.DEGREES);
             if (!Double.isNaN(xLoc) && !Double.isNaN(yLoc) && !Double.isNaN(hLoc)) {
                 RobotLog.vv("Rockin' Robots",
-                        "Position: {X: %.1f, Y: %.1f, H: %.1f}", xLoc, yLoc, hLoc);
+                        "New Position: {X: %.1f, Y: %.1f, H: %.1f}", xLoc, yLoc, hLoc);
                 return true;
             }
             RobotLog.vv("Rockin' Robots", "Pinpoint returned NaN, status=" + odo.getDeviceStatus());
@@ -390,8 +390,8 @@ public class RockinBot {
         intakePower = intake.getCurrent(CurrentUnit.MILLIAMPS);
 
         shooterPower = shooter.getCurrent(CurrentUnit.MILLIAMPS);
-        o.telemetry.addData("shooter Speed and Power", "%.2f", shooterSpeed, shooterPower);
-        o.telemetry.addData("Intake Speed and Power", "%.2f", intakeSpeed, intakePower);
+        o.telemetry.addData("Shooter speed and Power", "%.2f, %.0f mA", shooterSpeed, shooterPower);
+        o.telemetry.addData("Intake speed and Power", "%.2f, %.0f mA", intakeSpeed, intakePower);
         o.telemetry.addData("Trigger Power", "%.2f", triggerPower);
         o.telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         o.telemetry.addData("Back left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);

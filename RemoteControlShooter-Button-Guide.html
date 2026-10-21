@@ -118,11 +118,58 @@
       filter: drop-shadow(0 0 1.5px #17212b);
     }
 
+    .line.lumberjack {
+      stroke: var(--purple);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .line.shooter {
+      stroke: var(--orange);
+    }
+
+    .line.tuning {
+      stroke: var(--purple);
+    }
+
+    .line.intake {
+      stroke: var(--green);
+    }
+
+    .line.drive {
+      stroke: var(--blue);
+    }
+
+    .line.trigger {
+      stroke: #c02678;
+    }
+
+    .line.trigger.hidden {
+      stroke-dasharray: 12 8;
+    }
+
+    .dot.hidden-marker {
+      stroke: #c02678;
+      stroke-dasharray: 5 4;
+      filter: none;
+    }
+
+    .callout.trigger {
+      fill: #fce7f3;
+      stroke: #c02678;
+    }
+
     .dot {
       fill: #ff1744;
       stroke: #fff;
       stroke-width: 4;
       filter: drop-shadow(0 0 2px #17212b);
+    }
+
+    .dot.button-marker {
+      fill: none;
+      stroke: #ff1744;
+      stroke-width: 3;
     }
 
     .label-title {
@@ -137,21 +184,14 @@
       font-weight: 600;
     }
 
-    .legend,
-    .startup,
-    .notes {
+    .legend {
       display: grid;
       gap: 8px;
-    }
-
-    .legend {
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       margin-top: 10px;
     }
 
-    .legend span,
-    .startup div,
-    .notes div {
+    .legend span {
       padding: 7px 9px;
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -183,16 +223,12 @@
     }
 
     .startup {
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      margin: 0;
+      padding-left: 24px;
     }
 
-    .startup div,
-    .notes div {
-      background: #f7f9fc;
-    }
-
-    .notes {
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    .startup li {
+      padding: 2px 0;
     }
 
     footer {
@@ -243,82 +279,85 @@
   <main>
     <header>
       <h1>Remote Control Button Guide</h1>
-      <p class="subtitle">Only controls used by <strong>RemoteControl.java</strong> and <strong>RockinBot.java</strong> are shown.</p>
     </header>
 
     <section aria-labelledby="diagram-heading">
       <h2 id="diagram-heading">Gamepad 1 Controls</h2>
-      <p class="note">Each information block connects related functions to the exact controls marked by red dots.</p>
 
       <div class="diagram-wrap">
         <svg viewBox="0 0 1400 820" role="img" aria-labelledby="diagram-title diagram-description">
           <title id="diagram-title">Remote Control gamepad button map</title>
-          <desc id="diagram-description">The supplied controller picture with callout lines labeling every control used by RemoteControl.</desc>
+          <desc id="diagram-description">Gamepad 1 controls for driving, half-speed mode, shooter, intake, trigger motor, and lumberjack.</desc>
 
           <image href="RemoteControlShooter-Controller.png" x="400" y="120" width="600" height="600"></image>
 
           <g>
-            <polyline class="line" points="620,650 620,520 603,413"></polyline>
-            <polyline class="line" points="780,650 780,520 797,413"></polyline>
+            <polyline class="line drive" points="620,570 620,520 603,413"></polyline>
+            <polyline class="line drive" points="780,570 780,520 797,413"></polyline>
+            <polyline class="line drive" points="570,570 570,520 514,374"></polyline>
             <circle class="dot" cx="603" cy="413" r="8"></circle>
             <circle class="dot" cx="797" cy="413" r="8"></circle>
-            <rect class="callout drive" x="500" y="650" width="400" height="105" rx="12"></rect>
-            <text class="label-title" x="514" y="676">Driving</text>
-            <text class="label-detail" x="514" y="701">Left stick: flipped-front drive + strafe</text>
-            <text class="label-detail" x="514" y="729">Right stick: turn left/right</text>
+            <circle class="dot" cx="514" cy="366" r="8"></circle>
+            <rect class="callout drive" x="510" y="570" width="380" height="123" rx="12"></rect>
+            <text class="label-title" x="524" y="596">Driving</text>
+            <text class="label-detail" x="524" y="621">Left stick: drive+strafe</text>
+            <text class="label-detail" x="524" y="649">Right stick: turn</text>
+            <text class="label-detail" x="524" y="677">D-pad Down: toggle normal/parking speed</text>
           </g>
 
           <g>
-            <polyline class="line" points="330,285 410,285 479,331"></polyline>
-            <polyline class="line" points="330,325 430,325 549,331"></polyline>
+            <polyline class="line lumberjack" points="330,335 400,335 471,331"></polyline>
+            <polyline class="line lumberjack" points="330,375 410,375 541,331"></polyline>
             <circle class="dot" cx="479" cy="331" r="8"></circle>
             <circle class="dot" cx="549" cy="331" r="8"></circle>
-            <rect class="callout tuning" x="0" y="250" width="330" height="105" rx="12"></rect>
-            <text class="label-title" x="14" y="276">Lumberjack</text>
-            <text class="label-detail" x="14" y="301">D-pad Left: position 0.18</text>
-            <text class="label-detail" x="14" y="329">D-pad Right: position 0.66</text>
+            <rect class="callout tuning" x="160" y="300" width="170" height="92" rx="12"></rect>
+            <text class="label-title" x="174" y="326">Lumberjack</text>
+            <text class="label-detail" x="174" y="351">D-pad Left: down</text>
+            <text class="label-detail" x="174" y="379">D-pad right: up</text>
           </g>
 
           <g>
-            <polyline class="line" points="330,75 420,75 510,230"></polyline>
-            <polyline class="line" points="330,115 370,115 370,180 890,180 890,230"></polyline>
+            <polyline class="line trigger hidden" points="300,180 300,262 492,262"></polyline>
+            <polyline class="line trigger hidden" points="1100,180 1100,262 908,262"></polyline>
+            <circle class="dot button-marker hidden-marker" cx="492" cy="262" r="12"></circle>
+            <circle class="dot button-marker hidden-marker" cx="908" cy="262" r="12"></circle>
+            <rect class="callout trigger" x="210" y="120" width="180" height="60" rx="12"></rect>
+            <text class="label-title" x="224" y="146">Left Trigger</text>
+            <text class="label-detail" x="224" y="173">Backwards</text>
+            <rect class="callout trigger" x="1003" y="120" width="194" height="60" rx="12"></rect>
+            <text class="label-title" x="1017" y="146">Right Trigger</text>
+            <text class="label-detail" x="1017" y="173">Forwards</text>
+          </g>
+
+          <g>
+            <polyline class="line shooter" points="600,95 510,230"></polyline>
+            <polyline class="line shooter" points="790,95 514,296"></polyline>
+            <polyline class="line shooter" points="600,95 890,230"></polyline>
+            <polyline class="line shooter" points="790,95 885,288"></polyline>
             <circle class="dot" cx="510" cy="230" r="8"></circle>
             <circle class="dot" cx="890" cy="230" r="8"></circle>
-            <rect class="callout mechanism" x="0" y="40" width="330" height="105" rx="12"></rect>
-            <text class="label-title" x="14" y="66">Trigger Motor</text>
-            <text class="label-detail" x="14" y="91">Left trigger: reverse while held</text>
-            <text class="label-detail" x="14" y="119">Right trigger: forward while held</text>
-          </g>
-
-          <g>
-            <polyline class="line" points="570,140 570,200 560,260"></polyline>
-            <polyline class="line" points="760,140 760,200 838,260"></polyline>
-            <polyline class="line" points="900,140 900,230 885,288"></polyline>
-            <polyline class="line" points="530,140 530,230 514,296"></polyline>
-            <circle class="dot" cx="560" cy="260" r="8"></circle>
-            <circle class="dot" cx="838" cy="260" r="8"></circle>
             <circle class="dot" cx="885" cy="288" r="8"></circle>
             <circle class="dot" cx="514" cy="296" r="8"></circle>
-            <rect class="callout shooter" x="500" y="0" width="500" height="140" rx="12"></rect>
+            <rect class="callout shooter" x="500" y="0" width="360" height="95" rx="12"></rect>
             <text class="label-title" x="514" y="26">Shooter</text>
-            <text class="label-detail" x="514" y="51">Left bumper: speed -1%</text>
-            <text class="label-detail" x="514" y="79">Right bumper: speed +1%</text>
-            <text class="label-detail" x="754" y="51">Triangle: reverse direction</text>
-            <text class="label-detail" x="754" y="79">D-pad Up: stop</text>
+            <text class="label-detail" x="514" y="51">Left bumper: slower</text>
+            <text class="label-detail" x="514" y="79">Right bumper: faster</text>
+            <text class="label-detail" x="714" y="51">Triangle: reverse</text>
+            <text class="label-detail" x="714" y="79">D-pad Up: stop</text>
           </g>
 
           <g>
-            <polyline class="line" points="1070,285 1000,285 928,331"></polyline>
-            <polyline class="line" points="1070,325 1010,325 842,331"></polyline>
-            <polyline class="line" points="1070,365 1000,365 885,374"></polyline>
-            <circle class="dot" cx="928" cy="331" r="8"></circle>
-            <circle class="dot" cx="842" cy="331" r="8"></circle>
-            <circle class="dot" cx="885" cy="374" r="8"></circle>
-            <rect class="callout mechanism" x="1070" y="250" width="330" height="135" rx="12"></rect>
-            <text class="label-title" x="1084" y="276">Intake</text>
-            <text class="label-detail" x="1084" y="301">Circle: forward</text>
-            <text class="label-detail" x="1084" y="329">Square: reverse</text>
-            <text class="label-detail" x="1084" y="357">Cross (X): stop</text>
+            <polyline class="line intake" points="1030,365 1000,365 946,331"></polyline>
+            <polyline class="line intake" points="1030,405 1010,405 860,331"></polyline>
+            <polyline class="line intake" points="1030,445 1000,445 903,374"></polyline>
+            <circle class="dot button-marker" cx="928" cy="331" r="18"></circle>
+            <circle class="dot button-marker" cx="842" cy="331" r="18"></circle>
+            <circle class="dot button-marker" cx="885" cy="374" r="18"></circle>
+            <rect class="callout mechanism" x="1030" y="330" width="160" height="135" rx="12"></rect>
+            <text class="label-title" x="1044" y="356">Intake</text>
+            <text class="label-detail" x="1044" y="381">Circle: on</text>
+            <text class="label-detail" x="1044" y="409">Square: reverse</text>
+            <text class="label-detail" x="1044" y="437">X: stop</text>
           </g>
         </svg>
       </div>
@@ -326,28 +365,60 @@
 
     <section aria-labelledby="startup-heading">
       <h2 id="startup-heading">Starting Settings</h2>
-      <div class="startup">
-        <div><strong>Shooter power:</strong> 76%</div>
-        <div><strong>Shooter P value:</strong> 60</div>
-        <div><strong>Intake:</strong> Reverse at full power</div>
-        <div><strong>Trigger motor:</strong> Stopped</div>
-        <div><strong>Gamepad 2 left bumper:</strong> Decrease shooter P by 2</div>
-        <div><strong>Gamepad 2 right bumper:</strong> Increase shooter P by 2</div>
+      <ul class="startup">
+        <li><strong>Shooter power:</strong> 76%</li>
+        <li><strong>Shooter P value:</strong> 60</li>
+        <li><strong>Intake:</strong> Forward at +50% power</li>
+        <li><strong>Trigger motor:</strong> Stopped; speed setting 50%</li>
+        <li><strong>Drive speed mode:</strong> Normal (half-speed mode off)</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="gamepad2-heading">
+      <h2 id="gamepad2-heading">Gamepad 2 Controls</h2>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 1400 700" role="img" aria-labelledby="gamepad2-title gamepad2-description">
+          <title id="gamepad2-title">Gamepad 2 speed and shooter tuning controls</title>
+          <desc id="gamepad2-description">D-pad Up and Down adjust trigger speed, Circle and Square adjust signed intake power, and the bumpers adjust shooter P.</desc>
+          <image href="RemoteControlShooter-Controller.png" x="400" y="100" width="600" height="600"></image>
+
+          <g>
+            <polyline class="line tuning" points="505,129 505,208"></polyline>
+            <polyline class="line tuning" points="895,129 895,208"></polyline>
+            <circle class="dot" cx="505" cy="208" r="8"></circle>
+            <circle class="dot" cx="895" cy="208" r="8"></circle>
+            <rect class="callout tuning" x="490" y="60" width="420" height="69" rx="12"></rect>
+            <text class="label-title" x="504" y="86">Shooter P Tuning</text>
+            <text class="label-detail" x="504" y="113">Left bumper: P -2</text>
+            <text class="label-detail" x="724" y="113">Right bumper: P +2</text>
+          </g>
+
+          <g>
+            <polyline class="line trigger" points="330,285 430,285 514,276"></polyline>
+            <polyline class="line trigger" points="330,325 430,325 514,346"></polyline>
+            <circle class="dot" cx="514" cy="276" r="8"></circle>
+            <circle class="dot" cx="514" cy="346" r="8"></circle>
+            <rect class="callout trigger" x="125" y="235" width="205" height="100" rx="12"></rect>
+            <text class="label-title" x="139" y="261">Trigger Speed</text>
+            <text class="label-detail" x="139" y="286">D-pad Up: +0.05</text>
+            <text class="label-detail" x="139" y="314">D-pad Down: -0.05</text>
+          </g>
+
+          <g>
+            <polyline class="line intake" points="1070,345 928,345 928,329"></polyline>
+            <polyline class="line intake" points="1070,385 842,385 842,329"></polyline>
+            <circle class="dot button-marker" cx="928" cy="311" r="18"></circle>
+            <circle class="dot button-marker" cx="842" cy="311" r="18"></circle>
+            <rect class="callout mechanism" x="1070" y="320" width="200" height="95" rx="12"></rect>
+            <text class="label-title" x="1084" y="346">Intake Speed</text>
+            <text class="label-detail" x="1084" y="371">Circle: +0.05</text>
+            <text class="label-detail" x="1084" y="399">Square: -0.05</text>
+          </g>
+        </svg>
       </div>
     </section>
 
-    <section aria-labelledby="notes-heading">
-      <h2 id="notes-heading">Important Control Details</h2>
-      <div class="notes">
-        <div><strong>Bumpers, Triangle, and D-pad:</strong> Each action occurs once per press, not continuously while held.</div>
-        <div><strong>Triggers:</strong> The trigger motor runs only while a trigger is held and stops when both are released. If both are held, reverse wins.</div>
-        <div><strong>Drive orientation:</strong> The intake side is the back of the robot; the opposite side is the front.</div>
-        <div><strong>Lumberjack:</strong> The servo releases and can move freely after Remote Control stops.</div>
-        <div><strong>No park mode:</strong> The wheel controls always use their normal full range.</div>
-      </div>
-    </section>
-
-    <footer>v20261011-01</footer>
+    <footer>v20261018-25</footer>
   </main>
 </body>
 </html>
