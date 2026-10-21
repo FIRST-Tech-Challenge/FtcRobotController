@@ -66,14 +66,6 @@ public class RemoteControl extends LinearOpMode {
                 r.intakePower(0);
             }
 
-            // Control the shooter
-            if (gamepad1.triangleWasReleased()) {
-                shooterVelocity *= -1;
-                r.shooterVelocity(shooterVelocity);
-            }
-            if(gamepad1.dpad_up) {
-                r.shooterVelocity(0);
-            }
             if (gamepad1.rightBumperWasReleased()) {
                 shooterVelocity = shooterVelocity + 5;
                 r.shooterVelocity(shooterVelocity);
