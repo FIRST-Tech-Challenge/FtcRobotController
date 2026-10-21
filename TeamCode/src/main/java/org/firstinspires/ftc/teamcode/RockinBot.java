@@ -92,8 +92,8 @@ public class RockinBot {
         // TODO: Measure from the robot center to each pod and replace these zeros.
         // X pod: left is positive, right is negative.
         // Y pod: forward is positive, backward is negative.
-        final double X_POD_OFFSET_MM = 0;
-        final double Y_POD_OFFSET_MM = 0;
+        final double X_POD_OFFSET_MM = -120.65;
+        final double Y_POD_OFFSET_MM = -165.1;
         odo.setOffsets(X_POD_OFFSET_MM, Y_POD_OFFSET_MM);
 
         odo.setEncoderResolution(
@@ -240,7 +240,7 @@ public class RockinBot {
         do {
             odo.update();
             pos = odo.getPosition();
-            xLoc = -pos.getX(DistanceUnit.MM);
+            xLoc = pos.getX(DistanceUnit.MM);
             yLoc = pos.getY(DistanceUnit.MM);
             hLoc = pos.getHeading(AngleUnit.DEGREES);
             if (!Double.isNaN(xLoc) && !Double.isNaN(yLoc) && !Double.isNaN(hLoc)) {
@@ -327,10 +327,10 @@ public class RockinBot {
             double yCmd = yRotatedDistance * 0.003;
             double hCmd = hDistance * 0.03;
 
-            leftFrontPower = yCmd + xCmd - hCmd;
-            rightFrontPower = yCmd - xCmd + hCmd;
-            leftBackPower = yCmd - xCmd - hCmd;
-            rightBackPower = yCmd + xCmd + hCmd;
+            leftFrontPower = xCmd - yCmd - hCmd;
+            rightFrontPower = xCmd + yCmd + hCmd;
+            leftBackPower = xCmd + yCmd - hCmd;
+            rightBackPower = xCmd - yCmd + hCmd;
 
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
             max = Math.max(max, Math.abs(leftBackPower));

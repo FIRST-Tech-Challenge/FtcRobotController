@@ -19,11 +19,11 @@ public class ShootParkAuto extends LinearOpMode {
 
         telemetry.addData("Autonomous Ready", "Shoot, then park");
         telemetry.addData("Route", "(500, -800) to (1150, -2050) mm");
-        telemetry.addData("Version", "v20261020-08");
+        telemetry.addData("Version", "v20261020-14");
         telemetry.update();
         waitForStart();
 
-        // Start motors
+/*        // Start motors
         robot.shooterPower(SHOOTER_POWER);
         robot.setpValue(70);
         sleep(3000); // let shooters get up to speed
@@ -40,9 +40,10 @@ public class ShootParkAuto extends LinearOpMode {
         sleep(500);
         robot.triggerPower(0);
         sleep(1000);
-
-        robot.driveToPos(500, 13, -90, 50,2, 3, 0.6); // Move to collect balls
-        robot.driveToPos(700, 20, -85, 50, 2, 2, 0.3); // Collect them
+*/
+        robot.driveToPos(0, 150, 0, 25, 5, 1); // Waypoint to get off the wall
+        robot.driveToPos(-400, 100, -90, 50,2, 3, 0.6); // Move to collect balls
+        robot.driveToPos(-750, 80, -90, 50, 2, 2, 0.3); // Collect them
 /*
         robot.driveToPos(0, 0, 0, 50, 2, 4); // Go back to shooting position
         // Shoot 3rd round: balls 5 & 6
