@@ -49,12 +49,12 @@ public class RockinBot {
     private double rightFrontPower = 0;
     private double leftBackPower = 0;
     private double rightBackPower = 0;
-    private double intakePower = 0;
+    private double intakeCurrent = 0;
     private double shooterPower = 0;
     private double max = 0;
     private double triggerPower = 0;
     double shooterSpeed = 1.0;
-    double intakeSpeed = 1.0;
+    double intakePower = 1.0;
     // These do NOT affect anything, but leave them as is! See notes in RemoteControlShooter for more information
     // These should be affecting RC, but they do not, and we fear that if we change them, everything will explode
     final ElapsedTime runtime = new ElapsedTime();
@@ -364,15 +364,15 @@ public class RockinBot {
         stopMoving();
     }
 
-    public void intakePower(double speed) {
-        RobotLog.vv("Rockin' Robots", "intakePower(%.2f)", speed);
-        intakeSpeed = speed;
-        intake.setPower(speed);
+    public void intakePower(double power) {
+        RobotLog.vv("Rockin' Robots", "intakePower(%.2f)", power);
+        intakePower = power;
+        intake.setPower(power);
     }
 
-    public void triggerPower(double speed) {
-        triggerPower = speed;
-        trigger.setPower(speed);
+    public void triggerPower(double power) {
+        triggerPower = power;
+        trigger.setPower(power);
     }
 
     private boolean inBand(double actual, double lower, double upper) {
@@ -381,11 +381,11 @@ public class RockinBot {
 
     public void printDataOnScreen() {
 
-        intakePower = intake.getCurrent(CurrentUnit.MILLIAMPS);
+        intakeCurrent = intake.getCurrent(CurrentUnit.MILLIAMPS);
 
         shooterPower = shooter.getCurrent(CurrentUnit.MILLIAMPS);
         o.telemetry.addData("Shooter speed and Power", "%.2f, %.0f mA", shooterSpeed, shooterPower);
-        o.telemetry.addData("Intake speed and Power", "%.2f, %.0f mA", intakeSpeed, intakePower);
+        o.telemetry.addData("Intake power and current", "%.2f, %.0f mA", intakePower, intakeCurrent);
         o.telemetry.addData("Trigger Power", "%.2f", triggerPower);
         o.telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         o.telemetry.addData("Back left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
@@ -400,7 +400,7 @@ public class RockinBot {
         dashboardTelemetry = dashboard.getTelemetry();
         dashboardTelemetry.addData("Left Launcher:", leftLauncherVelocity);
         dashboardTelemetry.addData("Right Launcher:", rightLauncherVelocity);
-        dashboardTelemetry.addData("Intake", intakePower);
+        dashboardTelemetry.addData("Intake current", intakeCurrent);
         dashboardTelemetry.addData("Left Front Wheel", leftFrontPower);
         dashboardTelemetry.addData("Right Front Wheel", rightFrontPower);
         dashboardTelemetry.addData("Left Back Wheel", leftBackPower);
