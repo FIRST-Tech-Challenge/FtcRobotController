@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class TurkeyBot {
 	HardwareMap hwMap;
 	public DcMotor backLeft, frontLeft, frontRight, backRight;
-	private final double maxPower = 0.3;
+	private final double maxPower = 1;
 
 	TurkeyBot(HardwareMap hm) {
 		hwMap = hm;
@@ -20,7 +20,7 @@ public class TurkeyBot {
 			   DcMotorSimple.Direction.REVERSE,
 			   DcMotorSimple.Direction.FORWARD,
 			   DcMotorSimple.Direction.FORWARD,
-			   DcMotorSimple.Direction.REVERSE);
+			   DcMotorSimple.Direction.FORWARD);
 	}
 
 	public double clamp(double min, double value, double max) {
