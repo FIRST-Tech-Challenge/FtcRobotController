@@ -109,7 +109,7 @@ public class RockinBot {
         shooter.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pidf = shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-        setpValue(55);
+        setpValue(55); // this often gets overwritten by other programs
 
         trigger = o.hardwareMap.get(DcMotorEx.class, "trigger");
         trigger.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
