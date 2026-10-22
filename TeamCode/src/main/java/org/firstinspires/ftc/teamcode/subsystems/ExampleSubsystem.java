@@ -17,12 +17,13 @@ public class ExampleSubsystem implements Subsystem {
 
     public void update(Telemetry telemetry, Robot robot, InputHandler iHandler) {
         if (iHandler.actionHappened("Test Action")) {
-            robot.startMotor();
+            robot.runDriveTrain(iHandler.getDriveValues(InputHandler.GamepadNum.ONE));
         }
 
     }
 
     public void terminate(Telemetry telemetry, Robot robot, InputHandler iHandler) {
         telemetry.addLine("Terminating example subsystem...");
+        robot.endDriveTrain();
     }
 }
