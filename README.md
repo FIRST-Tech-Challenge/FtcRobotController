@@ -1,12 +1,12 @@
 ## NOTICE
 
-This repository contains the public FTC SDK for the DECODE (2025-2026) competition season.
+This repository contains the public FTC SDK for the BIOBUZZ (2026-2027) competition season.
 
 ## Welcome!
 This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
 
 ## Requirements
-To use this Android Studio project, you will need Android Studio Ladybug (2024.2) or later.
+To use this Android Studio project, you will need Android Studio Narwhal 3 Feature Drop or later.
 
 To program your robot in Blocks or OnBot Java, you do not need Android Studio.
 
@@ -58,6 +58,90 @@ Samples Folder: &nbsp;&nbsp; [/FtcRobotController/src/main/java/org/firstinspire
 The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc/teamcode](TeamCode/src/main/java/org/firstinspires/ftc/teamcode) folder contains an explanation of the sample naming convention, and instructions on how to copy them to your own project space.
 
 # Release Information
+
+## Version 12.0 (20260907-090034)
+
+### Breaking Changes
+* The new AprilTag Cluster capability breaks legacy AprilTag OpModes resulting in compile errors for software that uses AprilTagDetection objects in both Android Studio and OnBot Java.
+  * Legacy AprilTag OpModes must be updated to check whether the returned AprilTag is a cluster or singleton,
+     and cast the returned detection into the correct type to access its elements.  See below:    
+     
+	 **Old method for AprilTag processing**
+    ```
+     for (AprilTagDetection detection : currentDetections) {
+       // Do single Tag processing here  
+     }
+    ```
+
+     **New method for AprilTag Singleton/Cluster processing**
+
+    ```
+     for (AprilTagDetection detection : currentDetections) {
+       if (detection instanceof AprilTagSingleDetection) {
+         AprilTagSingleDetection singleDet = (AprilTagSingleDetection) detection;
+         // Do single Tag processing here  
+       } else {
+         AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
+         // Do cluster Tag processing here  
+       }
+     }
+     ```
+    For more information about how to update your OpModes to fix the breaking change see: https://ftc-docs.firstinspires.org/apriltag-clusters
+    
+  * About AprilTag clusters:  
+    * Clusters are co-planar groups of two or more AprilTags wherein the position of each member tag is defined relative to a common origin
+    * This origin may be placed outside the bounds of the tags themselves to provide a more suitable "aiming" target
+    * Clusters are resilient to partial occlusion. Full 6DOF pose can be estimated from a cluster even if only a single member tag is visible. Of course, the more tags that are visible, the better and more stable the pose estimate will be
+    * All AprilTag samples have been updated to differentiate between standalone tags and clusters
+  
+### Enhancements
+* Adds a tree view for robot configurations [issue 1821](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/1821)
+* Gamepad indicators on the Driver Station are now colored orange if the respective gamepads are connected to the Android generic gamepad driver instead of the Driver Station's usermode USB driver 
+* Updated AprilTag Library for BIOBUZZ. Notably, getCurrentGameTagLibrary() now returns BIOBUZZ tags.
+  * In BIOBUZZ, the Origin of each cluster is located in the center of the Cell opening for easy aiming.
+  * The Origin X,Y & Z Axes are now displayed by default on the preview image.
+  * <B>Unfortunately, since BIOBUZZ AprilTags move, they are not suitable for absolute Field Localization.</B>
+* Supports OctoQuad MK2 firmware v3.1.0, which adds diagnostics parameters for the IMU and MCU uptime
+
+### Bug Fixes
+* Fixes issue [2078](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/2078) where battery
+voltage was not updated on driver station if OpMode did not send any telemetry.
+
+## Version 11.2.1 (20260724-093406)
+
+### Bug Fixes
+* Fixes issue [2099](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/2099). Gradle and the AGP are now updated to 9.1 and 8.13.2 respectively.
+ 
+## Version 11.2 (20260707-102819)
+
+### Breaking Changes
+* Gradle is upgraded to v9.1 and the Android Gradle Plugin is updated to v8.13.2.  AGP v8.13.2 requires Android Studio Narwhal 3 Feature Drop or later.  Earlier versions of Android Studio will fail to sync the project.  Older versions of Android Studio may prompt the user to downgrade AGP.  Do not do this.  Gradle v9.1 removed support for features that older versions of the AGP use. Updating Gradle fixes a Windows 11 problem some teams may encounter if they have agressive security software installed on their machine.  For more context see [this Gradle issue](https://github.com/gradle/gradle/issues/31438)
+
+### Enhancements
+* New type of OpMode is now available. (`@Utility`)
+   * Utility opmodes that are not disabled will show up in the Utility menu (requires 11.2 or later DS and RC) 
+* TestHardware Utility now available
+  * It allows you to test all servos, CR servos, motors, Color sensors, distance sensors, touch sensors, IMUs, webcams, and analog sensors in the config
+* TestGamepad Utility now available
+  * It allows you to see the results of your two gamepads to make sure it is what you expect and find problems with your gamepads. 
+* Adds methods to PwmControl interface to allow you to setPulseWidth and getPulseWidth 
+   * Both of these are in microseconds (uSeconds)
+   * This is an ADVANCED feature.   There is not a supporting sample.
+   * NOTE: You may see a slight difference since the hardware is not accurate to the microsecond
+* Adds ability to set UVC camera "quirks" from user code to control compatibility flags used inside the low level UVC driver. Addresses issue [1428](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/1428)
+* Changes Apriltag Axis Display order on camera preview screen, to reflect updated Z axis direction.
+* The Driver Station app init button has a light teal background with the word init if
+   * the driver station and robot controller are connected and have the same team number
+   * there is at least one gamepad attached
+   * the timer is enabled (for an Autonomous OpMode)
+
+### Bug Fixes
+* Fixes issue [1949](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/1949) overwriting the group with the default group when registering a OpMode with OpModeManager.register(OpModeMeta name, Class<? extends OpMode> clazz)
+* Fixes issue mentioned in [1890](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/1890) where if 
+  for a servo you change the direction or scaleRange and send the same setPosition that was sent 
+  before, then it wouldn't update the servo.
+* Fixes an issue where Self-Inspect doesn't flag a driver station using -RC in it's name. The message is now:
+  * The team numbers in the robot controller and driver station names do not match, or a device name is invalid. Refer to the FTC Competition Manual for device naming rules.
 
 ## Version 11.1 (20251231-104637)
 
@@ -132,6 +216,7 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
   to rename the file, the rename will fail.
 
 ### Enhancements
+* Adds a configuration item for a Full Range Servo.  Selecting this item expands the pulse width range from 500us to 2500us.  For comparison, the legacy Servo type defines the pulse width range as 600us to 2400us.
 * Improved the OBJ new file creation flow workflow. The new flow allows you to easily use samples, craft new custom OpModes and make new Java classes.
 * Added support for gamepad edge detection.
   * A new sample program `ConceptGamepadEdgeDetection` demonstrates its use.
