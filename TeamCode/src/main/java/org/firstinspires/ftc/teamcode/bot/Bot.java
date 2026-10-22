@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Imu;
 import org.firstinspires.ftc.teamcode.subsystems.Indicator;
 import org.firstinspires.ftc.teamcode.subsystems.ImuSelector;
 import org.firstinspires.ftc.teamcode.subsystems.Launcher;
+import org.firstinspires.ftc.teamcode.subsystems.LightStrip;
 import org.firstinspires.ftc.teamcode.subsystems.SafeModeKey;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSelector;
@@ -75,6 +76,7 @@ public class Bot {
     private final Imu mImu;
     private final Launcher mLauncher;
     private final Indicator mIndicator;
+    private final LightStrip mLightStrip;
 
     /**
      * Build the robot. Nothing moves.
@@ -125,6 +127,14 @@ public class Bot {
         } else {
             mIndicator = new Indicator(mOp, mProperties, mVision);
             mSystems.add(mIndicator);
+        }
+
+        // The LED strip's demo controls are on gamepad 1's D-pad, which nothing else uses.
+        if (mProperties.stripDisabled) {
+            mLightStrip = null;
+        } else {
+            mLightStrip = new LightStrip(mOp, mProperties, mOp.mDriverGamepad);
+            mSystems.add(mLightStrip);
         }
 
         // Read every hub's sensors in one trip per loop instead of one trip per sensor.
@@ -202,6 +212,9 @@ public class Bot {
         if (mIndicator != null) {
             // The light follows the camera before START too.
             mIndicator.Process();
+        }
+        if (mLightStrip != null) {
+            mLightStrip.ShowStatus();
         }
     }
 

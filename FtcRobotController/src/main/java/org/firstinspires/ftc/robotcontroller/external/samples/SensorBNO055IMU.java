@@ -97,8 +97,7 @@ public class SensorBNO055IMU extends LinearOpMode
         // Set up our telemetry dashboard
         composeTelemetry();
 
-        // Wait until we're told to go
-        waitForStart();
+        // Wait until we're told to go        waitForStart();
 
         // Start the logging of measured acceleration
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);

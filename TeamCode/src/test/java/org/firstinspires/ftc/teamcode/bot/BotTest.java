@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.drivers.PrismLedDriver;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -244,6 +245,34 @@ class BotTest {
             bot.Init();
             teleOpLoop(bot);
             verify(hardwareMap, never()).tryGet(eq(Servo.class), anyString());
+        }
+    }
+
+    @Nested
+    @DisplayName("the LED strip")
+    class Strip {
+
+        @Test
+        @DisplayName("normal settings: the Bot looks for the strip and runs without one")
+        void looksForTheStrip() {
+            properties.driveDisabled = true;
+            properties.launcherDisabled = true;
+            Bot bot = new Bot(opMode, properties);
+            verify(hardwareMap).tryGet(PrismLedDriver.class, properties.cfgStrip);
+            bot.Init();
+            bot.ShowStatus();
+            teleOpLoop(bot);
+            verify(telemetry).addLine(contains("No light strip"));
+        }
+
+        @Test
+        @DisplayName("stripDisabled: the Bot never looks for the strip")
+        void stripOff() {
+            properties.driveDisabled = true;
+            properties.launcherDisabled = true;
+            properties.stripDisabled = true;
+            new Bot(opMode, properties);
+            verify(hardwareMap, never()).tryGet(eq(PrismLedDriver.class), anyString());
         }
     }
 

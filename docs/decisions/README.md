@@ -23,6 +23,7 @@ that replaces the old one and mark the old one **Replaced by NNNN**. Do not rewr
 | [0014](0014-safe-mode-off-for-foresight.md) | Safe Mode switched off while Foresight is tested | Accepted, temporary |
 | [0015](0015-indicator-light.md) | Indicator light: red, blinking blue, blue, green for 0, 1, 2, 3+ tags | Accepted, not on the robot yet |
 | [0016](0016-paths-live-in-the-opmode.md) | An auto's paths live in the auto's own file | Accepted |
+| [0017](0017-led-strip-prism.md) | The LED strip is a goBILDA Prism driver over I2C | Accepted, two CHECKs on the strip |
 
 ## Template
 

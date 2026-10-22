@@ -43,6 +43,8 @@ public class BotProperties {
     public boolean visionDisabled = false;
     /** true: the Bot never touches the indicator light. */
     public boolean indicatorDisabled = false;
+    /** true: the Bot never touches the LED strip. */
+    public boolean stripDisabled = false;
 
     // ---- Drive ------------------------------------------------------------------------------
 
@@ -182,6 +184,15 @@ public class BotProperties {
     public double indicatorOff = 0;
     /** With one tag in view the light blinks: this long on, this long off, in milliseconds. */
     public double indicatorBlinkMs = 300;
+
+    // ---- LED strip: goBILDA Prism RGB LED driver, over I2C (docs/decisions/0017) ---------
+
+    /** The Prism driver: type "goBILDA Prism LED Driver" on an I2C port the Pinpoint is not on. */
+    public String cfgStrip = "strip";
+    /** How many LEDs are on the strip. One 200 mm Prism strip has 12. Chained strips add up. */
+    public int stripLedCount = 12;
+    /** Strip brightness, 0 to 100. Start low; 100 is very bright and warm. */
+    public int stripBrightness = 50;
 
     // ---- Safe Mode: LOCKED (docs/decisions/0004 and 0007) --------------------------------
     // Safe Mode protects the people standing next to the robot, so these three are not
