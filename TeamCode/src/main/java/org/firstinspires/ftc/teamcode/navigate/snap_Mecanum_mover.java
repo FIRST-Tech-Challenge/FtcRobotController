@@ -32,18 +32,21 @@ public class snap_Mecanum_mover {
     private static final double SETTLE_TOLERANCE_RADIANS = Math.toRadians(2.0);
     private static final double BRAKE_ZONE_RADIANS = Math.toRadians(45.0);
     private static final double FINE_CONTROL_ZONE_RADIANS = Math.toRadians(6.0);
-    private static final double SNAP_TURN_KP = 0.70;
+    private static final double SNAP_TURN_KP = 0.76;
     //private static final double SNAP_TURN_KD = 0.60;
     private static final double SNAP_TURN_KD = 0.35;
     private static final double SNAP_TURN_MAX_POWER = 0.70;
     private static final double SNAP_TURN_BRAKE_MAX_POWER = 0.70;
-    private static final double SNAP_TURN_SETTLE_MAX_POWER = 0.14;
+    private static final double SNAP_TURN_SETTLE_MAX_POWER = 0.17;
     private static final double SNAP_TURN_MIN_POWER = 0.14;
-    private static final double SNAP_TURN_BRAKE_MIN_POWER = 0.08;
+    private static final double SNAP_TURN_BRAKE_MIN_POWER = 0.10;
     private static final double MAX_SETTLED_TURN_RATE_RADIANS = Math.toRadians(5.0);
     private static final int REQUIRED_SETTLED_LOOPS = 7;
     private static final double TRIGGER_THRESHOLD = 0.5;
     private static final double MANUAL_ROTATE_DEADBAND = 0.05;
+    private static final double SNAP_TURN_MAX_ERROR_RATE_RADIANS_PER_SECOND = Math.toRadians(300.0);
+    private static final double SNAP_TURN_ERROR_RATE_FILTER_ALPHA = 0.72;
+    private static final double SNAP_TURN_MAX_COMMAND_SLEW_PER_SECOND = 3.2;
 
     // Separate tuning values for odometry-driven point-to-point navigation.
     private static final double TARGET_POSITION_TOLERANCE_INCHES = 1.5;
@@ -70,6 +73,8 @@ public class snap_Mecanum_mover {
     private double previousHeadingErrorRadians = 0.0;
     private long previousSnapUpdateTimeNanos = 0L;
     private double lastTurnRateRadiansPerSecond = 0.0;
+    private double filteredHeadingErrorRateRadiansPerSecond = 0.0;
+    private double previousRotateCommand = 0.0;
     private boolean snapTurnSettling = false;
     private int settledLoopCount = 0;
 
@@ -125,13 +130,15 @@ public class snap_Mecanum_mover {
      *     <li>left/right triggers = snap-turn shortcuts</li>
      * </ul>
      */
-    public void loop(Gamepad gamepad1, Telemetry telemetry, boolean snap_to_tag) {
+    public void loop(Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry, boolean snap_to_tag) {
+        /*
         telemetry.addLine("Press A to reset Yaw");
         telemetry.addLine("Hold left bumper to drive in robot relative");
         telemetry.addLine("The left joystick sets the robot direction");
         telemetry.addLine("Moving the right joystick left and right turns the robot");
         telemetry.addLine("Left trigger snaps to 90° clockwise from field north");
         telemetry.addLine("Right trigger snaps to 90° counterclockwise from field north");
+        */
 
         // If another routine is temporarily taking over motion control (for example tag snapping),
         // skip the normal driver loop so commands do not fight each other.
@@ -167,15 +174,16 @@ public class snap_Mecanum_mover {
             rotateCommand = -getSnapTurnCommand(telemetry);
         }
 
-        telemetry.addData("Heading (deg)", Math.toDegrees(getCurrentHeadingRadians()));
-        telemetry.addData("Snap turn", snapTurnActive ? "ACTIVE" : "OFF");
+        //telemetry.addData("Heading (deg)", Math.toDegrees(getCurrentHeadingRadians()));
+        //telemetry.addData("Snap turn", snapTurnActive ? "ACTIVE" : "OFF");
+        /*
         if (snapTurnActive) {
             telemetry.addData("Target heading (deg)", Math.toDegrees(targetHeadingRadians));
             telemetry.addData("Heading error (deg)", Math.toDegrees(AngleUnit.normalizeRadians(targetHeadingRadians - getCurrentHeadingRadians())));
             telemetry.addData("Turn rate (deg/s)", Math.toDegrees(lastTurnRateRadiansPerSecond));
             telemetry.addData("Settling", snapTurnSettling ? "YES" : "NO");
         }
-
+        */
         if (gamepad1.left_bumper) {
             // Robot-relative mode: stick directions are interpreted from the robot's point of view.
             drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, rotateCommand);
@@ -193,6 +201,8 @@ public class snap_Mecanum_mover {
         previousHeadingErrorRadians = AngleUnit.normalizeRadians(targetHeadingRadians - getCurrentHeadingRadians());
         previousSnapUpdateTimeNanos = System.nanoTime();
         lastTurnRateRadiansPerSecond = 0.0;
+        filteredHeadingErrorRateRadiansPerSecond = 0.0;
+        previousRotateCommand = 0.0;
         snapTurnSettling = false;
         settledLoopCount = 0;
         snapTurnActive = true;
@@ -206,10 +216,11 @@ public class snap_Mecanum_mover {
      */
     private double getSnapTurnCommand(Telemetry telemetry) {
         double headingError = AngleUnit.normalizeRadians(targetHeadingRadians - getCurrentHeadingRadians());
+        /*
         telemetry.addData("heading error value", Math.abs(headingError));
         telemetry.addData("deadband", TURN_STOP_DEADBAND_RADIANS);
         telemetry.addData("settled loop count", settledLoopCount);
-
+        */
         long nowNanos = System.nanoTime();
         double deltaTimeSeconds = (nowNanos - previousSnapUpdateTimeNanos) / 1_000_000_000.0;
 
@@ -218,8 +229,19 @@ public class snap_Mecanum_mover {
         }
 
         double errorDeltaRadians = AngleUnit.normalizeRadians(headingError - previousHeadingErrorRadians);
-        double errorRate = errorDeltaRadians / deltaTimeSeconds;
-        lastTurnRateRadiansPerSecond = -errorRate;
+        double rawErrorRateRadiansPerSecond = errorDeltaRadians / deltaTimeSeconds;
+        // Limit impossible derivative spikes from IMU sample jitter or angle wrap transitions.
+        rawErrorRateRadiansPerSecond = Range.clip(
+                rawErrorRateRadiansPerSecond,
+                -SNAP_TURN_MAX_ERROR_RATE_RADIANS_PER_SECOND,
+                SNAP_TURN_MAX_ERROR_RATE_RADIANS_PER_SECOND
+        );
+
+        // Low-pass filter derivative so tiny heading jitter does not create direction-flip jerk.
+        filteredHeadingErrorRateRadiansPerSecond =
+                (SNAP_TURN_ERROR_RATE_FILTER_ALPHA * filteredHeadingErrorRateRadiansPerSecond)
+                        + ((1.0 - SNAP_TURN_ERROR_RATE_FILTER_ALPHA) * rawErrorRateRadiansPerSecond);
+        lastTurnRateRadiansPerSecond = -filteredHeadingErrorRateRadiansPerSecond;
 
         // Once the heading is close enough, stop the snap-turn controller entirely.
         if (Math.abs(headingError) <= TURN_STOP_DEADBAND_RADIANS) {
@@ -229,6 +251,8 @@ public class snap_Mecanum_mover {
             previousHeadingErrorRadians = headingError;
             previousSnapUpdateTimeNanos = nowNanos;
             lastTurnRateRadiansPerSecond = 0.0;
+            filteredHeadingErrorRateRadiansPerSecond = 0.0;
+            previousRotateCommand = 0.0;
             return 0.0;
         }
 
@@ -258,10 +282,14 @@ public class snap_Mecanum_mover {
             previousHeadingErrorRadians = headingError;
             previousSnapUpdateTimeNanos = nowNanos;
             lastTurnRateRadiansPerSecond = 0.0;
+            filteredHeadingErrorRateRadiansPerSecond = 0.0;
+            previousRotateCommand = 0.0;
             return 0.0;
         }
 
-        double rotateCommand = (headingError * SNAP_TURN_KP) + (errorRate * SNAP_TURN_KD);
+        double rotateCommand =
+                (headingError * SNAP_TURN_KP)
+                        + (filteredHeadingErrorRateRadiansPerSecond * SNAP_TURN_KD);
 
         double absoluteError = Math.abs(headingError);
         double maxAllowedPower;
@@ -285,6 +313,15 @@ public class snap_Mecanum_mover {
         if (minAllowedPower > 0.0 && Math.abs(rotateCommand) < minAllowedPower) {
             rotateCommand = Math.copySign(minAllowedPower, rotateCommand);
         }
+
+        // Slew-limit the rotation command so output does not jump sharply between loops.
+        double maxDeltaCommand = SNAP_TURN_MAX_COMMAND_SLEW_PER_SECOND * deltaTimeSeconds;
+        rotateCommand = Range.clip(
+                rotateCommand,
+                previousRotateCommand - maxDeltaCommand,
+                previousRotateCommand + maxDeltaCommand
+        );
+        previousRotateCommand = rotateCommand;
 
         // Save state for the next derivative calculation.
         previousHeadingErrorRadians = headingError;

@@ -83,9 +83,9 @@ public class april_tag_detecting_mover extends OpMode {
         imu = hardwareMap.get(IMU.class, "imu");
         // This needs to be changed to match the orientation on your robot
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.UP;
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
         RevHubOrientationOnRobot.UsbFacingDirection usbDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
 
         RevHubOrientationOnRobot orientationOnRobot = new
                 RevHubOrientationOnRobot(logoDirection, usbDirection);
@@ -110,8 +110,8 @@ public class april_tag_detecting_mover extends OpMode {
 
 
         boolean tagDetected = aprilTagWebcam.updateDetections();
-        boolean driver_snapping = gamepad1.right_bumper && tagDetected;
-        snapMecanumMover.loop(gamepad1, telemetry, driver_snapping);
+        boolean driver_snapping = gamepad2.right_bumper && tagDetected;
+        snapMecanumMover.loop(gamepad1, gamepad2, telemetry, driver_snapping);
         if (driver_snapping) {
             snap_to_tag();
         }

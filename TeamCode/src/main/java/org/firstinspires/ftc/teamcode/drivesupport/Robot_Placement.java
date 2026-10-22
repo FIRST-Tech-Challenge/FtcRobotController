@@ -5,7 +5,7 @@ public class Robot_Placement {
     public void init(int position_id){
         if (position_id == 1){
             // indicates red-1
-            target_tag = "RED SCORING";
+            target_tag = "RED AUDIENCE";
             int[] tag_id = {30,31,32,33,34,35,36,37};
         }
         if (position_id == 2){
@@ -15,7 +15,7 @@ public class Robot_Placement {
         }
         if (position_id == 3){
             // indicates blue-1
-            target_tag = "BLUE SCORING";
+            target_tag = "BLUE AUDIENCE";
             int[] tag_id = {40,41,42,43,44,45,46,47};
         }
         if (position_id == 4){
