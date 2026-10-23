@@ -32,6 +32,8 @@ public class Constants {
     Done tuning! Go do tests!
     */
     // pounds-to-kg = 0.453592 * (robot weight in pounds)
+
+    // TWEAK EVERYTHING FOR BIO-BUZZ!
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(10.5233344)
          // Tuning OpMode (Automatic Tuner)
