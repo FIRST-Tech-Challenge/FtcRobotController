@@ -18,7 +18,7 @@ public class Shooter {
     public static double target = 0;
 
     final double TICKS_PER_REV = 28;
-    double MAX_RPM = 0;
+    double RPS = 50;
     double GEAR_RATIO = 1;
 
     public static PIDFCoefficients pidfCoefficients = new PIDFCoefficients(0,0,0,0);
@@ -63,6 +63,9 @@ public class Shooter {
 
     public double getVelocity() {
         return  shooterUp.getVelocity();
+    }
+    public double convertRPStoTPS(double rps) {
+        return rps*TICKS_PER_REV;
     }
     public double convertTicksToRPS(double ticks_per_rev){
         return ticks_per_rev / TICKS_PER_REV;
