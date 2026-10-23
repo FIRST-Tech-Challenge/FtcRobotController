@@ -28,7 +28,7 @@ The class names will follow a naming convention which indicates the purpose of e
 The prefix of the name will be one of the following:
 
 Basic:  	This is a minimally functional OpMode used to illustrate the skeleton/structure
-            of a particular style of OpMode.  These are bare bones examples.
+            of a particular style of OpMode.  These are bare-bones examples.
 
 Sensor:    	This is a Sample OpMode that shows how to use a specific sensor.
             It is not intended to drive a functioning robot, it is simply showing the minimal code
@@ -97,7 +97,7 @@ a common code organization, with each being able to *see* the others code but ea
 their own team module with their own code that they maintain themselves.
 
 In this situation, you might wish to clone the TeamCode module, once for each of these teams.
-Each of the clones would then appear along side each other in the Android Studio module list,
+Each of the clones would then appear alongside each other in the Android Studio module list,
 together with the FtcRobotController module (and the original TeamCode module).
 
 Selective Team phones can then be programmed by selecting the desired Module from the pulldown list
