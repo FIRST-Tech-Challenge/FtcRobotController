@@ -29,11 +29,11 @@
          CRServo RightContinuousServo = hardwareMap.get(CRServo.class, "RightNTKServo");
          CRServo LeftContinuousServo = hardwareMap.get(CRServo.class, "LeftNTKServo");
          DcMotor IntakeMotor = hardwareMap.get(DcMotor.class, "NTK");
+         DcMotor IntakeMotor2 = hardwareMap.get(DcMotor.class, "NTK2");
          DcMotor ShooterMotor = hardwareMap.get(DcMotor.class, "Shooter");
 
-
-         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+         IntakeMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
          frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
          backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -43,6 +43,7 @@
      waitForStart();
      if (isStopRequested()) return;
      while (opModeIsActive()){
+
          double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
          double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
          double rx = gamepad1.right_stick_x;
@@ -56,5 +57,57 @@
          frontLeftMotor.setPower(frontLeftPower);
          backLeftMotor.setPower(backLeftPower);
          frontRightMotor.setPower(frontRightPower);
-         backRightMotor.setPower(backRightPower);}}}
+         backRightMotor.setPower(backRightPower);
+
+         if(gamepad1.left_trigger > 0.05) {
+             IntakeMotor.setPower(-1);
+         }
+         else{
+             IntakeMotor.setPower(0);
+         }
+         if(gamepad1.right_trigger > 0.05){
+             ShooterMotor.setPower(1);
+         }
+         else {
+             ShooterMotor.setPower(0);
+         }
+
+         if(gamepad1.right_bumper) {
+             ShooterMotor.setPower(-1);
+         }
+         else{
+             ShooterMotor.setPower(0);
+         }
+
+         if(gamepad1.circle) {
+             IntakeMotor.setPower(1);
+         }
+         else{
+             IntakeMotor.setPower(0);
+         }
+
+         if(gamepad1.left_bumper) {
+             IntakeMotor2.setPower(-1);}
+         else{
+             IntakeMotor2.setPower(0);
+         }
+
+         if(gamepad1.cross) {
+             IntakeMotor2.setPower(1);}
+         else{
+             IntakeMotor2.setPower(0);
+         }
+
+         if(gamepad1.square){
+             RightContinuousServo.setPower(1);
+             LeftContinuousServo.setPower(-1);
+         }
+         else{
+             RightContinuousServo.setPower(0);
+             LeftContinuousServo.setPower(0);
+         }
+
+         }
+    }
+ }
 
