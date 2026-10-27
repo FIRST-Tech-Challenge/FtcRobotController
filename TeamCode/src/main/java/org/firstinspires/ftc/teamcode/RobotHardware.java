@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.Range;
  * See org.firstinspires.ftc.robotcontroller.external.samples.externalhardware.RobotHardware for the FTC example
  */
 public class RobotHardware {
-    private LinearOpMode opMode = null;
+    private OpMode opMode = null;
 
     private DcMotor frontLeftDrive   = null;
     private DcMotor frontRightDrive  = null;
@@ -17,7 +17,7 @@ public class RobotHardware {
     private DcMotor backLeftDrive   = null;
     private DcMotor backRightDrive  = null;
 
-    public RobotHardware(LinearOpMode opMode1) {opMode = opMode1;}
+    public RobotHardware(OpMode opMode1) {opMode = opMode1;}
 
     private DcMotor getDcMotor(String id) {
         DcMotor motor = opMode.hardwareMap.get(DcMotor.class, id);
@@ -38,7 +38,13 @@ public class RobotHardware {
     }
 
     public void setDrivePower(double left, double right) {
-        // stub, fill in later
+        // set left drive
+        frontLeftDrive.setPower(left);
+        backLeftDrive.setPower(left);
+
+        // set right drive
+        frontRightDrive.setPower(right);
+        backRightDrive.setPower(right);
     }
 
     public void setArmPower(double power) {

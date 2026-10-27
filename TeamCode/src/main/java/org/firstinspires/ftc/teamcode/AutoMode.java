@@ -2,34 +2,38 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import org.firstinspires.ftc.teamcode.RobotHardware;
 
 /**
  * Autonomous mode code goes here
  */
 @Autonomous(name="Autonomous Mode", group="Robot")
-public class AutoMode extends OpMode {
+public class AutoMode extends RobotOpMode {
+
     @Override
     public void init() {
-        telemetry.addData("Hello", "Chameleons");
+        telemetryPrinter.helloWorld("Chameleons");
     }
 
     @Override
     public void init_loop() {
-        telemetry.addData("Hello", "Chameleons during init_loop");
+        telemetryPrinter.helloWorld("Chameleons");
     }
 
     @Override
     public void start() {
-        telemetry.addData(">", "Starting AutoMode...");
+        telemetryPrinter.print("Staring AutoMode...");
+
     }
 
     @Override
     public void loop() {
-        telemetry.addData("Hello", "Chameleons on the bot");
+        telemetryPrinter.helloWorld("Chameleons on the bot");
     }
 
     @Override
     public void stop() {
-        telemetry.addData(">", "Stopping AutoMode...");
+        telemetryPrinter.print("Stopping AutoMode...");
     }
+
 }

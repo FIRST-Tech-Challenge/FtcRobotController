@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import java.util.Arrays;
 
 public class TelemetryPrinter {
-    private LinearOpMode opMode = null;
+    private OpMode opMode = null;
 
-    public TelemetryPrinter(LinearOpMode opMode1) {opMode = opMode1;}
+    public TelemetryPrinter(OpMode opMode1) {opMode = opMode1;}
 
     public void print(String input){
         opMode.telemetry.addData(">", input);
