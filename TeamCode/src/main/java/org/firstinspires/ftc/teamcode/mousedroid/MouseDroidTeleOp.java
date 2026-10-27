@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.mousedroid;
 
-import com.bylazar.configurables.annotations.Configurable;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-
+import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 
@@ -16,17 +16,7 @@ public class MouseDroidTeleOp extends OpMode {
 
 
 
-//    @Configurable
-//    public class SortedConfigurables {
-//        @Sorter(sort = 0)
-//        public static double kP = 0.0;
-//
-//        @Sorter(sort = 1)
-//        public static double kI = 0.0;
-//
-//        @Sorter(sort = 2)
-//        public static double kD = 0.0;
-//    }
+
 
 
 TankDriveHW m_tankDrive;
@@ -69,11 +59,11 @@ PanelsTelemetry    panelsTelemetry;
 
         //panelsTelemetry.getFtcTelemetry().addLine("This is a test");
 
-        telemetry.addData("rightStickX", gamepad1.right_stick_x);
-        telemetry.addData("rightStickY", gamepad1.right_stick_y);
+//        telemetry.addData("rightStickX", gamepad1.right_stick_x);
+//        telemetry.addData("rightStickY", gamepad1.right_stick_y);
         telemetry.addData("leftPower", leftPower);
         telemetry.addData("rightPower", rightPower);
-        telemetry.update();
+        //telemetry.update();
 
 
         panels.addData("rightStickX", gamepad1.right_stick_x);
@@ -81,7 +71,13 @@ PanelsTelemetry    panelsTelemetry;
         panels.addData("leftPower", leftPower);
         panels.addData("rightPower", rightPower);
 
-        panels.update();
+
+
+        panels.addData("kP", Mousefigurables.kP);
+        panels.addData("kI", Mousefigurables.kI);
+        panels.addData("kID", Mousefigurables.kD);
+
+        panels.update(telemetry);
 
         // Send real-time data back to Panels dashboard
         //telemetry.addData("leftPower", leftPower);
