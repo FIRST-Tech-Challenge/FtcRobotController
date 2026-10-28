@@ -27,7 +27,9 @@ public class Auto_2026_2027 extends OpMode {
     private DcMotor flywheel;
     private DcMotor transfer;
     private DcMotor intake;
-
+    // IMU Stuff
+    IMU imu;
+    private double yaw;
     private ElapsedTime runtime = new ElapsedTime();
 
     GoBildaPinpointDriver pinpoint;
@@ -71,6 +73,8 @@ public class Auto_2026_2027 extends OpMode {
         }
         pinpoint.update();
         Pose2D pose2D = pinpoint.getPosition();
+
+        displayIMU();
 
         // telememtery
         telemetry.addData("X coordinate (IN)", pose2D.getX(DistanceUnit.INCH));
