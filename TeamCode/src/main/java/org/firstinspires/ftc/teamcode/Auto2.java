@@ -21,8 +21,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  * START: backward in the middle of the wall behind our HIVE (blue: tile D6, red: tile C1), front
  * (intake) pressed against the wall, back (launcher) facing our upward CELL. It never turns.
  * ROUTE (straight lines, from the drawing): back 21, right 30, straight to 10 in. in front of the
- * GARDEN corner, forward into it with the intake on, then the same lines back and forward into the
- * wall, so it ends where it started, ready to shoot.
+ * GARDEN corner, forward into it with the intake on. Home: back off the wall 3 in., slide left
+ * along the wall until in line with the start spot, then forward until pressed against the wall,
+ * where it started, and shoot.
  *
  * BLOCKS: forward(n)  back(n)  left(n)  right(n)  goTo(ahead, right)  shoot()  spinSiphon(turns)  setIntake(power)
  *
@@ -39,6 +40,7 @@ public class Auto2 extends LinearOpMode {
 
     // Route, inches from the start spot.
     static final double CORNER_BACK = 21, CORNER_RIGHT = 30, GARDEN_RIGHT = 50, GARDEN_APPROACH = 10;
+    static final double WALL_GAP = 3;  // how far it backs off the wall to slide home along it
 
     // Shooting. The siphon can't count its turns: if it does too many or too few, change SECONDS_PER_TURN.
     static final double RPM = 2800, SIPHON_POWER = 0.3, SECONDS_PER_TURN = 1.5;
@@ -114,11 +116,11 @@ public class Auto2 extends LinearOpMode {
         setIntake(0);
     }
 
+    /** From the GARDEN: back off the wall a tiny bit, slide along it to the start spot, push onto the wall. */
     void returnToStart() {
-        goTo(-GARDEN_APPROACH, GARDEN_RIGHT);
-        goTo(-CORNER_BACK, CORNER_RIGHT);
-        left(CORNER_RIGHT);
-        forward(CORNER_BACK + 3);  // 3 in. past the wall, so it ends up pressed against it
+        back(WALL_GAP);            // a tiny bit off the wall
+        left(planRight);           // straight along the wall, back in line with the start spot
+        forward(WALL_GAP + 3);     // 3 in. past the wall, so it ends up pressed against it
         posAhead = planAhead = 0;  // touching the wall = exactly the start distance
     }
 
