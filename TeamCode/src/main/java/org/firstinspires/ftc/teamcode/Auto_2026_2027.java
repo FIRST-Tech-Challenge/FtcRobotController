@@ -65,14 +65,16 @@ public class Auto_2026_2027 extends OpMode {
     @Override
     public void loop()
     {
-        telemetry.addLine("Push your robot around to see it track");
-        telemetry.addLine("Press A to reset the position");
         if(gamepad1.a){
             // You could use readings from April Tags here to give a new known position to the pinpoint
             pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0));
         }
         pinpoint.update();
         Pose2D pose2D = pinpoint.getPosition();
+
+        // Field Centric stuff
+        double x_Mod = yPower * Math.cos(yaw) + xPower * Math.sin(yaw);
+        double y_Mod = xPower * Math.cos(yaw) - yPower * Math.sin(yaw);
 
         displayIMU();
 
