@@ -33,6 +33,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -59,6 +60,7 @@ import com.qualcomm.robotcore.util.Range;
 
 
 @TeleOp(name="Basic: Iterative OpMode", group="Iterative OpMode")
+@Config
 public class BasicOpMode_Iterative extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -71,8 +73,8 @@ public class BasicOpMode_Iterative extends OpMode {
     private CRServo windMill = null;
 
 
-    public final int LAUNCHER_TARGET_VELOCITY = 3000;
-    public final int LAUNCHER_MIN_VELOCITY = 2700;
+    public static int LAUNCHER_TARGET_VELOCITY = 3000;
+    public static int LAUNCHER_MIN_VELOCITY = 2700;
 
     /*
      * Code to run ONCE when the driver hits INIT
