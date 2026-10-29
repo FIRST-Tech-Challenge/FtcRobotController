@@ -88,3 +88,27 @@ exit /b 1
 if "%OS%"=="Windows_NT" endlocal
 
 :omega
+
+@rem FTC: Gradle 9.1 needs Java 17-25; stop early with a clear fix instead of a stack trace
+if defined JAVA_HOME (set "_FTC_JAVA=%JAVA_HOME%\bin\java.exe") else (set "_FTC_JAVA=java.exe")
+set "_FTC_VER=" & set "_FTC_MIN="
+"%_FTC_JAVA%" -fullversion 2> "%TEMP%\ftc_java_ver.txt"
+for /f usebackq^ tokens^=2-3^ delims^=.^" %%a in ("%TEMP%\ftc_java_ver.txt") do (set "_FTC_VER=%%a" & set "_FTC_MIN=%%b")
+del "%TEMP%\ftc_java_ver.txt" 2>NUL
+if "%_FTC_VER%"=="1" set "_FTC_VER=%_FTC_MIN%"
+if not defined _FTC_VER goto ftcJavaOk
+if %_FTC_VER% LSS 17 goto ftcBadJava
+if %_FTC_VER% LEQ 25 goto ftcJavaOk
+:ftcBadJava
+echo. 1>&2
+echo BUILD STOPPED: found Java %_FTC_VER%, but this project needs Java 17-25. 1>&2
+echo Run these, then try again: 1>&2
+echo. 1>&2
+echo   set "JAVA_HOME=C:\Program Files\Android\Android Studio\jbr" 1>&2
+echo   gradlew --stop 1>&2
+echo. 1>&2
+echo In PowerShell, use instead: $env:JAVA_HOME="C:\Program Files\Android\Android Studio\jbr" 1>&2
+echo To make it permanent: setx JAVA_HOME "C:\Program Files\Android\Android Studio\jbr" 1>&2
+echo. 1>&2
+goto fail
+:ftcJavaOk
