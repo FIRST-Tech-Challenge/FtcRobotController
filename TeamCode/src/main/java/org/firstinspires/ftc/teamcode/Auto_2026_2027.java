@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -20,10 +21,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 public class Auto_2026_2027 extends OpMode {
 
     //---Declare OpMode members.---//
-    private DcMotor motorFL;
-    private DcMotor motorBL;
-    private DcMotor motorFR;
-    private DcMotor motorBR;
+    private DcMotor frontLeftDrive;
+    private DcMotor frontRightDrive;
+    private DcMotor backLeftDrive;
+    private DcMotor backRightDrive;
     private DcMotor flywheel;
     private DcMotor transfer;
     private DcMotor intake;
@@ -40,15 +41,19 @@ public class Auto_2026_2027 extends OpMode {
         // Get a reference to the sensor
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "motorFL");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "motorFR");
+        backLeftDrive = hardwareMap.get(DcMotor.class, "motorBL");
+        backRightDrive = hardwareMap.get(DcMotor.class, "motorBR");
+
+        // IMU - FIELD CENTRIC STUFF!! //
+        imu = hardwareMap.get(IMU.class, "imu");
+
         // Configure the sensor
         configurePinpoint();
 
         // Set the location of the robot - this should be the place you are starting the robot from
         pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0));
-
-        // IMU - FIELD CENTRIC STUFF!! //
-        imu = hardwareMap.get(IMU.class, "imu");
-
 
         // NOTE: If the logo of control hub that says "Control Hub" is facing right ex: robot is facing forward and its on its right side. . then tell the firectiong its facing right.
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
@@ -56,6 +61,15 @@ public class Auto_2026_2027 extends OpMode {
 
         // Defining stuff frfr.. I think? - Brayyten
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+
+        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        flywheel.setDirection(DcMotor.Direction.FORWARD);
+        transfer.setDirection(DcMotor.Direction.FORWARD);
+        intake.setDirection(DcMotor.Direction.FORWARD);
 
         // Initializing the IMU's orientation..
         // Note: if you choose two conflicting directions, this initialization will cause a code exception.
@@ -71,10 +85,6 @@ public class Auto_2026_2027 extends OpMode {
         }
         pinpoint.update();
         Pose2D pose2D = pinpoint.getPosition();
-
-        // Field Centric stuff
-        double x_Mod = yPower * Math.cos(yaw) + xPower * Math.sin(yaw);
-        double y_Mod = xPower * Math.cos(yaw) - yPower * Math.sin(yaw);
 
         displayIMU();
 
@@ -128,5 +138,34 @@ public class Auto_2026_2027 extends OpMode {
                 GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
         pinpoint.resetPosAndIMU();
+    }
+
+    public void auto_drivebase(){
+        pinpoint.update();
+
+        double robotXDestination = 1;
+        double robotYDestination = 1;
+
+        Pose2D pose2D = pinpoint.getPosition();
+        double robotXPosition = pose2D.getX(DistanceUnit.INCH);
+        double robotYPosition = pose2D.getY(DistanceUnit.INCH);
+
+        // Get error
+        double robotPinpointXError = robotXDestination - robotXPosition;
+        double robotPinpointYError = robotYDestination - robotYPosition;
+
+        // Field Centric stuff
+        double x_Mod = robotPinpointYError * Math.cos(yaw) + robotPinpointXError * Math.sin(yaw);
+        double y_Mod = robotPinpointXError * Math.cos(yaw) - robotPinpointYError * Math.sin(yaw);
+
+        frontRightDrive = y_Mod;
+        backRightDrive = y_Mod;
+        frontLeftDrive = x_Mod;
+        backLeftDrive = x_Mod;
+        // NOTE FOR TMR: PUT MOTORS IN HARWARE MAP
+
+        // Telemetry
+        telemetry.addData("X Error", robotPinpointXError);
+        telemetry.addData("Y Error", robotPinpointYError);
     }
 }
