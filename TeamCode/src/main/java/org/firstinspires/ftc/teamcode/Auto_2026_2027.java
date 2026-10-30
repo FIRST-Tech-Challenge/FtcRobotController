@@ -67,9 +67,9 @@ public class Auto_2026_2027 extends OpMode {
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        flywheel.setDirection(DcMotor.Direction.FORWARD);
-        transfer.setDirection(DcMotor.Direction.FORWARD);
-        intake.setDirection(DcMotor.Direction.FORWARD);
+       // flywheel.setDirection(DcMotor.Direction.FORWARD);
+       // transfer.setDirection(DcMotor.Direction.FORWARD);
+       // intake.setDirection(DcMotor.Direction.FORWARD);
 
         // Initializing the IMU's orientation..
         // Note: if you choose two conflicting directions, this initialization will cause a code exception.
@@ -87,6 +87,9 @@ public class Auto_2026_2027 extends OpMode {
         Pose2D pose2D = pinpoint.getPosition();
 
         displayIMU();
+
+        //Auto Druve vase!
+        auto_drivebase();
 
         // telememtery
         telemetry.addData("X coordinate (IN)", pose2D.getX(DistanceUnit.INCH));
@@ -158,11 +161,11 @@ public class Auto_2026_2027 extends OpMode {
         double x_Mod = robotPinpointYError * Math.cos(yaw) + robotPinpointXError * Math.sin(yaw);
         double y_Mod = robotPinpointXError * Math.cos(yaw) - robotPinpointYError * Math.sin(yaw);
 
-        frontRightDrive = y_Mod;
-        backRightDrive = y_Mod;
-        frontLeftDrive = x_Mod;
-        backLeftDrive = x_Mod;
-        // NOTE FOR TMR: PUT MOTORS IN HARWARE MAP
+        frontRightDrive.setPower(y_Mod);
+        backRightDrive.setPower(y_Mod);
+        frontLeftDrive.setPower(x_Mod);
+        backLeftDrive.setPower(x_Mod);
+
 
         // Telemetry
         telemetry.addData("X Error", robotPinpointXError);
