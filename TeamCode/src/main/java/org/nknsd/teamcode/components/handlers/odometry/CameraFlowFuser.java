@@ -111,7 +111,7 @@ public class CameraFlowFuser implements NKNComponent {
 
 
 
-    public boolean hiveFacingUp(AprilTagPosition[] aprilTagPositions){
+    private boolean hiveFacingUp(AprilTagPosition[] aprilTagPositions){
         //if the z value of a tag is above this, the tag is considered valid.
         int zMin = 30;
         //tracks number of "valid" tags for the hive to be facing up.
@@ -124,6 +124,13 @@ public class CameraFlowFuser implements NKNComponent {
         }
         //if two or more tags are "valid" then it states the hive is facing up.
         return validTags >= 1;
+    }
+
+    public boolean hiveFacingUp(boolean redHive, boolean frontHive){
+        if(redHive && frontHive){ return hiveFacingUp(frontRed);}
+        else if(redHive && !frontHive){ return hiveFacingUp(backRed);}
+        else if(!redHive && frontHive){ return hiveFacingUp(frontBlue);}
+        else { return hiveFacingUp(backBlue);}
     }
 
     @Override
