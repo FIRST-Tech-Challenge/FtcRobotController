@@ -65,7 +65,7 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
  * main robot "loop," continuously checking for conditions that allow us to move to the next step.
  */
 
-@Autonomous(name="StarterBotAuto", group="StarterBot")
+@Autonomous(name="StarterBotAuto", group="zTest")
 //@Disabled
 public class StarterBotAuto extends OpMode
 {

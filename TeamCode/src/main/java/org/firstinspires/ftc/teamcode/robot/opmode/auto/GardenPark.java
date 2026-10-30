@@ -18,23 +18,20 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
-@Autonomous(name = "AutoPath", group = "Autonomous")
-public class Red3FarAuto extends LinearOpMode {
+@Autonomous(name = "GardenPark", group = "Compete")
+public class GardenPark extends LinearOpMode {
 
     private Follower follower;
 
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
-    private final Pose path2 = poseFactory.of(62.5502, 7.9556, 90);
-    private final Pose point1 = poseFactory.of(34.0057, 24.9311, 90);
-    private final Pose point2Start = poseFactory.of(34.0057, 24.9311, 90);
-    private final Pose point2 = poseFactory.of(13.4268, 99.2855, 90);
+    private final Pose start = poseFactory.of(38.0, 9.0, 90);
+    private final Pose end = poseFactory.of(12.0, 98.0, 90);
 
     // Autonomous routine
     public Command autoRoutine() {
         return sequential(
-                follow(follower, path1()),
-                follow(follower, path2())
+                follow(follower, path1())
         );
     }
 
@@ -42,7 +39,7 @@ public class Red3FarAuto extends LinearOpMode {
     public void runOpMode() {
         Scheduler.reset();
         follower = Constants.create(hardwareMap);
-        follower.setPose(path2);
+        follower.setPose(start);
         follower.update();
 
         waitForStart();
@@ -66,10 +63,7 @@ public class Red3FarAuto extends LinearOpMode {
     }
 
     public Path path1() {
-        return Paths.line(path2, point1).linear(path2, point1);
+        return Paths.line(start, end).linear(start, end);
     }
 
-    public Path path2() {
-        return Paths.line(point2Start, point2).linear(point2Start, point2);
-    }
 }

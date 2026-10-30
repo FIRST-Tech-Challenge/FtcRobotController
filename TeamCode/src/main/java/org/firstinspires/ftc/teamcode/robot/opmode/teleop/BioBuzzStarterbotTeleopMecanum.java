@@ -65,7 +65,7 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
  * watch the pose change. Press BACK to reset the pose and the checks.
  */
 
-@TeleOp(name = "Mec BioBuzz StarterBot Teleop", group = "StarterBot")
+@TeleOp(name = "Standard Teleop", group = "_Compete")
 //@Disabled
 public class BioBuzzStarterbotTeleopMecanum extends OpMode {
 
@@ -93,6 +93,7 @@ public class BioBuzzStarterbotTeleopMecanum extends OpMode {
      */
     public final int LAUNCHER_TARGET_VELOCITY = 1250; //2678 RPM
     public final int LAUNCHER_MIN_VELOCITY = 1200; //2571 RPM
+    public final int LAUNCHER_REVERSE_VELOCITY = 625; // half of target; reverse speed for unjamming
 
 
     /*
@@ -107,6 +108,18 @@ public class BioBuzzStarterbotTeleopMecanum extends OpMode {
 
     // Create a variable to set to the intake.
     double intakePower;
+
+    /*
+     * Heading snap. Tapping X turns the robot to face 90 degrees and tapping B turns it to face
+     * 270 degrees, measured by the Pinpoint (counterclockwise from the way the robot faced at INIT,
+     * or when BACK was last pressed). The driver can still drive and strafe during the turn.
+     * Moving the right stick cancels the snap. snapTarget is null when no snap is running.
+     */
+    private Double snapTarget = null;
+    private static final double SNAP_KP = 1.2;               // turn power per radian of error
+    private static final double SNAP_MIN_POWER = 0.08;       // enough to keep turning near the end
+    private static final double SNAP_MAX_POWER = 0.7;
+    private static final double SNAP_TOLERANCE_DEG = 2.0;
 
     /*
      * Pedro Pathing debug. These stay null if Pedro can't start (for example, no Pinpoint in the
@@ -268,7 +281,7 @@ public class BioBuzzStarterbotTeleopMecanum extends OpMode {
          * Note, moving the joystick forward on most gamepads results in a negative signal, so
          * we invert it before passing it to the function.
          */
-        mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, snapRotate(gamepad1.right_stick_x));
 
         /*
          * Set the intake power variable to equal the right trigger, minus the left trigger.
@@ -303,6 +316,8 @@ public class BioBuzzStarterbotTeleopMecanum extends OpMode {
          */
         telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftFrontPower, rightFrontPower);
         telemetry.addData("Triggers", "left (%.2f), right (%.2f)", gamepad1.left_trigger, gamepad1.right_trigger);
+        telemetry.addData("Snap (X=90, B=270)", snapTarget == null
+                ? "off" : String.format("turning to %.0f deg", Math.toDegrees(snapTarget)));
 
         addPedroTelemetry(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
     }
@@ -312,6 +327,40 @@ public class BioBuzzStarterbotTeleopMecanum extends OpMode {
      */
     @Override
     public void stop() {
+    }
+
+    /*
+     * Returns the turn power to use this loop. Normally that's just the driver's right stick, but
+     * while a snap is running we turn toward snapTarget instead. Like mecanumDrive, positive
+     * rotate is clockwise, while Pedro's heading is counterclockwise, so the sign is flipped.
+     */
+    double snapRotate(double stickRotate) {
+        if (localizer == null) {
+            return stickRotate; // no odometry, so no snap
+        }
+        if (gamepad1.x) {
+            snapTarget = Math.toRadians(90);
+        } else if (gamepad1.b) {
+            snapTarget = Math.toRadians(270);
+        }
+        if (Math.abs(stickRotate) > OTHER_STICKS_CENTERED) {
+            snapTarget = null; // the driver took over
+        }
+        if (snapTarget == null) {
+            return stickRotate;
+        }
+
+        // Shortest way around: wrap the error into -180..180 degrees
+        double error = snapTarget - localizer.pose().heading();
+        error = Math.atan2(Math.sin(error), Math.cos(error));
+        if (Math.abs(error) < Math.toRadians(SNAP_TOLERANCE_DEG)) {
+            snapTarget = null;
+            return 0;
+        }
+
+        double power = SNAP_KP * Math.abs(error);
+        power = Math.max(SNAP_MIN_POWER, Math.min(SNAP_MAX_POWER, power));
+        return -Math.signum(error) * power;
     }
 
     void mecanumDrive(double forward, double strafe, double rotate) {
@@ -468,6 +517,19 @@ public class BioBuzzStarterbotTeleopMecanum extends OpMode {
     }
 
     void launch() {
+        /*
+         * Holding the left bumper runs everything backwards to clear a jam: the launcher spins in
+         * reverse, the windmill pushes elements back out of the launcher, and the intake pushes
+         * them out of the robot. This takes priority over the right bumper, so we return early
+         * and skip the normal launch logic below.
+         */
+        if (gamepad1.left_bumper) {
+            launcher.setVelocity(-LAUNCHER_REVERSE_VELOCITY);
+            windmillServo.setPower(-1);
+            intakePower = -1;
+            return;
+        }
+
         /*
          * Calling gamepad1.right_bumper returns a boolean which will be true if the bumper is
          * held down, and false if it is not. Notably, this will continue to be true for every
