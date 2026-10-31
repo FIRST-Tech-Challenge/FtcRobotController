@@ -56,31 +56,32 @@ public void turnOff() {
 }
 
 
-        while (opModeIsActive()) {
+      while (opModeIsActive()) {
 
-            // A = RED
-            if (gamepad1.a) {
-                lights.setRed();
-            }
+    // CROSS = RED
+    if (gamepad1.a) {
+        lights.setRed();
+    }
 
-            // B = GREEN
-            if (gamepad1.b) {
-                lights.setGreen();
-            }
+    // CIRCLE = GREEN
+    if (gamepad1.b) {
+        lights.setGreen();
+    }
 
-            // X = BLUE
-            if (gamepad1.x) {
-                lights.setBlue();
-            }
+    // SQUARE = BLUE
+    if (gamepad1.x) {
+        lights.setBlue();
+    }
 
-            // Y = PURPLE
-            if (gamepad1.y) {
-                lights.setPurple();
-            }
+    // TRIANGLE = PURPLE
+    if (gamepad1.y) {
+        lights.setPurple();
+    }
 
-            // D-pad DOWN = OFF
-            if (gamepad1.dpad_down) {
-                lights.turnOff();
+    // D-PAD DOWN = OFF
+    if (gamepad1.dpad_down) {
+        lights.turnOff();
+    }
             }
         }
     }
