@@ -1,0 +1,23 @@
+name: FTC Format Checking
+
+on:
+  pull_request:
+    branches:
+      - [main, master]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup SDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'yulu'
+          java-version: '17'
+
+      - name: Run Spotless Check
+        run: ./gradlew spotlessCheck

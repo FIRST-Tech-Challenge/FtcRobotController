@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.robotcontroller.external.utilities;
+
 /*
         Copyright (c) 2026 Porpoiseful, LLC
         All rights reserved.
@@ -41,7 +42,7 @@ public class UtilityTestGamepad extends OpMode {
     public static final String SEPARATOR = "  •  ";
 
     @Override
-    public void init(){
+    public void init() {
         telemetry.addData("Instructions", "Setup your gamepads and then press the play button");
     }
 
@@ -53,23 +54,32 @@ public class UtilityTestGamepad extends OpMode {
 
     void display_gamepad(Gamepad gamepad, String name) {
         telemetry.addLine("---" + name + "---");
-        telemetry.addData("Left Joystick",  "(% 1.2f, %1.2f)", gamepad.left_stick_x, gamepad.left_stick_y);
+        telemetry.addData(
+                "Left Joystick", "(% 1.2f, %1.2f)", gamepad.left_stick_x, gamepad.left_stick_y);
         telemetry.addData("Left Trigger", "% 1.2f", gamepad.left_trigger);
-        telemetry.addData("Right Joystick",  "(% 1.2f, %1.2f)", gamepad.right_stick_x, gamepad.right_stick_y);
+        telemetry.addData(
+                "Right Joystick", "(% 1.2f, %1.2f)", gamepad.right_stick_x, gamepad.right_stick_y);
         telemetry.addData("Right Trigger", "% 1.2f", gamepad.right_trigger);
 
-        switch(gamepad.type()){
+        switch (gamepad.type()) {
             case SONY_PS4:
             case SONY_PS4_SUPPORTED_BY_KERNEL:
-
                 if (gamepad.touchpad_finger_1) {
-                    telemetry.addData("Touchpad Finger1", "(% 1.2f, %1.2f)", gamepad.touchpad_finger_1_x, gamepad.touchpad_finger_1_y);
+                    telemetry.addData(
+                            "Touchpad Finger1",
+                            "(% 1.2f, %1.2f)",
+                            gamepad.touchpad_finger_1_x,
+                            gamepad.touchpad_finger_1_y);
                 } else {
                     telemetry.addData("Touchpad Finger1", false);
                 }
 
                 if (gamepad.touchpad_finger_2) {
-                    telemetry.addData("Touchpad Finger2", "(% 1.2f, %1.2f)", gamepad.touchpad_finger_2_x, gamepad.touchpad_finger_2_y);
+                    telemetry.addData(
+                            "Touchpad Finger2",
+                            "(% 1.2f, %1.2f)",
+                            gamepad.touchpad_finger_2_x,
+                            gamepad.touchpad_finger_2_y);
                 } else {
                     telemetry.addData("Touchpad Finger2", false);
                 }
@@ -86,9 +96,9 @@ public class UtilityTestGamepad extends OpMode {
     }
 
     /*
-      This returns a string based off of the buttons pressed, with the xbox names for buttons
-     */
-    String xbox_buttons_to_string(Gamepad gamepad){
+     This returns a string based off of the buttons pressed, with the xbox names for buttons
+    */
+    String xbox_buttons_to_string(Gamepad gamepad) {
         String buttons = generic_buttons_to_string(gamepad);
         if (gamepad.back) buttons += "back" + SEPARATOR;
         if (gamepad.start) buttons += "start" + SEPARATOR;
@@ -102,9 +112,9 @@ public class UtilityTestGamepad extends OpMode {
     }
 
     /*
-      This returns a string based off of the buttons pressed, with the ps names for buttons
-     */
-    String ps_buttons_to_string(Gamepad gamepad){
+     This returns a string based off of the buttons pressed, with the ps names for buttons
+    */
+    String ps_buttons_to_string(Gamepad gamepad) {
         String buttons = generic_buttons_to_string(gamepad);
         if (gamepad.cross) buttons += "cross" + SEPARATOR;
         if (gamepad.circle) buttons += "circle" + SEPARATOR;
@@ -119,9 +129,9 @@ public class UtilityTestGamepad extends OpMode {
     }
 
     /*
-      This returns the buttons pressed for those that are the same on both types of gamepads
-     */
-    String generic_buttons_to_string(Gamepad gamepad){
+     This returns the buttons pressed for those that are the same on both types of gamepads
+    */
+    String generic_buttons_to_string(Gamepad gamepad) {
         String buttons = "";
         if (gamepad.dpad_up) buttons += "dpad_up" + SEPARATOR;
         if (gamepad.dpad_down) buttons += "dpad_down" + SEPARATOR;
@@ -133,5 +143,4 @@ public class UtilityTestGamepad extends OpMode {
         if (gamepad.right_stick_button) buttons += "right stick button" + SEPARATOR;
         return buttons;
     }
-
 }

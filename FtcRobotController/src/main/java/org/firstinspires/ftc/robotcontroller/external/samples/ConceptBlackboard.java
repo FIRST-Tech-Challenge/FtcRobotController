@@ -54,9 +54,7 @@ public class ConceptBlackboard extends OpMode {
     public static final String TIMES_STARTED_KEY = "Times started";
     public static final String ALLIANCE_KEY = "Alliance";
 
-    /**
-     * This method will be called once, when the INIT button is pressed.
-     */
+    /** This method will be called once, when the INIT button is pressed. */
     @Override
     public void init() {
         // This gets us what is in the blackboard or the default if it isn't in there.
@@ -67,13 +65,14 @@ public class ConceptBlackboard extends OpMode {
     }
 
     /**
-     * This method will be called repeatedly during the period between when
-     * the START button is pressed and when the OpMode is stopped.
-     * <p>
-     * If the left bumper is pressed it will store the value "RED" in the blackboard for alliance.
-     * If the right bumper is pressed it will store the value "BLUE" in the blackboard for alliance.
-     * <p>
-     * You'll notice that if you quit the OpMode and come back in, the value will persist.
+     * This method will be called repeatedly during the period between when the START button is
+     * pressed and when the OpMode is stopped.
+     *
+     * <p>If the left bumper is pressed it will store the value "RED" in the blackboard for
+     * alliance. If the right bumper is pressed it will store the value "BLUE" in the blackboard for
+     * alliance.
+     *
+     * <p>You'll notice that if you quit the OpMode and come back in, the value will persist.
      */
     @Override
     public void loop() {

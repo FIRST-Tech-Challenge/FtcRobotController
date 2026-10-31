@@ -25,7 +25,6 @@ import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /*
@@ -48,9 +47,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  */
 
 @Disabled
-@TeleOp(name="OctoQuad Localizer", group="OctoQuad")
-public class SensorOctoQuadLocalization extends LinearOpMode
-{
+@TeleOp(name = "OctoQuad Localizer", group = "OctoQuad")
+public class SensorOctoQuadLocalization extends LinearOpMode {
     // #####################################################################################
     //
     // YOU MUST ADJUST THESE CONSTANTS FOR YOUR ROBOT!
@@ -61,19 +59,19 @@ public class SensorOctoQuadLocalization extends LinearOpMode
     //     https://github.com/DigitalChickenLabs/OctoQuad/blob/master/code_examples/FTC
     //
     // #####################################################################################
-    static final int DEADWHEEL_PORT_X = 0;  // encoder port on OctoQuad
-    static final int DEADWHEEL_PORT_Y = 1;  // encoder port on OctoQuad
+    static final int DEADWHEEL_PORT_X = 0; // encoder port on OctoQuad
+    static final int DEADWHEEL_PORT_Y = 1; // encoder port on OctoQuad
     static final OctoQuad.EncoderDirection DEADWHEEL_X_DIR = OctoQuad.EncoderDirection.FORWARD;
     static final OctoQuad.EncoderDirection DEADWHEEL_Y_DIR = OctoQuad.EncoderDirection.REVERSE;
-    static final float X_TICKS_PER_MM  =  12.34f;  // eg.  19.89f for a goBILDA 4-Bar Odometry Pod
-    static final float Y_TICKS_PER_MM  =  12.34f;  // eg.  19.89f for a goBILDA 4-Bar Odometry Pod
-    static final float TCP_OFFSET_X_MM =  123.4f;  // eg. 147.0f from QuickStart Guide diagram
-    static final float TCP_OFFSET_Y_MM =  123.4f;  // eg.-158.0f from QuickStart Guide diagram
-    static final float IMU_SCALAR      =    1.0f;  // Rotational scale factor.
+    static final float X_TICKS_PER_MM = 12.34f; // eg.  19.89f for a goBILDA 4-Bar Odometry Pod
+    static final float Y_TICKS_PER_MM = 12.34f; // eg.  19.89f for a goBILDA 4-Bar Odometry Pod
+    static final float TCP_OFFSET_X_MM = 123.4f; // eg. 147.0f from QuickStart Guide diagram
+    static final float TCP_OFFSET_Y_MM = 123.4f; // eg.-158.0f from QuickStart Guide diagram
+    static final float IMU_SCALAR = 1.0f; // Rotational scale factor.
     // #####################################################################################
 
     // Conversion factor for radians --> degrees
-    static final double RAD2DEG = 180/Math.PI;
+    static final double RAD2DEG = 180 / Math.PI;
 
     // For tracking the number of CRC mismatches
     int badPackets = 0;
@@ -86,8 +84,7 @@ public class SensorOctoQuadLocalization extends LinearOpMode
     /*
      * Main OpMode function
      */
-    public void runOpMode()
-    {
+    public void runOpMode() {
         // Begin by retrieving a handle to the device from the hardware map.
         OctoQuad oq = hardwareMap.get(OctoQuad.class, "octoquad");
 
@@ -118,8 +115,7 @@ public class SensorOctoQuadLocalization extends LinearOpMode
         /*
          * Init Loop
          */
-        while (opModeInInit())
-        {
+        while (opModeInInit()) {
             telemetry.addData("OQ Firmware Version", oq.getFirmwareVersionString());
             telemetry.addData("Localizer Status", oq.getLocalizerStatus());
             telemetry.addData("Heading Axis Detection", oq.getLocalizerHeadingAxisChoice());
@@ -136,8 +132,8 @@ public class SensorOctoQuadLocalization extends LinearOpMode
         /*
          * Don't proceed to the main loop until calibration is complete
          */
-        while (!isStopRequested() && (oq.getLocalizerStatus() != OctoQuad.LocalizerStatus.RUNNING))
-        {
+        while (!isStopRequested()
+                && (oq.getLocalizerStatus() != OctoQuad.LocalizerStatus.RUNNING)) {
             telemetry.addLine("Waiting for IMU Calibration to complete\n");
             telemetry.addData("Localizer Status", oq.getLocalizerStatus());
             telemetry.update();
@@ -155,12 +151,10 @@ public class SensorOctoQuadLocalization extends LinearOpMode
         /*
          * MAIN LOOP
          */
-        while (opModeIsActive())
-        {
+        while (opModeIsActive()) {
             // Use the Gamepad A/Cross button to teleport to a new location and heading
-            if (gamepad1.crossWasPressed())
-            {
-                oq.setLocalizerPose(200, 200, (float)(Math.PI/2.0f));
+            if (gamepad1.crossWasPressed()) {
+                oq.setLocalizerPose(200, 200, (float) (Math.PI / 2.0f));
             }
 
             // Read updated data from the OctoQuad into the 'localizer' data structure
@@ -179,8 +173,7 @@ public class SensorOctoQuadLocalization extends LinearOpMode
             //  When the robot is pushed LEFT, the Y pod counts must increase in value
             //    Use the setSingleEncoderDirection() method to make any reversals.
             // #################################################################################
-            if (localizer.crcOk)
-            {
+            if (localizer.crcOk) {
                 warnIfNotTuned();
 
                 // Display Robot position data
@@ -199,18 +192,19 @@ public class SensorOctoQuadLocalization extends LinearOpMode
                 // These two encoder status lines will slow the loop down,
                 // so they can be removed once the encoder direction has been verified.
                 // #############################################################################
-                telemetry.addData("\nRaw X Pod Counts", oq.readSinglePosition_Caching(DEADWHEEL_PORT_X));
-                telemetry.addData("Raw Y Pod Counts", oq.readSinglePosition_Caching(DEADWHEEL_PORT_Y));
-            }
-            else
-            {
+                telemetry.addData(
+                        "\nRaw X Pod Counts", oq.readSinglePosition_Caching(DEADWHEEL_PORT_X));
+                telemetry.addData(
+                        "Raw Y Pod Counts", oq.readSinglePosition_Caching(DEADWHEEL_PORT_Y));
+            } else {
                 badPackets++;
                 telemetry.addLine("Data CRC not valid");
             }
             totalPackets++;
 
             // Print some statistics about CRC validation
-            telemetry.addLine(String.format("%d CRC error(s) in %d packets", badPackets, totalPackets));
+            telemetry.addLine(
+                    String.format("%d CRC error(s) in %d packets", badPackets, totalPackets));
 
             // Send updated telemetry to the Driver Station
             telemetry.update();
@@ -220,36 +214,32 @@ public class SensorOctoQuadLocalization extends LinearOpMode
     long lastWarnFlashTimeMs = 0;
     boolean warnFlash = false;
 
-    void warnIfNotTuned()
-    {
+    void warnIfNotTuned() {
         String warnString = "";
-        if (IMU_SCALAR == 1.0f)
-        {
+        if (IMU_SCALAR == 1.0f) {
             warnString += "WARNING: IMU_SCALAR not tuned.<br>";
             warn = true;
         }
-        if (X_TICKS_PER_MM == 12.34f  ||  Y_TICKS_PER_MM == 12.34f)
-        {
+        if (X_TICKS_PER_MM == 12.34f || Y_TICKS_PER_MM == 12.34f) {
             warnString += "WARNING: TICKS_PER_MM not tuned.<br>";
             warn = true;
         }
-        if (TCP_OFFSET_X_MM == 123.4f || TCP_OFFSET_Y_MM == 123.4f)
-        {
+        if (TCP_OFFSET_X_MM == 123.4f || TCP_OFFSET_Y_MM == 123.4f) {
             warnString += "WARNING: TCP_OFFSET not tuned.<br>";
             warn = true;
         }
-        if (warn)
-        {
-            warnString +="<BR>&nbsp;-&nbsp;Read the code COMMENTS for tuning help.<BR>";
+        if (warn) {
+            warnString += "<BR>&nbsp;-&nbsp;Read the code COMMENTS for tuning help.<BR>";
 
-            if (System.currentTimeMillis() - lastWarnFlashTimeMs > 1000)
-            {
+            if (System.currentTimeMillis() - lastWarnFlashTimeMs > 1000) {
                 lastWarnFlashTimeMs = System.currentTimeMillis();
                 warnFlash = !warnFlash;
             }
 
-            telemetry.addLine(String.format("<b><font color='%s' >%s</font></b>",
-                                            warnFlash ? "red" : "white", warnString));
+            telemetry.addLine(
+                    String.format(
+                            "<b><font color='%s' >%s</font></b>",
+                            warnFlash ? "red" : "white", warnString));
         }
     }
 }

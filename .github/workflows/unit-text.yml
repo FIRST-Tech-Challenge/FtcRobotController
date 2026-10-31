@@ -1,0 +1,29 @@
+name: FTC Unit Test
+
+on:
+  pull_request:
+    branches:
+      - [main, master]
+  push:
+    branches:
+      - [main, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup SDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+
+    - name: Grant Execute Permission for Gradle Wrapper
+      run: chmod +x gradlew
+
+    - name: Run Unit Tests
+      run: ./gradlew :TeamCode:testDebugUnitTest

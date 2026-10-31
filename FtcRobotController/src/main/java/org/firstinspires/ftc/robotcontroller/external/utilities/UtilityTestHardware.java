@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.robotcontroller.external.utilities;
+
 /*
         Copyright (c) 2026 Porpoiseful, LLC
         All rights reserved.
@@ -38,13 +39,11 @@ import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /*
  * This OpMode helps test the hardware in your robot configuration so that you can isolate
@@ -84,7 +83,7 @@ public class UtilityTestHardware extends OpMode {
 
     @Override
     public void loop() {
-        if (deviceList.isEmpty()){
+        if (deviceList.isEmpty()) {
             telemetry.addData("No Devices", "Found");
             return;
         }
@@ -197,8 +196,8 @@ public class UtilityTestHardware extends OpMode {
     void testAnalogSensor(AnalogSensor analogSensor) {
         telemetry.addData("Voltage", analogSensor.readRawVoltage());
     }
+
     void testDigitalChannel(DigitalChannel digitalChannel) {
         telemetry.addData("State", digitalChannel.getState());
     }
-
 }

@@ -1,0 +1,29 @@
+name: FTC Android Build
+
+on:
+  pull_request:
+    branches:
+      - [main, master]
+  push:
+    branches:
+      - [main, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup SDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'yulu'
+          java-version: '17'
+
+      - name: Change Gradle Permissions
+        run: chmod +x gradlew
+
+      - name: Assemble Debug APK
+        run: ./gradlew assembleDebug

@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
+import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.xyzOrientation;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -38,8 +40,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-
-import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.xyzOrientation;
 
 /*
  * This OpMode shows how to use the new universal IMU interface. This
@@ -70,17 +70,17 @@ import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.xyzOrientation;
  * Finally, edit this OpMode to use at least one angle around an axis to orient your Hub.
  */
 @TeleOp(name = "Sensor: IMU Non-Orthogonal", group = "Sensor")
-@Disabled     // Comment this out to add to the OpMode list
-public class SensorIMUNonOrthogonal extends LinearOpMode
-{
+@Disabled // Comment this out to add to the OpMode list
+public class SensorIMUNonOrthogonal extends LinearOpMode {
     // The IMU sensor object
     IMU imu;
 
-    //----------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------
     // Main logic
-    //----------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------
 
-    @Override public void runOpMode() throws InterruptedException {
+    @Override
+    public void runOpMode() throws InterruptedException {
 
         // Retrieve and initialize the IMU.
         // This sample expects the IMU to be in a REV Hub and named "imu".
@@ -146,9 +146,9 @@ public class SensorIMUNonOrthogonal extends LinearOpMode
 
         // The next three lines define the desired axis rotations.
         // To Do: EDIT these values to match YOUR mounting configuration.
-        double xRotation = 0;  // enter the desired X rotation angle here.
-        double yRotation = 0;  // enter the desired Y rotation angle here.
-        double zRotation = 0;  // enter the desired Z rotation angle here.
+        double xRotation = 0; // enter the desired X rotation angle here.
+        double yRotation = 0; // enter the desired Y rotation angle here.
+        double zRotation = 0; // enter the desired Z rotation angle here.
 
         Orientation hubRotation = xyzOrientation(xRotation, yRotation, zRotation);
 
@@ -158,7 +158,12 @@ public class SensorIMUNonOrthogonal extends LinearOpMode
 
         // Loop and update the dashboard
         while (!isStopRequested()) {
-            telemetry.addData("Hub orientation", "X=%.1f,  Y=%.1f,  Z=%.1f \n", xRotation, yRotation, zRotation);
+            telemetry.addData(
+                    "Hub orientation",
+                    "X=%.1f,  Y=%.1f,  Z=%.1f \n",
+                    xRotation,
+                    yRotation,
+                    zRotation);
 
             // Check to see if heading reset is requested
             if (gamepad1.y) {
@@ -172,7 +177,8 @@ public class SensorIMUNonOrthogonal extends LinearOpMode
             YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
             AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
 
-            telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
+            telemetry.addData(
+                    "Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
             telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
             telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
             telemetry.addData("Yaw (Z) velocity", "%.2f Deg/Sec", angularVelocity.zRotationRate);

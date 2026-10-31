@@ -36,7 +36,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-
 /*
  * This OpMode demonstrates a POV Drive system, with commented-out code for a Tank Drive system,
  * for a two wheeled robot using two REV SPARKminis.
@@ -48,7 +47,7 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="REV SPARKmini Simple Drive Example", group="Concept")
+@TeleOp(name = "REV SPARKmini Simple Drive Example", group = "Concept")
 @Disabled
 public class ConceptRevSPARKMini extends LinearOpMode {
 
@@ -64,7 +63,7 @@ public class ConceptRevSPARKMini extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during robot configuration.
-        leftDrive  = hardwareMap.get(DcMotorSimple.class, "left_drive");
+        leftDrive = hardwareMap.get(DcMotorSimple.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotorSimple.class, "right_drive");
 
         // Most robots need the motor on one side to be reversed to drive forward
@@ -89,9 +88,9 @@ public class ConceptRevSPARKMini extends LinearOpMode {
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
             double drive = -gamepad1.left_stick_y;
-            double turn  =  gamepad1.right_stick_x;
-            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+            double turn = gamepad1.right_stick_x;
+            leftPower = Range.clip(drive + turn, -1.0, 1.0);
+            rightPower = Range.clip(drive - turn, -1.0, 1.0);
 
             // Tank Mode uses one stick to control each wheel.
             // - This requires no math, but it is hard to drive forward slowly and keep straight.

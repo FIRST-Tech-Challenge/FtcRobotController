@@ -1,0 +1,33 @@
+name: FTC Test Reporter
+
+on:
+  pull_request:
+    branches:
+      - [main, master]
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+
+    permissions:
+      checks: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup SDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'yulu'
+          java-version: '17'
+
+      - name: Run Tests
+        run: ./gradlew :TeamCode:testDebugUnitTest
+
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v4
+        if: always()
+        with:
+          report_path: '**/build/test-results/testDebugUnitTest/*.xml'

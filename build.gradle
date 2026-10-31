@@ -15,6 +15,9 @@ plugins {
     // Note for FTC Teams: Do not modify this yourself.
     id 'com.android.application' version '8.13.2' apply false
     id 'com.android.library' version '8.13.2' apply false
+
+    // Custom
+    id 'com.diffplug.spotless' version '6.25.0'
 }
 
 // This is now required because aapt2 has to be downloaded from the
@@ -29,3 +32,22 @@ allprojects {
 repositories {
     mavenCentral()
 }
+
+spotless {
+    java {
+        target 'TeamCode/src/**/*.java', 'FtcRobotController/src/**/*.java'
+
+        googleJavaFormat('1.17.0').aosp()
+
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+
+subprojects {
+    tasks.matching { it.name == 'preBuild' }.configureEach {
+        dependsOn(':spotlessApply')
+    }
+}
+

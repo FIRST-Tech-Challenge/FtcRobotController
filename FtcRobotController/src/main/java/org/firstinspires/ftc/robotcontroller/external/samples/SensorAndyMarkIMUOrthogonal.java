@@ -79,17 +79,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  * this OpMode to use those parameters.
  */
 @TeleOp(name = "Sensor: AndyMark IMU Orthogonal", group = "Sensor")
-@Disabled   // Comment this out to add to the OpMode list
-public class SensorAndyMarkIMUOrthogonal extends LinearOpMode
-{
+@Disabled // Comment this out to add to the OpMode list
+public class SensorAndyMarkIMUOrthogonal extends LinearOpMode {
     // The AndyMark IMU sensor object
     private IMU imu;
 
-    //----------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------
     // Main logic
-    //----------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------
 
-    @Override public void runOpMode() throws InterruptedException {
+    @Override
+    public void runOpMode() throws InterruptedException {
 
         // Retrieve and initialize the AndyMark IMU.
         // This sample expects the AndyMark IMU to be named "imu".
@@ -110,15 +110,18 @@ public class SensorAndyMarkIMUOrthogonal extends LinearOpMode
         LogoFacingDirection logoDirection = LogoFacingDirection.UP;
         I2cPortFacingDirection i2cDirection = I2cPortFacingDirection.FORWARD;
 
-        AndyMarkIMUOrientationOnRobot orientationOnRobot = new AndyMarkIMUOrientationOnRobot(logoDirection, i2cDirection);
+        AndyMarkIMUOrientationOnRobot orientationOnRobot =
+                new AndyMarkIMUOrientationOnRobot(logoDirection, i2cDirection);
 
         // Now initialize the AndyMark IMU with this mounting orientation.
-        // Note: if you choose two conflicting directions, this initialization will cause a code exception.
+        // Note: if you choose two conflicting directions, this initialization will cause a code
+        // exception.
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
         // Loop and update the dashboard.
         while (!isStopRequested()) {
-            telemetry.addData("IMU orientation", "Logo=%s   I2C=%s\n ", logoDirection, i2cDirection);
+            telemetry.addData(
+                    "IMU orientation", "Logo=%s   I2C=%s\n ", logoDirection, i2cDirection);
 
             // Check to see if heading reset is requested.
             if (gamepad1.y) {
@@ -132,7 +135,8 @@ public class SensorAndyMarkIMUOrthogonal extends LinearOpMode
             YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
             AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
 
-            telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
+            telemetry.addData(
+                    "Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
             telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
             telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
             telemetry.addData("Yaw (Z) velocity", "%.2f Deg/Sec", angularVelocity.zRotationRate);

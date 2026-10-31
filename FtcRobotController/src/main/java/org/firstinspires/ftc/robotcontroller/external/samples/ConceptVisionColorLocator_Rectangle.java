@@ -22,12 +22,10 @@
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import android.util.Size;
-
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.SortOrder;
-
+import java.util.List;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -35,8 +33,6 @@ import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.opencv.core.RotatedRect;
-
-import java.util.List;
 
 /*
  * This OpMode illustrates how to use a video source (camera) to locate specifically colored regions
@@ -66,11 +62,9 @@ import java.util.List;
 
 @Disabled
 @TeleOp(name = "Concept: Color-Locator (Rectangle)", group = "Concept")
-public class ConceptVisionColorLocator_Rectangle extends LinearOpMode
-{
+public class ConceptVisionColorLocator_Rectangle extends LinearOpMode {
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
         /* Build a "Color Locator" vision processor based on the ColorBlobLocatorProcessor class.
          * - Specify the color range you are looking for. Use a predefined color, or create your own
          *
@@ -118,13 +112,15 @@ public class ConceptVisionColorLocator_Rectangle extends LinearOpMode
          *        object, such as when removing noise from an image.
          *        "pixels" in the range of 2-4 are suitable for low res images.
          */
-        ColorBlobLocatorProcessor colorLocator = new ColorBlobLocatorProcessor.Builder()
-                .setTargetColorRange(ColorRange.ARTIFACT_PURPLE)   // use a predefined color match
-                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-0.75, 0.75, 0.75, -0.75))
-                .setDrawContours(true)   // Show contours on the Stream Preview
-                .setBlurSize(5)          // Smooth the transitions between different colors in image
-                .build();
+        ColorBlobLocatorProcessor colorLocator =
+                new ColorBlobLocatorProcessor.Builder()
+                        .setTargetColorRange(
+                                ColorRange.ARTIFACT_PURPLE) // use a predefined color match
+                        .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
+                        .setRoi(ImageRegion.asUnityCenterCoordinates(-0.75, 0.75, 0.75, -0.75))
+                        .setDrawContours(true) // Show contours on the Stream Preview
+                        .setBlurSize(5) // Smooth the transitions between different colors in image
+                        .build();
 
         /*
          * Build a vision portal to run the Color Locator process.
@@ -138,18 +134,18 @@ public class ConceptVisionColorLocator_Rectangle extends LinearOpMode
          *  or
          *      .setCamera(BuiltinCameraDirection.BACK)    ... for a Phone Camera
          */
-        VisionPortal portal = new VisionPortal.Builder()
-                .addProcessor(colorLocator)
-                .setCameraResolution(new Size(320, 240))
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .build();
+        VisionPortal portal =
+                new VisionPortal.Builder()
+                        .addProcessor(colorLocator)
+                        .setCameraResolution(new Size(320, 240))
+                        .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                        .build();
 
-        telemetry.setMsTransmissionInterval(100);   // Speed up telemetry updates for debugging.
+        telemetry.setMsTransmissionInterval(100); // Speed up telemetry updates for debugging.
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
 
         // WARNING:  To view the stream preview on the Driver Station, this code runs in INIT mode.
-        while (opModeIsActive() || opModeInInit())
-        {
+        while (opModeIsActive() || opModeInInit()) {
             telemetry.addData("preview on/off", "... Camera Stream\n");
 
             // Read the current list
@@ -190,7 +186,9 @@ public class ConceptVisionColorLocator_Rectangle extends LinearOpMode
              */
             ColorBlobLocatorProcessor.Util.filterByCriteria(
                     ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA,
-                    50, 20000, blobs);  // filter out very small blobs.
+                    50,
+                    20000,
+                    blobs); // filter out very small blobs.
 
             /*
              * The list of Blobs can be sorted using the same Blob attributes as listed above.
@@ -203,12 +201,18 @@ public class ConceptVisionColorLocator_Rectangle extends LinearOpMode
             telemetry.addLine("Ctr:(X,Y)  Area Dens Aspect Arc  Circ");
 
             // Display the size (area) and center location for each Blob.
-            for(ColorBlobLocatorProcessor.Blob b : blobs)
-            {
+            for (ColorBlobLocatorProcessor.Blob b : blobs) {
                 RotatedRect boxFit = b.getBoxFit();
-                telemetry.addLine(String.format("(%3d,%3d) %5d %4.2f  %5.2f %3d %5.3f ",
-                        (int) boxFit.center.x, (int) boxFit.center.y, b.getContourArea(), b.getDensity(),
-                        b.getAspectRatio(), (int) b.getArcLength(), b.getCircularity()));
+                telemetry.addLine(
+                        String.format(
+                                "(%3d,%3d) %5d %4.2f  %5.2f %3d %5.3f ",
+                                (int) boxFit.center.x,
+                                (int) boxFit.center.y,
+                                b.getContourArea(),
+                                b.getDensity(),
+                                b.getAspectRatio(),
+                                (int) b.getArcLength(),
+                                b.getCircularity()));
             }
 
             telemetry.update();
