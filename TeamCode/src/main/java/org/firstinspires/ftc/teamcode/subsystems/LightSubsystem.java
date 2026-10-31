@@ -34,3 +34,54 @@ import com.qualcomm.robotcore.hardware.Servo;
         rgbLight.setPosition(GREEN);
     }
    }
+
+   public void setRed() {
+    rgbLight.setPosition(0.28);
+}
+
+public void setGreen() {
+    rgbLight.setPosition(0.5);
+}
+
+public void setBlue() {
+    rgbLight.setPosition(0.611);
+}
+
+public void setPurple() {
+    rgbLight.setPosition(0.7);
+}
+
+public void turnOff() {
+    rgbLight.setPosition(0.0);
+}
+
+
+        while (opModeIsActive()) {
+
+            // A = RED
+            if (gamepad1.a) {
+                lights.setRed();
+            }
+
+            // B = GREEN
+            if (gamepad1.b) {
+                lights.setGreen();
+            }
+
+            // X = BLUE
+            if (gamepad1.x) {
+                lights.setBlue();
+            }
+
+            // Y = PURPLE
+            if (gamepad1.y) {
+                lights.setPurple();
+            }
+
+            // D-pad DOWN = OFF
+            if (gamepad1.dpad_down) {
+                lights.turnOff();
+            }
+        }
+    }
+}
