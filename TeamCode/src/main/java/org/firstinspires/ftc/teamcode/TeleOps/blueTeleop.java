@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleOps;
+package org.firstinspires.ftc.teamcode.TeleOps;
 
 
 import com.pedropathing.drivetrain.DrivePowers;

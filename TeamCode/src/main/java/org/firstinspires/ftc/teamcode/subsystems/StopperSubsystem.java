@@ -5,9 +5,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class StopperSubsystem {
 
-    private static final double ON_POS = 0.5;
-    private static final double OFF_POS = 0.554;
-
+    private static final double ON_POS = 0.3266;
+    private static final double OFF_POS = 0.5;
     private final Servo servo;
 
     public StopperSubsystem(HardwareMap hardwareMap) {

@@ -30,4 +30,7 @@ import com.qualcomm.robotcore.hardware.Servo;
         rgbLight.setPosition(RED);
     }
     }
+    public void setGreen(){
+        rgbLight.setPosition(GREEN);
+    }
    }
