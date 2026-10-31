@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.BeamBrakeSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.CameraTrackingSubsystems;
 import org.firstinspires.ftc.teamcode.subsystems.FeederSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -20,11 +21,17 @@ public class BestRobotEverBioBuzzOpMode extends OpMode {
     private IntakeSubsystem intakeSubsystem;
     private FeederSubsystem feederSubsystem;
     private BeamBrakeSubsystem beamBrakeSubsystem;
+    private CameraTrackingSubsystems cameraTrackingSubsystems;
     private MecanumDrive drive;
 
-    private double driveSpeed = 0.8;
+    private double rx;
+    private double driveSpeed = 0;
     private double driveSpeedFast = 1;
     private double driveSpeedSlow = 0.4;
+    private double driveSpeedNormal = 0.65;
+    public static double turnSpeed = 0.5;
+
+    public static double autoAimMultuplyer = 0.05;
 
     @Override
     public void init() {
@@ -32,11 +39,13 @@ public class BestRobotEverBioBuzzOpMode extends OpMode {
         shooterSubsystem = new ShooterSubsystem(hardwareMap, telemetry);
         feederSubsystem = new FeederSubsystem(hardwareMap, telemetry);
         beamBrakeSubsystem = new BeamBrakeSubsystem(hardwareMap, telemetry);
+        cameraTrackingSubsystems =new CameraTrackingSubsystems(hardwareMap,telemetry);
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
         beamBrakeSubsystem.Reset();
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+        shooterSubsystem.initShooter();
     }
 
     @Override
@@ -47,15 +56,26 @@ public class BestRobotEverBioBuzzOpMode extends OpMode {
         // endregion
 
         // region Shooter code
+        shooterSubsystem.pidfTuning();
         shooterSubsystem.runShooter();
         // endregion
 
         // region Drive code
         drive.updatePoseEstimate();
 
-        double y = -gamepad1.left_stick_y * driveSpeedSlow; // Forward/Backward
-        double x = -gamepad1.left_stick_x * driveSpeedSlow;  // Strafing left/right
-        double rx = -gamepad1.right_stick_x * driveSpeedSlow;// Rotation
+        if (gamepad1.left_bumper){
+           driveSpeed = driveSpeedSlow;
+        } else {
+            driveSpeed = driveSpeedNormal;
+        }
+
+        double  y = -gamepad1.left_stick_y * driveSpeed; // Forward/Backward
+        double x = -gamepad1.left_stick_x * driveSpeed;  // Strafing left/right
+        if (gamepad1.a){
+             rx = cameraTrackingSubsystems.autoAim() * autoAimMultuplyer * driveSpeed;// Rotation
+        } else {
+             rx = -gamepad1.right_stick_x * turnSpeed;// Rotation
+        }
 
         // Fixed: access pose through the localizer
         Pose2d poseEstimate = drive.localizer.getPose();

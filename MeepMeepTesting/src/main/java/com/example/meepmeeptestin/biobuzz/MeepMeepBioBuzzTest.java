@@ -29,10 +29,13 @@ public class MeepMeepBioBuzzTest {
                 .strafeToLinearHeading(new Vector2d(55,55),Math.toRadians(220))
                 .waitSeconds(1)
                 // endregion
+
                 .splineToLinearHeading(new Pose2d(40, -45, Math.toRadians(130)), Math.toRadians(250))
                 .waitSeconds(2) // Shoot
                 .waitSeconds(2) // Intake
+
                 .setTangent(Math.toRadians(80))
+
                 .splineToLinearHeading(new Pose2d(14, 60.5, Math.toRadians(270)), Math.toRadians(160))
                 .waitSeconds(2) // shoot
                 .setTangent(Math.toRadians(320))

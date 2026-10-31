@@ -39,11 +39,32 @@ public class BlueScoring extends LinearOpMode {
         Actions.runBlocking(
                 new RaceAction(
                         drive.actionBuilder(beginPose, poseMap)
-                                .stopAndAdd(() -> shooterSubsystem.runShooter() )
-                                .stopAndAdd(() -> feederSubsystem.runIndexerForward())
+                                .stopAndAdd(() -> shooterSubsystem.runShooter() ) // turn on shooter
+                                .stopAndAdd(() -> feederSubsystem.runIndexerForward()) // shoot
                                 .waitSeconds(feederOnTime)
-                                .stopAndAdd(() -> feederSubsystem.stopIndexer())
-                                .strafeToSplineHeading(new Vector2d(60.5,60.5), Math.toRadians(270))
+                                .stopAndAdd(() -> feederSubsystem.stopIndexer()) // stop shooting
+                                .stopAndAdd(() -> intakeSubsystem.runIntakeForward()) //turn on intake
+                                .strafeToSplineHeading(new Vector2d(60.5,60.5), Math.toRadians(270)) // intake
+                                .waitSeconds(.5)
+                                .stopAndAdd(() -> intakeSubsystem.stopIntake()) // turn off intake
+                                .strafeToLinearHeading(new Vector2d(55,55),Math.toRadians(220)) // camera check
+                                .waitSeconds(1)
+                                .build()
+                )
+
+
+        );
+
+        Actions.runBlocking(
+                new RaceAction(
+                        drive.actionBuilder(beginPose, poseMap)
+                                .splineToLinearHeading(new Pose2d(40, -45, Math.toRadians(130)), Math.toRadians(250)) //move to loading side
+                                .stopAndAdd(() -> feederSubsystem.runIndexerForward())  //shoot
+                                .waitSeconds(feederOnTime)
+                                .stopAndAdd(() -> feederSubsystem.stopIndexer()) //stop shooting
+                                .stopAndAdd(() -> intakeSubsystem.runIntakeForward()) //start intaking
+                                .waitSeconds(3)
+                                .stopAndAdd(() -> intakeSubsystem.stopIntake()) //stop intaking
 
                                 .build()
                 )
@@ -54,25 +75,13 @@ public class BlueScoring extends LinearOpMode {
         Actions.runBlocking(
                 new RaceAction(
                         drive.actionBuilder(beginPose, poseMap)
-                                .stopAndAdd(() -> shooterSubsystem.runShooter() )
-                                .stopAndAdd(() -> feederSubsystem.runIndexerForward())
+                                .setTangent(Math.toRadians(80))
+                                .splineToLinearHeading(new Pose2d(14, 60.5, Math.toRadians(270)), Math.toRadians(160)) //move to garden side
+                                .stopAndAdd(() -> feederSubsystem.runIndexerForward()) // shoot
                                 .waitSeconds(feederOnTime)
-                                .stopAndAdd(() -> feederSubsystem.stopIndexer())
-
-
-                                .build()
-                )
-
-
-        );
-
-        Actions.runBlocking(
-                new RaceAction(
-                        drive.actionBuilder(beginPose, poseMap)
-                                .stopAndAdd(() -> shooterSubsystem.runShooter() )
-                                .stopAndAdd(() -> feederSubsystem.runIndexerForward())
-                                .waitSeconds(feederOnTime)
-                                .stopAndAdd(() -> feederSubsystem.stopIndexer())
+                                .stopAndAdd(() -> feederSubsystem.stopIndexer()) // stop shooting
+                                .setTangent(Math.toRadians(320))
+                                .splineToLinearHeading(new Pose2d(57, -20, Math.toRadians(180)), Math.toRadians(300)) //park
 
 
                                 .build()
