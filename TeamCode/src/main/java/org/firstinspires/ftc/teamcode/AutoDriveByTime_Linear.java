@@ -231,6 +231,12 @@ public class AutoDriveByTime_Linear extends LinearOpMode {
         launcher.setVelocity(0);
         telemetry.addData("Launcher", "Stopped");
 
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
+            mecanumDrive(FORWARD_SPEED, 0, 0);
+            telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());         telemetry.update();
+        }
+
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
