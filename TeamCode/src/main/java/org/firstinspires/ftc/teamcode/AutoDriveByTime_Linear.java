@@ -106,7 +106,7 @@ public class AutoDriveByTime_Linear extends LinearOpMode {
     private ElapsedTime    runtime = new ElapsedTime();
 
 
-    static final double     FORWARD_SPEED = 0.6;
+    static final double     FORWARD_SPEED = 0.1;
     static final double     TURN_SPEED    = 0.5;
 
     @Override
