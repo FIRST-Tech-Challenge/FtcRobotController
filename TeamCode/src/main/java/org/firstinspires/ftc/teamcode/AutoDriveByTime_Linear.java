@@ -75,25 +75,6 @@ public class AutoDriveByTime_Linear extends LinearOpMode {
     private CRServo windmillServo = null;
 
 
-    /*
-     * These two variables are used to control the velocity of the launcher motor.
-     * They are both in encoder ticks per second. The motors we use in the FIRST Tech Challenge
-     * have encoders with a resolution of 28 ticks per revolution. We can convert this to RPM
-     * by dividing the value by 28, to get to revolutions per second, before multiplying by 60
-     * to get revolutions per minute.
-     * We pass the target velocity variable to our motor to set the goal. We use the min velocity
-     * in the launch() function to only run the windmill servo when the motor is spinning fast
-     * enough to make a successful throw.
-     */
-    public final int LAUNCHER_TARGET_VELOCITY = 1250; //2678 RPM
-    public final int LAUNCHER_MIN_VELOCITY = 1200; //2571 RPM
-
-    private DcMotorEx launcher = null;
-    private DcMotor intake = null;
-    private CRServo leftIntakeServo = null;
-    private CRServo rightIntakeServo = null;
-    private CRServo windmillServo = null;
-
 
     /*
      * These two variables are used to control the velocity of the launcher motor.
@@ -240,7 +221,7 @@ public class AutoDriveByTime_Linear extends LinearOpMode {
         telemetry.addData("Windmill", "Starting");
 
         windmillServo.setPower(1);
-        sleep(2000);
+        sleep(6000);
         telemetry.addData("Windmill", "Started");
 
         //Add code for stopping the launcher
@@ -249,6 +230,12 @@ public class AutoDriveByTime_Linear extends LinearOpMode {
         windmillServo.setPower(0);
         launcher.setVelocity(0);
         telemetry.addData("Launcher", "Stopped");
+
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
+            mecanumDrive(FORWARD_SPEED, 0, 0);
+            telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());         telemetry.update();
+        }
 
 
         telemetry.addData("Path", "Complete");
