@@ -21,12 +21,19 @@ public class AutoBlueFar extends AutoBase {
         double p = RobotConstants.AUTO_POWER;
 
         driveInches(12, p);
+        //forwards 1
         turnToDegrees(90, p);
+        //turn one
         driveInches(30, p);
+        //forwards 2
         turnToDegrees(0, p);
-        driveInches(72, p);
-        turnToDegrees(90, p);
+        //turn 2
+        driveInches(79, p);
+        //forwards 3
+        turnToDegrees(80, p);
+        //turn 3
         driveInches(10, p);
+        //forwards 4
         driveSeconds(3.0, p);    // push into the wall to square up
         driveSeconds(0.5, -p);   // back out
     }

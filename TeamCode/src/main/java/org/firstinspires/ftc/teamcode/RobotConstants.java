@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 /*
  * One place for every hardware name and tunable number.
@@ -28,9 +29,9 @@ public final class RobotConstants {
     public static final DcMotor.Direction FRONT_RIGHT_DIRECTION = DcMotor.Direction.FORWARD;
     public static final DcMotor.Direction BACK_RIGHT_DIRECTION  = DcMotor.Direction.FORWARD;
 
-    // ---- Odometry (TODO: measure) ----
-    public static final double PINPOINT_X_OFFSET_MM = 105; // from last year's robot - TODO re-measure on the new one
-    public static final double PINPOINT_Y_OFFSET_MM = 38;  // from last year's robot - TODO re-measure on the new one
+    // ---- Odometry ----
+    public static final double PINPOINT_X_OFFSET_MM = -8.0; // 8 mm Right of center
+    public static final double PINPOINT_Y_OFFSET_MM = 1.0;  // 1 mm Up (Forward) of center
 
     // Which goBILDA pod is on the robot, and which way each pod counts.
     // Flip a direction to REVERSED if X doesn't go up going forward, or Y doesn't go up going left.
