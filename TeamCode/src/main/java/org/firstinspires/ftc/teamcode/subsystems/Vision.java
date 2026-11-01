@@ -1,26 +1,25 @@
+
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RobotConstants;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 
-/*
- * VISION - the Limelight camera.
- *
- * Put here:
- *  - Limelight setup in init() (start it, pick the pipeline)
- *  - update() that reads the latest result once per loop
- *  - hasTarget(), getTx(), getTy(), setPipeline(int)
- * Do NOT put here: turning the robot. AimController turns tx into a turn power.
- */
+import java.util.List;
+
 public class Vision implements Subsystem {
 
     private final HardwareMap hardwareMap;
     private final Telemetry telemetry;
 
     private Limelight3A limelight;
+    private LLResult result;
+
+    private Boolean tipped = false;
 
     public Vision(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -29,26 +28,65 @@ public class Vision implements Subsystem {
 
     @Override
     public void init() {
-        // TODO: get hardware from hardwareMap using RobotConstants names
+        limelight = hardwareMap.get(
+                Limelight3A.class,
+                RobotConstants.LIMELIGHT
+        );
+
+        limelight.pipelineSwitch(0);
+        limelight.start();
     }
 
     @Override
     public void update() {
-        // TODO
+        result = limelight.getLatestResult();
+    }
+
+    public boolean hasTarget() {
+        return result != null && result.isValid();
+    }
+
+    public double getTx() {
+        return hasTarget() ? result.getTx() : 0;
+    }
+
+    public double getTy() {
+        return hasTarget() ? result.getTy() : 0;
+    }
+
+    public void setPipeline(int pipeline) {
+        limelight.pipelineSwitch(pipeline);
     }
 
     @Override
-    public void stop() {
-        // TODO: set outputs to zero
+    public boolean TipDetect(double startCluster, double endCluster) {
+        // 42 and 45 returns true for Blue Audience
+        // 38 and 41 returns true for Blue Far
+        // add red audience and red far blah blah blah
+        tipped = false;
+
+        if (result.isValid()) {
+
+            List<LLResultTypes.FiducialResult> fiducialResults =
+                    result.getFiducialResults();
+
+            for (LLResultTypes.FiducialResult fr : fiducialResults) {
+
+                int id = fr.getFiducialId();
+
+                if (id >= startCluster && id <= endCluster) {
+                    tipped = true;
+                    break;
+                }
+            }
+        }
+
+        return tipped;
     }
 
-    // TODO: hasTarget(), getTx(), getTy(), setPipeline(int)
 
-    /**
-     * Is the hive tipped? Used by the autos to pick a plan.
-     * TODO: check the AprilTag the camera sees (which tag id means tipped?).
-     */
-    public boolean isHiveTipped() {
-        return false;
+    @Override
+    public void stop() {
+        //hi
     }
 }

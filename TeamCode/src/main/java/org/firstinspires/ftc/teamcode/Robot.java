@@ -33,7 +33,6 @@ public class Robot {
         RobotLog.i("Robot: Initializing telemetry");
         telemetry = new MultipleTelemetry(opModeTelemetry, FtcDashboard.getInstance().getTelemetry());
         RobotLog.i("Robot: Telemetry initialized");
-
         RobotLog.i("Robot: Initializing subsystems");
         drive    = new Drivetrain(hardwareMap, telemetry);
         odo      = new Odometry(hardwareMap, telemetry);
