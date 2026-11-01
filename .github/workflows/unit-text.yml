@@ -3,10 +3,12 @@ name: FTC Unit Test
 on:
   pull_request:
     branches:
-      - [main, master]
+      - main
+      - master
   push:
     branches:
-      - [main, master]
+      - main
+      - master
 
 jobs:
   test:
