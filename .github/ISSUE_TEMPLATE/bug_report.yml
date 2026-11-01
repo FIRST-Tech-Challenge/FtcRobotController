@@ -1,0 +1,100 @@
+name: "🐛 Robot Bug Report"
+description: File a structured report for robot failures, code bugs, or unexpected behaviour. Report one bug per request!
+labels: ["bug", "robot-tested"]
+
+body:
+  - type: markdown
+
+    attributes:
+      value: |
+        ### Thank you for reporting, it will be reviewed soon! 🤖
+        Please provide clear, actionable details so that the programming team can reproduce and fix this issue quickly.
+
+  - type: checkboxes
+    id: pre-check
+
+    attributes:
+      label: Pre-reporting checklist
+      description: Please double-check these common baselines before filing a software bug.
+
+      options:
+        - label: If my robot design, hardware, or packages are slightly different to that of Metabotic's, I made any necessary changes.
+          required: true
+
+        - label: The issue occurs on a freshly charged robot battery.
+          required: true
+
+        - label: I verified that the hardware cables, ports, and encoders are physically plugged in correctly.
+          required: true
+
+  - type: dropdown
+    id: environment
+
+    attributes:
+      label: OpMode / Subsystem Affected
+      description: Which area of the codebase or phase of the match is failing?
+      multiple: false
+
+      options:
+        - "Autonomous: Pathing / Odometry"
+        - "Autonomous: Scoring / Detection"
+        - "TeleOp: Drivetrain / Controls"
+        - "Subsystem: Intake / Transfer"
+        - "Subsystem: Outtake"
+        - "Subsystem: End-Game"
+        - "Driver Station / Configuration Error"
+
+    validations:
+      required: true
+
+  - type: textarea
+    id: behavior
+
+    attributes:
+      label: Expected vs Actual Behavior
+      description: What was the robot supposed to do, and what did it *actually* do?
+
+      placeholder: |
+        Expected: Pressing the Cross button should fire the pollen.
+        Actual: Pressing Cross rotated the turret, the servos groaned, and the OpMode threw an overcurrent warning.
+
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+
+    attributes:
+      label: Steps to Reproduce
+      description: List the exact driver inputs or sequence required to make this bug happen again.
+
+      placeholder: |
+        1. Initialize TeleOp OpMode.
+        2. Press START (Driver 1 and Driver 2).
+        3. Push the Left Joystick fully.
+        4. Observe what direction the robot moves.
+
+    validations:
+      required: true
+
+  - type: textarea
+    id: telemetry
+
+    attributes:
+      label: Logs, Warnings, or Telemetry Data
+      description: Paste any exact error messages from the Driver Station screen, warning codes, or custom telemetry logs.
+      placeholder: "e.g., Warning: Motor [movementMotor] exceeded current limit of 4.0A!"
+
+    validations:
+      required: false
+
+  - type: input
+    id: code-version
+
+    attributes:
+      label: Code Branch or Tag Name
+      description: What version of the code was on the robot when this happened? (e.g., main, movement-fix, v1.2)
+      placeholder: "e.g., main"
+
+    validations:
+      required: true
