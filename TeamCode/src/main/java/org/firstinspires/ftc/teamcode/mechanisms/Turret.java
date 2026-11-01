@@ -31,6 +31,8 @@ public class Turret {
     private VisionPortal visionPortal;
     private List<AprilTagDetection> detectedTags = new ArrayList<>();
 
+    private final List<AprilTagDetection> allianceColorTags = new ArrayList<>();
+
     // ---------- Alignment ----------
     private DcMotor turnMotor;
     private double kP = 0.013;
@@ -54,8 +56,8 @@ public class Turret {
         aprilTagProcessor = new AprilTagProcessor.Builder()
                 .setDrawTagID(true)
                 .setDrawTagOutline(true)
-                .setDrawAxes(true)
-                .setDrawCubeProjection(true)
+                .setDrawAxes(false)
+                .setDrawCubeProjection(false)
                 .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
                 .build();
 
@@ -106,7 +108,8 @@ public class Turret {
 
     public List<AprilTagDetection> getTagByColor(IntakeLayers.DetectedColor enemyColor) {
         String requiredPrefix = (enemyColor == IntakeLayers.DetectedColor.RED) ? "B" : "R";
-        List<AprilTagDetection> allianceColorTags = new ArrayList<>();
+
+        allianceColorTags.clear();
         for (AprilTagDetection detection : detectedTags) {
             if (detection instanceof AprilTagClusterDetection) {
                 AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
