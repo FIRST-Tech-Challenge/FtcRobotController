@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 /*
  * One place for every hardware name and tunable number.
@@ -50,7 +51,9 @@ public final class RobotConstants {
     public static final int AUTO_PAUSE_MS = 500;             // short pause after each step
 
     // ---- Launcher (live-tunable values are in LauncherConfig) ----
-    public static final double LAUNCHER_MAX_RPM = 6000;      // free speed of the flywheel motor
+
+    public static final PIDFCoefficients LAUNCHER_PIDF = new PIDFCoefficients(120,0.67,12,150);
+    public static final double LAUNCHER_TARGET_VEL = 1150;      // free speed of the flywheel motor
     public static final double LAUNCHER_TICKS_PER_REV = 28;  // 6000 RPM goBILDA motor, no gearbox (check the spec sheet)
 
     // ---- Drivetrain: 435 RPM 12V motors ----
