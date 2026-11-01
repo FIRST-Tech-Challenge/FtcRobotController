@@ -65,12 +65,7 @@ public class Vision implements Subsystem {
         // add red audience and red far blah blah blah
         tipped = false;
 
-        if (hasTarget()) {
-
-            telemetry.addData("tx", result.getTx());
-            telemetry.addData("txnc", result.getTxNC());
-            telemetry.addData("ty", result.getTy());
-            telemetry.addData("tync", result.getTyNC());
+        if (result.isValid()) {
 
             List<LLResultTypes.FiducialResult> fiducialResults =
                     result.getFiducialResults();
@@ -78,15 +73,6 @@ public class Vision implements Subsystem {
             for (LLResultTypes.FiducialResult fr : fiducialResults) {
 
                 int id = fr.getFiducialId();
-
-                telemetry.addData(
-                        "Fiducial",
-                        "ID: %d, Family: %s, X: %.2f, Y: %.2f",
-                        id,
-                        fr.getFamily(),
-                        fr.getTargetXDegrees(),
-                        fr.getTargetYDegrees()
-                );
 
                 if (id >= startCluster && id <= endCluster) {
                     tipped = true;
