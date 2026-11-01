@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode;
-import static com.sun.tools.doclint.Entity.nu;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
