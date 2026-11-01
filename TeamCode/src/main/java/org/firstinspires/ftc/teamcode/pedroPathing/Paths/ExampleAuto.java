@@ -2,11 +2,11 @@ package org.firstinspires.ftc.teamcode.pedroPathing.Paths;
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
-import com.pedropathing.api.PoseFactory;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.math.Pose;
-import com.pedropathing.paths.Path;
-import com.pedropathing.utils.Timer;
+import org.firstinspires.ftc.teamcode.follower.api.PoseFactory;
+import org.firstinspires.ftc.teamcode.follower.follower.Follower;
+import org.firstinspires.ftc.teamcode.follower.math.Pose;
+import org.firstinspires.ftc.teamcode.follower.paths.Path;
+import org.firstinspires.ftc.teamcode.follower.utils.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.pedropathing.api.Paths.*;
+import static org.firstinspires.ftc.teamcode.follower.api.Paths.*;
 
 @Autonomous(name = "Crazy")
 public class ExampleAuto extends LinearOpMode {

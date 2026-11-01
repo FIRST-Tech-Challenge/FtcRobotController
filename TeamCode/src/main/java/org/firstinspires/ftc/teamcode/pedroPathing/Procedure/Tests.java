@@ -1,26 +1,26 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.Procedure;
 
-import com.pedropathing.algorithm.Algorithm;
-import com.pedropathing.drivetrain.DrivePowers;
-import com.pedropathing.drivetrain.Drivetrain;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.localization.Localizer;
-import com.pedropathing.math.Pose;
-import com.pedropathing.paths.Path;
-import com.pedropathing.paths.interpolator.Interpolator;
+import org.firstinspires.ftc.teamcode.follower.algorithm.Algorithm;
+import org.firstinspires.ftc.teamcode.follower.drivetrain.DrivePowers;
+import org.firstinspires.ftc.teamcode.follower.drivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.follower.follower.Follower;
+import org.firstinspires.ftc.teamcode.follower.localization.Localizer;
+import org.firstinspires.ftc.teamcode.follower.math.Pose;
+import org.firstinspires.ftc.teamcode.follower.paths.Path;
+import org.firstinspires.ftc.teamcode.follower.paths.interpolator.Interpolator;
 import com.pedropathing.tuning.autotune.DisplayName;
 import com.pedropathing.tuning.autotune.Inputs;
 import com.pedropathing.tuning.autotune.Procedure;
 import com.pedropathing.tuning.autotune.TuningOpMode;
-import com.pedropathing.utils.Angle;
+import org.firstinspires.ftc.teamcode.follower.utils.Angle;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static com.pedropathing.api.Paths.curve;
-import static com.pedropathing.api.Paths.line;
+import static org.firstinspires.ftc.teamcode.follower.api.Paths.curve;
+import static org.firstinspires.ftc.teamcode.follower.api.Paths.line;
 
 public class Tests extends Procedure {
     enum Test {

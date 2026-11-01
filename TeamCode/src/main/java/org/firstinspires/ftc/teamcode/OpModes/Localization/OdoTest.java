@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.OpModes.Localization;
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
-import com.pedropathing.api.PoseFactory;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.math.Pose;
+import org.firstinspires.ftc.teamcode.follower.api.PoseFactory;
+import org.firstinspires.ftc.teamcode.follower.follower.Follower;
+import org.firstinspires.ftc.teamcode.follower.math.Pose;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;

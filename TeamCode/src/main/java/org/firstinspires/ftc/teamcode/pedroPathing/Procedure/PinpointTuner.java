@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.Procedure;
 
-import com.pedropathing.math.Pose;
-import com.pedropathing.revhub.localizers.PinpointConfig;
-import com.pedropathing.revhub.localizers.PinpointLocalizer;
+import org.firstinspires.ftc.teamcode.follower.math.Pose;
+import org.firstinspires.ftc.teamcode.follower.hardware.PinpointConfig;
+import org.firstinspires.ftc.teamcode.follower.hardware.PinpointLocalizer;
 import com.pedropathing.tuning.autotune.Inputs;
 import com.pedropathing.tuning.autotune.Procedure;
 import com.pedropathing.tuning.autotune.TuningOpMode;
