@@ -19,9 +19,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup SDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
-          distribution: 'yulu'
+          distribution: 'zulu'
           java-version: '17'
 
       - name: Change Gradle Permissions
