@@ -30,7 +30,7 @@ public class Launcher implements Subsystem {
     private DcMotorEx flywheel;
     private Servo feeder;
 
-    private double targetRpm = 0;
+    private double targetVel = 0;
 
     public Launcher(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -52,7 +52,7 @@ public class Launcher implements Subsystem {
     public void update() {
         applyPidf(); // every loop, so Dashboard changes take effect
         telemetry.addData("Launcher RPM", getRpm());
-        telemetry.addData("Launcher target", targetRpm);
+        telemetry.addData("Launcher target", targetVel);
     }
 
     @Override
@@ -61,14 +61,14 @@ public class Launcher implements Subsystem {
         retractFeeder();
     }
 
-    public void spinUp(double rpm) {
-        if (rpm != targetRpm) RobotLog.ii("Launcher", "target rpm -> %.0f", rpm);
-        targetRpm = rpm;
-        flywheel.setVelocity(rpm * RobotConstants.LAUNCHER_TICKS_PER_REV / 60.0);
+    public void spinUp(double vel) {
+        if (vel != targetVel) RobotLog.ii("Launcher", "target rpm -> %.0f", vel);
+        targetVel = vel;
+        flywheel.setVelocity(vel * RobotConstants.LAUNCHER_TICKS_PER_REV / 60.0);
     }
 
     public void stopFlywheel() {
-        targetRpm = 0;
+        targetVel = 0;
         flywheel.setPower(0);
     }
 
@@ -77,8 +77,8 @@ public class Launcher implements Subsystem {
     }
 
     public boolean isReady() {
-        return targetRpm > 0
-                && Math.abs(getRpm() - targetRpm) < LauncherConfig.RPM_TOLERANCE;
+        return targetVel > 0
+                && Math.abs(getRpm() - targetVel) < LauncherConfig.RPM_TOLERANCE;
     }
 
     public void feed() {
