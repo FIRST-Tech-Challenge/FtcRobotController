@@ -12,7 +12,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class IntakeLayers {
     private DcMotor outer, feeder;
-    private CRServo inner;
     private NormalizedColorSensor leftOuterColorSensor;
     private NormalizedColorSensor rightOuterColorSensor;
 
@@ -28,9 +27,6 @@ public class IntakeLayers {
         outer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        outer.setDirection(DcMotor.Direction.REVERSE);
-
-        inner = hardwareMap.get(CRServo.class, "inner_intake_servo");
-//        inner.setDirection(CRServo.Direction.REVERSE);
 
         feeder = hardwareMap.get(DcMotor.class, "feeder_motor");
         feeder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -48,20 +44,17 @@ public class IntakeLayers {
     public void intake() {
         // these values can be changed
         outer.setPower(1.0);
-        inner.setPower(1.0);
         feeder.setPower(1.0);
     }
 
     public void stop() {
         outer.setPower(0.0);
-        inner.setPower(0.0);
         feeder.setPower(0.0);
     }
 
     public void garden() {
         // these values can be changed
         outer.setPower(-1.0);
-        inner.setPower(-1.0);
         feeder.setPower(-1.0);
     }
 
