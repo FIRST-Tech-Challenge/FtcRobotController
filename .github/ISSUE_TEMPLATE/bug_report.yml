@@ -1,6 +1,6 @@
 name: "🐛 Robot Bug Report"
 description: File a structured report for robot failures, code bugs, or unexpected behaviour. Report one bug per request!
-labels: ["bug", "robot-tested", "priority-high"]
+labels: ["bug"]
 assignees: ["dev-verexxed"]
 
 body:
