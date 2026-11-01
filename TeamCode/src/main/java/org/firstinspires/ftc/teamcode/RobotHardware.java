@@ -1,9 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 /**
  * See org.firstinspires.ftc.robotcontroller.external.samples.externalhardware.RobotHardware for the FTC example
@@ -17,11 +22,26 @@ public class RobotHardware {
     private DcMotor backLeftDrive   = null;
     private DcMotor backRightDrive  = null;
 
+    private Servo spendexerWheel = null;
+
+    private IMU imu = null;
+    private IMU.Parameters parameters = null;
+
     public RobotHardware(OpMode opMode1) {opMode = opMode1;}
 
     private DcMotor getDcMotor(String id) {
         DcMotor motor = opMode.hardwareMap.get(DcMotor.class, id);
         return motor;
+    }
+
+    private Servo getServo(String id) {
+        Servo servo = opMode.hardwareMap.get(Servo.class, id);
+        return servo;
+    }
+
+    private IMU getImu(String id) {
+        final IMU imu2 = opMode.hardwareMap.get(IMU.class, id);
+        return imu2;
     }
 
     private void _init() throws Exception {
@@ -30,11 +50,27 @@ public class RobotHardware {
         frontRightDrive = this.getDcMotor("frontRight");
         backLeftDrive = this.getDcMotor("backLeft");
         backRightDrive = this.getDcMotor("backRight");
+        spendexerWheel = this.getServo("pollen");
+
+        // set up imu
+        imu = getImu("imu");
+        parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP
+        ));
+        imu.initialize(parameters);
+
+        // set directions
 
         frontLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         backRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        spendexerWheel.setDirection(Servo.Direction.FORWARD);
+    }
+
+    public double getHeading(){
+        return -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
 
     public void setDrivePower(double left, double right) {
@@ -49,6 +85,20 @@ public class RobotHardware {
 
     public void setArmPower(double power) {
         // stub, fill in later
+        this.setPollenWheelPosition(power);
+    }
+
+    public void setPollenWheelPosition(double angle) {
+        spendexerWheel.setPosition((angle - 180) / 360);
+    }
+
+    public double getPollenWheelPosition(){
+        double rawPosition = spendexerWheel.getPosition();
+        double _360degPosition = rawPosition * 360;
+        double _180degPosition;
+        _180degPosition = rawPosition - 180;
+
+        return _180degPosition;
     }
 
     public void driveRobot(double drive, double turn) {
