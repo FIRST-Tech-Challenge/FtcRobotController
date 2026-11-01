@@ -162,3 +162,23 @@ eval splitJvmOpts $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS
 JVM_OPTS[${#JVM_OPTS[*]}]="-Dorg.gradle.appname=$APP_BASE_NAME"
 
 exec "$JAVACMD" "${JVM_OPTS[@]}" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
+
+# FTC: Gradle 9.1 needs Java 17-25; stop early with a clear fix instead of a stack trace
+if [ -n "$JAVA_HOME" ]; then _ftc_java="$JAVA_HOME/bin/java"; else _ftc_java=java; fi
+_ftc_ver=$("$_ftc_java" -version 2>&1 | awk -F '"' '/version/ {print $2}' | cut -d. -f1)
+[ "$_ftc_ver" = "1" ] && _ftc_ver=8
+if [ -n "$_ftc_ver" ] && { [ "$_ftc_ver" -lt 17 ] || [ "$_ftc_ver" -gt 25 ]; }; then
+    cat >&2 <<EOF
+
+BUILD STOPPED: found Java $_ftc_ver, but this project needs Java 17-25.
+Run these, then try again:
+
+  export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+  ./gradlew --stop
+
+To make it permanent, add the export line to ~/.zshrc.
+No Android Studio? See installed versions with: /usr/libexec/java_home -V
+
+EOF
+    exit 1
+fi
