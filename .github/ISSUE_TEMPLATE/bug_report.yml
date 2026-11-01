@@ -7,7 +7,7 @@ body:
 
     attributes:
       value: |
-        ### Thank you for reporting, it will be reviewed soon! 🤖
+        ### Thank you for your report, it will be reviewed once you sumbit it! 🤖
         Please provide clear, actionable details so that the programming team can reproduce and fix this issue quickly.
 
   - type: checkboxes
