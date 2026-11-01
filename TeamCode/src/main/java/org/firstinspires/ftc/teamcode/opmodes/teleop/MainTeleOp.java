@@ -32,6 +32,7 @@ public class MainTeleOp extends OpMode {
         RobotLog.i("MainTeleOp: Driving with forward=" + -gamepad1.left_stick_y + " strafe=" + gamepad1.left_stick_x + " turn=" + gamepad1.right_stick_x);
         robot.drive.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
         robot.launcher.spinUp(1150);
+        robot.vision.TipDetect(42,45);
         // TODO: launcher, intake, and aiming controls
         robot.update();
     }
