@@ -32,6 +32,12 @@ public final class DriveConfig {
     public static final double SNAP_TURN_ERROR_RATE_FILTER_ALPHA = 0.72;
     public static final double SNAP_TURN_MAX_COMMAND_SLEW_PER_SECOND = 3.2;
 
+    // Driver-tunable speed scaling for translation/rotation commands in TeleOp.
+    public static final double DEFAULT_DRIVE_SPEED_SCALE = 1.0;
+    public static final double MIN_DRIVE_SPEED_SCALE = 0.5;
+    public static final double MAX_DRIVE_SPEED_SCALE = 1.0;
+    public static final double DRIVE_SPEED_SCALE_STEP = 0.1;
+
     // Target-navigation non-PID behavior limits.
     public static final double TARGET_POSITION_TOLERANCE_INCHES = 1.5;
     public static final double TARGET_HEADING_TOLERANCE_RADIANS = Math.toRadians(3.0);

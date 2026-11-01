@@ -35,24 +35,30 @@ public class IntakeController {
     /**
      * Applies one control step for intake + windmill.
      *
-     * @param intakeRequested true when driver wants feeder + intake path active
+     * @param intakeMotorRequested true when driver wants front intake motor active
+     * @param feederRequested true when driver wants side feeder servos active
      * @param windmillRequested true when shooter-feed assist should run windmill
      *
      * Behavior summary:
-     * - Intake request powers both feeder servos and intake motor.
+     * - Intake motor request powers intake motor.
+     * - Feeder request powers both feeder servos.
      * - Windmill request spins windmill and enforces a minimum intake assist power.
      * - No request stops all intake-side motion.
      */
-    public void applyIntakeAndWindmillControl(boolean intakeRequested, boolean windmillRequested) {
+    public void applyIntakeAndWindmillControl(boolean intakeMotorRequested, boolean feederRequested, boolean windmillRequested) {
         double intakeMotorPower;
 
-        if (intakeRequested) {
+        if (feederRequested) {
             frontLeftFeeder.setPower(ScoringConfig.INTAKE_POWER);
             frontRightFeeder.setPower(-ScoringConfig.INTAKE_POWER);
-            intakeMotorPower = ScoringConfig.INTAKE_POWER;
         } else {
             frontLeftFeeder.setPower(0.0);
             frontRightFeeder.setPower(0.0);
+        }
+
+        if (intakeMotorRequested) {
+            intakeMotorPower = ScoringConfig.INTAKE_POWER;
+        } else {
             intakeMotorPower = 0.0;
         }
 

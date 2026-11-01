@@ -6,6 +6,7 @@ public final class ScoringConfig {
     }
 
     public static final double TRIGGER_THRESHOLD = 0.1;
+    public static boolean intake_side_and_stratight_combined = true;
 
     public static final double INTAKE_POWER = 1.0;
     public static final double WINDMILL_POWER = 0.75;

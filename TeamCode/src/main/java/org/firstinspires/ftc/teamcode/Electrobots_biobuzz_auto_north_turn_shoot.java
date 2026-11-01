@@ -181,7 +181,7 @@ public class Electrobots_biobuzz_auto_north_turn_shoot extends LinearOpMode {
             shooterController.applyShooterSpeedControl(true, 0.0);
 
             boolean shooterReady = shooterController.isReady();
-            intakeController.applyIntakeAndWindmillControl(false, shooterReady);
+            intakeController.applyIntakeAndWindmillControl(false, false, shooterReady);
 
             telemetry.addData("Shooter RPM", "%.1f", shooterController.getLastRpm());
             telemetry.addData("Shooter Target", "%.1f", shooterController.getTargetRpm());

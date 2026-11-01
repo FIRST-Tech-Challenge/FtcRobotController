@@ -427,6 +427,8 @@ public class Electrobots_biobuzz_scrimmage_master extends OpMode {
         }
 
         boolean intakeRequested = gamepad2.left_trigger > ScoringConfig.TRIGGER_THRESHOLD;
+        boolean feederRequested = gamepad2.b
+                || (ScoringConfig.intake_side_and_stratight_combined && intakeRequested);
         boolean shooterRequested = gamepad2.right_trigger > ScoringConfig.TRIGGER_THRESHOLD;
         boolean windmillRequested = shooterRequested && gamepad2.a;
         boolean shooterTuningRequested = gamepad2.dpad_up || gamepad2.dpad_down || gamepad2.left_bumper;
@@ -439,8 +441,8 @@ public class Electrobots_biobuzz_scrimmage_master extends OpMode {
             }
         }
 
-        if (intakeRequested || windmillRequested) {
-            intakeController.applyIntakeAndWindmillControl(intakeRequested, windmillRequested);
+        if (intakeRequested || feederRequested || windmillRequested) {
+            intakeController.applyIntakeAndWindmillControl(intakeRequested, feederRequested, windmillRequested);
             intakeRoutineActive = true;
         } else if (intakeRoutineActive) {
             intakeController.stop();
