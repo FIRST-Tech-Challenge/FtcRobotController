@@ -3,7 +3,8 @@ name: FTC Format Checking
 on:
   pull_request:
     branches:
-      - [main, master]
+      - main
+      - master
 
 jobs:
   lint:

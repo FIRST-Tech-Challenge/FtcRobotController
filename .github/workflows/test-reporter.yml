@@ -3,7 +3,8 @@ name: FTC Test Reporter
 on:
   pull_request:
     branches:
-      - [main, master]
+      - main
+      - master
 
 jobs:
   report:

@@ -3,10 +3,12 @@ name: FTC Android Build
 on:
   pull_request:
     branches:
-      - [main, master]
+      - main
+      - master
   push:
     branches:
-      - [main, master]
+      - main
+      - master
 
 jobs:
   build:
