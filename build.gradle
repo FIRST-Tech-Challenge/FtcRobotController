@@ -45,9 +45,8 @@ spotless {
     }
 }
 
-subprojects {
-    tasks.matching { it.name == 'preBuild' }.configureEach {
-        dependsOn(':spotlessApply')
+afterEvaluate {
+    tasks.matching { it.name == 'assembleDebug' || it.name == 'compileDebugJavaWithJavac' }.configureEach {
+        mustRunAfter(':spotlessApply')
     }
 }
-
