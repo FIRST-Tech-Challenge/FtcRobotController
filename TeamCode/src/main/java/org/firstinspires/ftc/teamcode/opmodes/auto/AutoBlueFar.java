@@ -10,7 +10,9 @@ public class AutoBlueFar extends AutoBase {
 
     @Override
     protected void runRoutine() {
-        // TODO: if (robot.vision.isHiveTipped()) pick a different plan
+        // TODO: check which cell is up before shooting, e.g.
+        //   boolean tipped = robot.vision.isHiveTipped(RobotConstants.TAG_BLUE_SCORING_MIN, RobotConstants.TAG_BLUE_SCORING_MAX);
+        // (confirm on the robot whether SCORING or AUDIENCE is the one to check from this start position)
         leaveAndPark();      // milestone 1
         // Milestone 2: leave, get in position, shoot(4), then park.
         // TODO: skip shoot() and go park if secondsLeft() is low
@@ -21,19 +23,12 @@ public class AutoBlueFar extends AutoBase {
         double p = RobotConstants.AUTO_POWER;
 
         driveInches(12, p);
-        //forwards 1
         turnToDegrees(90, p);
-        //turn one
         driveInches(30, p);
-        //forwards 2
         turnToDegrees(0, p);
-        //turn 2
         driveInches(79, p);
-        //forwards 3
         turnToDegrees(80, p);
-        //turn 3
         driveInches(10, p);
-        //forwards 4
         driveSeconds(3.0, p);    // push into the wall to square up
         driveSeconds(0.5, -p);   // back out
     }

@@ -11,14 +11,15 @@ import com.acmerobotics.dashboard.config.Config;
  */
 @Config
 public class LauncherConfig {
-    public static double KP = 100.0; // KP/KI/KD/KF start from last year's working launcher (different motor, re-tune)
-    public static double KI = 0.1;
-    public static double KD = 25.0;
-    public static double KF = 11.7; // = 32767 / max ticks per sec (6000 RPM * 28 / 60 = 2800)
+    // Tuned and tested on the robot (SuperTestTeleop bench test).
+    public static double KP = 120.0;
+    public static double KI = 0.2;
+    public static double KD = 12.0;
+    public static double KF = 150.0;
 
     public static double RPM_TOLERANCE = 50; // "ready" when within this many RPM
-    public static double DEFAULT_RPM = 3000;
+    public static double DEFAULT_RPM = 1200; // tested working speed
 
-    public static double FEEDER_REST_POS = 0.0; // TODO: find on the robot
-    public static double FEEDER_FEED_POS = 0.5; // TODO: find on the robot
+    public static double FEEDER_REST_POS = 0.3; // held while not feeding
+    public static double FEEDER_FEED_POS = 0.04; // held while the feed trigger is pressed
 }

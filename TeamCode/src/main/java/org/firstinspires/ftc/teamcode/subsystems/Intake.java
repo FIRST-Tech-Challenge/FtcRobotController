@@ -1,18 +1,16 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RobotConstants;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 /*
  * INTAKE - picks up game pieces.
  *
- * Put here:
- *  - motor setup in init()
- *  - run(), reverse() (unjam), off()
- *  - optional: a sensor to know when a piece is held
+ * toggle() flips the motor between off and RobotConstants.INTAKE_POWER (tested on the robot).
+ * TODO: reverse() to unjam, and a sensor to know when a piece is held.
  */
 public class Intake implements Subsystem {
 
@@ -20,6 +18,7 @@ public class Intake implements Subsystem {
     private final Telemetry telemetry;
 
     private DcMotor motor;
+    private boolean running = false;
 
     public Intake(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -28,18 +27,28 @@ public class Intake implements Subsystem {
 
     @Override
     public void init() {
-        // TODO: get hardware from hardwareMap using RobotConstants names
+        motor = hardwareMap.get(DcMotor.class, RobotConstants.INTAKE_MOTOR);
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     @Override
     public void update() {
-        // TODO
+        telemetry.addData("Intake", running ? "on" : "off");
     }
 
     @Override
     public void stop() {
-        // TODO: set outputs to zero
+        off();
     }
 
-    // TODO: run(), reverse(), off()
+    /** Flips the intake between off and RobotConstants.INTAKE_POWER. */
+    public void toggle() {
+        running = !running;
+        motor.setPower(running ? RobotConstants.INTAKE_POWER : 0);
+    }
+
+    public void off() {
+        running = false;
+        motor.setPower(0);
+    }
 }

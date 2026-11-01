@@ -3,20 +3,26 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.LauncherConfig;
+import org.firstinspires.ftc.teamcode.RobotConstants;
 import org.firstinspires.ftc.teamcode.Robot;
 
 import com.qualcomm.robotcore.util.RobotLog;
 
-// Main TeleOp mode for driving the robot using gamepad controls.
-// Class MainTeleOp represents the main teleoperated mode for the robot.
+/*
+ * Main driver-controlled mode.
+ * Left stick: drive/strafe. Right stick: turn.
+ * Right trigger: feed (hold). Right bumper: toggle intake.
+ * Left bumper (hold): run the flywheel backward to clear a stuck ball.
+ * Launcher spins continuously at LauncherConfig.DEFAULT_RPM so it's always ready to feed.
+ * Controls ported from the tested SuperTestTeleop bench test.
+ * TODO: aiming controls (button mapping not decided yet)
+ */
 @TeleOp(name = "Main TeleOp", group = "Main")
 public class MainTeleOp extends OpMode {
 
-    // The robot instance that this teleop mode will control.
     private Robot robot;
 
-    // Initializes the robot and its subsystems when the teleop mode starts.
-    // hardwareMap and telemetry are passed to the Robot constructor from the OpMode.
     @Override
     public void init() {
         RobotLog.i("MainTeleOp: Initializing robot");
@@ -25,15 +31,28 @@ public class MainTeleOp extends OpMode {
         RobotLog.i("MainTeleOp: Robot initialized");
     }
 
-    // Reads the gamepad inputs and updates the robot's subsystems accordingly.
     @Override
     public void loop() {
-        // Left stick drives and strafes, right stick turns
-        RobotLog.i("MainTeleOp: Driving with forward=" + -gamepad1.left_stick_y + " strafe=" + gamepad1.left_stick_x + " turn=" + gamepad1.right_stick_x);
         robot.drive.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-        robot.launcher.spinUp(1150);
-        robot.vision.TipDetect(42,45);
-        // TODO: launcher, intake, and aiming controls
+
+        if (gamepad1.left_bumper) {
+            // Held: run the flywheel backward to clear a stuck ball.
+            robot.launcher.reverse(RobotConstants.LAUNCHER_REVERSE_POWER);
+        } else {
+            robot.launcher.spinUp(LauncherConfig.DEFAULT_RPM);
+            if (gamepad1.right_trigger >= 0.3) {
+                robot.launcher.feed();
+            } else {
+                robot.launcher.retractFeeder();
+            }
+        }
+
+        if (gamepad1.rightBumperWasPressed()) {
+            robot.intake.toggle();
+        }
+
+        telemetry.addData("Hive tipped",
+                robot.vision.isHiveTipped(RobotConstants.TAG_BLUE_AUDIENCE_MIN, RobotConstants.TAG_BLUE_AUDIENCE_MAX));
         robot.update();
     }
 

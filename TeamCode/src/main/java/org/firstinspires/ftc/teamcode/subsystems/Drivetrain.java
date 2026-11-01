@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RobotConstants;
-import com.qualcomm.robotcore.hardware.DcMotor;
-
-import com.qualcomm.robotcore.util.RobotLog;
 
 /*
  * DRIVETRAIN - the four mecanum wheel motors.
@@ -18,27 +17,19 @@ import com.qualcomm.robotcore.util.RobotLog;
  * Do NOT put here: gamepad reading (that belongs in the TeleOp).
  */
 
-// Drivetrain subsystem for controlling the robot's mecanum wheels.
 public class Drivetrain implements Subsystem {
 
-    // Constructor parameters and hardware references for the drivetrain subsystem.
-    // hardwareMap: provides access to the robot's hardware configuration.
-    // telemetry: allows sending data to the driver station for debugging.
     private final HardwareMap hardwareMap;
     private final Telemetry telemetry;
 
-    // Motor references for the four mecanum wheels.
-    // forward, strafe, turn: latest driver request, applied in update()
     private DcMotor frontLeft, backLeft, frontRight, backRight;
     private double forward, strafe, turn; // latest driver request, applied in update()
 
-    // 
     public Drivetrain(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
     }
 
-    // Initializes the drivetrain subsystem by setting up the motors and their configurations.
     @Override
     public void init() {
         RobotLog.i("Drivetrain: Initializing motors");
@@ -61,8 +52,6 @@ public class Drivetrain implements Subsystem {
         RobotLog.i("Drivetrain: Motors initialized");
     }
 
-    // Updates the motor powers based on the latest drive request.
-    //  Should be called repeatedly in the main control loop to apply the latest drive request.
     @Override
     public void update() {
         double fl = forward + strafe + turn;
@@ -91,23 +80,16 @@ public class Drivetrain implements Subsystem {
         backRight.setPower(0);
     }
 
-    // TODO: drive(), field-centric drive, and other drive modes
+    // TODO: field-centric drive and other drive modes
 
     /**
      * Robot-centric mecanum drive. Each value is -1 to 1.
      * forward: + is forward. strafe: + is right. turn: + is clockwise.
      * This only saves the request; update() sets the motor power.
      */
-
-    // Sets the desired drive values for the drivetrain.
-    // forward: desired forward/backward motion.
-    // strafe: desired left/right motion.
-    // turn: desired rotational motion.
     public void drive(double forward, double strafe, double turn) {
-        RobotLog.i("Drivetrain: Drive request received with forward=" + forward + " strafe=" + strafe + " turn=" + turn);
         this.forward = forward;
         this.strafe = strafe;
         this.turn = turn;
     }
 }
-

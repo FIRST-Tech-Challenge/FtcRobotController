@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 /*
  * One place for every hardware name and tunable number.
@@ -51,10 +49,13 @@ public final class RobotConstants {
     public static final int AUTO_PAUSE_MS = 500;             // short pause after each step
 
     // ---- Launcher (live-tunable values are in LauncherConfig) ----
-
-    public static final PIDFCoefficients LAUNCHER_PIDF = new PIDFCoefficients(120,0.67,12,150);
+    public static final DcMotor.Direction LAUNCHER_MOTOR_DIRECTION = DcMotor.Direction.REVERSE; // confirmed on the robot
     public static final double LAUNCHER_TARGET_VEL = 1150;      // free speed of the flywheel motor
     public static final double LAUNCHER_TICKS_PER_REV = 28;  // 6000 RPM goBILDA motor, no gearbox (check the spec sheet)
+    public static final double LAUNCHER_REVERSE_POWER = 0.5; // raw power while clearing a jam, start low and tune
+
+    // ---- Intake ----
+    public static final double INTAKE_POWER = 0.8; // confirmed on the robot
 
     // ---- Drivetrain: 435 RPM 12V motors ----
     public static final double DRIVE_MAX_RPM = 435;
@@ -63,4 +64,20 @@ public final class RobotConstants {
     // ---- Aiming (TODO: tune) ----
     public static final double AIM_KP = 0;
     public static final double AIM_DEADBAND_DEG = 1.0;
+
+    // ---- AprilTag fiducial ID ranges (Limelight pipeline), used by Vision.isHiveTipped ----
+    // From the game manual (Fig 9-17). "Scoring" = far side from audience.
+    public static final int TAG_RED_SCORING_MIN = 30;
+    public static final int TAG_RED_SCORING_MAX = 33;
+    public static final int TAG_RED_AUDIENCE_MIN = 34;
+    public static final int TAG_RED_AUDIENCE_MAX = 37;
+    public static final int TAG_BLUE_AUDIENCE_MIN = 38;
+    public static final int TAG_BLUE_AUDIENCE_MAX = 41;
+    public static final int TAG_BLUE_SCORING_MIN = 42;
+    public static final int TAG_BLUE_SCORING_MAX = 45;
+
+    // ---- Shooting (auto) - starting guesses, tune these on the robot ----
+    public static final double SHOOT_READY_TIMEOUT_SECONDS = 2.0; // give up waiting for speed and fire anyway
+    public static final double SHOOT_FEED_HOLD_SECONDS = 0.3;     // how long to hold the feeder forward
+    public static final double SHOOT_FEED_PAUSE_SECONDS = 0.3;    // gap before checking ready for the next piece
 }
