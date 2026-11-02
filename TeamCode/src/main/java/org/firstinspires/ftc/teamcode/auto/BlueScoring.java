@@ -35,7 +35,7 @@ public class BlueScoring extends LinearOpMode {
 
         Pose2d beginPose = new Pose2d(14, 60.5, Math.toRadians(270));
 
-
+        // region block 1
         Actions.runBlocking(
                 new RaceAction(
                         drive.actionBuilder(beginPose, poseMap)
@@ -51,10 +51,11 @@ public class BlueScoring extends LinearOpMode {
                                 .waitSeconds(1)
                                 .build()
                 )
-
+        // endregion
 
         );
 
+        // region block 3
         Actions.runBlocking(
                 new RaceAction(
                         drive.actionBuilder(beginPose, poseMap)
@@ -68,10 +69,11 @@ public class BlueScoring extends LinearOpMode {
 
                                 .build()
                 )
-
+        // endregion
 
         );
 
+        // region block 6
         Actions.runBlocking(
                 new RaceAction(
                         drive.actionBuilder(beginPose, poseMap)
@@ -86,10 +88,11 @@ public class BlueScoring extends LinearOpMode {
 
                                 .build()
                 )
-
+        // endregion
 
         );
 
+        // region block 2
         Actions.runBlocking(
                 new RaceAction(
                         drive.actionBuilder(beginPose, poseMap)
@@ -101,7 +104,7 @@ public class BlueScoring extends LinearOpMode {
 
                                 .build()
                 )
-
+        // endregion
 
         );
 

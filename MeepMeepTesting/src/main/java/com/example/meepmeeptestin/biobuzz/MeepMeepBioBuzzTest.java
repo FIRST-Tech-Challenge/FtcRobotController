@@ -22,6 +22,7 @@ public class MeepMeepBioBuzzTest {
                 .build();
 
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(14, 60.5, Math.toRadians(270)))
+
                 // region Block 1
                 .waitSeconds(2) // Shoot
                 .strafeToSplineHeading(new Vector2d(60.5,60.5), Math.toRadians(270))
@@ -46,11 +47,11 @@ public class MeepMeepBioBuzzTest {
         Image img = null;
         try {
             // Provide the absolute path to your image file
-            img = ImageIO.read(new File("C:\\Users\\Owner\\Documents\\biobuzz.png"));
+            img = ImageIO.read(new File("MeepMeepTesting\\biobuzz.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        
         meepMeep.setBackground(img)
                 .setDarkMode(true)
                 .setBackgroundAlpha(1.0f)
