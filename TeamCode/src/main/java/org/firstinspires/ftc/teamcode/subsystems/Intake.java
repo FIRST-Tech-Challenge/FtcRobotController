@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -9,8 +10,9 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.jetbrains.annotations.NotNull;
 
 /** Owns the intake motor; the TeleOp decides when to collect. */
+@Configurable
 public final class Intake extends SubsystemBase {
-    // Initial commanded power; verify direction and tune on the current mechanism.
+    // Shared commanded power, limited to [-1, 1] by setPower(); tune in Panels.
     public static double INTAKE_POWER = 1.0;
     private final DcMotorEx intake;
     private double commandedPower;
@@ -24,7 +26,7 @@ public final class Intake extends SubsystemBase {
         stop();
     }
 
-    public void intake() {
+    public void runIntake() {
         setPower(INTAKE_POWER);
     }
 
@@ -43,5 +45,5 @@ public final class Intake extends SubsystemBase {
         return commandedPower;
     }
 
-    public double tuningPow() {return intake.getPower(); }
+    public double tuningPow() { return intake.getPower(); }
 }

@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.tests;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.bylazar.configurables.PanelsConfigurables;
+import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.JoinedTelemetry;
+import com.bylazar.telemetry.PanelsTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -23,7 +24,7 @@ import java.io.PrintWriter;
 import java.util.Locale;
 
 /** Tune the Hub's own velocity PIDF. No drivetrain, automatic firing, or inferred ball counts. */
-@Config
+@Configurable
 @TeleOp(name = "TEST - Shooter PIDF Tuner", group = "Testing")
 public final class ShooterPidfTuner extends LinearOpMode {
     public static double TARGET_TPS = Shooter.SHOOT_VEL;
@@ -50,7 +51,7 @@ public final class ShooterPidfTuner extends LinearOpMode {
         DcMotorEx motor = null;
         DcMotorEx intake = null;
         PIDFCoefficients original = null;
-        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = new JoinedTelemetry(PanelsTelemetry.INSTANCE.getFtcTelemetry(), telemetry);
         try {
             motor = hardwareMap.get(DcMotorEx.class, "shooter");
             motor.setVelocity(0);
@@ -62,6 +63,7 @@ public final class ShooterPidfTuner extends LinearOpMode {
             I = original.i;
             D = original.d;
             F = original.f;
+            PanelsConfigurables.refreshClass(ShooterPidfTuner.class);
             intake = hardwareMap.tryGet(DcMotorEx.class, "intake");
             if (intake != null) {
                 intake.setPower(0);
@@ -73,7 +75,7 @@ public final class ShooterPidfTuner extends LinearOpMode {
             telemetry.addLine("Shooter PIDF tuner: no drivetrain control.");
             telemetry.addData("Initial Hub PIDF", original);
             telemetry.addData("Intake", intake == null ? "absent: feed manually" : "LB manual feed");
-            telemetry.addLine("Dashboard: edit ShooterPidfTuner AFTER INIT.");
+            telemetry.addLine("Panels: edit ShooterPidfTuner AFTER INIT.");
             addControls();
             telemetry.update();
             waitForStart();
@@ -194,18 +196,17 @@ public final class ShooterPidfTuner extends LinearOpMode {
                     telemetry.addLine(message);
                     telemetry.addData("CSV", savedPath);
                     addControls();
-                    telemetry.update();
 
-                    TelemetryPacket packet = new TelemetryPacket();
-                    packet.put("targetTps", running ? applied.target : 0);
-                    packet.put("velocityTps", speed);
-                    packet.put("errorTps", running ? applied.target - speed : 0);
-                    packet.put("ready", ready ? 1 : 0);
-                    packet.put("intakeCommand", intake == null ? 0 : feed);
-                    packet.put("manualMarkers", trial == null ? 0 : trial.getShots().size());
-                    packet.put("batteryVolts", volts);
-                    packet.put("loopTimeSeconds", now);
-                    dashboard.sendTelemetryPacket(packet);
+                    // Keep numeric fields separate so Panels can graph them.
+                    telemetry.addData("targetTps", running ? applied.target : 0);
+                    telemetry.addData("velocityTps", speed);
+                    telemetry.addData("errorTps", running ? applied.target - speed : 0);
+                    telemetry.addData("ready", ready ? 1 : 0);
+                    telemetry.addData("intakeCommand", intake == null ? 0 : feed);
+                    telemetry.addData("manualMarkers", trial == null ? 0 : trial.getShots().size());
+                    telemetry.addData("batteryVolts", volts);
+                    telemetry.addData("loopTimeSeconds", now);
+                    telemetry.update();
                 }
                 previous.copy(current);
                 sleep(10);
@@ -255,8 +256,9 @@ public final class ShooterPidfTuner extends LinearOpMode {
             case 2: D = Math.max(0, D + delta); break;
             case 3: F = Math.max(0, F + delta); break;
             case 4: TARGET_TPS = Math.max(1, TARGET_TPS + delta); break;
-            default: break;
+            default: return;
         }
+        PanelsConfigurables.refreshClass(ShooterPidfTuner.class);
     }
 
     private void addControls() {
@@ -321,7 +323,7 @@ public final class ShooterPidfTuner extends LinearOpMode {
         return file.getAbsolutePath();
     }
 
-    /** A snapshot prevents telemetry and one trial from using different Dashboard edits. */
+    /** A snapshot prevents telemetry and one trial from using different Panels edits. */
     private static final class Settings {
         final double target = TARGET_TPS;
         final double p = P;

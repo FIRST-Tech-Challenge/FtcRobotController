@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleops;
 
+import com.bylazar.telemetry.JoinedTelemetry;
+import com.bylazar.telemetry.PanelsTelemetry;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 
@@ -19,7 +21,7 @@ public abstract class BaseDriveTeleOp extends CommandOpMode {
 
     @Override
     public final void initialize() {
-        configureTelemetry();
+        telemetry = new JoinedTelemetry(telemetry, PanelsTelemetry.INSTANCE.getFtcTelemetry());
         drive = new Drive(hardwareMap);
         shooter = new Shooter(hardwareMap);
         intake = new Intake(hardwareMap);
@@ -29,16 +31,10 @@ public abstract class BaseDriveTeleOp extends CommandOpMode {
 
     protected abstract DriveCommand createDriveCommand(Drive drive, GamepadConfig controls);
 
-    protected void configureTelemetry() {
-    }
-
     protected double getShooterVelocity() {
         return Shooter.SHOOT_VEL;
     }
 
-    protected double getIntakePower() {
-        return Intake.INTAKE_POWER;
-    }
 
     @Override
     public final void initialize_loop() {
@@ -53,34 +49,28 @@ public abstract class BaseDriveTeleOp extends CommandOpMode {
 
     @Override
     public final void run() {
-        if (isStopRequested() || Thread.currentThread().isInterrupted()) {
-            end();
-            return;
-        }
         beforeDriveRun();
-        if (isStopRequested() || Thread.currentThread().isInterrupted()) {
-            end();
-            return;
-        }
+
         super.run();
+
         if (controls.isShootHeld()) {
-            shooter.setVelocity(getShooterVelocity());
+            shooter.shoot();
         } else {
             shooter.stop();
         }
+
         if (controls.isIntakeHeld()) {
-            intake.setPower(getIntakePower());
+            intake.runIntake();
         } else {
             intake.stop();
         }
 
         addDriveTelemetry();
         telemetry.addData("Shooter velocity command", shooter.getCommandedVel());
-        telemetry.addData("Intake power command", intake.getCommandedPower());
         telemetry.addData("Shooter velocity actual", shooter.tuningVel());
+        telemetry.addData("Intake power command", intake.getCommandedPower());
         telemetry.addData("Intake power actual", intake.tuningPow());
         telemetry.update();
-        idle();
     }
 
     protected void beforeDriveRun() {

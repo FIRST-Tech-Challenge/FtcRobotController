@@ -3,6 +3,7 @@ repositories {
     google() // Needed for androidx
     maven { url 'https://repo.dairy.foundation/releases/'}
     maven { url = 'https://maven.brott.dev/' }
+    maven { url = "https://mymaven.bylazar.com/releases" }
 }
 
 dependencies {
@@ -18,6 +19,5 @@ dependencies {
     implementation 'org.firstinspires.ftc:Vision:12.0.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
-    implementation 'com.acmerobotics.dashboard:dashboard:0.6.0'
+    implementation "com.bylazar:fullpanels:1.0.19"
 }
-

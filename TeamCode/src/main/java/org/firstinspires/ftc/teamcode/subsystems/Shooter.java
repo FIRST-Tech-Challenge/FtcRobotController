@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -9,8 +10,9 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.jetbrains.annotations.NotNull;
 
 /** Owns the shooter motor; the TeleOp decides when to fire. */
+@Configurable
 public final class Shooter extends SubsystemBase {
-    // Default velocity in encoder ticks per second; tune in ConfigTeleOp.
+    // Shared velocity in encoder ticks per second; tune in Panels.
     public static double SHOOT_VEL = 1560;
     // Copy measured values from Shooter PIDF Tuner, then opt in. Zeros are NOT tuned values.
     public static boolean USE_TUNED_PIDF = false;

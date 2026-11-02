@@ -6,7 +6,7 @@
 
 ## 操作
 
-INIT 时电机保持零输出，并读取当前 Hub 的 PIDF 到 Dashboard。**在 INIT 之后改 P/I/D/F**；重新 INIT 会再次从 Hub 读取。初始 `TARGET_TPS` 沿用 Shooter 的 1560，目标速度也可以修改。
+INIT 时电机保持零输出，并读取当前 Hub 的 PIDF 到 Panels。**在 INIT 之后改 P/I/D/F**；重新 INIT 会再次从 Hub 读取。初始 `TARGET_TPS` 沿用 Shooter 的 1560，目标速度也可以修改。
 
 调参器明确使用 PIDF 算法。`Algorithm` 行同时显示进入时的算法；若原先为 LegacyPID，原系数仅作为起点，切换后不代表与原控制行为等价。每次写入系数后会读回核对，不匹配则退出并尝试停机。
 
@@ -21,9 +21,9 @@ INIT 时电机保持零输出，并读取当前 Hub 的 PIDF 到 Dashboard。**�
 | 方向键 上/下 | 每次按键增减所选值 |
 | Y | 松开 RB 后保存本轮 CSV 摘要 |
 
-手柄调参步长由 `PIDF_STEP`（默认 0.05）和 `TARGET_STEP_TPS`（默认 10）控制。按住方向键不会连续加数。Dashboard 可直接输入数值。
+手柄调参步长由 `PIDF_STEP`（默认 0.05）和 `TARGET_STEP_TPS`（默认 10）控制。按住方向键不会连续加数。Panels 可直接输入数值。
 
-连接机器人网络，在 FTC Dashboard 的配置中展开 `ShooterPidfTuner`。在图表中同时选择 `targetTps`、`velocityTps`；也可观察 `errorTps`、`ready`、`intakeCommand`、`manualMarkers` 和 `batteryVolts`。Control Hub 常用地址是 `http://192.168.43.1:8080/dash`，以实际机器人网络为准。
+连接机器人网络，在 Panels 的 Configurables 面板中展开 `ShooterPidfTuner`。在图表中同时选择 `targetTps`、`velocityTps`；也可观察 `errorTps`、`ready`、`intakeCommand`、`manualMarkers` 和 `batteryVolts`。使用已在 `DashTest` 验证可用的 Panels 连接地址，并打开 Telemetry 和 Graph 面板。
 
 任何 PIDF、目标、供球功率、容差、等待时间或供球模式变更都会清空本轮数据并重新等待速度稳定。INIT 和 START 都不会自动转轮；若 START 时已按住 RB，需要先松开再按。无效参数会停机，修正后也要松开 RB 再按。
 
@@ -89,9 +89,9 @@ python3 scripts/sync_shooter_csv.py --output "$HOME/Desktop/Shooter数据"
 
 ### 机器人端原文件与正式参数
 
-松开 RB 后按 Y，把当前设置和四球摘要写入 Robot Controller 应用文件目录下的 `shooter-tuning/trial-时间戳.csv`。Driver Station 的 `CSV` 行显示完整路径。可通过 Android Studio Device Explorer 或已有的 ADB 连接提取。CSV 的电压是保存时电压；射击过程中的负载电压请看 Dashboard 图表。CSV 不包含落点和完整波形，请另行记录落点。
+松开 RB 后按 Y，把当前设置和四球摘要写入 Robot Controller 应用文件目录下的 `shooter-tuning/trial-时间戳.csv`。Driver Station 的 `CSV` 行显示完整路径。可通过 Android Studio Device Explorer 或已有的 ADB 连接提取。CSV 的电压是保存时电压；射击过程中的负载电压请看 Panels 图表。CSV 不包含落点和完整波形，请另行记录落点。
 
-Dashboard 改值和 CSV 保存**不会自动修改 Java 源码或安装正式参数**。确认一组参数后，修改 `subsystems/Shooter.java`：
+Panels 改值和 CSV 保存**不会自动修改 Java 源码或安装正式参数**。确认一组参数后，修改 `subsystems/Shooter.java`：
 
 - `SHOOT_VEL` 写入测得的目标 ticks/s。
 - `VELOCITY_P`、`VELOCITY_I`、`VELOCITY_D`、`VELOCITY_F` 写入选定值。
