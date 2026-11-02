@@ -303,10 +303,11 @@ public class Electrobots_biobuzz_scrimmage_master extends OpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
         backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
 
-        // Left motors are reversed because they are mirrored physically on many drivetrains.
-        // Without this, one side can fight the other side.
-        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        // Match base starterbot mecanum direction profile.
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // RUN_USING_ENCODER lets the motor controller use encoder feedback for steadier speed control.
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

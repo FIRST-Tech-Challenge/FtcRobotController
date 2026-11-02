@@ -11,8 +11,8 @@ public final class DriveConfig {
     }
 
     // Snap headings for trigger shortcuts.
-    public static final double RIGHT_TRIGGER_TARGET_RADIANS = -Math.PI / 2.0;
-    public static final double LEFT_TRIGGER_TARGET_RADIANS = Math.PI / 2.0;
+    public static final double RIGHT_TRIGGER_TARGET_RADIANS = Math.toRadians(270.0);
+    public static final double LEFT_TRIGGER_TARGET_RADIANS = Math.toRadians(90.0);
 
     // Snap-turn non-PID behavior limits and thresholds.
     public static final double TURN_STOP_DEADBAND_RADIANS = Math.toRadians(1.0);
@@ -37,6 +37,7 @@ public final class DriveConfig {
     public static final double MIN_DRIVE_SPEED_SCALE = 0.5;
     public static final double MAX_DRIVE_SPEED_SCALE = 1.0;
     public static final double DRIVE_SPEED_SCALE_STEP = 0.1;
+    public static final double DRIVE_STICK_DEADBAND = 0.06;
 
     // Target-navigation non-PID behavior limits.
     public static final double TARGET_POSITION_TOLERANCE_INCHES = 1.5;

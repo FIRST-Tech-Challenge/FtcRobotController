@@ -116,6 +116,7 @@ public class SnapMecanumMover {
     private static final double MIN_DRIVE_SPEED_SCALE = DriveConfig.MIN_DRIVE_SPEED_SCALE;
     private static final double MAX_DRIVE_SPEED_SCALE = DriveConfig.MAX_DRIVE_SPEED_SCALE;
     private static final double DRIVE_SPEED_SCALE_STEP = DriveConfig.DRIVE_SPEED_SCALE_STEP;
+    private static final double DRIVE_STICK_DEADBAND = DriveConfig.DRIVE_STICK_DEADBAND;
 
     private final DcMotor frontLeftDrive;
     private final DcMotor frontRightDrive;
@@ -244,9 +245,9 @@ public class SnapMecanumMover {
         // Edge trigger logic:
         // We start snap-turn only when trigger transitions from not-pressed -> pressed.
         // This avoids re-initializing controller state every single loop while held.
-        if (leftTriggerPressed && !rightTriggerWasPressed) {
+        if (leftTriggerPressed && !leftTriggerWasPressed) {
             startSnapTurn(LEFT_TRIGGER_TARGET_RADIANS);
-        } else if (rightTriggerPressed && !leftTriggerWasPressed) {
+        } else if (rightTriggerPressed && !rightTriggerWasPressed) {
             startSnapTurn(RIGHT_TRIGGER_TARGET_RADIANS);
         }
 
@@ -258,7 +259,7 @@ public class SnapMecanumMover {
         // Snap reaction rule:
         // Manual turn input overrides snap-turn immediately.
         // This makes driver control feel predictable and safe.
-        double rotateCommand = gamepad1.right_stick_x;
+        double rotateCommand = applyDeadband(gamepad1.right_stick_x);
         if (Math.abs(rotateCommand) > MANUAL_ROTATE_DEADBAND) {
             snapTurnActive = false;
         } else if (snapTurnActive) {
@@ -300,13 +301,23 @@ public class SnapMecanumMover {
     }
 
     private void driveFromSelectedMode(Gamepad gamepad1, double rotateCommand) {
+        // Template-consistent mapping:
+        // left stick Y = forward/back, left stick X = strafe, right stick X = rotate.
+        double forwardCommand = applyDeadband(-gamepad1.left_stick_y);
+        double rightCommand = applyDeadband(gamepad1.left_stick_x);
+
         if (gamepad1.right_bumper) {
-            // Robot-relative mode: stick directions are interpreted from the robot's point of view.
-            drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, rotateCommand);
-        } else {
-            // Field-relative mode: stick directions are interpreted from the field's point of view.
-            driveFieldRelative(-gamepad1.left_stick_y, gamepad1.left_stick_x, rotateCommand);
+            // Robot-relative mode while held.
+            drive(forwardCommand, rightCommand, rotateCommand);
+            return;
         }
+
+        // Default behavior is field-relative.
+        driveFieldRelative(forwardCommand, rightCommand, rotateCommand);
+    }
+
+    private double applyDeadband(double value) {
+        return Math.abs(value) > DRIVE_STICK_DEADBAND ? value : 0.0;
     }
 
     /** Starts the same snap-turn target as pressing the right trigger shortcut. */
