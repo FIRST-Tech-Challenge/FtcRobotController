@@ -1,3 +1,10 @@
+/**
+ *  Heavy inspo from:
+ *  @see <a href="https://www.youtube.com/watch?v=p6g8CbNj0eM&t=1266s">
+ *       The Best Way to Multitask in FTC Auto (Pedro Pathing)
+ *       </a>
+*/
+
 package org.firstinspires.ftc.teamcode.Auton;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
