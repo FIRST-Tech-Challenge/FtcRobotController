@@ -1,0 +1,27 @@
+name: Enforce Branch Naming Convention
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  validate-branch-name:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check branch naming convention
+
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          REGEX="^(feature|bugfix|hotfix|release)/[A-Z]+-[0-9]+-[a-z0-9-]+$"
+          
+          if [[ ! "$BRANCH_NAME" =~ $REGEX ]]; then
+            echo "❌ Error: The branch name '$BRANCH_NAME' violates the naming convention."
+            echo "Format must match: feature|bugfix|hotfix|release/PROJECT-123-short-description"
+            exit 1
+          else
+            echo "✅ Success: Branch name '$BRANCH_NAME' complies with the naming convention."
+          fi

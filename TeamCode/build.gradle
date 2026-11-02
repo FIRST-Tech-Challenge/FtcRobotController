@@ -27,6 +27,12 @@ android {
 dependencies {
     implementation project(':FtcRobotController')
 
+    implementation 'com.pedropathing:revhub:3.0.2'
+    implementation 'com.pedropathing:tuning:1.0.0'
+    implementation "org.solverslib:core:0.3.6"
+    implementation "org.solverslib:pedroPathing:0.3.6"
+    implementation 'com.acmerobotics.dashboard:dashboard:0.6.0'
+
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:5.x.x'
 }
