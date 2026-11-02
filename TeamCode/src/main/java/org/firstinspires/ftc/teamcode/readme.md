@@ -1,4 +1,4 @@
-# TeamCode
+# FTC-20827 BioBuzz TeamCode
 
 Team-owned FTC code for BIOBUZZ. The command architecture uses SolversLib's official command system (`org.solverslib:core:0.3.4`), following its subsystem, command, and `CommandOpMode` lifecycle model.
 
@@ -12,7 +12,7 @@ Team-owned FTC code for BIOBUZZ. The command architecture uses SolversLib's offi
 
 Subsystems encapsulate hardware. Commands declare their subsystem requirements with `addRequirements(...)`, implement the command lifecycle, and use subsystem methods instead of writing hardware directly. SolversLib's `CommandOpMode` runs its scheduler and handles scheduler reset when the OpMode ends.
 
-`FieldCentricDrive` is registered as **20287 Headless TeleOp** in the Driver Station. The left stick translates relative to the direction the robot faced at START, and right stick X turns the robot. Hold gamepad 1 LB to cap each normalized wheel output at 0.30; release LB for normal power. No gamepad button changes the fixed forward reference.
+`FieldCentricDrive` is registered as **20827 Headless TeleOp** in the Driver Station. The left stick translates relative to the direction the robot faced at START, and right stick X turns the robot. Hold gamepad 1 LB to cap each normalized wheel output at 0.30; release LB for normal power. No gamepad button changes the fixed forward reference.
 
 For example, after the robot turns counterclockwise 90 degrees, stick-left commands robot-forward movement, which is still the driver's original left. Stick-forward-left commands robot-forward-right, which is still the driver's original forward-left. These directions remain fixed for the whole run; the program does not track the driver's later movement or turning.
 
@@ -24,7 +24,7 @@ On STOP or a runtime exception, the OpMode explicitly stops the drivetrain, shoo
 
 ## Shooter and intake controls
 
-In **20287 Headless TeleOp**, use gamepad 1:
+In **20827 Headless TeleOp**, use gamepad 1:
 
 - Hold **A** to run the intake; release A to stop it.
 - Hold **B** to run the shooter; release B to stop it.

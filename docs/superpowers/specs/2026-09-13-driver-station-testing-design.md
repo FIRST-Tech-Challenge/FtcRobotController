@@ -3,7 +3,7 @@
 > Historical document: FTC Knowledge Bank was removed from this project on 2026-10-28. FTCKB integration steps, rules, and check commands below are retained as history and no longer apply.
 
 **Date:** 2026-09-13  
-**Project:** FTC20287-BioBuzz  
+**Project:** FTC-20827 BioBuzz<br>
 **Scope:** Replace host-side JUnit tests with FTC Driver Station test OpModes.
 
 ## Goal
