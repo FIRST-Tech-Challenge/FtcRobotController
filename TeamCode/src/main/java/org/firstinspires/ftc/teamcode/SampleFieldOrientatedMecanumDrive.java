@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcontroller.mechanisms.mecanumDrive;
+import org.firstinspires.ftc.teamcode.mechanisms.mecanumDrive;
 
-public class MecanumFieldOrientatedOpMode extends OpMode {
+public class SampleFieldOrientatedMecanumDrive extends OpMode {
 
     mecanumDrive drive = new mecanumDrive();
     double forward, strafe, rotate;
