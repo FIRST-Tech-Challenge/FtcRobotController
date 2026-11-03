@@ -33,8 +33,10 @@ public class TeleOp extends RobotOpMode {
         double lx = gamepad1.left_stick_x;
         double ly = gamepad1.left_stick_y;
 
-        double adjustedLx = -ly * Math.sin(heading) + lx * Math.cos(heading);
-        double adjustedLy = ly * Math.cos(heading) + lx * Math.sin(heading);
+//        double adjustedLx = -ly * Math.sin(heading) + lx * Math.cos(heading);
+//        double adjustedLy = ly * Math.cos(heading) + lx * Math.sin(heading);
+        double adjustedLx = lx;
+        double adjustedLy = ly;
 
         if (Math.abs(adjustedLy) > 0.1) {
             this.drive = -adjustedLy;
