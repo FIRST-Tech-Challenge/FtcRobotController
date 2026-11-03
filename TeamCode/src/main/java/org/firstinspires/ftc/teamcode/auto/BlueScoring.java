@@ -51,14 +51,33 @@ public class BlueScoring extends LinearOpMode {
                                 .waitSeconds(1)
                                 .build()
                 )
-        // endregion
 
         );
+        // endregion
+
+        // region block 2
+        Actions.runBlocking(
+                new RaceAction(
+                        drive.actionBuilder(beginPose, poseMap)
+
+                                .setTangent(180)
+                                .splineToLinearHeading(new Pose2d(14, 60.5, Math.toRadians(270)), Math.toRadians(180)) // move to garden side
+                                .stopAndAdd(() -> feederSubsystem.runIndexerForward()) // pew pew
+                                .waitSeconds(feederOnTime)
+                                .stopAndAdd(() -> feederSubsystem.stopIndexer()) // stop shooter
+                                .waitSeconds(1) // camera check
+
+                                .build()
+                )
+
+        );
+        // endregion
 
         // region block 3
         Actions.runBlocking(
                 new RaceAction(
                         drive.actionBuilder(beginPose, poseMap)
+
                                 .splineToLinearHeading(new Pose2d(40, -45, Math.toRadians(130)), Math.toRadians(250)) //move to loading side
                                 .stopAndAdd(() -> feederSubsystem.runIndexerForward())  //shoot
                                 .waitSeconds(feederOnTime)
@@ -66,12 +85,51 @@ public class BlueScoring extends LinearOpMode {
                                 .stopAndAdd(() -> intakeSubsystem.runIntakeForward()) //start intaking
                                 .waitSeconds(3)
                                 .stopAndAdd(() -> intakeSubsystem.stopIntake()) //stop intaking
+                                .waitSeconds(1) // camera check
 
                                 .build()
                 )
-        // endregion
 
         );
+        // endregion
+
+        // region block 4
+        Actions.runBlocking(
+                new RaceAction(
+                        drive.actionBuilder(beginPose, poseMap)
+
+                                .setTangent(Math.toRadians(330))
+                                .splineToLinearHeading(new Pose2d(57, -20, Math.toRadians(180)), Math.toRadians(300))
+
+                                .build()
+                )
+
+
+        );
+
+        // endregion
+
+        // region block 5
+        Actions.runBlocking(
+                new RaceAction(
+                        drive.actionBuilder(beginPose, poseMap)
+
+                                .splineToLinearHeading(new Pose2d(40, -45, Math.toRadians(130)), Math.toRadians(250)) //move to loading side
+                                .stopAndAdd(() -> intakeSubsystem.runIntakeForward())
+                                .waitSeconds(3) // intake human player
+                                .stopAndAdd(() -> intakeSubsystem.stopIntake()) // stop intaking
+                                .stopAndAdd(() -> feederSubsystem.runIndexerForward()) // start shooting
+                                .waitSeconds(2) // shoot
+                                .stopAndAdd(() -> feederSubsystem.stopIndexer()) // stop shooting
+                                .splineToLinearHeading(new Pose2d(57, -20, Math.toRadians(180)), Math.toRadians(300)) // park
+
+                                .build()
+                )
+
+
+        );
+
+        // endregion//
 
         // region block 6
         Actions.runBlocking(
@@ -88,69 +146,25 @@ public class BlueScoring extends LinearOpMode {
 
                                 .build()
                 )
+
+        );
         // endregion
 
-        );
-
-        // region block 2
+        // region block 7
         Actions.runBlocking(
                 new RaceAction(
                         drive.actionBuilder(beginPose, poseMap)
-                                .stopAndAdd(() -> shooterSubsystem.runShooter() )
                                 .stopAndAdd(() -> feederSubsystem.runIndexerForward())
-                                .waitSeconds(feederOnTime)
+                                .waitSeconds(feederOnTime) // shoot
                                 .stopAndAdd(() -> feederSubsystem.stopIndexer())
-
+                                .setTangent(Math.toRadians(50))
+                                .splineToLinearHeading(new Pose2d(57, -20, Math.toRadians(180)), Math.toRadians(50)) //park
 
                                 .build()
                 )
+
+
+        );
         // endregion
-
-        );
-
-        Actions.runBlocking(
-                new RaceAction(
-                        drive.actionBuilder(beginPose, poseMap)
-                                .stopAndAdd(() -> shooterSubsystem.runShooter() )
-                                .stopAndAdd(() -> feederSubsystem.runIndexerForward())
-                                .waitSeconds(feederOnTime)
-                                .stopAndAdd(() -> feederSubsystem.stopIndexer())
-
-
-                                .build()
-                )
-
-
-        );
-
-        Actions.runBlocking(
-                new RaceAction(
-                        drive.actionBuilder(beginPose, poseMap)
-                                .stopAndAdd(() -> shooterSubsystem.runShooter() )
-                                .stopAndAdd(() -> feederSubsystem.runIndexerForward())
-                                .waitSeconds(feederOnTime)
-                                .stopAndAdd(() -> feederSubsystem.stopIndexer())
-
-
-                                .build()
-                )
-
-
-        );
-
-        Actions.runBlocking(
-                new RaceAction(
-                        drive.actionBuilder(beginPose, poseMap)
-                                .stopAndAdd(() -> shooterSubsystem.runShooter() )
-                                .stopAndAdd(() -> feederSubsystem.runIndexerForward())
-                                .waitSeconds(feederOnTime)
-                                .stopAndAdd(() -> feederSubsystem.stopIndexer())
-
-
-                                .build()
-                )
-
-
-        );
     }
 }
