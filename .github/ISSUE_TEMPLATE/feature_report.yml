@@ -1,0 +1,73 @@
+name: "🐛 Feature Report"
+description: Create a list of requirements needed for a task!
+labels: ["priority-high", "feature"]
+assignees: ["dev-verexxed"]
+
+body:
+  - type: markdown
+
+    attributes:
+      value: |
+        ### Fill in the following, so the team can know what needs doing! 🤖
+        Ensure you use as much detail as possible!
+
+  - type: checkboxes
+    id: pre-check
+
+    attributes:
+      label: Pre-check checklist
+      description: Fill in the radios.
+
+      options:
+        - label: The current feature I am adding as a task is not implemented already.
+          required: true
+
+        - label: The current feature I want to add was approved by a higher up.
+          required: true
+
+  - type: dropdown
+    id: environment
+
+    attributes:
+      label: Feature type
+      description: Which is the type of feature you want to implement?
+      multiple: false
+
+      options:
+        - "Subsystem"
+        - "Vision"
+        - "Hardware"
+        - "OpMode"
+        - "Other"
+
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+
+    attributes:
+      label: Feature Details
+      description: Provide a detailed description of the feature you want to implement.
+
+      placeholder: |
+        I want to be able to press the Cross button to fire the pollen.
+        This will allow me to score points more efficiently during the match.
+
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+
+    attributes:
+      label: Steps to Implement
+      description: List the exact steps required to implement this feature.
+
+      placeholder: |
+        1. Create a new OpMode for the feature.
+        2. Add the necessary hardware components to the robot.
+        3. Implement the logic for the feature in the OpMode.
+
+    validations:
+      required: true
