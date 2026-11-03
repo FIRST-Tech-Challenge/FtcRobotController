@@ -48,7 +48,7 @@ import org.firstinspires.ftc.teamcode.mechanisms.mecanumDrive;
  * we will also need to adjust the "PIDF" coefficients with some that are a better fit for our application.
  */
 
-@TeleOp(name = "Mec BioBuzz StarterBot Teleop", group = "StarterBot")
+@TeleOp(name = "FieldOrientatedMecanumDriveTeleOp", group = "StarterBot")
 //@Disabled
 public class FieldOrientatedMecanumDriveTeleOp extends OpMode {
 
@@ -106,10 +106,10 @@ public class FieldOrientatedMecanumDriveTeleOp extends OpMode {
          * to 'get' must correspond to the names assigned during the robot configuration
          * step.
          */
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "motorFL");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "motorFR");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "motorBL");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "motorBR");
         intake = hardwareMap.get(DcMotor.class, "intake");
         launcher = hardwareMap.get(DcMotorEx.class, "launcher");
         windmillServo = hardwareMap.get(CRServo.class, "windmillServo");
