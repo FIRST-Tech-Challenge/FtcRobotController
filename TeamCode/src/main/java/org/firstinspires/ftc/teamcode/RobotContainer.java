@@ -2,28 +2,35 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.commands.Drive;
-import org.firstinspires.ftc.teamcode.commands.Intake;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 @TeleOp
-public class RobotContainer extends OpMode{
+public class RobotContainer extends OpMode {
     DcMotor frontLeftDrive;
     DcMotor frontRightDrive;
     DcMotor backLeftDrive;
     DcMotor backRightDrive;
+    DcMotor armMotor;
+    DcMotor intakeMotor;
+
 
     // This declares the IMU needed to get the current direction the robot is facing
     IMU imu;
-    public void init(){
+
+    public void init() {
         frontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_drive");
         frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
         backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
         backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
+        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
+        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
+        Intake m_intake = new Intake(armMotor);
         // We set the left motors in reverse which is needed for drive trains where the left
         // motors are opposite to the right ones.
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -36,6 +43,8 @@ public class RobotContainer extends OpMode{
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         imu = hardwareMap.get(IMU.class, "imu");
         // This needs to be changed to match the orientation on your robot
@@ -47,13 +56,16 @@ public class RobotContainer extends OpMode{
         RevHubOrientationOnRobot orientationOnRobot = new
                 RevHubOrientationOnRobot(logoDirection, usbDirection);
         imu.initialize(new IMU.Parameters(orientationOnRobot));
+
+        m_intake.init(hardwareMap);
     }
 
-    public void loop(){
+    public void loop() {
         telemetry.addLine("Press A to reset Yaw");
         telemetry.addLine("Hold left bumper to drive in robot relative");
         telemetry.addLine("The left joystick sets the robot direction");
         telemetry.addLine("Moving the right joystick left and right turns the robot");
+        telemetry.addLine("Press PovDown to lower intake");
 
         // If you press the A button, then you reset the Yaw to be zero from the way
         // the robot is currently pointing
@@ -66,6 +78,20 @@ public class RobotContainer extends OpMode{
             drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
         } else {
             driveFieldRelative(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        }
+
+        Intake m_intake = new Intake(armMotor);
+
+        if(gamepad1.dpad_down){
+            m_intake.ArmIntakeIn();
+        }else if (!gamepad1.dpad_up && !gamepad1.dpad_down){
+            armMotor.setPower(0);
+        }
+
+        if(gamepad1.dpad_up){
+            m_intake.ArmIntakeOut();
+        }else if (!gamepad1.dpad_down && !gamepad1.dpad_up){
+            armMotor.setPower(0);
         }
     }
 
@@ -115,5 +141,13 @@ public class RobotContainer extends OpMode{
         backLeftDrive.setPower(maxSpeed * (backLeftPower / maxPower));
         backRightDrive.setPower(maxSpeed * (backRightPower / maxPower));
     }
+    public void Intake(){
+
+
+    }
+
+
+
 }
+
 
