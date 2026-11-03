@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.CameraTrackingSubsystems;
 import org.firstinspires.ftc.teamcode.subsystems.FeederSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
@@ -27,6 +28,7 @@ public class BlueScoring extends LinearOpMode {
     private IntakeSubsystem intakeSubsystem;
     private ShooterSubsystem shooterSubsystem;
     private FeederSubsystem feederSubsystem;
+    private CameraTrackingSubsystems cameraTrackingSubsystems;
     PoseMap poseMap;
     private double feederOnTime = 2;
 
@@ -55,116 +57,124 @@ public class BlueScoring extends LinearOpMode {
         );
         // endregion
 
-        // region block 2
-        Actions.runBlocking(
-                new RaceAction(
-                        drive.actionBuilder(beginPose, poseMap)
+        if (cameraTrackingSubsystems.seeApirltag()){
+            // region block 2
+            Actions.runBlocking(
+                    new RaceAction(
+                            drive.actionBuilder(new Pose2d(55, 55, Math.toRadians(220)), poseMap)
 
-                                .setTangent(180)
-                                .splineToLinearHeading(new Pose2d(14, 60.5, Math.toRadians(270)), Math.toRadians(180)) // move to garden side
-                                .stopAndAdd(() -> feederSubsystem.runIndexerForward()) // pew pew
-                                .waitSeconds(feederOnTime)
-                                .stopAndAdd(() -> feederSubsystem.stopIndexer()) // stop shooter
-                                .waitSeconds(1) // camera check
+                                    .setTangent(180)
+                                    .splineToLinearHeading(new Pose2d(14, 60.5, Math.toRadians(270)), Math.toRadians(180)) // move to garden side
+                                    .stopAndAdd(() -> feederSubsystem.runIndexerForward()) // pew pew
+                                    .waitSeconds(feederOnTime)
+                                    .stopAndAdd(() -> feederSubsystem.stopIndexer()) // stop shooter
+                                    .waitSeconds(1) // camera check
 
-                                .build()
-                )
+                                    .build()
+                    )
 
-        );
-        // endregion
+            );
+            // endregion
 
-        // region block 3
-        Actions.runBlocking(
-                new RaceAction(
-                        drive.actionBuilder(beginPose, poseMap)
+            if (cameraTrackingSubsystems.seeApirltag()){
+                // region block 4
+                Actions.runBlocking(
+                        new RaceAction(
+                                drive.actionBuilder(new Pose2d(14, 60.5, Math.toRadians(270)), poseMap)
 
-                                .splineToLinearHeading(new Pose2d(40, -45, Math.toRadians(130)), Math.toRadians(250)) //move to loading side
-                                .stopAndAdd(() -> feederSubsystem.runIndexerForward())  //shoot
-                                .waitSeconds(feederOnTime)
-                                .stopAndAdd(() -> feederSubsystem.stopIndexer()) //stop shooting
-                                .stopAndAdd(() -> intakeSubsystem.runIntakeForward()) //start intaking
-                                .waitSeconds(3)
-                                .stopAndAdd(() -> intakeSubsystem.stopIntake()) //stop intaking
-                                .waitSeconds(1) // camera check
+                                        .setTangent(Math.toRadians(330))
+                                        .splineToLinearHeading(new Pose2d(57, -20, Math.toRadians(180)), Math.toRadians(300))
 
-                                .build()
-                )
-
-        );
-        // endregion
-
-        // region block 4
-        Actions.runBlocking(
-                new RaceAction(
-                        drive.actionBuilder(beginPose, poseMap)
-
-                                .setTangent(Math.toRadians(330))
-                                .splineToLinearHeading(new Pose2d(57, -20, Math.toRadians(180)), Math.toRadians(300))
-
-                                .build()
-                )
+                                        .build()
+                        )
 
 
-        );
+                );
 
-        // endregion
+                // endregion
+            } else {
+                // region block 5
+                Actions.runBlocking(
+                        new RaceAction(
+                                drive.actionBuilder(new Pose2d(14, 60.5, Math.toRadians(270)), poseMap)
 
-        // region block 5
-        Actions.runBlocking(
-                new RaceAction(
-                        drive.actionBuilder(beginPose, poseMap)
+                                        .splineToLinearHeading(new Pose2d(40, -45, Math.toRadians(130)), Math.toRadians(250)) //move to loading side
+                                        .stopAndAdd(() -> intakeSubsystem.runIntakeForward())
+                                        .waitSeconds(3) // intake human player
+                                        .stopAndAdd(() -> intakeSubsystem.stopIntake()) // stop intaking
+                                        .stopAndAdd(() -> feederSubsystem.runIndexerForward()) // start shooting
+                                        .waitSeconds(2) // shoot
+                                        .stopAndAdd(() -> feederSubsystem.stopIndexer()) // stop shooting
+                                        .splineToLinearHeading(new Pose2d(57, -20, Math.toRadians(180)), Math.toRadians(300)) // park
 
-                                .splineToLinearHeading(new Pose2d(40, -45, Math.toRadians(130)), Math.toRadians(250)) //move to loading side
-                                .stopAndAdd(() -> intakeSubsystem.runIntakeForward())
-                                .waitSeconds(3) // intake human player
-                                .stopAndAdd(() -> intakeSubsystem.stopIntake()) // stop intaking
-                                .stopAndAdd(() -> feederSubsystem.runIndexerForward()) // start shooting
-                                .waitSeconds(2) // shoot
-                                .stopAndAdd(() -> feederSubsystem.stopIndexer()) // stop shooting
-                                .splineToLinearHeading(new Pose2d(57, -20, Math.toRadians(180)), Math.toRadians(300)) // park
-
-                                .build()
-                )
-
-
-        );
-
-        // endregion//
-
-        // region block 6
-        Actions.runBlocking(
-                new RaceAction(
-                        drive.actionBuilder(beginPose, poseMap)
-                                .setTangent(Math.toRadians(80))
-                                .splineToLinearHeading(new Pose2d(14, 60.5, Math.toRadians(270)), Math.toRadians(160)) //move to garden side
-                                .stopAndAdd(() -> feederSubsystem.runIndexerForward()) // shoot
-                                .waitSeconds(feederOnTime)
-                                .stopAndAdd(() -> feederSubsystem.stopIndexer()) // stop shooting
-                                .setTangent(Math.toRadians(320))
-                                .splineToLinearHeading(new Pose2d(57, -20, Math.toRadians(180)), Math.toRadians(300)) //park
+                                        .build()
+                        )
 
 
-                                .build()
-                )
+                );
 
-        );
-        // endregion
+                // endregion//
+            }
 
-        // region block 7
-        Actions.runBlocking(
-                new RaceAction(
-                        drive.actionBuilder(beginPose, poseMap)
-                                .stopAndAdd(() -> feederSubsystem.runIndexerForward())
-                                .waitSeconds(feederOnTime) // shoot
-                                .stopAndAdd(() -> feederSubsystem.stopIndexer())
-                                .setTangent(Math.toRadians(50))
-                                .splineToLinearHeading(new Pose2d(57, -20, Math.toRadians(180)), Math.toRadians(50)) //park
+        } else {
+            // region block 3
+            Actions.runBlocking(
+                    new RaceAction(
+                            drive.actionBuilder(new Pose2d(55, 55, Math.toRadians(220)), poseMap)
 
-                                .build()
-                )
+                                    .splineToLinearHeading(new Pose2d(40, -45, Math.toRadians(130)), Math.toRadians(250)) //move to loading side
+                                    .stopAndAdd(() -> feederSubsystem.runIndexerForward())  //shoot
+                                    .waitSeconds(feederOnTime)
+                                    .stopAndAdd(() -> feederSubsystem.stopIndexer()) //stop shooting
+                                    .stopAndAdd(() -> intakeSubsystem.runIntakeForward()) //start intaking
+                                    .waitSeconds(3)
+                                    .stopAndAdd(() -> intakeSubsystem.stopIntake()) //stop intaking
+                                    .waitSeconds(1) // camera check
+
+                                    .build()
+                    )
+
+            );
+            // endregion
+
+            if (cameraTrackingSubsystems.seeApirltag()){
+                // region block 6
+                Actions.runBlocking(
+                        new RaceAction(
+                                drive.actionBuilder(new Pose2d(40, -45, Math.toRadians(130)), poseMap)
+                                        .setTangent(Math.toRadians(80))
+                                        .splineToLinearHeading(new Pose2d(14, 60.5, Math.toRadians(270)), Math.toRadians(160)) //move to garden side
+                                        .stopAndAdd(() -> feederSubsystem.runIndexerForward()) // shoot
+                                        .waitSeconds(feederOnTime)
+                                        .stopAndAdd(() -> feederSubsystem.stopIndexer()) // stop shooting
+                                        .setTangent(Math.toRadians(320))
+                                        .splineToLinearHeading(new Pose2d(57, -20, Math.toRadians(180)), Math.toRadians(300)) //park
 
 
-        );
-        // endregion
+                                        .build()
+                        )
+
+                );
+                // endregion
+            } else {
+                // region block 7
+                Actions.runBlocking(
+                        new RaceAction(
+                                drive.actionBuilder(new Pose2d(40, -45, Math.toRadians(130)), poseMap)
+                                        .stopAndAdd(() -> feederSubsystem.runIndexerForward())
+                                        .waitSeconds(feederOnTime) // shoot
+                                        .stopAndAdd(() -> feederSubsystem.stopIndexer())
+                                        .setTangent(Math.toRadians(50))
+                                        .splineToLinearHeading(new Pose2d(57, -20, Math.toRadians(180)), Math.toRadians(50)) //park
+
+                                        .build()
+                        )
+
+
+                );
+                // endregion
+            }
+
+        }
     }
 }
