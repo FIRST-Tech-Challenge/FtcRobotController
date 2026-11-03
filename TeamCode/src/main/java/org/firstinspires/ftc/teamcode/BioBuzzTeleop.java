@@ -5,15 +5,16 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "Basic State Machine Teleop", group = "Testing") // on the DS, opmodes are sorted by gorup, then name
-public class BasicStateMachineTeleop extends OpMode {
+@SuppressWarnings("unused")
+@TeleOp(name = "BioBuzz Teleop", group = "Testing") // on the DS, opmodes are sorted by gorup, then name
+public class BioBuzzTeleop extends OpMode {
     
     private ElapsedTime clock = new ElapsedTime();
     private State currentState;
     
     private enum State {
         COLLECT,
-        DRIVE,
+        DRIVETOSIDE,
         SEARCH,
         AUTOAIM,
         MANUALAIM,
@@ -24,7 +25,7 @@ public class BasicStateMachineTeleop extends OpMode {
     @Override
     public void init() {
         // Initialize the hardware variables.
-        motor312 = new MotorPowerController(hardwareMap, "motor1");
+      
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Init OK");
@@ -59,7 +60,7 @@ public class BasicStateMachineTeleop extends OpMode {
             3. if no ball move around to find one
             4. if 4 balls detected, move to search state
             */
-        } else if (currentState == State.DRIVE){
+        } else if (currentState == State.DRIVETOSIDE){
             /*
             1. keep feedwheel reverse and turn off intake
             2. if side boolean is false move to a certain side of the hive using odometry

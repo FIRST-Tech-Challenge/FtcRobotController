@@ -7,7 +7,7 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 
 public class Localizer {
 
-     GoBildaPinpointDriver gbpd;
+     private GoBildaPinpointDriver gbpd;
      /**
      * Creates a object to track positon and heading. Currently only supports
      * the GoBilda Pidpoint Driver odometry system. Future development may 
@@ -19,7 +19,6 @@ public class Localizer {
           if (name.contains("gbpoc")){
                final double X_OFFSET = -84.0;  // how sideways from the center of the robot is the X (forward) pod? Left increases
                final double Y_OFFSET = -168.0; // how far forward from the center of the robot is the Y (strafe) pod? forward increases
-               //TODO use Elias's offsets x 12 * 8, y 21 * 8 (mm)
                gbpd = hm.get(GoBildaPinpointDriver.class, "gbpoc");
                gbpd.setOffsets(X_OFFSET, Y_OFFSET, DistanceUnit.MM); //these are tuned for 3110-0002-0001 Product Insight #1
                gbpd.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
@@ -30,12 +29,16 @@ public class Localizer {
      }
      
      public void update(){
-          gbpd.update();
+          if (gbpd != null) gbpd.update();
      }
      
      public Pose2D getPosition(){
-          Pose2D gbpdPose = gbpd.getPosition();
+          Pose2D gbpdPose = null;
+          if (gbpd != null){
+            gbpdPose = gbpd.getPosition();
+          }
           // TODO fuse multiple sensor readings
-          return gbpdPose;
+          Pose2D fused  = gbpdPose;
+          return fused;
      }
 }
