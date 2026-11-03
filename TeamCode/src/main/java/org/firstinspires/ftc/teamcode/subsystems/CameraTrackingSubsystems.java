@@ -69,4 +69,16 @@ public class CameraTrackingSubsystems {
             visionPortal.close();
         }
     }
+
+    public boolean seeApirltag() {
+        FtcDashboard.getInstance().startCameraStream(visionPortal,0);
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection instanceof AprilTagClusterDetection) {
+                return true;
+            }
+
+        }
+        return false;
+    }
 }
