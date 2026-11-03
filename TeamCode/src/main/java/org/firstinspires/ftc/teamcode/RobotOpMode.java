@@ -15,7 +15,6 @@ public class RobotOpMode extends com.qualcomm.robotcore.eventloop.opmode.OpMode 
 
     @Override
     public void start() {
-        double drive = 0;
         telemetry.addData(">", "Starting AutoMode...");
 
     }
