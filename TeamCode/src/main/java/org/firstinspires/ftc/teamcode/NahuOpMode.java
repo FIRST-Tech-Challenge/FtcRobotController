@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -33,8 +34,8 @@ public class NahuOpMode extends LinearOpMode {
 
             // a button
             if (gamepad1.y){
-                lMotor.setPower(-1);
-                rMotor.setPower(1);
+                lMotor.setPower(1);
+                rMotor.setPower(-1);
                 sleep(1000);
                 lMotor.setPower(0);
                 rMotor.setPower(0);
@@ -43,8 +44,8 @@ public class NahuOpMode extends LinearOpMode {
 
             // y button
             if (gamepad1.a) {
-                lMotor.setPower(1);
-                rMotor.setPower(-1);
+                lMotor.setPower(-1);
+                rMotor.setPower(1);
                 sleep(1000);
                 lMotor.setPower(0);
                 rMotor.setPower(0);
@@ -53,9 +54,9 @@ public class NahuOpMode extends LinearOpMode {
 
             // b button
             else if (gamepad1.x) {
-                lMotor.setPower(1);
-                rMotor.setPower(1);
-                sleep(500);
+                lMotor.setPower(-1);
+                rMotor.setPower(-1);
+                sleep(400);
                 lMotor.setPower(0);
                 rMotor.setPower(0);
             }
@@ -63,9 +64,9 @@ public class NahuOpMode extends LinearOpMode {
 
             // x button
             else if (gamepad1.b) {
-                lMotor.setPower(-1);
-                rMotor.setPower(-1);
-                sleep(500);
+                lMotor.setPower(1);
+                rMotor.setPower(1);
+                sleep(400);
                 lMotor.setPower(0);
                 rMotor.setPower(0);
             }
