@@ -36,30 +36,29 @@ public class LeulOpMode extends LinearOpMode {
 
             // a button
             if (gamepad1.a){
-                lMotor.setPower(-0.3);
-                rMotor.setPower(-0.3);
-                sleep(500);
+                lMotor.setPower(-1);
+                rMotor.setPower(-1);
             }
 
 
             // y button
             else if (gamepad1.y) {
-                lMotor.setPower(0.3);
-                rMotor.setPower(0.3);
+                lMotor.setPower(1);
+                rMotor.setPower(1);
             }
 
 
             // b button
             else if (gamepad1.b) {
-                lMotor.setPower(0.3);
-                rMotor.setPower(-0.3);
+                lMotor.setPower(1);
+                rMotor.setPower(-1);
             }
 
 
             // x button
             else if (gamepad1.x) {
-                lMotor.setPower(-0.3);
-                rMotor.setPower(0.3);
+                lMotor.setPower(-1);
+                rMotor.setPower(1);
             }
 
 
