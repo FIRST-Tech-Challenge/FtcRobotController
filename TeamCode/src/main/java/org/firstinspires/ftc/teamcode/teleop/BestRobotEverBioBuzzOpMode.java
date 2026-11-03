@@ -88,7 +88,7 @@ public class BestRobotEverBioBuzzOpMode extends OpMode {
         // endregion
 
         // region Intake code
-        if ((gamepad2.right_trigger > 0 || gamepad2.right_bumper) /*& !beamBrakeSubsystem.Status()*/) {
+        if ((gamepad2.right_trigger > 0 || gamepad2.right_bumper) & !beamBrakeSubsystem.Status()) {
             intakeSubsystem.runIntakeForward();
         } else if (gamepad2.left_trigger > 0) {
             intakeSubsystem.runIntakeReverse();
