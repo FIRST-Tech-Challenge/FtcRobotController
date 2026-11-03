@@ -8,11 +8,28 @@ import com.qualcomm.robotcore.hardware.ServoController;
 public class ServoMotorController {
     
     private Servo servo;
+    private boolean turnPos;
+    
     public ServoMotorController(HardwareMap hm, String servoName) {
         servo = hm.get(Servo.class, servoName);
+        turnPos = true;
     }
 
     public void runServo() {
-        servo.setPosition(1);
+        servo.setPosition(newPos());
+        checkDirection();
+    }
+
+    private double newPos(){
+        return servo.getPosition()+0.01;
+    }
+
+    private void checkDirection(){
+        if(servo.getPosition >= 0.3){
+            Servo.setDirection(REVERSE);
+        }
+        if(servo.getPostion <= -0.3){
+            Servo.setDirection(FORWARD);
+        }
     }
 }
