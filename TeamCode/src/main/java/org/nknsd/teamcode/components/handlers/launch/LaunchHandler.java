@@ -16,6 +16,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.teamcode.components.utility.feedbackcontroller.PidController;
 import org.nknsd.teamcode.frameworks.NKNComponent;
 
+/// THIS CLASS IS NOT READY YET
+/// PLEASE DO NOT USE IT UNLESS
+/// THIS TEXT IS GONE
+/// CHECK THE SOFTWARE ARCHITECTURE TO SEE WHAT IT DOES
 public class LaunchHandler implements NKNComponent {
 
     //motors
@@ -76,9 +80,9 @@ public class LaunchHandler implements NKNComponent {
     @Override
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
         if(launchEnabled){
-            double leftVel = ;
-            double rightVel = ;
-            setLauncherPower(leftErr, leftErrDelta);
+//            double leftVel = ;
+//            double rightVel = ;
+//            setLauncherPower(leftErr, leftErrDelta);
         } else {
             setLauncherPower(0);
         }

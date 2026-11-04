@@ -53,6 +53,7 @@ public class MecanumMotorMixer implements NKNComponent {
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
         flMotor = hardwareMap.dcMotor.get("FL");
+        flMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         flMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frMotor = hardwareMap.dcMotor.get("FR");
         frMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -60,7 +61,7 @@ public class MecanumMotorMixer implements NKNComponent {
         blMotor = hardwareMap.dcMotor.get("BL");
         blMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         brMotor = hardwareMap.dcMotor.get("BR");
-        brMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        //brMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         brMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         return true;
     }

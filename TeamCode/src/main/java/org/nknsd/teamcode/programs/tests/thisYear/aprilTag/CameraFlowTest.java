@@ -35,75 +35,89 @@ public class CameraFlowTest extends NKNProgram {
 
         GeneralMatrixF rotationMatrix = new GeneralMatrixF(3, 3);
 
+        int testNumber = 1;
+
         @Override
         protected void run(ElapsedTime runtime, Telemetry telemetry) {
                 if (runtime.milliseconds() < 3000) {
-
-                    rotationMatrix = flowFuser.findRotationMatrix(rot[0], rot[1], rot[2]);
-
-
-                    telemetry.addData("Rotation 1: ", rot);
-                    telemetry.addData("RotationMatrix: ", rotationMatrix);
-                    RobotLog.v("Rotation 1 roll pitch yaw: " + rotationMatrix.toString());
-                    RobotLog.v("Current rotat: " + Arrays.toString(rot));
+                    if(testNumber == 1) {
 
 
+                        rotationMatrix = flowFuser.findRotationMatrix(rot[0], rot[1], rot[2]);
+
+
+                        telemetry.addData("Rotation 1: ", Arrays.toString(rot));
+                        telemetry.addData("RotationMatrix: ", rotationMatrix);
+                        RobotLog.v("Rotation 1 roll pitch yaw: " + rotationMatrix.toString());
+                        RobotLog.v("Current rotat: " + Arrays.toString(rot));
+
+                        testNumber++;
+                    }
                 }
 
-                rot = new float[]{1, 0, 0};
+                rot = new float[]{(float)(Math.PI/2), 0, 0};
 
                 if (runtime.milliseconds() < 6000 && runtime.milliseconds() > 3000) {
 
-                    rotationMatrix = flowFuser.findRotationMatrix(rot[0], rot[1], rot[2]);
+                    if(testNumber == 2) {
+                        rotationMatrix = flowFuser.findRotationMatrix(rot[0], rot[1], rot[2]);
 
 
-                    telemetry.addData("Rotation 2 (roll = 1): ", rot);
-                    telemetry.addData("RotationMatrix: ", rotationMatrix);
-                    RobotLog.v("Rotation 2 roll pitch yaw: " + rotationMatrix.toString());
-                    RobotLog.v("Current rotat: " + Arrays.toString(rot));
+                        telemetry.addData("Rotation 2 (roll = 1): ", rot);
+                        telemetry.addData("RotationMatrix: ", rotationMatrix);
+                        RobotLog.v("Rotation 2 roll pitch yaw: " + rotationMatrix.toString());
+                        RobotLog.v("Current rotat: " + Arrays.toString(rot));
 
-
+                        testNumber++;
+                    }
                 }
 
-                rot = new float[]{0, 1, 0};
+                rot = new float[]{0, 90, 0};
                 if (runtime.milliseconds() < 9000 && runtime.milliseconds() > 6000) {
 
-                    rotationMatrix = flowFuser.findRotationMatrix(rot[0], rot[1], rot[2]);
+                    if(testNumber == 3) {
+
+                        rotationMatrix = flowFuser.findRotationMatrix(rot[0], rot[1], rot[2]);
 
 
-                    telemetry.addData("Rotation 3 (pitch = 1): ", rot);
-                    telemetry.addData("RotationMatrix: ", rotationMatrix);
-                    RobotLog.v("Rotation 3 roll pitch yaw: " + rotationMatrix.toString());
-                    RobotLog.v("Current rotat: " + Arrays.toString(rot));
+                        telemetry.addData("Rotation 3 (pitch = 1): ", rot);
+                        telemetry.addData("RotationMatrix: ", rotationMatrix);
+                        RobotLog.v("Rotation 3 roll pitch yaw: " + rotationMatrix.toString());
+                        RobotLog.v("Current rotat: " + Arrays.toString(rot));
 
+                        testNumber++;
+                    }
                 }
 
                 rot = new float[]{0, 0, 1};
                 if (runtime.milliseconds() < 12000 && runtime.milliseconds() > 9000) {
+                    if(testNumber == 4) {
 
-                    rotationMatrix = flowFuser.findRotationMatrix(rot[0], rot[1], rot[2]);
-
-
-                    telemetry.addData("Rotation 4 (yaw = 1): ", rot);
-                    telemetry.addData("RotationMatrix: ", rotationMatrix);
-                    RobotLog.v("Rotation 4 roll pitch yaw: " + rotationMatrix.toString());
-                    RobotLog.v("Current rotat: " + Arrays.toString(rot));
+                        rotationMatrix = flowFuser.findRotationMatrix(rot[0], rot[1], rot[2]);
 
 
+                        telemetry.addData("Rotation 4 (yaw = 1): ", rot);
+                        telemetry.addData("RotationMatrix: ", rotationMatrix);
+                        RobotLog.v("Rotation 4 roll pitch yaw: " + rotationMatrix.toString());
+                        RobotLog.v("Current rotat: " + Arrays.toString(rot));
+
+                        testNumber++;
+                    }
                 }
 
                 rot = new float[]{1, 1, 1};
                 if (runtime.milliseconds() < 15000 && runtime.milliseconds() > 18000) {
+                    if(testNumber == 5) {
 
-                    rotationMatrix = flowFuser.findRotationMatrix(rot[0], rot[1], rot[2]);
-
-
-                    telemetry.addData("Rotation 5 (all 1): ", rot);
-                    telemetry.addData("RotationMatrix: ", rotationMatrix);
-                    RobotLog.v("Rotation 5 roll pitch yaw: " + rotationMatrix.toString());
-                    RobotLog.v("Current rotat: " + Arrays.toString(rot));
+                        rotationMatrix = flowFuser.findRotationMatrix(rot[0], rot[1], rot[2]);
 
 
+                        telemetry.addData("Rotation 5 (all 1): ", rot);
+                        telemetry.addData("RotationMatrix: ", rotationMatrix);
+                        RobotLog.v("Rotation 5 roll pitch yaw: " + rotationMatrix.toString());
+                        RobotLog.v("Current rotat: " + Arrays.toString(rot));
+
+                    }
                 }
             }
 

@@ -1,7 +1,5 @@
 package org.nknsd.teamcode.programs.parts;
 
-import com.qualcomm.robotcore.util.RobotLog;
-
 import org.nknsd.teamcode.components.handlers.lifting.BalancedLiftHandler;
 import org.nknsd.teamcode.components.handlers.artifact.ArtifactSystem;
 import org.nknsd.teamcode.components.handlers.artifact.MicrowaveScoopHandler;
