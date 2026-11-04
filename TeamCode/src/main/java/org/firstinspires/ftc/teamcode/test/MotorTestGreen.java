@@ -33,78 +33,48 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-@TeleOp(name = "Motor Tester - Green Bot", group = "StarterBot")
-public class MotorTestGreen extends OpMode {
+import org.firstinspires.ftc.teamcode.R;
+import org.firstinspires.ftc.teamcode.base.GreenBotBaseOpMode;
 
-    // Declare OpMode members.
-    private DcMotor frontRight = null;
-    private DcMotor frontLeft = null;
-    private DcMotor backRight = null;
-    private DcMotor backLeft = null;
-    private DcMotorEx launcher = null;
-    private DcMotor intake = null;
+@TeleOp(name = "Motor Tester - Green Bot", group = "StarterBot")
+public class MotorTestGreen extends GreenBotBaseOpMode {
 
     private static final double DRIVE_POWER = 0.2;
 
     @Override
-    public void init() {
+    public void runOpMode() {
 
-        frontRight = hardwareMap.get(DcMotor.class, "front_right");
-        frontLeft = hardwareMap.get(DcMotor.class, "front_left");
-        backLeft = hardwareMap.get(DcMotor.class, "back_left");
-        backRight = hardwareMap.get(DcMotor.class, "back_right");
-        intake = hardwareMap.get(DcMotor.class, "intake_motor");
-        launcher = hardwareMap.get(DcMotorEx.class, "launcher");
+        config();
+        waitForStart();
 
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        launcher.setDirection(DcMotor.Direction.REVERSE);
+        while (opModeIsActive()) {
+            frontRight.setPower(gamepad1.dpad_up ? DRIVE_POWER : 0.0);
+            backRight.setPower(gamepad1.dpad_right ? DRIVE_POWER : 0.0);
+            frontLeft.setPower(gamepad1.dpad_left ? DRIVE_POWER : 0.0);
+            backLeft.setPower(gamepad1.dpad_down ? DRIVE_POWER : 0.0);
 
-        frontLeft.setZeroPowerBehavior(BRAKE);
-        frontRight.setZeroPowerBehavior(BRAKE);
-        backLeft.setZeroPowerBehavior(BRAKE);
-        backRight.setZeroPowerBehavior(BRAKE);
-        intake.setZeroPowerBehavior(BRAKE);
+            turret.setPower(gamepad1.y ? DRIVE_POWER : 0.0);
+            launcher.setPower(gamepad1.b ? DRIVE_POWER : 0.0);
+            intake.setPower(gamepad1.a ? DRIVE_POWER : 0.0);
+            feeder.setPower(gamepad1.x ? DRIVE_POWER * 2 : 0.0);
 
-        telemetry.addData("Status", "Initialized");
-    }
+            rightIntakeServo.setPower(gamepad1.right_bumper ? 1.0 : 0.0);
+            leftIntakeServo.setPower(gamepad1.left_bumper ? 1.0 : 0.0);
 
-    @Override
-    public void loop() {
-        if (gamepad1.dpad_up) {
-            frontRight.setPower(DRIVE_POWER);
-        } else {
-            frontRight.setPower(0.0);
-        }
+            telemetry.addData("D Pad Up", "frontRight");
+            telemetry.addData("D Pad Right", "backRight");
+            telemetry.addData("D Pad Down", "backLeft");
+            telemetry.addData("D Pad Left", "frontLeft");
 
-        if (gamepad1.dpad_down) {
-            backRight.setPower(DRIVE_POWER);
-        } else {
-            backRight.setPower(0.0);
-        }
+            telemetry.addData("Y", "turret");
+            telemetry.addData("B", "launcher");
+            telemetry.addData("A", "intake");
+            telemetry.addData("X", "feeder");
 
-        if (gamepad1.dpad_right) {
-            frontLeft.setPower(DRIVE_POWER);
-        } else {
-            frontLeft.setPower(0.0);
-        }
+            telemetry.addData("right bumper", "rightIntakeServo");
+            telemetry.addData("left bumper", "leftIntakeServo");
 
-        if (gamepad1.dpad_left) {
-            backLeft.setPower(DRIVE_POWER);
-        } else {
-            backLeft.setPower(0.0);
-        }
-
-        if (gamepad1.a) {
-            intake.setPower(DRIVE_POWER);
-        } else {
-            intake.setPower(0.0);
-        }
-
-        if (gamepad1.b) {
-            launcher.setPower(DRIVE_POWER);
-        } else {
-            launcher.setPower(0.0);
+            telemetry.update();
         }
     }
 }

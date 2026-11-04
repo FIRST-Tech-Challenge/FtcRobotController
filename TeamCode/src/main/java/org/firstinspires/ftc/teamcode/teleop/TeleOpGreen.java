@@ -22,7 +22,9 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
     private final double INTAKE_POWER = 1.0;
     private final double FEEDER_POWER = 1.0;
 
-    private boolean intakeOn = false;
+    private boolean intakeOn = true;
+    private boolean intakeReversed = false;
+
     private double launcherTargetVelocity = INITIAL_LAUNCHER_TARGET_VELOCITY;
 
     @Override
@@ -50,16 +52,18 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
             if (gamepad1.leftBumperWasPressed()) {
                 intakeOn = !intakeOn;
             }
-            double intakePower = 0;
-            if (intakeOn) {
-                intakePower = INTAKE_POWER;
-            } // else stays at 0
+            if (gamepad1.rightBumperWasPressed()) {
+                intakeReversed = !intakeReversed;
+            }
+            double intakePower;
+            intakePower = intakeOn ? INTAKE_POWER : 0.0;
+            intakePower = intakeReversed ? -intakePower : intakePower;
             intake.setPower(intakePower);
             leftIntakeServo.setPower(intakePower);
             rightIntakeServo.setPower(intakePower);
 
             /////////////////////////
-            // handle feeder - only runs when buttons are held
+            // handle feeder
             /////////////////////////
             if (gamepad2.leftBumperWasPressed()) {
                 feeder.setPower(FEEDER_POWER);
@@ -68,6 +72,11 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
             } else if (gamepad2.aWasPressed()){
                 feeder.setPower(0.0);
             }
+
+            /////////////////////////
+            // handle turret
+            /////////////////////////
+            turret.setPower(gamepad2.left_stick_x);
 
             /////////////////////////
             // handle launcher - runs continuously
