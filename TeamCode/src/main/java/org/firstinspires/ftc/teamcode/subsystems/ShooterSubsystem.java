@@ -16,13 +16,13 @@ public class ShooterSubsystem {
 
     public static double shooterSpeed = 1300;
 
+    public static double realShooterSpeed = 0;
 
-
-    public static double P = 200;
+    public static double P = 150;
     public static double I = 0;
     public static double D = 0;
 
-    public static double F = 22.16;
+    public static double F = 13.65;
 
     public static boolean UPDATE_FLYWHEEL_PID = false;
 
@@ -59,7 +59,9 @@ public class ShooterSubsystem {
     public void pidfTuning(){
         if (UPDATE_FLYWHEEL_PID){
             PIDFCoefficients pidfNew = new PIDFCoefficients (P, I, D, F);
+            shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
             UPDATE_FLYWHEEL_PID = false;
         }
+        realShooterSpeed = shooter.getVelocity();
     }
 }
