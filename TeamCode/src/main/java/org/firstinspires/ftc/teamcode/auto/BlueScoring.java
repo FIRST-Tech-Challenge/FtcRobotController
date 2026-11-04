@@ -57,6 +57,8 @@ public class BlueScoring extends LinearOpMode {
         );
         // endregion
 
+        // region auto
+
         if (cameraTrackingSubsystems.seeApirltag()){
             // region block 2
             Actions.runBlocking(
@@ -176,5 +178,8 @@ public class BlueScoring extends LinearOpMode {
             }
 
         }
+
+        // endregion
+
     }
 }
