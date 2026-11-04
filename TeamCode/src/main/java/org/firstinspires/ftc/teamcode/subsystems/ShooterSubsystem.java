@@ -53,12 +53,14 @@ public class ShooterSubsystem {
     }
 
     public void stopShooter(){
-        shooter.setVelocity(0);
+        shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooter.setPower(0);
     }
 
     public void pidfTuning(){
         if (UPDATE_FLYWHEEL_PID){
             PIDFCoefficients pidfNew = new PIDFCoefficients (P, I, D, F);
+            shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfNew);
             UPDATE_FLYWHEEL_PID = false;
         }
     }
