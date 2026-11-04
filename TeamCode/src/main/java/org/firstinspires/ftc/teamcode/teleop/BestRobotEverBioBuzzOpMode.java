@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.BeamBrakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.CameraTrackingSubsystems;
+import org.firstinspires.ftc.teamcode.subsystems.DepollenaterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FeederSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -24,6 +25,7 @@ public class BestRobotEverBioBuzzOpMode extends OpMode {
     private FeederSubsystem feederSubsystem;
     private BeamBrakeSubsystem beamBrakeSubsystem;
     private CameraTrackingSubsystems cameraTrackingSubsystems;
+    private DepollenaterSubsystem depollenaterSubsystem;
     private MecanumDrive drive;
 
     private double rx;
@@ -43,6 +45,7 @@ public class BestRobotEverBioBuzzOpMode extends OpMode {
         feederSubsystem = new FeederSubsystem(hardwareMap, telemetry);
         beamBrakeSubsystem = new BeamBrakeSubsystem(hardwareMap, telemetry);
         cameraTrackingSubsystems =new CameraTrackingSubsystems(hardwareMap,telemetry);
+        depollenaterSubsystem = new DepollenaterSubsystem(hardwareMap,telemetry);
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
 
@@ -50,6 +53,7 @@ public class BestRobotEverBioBuzzOpMode extends OpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         shooterSubsystem.initShooter();
+        depollenaterSubsystem.depollenaterUp();
     }
 
     @Override
@@ -111,6 +115,13 @@ public class BestRobotEverBioBuzzOpMode extends OpMode {
 
         // endregion
 
+        // region de-pollonater code
+        if (gamepad2.y){
+            depollenaterSubsystem.DepollenaterDown();
+        } else {
+            depollenaterSubsystem.depollenaterUp();
+        }
+        // endregion
 
     }
 }
