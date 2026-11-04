@@ -22,7 +22,9 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
     private final double INTAKE_POWER = 1.0;
     private final double FEEDER_POWER = 1.0;
 
-    private boolean intakeOn = false;
+    private boolean intakeOn = true;
+    private boolean intakeReversed = false;
+
     private double launcherTargetVelocity = INITIAL_LAUNCHER_TARGET_VELOCITY;
 
     @Override
@@ -50,35 +52,42 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
             if (gamepad1.leftBumperWasPressed()) {
                 intakeOn = !intakeOn;
             }
-            double intakePower = 0;
-            if (intakeOn) {
-                intakePower = INTAKE_POWER;
-            } // else stays at 0
+            if (gamepad1.rightBumperWasPressed()) {
+                intakeReversed = !intakeReversed;
+            }
+            double intakePower;
+            intakePower = intakeOn ? INTAKE_POWER : 0.0;
+            intakePower = intakeReversed ? -intakePower : intakePower;
             intake.setPower(intakePower);
             leftIntakeServo.setPower(intakePower);
             rightIntakeServo.setPower(intakePower);
 
             /////////////////////////
-            // handle feeder - only runs when buttons are held
+            // handle feeder
             /////////////////////////
-            if (gamepad1.y) {
+            if (gamepad2.leftBumperWasPressed()) {
                 feeder.setPower(FEEDER_POWER);
-            } else if (gamepad1.a) {
+            } else if (gamepad2.rightBumperWasPressed()) {
                 feeder.setPower(-FEEDER_POWER);
-            } else {
+            } else if (gamepad2.aWasPressed()){
                 feeder.setPower(0.0);
             }
 
             /////////////////////////
+            // handle turret
+            /////////////////////////
+            turret.setPower(gamepad2.left_stick_x);
+
+            /////////////////////////
             // handle launcher - runs continuously
             /////////////////////////
-            if (gamepad1.dpadUpWasPressed()) {
+            if (gamepad2.dpadUpWasPressed()) {
                 launcherTargetVelocity += 100;
                 if (launcherTargetVelocity > MAX_LAUNCHER_TARGET_VELOCITY) {
                     launcherTargetVelocity = MAX_LAUNCHER_TARGET_VELOCITY;
                 }
             }
-            if (gamepad1.dpadDownWasPressed()) {
+            if (gamepad2.dpadDownWasPressed()) {
                 launcherTargetVelocity -= 100;
                 if (launcherTargetVelocity < MIN_LAUNCHER_TARGET_VELOCITY) {
                     launcherTargetVelocity = MIN_LAUNCHER_TARGET_VELOCITY;
