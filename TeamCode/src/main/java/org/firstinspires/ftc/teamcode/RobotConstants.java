@@ -50,7 +50,7 @@ public final class RobotConstants {
 
     // ---- Launcher (live-tunable values are in LauncherConfig) ----
     public static final DcMotor.Direction LAUNCHER_MOTOR_DIRECTION = DcMotor.Direction.REVERSE; // confirmed on the robot
-    public static final double LAUNCHER_TARGET_VEL = 1150;      // free speed of the flywheel motor
+    public static final double LAUNCHER_TARGET_VEL = 950;      // free speed of the flywheel motor
     public static final double LAUNCHER_TICKS_PER_REV = 28;  // 6000 RPM goBILDA motor, no gearbox (check the spec sheet)
     public static final double LAUNCHER_REVERSE_POWER = 0.5; // raw power while clearing a jam, start low and tune
 
@@ -80,4 +80,12 @@ public final class RobotConstants {
     public static final double SHOOT_READY_TIMEOUT_SECONDS = 2.0; // give up waiting for speed and fire anyway
     public static final double SHOOT_FEED_HOLD_SECONDS = 0.3;     // how long to hold the feeder forward
     public static final double SHOOT_FEED_PAUSE_SECONDS = 0.3;    // gap before checking ready for the next piece
+
+    //april tag numbers (auto)
+    public static final int[] LEFT_BLUE_APRIL_TAG_CODES = {38,41};
+    public static final int[] RIGHT_BLUE_APRIL_TAG_CODES = {42,45};
+
+    //blue above red below this line
+    public static final int[] LEFT_RED_APRIL_TAG_CODES = {34,37};
+    public static final int[] RIGHT_RED_APRIL_TAG_CODES = {30,33};
 }

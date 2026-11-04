@@ -65,7 +65,7 @@ public class Launcher implements Subsystem {
     public void spinUp(double vel) {
         if (vel != targetVel) RobotLog.ii("Launcher", "target rpm -> %.0f", vel);
         targetVel = vel;
-        flywheel.setVelocity(vel * RobotConstants.LAUNCHER_TICKS_PER_REV / 60.0);
+        flywheel.setVelocity(RobotConstants.LAUNCHER_TARGET_VEL);
     }
 
     public void stopFlywheel() {
