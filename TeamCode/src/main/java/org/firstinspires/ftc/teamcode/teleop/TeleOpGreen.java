@@ -31,7 +31,6 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
     public void runOpMode() { // when driver hits INIT
         config();
 
-
         helpMenu();
         telemetry.update();
 
@@ -39,7 +38,7 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
 
         while (opModeIsActive()) {
             /////////////////////////
-            // handle driving
+            // handle driving - driver 1
             /////////////////////////
             double forward = -gamepad1.left_stick_y;
             double strafe = gamepad1.left_stick_x;
@@ -47,7 +46,7 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
             drive.drive(forward, strafe, turn);
 
             /////////////////////////
-            // handle intake
+            // handle intake - driver 1
             /////////////////////////
             if (gamepad1.leftBumperWasPressed()) {
                 intakeOn = !intakeOn;
@@ -63,7 +62,7 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
             rightIntakeServo.setPower(intakePower);
 
             /////////////////////////
-            // handle feeder
+            // handle feeder - driver 2
             /////////////////////////
             if (gamepad2.leftBumperWasPressed()) {
                 feeder.setPower(FEEDER_POWER);
@@ -74,12 +73,13 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
             }
 
             /////////////////////////
-            // handle turret
+            // handle turret - driver 2
             /////////////////////////
             turret.setPower(gamepad2.left_stick_x);
 
             /////////////////////////
-            // handle launcher - runs continuously
+            // handle launcher - driver 2
+            // (runs continuously)
             /////////////////////////
             if (gamepad2.dpadUpWasPressed()) {
                 launcherTargetVelocity += 100;
@@ -98,7 +98,7 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
             /////////////////////////
             // update telemetry
             /////////////////////////
-            if (gamepad1.start) {
+            if (gamepad1.start || gamepad2.start) {
                 helpMenu();
             } else {
                 double launcherVelocity = launcher.getVelocity();
@@ -110,10 +110,15 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
     }
 
     private void helpMenu() {
-        telemetry.addData("Drive controls", "Standard Mecanum");
-        telemetry.addData("Intake Toggle", "Left Bumper");
-        telemetry.addData("Run Launcher", "FWD: Hold Y, REV: Hold A");
-        telemetry.addData("Launcher +", "DPad Up");
-        telemetry.addData("Launcher - ", "DPad Down");
+        telemetry.addData("Help Menu (this)", "Either Gamepad - Press Start");
+        telemetry.addData("Drive controls", "Gamepad 1 - Standard Mecanum");
+        telemetry.addData("Intake IN (Toggle)", "Gamepad 1 - Left Bumper");
+        telemetry.addData("Intake OUT (Toggle)", "Gamepad 1 - Right Bumper");
+        telemetry.addData("Feeder IN (Keep On)", "Gamepad 2 - Left Bumper");
+        telemetry.addData("Feeder OUT (Keep On)", "Gamepad 2 - Right Bumper");
+        telemetry.addData("Feeder OFF", "Gamepad 2 - A");
+        telemetry.addData("Turret L/R", "Gamepad 2 - Left Stick L/R");
+        telemetry.addData("Launcher +100", "Gamepad 2 - DPad Up");
+        telemetry.addData("Launcher -100", "Gamepad 2 - DPad Down");
     }
 }
