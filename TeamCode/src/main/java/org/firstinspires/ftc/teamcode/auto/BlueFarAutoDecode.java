@@ -29,11 +29,11 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.archive.Hood;
 
 @Config
-public class BlueFarAuto extends LinearOpMode {
+public class BlueFarAutoDecode extends LinearOpMode {
 
     boolean isRed = false;
     @Autonomous()
-    public static class BlueFar extends BlueFarAuto {
+    public static class BlueFar extends BlueFarAutoDecode {
         public BlueFar() {
             super(new Pose2d(60, -14.5, Math.toRadians(180)), new IdentityPoseMap());
 
@@ -42,7 +42,7 @@ public class BlueFarAuto extends LinearOpMode {
 
     @Autonomous()
     @Disabled
-    public static class RedFarAuto extends BlueFarAuto {
+    public static class RedFarAuto extends BlueFarAutoDecode {
         public RedFarAuto() {
             super(
                     new Pose2d(60, -14.5, Math.toRadians(180)
@@ -140,7 +140,7 @@ public class BlueFarAuto extends LinearOpMode {
         };
     }
 
-    public BlueFarAuto(Pose2d startingPose, PoseMap poseMap) {
+    public BlueFarAutoDecode(Pose2d startingPose, PoseMap poseMap) {
         this.poseMap = poseMap;
         this.startingPose = startingPose;
     }
