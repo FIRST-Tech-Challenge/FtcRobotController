@@ -61,24 +61,24 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
             /////////////////////////
             // handle feeder - only runs when buttons are held
             /////////////////////////
-            if (gamepad1.y) {
+            if (gamepad2.leftBumperWasPressed()) {
                 feeder.setPower(FEEDER_POWER);
-            } else if (gamepad1.a) {
+            } else if (gamepad2.rightBumperWasPressed()) {
                 feeder.setPower(-FEEDER_POWER);
-            } else {
+            } else if (gamepad2.aWasPressed()){
                 feeder.setPower(0.0);
             }
 
             /////////////////////////
             // handle launcher - runs continuously
             /////////////////////////
-            if (gamepad1.dpadUpWasPressed()) {
+            if (gamepad2.dpadUpWasPressed()) {
                 launcherTargetVelocity += 100;
                 if (launcherTargetVelocity > MAX_LAUNCHER_TARGET_VELOCITY) {
                     launcherTargetVelocity = MAX_LAUNCHER_TARGET_VELOCITY;
                 }
             }
-            if (gamepad1.dpadDownWasPressed()) {
+            if (gamepad2.dpadDownWasPressed()) {
                 launcherTargetVelocity -= 100;
                 if (launcherTargetVelocity < MIN_LAUNCHER_TARGET_VELOCITY) {
                     launcherTargetVelocity = MIN_LAUNCHER_TARGET_VELOCITY;
