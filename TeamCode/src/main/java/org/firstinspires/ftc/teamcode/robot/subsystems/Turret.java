@@ -14,8 +14,10 @@ public class Turret implements Subsystem {
     private PIDController pidController;
     private boolean isDisabled = false;
     public Turret(HardwareMap hardwareMap, double p, double i, double d){
-        turretServo = hardwareMap.get(Servo.class, "turretServo");
-        turretEncoder = hardwareMap.get(DcMotor.class, "turretEncoder");
+        String servo = "turretServo";
+        String encoder = "turretEncoder";
+        turretServo = hardwareMap.get(Servo.class, servo);
+        turretEncoder = hardwareMap.get(DcMotor.class, encoder);
         turretEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turretEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         pidController = new PIDController(p, i, d, new ElapsedTime());
