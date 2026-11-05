@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class ShooterSubsystem {
 
-    public static double shooterSpeed = 1300;
+    public static double shooterSpeed = 1320;
 
     public static double realShooterSpeed = 0;
 
