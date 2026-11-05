@@ -16,7 +16,7 @@ public class ShooterSubsystemFF {
     public static double READY_TOLERANCE_RPM = 150.0;
 
     // Initial estimates only; tune on your actual robot.
-    public static double kP = 0.006; // power per RPM of error
+    public static double kP = 0.001; // power per RPM of error
     public static double kI = 0.0;
     public static double kD = 0.0;
     public static double kV = 0.0002; // power per target RPM

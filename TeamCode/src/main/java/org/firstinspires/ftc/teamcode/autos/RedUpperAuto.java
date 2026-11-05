@@ -24,24 +24,47 @@ public class RedUpperAuto extends OpMode {
     private ShooterSubsystemFF shooter;
     private StopperSubsystem stopper;
 
-    private final ElapsedTime timer = new ElapsedTime();
-    private int step = 0;
-
     private static final double SHOOT_RPM = 3200;
-    private static final double FEED_DELAY = 0.3;
+    private static final double DRIVE_TIMEOUT = 5.0;
     private static final double GATE_TIME = 1.5;
-    private static final double COLLECT_WAIT = 2.0;
+
+    private final ElapsedTime stepTimer = new ElapsedTime();
+    private int step = 0;
 
     private final PoseFactory poses = PoseFactory.degrees();
 
-    private final Pose startPose = poses.of(60, 134, 90);
-    private final Pose shootPose = poses.of(60, 130, 270);
-    private final Pose collectPose = poses.of(48, 130, 90);
-    private final Pose collectControl = poses.of(53.3288, 109.5317, 0);
-    private final Pose returnControl = poses.of(53.2602, 109.0498, 0);
-    private final Pose exitPose = poses.of(14.0947, 107.6721, -154.0621);
+    private final Pose startPose =
+            poses.of(53.5, 139.3, 270);
 
-    private Path path1, path2, path3, path5;
+    private final Pose shootPose =
+            poses.of(53.5, 135.3, 270);
+
+    private final Pose collectPose =
+            poses.of(48, 130, 90);
+
+    private final Pose collectControl =
+            poses.of(53.3288, 109.5317, 0);
+
+    private final Pose returnControl =
+            poses.of(53.2602, 109.0498, 0);
+
+    private final Pose exitPose =
+            poses.of(14.0947, 107.6721, -154.0621);
+
+    private Path path1;
+    private Path path2;
+    private Path path3;
+    private Path path5;
+
+    private void setStep(int nextStep) {
+        step = nextStep;
+        stepTimer.reset();
+    }
+
+    private boolean driveFinished() {
+        return !follower.isBusy()
+                || stepTimer.seconds() >= DRIVE_TIMEOUT;
+    }
 
     @Override
     public void init() {
@@ -59,23 +82,35 @@ public class RedUpperAuto extends OpMode {
         path1 = Paths.line(startPose, shootPose)
                 .linear(startPose, shootPose);
 
-        path2 = Paths.curve(shootPose, collectControl, collectPose)
-                .linear(shootPose, collectPose);
+        path2 = Paths.curve(
+                shootPose,
+                collectControl,
+                collectPose
+        ).linear(shootPose, collectPose);
 
-        path3 = Paths.curve(collectPose, returnControl, shootPose)
-                .linear(collectPose, shootPose);
+        path3 = Paths.curve(
+                collectPose,
+                returnControl,
+                shootPose
+        ).linear(collectPose, shootPose);
 
-        path5 = Paths.line(shootPose, exitPose).tangent();
+        path5 = Paths.line(shootPose, exitPose)
+                .tangent();
 
-        OpModeStorage.autonomousIsBlue = true;
+        OpModeStorage.autonomousIsBlue = false;
         OpModeStorage.autonomousEndPose = null;
     }
 
     @Override
     public void start() {
-        step = 0;
+        stopper.off();
+
+        // Intake and shooter run continuously until Stop.
+        intake.startIntake();
         shooter.update(true);
+
         follower.follow(path1);
+        setStep(0);
     }
 
     @Override
@@ -85,71 +120,97 @@ public class RedUpperAuto extends OpMode {
 
         switch (step) {
 
-            // Arrive at shooting position, first or second visit.
+            // PATH 1: Approach shooting position.
+            // No driving timeout.
             case 0:
-            case 4:
-                if (!follower.isBusy() && shooter.isReady()) {
+                if (!follower.isBusy()) {
                     follower.hold(shootPose);
-                    intake.stopIntake();
-                    stopper.on();
-                    timer.reset();
-                    step++;
+                    setStep(1);
                 }
                 break;
 
-            // Shoot: gate open for 1.5 s, intake starts after 0.3 s.
+            // Hold shooting position and wait for RPM.
+            // No shooter readiness timeout.
             case 1:
-            case 5:
-                if (timer.seconds() >= GATE_TIME) {
-                    stopper.off();
-                    intake.stopIntake();
-
-                    if (step == 1) {
-                        // Collect for 2 s while still at shooting position.
-                        intake.startIntake();
-                        timer.reset();
-                        step = 2;
-                    } else {
-                        follower.follow(path5);
-                        step = 6;
-                    }
-                } else if (timer.seconds() >= FEED_DELAY) {
-                    intake.startIntake();
+                if (shooter.isReady()) {
+                    stopper.on();
+                    setStep(2);
                 }
                 break;
 
-            // Wait stationary with intake running, then start Path 2.
+            // Shoot preloads for 1.5 seconds.
             case 2:
-                if (timer.seconds() >= COLLECT_WAIT) {
+                if (stepTimer.seconds() >= GATE_TIME) {
+                    stopper.off();
+
                     follower.follow(path2);
-                    step = 3;
+                    setStep(3);
                 }
                 break;
 
-            // Keep intake running throughout Path 2.
+            // PATH 2: Follow the collection curve.
+            // Intake stays running. Five-second timeout.
             case 3:
-                if (!follower.isBusy()) {
-                    intake.stopIntake();
+                if (driveFinished()) {
                     follower.follow(path3);
-                    step = 4;
+                    setStep(4);
                 }
                 break;
 
-            // Finish exit path; shooter remains on until OpMode stops.
-            case 6:
+            // PATH 3: Return to shooting position.
+            // Intake stays running. No driving timeout.
+            case 4:
                 if (!follower.isBusy()) {
-                    follower.hold(exitPose);
-                    step = 7;
+                    follower.hold(shootPose);
+                    setStep(5);
                 }
+                break;
+
+            // Hold shooting position and wait for RPM.
+            // No shooter readiness timeout.
+            case 5:
+                if (shooter.isReady()) {
+                    stopper.on();
+                    setStep(6);
+                }
+                break;
+
+            // Shoot collected balls for 1.5 seconds.
+            case 6:
+                if (stepTimer.seconds() >= GATE_TIME) {
+                    stopper.off();
+
+                    follower.follow(path5);
+                    setStep(7);
+                }
+                break;
+
+            // PATH 5: Drive to parking position.
+            // Five-second driving timeout.
+            case 7:
+                if (driveFinished()) {
+                    follower.hold(exitPose);
+                    setStep(8);
+                }
+                break;
+
+            // Hold final position.
+            // Intake and shooter remain running until Stop.
+            case 8:
                 break;
         }
 
         OpModeStorage.autonomousEndPose = follower.pose();
 
         telemetry.addData("Step", step);
+        telemetry.addData("Step time", "%.2f", stepTimer.seconds());
+        telemetry.addData("Path busy", follower.isBusy());
         telemetry.addData("X", follower.pose().x());
         telemetry.addData("Y", follower.pose().y());
-        telemetry.addData("Heading", Math.toDegrees(follower.pose().heading()));
+        telemetry.addData(
+                "Heading",
+                Math.toDegrees(follower.pose().heading())
+        );
         telemetry.addData("RPM", shooter.getVelocityRpm());
         telemetry.addData("Ready", shooter.isReady());
         telemetry.update();
@@ -158,9 +219,11 @@ public class RedUpperAuto extends OpMode {
     @Override
     public void stop() {
         OpModeStorage.autonomousEndPose = follower.pose();
+
         shooter.stop();
         intake.stopIntake();
         stopper.off();
+
         follower.stop();
         follower.update();
     }

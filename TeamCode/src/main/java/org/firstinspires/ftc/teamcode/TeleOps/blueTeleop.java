@@ -128,6 +128,7 @@ public class blueTeleop extends OpMode {
         //turret = new TurretSubsystem(hardwareMap, turretConfig);
 
         shooter.setTargetRpm(DEFAULT_RPM);
+        stopper.off();
 
         /*
         tracking = new TurretTracking(
