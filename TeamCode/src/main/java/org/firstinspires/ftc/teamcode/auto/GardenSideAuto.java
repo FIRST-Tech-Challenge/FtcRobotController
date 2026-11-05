@@ -36,7 +36,7 @@ public class GardenSideAuto extends LinearOpMode {
 
 
     public void runOpMode() throws InterruptedException {
-
+        drive = new MecanumDrive(hardwareMap, new Pose2d(14, 60.5, Math.toRadians(270)));
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
         shooterSubsystem = new ShooterSubsystem(hardwareMap, telemetry);
