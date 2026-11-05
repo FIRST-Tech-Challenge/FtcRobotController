@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseMap;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -11,7 +13,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.BeamBrakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.CameraTrackingSubsystems;
+import org.firstinspires.ftc.teamcode.subsystems.DepollenaterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FeederSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
@@ -29,18 +33,24 @@ public class BlueScoring extends LinearOpMode {
     private ShooterSubsystem shooterSubsystem;
     private FeederSubsystem feederSubsystem;
     private CameraTrackingSubsystems cameraTrackingSubsystems;
-    PoseMap poseMap;
+
     private double feederOnTime = 2;
 
 
     public void runOpMode() throws InterruptedException {
+
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
+        shooterSubsystem = new ShooterSubsystem(hardwareMap, telemetry);
+        feederSubsystem = new FeederSubsystem(hardwareMap, telemetry);
+        cameraTrackingSubsystems =new CameraTrackingSubsystems(hardwareMap,telemetry);
 
         Pose2d beginPose = new Pose2d(14, 60.5, Math.toRadians(270));
 
         // region block 1
         Actions.runBlocking(
                 new RaceAction(
-                        drive.actionBuilder(beginPose, poseMap)
+                        drive.actionBuilder(beginPose)
                                 .stopAndAdd(() -> shooterSubsystem.runShooter() ) // turn on shooter
                                 .stopAndAdd(() -> feederSubsystem.runIndexerForward()) // shoot
                                 .waitSeconds(feederOnTime)
@@ -63,7 +73,7 @@ public class BlueScoring extends LinearOpMode {
             // region block 2
             Actions.runBlocking(
                     new RaceAction(
-                            drive.actionBuilder(new Pose2d(55, 55, Math.toRadians(220)), poseMap)
+                            drive.actionBuilder(new Pose2d(55, 55, Math.toRadians(220)))
 
                                     .setTangent(180)
                                     .splineToLinearHeading(new Pose2d(14, 60.5, Math.toRadians(270)), Math.toRadians(180)) // move to garden side
@@ -82,7 +92,7 @@ public class BlueScoring extends LinearOpMode {
                 // region block 4
                 Actions.runBlocking(
                         new RaceAction(
-                                drive.actionBuilder(new Pose2d(14, 60.5, Math.toRadians(270)), poseMap)
+                                drive.actionBuilder(new Pose2d(14, 60.5, Math.toRadians(270)))
 
                                         .setTangent(Math.toRadians(330))
                                         .splineToLinearHeading(new Pose2d(57, -20, Math.toRadians(180)), Math.toRadians(300))
@@ -98,7 +108,7 @@ public class BlueScoring extends LinearOpMode {
                 // region block 5
                 Actions.runBlocking(
                         new RaceAction(
-                                drive.actionBuilder(new Pose2d(14, 60.5, Math.toRadians(270)), poseMap)
+                                drive.actionBuilder(new Pose2d(14, 60.5, Math.toRadians(270)))
 
                                         .splineToLinearHeading(new Pose2d(40, -45, Math.toRadians(130)), Math.toRadians(250)) //move to loading side
                                         .stopAndAdd(() -> intakeSubsystem.runIntakeForward())
@@ -122,7 +132,7 @@ public class BlueScoring extends LinearOpMode {
             // region block 3
             Actions.runBlocking(
                     new RaceAction(
-                            drive.actionBuilder(new Pose2d(55, 55, Math.toRadians(220)), poseMap)
+                            drive.actionBuilder(new Pose2d(55, 55, Math.toRadians(220)))
 
                                     .splineToLinearHeading(new Pose2d(40, -45, Math.toRadians(130)), Math.toRadians(250)) //move to loading side
                                     .stopAndAdd(() -> feederSubsystem.runIndexerForward())  //shoot
@@ -143,7 +153,7 @@ public class BlueScoring extends LinearOpMode {
                 // region block 6
                 Actions.runBlocking(
                         new RaceAction(
-                                drive.actionBuilder(new Pose2d(40, -45, Math.toRadians(130)), poseMap)
+                                drive.actionBuilder(new Pose2d(40, -45, Math.toRadians(130)))
                                         .setTangent(Math.toRadians(80))
                                         .splineToLinearHeading(new Pose2d(14, 60.5, Math.toRadians(270)), Math.toRadians(160)) //move to garden side
                                         .stopAndAdd(() -> feederSubsystem.runIndexerForward()) // shoot
@@ -162,7 +172,7 @@ public class BlueScoring extends LinearOpMode {
                 // region block 7
                 Actions.runBlocking(
                         new RaceAction(
-                                drive.actionBuilder(new Pose2d(40, -45, Math.toRadians(130)), poseMap)
+                                drive.actionBuilder(new Pose2d(40, -45, Math.toRadians(130)))
                                         .stopAndAdd(() -> feederSubsystem.runIndexerForward())
                                         .waitSeconds(feederOnTime) // shoot
                                         .stopAndAdd(() -> feederSubsystem.stopIndexer())
