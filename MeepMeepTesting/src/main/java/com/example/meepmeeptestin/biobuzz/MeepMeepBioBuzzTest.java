@@ -26,7 +26,7 @@ public class MeepMeepBioBuzzTest {
 
                 // region block 1
                 .waitSeconds(2) // Shoot
-                .strafeToSplineHeading(new Vector2d(60.5,60.5), Math.toRadians(270))
+                .strafeToSplineHeading(new Vector2d(53,60.5), Math.toRadians(270))
                 .setTangent(Math.toRadians(240))
                 .strafeToLinearHeading(new Vector2d(55,55),Math.toRadians(220))
                 .waitSeconds(1)

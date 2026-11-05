@@ -30,9 +30,9 @@ public class BestRobotEverBioBuzzOpMode extends OpMode {
 
     private double rx;
     private double driveSpeed = 0;
-    private double driveSpeedFast = 1;
+    private double driveSpeedFast = 0.95;
     private double driveSpeedSlow = 0.4;
-    private double driveSpeedNormal = 0.65;
+    private double driveSpeedNormal = 0.8;
     public static double turnSpeed = 0.5;
 
     public static double autoAimMultuplyer = 0.05;
@@ -73,7 +73,10 @@ public class BestRobotEverBioBuzzOpMode extends OpMode {
 
         if (gamepad1.left_bumper){
            driveSpeed = driveSpeedSlow;
-        } else {
+        } else if (gamepad1.right_bumper){
+            driveSpeed = driveSpeedFast;
+        }
+        else {
             driveSpeed = driveSpeedNormal;
         }
 

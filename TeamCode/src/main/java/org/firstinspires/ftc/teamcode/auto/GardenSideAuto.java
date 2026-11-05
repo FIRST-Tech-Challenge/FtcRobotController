@@ -32,7 +32,7 @@ public class GardenSideAuto extends LinearOpMode {
     private DepollenaterSubsystem depollenaterSubsystem;
     private CameraTrackingSubsystems cameraTrackingSubsystems;
 
-    private double feederOnTime = 2;
+    private double feederOnTime = 3;
 
 
     public void runOpMode() throws InterruptedException {
@@ -66,10 +66,10 @@ public class GardenSideAuto extends LinearOpMode {
                                 .waitSeconds(feederOnTime)
                                 .stopAndAdd(() -> feederSubsystem.stopIndexer()) // stop shooting
                                 .stopAndAdd(() -> intakeSubsystem.runIntakeForward()) //turn on intake
-                                .strafeToSplineHeading(new Vector2d(60.5,60.5), Math.toRadians(270)) // intake
+                                .strafeToSplineHeading(new Vector2d(53,60.5), Math.toRadians(270), new com.acmerobotics.roadrunner.TranslationalVelConstraint(15.0)) // intake
                                 .waitSeconds(.5)
                                 .stopAndAdd(() -> intakeSubsystem.stopIntake()) // turn off intake
-                                .strafeToLinearHeading(new Vector2d(55,55),Math.toRadians(220)) // camera check
+                                .strafeToLinearHeading(new Vector2d(55,55),Math.toRadians(220), new com.acmerobotics.roadrunner.TranslationalVelConstraint(15.0)) // camera check
                                 .waitSeconds(1)
                                 .build()
                 )
