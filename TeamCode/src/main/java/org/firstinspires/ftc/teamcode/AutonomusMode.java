@@ -1,216 +1,218 @@
-package org.firstinspires.ftc.robotcontroller;
-
-import static org.firstinspires.ftc.robotcontroller.OdoTreino.DIR_ENC_X;
-import static org.firstinspires.ftc.robotcontroller.OdoTreino.DIR_ENC_Y;
-import static org.firstinspires.ftc.robotcontroller.OdoTreino.START_H_DEG;
-import static org.firstinspires.ftc.robotcontroller.OdoTreino.START_X_MM;
-import static org.firstinspires.ftc.robotcontroller.OdoTreino.START_Y_MM;
-
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+package org.firstinspires.ftc.teamcode;
+//Blbliotecas nescessárias para o TeleOp
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+//Motor e afins
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+//Odometria
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
-public class fds extends LinearOpMode {
-    //NOMES NO "CONFIGURE ROBOT" (Driver Station)
-    static final String M_LEF = "frontleft";
-    static final String M_LDF = "frontright";
-    static final String M_LET = "backleft";
-    static final String M_LDT = "backright";
-    static final String PINPOINT = "odo";
-    static final String CAMERA = "Webcam 1";
-    static final String INTAKE = "intake";
-    static final String LAUNCHER = "launcher";
-    static final String S_YAW_ESQ = "yawEsq";
-    static final String S_YAW_DIR = "yawDir";
-    static final String S_PITCH = "pitch";
+@TeleOp(name = "MainCode", group = "Linear")
+public class TeleOpfinal extends LinearOpMode {
 
-    //Variaveis do robo
-    static final double xOffset = 95;
-    static final double yOffset = 100;
-    static final double tol = 10;
-    static final double tolH = 5;
-    private double pot = 0.5;
-    private double x, y, h;
-    private double erX, erY, erH;
+    // Locomoção
+    private DcMotor Ldf, Ldt, Lef, Let;
 
-    //hardware
-    private DcMotor Lef, Ldf, Let, Ldt, intake;
+    // Coletor
+    private DcMotor Coletor;
+    private DcMotor Auxilio;
+    private boolean coletorLigado  = false;
+    private boolean botaoAAnterior = false;
+
+    // Lançador
+    private DcMotor motorPotencia;
+    private CRServo ServoC;                 // gatilho, servo de rotação contínua   // MUDOU
+    private Servo servoTorreta;
+    private double posicaoTorreta = 0.5;    // torreta começa no meio
+    private ElapsedTime timer = new ElapsedTime();
+
+    // Servos Modeladores (Se eles controlam posições, devem ser do tipo Servo)
+    private Servo servoPotencia;
+    private Servo servo2Potencia;
+    private double PotenciaAtual = 1;
+    private double PotenciaAtual2 = 1;
+
+    // Odometria GoBilda Pinpoint
     private GoBildaPinpointDriver odo;
 
-    //config motores e servos
-    public void declarar(){
-        Lef = hardwareMap.get(DcMotor.class, M_LEF);
-        Let = hardwareMap.get(DcMotor.class, M_LET);
-        Ldf = hardwareMap.get(DcMotor.class, M_LDF);
-        Ldt = hardwareMap.get(DcMotor.class, M_LDT);
+    @Override
+    public void runOpMode() {
+        inicializarHardware();
+        invmotores();
 
-        intake = hardwareMap.get(DcMotor.class, "intake");
-        odo = hardwareMap.get(GoBildaPinpointDriver.class, PINPOINT);
+        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+        odometry();   // configura a odometria UMA vez, antes do start
+
+        telemetry.addData("Status", "Pronto");
+        telemetry.addData("ServoC", ServoC == null ? "NAO ENCONTRADO na config" : "ok");
+        telemetry.update();
+
+        waitForStart();
+        timer.reset();
+
+        while (opModeIsActive()) {
+            odo.update();   // atualiza a odometria a cada ciclo
+
+            movimentacao();
+            coletor();
+            motorsLancador();
+            servoLancador();
+            servoTORRETA();
+
+            Pose2D pos = odo.getPosition();
+
+            telemetry.addData("Torreta", "%.2f", posicaoTorreta);
+            telemetry.addData("Lancador", "%.2f", motorPotencia.getPower());
+            telemetry.addData("ServoC", ServoC == null ? "NAO ENCONTRADO" : "ok");
+            telemetry.addData("Auxilio", "%.2f", Auxilio.getPower());   // MUDOU
+            telemetry.update();
+        }
+    }
+
+    public void invmotores() {
+        Lef.setDirection(DcMotor.Direction.FORWARD);
+        Let.setDirection(DcMotor.Direction.FORWARD);
+        Ldf.setDirection(DcMotor.Direction.REVERSE);
+        Ldt.setDirection(DcMotor.Direction.REVERSE);
+        Coletor.setDirection(DcMotor.Direction.FORWARD);
+        Auxilio.setDirection(DcMotor.Direction.REVERSE);
+    }
+
+    // Controle 1 - Locomoção
+    public void movimentacao() {
+        double  axial   =  this.gamepad1.left_stick_y,
+                lateral = -this.gamepad1.left_stick_x,
+                rot     = -this.gamepad1.right_stick_x;
+
+        double VLef = axial - lateral + rot,
+                VLdf = axial + lateral - rot,
+                VLet = axial + lateral + rot,
+                VLdt = axial - lateral - rot;
+
+        double max = Math.max(Math.abs(VLef), Math.abs(VLdf));
+        max = Math.max(max, Math.abs(VLet));
+        max = Math.max(max, Math.abs(VLdt));
+
+        if (max > 0.75) {
+            VLef /= max;
+            VLdf /= max;
+            VLet /= max;
+            VLdt /= max;
+        }
+
+        Lef.setPower(VLef);
+        Ldf.setPower(VLdf);
+        Let.setPower(VLet);
+        Ldt.setPower(VLdt);
+    }
+
+    // Controle 1 - Coletor (botão A)
+    public void coletor() {             //******
+        boolean botaoAAtual = this.gamepad1.a;
+
+        if (botaoAAtual && !botaoAAnterior) {
+            coletorLigado = !coletorLigado;
+        }
+        botaoAAnterior = botaoAAtual;
+        if (coletorLigado) {
+            Coletor.setPower(1.0);
+            Auxilio.setPower(1.0);
+        } else {
+            Coletor.setPower(0.0);
+            Auxilio.setPower(0.0);
+        }
 
     }
-    public void config(){
-        //Motores
-        Lef.setDirection(DcMotorSimple.Direction.FORWARD);
-        Let.setDirection(DcMotorSimple.Direction.REVERSE);
-        Ldf.setDirection(DcMotorSimple.Direction.REVERSE);
-        Ldt.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        //Servo
+    // Controle 2 - Lançador (analógico direito pra cima) e gatilho (Y)
+    public void motorsLancador() {
+        double y = -gamepad2.right_stick_y;        // pra cima = positivo
+        if (y < 0.03) y = 0;                       // perto do centro ou pra baixo = desligado
+        motorPotencia.setPower(y * 0.57);          // analógico no topo = 0.57
 
-        //Odo
-        odo.setOffsets(xOffset, yOffset, DistanceUnit.MM);
+        // Gatilho (ServoC): segura Y pra girar, solta pra parar   // MUDOU
+        if (ServoC != null) {
+            if (gamepad2.y) {
+                ServoC.setPower(1.0);
+            } else {
+                ServoC.setPower(0.0);
+            }
+        }
+    }
+
+    // Controle 2 - Torreta (analógico esquerdo pros lados)
+    public void servoTORRETA() {     //*******
+        double tempo = timer.seconds();            // segundos desde o último ciclo
+        timer.reset();
+
+        double x = gamepad2.left_stick_x;          // -1 = esquerda, 1 = direita
+        if (Math.abs(x) < 0.1) x = 0;              // perto do centro conta como solto
+        posicaoTorreta = posicaoTorreta + x * 0.5 * tempo;   // 0.5 = velocidade da torreta
+        if (posicaoTorreta > 0.7) posicaoTorreta = 0.7;      // limite da estrutura
+        if (posicaoTorreta < 0.0) posicaoTorreta = 0.0;
+        servoTorreta.setPosition(posicaoTorreta);
+    }
+
+    //Servos Auxiliadores
+    public void servoLancador() {
+        if (gamepad2.a) {
+            PotenciaAtual  = servoPotencia.getPosition();
+            PotenciaAtual2 = servo2Potencia.getPosition();
+
+            servoPotencia.setPosition(PotenciaAtual + 1);
+
+            servo2Potencia.setPosition(PotenciaAtual2 + 1);
+        }
+        if (gamepad2.x) {
+            servoPotencia.setPosition(PotenciaAtual);
+
+            servo2Potencia.setPosition(PotenciaAtual2);
+        }
+
+    }
+
+    public void odometry(){
+
+        // Offsets = posição dos pods em relação ao centro de giro do robô (mm)
+        odo.setOffsets(30, 12, DistanceUnit.MM);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        odo.setEncoderDirections(DIR_ENC_X, DIR_ENC_Y);
-        odo.resetPosAndIMU();
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
+                GoBildaPinpointDriver.EncoderDirection.FORWARD);
+
+        // CORREÇÃO: Substituído resetPosAndIMU() por recalibrateIMU() e setPosition()
+        odo.recalibrateIMU();
         sleep(300);
-        odo.setPosition(new Pose2D(DistanceUnit.MM, START_X_MM, START_Y_MM, AngleUnit.DEGREES, START_H_DEG));
 
-    }
-    public void atualizarOdo(){
-        odo.update();
-        Pose2D pos = odo.getPosition();
-        x = pos.getX(DistanceUnit.MM);
-        y = pos.getY(DistanceUnit.MM);
-        h = pos.getHeading(AngleUnit.DEGREES);
-    }
-    //Correção do movimento(Ponto que precisa ver dps)
+        // Posição inicial do robô no campo
+        odo.setPosition(new Pose2D(DistanceUnit.MM, 0, 0, AngleUnit.RADIANS, 0));
 
-    public void corMov (double alvoX, double alvoY, double alvoH){
-        erX = alvoX - x;
-        erY = alvoY - y;
-        erH = alvoH - h;
-
-        //Correção angulo
-        while(erH > 180) erH -= 360;
-        while(erH < -180) erH += 360;
-
-        if (erH > tolH) giroEsq();
-        else if (erH < -tolH) giroDir();
-
-            //Correção movimento
-        else if (erX > tol) movFre();
-        else if (erX < -tol) movTra();
-
-        else if (erY > tol) movEsq();
-        else if (erY < -tol) movDir();
-        else parar();
-    }
-
-    //Movimentação (Ponto que precisa ver dps)
-    public void parar(){
-        Lef.setPower(0);
-        Let.setPower(0);
-        Ldt.setPower(0);
-        Ldf.setPower(0);
-    }
-    public void movFre(){
-        Lef.setPower(pot);
-        Ldf.setPower(pot);
-        Let.setPower(pot);
-        Ldt.setPower(pot);
-    }
-    public void movTra(){
-        Lef.setPower(-pot);
-        Ldf.setPower(-pot);
-        Let.setPower(-pot);
-        Ldt.setPower(-pot);
-    }
-    public void movEsq() {
-        Lef.setPower(-pot);
-        Ldf.setPower(pot);
-        Let.setPower(pot);
-        Ldt.setPower(-pot);
-    }
-    public void movDir() {
-        Lef.setPower(pot);
-        Ldf.setPower(-pot);
-        Let.setPower(-pot);
-        Ldt.setPower(pot);
-    }
-    public void giroEsq() {
-        Lef.setPower(-pot);
-        Ldf.setPower(pot);
-        Let.setPower(-pot);
-        Ldt.setPower(pot);
-    }
-    public void giroDir() {
-        Lef.setPower(pot);
-        Ldf.setPower(-pot);
-        Let.setPower(pot);
-        Ldt.setPower(-pot);
-    }
-
-    //Telemetry
-    public void tel(){
-        telemetry.addData("Erro X", erX);
-        telemetry.addData("Erro Y", erY);
-        telemetry.addData("Erro Angulo", erH);
+        telemetry.addData("Status", "Initialized");
         telemetry.update();
     }
 
-    //Trajeto percorrido (Exemplo)
-    public boolean chegou(double alvoX, double alvoY, double alvoH){
-        double eH = alvoH - h;
-        while(eH > 180) eH -= 360;
-        while(eH < -180) eH += 360;
+    public void inicializarHardware() {
+        Ldf            = hardwareMap.get(DcMotor.class,   "frontRight");
+        Ldt            = hardwareMap.get(DcMotor.class,   "backRight");
+        Lef            = hardwareMap.get(DcMotor.class,   "frontLeft");
+        Let            = hardwareMap.get(DcMotor.class,   "backLeft");
+        Coletor        = hardwareMap.get(DcMotor.class,   "motorExtra");
+        Auxilio        = hardwareMap.get(DcMotor.class,   "motorAuxiliar");
+        motorPotencia  = hardwareMap.get(DcMotor.class,   "motorPotencia");
+        servoTorreta   = hardwareMap.get(Servo.class,     "servoTorreta");
+        servoPotencia  = hardwareMap.get(Servo.class,     "servoPotencia");
+        servo2Potencia = hardwareMap.get(Servo.class,     "servo2Potencia");
+        ServoC         = hardwareMap.get(CRServo.class,   "ServoColetor");
+        odo            = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
 
-        boolean b = Math.abs(alvoX - x) <= tol && Math.abs(alvoY - y) <= tol && Math.abs(eH) <= tolH;
-        return b;
-    }
-    public void trajeto(){
-        while(opModeIsActive() && !chegou(1500, 0, 0)) {
-            corMov(1500, 0, 0);
-            atualizarOdo();
-            sleep(20);
-        }
-        while(opModeIsActive() && !chegou(0, 0, 90)) {
-            corMov(0, 0, 90);
-            atualizarOdo();
-            sleep(20);
-        }
-        while(opModeIsActive() && !chegou(0, 1500, 0)) {
-            corMov(0, 1500, 0);
-            atualizarOdo();
-            sleep(20);
-        }
-        while(opModeIsActive() && !chegou(0, 0, 90)) {
-            corMov(0, 0, 90);
-            atualizarOdo();
-            sleep(20);
-        }
-        while(opModeIsActive() && !chegou(1500, 0, 0)) {
-            corMov(1500, 0, 0);
-            atualizarOdo();
-            sleep(20);
-        }
-        while(opModeIsActive() && !chegou(0, 0, 90)) {
-            corMov(0, 0, 90);
-            atualizarOdo();
-            sleep(20);
-        }
-        while(opModeIsActive() && !chegou(0, 1500, 0)) {
-            corMov(0, 1500, 0);
-            atualizarOdo();
-            sleep(20);
-        }
+        motorPotencia.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        servoPotencia.setDirection(Servo.Direction.FORWARD);
+        servo2Potencia.setDirection(Servo.Direction.REVERSE);
 
-    }
-
-    @Override
-    public void runOpMode(){
-        declarar();
-        config();
-        waitForStart();
-        trajeto();
-
-        while(opModeIsActive()){
-            atualizarOdo();
-            tel();
-        }
     }
 }

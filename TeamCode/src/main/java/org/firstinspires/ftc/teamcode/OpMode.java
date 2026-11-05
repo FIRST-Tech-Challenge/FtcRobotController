@@ -23,12 +23,6 @@ public class TeleOpfinal extends LinearOpMode {
     private boolean coletorLigado  = false;
     private boolean botaoAAnterior = false;
 
-    // Servos das flores (CRServo)
-    private Servo FlorR;
-    private Servo FlorL;
-    private boolean servoRLigado = false;
-    private boolean servoLLigado = false;
-
     // Lançador
     private DcMotor motorPotencia;
     private Servo ServoC;
@@ -37,6 +31,8 @@ public class TeleOpfinal extends LinearOpMode {
     // Servos Modeladores (Se eles controlam posições, devem ser do tipo Servo)
     private Servo servoPotencia;
     private Servo servo2Potencia;
+    private double UltimaPotencia = 0;
+    private double Ultima2Potencia = 0;
 
     // Odometria GoBilda Pinpoint
     private GoBildaPinpointDriver odo;
@@ -149,21 +145,17 @@ public class TeleOpfinal extends LinearOpMode {
 
     public void servoLancador() {
         if (gamepad1.a) {
-            servoPotencia.setDirection(Servo.Direction.FORWARD);
+            UltimaPotencia = this.PotenciaAtual;
+            Ultima2Potencia = this.PotenciaAtual2;
+
             servoPotencia.setPosition(0.25);
+
+            servo2Potencia.setPosition(0.25);
         }
         if (gamepad1.x) {
-            servoPotencia.setDirection(Servo.Direction.REVERSE);
-            servoPotencia.setPosition(0.25);
-        }
-        //servo 2
-        if (gamepad2.a) {
-            servo2Potencia.setDirection(Servo.Direction.FORWARD);
-            servo2Potencia.setPosition(0.25);
-        }
-        if (gamepad2.x) {
-            servo2Potencia.setDirection(Servo.Direction.REVERSE);
-            servo2Potencia.setPosition(0.25);
+            servoPotencia.setPosition(PotenciaAtual);
+
+            servo2Potencia.setPosition(PotenciaAtual2);
         }
     }
 
@@ -195,30 +187,16 @@ public class TeleOpfinal extends LinearOpMode {
         Coletor        = hardwareMap.get(DcMotor.class,   "motorExtra");
         Auxilio        = hardwareMap.get(DcMotor.class,   "motorAuxiliar");
         ServoC         = hardwareMap.get(CRServo.class,   "ServoColetor");
-        FlorR          = hardwareMap.get(Servo.class,   "ServoFlorDireita");
-        FlorL          = hardwareMap.get(Servo.class,   "ServoFlorEsquerda");
         motorPotencia  = hardwareMap.get(DcMotor.class,   "motorPotencia");  //lancador
         servoTorreta   = hardwareMap.get(Servo.class,     "servoTorreta"); //girar a torreta
         servoPotencia  = hardwareMap.get(Servo.class,     "servoPotencia");
+        servoPotencia.setDirection(Servo.Direction.FORWARD);
         servo2Potencia = hardwareMap.get(Servo.class,     "servo2Potencia");
+        servo2Potencia.setDirection(Servo.Direction.FORWARD);
         odo            = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
     }
 
     public void telemetriafinal() {
-        telemetry.addData("Motor Lef",        "%.2f", Lef.getPower());
-        telemetry.addData("Motor Ldf",        "%.2f", Ldf.getPower());
-        telemetry.addData("Motor Let",        "%.2f", Let.getPower());
-        telemetry.addData("Motor Ldt",        "%.2f", Ldt.getPower());
-        telemetry.addData("Coletor",          coletorLigado ? "LIGADO" : "DESLIGADO");
-        telemetry.addData("Auxiliar",         coletorLigado ? "LIGADO" : "DESLIGADO");
-        telemetry.addData("Servo Flores",     (servoRLigado && servoLLigado) ? "LIGADOS" : "DESLIGADOS");
-        telemetry.addData("motorPotencia",    "%.2f", motorPotencia.getPower());
-        telemetry.addData("Servo Torreta",    "%.2f", servoTorreta.getPosition());
-        telemetry.addData("Servo Potencia",   "%.2f", servoPotencia.getPosition());
-        telemetry.addData("Servo2 Potencia",  "%.2f", servo2Potencia.getPosition());
-        telemetry.addData("X (mm)",           "%.1f", pos.getX(DistanceUnit.MM));
-        telemetry.addData("Y (mm)",           "%.1f", pos.getY(DistanceUnit.MM));
-        telemetry.addData("Heading (graus)",  "%.1f", pos.getHeading(AngleUnit.DEGREES));
         telemetry.addData("Status odo",       odo.getDeviceStatus());
         telemetry.update();
     }
