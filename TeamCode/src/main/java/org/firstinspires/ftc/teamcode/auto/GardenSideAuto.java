@@ -4,8 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.PoseMap;
-import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.RaceAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -13,7 +11,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystems.BeamBrakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.CameraTrackingSubsystems;
 import org.firstinspires.ftc.teamcode.subsystems.DepollenaterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FeederSubsystem;
@@ -25,13 +22,14 @@ import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 
 
 @Autonomous
-public class BlueScoring extends LinearOpMode {
+public class GardenSideAuto extends LinearOpMode {
 
     protected MecanumDrive drive;
     // TODO: create instances of subsystems
     private IntakeSubsystem intakeSubsystem;
     private ShooterSubsystem shooterSubsystem;
     private FeederSubsystem feederSubsystem;
+    private DepollenaterSubsystem depollenaterSubsystem;
     private CameraTrackingSubsystems cameraTrackingSubsystems;
 
     private double feederOnTime = 2;
@@ -43,15 +41,27 @@ public class BlueScoring extends LinearOpMode {
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
         shooterSubsystem = new ShooterSubsystem(hardwareMap, telemetry);
         feederSubsystem = new FeederSubsystem(hardwareMap, telemetry);
-        cameraTrackingSubsystems =new CameraTrackingSubsystems(hardwareMap,telemetry);
+        cameraTrackingSubsystems = new CameraTrackingSubsystems(hardwareMap,telemetry);
+        depollenaterSubsystem = new DepollenaterSubsystem(hardwareMap, telemetry);
 
         Pose2d beginPose = new Pose2d(14, 60.5, Math.toRadians(270));
+
+        Actions.runBlocking(
+                new RaceAction(
+                        drive.actionBuilder(beginPose)
+                                .stopAndAdd(() -> depollenaterSubsystem.depollenaterUp() ) // put depollenater up
+                                .build()
+                )
+        );
+
+        waitForStart();
 
         // region block 1
         Actions.runBlocking(
                 new RaceAction(
                         drive.actionBuilder(beginPose)
                                 .stopAndAdd(() -> shooterSubsystem.runShooter() ) // turn on shooter
+                                .waitSeconds(feederOnTime)
                                 .stopAndAdd(() -> feederSubsystem.runIndexerForward()) // shoot
                                 .waitSeconds(feederOnTime)
                                 .stopAndAdd(() -> feederSubsystem.stopIndexer()) // stop shooting
