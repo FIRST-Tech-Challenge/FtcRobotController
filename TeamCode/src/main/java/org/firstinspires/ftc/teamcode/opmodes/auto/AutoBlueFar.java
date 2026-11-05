@@ -1,43 +1,81 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.LauncherConfig;
 import org.firstinspires.ftc.teamcode.RobotConstants;
 
-/* Ported from Rayden's blue_down_far_load. */
+/* Ported from Rayden's blue_down_far_load with Limelight Vision & Path branching. */
 @Autonomous(name = "Blue Far", group = "Main")
 public class AutoBlueFar extends AutoBase {
 
     @Override
     protected void runRoutine() {
-        // TODO: if (robot.vision.isHiveTipped()) pick a different plan
-        leaveAndPark();      // milestone 1
-        // Milestone 2: leave, get in position, shoot(4), then park.
-        // TODO: skip shoot() and go park if secondsLeft() is low
+        double p = RobotConstants.AUTO_POWER;
+
+        // Step 1: Forward 20 inches
+        driveInches(20, p);
+
+        // Step 2: Limelight TipDetect scan (wait up to 8s for AprilTag cluster 38..41)
+        ElapsedTime waitTimer = new ElapsedTime();
+        boolean isTipped = false;
+
+        while (opModeIsActive() && waitTimer.seconds() < 8.0) {
+            robot.update(); // CRITICAL: Updates Limelight camera feed and telemetry on every frame!
+
+            isTipped = robot.vision.isHiveTipped(RobotConstants.LEFT_BLUE_APRIL_TAG_CODES[0], RobotConstants.LEFT_BLUE_APRIL_TAG_CODES[1]);
+
+            telemetry.addData("Scan Timer", "%.1fs remaining", 8.0 - waitTimer.seconds());
+            telemetry.addData("Limelight Target", robot.vision.hasTarget() ? "YES" : "NO");
+            telemetry.addData("Tip Detected", isTipped ? "TRUE" : "FALSE");
+
+            if (isTipped) {
+                break;
+            }
+            sleep(50);
+        }
+
+        double remainingSeconds = Math.max(0.0, 8.0 - waitTimer.seconds());
+
+        // Branching Logic
+        if (isTipped) {
+            robot.launcher.spinUp(RobotConstants.LAUNCHER_TARGET_VEL);
+            driveInches(19, -p);
+            robot.intake.toggle();
+            robot.launcher.feed();
+            waitSeconds(5);
+
+            leaveAndPark();
+            // Saw the camera tag! Run motors for remaining time left on the 8s timer
+//            if (remainingSeconds > 0) {
+//                driveSeconds(remainingSeconds, p);
+//            }
+            // Then execute Path A (Reverse 8 IN & run leaveAndPark)
+//            driveInches(8, -p);
+//            leaveAndPark();
+        } else if (waitTimer.seconds() >= 8.0) {
+            // 8s limit reached -> Path A: Reverse 8 IN & run leaveAndPark
+            driveInches(8, -p);
+            leaveAndPark();
+        } else {
+            // Path B: Cleared / Upright -> Reverse 19 IN and stop
+            driveInches(19, -p);
+            leaveAndPark();
+        }
     }
 
-    // TODO: confirm this path ends in the park zone for this start position.
     private void leaveAndPark() {
         double p = RobotConstants.AUTO_POWER;
 
         driveInches(12, p);
-        //forwards 1
         turnToDegrees(90, p);
-        //turn one
         driveInches(30, p);
-        //forwards 2
         turnToDegrees(0, p);
-        //turn 2
         driveInches(79, p);
-        //forwards 3
         turnToDegrees(80, p);
-        //turn 3
         driveInches(10, p);
-        //forwards 4
         driveSeconds(3.0, p);    // push into the wall to square up
         driveSeconds(0.5, -p);   // back out
     }
-
-    // TODO: drive to the park zone from wherever we are (robot.odo has the pose).
-    //       Override onOverdrive() to call it so we still park if time runs out.
 }

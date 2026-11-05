@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.RobotConstants;
  * controller's built-in PIDF. Tune KP/KI/KD/KF in LauncherConfig (live from FTC Dashboard).
  *
  * Put here:
- *  - spinUp(rpm), stopFlywheel()
+ *  - spinUp(rpm), stopFlywheel(), reverse(power) - run backward to clear a jam
  *  - isReady() - true when the flywheel is close enough to the target speed
  *  - feed() / retractFeeder()
  * Later: pick the RPM from the distance to the goal.
@@ -42,6 +42,7 @@ public class Launcher implements Subsystem {
         flywheel = hardwareMap.get(DcMotorEx.class, RobotConstants.LAUNCHER_MOTOR);
         feeder = hardwareMap.get(Servo.class, RobotConstants.FEEDER_SERVO);
 
+        flywheel.setDirection(RobotConstants.LAUNCHER_MOTOR_DIRECTION);
         flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         applyPidf();
 
@@ -64,12 +65,18 @@ public class Launcher implements Subsystem {
     public void spinUp(double vel) {
         if (vel != targetVel) RobotLog.ii("Launcher", "target rpm -> %.0f", vel);
         targetVel = vel;
-        flywheel.setVelocity(vel * RobotConstants.LAUNCHER_TICKS_PER_REV / 60.0);
+        flywheel.setVelocity(RobotConstants.LAUNCHER_TARGET_VEL);
     }
 
     public void stopFlywheel() {
         targetVel = 0;
         flywheel.setPower(0);
+    }
+
+    /** Runs the flywheel backward at raw power (not velocity-controlled) to clear a stuck ball. */
+    public void reverse(double power) {
+        targetVel = 0; // not holding a shooting speed while reversing
+        flywheel.setPower(-Math.abs(power));
     }
 
     public double getRpm() {

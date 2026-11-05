@@ -10,7 +10,9 @@ public class AutoRedClose extends AutoBase {
 
     @Override
     protected void runRoutine() {
-        // TODO: if (robot.vision.isHiveTipped()) pick a different plan
+        // TODO: check which cell is up before shooting, e.g.
+        //   boolean tipped = robot.vision.isHiveTipped(RobotConstants.TAG_RED_SCORING_MIN, RobotConstants.TAG_RED_SCORING_MAX);
+        // (confirm on the robot whether SCORING or AUDIENCE is the one to check from this start position)
         leaveAndPark();      // milestone 1
         // Milestone 2: leave, get in position, shoot(4), then park.
         // TODO: skip shoot() and go park if secondsLeft() is low

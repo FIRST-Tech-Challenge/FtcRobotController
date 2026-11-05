@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.LauncherConfig;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.RobotConstants;
 
@@ -12,6 +13,10 @@ import org.firstinspires.ftc.teamcode.RobotConstants;
  * To write an auto: extend this class and fill in runRoutine() with steps like
  *     driveInches(24, RobotConstants.AUTO_POWER);
  *     turnToDegrees(90, RobotConstants.AUTO_POWER);
+ *     shoot(4);
+ *
+ * Hive tipped check: robot.vision.isHiveTipped(minId, maxId), using one of the
+ * RobotConstants.TAG_*_SCORING/AUDIENCE_MIN/MAX ranges for your alliance, then pick a plan.
  *
  * Safety: after AUTO_OVERDRIVE_SECONDS the remaining steps are skipped and
  * onOverdrive() runs instead (stop, or park).
@@ -20,8 +25,6 @@ import org.firstinspires.ftc.teamcode.RobotConstants;
  * Time left: secondsLeft() tells a routine how much of the 30 seconds remains.
  *
  * TODO features to add:
- *  - Hive tipped check: Vision.isHiveTipped() (AprilTag), then pick the plan.
- *  - shoot(count): shoot the loaded pieces (stub below).
  *  - Work out where we ended up (robot.odo pose) so we know how to get to park.
  *  - Park in the right zone: each auto gets a parkInZone() and overrides onOverdrive() to call it.
  *  - Use secondsLeft() to skip shooting and go park when time is short.
@@ -115,15 +118,27 @@ public abstract class AutoBase extends LinearOpMode {
     }
 
     /**
-     * Shoot the loaded pieces. Not built yet.
-     * TODO:
-     *  1. robot.launcher.spinUp(LauncherConfig.DEFAULT_RPM)
-     *  2. wait until robot.launcher.isReady() (give up after a few seconds)
-     *  3. robot.launcher.feed(), short wait, robot.launcher.retractFeeder()
-     *  4. repeat for each piece, then robot.launcher.stopFlywheel()
+     * Shoot `count` pieces. Spins up, and for each piece waits for the flywheel to reach
+     * speed (gives up after SHOOT_READY_TIMEOUT_SECONDS and fires anyway, so one slow
+     * flywheel doesn't eat the whole auto), feeds, then pauses before the next one.
+     * Feed-hold/pause timing in RobotConstants is a starting guess - tune on the robot.
      */
     protected void shoot(int count) {
-        // TODO
+        robot.launcher.spinUp(LauncherConfig.DEFAULT_RPM);
+
+        for (int i = 0; i < count && !shouldStop(); i++) {
+            ElapsedTime readyTimer = new ElapsedTime();
+            while (!shouldStop() && !robot.launcher.isReady()
+                    && readyTimer.seconds() < RobotConstants.SHOOT_READY_TIMEOUT_SECONDS) {
+                tick();
+            }
+            robot.launcher.feed();
+            waitSeconds(RobotConstants.SHOOT_FEED_HOLD_SECONDS);
+            robot.launcher.retractFeeder();
+            waitSeconds(RobotConstants.SHOOT_FEED_PAUSE_SECONDS);
+        }
+
+        robot.launcher.stopFlywheel();
     }
 
     // ---- Helpers ----

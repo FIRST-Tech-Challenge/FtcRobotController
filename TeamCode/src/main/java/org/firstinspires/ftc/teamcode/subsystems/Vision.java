@@ -1,16 +1,20 @@
-
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RobotConstants;
 
-import java.util.List;
-
+/*
+ * VISION - Limelight3A: AprilTag targeting and the hive-tipped check.
+ * Status/tx/ty/fiducial telemetry and the FTC Dashboard camera stream live here
+ * (ported from the standalone LimelightTest bench OpMode).
+ */
 public class Vision implements Subsystem {
 
     private final HardwareMap hardwareMap;
@@ -35,11 +39,19 @@ public class Vision implements Subsystem {
 
         limelight.pipelineSwitch(0);
         limelight.start();
+        FtcDashboard.getInstance().startCameraStream(limelight, 10);
     }
 
     @Override
     public void update() {
         result = limelight.getLatestResult();
+
+        LLStatus status = limelight.getStatus();
+        telemetry.addData("Limelight", "temp %.1fC  cpu %.1f%%  fps %d",
+                status.getTemp(), status.getCpu(), (int) status.getFps());
+        if (hasTarget()) {
+            telemetry.addData("Limelight tx/ty", "%.2f / %.2f", getTx(), getTy());
+        }
     }
 
     public boolean hasTarget() {
@@ -58,23 +70,17 @@ public class Vision implements Subsystem {
         limelight.pipelineSwitch(pipeline);
     }
 
-    @Override
-    public boolean TipDetect(double startCluster, double endCluster) {
-        // 42 and 45 returns true for Blue Audience
-        // 38 and 41 returns true for Blue Far
-        // add red audience and red far blah blah blah
+    /**
+     * True if a tag in [minId, maxId] is in view right now.
+     * Use the RobotConstants.TAG_*_SCORING/AUDIENCE_MIN/MAX ranges (red and blue, both mapped).
+     */
+    public boolean isHiveTipped(int minId, int maxId) {
         tipped = false;
 
-        if (result.isValid()) {
-
-            List<LLResultTypes.FiducialResult> fiducialResults =
-                    result.getFiducialResults();
-
-            for (LLResultTypes.FiducialResult fr : fiducialResults) {
-
+        if (hasTarget()) {
+            for (LLResultTypes.FiducialResult fr : result.getFiducialResults()) {
                 int id = fr.getFiducialId();
-
-                if (id >= startCluster && id <= endCluster) {
+                if (id >= minId && id <= maxId) {
                     tipped = true;
                     break;
                 }
@@ -84,9 +90,7 @@ public class Vision implements Subsystem {
         return tipped;
     }
 
-
     @Override
     public void stop() {
-        //hi
     }
 }
