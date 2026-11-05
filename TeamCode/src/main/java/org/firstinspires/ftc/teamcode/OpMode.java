@@ -205,20 +205,6 @@ public class TeleOpfinal extends LinearOpMode {
     }
 
     public void telemetriafinal() {
-        telemetry.addData("Motor Lef",        "%.2f", Lef.getPower());
-        telemetry.addData("Motor Ldf",        "%.2f", Ldf.getPower());
-        telemetry.addData("Motor Let",        "%.2f", Let.getPower());
-        telemetry.addData("Motor Ldt",        "%.2f", Ldt.getPower());
-        telemetry.addData("Coletor",          coletorLigado ? "LIGADO" : "DESLIGADO");
-        telemetry.addData("Auxiliar",         coletorLigado ? "LIGADO" : "DESLIGADO");
-        telemetry.addData("Servo Flores",     (servoRLigado && servoLLigado) ? "LIGADOS" : "DESLIGADOS");
-        telemetry.addData("motorPotencia",    "%.2f", motorPotencia.getPower());
-        telemetry.addData("Servo Torreta",    "%.2f", servoTorreta.getPosition());
-        telemetry.addData("Servo Potencia",   "%.2f", servoPotencia.getPosition());
-        telemetry.addData("Servo2 Potencia",  "%.2f", servo2Potencia.getPosition());
-        telemetry.addData("X (mm)",           "%.1f", pos.getX(DistanceUnit.MM));
-        telemetry.addData("Y (mm)",           "%.1f", pos.getY(DistanceUnit.MM));
-        telemetry.addData("Heading (graus)",  "%.1f", pos.getHeading(AngleUnit.DEGREES));
         telemetry.addData("Status odo",       odo.getDeviceStatus());
         telemetry.update();
     }
