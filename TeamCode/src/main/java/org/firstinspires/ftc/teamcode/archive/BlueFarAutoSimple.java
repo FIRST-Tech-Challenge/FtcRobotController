@@ -31,6 +31,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 public class BlueFarAutoSimple extends LinearOpMode {
 
     boolean isRed = false;
+    @Disabled
     @Autonomous()
     public static class BlueFarSimple extends BlueFarAutoSimple {
         public BlueFarSimple() {
