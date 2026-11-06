@@ -5,7 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.subsystems.FlowerArm;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 @TeleOp
@@ -17,6 +20,9 @@ public class RobotContainer extends OpMode {
     DcMotor armMotor;
     DcMotor intakeMotor;
     Intake m_intake = new Intake();
+    Servo ServoLeft;
+    Servo ServoRight;
+    FlowerArm m_flowerarm = new FlowerArm();
 
 
     // This declares the IMU needed to get the current direction the robot is facing
@@ -90,6 +96,12 @@ public class RobotContainer extends OpMode {
         }else if (!gamepad1.dpad_down && !gamepad1.dpad_up){
             armMotor.setPower(0);
             intakeMotor.setPower(0);
+        }
+        if(gamepad1.yWasPressed()){
+            m_flowerarm.BallIn();
+        }
+        if(gamepad1.xWasPressed()){
+            m_flowerarm.BallOut();
         }
     }
 
