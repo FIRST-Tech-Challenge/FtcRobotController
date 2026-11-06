@@ -74,7 +74,10 @@ public class ServoTeleop extends OpMode {
                 currentState = State.STOP;
             }   
             if (gamepad1.b){
-                servo.runServo();
+                servo.runServoTurret(false);
+            }
+            if (gamepad1.x){
+                servo.runServoTurret(true);
             }
         }
         // STATE MACHINE END

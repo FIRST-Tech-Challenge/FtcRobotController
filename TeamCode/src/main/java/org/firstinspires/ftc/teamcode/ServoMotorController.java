@@ -9,18 +9,21 @@ public class ServoMotorController {
     
     private Servo servo;
     private boolean turnPos;
-    
+
     public ServoMotorController(HardwareMap hm, String servoName) {
         servo = hm.get(Servo.class, servoName);
         turnPos = true;
     }
 
-    public void runServo() {
-        servo.setPosition(newPos());
+    public void runServoTurret(boolean turnDir) {
+        servo.setPosition(newPos(turnDir));
         checkDirection();
     }
 
-    private double newPos(){
+    private double newPos(boolean opposite){
+        if (opposite){
+            return servo.getPosition()-0.01;
+        }
         return servo.getPosition()+0.01;
     }
 
