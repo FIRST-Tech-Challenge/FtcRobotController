@@ -19,7 +19,7 @@ import java.util.regex.Pattern
 
 android {
 
-    compileSdkVersion 37
+    compileSdkVersion 30
 
     signingConfigs {
         release {

@@ -33,7 +33,7 @@ public class OctoQuadTuner extends Procedure {
         Inputs.Field<String> octoquadName = inputs.s("HardwareMap Name").withDefault("octoquad");
         Inputs.Field<Integer> xPort =  inputs.i("Forward Pod Port").withDefault(0);
         Inputs.Field<Integer> yPort =  inputs.i("Strafe Pod Port").withDefault(1);
-        Inputs.Field<OctoQuadTuner.PodType> podType = inputs.e("Odometry Pod Type", OctoQuadTuner.PodType.class).withDefault(OctoQuadTuner.PodType.FOUR_BAR);
+        Inputs.Field<PodType> podType = inputs.e("Odometry Pod Type", PodType.class).withDefault(PodType.FOUR_BAR);
         Inputs.Field<OctoQuad.I2cRecoveryMode> recoveryMode = inputs.e("Recovery Mode", OctoQuad.I2cRecoveryMode.class).withDefault(OctoQuad.I2cRecoveryMode.MODE_1_PERIPH_RST_ON_FRAME_ERR);
         awaitInputs(inputs);
 
@@ -75,7 +75,7 @@ public class OctoQuadTuner extends Procedure {
                 "    c.name.set(\"" + octoquadName.get() + "\");\n" +
                 "    c.xPodPort.set(" + xPort.get() + ");\n" +
                 "    c.yPodPort.set(" + yPort.get() + ");\n" +
-                (podType.get() == PodType.CUSTOM ? "    c.ticksPerUnit.set(" + customPodScalar + ");\n" : "    c.ticksPerUnit.set(" + (podType.get() == OctoQuadTuner.PodType.SWING_ARM ? SWING_ARM : FOUR_BAR) + ");\n") +
+                (podType.get() == PodType.CUSTOM ? "    c.ticksPerUnit.set(" + customPodScalar + ");\n" : "    c.ticksPerUnit.set(" + (podType.get() == PodType.SWING_ARM ? SWING_ARM : FOUR_BAR) + ");\n") +
                 "    c.xPodOffset.set(" + offsets.get(0) + ");\n" +
                 "    c.yPodOffset.set(" + offsets.get(1) + ");\n" +
                 "    c.xPodDirection.set(" + (forwardPodReversed ? "OctoQuad.EncoderDirection.REVERSE" : "OctoQuad.EncoderDirection.FORWARD") + ");\n" +

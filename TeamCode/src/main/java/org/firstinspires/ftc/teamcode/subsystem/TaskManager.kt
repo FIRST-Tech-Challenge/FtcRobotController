@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystem
 
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.robotcore.external.Telemetry
 
-class TaskManager {
+class TaskManager : Subsystem() {
     class Call(
         val elapsedTime: ElapsedTime
     ) {
@@ -20,4 +21,8 @@ class TaskManager {
     val elapsedTime: ElapsedTime = ElapsedTime()
     val initLoop: Call = Call(elapsedTime)
     val loop: Call = Call(elapsedTime)
+
+    override fun printState(telemetry: Telemetry) {
+        TODO("Not yet implemented")
+    }
 }

@@ -1,0 +1,18 @@
+{// Folder-specific settings
+//
+// For a full list of overridable settings, and general information on folder-specific settings,//zed.dev/docs/configuring-zed#settings-files
+  "inlay_hints": {
+    "enabled": true
+  },
+  "languages": {
+    "Kotlin": {
+      "prettier": {
+        "allowed": true
+      },
+      "colorize_brackets": true,
+      "inlay_hints": {
+        "enabled": true
+      }
+    }
+  }
+}

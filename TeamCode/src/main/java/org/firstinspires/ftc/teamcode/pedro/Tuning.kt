@@ -12,13 +12,15 @@ import org.firstinspires.ftc.teamcode.pedro.procedures.Tests
 import java.util.function.Function
 
 
-class Tuning {
+object Tuning {
     @Tuner
+    @JvmStatic
     fun mecanumTuner(): Procedure {
         return MecanumTuner()
     }
 
     @Tuner
+    @JvmStatic
     fun tests(): Procedure {
         return Tests(Function { hardwareMap: HardwareMap? ->
             Mecanum(
@@ -29,11 +31,13 @@ class Tuning {
     }
 
     @Tuner
+    @JvmStatic
     fun pinpointTuner(): Procedure {
         return PinpointTuner()
     }
 
     @Tuner
+    @JvmStatic
     fun foresightTuner(): Procedure {
         return ForesightTuner(
             { hardwareMap: HardwareMap? ->

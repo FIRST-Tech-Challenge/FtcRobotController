@@ -11,7 +11,7 @@ sealed class Turret : Subsystem() {
     }
     open var angle: Double = 0.0
         set(angle) {
-            field = Math.clamp(AngleUnit.normalizeDegrees(angle), MIN_ANGLE, MAX_ANGLE)
+            field = AngleUnit.normalizeDegrees(angle)
         }
     abstract val isWithinTolerance: Boolean
     fun off() {

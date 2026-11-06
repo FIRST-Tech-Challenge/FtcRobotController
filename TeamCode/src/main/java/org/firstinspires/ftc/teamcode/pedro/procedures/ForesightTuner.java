@@ -1336,4 +1336,3 @@ class StrafeTranslational extends TuningOpMode<List<Double>> {
         this.tau = -1.0/linReg[1];
     }
 }
-

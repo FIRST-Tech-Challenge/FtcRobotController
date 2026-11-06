@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystem.turret.Turret
 import kotlin.math.abs
 
 class Shooter(
+    val taskManager: TaskManager,
     val follower: Follower,
     val outtake: Outtake,
     val turret: Turret,
@@ -33,6 +34,9 @@ class Shooter(
             return Math.toDegrees(angleRadians)
         }
         const val MAXIMUM_ATTACK_ANGLE: Double = 60.0
+    }
+    init {
+        taskManager.loop.action += { tick() }
     }
     var mode: Mode = Mode.FULL_AUTO
         set(mode) {
@@ -76,7 +80,6 @@ class Shooter(
             }
             else -> {}
         }
-        if (turret is CRTurret) turret.tick()
     }
 
     private fun target() {

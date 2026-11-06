@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 
 object Constants {
     val mecanumConfig: MecanumConfig = MecanumConfig { config: MecanumConfig ->
-        with (config) {
+        config.apply {
             frontLeftName.set("left_front")
             backLeftName.set("left_back")
             frontRightName.set("right_front")
