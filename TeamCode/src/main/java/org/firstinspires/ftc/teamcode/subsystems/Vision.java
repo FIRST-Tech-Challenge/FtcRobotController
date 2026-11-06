@@ -6,7 +6,7 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
+import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RobotConstants;
 
@@ -24,7 +24,8 @@ public class Vision implements Subsystem {
     private LLResult result;
 
     private Boolean tipped = false;
-
+    private Servo servo;
+    private double servopos = 0;
     public Vision(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
@@ -36,7 +37,7 @@ public class Vision implements Subsystem {
                 Limelight3A.class,
                 RobotConstants.LIMELIGHT
         );
-
+        Servo limelight_servo = hardwareMap.get(Servo.class, RobotConstants.LIME_LITE_SERVO);
         limelight.pipelineSwitch(0);
         limelight.start();
         FtcDashboard.getInstance().startCameraStream(limelight, 10);

@@ -3,12 +3,11 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.LauncherConfig;
 import org.firstinspires.ftc.teamcode.RobotConstants;
 
 /* Ported from Rayden's blue_down_far_load with Limelight Vision & Path branching. */
-@Autonomous(name = "Blue Far", group = "Main")
-public class AutoBlueFar extends AutoBase {
+@Autonomous(name = "RedScoring", group = "Main")
+public class RedScoring extends AutoBase {
 
     @Override
     protected void runRoutine() {
@@ -24,7 +23,7 @@ public class AutoBlueFar extends AutoBase {
         while (opModeIsActive() && waitTimer.seconds() < 8.0) {
             robot.update(); // CRITICAL: Updates Limelight camera feed and telemetry on every frame!
 
-            isTipped = robot.vision.isHiveTipped(RobotConstants.LEFT_BLUE_APRIL_TAG_CODES[0], RobotConstants.LEFT_BLUE_APRIL_TAG_CODES[1]);
+            isTipped = robot.vision.isHiveTipped(RobotConstants.LEFT_RED_APRIL_TAG_CODES[0], RobotConstants.LEFT_RED_APRIL_TAG_CODES[1]);
 
             telemetry.addData("Scan Timer", "%.1fs remaining", 8.0 - waitTimer.seconds());
             telemetry.addData("Limelight Target", robot.vision.hasTarget() ? "YES" : "NO");
@@ -40,11 +39,11 @@ public class AutoBlueFar extends AutoBase {
 
         // Branching Logic
         if (isTipped) {
-            robot.launcher.spinUp(RobotConstants.LAUNCHER_TARGET_VEL);
+            //robot.launcher.spinUp(RobotConstants.LAUNCHER_TARGET_VEL);
             driveInches(19, -p);
             robot.intake.toggle();
-            robot.launcher.feed();
-            waitSeconds(5);
+            shoot(3);
+
 
             leaveAndPark();
             // Saw the camera tag! Run motors for remaining time left on the 8s timer

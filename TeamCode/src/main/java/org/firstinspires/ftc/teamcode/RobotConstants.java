@@ -21,6 +21,7 @@ public final class RobotConstants {
     public static final String LAUNCHER_MOTOR    = "launcher";
     public static final String FEEDER_SERVO      = "feeder";
     public static final String INTAKE_MOTOR      = "intake";
+    public static final String LIME_LITE_SERVO = "limelightservo";
 
     // ---- Drive motor directions (flip one if that wheel spins the wrong way) ----
     public static final DcMotor.Direction FRONT_LEFT_DIRECTION  = DcMotor.Direction.REVERSE;
@@ -42,11 +43,11 @@ public final class RobotConstants {
             GoBildaPinpointDriver.EncoderDirection.FORWARD;
 
     // ---- Autonomous ----
-    public static final double AUTO_POWER = 0.3;             // drive and turn power, start low
+    public static final double AUTO_POWER = 0.5;             // drive and turn power, start low
     public static final double AUTO_PERIOD_SECONDS = 30;     // length of autonomous
-    public static final double AUTO_OVERDRIVE_SECONDS = 20;  // after this, stop the routine and run onOverdrive()
+    public static final double AUTO_OVERDRIVE_SECONDS = 40;  // after this, stop the routine and run onOverdrive()
     public static final double AUTO_START_DELAY_SECONDS = 0; // alliance delay: raise it so we don't run into our partner
-    public static final int AUTO_PAUSE_MS = 500;             // short pause after each step
+    public static final int AUTO_PAUSE_MS = 250;             // short pause after each step
 
     // ---- Launcher (live-tunable values are in LauncherConfig) ----
     public static final DcMotor.Direction LAUNCHER_MOTOR_DIRECTION = DcMotor.Direction.REVERSE; // confirmed on the robot

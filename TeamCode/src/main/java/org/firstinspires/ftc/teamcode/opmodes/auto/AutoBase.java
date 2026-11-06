@@ -124,7 +124,7 @@ public abstract class AutoBase extends LinearOpMode {
      * Feed-hold/pause timing in RobotConstants is a starting guess - tune on the robot.
      */
     protected void shoot(int count) {
-        robot.launcher.spinUp(LauncherConfig.DEFAULT_RPM);
+        // robot.launcher.spinUp(LauncherConfig.DEFAULT_RPM);
 
         for (int i = 0; i < count && !shouldStop(); i++) {
             ElapsedTime readyTimer = new ElapsedTime();
