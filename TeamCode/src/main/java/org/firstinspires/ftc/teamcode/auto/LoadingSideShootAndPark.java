@@ -88,7 +88,7 @@ public class LoadingSideShootAndPark extends LinearOpMode {
         backLeft.setPower(-drivePower);
         frontRight.setPower(drivePower);
         backRight.setPower(drivePower);
-        sleep(310);
+        sleep(290);
         frontLeft.setPower(0); // Stop driving
         backLeft.setPower(0);
         frontRight.setPower(0);
