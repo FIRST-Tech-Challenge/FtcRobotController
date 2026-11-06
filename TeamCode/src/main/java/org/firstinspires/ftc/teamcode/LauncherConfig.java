@@ -18,7 +18,7 @@ public class LauncherConfig {
     public static double KF = 150.0;
 
     public static double RPM_TOLERANCE = 20; // "ready" when within this many RPM
-    public static double DEFAULT_RPM = 1000; // tested working speed
+    public static double DEFAULT_RPM = 950; // tested working speed
 
     public static double FEEDER_REST_POS = 0.3; // held while not feeding
     public static double FEEDER_FEED_POS = 0.04; // held while the feed trigger is pressed
