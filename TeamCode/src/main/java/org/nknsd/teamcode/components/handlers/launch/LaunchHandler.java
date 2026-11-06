@@ -28,12 +28,6 @@ public class LaunchHandler implements NKNComponent {
     String leftLaunchName = "launchLeft";
     String rightLaunchName = "rightLaunch";
 
-    //servos
-    CRServo transferLeft;
-    CRServo transferRight;
-    String leftTransferName = "leftTrans";
-    String rightTransferName = "rightTrans";
-
     //constants
     private final double servoSpeed = 1;
 
@@ -48,9 +42,6 @@ public class LaunchHandler implements NKNComponent {
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
         leftLaunch = (DcMotorEx) hardwareMap.get(leftLaunchName);
         rightLaunch = (DcMotorEx) hardwareMap.get(rightLaunchName);
-        transferLeft = hardwareMap.crservo.get(leftTransferName);
-        transferRight = hardwareMap.crservo.get(rightTransferName);
-        transferRight.setDirection(DcMotorSimple.Direction.REVERSE);
         return true;
     }
 
@@ -99,16 +90,6 @@ public class LaunchHandler implements NKNComponent {
     public void setLaunchEnabled(boolean launching){
         launchEnabled = launching;
 
-    }
-
-    public void setTransfer(boolean activateTransfer){
-        if(activateTransfer) {
-            transferLeft.setPower(servoSpeed);
-            transferRight.setPower(servoSpeed);
-        } else {
-            transferLeft.setPower(0);
-            transferRight.setPower(0);
-        }
     }
     public double getTargetVelocity(){
         return targetVelocity;

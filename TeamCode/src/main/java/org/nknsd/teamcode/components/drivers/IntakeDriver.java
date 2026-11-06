@@ -5,8 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.nknsd.teamcode.components.handlers.IntakeHandler;
-import org.nknsd.teamcode.components.handlers.artifact.ArtifactSystem;
+import org.nknsd.teamcode.components.handlers.intakeTurret.IntakeHandler;
 import org.nknsd.teamcode.components.handlers.gamepad.GamePadHandler;
 import org.nknsd.teamcode.controlSchemes.defaults.IntakeControlScheme;
 import org.nknsd.teamcode.frameworks.NKNComponent;

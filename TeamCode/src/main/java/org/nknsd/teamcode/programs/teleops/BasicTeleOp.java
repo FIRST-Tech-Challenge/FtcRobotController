@@ -6,7 +6,7 @@ import org.nknsd.teamcode.components.drivers.BallLiftDriver;
 import org.nknsd.teamcode.components.drivers.IntakeDriver;
 import org.nknsd.teamcode.components.drivers.MixedInputWheelDriver;
 import org.nknsd.teamcode.components.handlers.BallLiftHandler;
-import org.nknsd.teamcode.components.handlers.IntakeHandler;
+import org.nknsd.teamcode.components.handlers.intakeTurret.IntakeHandler;
 import org.nknsd.teamcode.components.handlers.gamepad.GamePadHandler;
 import org.nknsd.teamcode.components.motormixers.AbsolutePowerMixer;
 import org.nknsd.teamcode.components.motormixers.MecanumMotorMixer;

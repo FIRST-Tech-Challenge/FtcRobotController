@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.teamcode.frameworks.NKNComponent;
 
+///THIS CLASS IS OUTDATED. ONCE LaunchHandler AND BallSystem
+///ARE DONE, IT SHOULD BE REMOVED INSTANTLY PLEASE!!!!
 public class BallLiftHandler implements NKNComponent {
 
     private final String liftServoName = "liftBallServo";
