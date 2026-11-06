@@ -1,132 +1,199 @@
+
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ReadWriteFile;
 
-@Autonomous(name="Auto_2026_2027", group="Robot")
-@Disabled
-public class Auto_2026_2027 extends LinearOpMode {
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
-    //---Declare OpMode members.---//
-    private DcMotor leftDrive;
-    private DcMotor rightDrive;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-    private ElapsedTime runtime = new ElapsedTime();
+@Autonomous(name="Auto_2026_2027", group="Iterative OpMode")
+public class Auto_2026_2027 extends OpMode {
+    //---Declare Motors---//
+    //private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor motorFR = null;
+    private DcMotor motorFL = null;
+    private DcMotor motorBR = null;
+    private DcMotor motorBL = null;
+    private DcMotor intakeMotor;
+    private DcMotor launcherMotor;
 
-    // Calculate the COUNTS_PER_INCH for your specific drive train.
-    // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
-    // For external drive gearing, set DRIVE_GEAR_REDUCTION as needed.
-    // For example, use a value of 2.0 for a 12-tooth spur gear driving a 24-tooth spur gear.
-    // This is gearing DOWN for less speed and more torque.
-    // For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
-    static final double COUNTS_PER_MOTOR_REV = 1440 ;    // eg: TETRIX Motor Encoder
-    static final double DRIVE_GEAR_REDUCTION = 1.0 ;     // No External Gearing.
-    static final double WHEEL_DIAMETER_INCHES = 4.0 ;     // For figuring circumference
-    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-                                                      (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double DRIVE_SPEED = 0.6;
-    static final double TURN_SPEED = 0.5;
+    IMU imu;
 
+    private double yaw;
+
+    boolean intakeOn = false;
+    boolean launcherOn = false;
+
+    //boolean transfer = false;
+
+    //---Code to run ONCE when the driver hits INIT---//
     @Override
-    public void runOpMode() {
+    public void init()
+    {
+        //---Initialize Motors---//
+        motorFR = hardwareMap.get(DcMotor.class, "motorFR");
+        motorFL = hardwareMap.get(DcMotor.class, "motorFL");
+        motorBR = hardwareMap.get(DcMotor.class, "motorBR");
+        motorBL = hardwareMap.get(DcMotor.class, "motorBL");
+       // intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+        //launcherMotor = hardwareMap.get(DcMotor.class, "launcherMotor");
 
-        //---Initialize the drive system variables---//
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        imu = hardwareMap.get(IMU.class, "imu");
+
+        //---Initialize
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.UP;
+
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+
+        // Now initialize the IMU with this mounting orientation
+        // Note: if you choose two conflicting directions, this initialization will cause a code exception.
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+
 
         //---Set Motor Directions---//
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);
-
-        //---Reset encoder positions---//
-        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //---Start motor encoders---//
-        leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Starting at",  "%7d :%7d",
-                          leftDrive.getCurrentPosition(),
-                          rightDrive.getCurrentPosition());
-        telemetry.update();
-
-        // Wait for the game to start (driver presses START)
-        waitForStart();
-
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
-        sleep(1000);  // pause to display final telemetry message.
+        motorFR.setDirection(DcMotor.Direction.FORWARD);
+        motorFL.setDirection(DcMotor.Direction.REVERSE);
+        motorBL.setDirection(DcMotor.Direction.REVERSE);
+        motorBR.setDirection(DcMotor.Direction.FORWARD);
+        //---Add telemetry data---//
+        telemetry.addData("Status", "Initialized");
     }
 
-    /*
-     *  Method to perform a relative move, based on encoder counts.
-     *  Encoders are not reset as the move is based on the current position.
-     *  Move will stop if any of three conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Move runs out of time
-     *  3) Driver stops the OpMode running.
-     */
-    public void encoderDrive(double speed,
-                             double leftInches, double rightInches,
-                             double timeoutS) {
-        int newLeftTarget;
-        int newRightTarget;
+    //---Code to run REPEATEDLY after the driver hits INIT, but before they hit START---//
+    @Override
 
-        // Ensure that the OpMode is still active
-        if (opModeIsActive()) {
+    public void init_loop()
+    {
 
-            // Determine new target position, and pass to motor controller
-            newLeftTarget = leftDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = rightDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            leftDrive.setTargetPosition(newLeftTarget);
-            rightDrive.setTargetPosition(newRightTarget);
+    }
 
-            // Turn On RUN_TO_POSITION
-            leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    //---Code to run ONCE when the driver hits START---//
+    @Override
+    public void start()
+    {
+        driveBase(0.457,0,0);
 
-            // reset the timeout time and start motion.
-            runtime.reset();
-            leftDrive.setPower(Math.abs(speed));
-            rightDrive.setPower(Math.abs(speed));
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-            // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() &&
-                   (runtime.seconds() < timeoutS) &&
-                   (leftDrive.isBusy() && rightDrive.isBusy())) {
+        driveBase(0,0.457,0);
 
-                // Display it for the driver.
-                telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
-                telemetry.addData("Currently at",  " at %7d :%7d",
-                                            leftDrive.getCurrentPosition(), rightDrive.getCurrentPosition());
-                telemetry.update();
-            }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
-            // Stop all motion;
-            leftDrive.setPower(0);
-            rightDrive.setPower(0);
+        driveBase(0,0,0);
+    }
 
-            // Turn off RUN_TO_POSITION
-            leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    //---Code to run REPEATEDLY after the driver hits START but before they hit STOP---//
+    @Override
+    public void loop()
+    {
 
-            sleep(250);   // optional pause after each move.
+    }
+
+    //---Code to run ONCE after the driver hits STOP---//
+    @Override
+    public void stop()
+    {
+
+    }
+
+
+    public void launcher()
+    {
+        launcherOn = gamepad1.dpad_up;
+
+        if(launcherOn){
+            launcherMotor.setPower(0);
+        }
+        else{
+            launcherMotor.setPower(0);
         }
     }
+
+    public void intake()
+    {
+        if(gamepad1.aWasPressed()){
+            intakeOn = !intakeOn;
+        }
+
+        if(intakeOn){
+            intakeMotor.setPower(1);
+        }
+        else{
+            launcherMotor.setPower(0);
+        }
+
+    }
+
+    public void hood()
+    {
+
+    }
+
+    public void driveBase(double y_Input, double x_Input, double driveTurn)
+    {
+        //Get variables from the gamepad
+//        double y_Input = gamepad1.left_stick_y;
+//        double x_Input = gamepad1.left_stick_x;
+//        double driveTurn = gamepad1.right_stick_x;
+
+        double y_Mod = - y_Input * Math.sin(yaw) + x_Input * Math.cos(yaw);
+        double x_Mod = x_Input * Math.sin(yaw) + y_Input * Math.cos(yaw);
+
+        //Translate inputs to outputs for motors
+        motorBL.setPower ((y_Mod + driveTurn) - x_Mod);
+        motorBR.setPower ((y_Mod - driveTurn) + x_Mod);
+        motorFL.setPower ((y_Mod + driveTurn) + x_Mod);
+        motorFR.setPower ((y_Mod - driveTurn) - x_Mod);
+
+    }
+
+    public void displayIMU()
+    {
+
+        //telemetry.addData("Hub orientation", "Logo=%s   USB=%s\n ", logoDirection, usbDirection);
+
+        // Check to see if heading reset is requested
+        if (gamepad1.y) {
+            telemetry.addData("Yaw", "Resetting\n");
+            imu.resetYaw();
+        } else {
+            telemetry.addData("Yaw", "Press Y (triangle) on Gamepad to reset\n");
+        }
+
+        // Retrieve Rotational Angles and Velocities
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
+
+        yaw = orientation.getYaw(AngleUnit.RADIANS);
+
+        telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
+        telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
+        telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
+        telemetry.addData("Yaw (Z) velocity", "%.2f Deg/Sec", angularVelocity.zRotationRate);
+        telemetry.addData("Pitch (X) velocity", "%.2f Deg/Sec", angularVelocity.xRotationRate);
+        telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
+        telemetry.update();
+    }
+
 }

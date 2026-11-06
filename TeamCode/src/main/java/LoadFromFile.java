@@ -1,4 +1,5 @@
 //NRuke
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ReadWriteFile;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @TeleOp(name = "load from file")
+@Disabled
 public class LoadFromFile extends OpMode {
         private List<Integer> routine;
 

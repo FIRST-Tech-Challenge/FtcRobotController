@@ -19,7 +19,6 @@ import java.util.List;
 
 @TeleOp(name="TeleOp_2026_2027", group="Iterative OpMode")
 public class TeleOp_2026_2027 extends OpMode {
-    private List<Integer> routine;
 
 
     //---Declare Motors---//
@@ -38,11 +37,10 @@ public class TeleOp_2026_2027 extends OpMode {
     boolean intakeOn = false;
     boolean launcherOn = false;
 
-    //boolean transfer = false;
 
     //---Code to run ONCE when the driver hits INIT---//
     @Override
-    public void init() 
+    public void init()
     {
         //---Initialize Motors---//
         motorFR = hardwareMap.get(DcMotor.class, "motorFR");
@@ -51,10 +49,6 @@ public class TeleOp_2026_2027 extends OpMode {
         motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
         launcherMotor = hardwareMap.get(DcMotor.class, "launcherMotor");
-        //transfer = hardwareMap.get(DcMotor.class,"transfer");
-
-        routine = new ArrayList<>();
-            //routine.add(#); put in public void init_loop(), then if and if else statements. Thank you very much, have a great day!//
 
         imu = hardwareMap.get(IMU.class, "imu");
         //---Initialize
@@ -75,8 +69,6 @@ public class TeleOp_2026_2027 extends OpMode {
         motorBR.setDirection(DcMotor.Direction.FORWARD);
         //---Add telemetry data---//
         telemetry.addData("Status", "Initialized");
-
-        telemetry.addData("routine", routine);
     }
 
 
@@ -84,7 +76,7 @@ public class TeleOp_2026_2027 extends OpMode {
     //---Code to run REPEATEDLY after the driver hits INIT, but before they hit START---//
     @Override
 
-    public void init_loop() 
+    public void init_loop()
     {
 
 
@@ -93,38 +85,31 @@ public class TeleOp_2026_2027 extends OpMode {
 
     //---Code to run ONCE when the driver hits START---//
     @Override
-    public void start() 
+    public void start()
     {
         //runtime.reset();
     }
 
     //---Code to run REPEATEDLY after the driver hits START but before they hit STOP---//
     @Override
-    public void loop() 
+    public void loop()
     {
-        telemetry.addData("routine", routine);
-
         displayIMU();
 
         driveBase();
 
         launcher();
         intake();
-        if (gamepad1.bWasPressed()) {
-
-            routine.add(2);
-        }
     }
 
     //---Code to run ONCE after the driver hits STOP---//
     @Override
-    public void stop() 
+    public void stop()
     {
 
-        routineBlock();
     }
 
-    
+
     public void launcher()
     {
         launcherOn = gamepad1.dpad_up;
@@ -136,7 +121,7 @@ public class TeleOp_2026_2027 extends OpMode {
             launcherMotor.setPower(0);
         }
     }
-    
+
     public void intake()
     {
         if(gamepad1.aWasPressed()){
@@ -150,17 +135,11 @@ public class TeleOp_2026_2027 extends OpMode {
             launcherMotor.setPower(0);
         }
 
-        if(gamepad1.dpad_up && gamepad1.aWasPressed()){
-           // transfer.setPower(1);
-
-        }
     }
-    //if( Flywheel_on && GP1_LT ){
-       // transfer on
-    //  }
+
     public void hood()
     {
-    
+
     }
 
     public void driveBase()
@@ -170,8 +149,8 @@ public class TeleOp_2026_2027 extends OpMode {
         double x_Input = gamepad1.left_stick_x;
         double driveTurn = gamepad1.right_stick_x;
 
-        double y_Mod = - y_Input * Math.sin(yaw) + x_Input * Math.cos(yaw);
-        double x_Mod = x_Input * Math.sin(yaw) + y_Input * Math.cos(yaw);
+        double x_Mod = x_Input * Math.cos(yaw) + y_Input * Math.sin(yaw);
+        double y_Mod = -x_Input * Math.sin(yaw) + y_Input * Math.cos(yaw);
 
         //Translate inputs to outputs for motors
         motorBL.setPower ((y_Mod + driveTurn) - x_Mod);
@@ -209,7 +188,7 @@ public class TeleOp_2026_2027 extends OpMode {
             telemetry.update();
     }
 
-    public void routineBlock()
+    /*public void routineBlock()
     {
         String routineString = routine.toString();
         routineString = routineString.substring(1, routineString.length()-1);
@@ -218,6 +197,6 @@ public class TeleOp_2026_2027 extends OpMode {
         ReadWriteFile.writeFile(file, routineString);
 
         requestOpModeStop();
-    }
+    }*/
 
 }
