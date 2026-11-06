@@ -14,7 +14,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class ShooterSubsystem {
 
-    public static double shooterSpeed = 1320;
+    // public static double shooterSpeed = 1320;
+    public static double shooterSpeed = 1340;
+
 
     public static double realShooterSpeed = 0;
 
@@ -31,7 +33,8 @@ public class ShooterSubsystem {
 
     private Telemetry telemetry;
 
-    public ShooterSubsystem(HardwareMap hardwareMap,Telemetry telemetry){
+    public ShooterSubsystem(HardwareMap hardwareMap,Telemetry telemetry) {
+
         this.telemetry = telemetry;
         shooter = hardwareMap.get(DcMotorEx.class,"Shooter");
         shooter.setDirection(DcMotorSimple.Direction.REVERSE);

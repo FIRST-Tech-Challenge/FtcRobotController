@@ -15,11 +15,13 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.RaceAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.archive.PinpointLocalizer;
 import org.firstinspires.ftc.teamcode.subsystems.CameraTrackingSubsystems;
 import org.firstinspires.ftc.teamcode.subsystems.DepollenaterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FeederSubsystem;
@@ -44,24 +46,44 @@ public class GardenSideAuto extends LinearOpMode {
     private double feederOnTime = 3;
 
     public void runOpMode() throws InterruptedException {
+
+        telemetry.addData("Status", "Initializing");
+        telemetry.update();
+
         drive = new MecanumDrive(hardwareMap, GARDEN_BEGIN_POSE);
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
         shooterSubsystem = new ShooterSubsystem(hardwareMap, telemetry);
         feederSubsystem = new FeederSubsystem(hardwareMap, telemetry);
-        cameraTrackingSubsystems = new CameraTrackingSubsystems(hardwareMap,telemetry);
+        cameraTrackingSubsystems = new CameraTrackingSubsystems(hardwareMap, telemetry);
         depollenaterSubsystem = new DepollenaterSubsystem(hardwareMap, telemetry);
+
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         Pose2d beginPose = Constants.GARDEN_BEGIN_POSE;
 
-
+        // Put depollenater up before starting
         Actions.runBlocking(
-            drive.actionBuilder(beginPose)
-                    .stopAndAdd(() -> depollenaterSubsystem.depollenaterUp() ) // put depollenater up
-                    .build()
+                drive.actionBuilder(beginPose)
+                        .stopAndAdd(() -> depollenaterSubsystem.depollenaterUp())
+                        .build()
         );
 
+//        PinpointLocalizer pinpoint = (PinpointLocalizer) drive.localizer;
+//        GoBildaPinpointDriver.DeviceStatus status;
+//        do {
+//            pinpoint.update();
+//            status = pinpoint.getDeviceStatus();
+//            telemetry.addData("Pinpoint Status", status);
+//            telemetry.addData("Starting Pose", drive.localizer.getPose());
+//            telemetry.update();
+//        }  while (status != GoBildaPinpointDriver.DeviceStatus.READY );
+//        telemetry.addData("Pinpoint Status", status);
+        telemetry.addData("Status", "Ready. Waiting for start.");
+        telemetry.addData("Starting Pose", drive.localizer.getPose());
+        telemetry.update();
+
         waitForStart();
+        drive.localizer.setPose(GARDEN_BEGIN_POSE);
 
         // region block 1
         Actions.runBlocking(
@@ -127,7 +149,7 @@ public class GardenSideAuto extends LinearOpMode {
                             .waitSeconds(2) // shoot
                             .stopAndAdd(() -> feederSubsystem.stopIndexer()) // stop shooting
                             .splineToLinearHeading(new Pose2d(57, -20, Math.toRadians(180)), Math.toRadians(300)) // park
-                            
+
                             .build()
                 );
 
@@ -162,7 +184,7 @@ public class GardenSideAuto extends LinearOpMode {
                             .stopAndAdd(() -> feederSubsystem.stopIndexer()) // stop shooting
                             .setTangent(Math.toRadians(320))
                             .splineToLinearHeading(new Pose2d(57, -20, Math.toRadians(180)), Math.toRadians(300)) //park
-                            
+
                             .build()
                 );
                 // endregion
