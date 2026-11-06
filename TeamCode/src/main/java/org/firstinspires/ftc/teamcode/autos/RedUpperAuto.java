@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem_Motor;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystemFF;
 import org.firstinspires.ftc.teamcode.subsystems.StopperSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 import org.firstinspires.ftc.teamcode.utils.OpModeStorage;
 
 @Autonomous(name = "Red Upper", group = "Autonomous")
@@ -23,38 +24,35 @@ public class RedUpperAuto extends OpMode {
     private IntakeSubsystem_Motor intake;
     private ShooterSubsystemFF shooter;
     private StopperSubsystem stopper;
+    private VisionSubsystem vision;
+
+    private static final VisionSubsystem.Goal HIVE_GOAL =
+            VisionSubsystem.Goal.AUDIENCE;
+    private boolean hiveReady = false;
 
     private static final double SHOOT_RPM = 3200;
     private static final double DRIVE_TIMEOUT = 5.0;
-    private static final double GATE_TIME = 1.5;
+    private static final double GATE_TIME = 2;
 
     private final ElapsedTime stepTimer = new ElapsedTime();
     private int step = 0;
 
+    private final ElapsedTime autoTimer = new ElapsedTime();
+    private static final double PARK_DEADLINE = 25.0;
+
     private final PoseFactory poses = PoseFactory.degrees();
 
     private final Pose startPose =
-            poses.of(53.5, 139.3, 270);
+            poses.of(53.5, 138.4, 270);
 
     private final Pose shootPose =
-            poses.of(53.5, 135.3, 270);
-
-    private final Pose collectPose =
-            poses.of(48, 130, 90);
-
-    private final Pose collectControl =
-            poses.of(53.3288, 109.5317, 0);
-
-    private final Pose returnControl =
-            poses.of(53.2602, 109.0498, 0);
+            poses.of(53.5, 134.4, 270);
 
     private final Pose exitPose =
-            poses.of(14.0947, 107.6721, -154.0621);
+            poses.of(14.0, 122.0, -154.0621);
 
-    private Path path1;
-    private Path path2;
-    private Path path3;
-    private Path path5;
+    private Path shootPath;
+    private Path parkPath;
 
     private void setStep(int nextStep) {
         step = nextStep;
@@ -74,27 +72,16 @@ public class RedUpperAuto extends OpMode {
         intake = new IntakeSubsystem_Motor(hardwareMap);
         shooter = new ShooterSubsystemFF(hardwareMap);
         stopper = new StopperSubsystem(hardwareMap);
+        vision = new VisionSubsystem(hardwareMap);
 
         shooter.setTargetRpm(SHOOT_RPM);
         intake.stopIntake();
         stopper.off();
 
-        path1 = Paths.line(startPose, shootPose)
+        shootPath = Paths.line(startPose, shootPose)
                 .linear(startPose, shootPose);
 
-        path2 = Paths.curve(
-                shootPose,
-                collectControl,
-                collectPose
-        ).linear(shootPose, collectPose);
-
-        path3 = Paths.curve(
-                collectPose,
-                returnControl,
-                shootPose
-        ).linear(collectPose, shootPose);
-
-        path5 = Paths.line(shootPose, exitPose)
+        parkPath = Paths.line(shootPose, exitPose)
                 .tangent();
 
         OpModeStorage.autonomousIsBlue = false;
@@ -109,8 +96,13 @@ public class RedUpperAuto extends OpMode {
         intake.startIntake();
         shooter.update(true);
 
-        follower.follow(path1);
+        follower.follow(shootPath);
         setStep(0);
+
+        vision.resetHiveDetection();
+        hiveReady = false;
+
+        autoTimer.reset();
     }
 
     @Override
@@ -118,10 +110,25 @@ public class RedUpperAuto extends OpMode {
         follower.update();
         shooter.update(true);
 
+        // false selects Red tags.
+        // Detection starts after Start and can latch during the approach.
+        hiveReady = vision.hiveReady(HIVE_GOAL, false);
+
+        // If we haven't started shooting by 25 seconds, skip the shot and park.
+        if (autoTimer.seconds() >= PARK_DEADLINE
+                && (step == 0 || step == 1)) {
+
+            stopper.off();
+
+            // Build from the current position.
+            parkPath = Paths.line(follower.pose(), exitPose).tangent();
+            follower.follow(parkPath);
+            setStep(3);
+        }
+
         switch (step) {
 
-            // PATH 1: Approach shooting position.
-            // No driving timeout.
+            // Approach shooting position without a driving timeout.
             case 0:
                 if (!follower.isBusy()) {
                     follower.hold(shootPose);
@@ -129,79 +136,45 @@ public class RedUpperAuto extends OpMode {
                 }
                 break;
 
-            // Hold shooting position and wait for RPM.
-            // No shooter readiness timeout.
+            // Hold shooting position until both hive and shooter are ready.
             case 1:
-                if (shooter.isReady()) {
+                if (hiveReady && shooter.isReady()) {
                     stopper.on();
                     setStep(2);
                 }
                 break;
 
-            // Shoot preloads for 1.5 seconds.
+            // Shoot preloads, then go directly to parking.
             case 2:
                 if (stepTimer.seconds() >= GATE_TIME) {
                     stopper.off();
 
-                    follower.follow(path2);
+                    follower.follow(parkPath);
                     setStep(3);
                 }
                 break;
 
-            // PATH 2: Follow the collection curve.
-            // Intake stays running. Five-second timeout.
+            // Parking path: five-second driving timeout.
             case 3:
                 if (driveFinished()) {
-                    follower.follow(path3);
+                    follower.hold(exitPose);
                     setStep(4);
                 }
                 break;
 
-            // PATH 3: Return to shooting position.
-            // Intake stays running. No driving timeout.
+            // Hold final position until Stop.
             case 4:
-                if (!follower.isBusy()) {
-                    follower.hold(shootPose);
-                    setStep(5);
-                }
-                break;
-
-            // Hold shooting position and wait for RPM.
-            // No shooter readiness timeout.
-            case 5:
-                if (shooter.isReady()) {
-                    stopper.on();
-                    setStep(6);
-                }
-                break;
-
-            // Shoot collected balls for 1.5 seconds.
-            case 6:
-                if (stepTimer.seconds() >= GATE_TIME) {
-                    stopper.off();
-
-                    follower.follow(path5);
-                    setStep(7);
-                }
-                break;
-
-            // PATH 5: Drive to parking position.
-            // Five-second driving timeout.
-            case 7:
-                if (driveFinished()) {
-                    follower.hold(exitPose);
-                    setStep(8);
-                }
-                break;
-
-            // Hold final position.
-            // Intake and shooter remain running until Stop.
-            case 8:
                 break;
         }
 
         OpModeStorage.autonomousEndPose = follower.pose();
 
+        telemetry.addData("Auto time", "%.2f", autoTimer.seconds());
+        telemetry.addData(
+                "Park deadline remaining",
+                "%.1f",
+                Math.max(0.0, PARK_DEADLINE - autoTimer.seconds())
+        );
         telemetry.addData("Step", step);
         telemetry.addData("Step time", "%.2f", stepTimer.seconds());
         telemetry.addData("Path busy", follower.isBusy());
@@ -213,6 +186,56 @@ public class RedUpperAuto extends OpMode {
         );
         telemetry.addData("RPM", shooter.getVelocityRpm());
         telemetry.addData("Ready", shooter.isReady());
+
+        telemetry.addData("Hive selected", "Red %s", HIVE_GOAL);
+        telemetry.addData("Hive visible now", vision.isHiveVisible());
+        telemetry.addData("Hive visible IDs", vision.getHiveVisibleIds());
+        telemetry.addData("Hive detection latched", vision.hasSeenHive());
+        telemetry.addData("Hive first seen IDs", vision.getHiveFirstSeenIds());
+        telemetry.addData(
+                "Hive seconds since seen",
+                "%.2f",
+                vision.getHiveElapsedSeconds()
+        );
+        telemetry.addData(
+                "Hive wait remaining",
+                "%.2f",
+                vision.getHiveWaitRemainingSeconds()
+        );
+        telemetry.addData("Hive ready", hiveReady);
+
+        String status;
+        switch (step) {
+            case 0:
+                status = "Driving to shoot pose";
+                break;
+
+            case 1:
+                if (!vision.hasSeenHive()) {
+                    status = "Waiting for selected Red hive tags";
+                } else if (!hiveReady) {
+                    status = "Waiting two seconds after detection";
+                } else if (!shooter.isReady()) {
+                    status = "Waiting for shooter RPM";
+                } else {
+                    status = "Ready to shoot";
+                }
+                break;
+
+            case 2:
+                status = "Shooting";
+                break;
+
+            case 3:
+                status = "Driving to park";
+                break;
+
+            default:
+                status = "Parked";
+                break;
+        }
+
+        telemetry.addData("Auto status", status);
         telemetry.update();
     }
 
@@ -226,5 +249,9 @@ public class RedUpperAuto extends OpMode {
 
         follower.stop();
         follower.update();
+
+        if (vision != null) {
+            vision.stop();
+        }
     }
 }

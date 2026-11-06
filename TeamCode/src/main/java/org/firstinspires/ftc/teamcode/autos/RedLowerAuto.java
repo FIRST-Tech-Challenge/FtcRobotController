@@ -40,19 +40,19 @@ public class RedLowerAuto extends OpMode {
             poses.of(60.85, 12, 90);
 
     private final Pose point2 =
-            poses.of(32, 12, 180);
+            poses.of(3, 30, 270);
 
     private final Pose point3 =
-            poses.of(8.48, 8, 180);
+            poses.of(3, 14, 270);
 
-    private final Pose point3Control =
-            poses.of(27.3218, 8, 0);
-
-    private final Pose point5 =
-            poses.of(26.91, 39.42, 141.0654);
+    private final Pose point4 =
+            poses.of(26.9172, 22.0661, 90);
 
     private final Pose point6 =
-            poses.of(10.5815, 94.636, 106.474);
+            poses.of(23.2947, 40.4285, 142.8751);
+
+    private final Pose point7 =
+            poses.of(14, 94, 99.8429);
 
     private Path path1;
     private Path path2;
@@ -60,6 +60,7 @@ public class RedLowerAuto extends OpMode {
     private Path path4;
     private Path path5;
     private Path path6;
+    private Path path7;
 
     private void setStep(int nextStep) {
         step = nextStep;
@@ -84,22 +85,32 @@ public class RedLowerAuto extends OpMode {
         intake.stopIntake();
         stopper.off();
 
+        // Initial shooting approach.
         path1 = Paths.line(startPose, shootPose)
                 .tangent();
 
+        // Move to the collection approach while turning.
         path2 = Paths.line(shootPose, point2)
+                .linear(shootPose, point2);
+
+        // Collect while facing 270 degrees.
+        path3 = Paths.line(point2, point3)
+                .constant(point3);
+
+        // First return segment: turn back to 90 degrees.
+        path4 = Paths.line(point3, point4)
+                .linear(point3, point4);
+
+        // Finish returning to the shooting position.
+        path5 = Paths.line(point4, shootPose)
+                .constant(shootPose);
+
+        // Parking approach.
+        path6 = Paths.line(shootPose, point6)
                 .tangent();
 
-        path3 = Paths.curve(point2, point3Control, point3)
-                .tangent();
-
-        path4 = Paths.line(point3, shootPose)
-                .linear(point3, shootPose);
-
-        path5 = Paths.line(shootPose, point5)
-                .tangent();
-
-        path6 = Paths.line(point5, point6)
+        // Final parking segment.
+        path7 = Paths.line(point6, point7)
                 .tangent();
 
         OpModeStorage.autonomousIsBlue = false;
@@ -134,8 +145,7 @@ public class RedLowerAuto extends OpMode {
                 }
                 break;
 
-            // Hold shooting position and wait for RPM.
-            // No shooter readiness timeout.
+            // Hold position and wait for shooter readiness.
             case 1:
                 if (shooter.isReady()) {
                     stopper.on();
@@ -143,7 +153,7 @@ public class RedLowerAuto extends OpMode {
                 }
                 break;
 
-            // Shoot preloads for 1.5 seconds.
+            // Shoot preloads.
             case 2:
                 if (stepTimer.seconds() >= GATE_TIME) {
                     stopper.off();
@@ -153,8 +163,8 @@ public class RedLowerAuto extends OpMode {
                 }
                 break;
 
-            // PATH 2: Move left while collecting.
-            // Five-second driving timeout.
+            // PATH 2: Move to (3, 30), turning toward 270 degrees.
+            // Five-second timeout.
             case 3:
                 if (driveFinished()) {
                     follower.follow(path3);
@@ -162,8 +172,8 @@ public class RedLowerAuto extends OpMode {
                 }
                 break;
 
-            // PATH 3: Continue collecting along the curve.
-            // Five-second driving timeout.
+            // PATH 3: Collect toward (3, 14), facing 270 degrees.
+            // Five-second timeout.
             case 4:
                 if (driveFinished()) {
                     follower.follow(path4);
@@ -171,55 +181,63 @@ public class RedLowerAuto extends OpMode {
                 }
                 break;
 
-            // PATH 4: Return to shooting position.
-            // Intake stays running. No driving timeout.
+            // PATH 4: Return through (26.9172, 22.0661).
+            // No driving timeout.
             case 5:
                 if (!follower.isBusy()) {
-                    follower.hold(shootPose);
+                    follower.follow(path5);
                     setStep(6);
                 }
                 break;
 
-            // Hold shooting position and wait for RPM.
-            // No shooter readiness timeout.
+            // PATH 5: Finish returning to shooting position.
+            // No driving timeout.
             case 6:
-                if (shooter.isReady()) {
-                    stopper.on();
+                if (!follower.isBusy()) {
+                    follower.hold(shootPose);
                     setStep(7);
                 }
                 break;
 
-            // Shoot collected balls for 1.5 seconds.
+            // Hold position and wait for shooter readiness.
             case 7:
-                if (stepTimer.seconds() >= GATE_TIME) {
-                    stopper.off();
-
-                    follower.follow(path5);
+                if (shooter.isReady()) {
+                    stopper.on();
                     setStep(8);
                 }
                 break;
 
-            // PATH 5: First parking movement.
-            // Five-second driving timeout.
+            // Shoot collected balls.
             case 8:
-                if (driveFinished()) {
+                if (stepTimer.seconds() >= GATE_TIME) {
+                    stopper.off();
+
                     follower.follow(path6);
                     setStep(9);
                 }
                 break;
 
-            // PATH 6: Final parking movement.
-            // Five-second driving timeout.
+            // PATH 6: First parking movement.
+            // Five-second timeout.
             case 9:
                 if (driveFinished()) {
-                    follower.hold(point6);
+                    follower.follow(path7);
                     setStep(10);
+                }
+                break;
+
+            // PATH 7: Final parking movement.
+            // Five-second timeout.
+            case 10:
+                if (driveFinished()) {
+                    follower.hold(point7);
+                    setStep(11);
                 }
                 break;
 
             // Hold final position.
             // Intake and shooter remain running until Stop.
-            case 10:
+            case 11:
                 break;
         }
 
