@@ -11,7 +11,8 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class IntakeLayers {
-    private DcMotor outer, feeder;
+    private DcMotor outer, inner;
+    private CRServo feeder;
     private NormalizedColorSensor leftOuterColorSensor;
     private NormalizedColorSensor rightOuterColorSensor;
 
@@ -28,10 +29,13 @@ public class IntakeLayers {
         outer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        outer.setDirection(DcMotor.Direction.REVERSE);
 
-        feeder = hardwareMap.get(DcMotor.class, "feeder_motor");
-        feeder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        feeder.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        feeder.setDirection(DcMotor.Direction.REVERSE);
+        inner = hardwareMap.get(DcMotor.class, "inner_intake_motor");
+        inner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        inner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        outer.setDirection(DcMotor.Direction.REVERSE);
+
+        feeder = hardwareMap.get(CRServo.class, "feeder_motor");
+//        feeder.setDirection(CRServo.Direction.REVERSE);
 
 
         leftOuterColorSensor = hardwareMap.get(NormalizedColorSensor.class, "left_outer_color_sensor");
@@ -44,17 +48,20 @@ public class IntakeLayers {
     public void intake() {
         // these values can be changed
         outer.setPower(1.0);
+        inner.setPower(1.0);
         feeder.setPower(1.0);
     }
 
     public void stop() {
         outer.setPower(0.0);
+        inner.setPower(1.0);
         feeder.setPower(0.0);
     }
 
     public void garden() {
         // these values can be changed
         outer.setPower(-1.0);
+        inner.setPower(-1.0);
         feeder.setPower(-1.0);
     }
 

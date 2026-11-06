@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.mechanisms.IntakeLayers.DetectedColor;
 import org.firstinspires.ftc.teamcode.mechanisms.MecanumDrive;
+import org.firstinspires.ftc.teamcode.mechanisms.OneLayerIntake;
 import org.firstinspires.ftc.teamcode.mechanisms.Turret;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import java.util.List;
@@ -14,17 +15,22 @@ public class MecanumAndTurretTest extends OpMode {
     MecanumDrive drive = new MecanumDrive();
     double forward, strafe, rotate;
 
-    // ---------- Turret ----------
+    // ---------- Intake ----------
+    OneLayerIntake intakeLayers = new OneLayerIntake();
     DetectedColor enemyColor = DetectedColor.RED;
-    Turret turret = new Turret();
+    boolean manualGarden = false;
+    boolean lastYState = false;
+    boolean lastRightBumperState = false;
+    boolean forceStop = false;
 
-    // Tuning P and D
+    // ---------- Turret ----------
+    Turret turret = new Turret();
     double[] stepSizes = {0.1, 0.01, 0.001, 0.0001, 0.00001};
     int stepIndex = 2;
     boolean manualShoot = false;
     boolean lastBState = false;
 
-    // State tracking variables for edge-detection tuning controls
+    // ---------- State Tracking (Tuning Controls) ----------
     boolean lastLeftTriggerState = false;
     boolean lastDpadLeftState = false;
     boolean lastDpadRightState = false;
@@ -34,6 +40,7 @@ public class MecanumAndTurretTest extends OpMode {
     @Override
     public void init() {
         drive.init(hardwareMap);
+        intakeLayers.init(hardwareMap);
         turret.init(hardwareMap, telemetry);
         telemetry.addLine("Initialized all mechanisms");
     }
@@ -41,12 +48,14 @@ public class MecanumAndTurretTest extends OpMode {
     @Override
     public void start() {
         turret.resetTimer();
+        intakeLayers.intake();
     }
 
     public void autoShoot(Turret turret) {
         turret.updateTagProcessor();
         List<AprilTagDetection> detections = turret.getTagByColor(enemyColor);
         turret.updateTurret(detections);
+
         telemetry.addData("Tuning P", turret.getkP());
         telemetry.addData("Tuning D", turret.getkD());
         telemetry.addData("Step Size", stepSizes[stepIndex]);
@@ -66,8 +75,27 @@ public class MecanumAndTurretTest extends OpMode {
         rotate = gamepad1.right_stick_x;
         drive.drive(forward, strafe, rotate);
 
-        // ---------- Turret Tuning Controls (Handled once per loop frame) ----------
-        // Left trigger threshold logic acts like a button press
+        // ---------- Intake Logic ----------
+        boolean enemyDetected = false;
+
+        if (gamepad1.y && !lastYState) {
+            manualGarden = !manualGarden;
+        }
+        lastYState = gamepad1.y;
+        if (gamepad1.right_bumper && !lastRightBumperState) {
+            forceStop = !forceStop;
+        }
+        lastRightBumperState = gamepad1.right_bumper;
+
+        if (forceStop) {
+            intakeLayers.stop();
+        } else if (enemyDetected || manualGarden) {
+            intakeLayers.garden();
+        } else {
+            intakeLayers.intake();
+        }
+
+        // ---------- Turret Tuning Controls ----------
         boolean currentLeftTriggerState = gamepad1.left_trigger > 0.0;
         if (currentLeftTriggerState && !lastLeftTriggerState) {
             stepIndex = (stepIndex + 1) % stepSizes.length;
@@ -102,10 +130,8 @@ public class MecanumAndTurretTest extends OpMode {
 
         if (!manualShoot) {
             autoShoot(turret);
-//            turret.shoot(turret.getDetectedColor(telemetry));
         } else {
             turret.manualMode();
-//            turret.shoot(turret.getDetectedColor(telemetry));
         }
     }
 }

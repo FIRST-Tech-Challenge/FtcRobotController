@@ -35,8 +35,8 @@ public class Turret {
 
     // ---------- Alignment ----------
     private DcMotor turnMotor;
-    private double kP = 0.013;
-    private double kD = 0.0004;
+    private double kP = 0.0039;
+    private double kD = 0.0003;
     private double goalX = 0;
     private double lastError = 0;
     private double angleTolerance = 0.5;

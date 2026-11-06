@@ -23,6 +23,9 @@ public class TeleOpMode extends OpMode {
     boolean manualGarden = false;
     boolean lastYState = false;
 
+    boolean lastRightBumperState = false;
+    boolean forceStop = false;
+
     // ---------- Flower Extraction ----------
     FlowerExtraction flowerExtraction = new FlowerExtraction();
     boolean extractorDown = false;
@@ -99,8 +102,12 @@ public class TeleOpMode extends OpMode {
             manualGarden = !manualGarden;
         }
         lastYState = gamepad1.y;
+        if (gamepad1.right_bumper && !lastRightBumperState) {
+            forceStop = !forceStop;
+        }
+        lastRightBumperState = gamepad1.right_bumper;
 
-        if (gamepad1.right_bumper) {
+        if (forceStop) {
             intakeLayers.stop();
         } else if (enemyDetected || manualGarden) {
             intakeLayers.garden();
