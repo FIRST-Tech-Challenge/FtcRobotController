@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TestCases;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -17,7 +17,7 @@ public class LauncherTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            launcher.setPower(0.5);
+            launcher.setPower(1);
 
             telemetry.addData("Launcher power", launcher.getPower());
             telemetry.update();
