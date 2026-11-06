@@ -50,7 +50,7 @@ public class CameraTrackingSubsystems {
                 if (clusterDet.metadata != null) {
                     telemetry.addData("Target Cluster Found", clusterDet.metadata.name);
                     telemetry.addData("Percent Found", "%d%%", clusterDet.percentClusterFound);
-
+                    telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inc, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
                     if (clusterDet.ftcPose != null) {
                         telemetry.addData("Yaw (Error)", "%5.2f degrees", clusterDet.ftcPose.yaw);
                         return clusterDet.ftcPose.yaw;
