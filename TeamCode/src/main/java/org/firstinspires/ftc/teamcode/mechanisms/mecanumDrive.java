@@ -20,7 +20,7 @@ public class mecanumDrive {
         frontRightMotor = hwMap.get(DcMotor.class, "motorFR");
         backRightMotor = hwMap.get(DcMotor.class, "motorBR");
 
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        //frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -32,7 +32,7 @@ public class mecanumDrive {
 
         RevHubOrientationOnRobot RevOrientation = new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP);
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD);
         imu.initialize(new IMU.Parameters(RevOrientation));
 
     }

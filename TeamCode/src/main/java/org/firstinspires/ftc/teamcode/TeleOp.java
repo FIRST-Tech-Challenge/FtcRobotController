@@ -53,10 +53,6 @@ import org.firstinspires.ftc.teamcode.mechanisms.mecanumDrive;
 public class FieldOrientatedMecanumDriveTeleOp extends OpMode {
 
     // Declare OpMode members.
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
     private DcMotorEx launcher = null;
     private DcMotor intake = null;
     private CRServo leftIntakeServo = null;
@@ -106,10 +102,6 @@ public class FieldOrientatedMecanumDriveTeleOp extends OpMode {
          * to 'get' must correspond to the names assigned during the robot configuration
          * step.
          */
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "motorFL");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "motorFR");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "motorBL");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "motorBR");
         intake = hardwareMap.get(DcMotor.class, "intake");
         launcher = hardwareMap.get(DcMotorEx.class, "launcher");
         windmillServo = hardwareMap.get(CRServo.class, "windmillServo");
@@ -123,7 +115,7 @@ public class FieldOrientatedMecanumDriveTeleOp extends OpMode {
          * Note: The settings here assume direct drive on left and right wheels. Gear
          * Reduction or 90 Deg drives may require direction flips
          */
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -200,7 +192,7 @@ public class FieldOrientatedMecanumDriveTeleOp extends OpMode {
          * function uses other methods in the mecanumDrive class to move the robot with mecanum drive
          * relative to the field instead of the robot heading.
          */
-        forward = gamepad1.left_stick_y;
+        forward = -gamepad1.left_stick_y;
         strafe = gamepad1.left_stick_x;
         rotate = gamepad1.right_stick_x;
         drive.driveField(forward,strafe,rotate);
