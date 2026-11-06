@@ -15,7 +15,7 @@ public class RedScoring extends AutoBase {
 
         // Step 1: Forward 20 inches
         driveInches(20, p);
-
+        robot.launcher.spinUp(RobotConstants.LAUNCHER_TARGET_VEL);
         // Step 2: Limelight TipDetect scan (wait up to 8s for AprilTag cluster 38..41)
         ElapsedTime waitTimer = new ElapsedTime();
         boolean isTipped = false;
@@ -39,10 +39,10 @@ public class RedScoring extends AutoBase {
 
         // Branching Logic
         if (isTipped) {
-            //robot.launcher.spinUp(RobotConstants.LAUNCHER_TARGET_VEL);
+
             driveInches(19, -p);
             robot.intake.toggle();
-            shoot(3);
+            shoot(4);
 
 
             leaveAndPark();
@@ -74,7 +74,7 @@ public class RedScoring extends AutoBase {
         driveInches(79, p);
         turnToDegrees(80, p);
         driveInches(10, p);
-        driveSeconds(3.0, p);    // push into the wall to square up
-        driveSeconds(0.5, -p);   // back out
+        driveSeconds(1.5, p);    // push into the wall to square up
+        driveSeconds(0.3, -p);   // back out
     }
 }

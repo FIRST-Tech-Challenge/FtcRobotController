@@ -51,12 +51,12 @@ public final class RobotConstants {
 
     // ---- Launcher (live-tunable values are in LauncherConfig) ----
     public static final DcMotor.Direction LAUNCHER_MOTOR_DIRECTION = DcMotor.Direction.REVERSE; // confirmed on the robot
-    public static final double LAUNCHER_TARGET_VEL = 950;      // free speed of the flywheel motor
+    public static final double LAUNCHER_TARGET_VEL = 900;      // free speed of the flywheel motor
     public static final double LAUNCHER_TICKS_PER_REV = 28;  // 6000 RPM goBILDA motor, no gearbox (check the spec sheet)
     public static final double LAUNCHER_REVERSE_POWER = 0.5; // raw power while clearing a jam, start low and tune
 
     // ---- Intake ----
-    public static final double INTAKE_POWER = 0.8; // confirmed on the robot
+    public static final double INTAKE_POWER = 0.9; // confirmed on the robot
 
     // ---- Drivetrain: 435 RPM 12V motors ----
     public static final double DRIVE_MAX_RPM = 435;
