@@ -66,9 +66,6 @@ public class IntakeHandler implements NKNComponent {
         } else {
             stopIntake();
         }
-
-
-
     }
 
     public void stopIntake() {
