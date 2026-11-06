@@ -22,9 +22,14 @@ public class AbsolutePosition implements NKNComponent {
     final FlowSensor sensor2;
     private double lastReadTime;
 
+
     public AbsolutePosition(FlowSensor sensor1, FlowSensor sensor2) {
         this.sensor1 = sensor1;
         this.sensor2 = sensor2;
+    }
+    public AbsolutePosition(FlowSensor sensor1){
+        this.sensor1 = sensor1;
+        sensor2 = null;
     }
 
     public SparkFunOTOS.Pose2D getVelocity() {
@@ -82,7 +87,12 @@ public class AbsolutePosition implements NKNComponent {
         SparkFunOTOS.Pose2D pos2;
 
         pos1 = sensor1.getPosition();
-        pos2 = sensor2.getPosition();
+        if(sensor2 != null) {
+            pos2 = sensor2.getPosition();
+        } else {
+            pos2 = sensor1.getPosition();
+        }
+
         SparkFunOTOS.Pose2D prevPos = avPos;
         avPos = new SparkFunOTOS.Pose2D();
 

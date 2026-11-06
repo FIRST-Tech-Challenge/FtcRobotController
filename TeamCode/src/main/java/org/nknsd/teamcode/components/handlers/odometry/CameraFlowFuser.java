@@ -1,30 +1,39 @@
 package org.nknsd.teamcode.components.handlers.odometry;
 
+import android.util.Log;
+
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.robotcore.external.matrices.ColumnMatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.DenseMatrixF;
+import org.firstinspires.ftc.robotcore.external.matrices.GeneralMatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.RowMatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.nknsd.teamcode.components.handlers.srs.SRSHub;
 import org.nknsd.teamcode.components.sensors.AprilTagPosition;
 import org.nknsd.teamcode.components.sensors.AprilTagSensor3d;
 import org.nknsd.teamcode.components.sensors.FlowSensor;
 import org.nknsd.teamcode.frameworks.NKNComponent;
+
+import java.util.Arrays;
 
 public class CameraFlowFuser implements NKNComponent {
 
     private final static int SAMPLE_TIME_MS = 25;
 
 
-    private final SparkFunOTOS.Pose2D Pos = new SparkFunOTOS.Pose2D(0, 0, 0);
+    private SparkFunOTOS.Pose2D pos = new SparkFunOTOS.Pose2D(0, 0, 0);
+    private SparkFunOTOS.Pose2D posAdjustment = new SparkFunOTOS.Pose2D(0,0,0);
 
+    private SparkFunOTOS.Pose2D velocity = new SparkFunOTOS.Pose2D(0, 0, 0);
 
     FlowSensor flowSensor;
     AprilTagSensor3d aprilSensor;
@@ -40,99 +49,6 @@ public class CameraFlowFuser implements NKNComponent {
     public CameraFlowFuser(FlowSensor flowSensor, AprilTagSensor3d aprilSensor) {
         this.flowSensor = flowSensor;
         this.aprilSensor = aprilSensor;
-    }
-
-    private DenseMatrixF findRotationMatrix(float roll, float pitch, float yaw){
-
-        DenseMatrixF rotationMatrix = new DenseMatrixF(3, 3) {
-            @Override
-            public float[] getData() {
-                return new float[0];
-            }
-
-            @Override
-            protected int indexFromRowCol(int row, int col) {
-                return 0;
-            }
-
-            @Override
-            public MatrixF emptyMatrix(int numRows, int numCols) {
-                return null;
-            }
-        };
-
-        double rollSin = Math.sin(roll);
-        double rollCos = Math.cos(roll);
-        double pitchSin = Math.sin(pitch);
-        double pitchCos = Math.cos(pitch);
-        double yawSin = Math.sin(yaw);
-        double yawCos = Math.cos(yaw);
-
-        rotationMatrix.put(0, 0, (float) (rollCos * pitchCos));
-        rotationMatrix.put(0, 1, (float) ((rollCos * pitchSin * yawSin) - (rollSin * yawCos)));
-        rotationMatrix.put(0, 2, (float) ((rollCos * pitchSin * yawCos) + (rollSin * yawSin)));
-        rotationMatrix.put(1, 0, (float) (rollSin * pitchCos));
-        rotationMatrix.put(1, 1, (float) ((rollSin * pitchSin * yawSin) + (rollCos + yawCos)));
-        rotationMatrix.put(1, 2, (float) ((rollSin * pitchSin * yawCos) + (rollCos * yawSin)));
-        rotationMatrix.put(2, 0, (float) (-pitchSin));
-        rotationMatrix.put(2, 1, (float) (pitchCos * yawSin));
-        rotationMatrix.put(2, 2, (float) (pitchCos * yawCos));
-        rotationMatrix.formatAsTransform();
-
-        return rotationMatrix;
-    }
-
-    //  averages both sensors
-    public SparkFunOTOS.Pose2D getPosition() {
-        return Pos;
-    }
-
-    public double[] getDoublePosition(){
-        double[] positions = new double[3];
-        positions[0] = Pos.x;
-        positions[1] = Pos.y;
-        positions[2] = Pos.h;
-        return positions;
-
-
-    }
-
-    //should be called at the start of every loop or elsewhere if needed.
-    public void getAprilTags(){
-        frontRed[0] = aprilSensor.getTag30();
-        frontRed[1] = aprilSensor.getTag31();
-        frontRed[2] = aprilSensor.getTag32();
-        frontRed[3] = aprilSensor.getTag33();
-        backRed[3] = aprilSensor.getTag34();
-        backRed[2] = aprilSensor.getTag35();
-        backRed[1] = aprilSensor.getTag36();
-        backRed[0] = aprilSensor.getTag37();
-        backBlue[0] = aprilSensor.getTag38();
-        backBlue[1] = aprilSensor.getTag39();
-        backBlue[2] = aprilSensor.getTag40();
-        backBlue[3] = aprilSensor.getTag41();
-        frontBlue[3] = aprilSensor.getTag42();
-        frontBlue[2] = aprilSensor.getTag43();
-        frontBlue[1] = aprilSensor.getTag44();
-        frontBlue[0] = aprilSensor.getTag45();
-    }
-
-
-
-
-    public boolean hiveFacingUp(AprilTagPosition[] aprilTagPositions){
-        //if the z value of a tag is above this, the tag is considered valid.
-        int zMin = 30;
-        //tracks number of "valid" tags for the hive to be facing up.
-        int validTags = 0;
-
-        for (AprilTagPosition aprilTagPosition : aprilTagPositions) {
-            if (aprilTagPosition != null && aprilTagPosition.tag_Z > zMin) {
-                validTags++;
-            }
-        }
-        //if two or more tags are "valid" then it states the hive is facing up.
-        return validTags >= 1;
     }
 
     @Override
@@ -160,11 +76,18 @@ public class CameraFlowFuser implements NKNComponent {
         return "";
     }
 
+
     @Override
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
         getAprilTags();
 
+        pos = new SparkFunOTOS.Pose2D(
+                flowSensor.getPosition().x + posAdjustment.x,
+                flowSensor.getPosition().y + posAdjustment.y,
+                flowSensor.getPosition().h + posAdjustment.h
+        );
 
+//        velocity =
     }
 
     @Override
@@ -175,4 +98,105 @@ public class CameraFlowFuser implements NKNComponent {
         telemetry.addData("frontRed up: ",hiveFacingUp(frontRed));
     }
 
+    //should be called at the start of every loop or elsewhere if needed.
+    public void getAprilTags(){
+        frontRed[0] = aprilSensor.getTag30();
+        frontRed[1] = aprilSensor.getTag31();
+        frontRed[2] = aprilSensor.getTag32();
+        frontRed[3] = aprilSensor.getTag33();
+        backRed[3] = aprilSensor.getTag34();
+        backRed[2] = aprilSensor.getTag35();
+        backRed[1] = aprilSensor.getTag36();
+        backRed[0] = aprilSensor.getTag37();
+        backBlue[0] = aprilSensor.getTag38();
+        backBlue[1] = aprilSensor.getTag39();
+        backBlue[2] = aprilSensor.getTag40();
+        backBlue[3] = aprilSensor.getTag41();
+        frontBlue[3] = aprilSensor.getTag42();
+        frontBlue[2] = aprilSensor.getTag43();
+        frontBlue[1] = aprilSensor.getTag44();
+        frontBlue[0] = aprilSensor.getTag45();
+    }
+
+    /// private version of hiveFacingUp as the public version shouldn't access the april tag positions
+    ///
+    /// determines if a collection of april tags are in an up or down position
+    /// @param aprilTagPositions collection of april tags used to determine if a hive is "up"
+    /// @return if the hive is in the up or down position
+    private boolean hiveFacingUp(AprilTagPosition[] aprilTagPositions){
+        //if the z value of a tag is above this, the tag is considered valid.
+        int zMin = 30;
+        //tracks number of "valid" tags for the hive to be facing up.
+        int validTags = 0;
+
+        for (AprilTagPosition aprilTagPosition : aprilTagPositions) {
+            if (aprilTagPosition != null && aprilTagPosition.tag_Z > zMin) {
+                validTags++;
+            }
+        }
+        //if two or more tags are "valid" then it states the hive is facing up.
+        return validTags >= 1;
+    }
+
+    /// determines if a given hive is facing up
+    /// @param redHive is the hive you want to know about a red hive?
+    /// @param frontHive is the hive facing the audience?
+    /// @return
+    public boolean hiveFacingUp(boolean redHive, boolean frontHive){
+        if(redHive && frontHive){ return hiveFacingUp(frontRed);}
+        else if(redHive && !frontHive){ return hiveFacingUp(backRed);}
+        else if(!redHive && frontHive){ return hiveFacingUp(frontBlue);}
+        else { return hiveFacingUp(backBlue);}
+    }
+
+    /**
+     *
+     * @return the current velocity of the robot based on the flow sensor.
+     */
+    public SparkFunOTOS.Pose2D getVelocity(){
+        return null;
+    }
+
+
+
+    /// @param roll roll in radians
+    /// @param pitch pitch in radians
+    /// @param yaw yaw in radians
+    /// @return rotation matrix made from roll, pitch, and yaw
+    public GeneralMatrixF findRotationMatrix(float roll, float pitch, float yaw){
+        GeneralMatrixF rotationMatrix = new GeneralMatrixF(3, 3);
+
+        double rollSin = Math.sin(roll);
+        double rollCos = Math.cos(roll);
+        double pitchSin = Math.sin(pitch);
+        double pitchCos = Math.cos(pitch);
+        double yawSin = Math.sin(yaw);
+        double yawCos = Math.cos(yaw);
+
+        rotationMatrix.put(0, 0, (float) (rollCos * pitchCos));
+        rotationMatrix.put(0, 1, (float) ((rollCos * pitchSin * yawSin) - (rollSin * yawCos)));
+        rotationMatrix.put(0, 2, (float) ((rollCos * pitchSin * yawCos) + (rollSin * yawSin)));
+        rotationMatrix.put(1, 0, (float) (rollSin * pitchCos));
+        rotationMatrix.put(1, 1, (float) ((rollSin * pitchSin * yawSin) + (rollCos * yawCos)));
+        rotationMatrix.put(1, 2, (float) ((rollSin * pitchSin * yawCos) + (rollCos * yawSin)));
+        rotationMatrix.put(2, 0, (float) (-pitchSin));
+        rotationMatrix.put(2, 1, (float) (pitchCos * yawSin));
+        rotationMatrix.put(2, 2, (float) (pitchCos * yawCos));
+
+
+        return rotationMatrix;
+    }
+
+    private SparkFunOTOS.Pose2D getPosition() {
+        return flowSensor.getPosition();
+    }
+//    public double[] getDoublePosition(){
+//        double[] positions = new double[3];
+//        positions[0] = Pos.x;
+//        positions[1] = Pos.y;
+//        positions[2] = Pos.h;
+//        return positions;
+//
+//
+//    }
 }

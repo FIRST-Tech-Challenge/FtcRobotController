@@ -1,14 +1,12 @@
 package org.nknsd.teamcode.programs.parts;
 
-import com.qualcomm.robotcore.util.RobotLog;
-
 import org.nknsd.teamcode.components.drivers.FiringDriver;
 import org.nknsd.teamcode.components.drivers.IntakeDriver;
 import org.nknsd.teamcode.components.drivers.LiftDriver;
 import org.nknsd.teamcode.components.drivers.MixedInputWheelDriver;
 import org.nknsd.teamcode.components.drivers.SRSDriver;
+import org.nknsd.teamcode.components.handlers.intakeTurret.IntakeHandler;
 import org.nknsd.teamcode.components.handlers.gamepad.GamePadHandler;
-import org.nknsd.teamcode.components.utility.StateMachine;
 import org.nknsd.teamcode.controlSchemes.defaults.FiringControlScheme;
 import org.nknsd.teamcode.controlSchemes.defaults.IntakeControlScheme;
 import org.nknsd.teamcode.controlSchemes.defaults.LiftControlScheme;
@@ -48,6 +46,9 @@ public class GamepadPart extends ProgramPart {
         IntakeDriver intakeDriver = new IntakeDriver();
         components.add(intakeDriver);
 
+        IntakeHandler intakeHandler = new IntakeHandler();
+        components.add(intakeHandler);
+
         IntakeControlScheme intakeControlScheme = new IntakeControlScheme();
 
         LiftDriver liftDriver = new LiftDriver();
@@ -66,7 +67,7 @@ public class GamepadPart extends ProgramPart {
         firingControlScheme.link(gamePadHandler);
         mixedInputWheelDriver.link(gamePadHandler, setup.getPowerInputMixer(), wheelControlScheme);
         wheelControlScheme.link(gamePadHandler);
-        intakeDriver.link(gamePadHandler, setup.getArtifactSystem(), intakeControlScheme);
+        intakeDriver.link(gamePadHandler, intakeControlScheme, intakeHandler);
         intakeControlScheme.link(gamePadHandler);
         liftDriver.link(gamePadHandler, setup.getBalancedLiftHandler(), liftControlScheme);
         liftControlScheme.link(gamePadHandler);
