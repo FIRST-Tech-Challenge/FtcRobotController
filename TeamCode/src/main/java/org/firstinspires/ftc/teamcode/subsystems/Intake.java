@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -11,7 +8,7 @@ public class Intake{
     DcMotor armMotor;
     DcMotor intakeMotor;
 
-    public Intake(DcMotor armMotor) {
+    public Intake() {
     }
 
     public void init(HardwareMap hardwareMap) {
@@ -24,11 +21,12 @@ public class Intake{
     }
 
     public void ArmIntakeIn(){
-        armMotor.setPower(1);
+        armMotor.setPower(-1);
     }
 
     public void ArmIntakeOut(){
-        armMotor.setPower(-1);
+        armMotor.setPower(1);
+        intakeMotor.setPower(-1);
     }
 
 }
