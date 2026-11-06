@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-// this is a test
+
 @TeleOp(name="BasicTeleop", group="mai")  // on the DS, opmodes are sorted by gorup, then name
 public class BasicTeleop extends OpMode {
     private ElapsedTime clock = new ElapsedTime();
