@@ -16,9 +16,10 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.Flywheel;
 public class BioBuzzRobot extends SWEEPRobot {
     // Robot subsystems
     Drivetrain drivetrain;
-    Flywheel flywheel;
+    Flywheel flywheelPollen;
 
     Flywheel flywheelNectar;
+
 
     /**
      * Constructor for the SoftwareTestingBot class.
@@ -30,11 +31,11 @@ public class BioBuzzRobot extends SWEEPRobot {
     public BioBuzzRobot(HardwareMap hardwareMap, Telemetry telemetry){
         runtime = new ElapsedTime();
         this.drivetrain = new Drivetrain(hardwareMap, telemetry, false);
-        this.flywheel = new Flywheel(hardwareMap, telemetry, new ElapsedTime(),70,65,45);
-        this.flywheelNectar = new Flywheel(hardwareMap,telemetry,new ElapsedTime(),50,40,65);
+        this.flywheelPollen = new Flywheel(hardwareMap, telemetry, new ElapsedTime(),true);
+        this.flywheelNectar = new Flywheel(hardwareMap,telemetry,new ElapsedTime(),false);
         subsystems = new Subsystem[]{
                 drivetrain,
-                flywheel,
+                flywheelPollen,
                 flywheelNectar
         };
     }
@@ -63,8 +64,8 @@ public class BioBuzzRobot extends SWEEPRobot {
     public Drivetrain getDrivetrain() {
         return drivetrain;
     }
-    public Flywheel getFlywheel(){
-        return flywheel;
+    public Flywheel getFlywheelPollen(){
+        return flywheelPollen;
     }
     // Robot action definitions
     /**
@@ -77,9 +78,11 @@ public class BioBuzzRobot extends SWEEPRobot {
     public ExampleAction exampleAction(Pos2D position, double time, double range){
         return new ExampleAction(this, position, time, range);
     }
+    /*
     public SetFlywheelSpeedAction flywheelAction(Pos2D position, double time,double speed){
         return new SetFlywheelSpeedAction(this, position,time,speed);
     }
+     */
 
 
     /**

@@ -37,18 +37,21 @@ public class Flywheel implements Subsystem {
     private DcMotorEx flywheel = null;
     // Acceptable error threshold for speed (rotations per minute)
     private double accuracyThreshold;
+    private final int POLLEN_P  = 70;
+    private final int NECTAR_P= 50;
+    private final int POLLEN_I = 65;
+    private final int NECTAR_I = 40;
+    private final int POLLEN_D = 45;
+    private final int NECTAR_D =65;
 
     /**
      * Constructs a Flywheel instance and configures the motor and PIDF coefficients.
      * @param hardwareMap HardwareMap for accessing hardware devices
      * @param telemetry Telemetry for reporting data
      * @param runtime ElapsedTime instance for timing
-     * @param p Proportional constant for PIDF
-     * @param i Integral constant for PIDF
-     * @param d Derivative constant for PIDF
+     * @param isPollen Determines if it is pollen or nectar
      */
-    public Flywheel(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime runtime, double p, double i, double d){
-        this.hardwareMap = hardwareMap;
+    public Flywheel(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime runtime,Boolean isPollen){
         this.telemetry = telemetry;
         this.runtime = runtime;
 
@@ -58,12 +61,16 @@ public class Flywheel implements Subsystem {
         flywheel.setMotorEnable();
         flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
-        // Set PIDF coefficients for velocity control
-        flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(p,i,d,f));
+        if(isPollen){
+            flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(POLLEN_P,POLLEN_I,POLLEN_D,0));
+        }else {
+            flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(NECTAR_P,NECTAR_I,NECTAR_D,0));
+        }
     }
 
     @Override
     public void update(){
+
     }
     @Override
     public void setDisabled(boolean disabled){
@@ -101,7 +108,7 @@ public class Flywheel implements Subsystem {
      * @param rotationsPerMinute Target speed in rotations per minute
      */
     public void setTargetSpeed(double rotationsPerMinute){
-        //This is the convesation factor for angular rate so you can get it in rotations per minute
+        //This is the convesation factor for angular rate so you can change it from rotations per minute into encoder ticks per minute
         targetSpeed = 28*rotationsPerMinute*60;
         flywheel.setVelocity(targetSpeed);
     }
@@ -109,9 +116,7 @@ public class Flywheel implements Subsystem {
     /**
      * Updates the flywheel's speed control and records the current speed.
      */
-    public void updateSpeedControl(double p, double i, double d){
-        flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(p,i,d,f));
-
+    public void updateSpeedControl(){
         flywheel.setVelocity(targetSpeed);
         currentSpeed = flywheel.getVelocity();
         telemetry.addData("FLYWHEELvelocity", currentSpeed);

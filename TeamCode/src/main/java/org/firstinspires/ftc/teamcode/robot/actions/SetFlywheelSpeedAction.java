@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.robot.actions;
 
 import com.broombots.sweep.Classes.Action;
@@ -22,7 +23,7 @@ public class SetFlywheelSpeedAction extends Action {
 
     @Override
     public void execute() {
-        robot.getFlywheel().setTargetSpeed(flywheeelSpeed);
+        robot.getFlywheelPollen().setTargetSpeed(flywheeelSpeed);
     }
     @Override
     public void process(){
@@ -47,3 +48,4 @@ public class SetFlywheelSpeedAction extends Action {
         // This is where you would put the code that you want to run when this action is completed
     }
 }
+ */
