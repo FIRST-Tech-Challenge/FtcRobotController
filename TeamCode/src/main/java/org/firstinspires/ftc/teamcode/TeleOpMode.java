@@ -74,15 +74,15 @@ public class TeleOpMode extends OpMode {
         turret.updateTagProcessor();
         List<AprilTagDetection> detections = turret.getTagByColor(enemyColor);
         turret.updateTurret(detections);
-        telemetry.addData("Tuning P", turret.getkP());
-        telemetry.addData("Tuning D", turret.getkD());
-        telemetry.addData("Step Size", stepSizes[stepIndex]);
-
-        if (!detections.isEmpty()) {
-            telemetry.addLine("Turret: AprilTag Detected");
-        } else {
-            telemetry.addLine("Turret: No Tag Detected. Stopping Motor");
-        }
+//        telemetry.addData("Tuning P", turret.getkP());
+//        telemetry.addData("Tuning D", turret.getkD());
+//        telemetry.addData("Step Size", stepSizes[stepIndex]);
+//
+//        if (!detections.isEmpty()) {
+//            telemetry.addLine("Turret: AprilTag Detected");
+//        } else {
+//            telemetry.addLine("Turret: No Tag Detected. Stopping Motor");
+//        }
     }
 
     @Override

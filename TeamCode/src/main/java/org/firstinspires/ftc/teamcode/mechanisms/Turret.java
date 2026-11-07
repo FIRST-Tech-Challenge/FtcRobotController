@@ -54,16 +54,19 @@ public class Turret {
 
         // ---------- AprilTag ----------
         aprilTagProcessor = new AprilTagProcessor.Builder()
-                .setDrawTagID(true)
-                .setDrawTagOutline(true)
+                .setDrawTagID(false)
+                .setDrawTagOutline(false)
                 .setDrawAxes(false)
                 .setDrawCubeProjection(false)
                 .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
                 .build();
 
+        aprilTagProcessor.setDecimation(3);
+
         VisionPortal.Builder builder = new VisionPortal.Builder();
         builder.setCamera(hwMap.get(WebcamName.class, "webcam1"));
         builder.setCameraResolution(new Size(640, 480));
+        builder.enableLiveView(false);
         builder.addProcessor(aprilTagProcessor);
         visionPortal = builder.build();
 
@@ -76,34 +79,17 @@ public class Turret {
         timer.reset();
 
         // ---------- Intake & Shooting ----------
-//        shooter = hwMap.get(DcMotor.class, "shooter");
-//        shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        shooter.setDirection(DcMotor.Direction.REVERSE);
-//
-//        colorSensor = hwMap.get(NormalizedColorSensor.class, "left_inner_color_sensor");
+        shooter = hwMap.get(DcMotor.class, "shooter");
+        shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooter.setDirection(DcMotor.Direction.REVERSE);
+
+        colorSensor = hwMap.get(NormalizedColorSensor.class, "left_inner_color_sensor");
     }
 
     public void updateTagProcessor() {
         List<AprilTagDetection> detections = aprilTagProcessor.getDetections();
         detectedTags = (detections != null) ? detections : Collections.emptyList();
-    }
-
-    @SuppressLint("DefaultLocale")
-    public void displayDetectionTelemetry(AprilTagDetection detectedId) {
-        if (detectedId == null) return;
-
-        if (detectedId instanceof AprilTagClusterDetection) {
-            AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detectedId;
-            if (clusterDet.metadata != null) {
-                telemetry.addLine(String.format("\n==== %s", clusterDet.metadata.name));
-                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f (cm)", detectedId.ftcPose.x, detectedId.ftcPose.y, detectedId.ftcPose.z));
-                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f (deg)", detectedId.ftcPose.pitch, detectedId.ftcPose.roll, detectedId.ftcPose.yaw));
-                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f (cm, deg, deg)", detectedId.ftcPose.range, detectedId.ftcPose.bearing, detectedId.ftcPose.elevation));
-            } else {
-                telemetry.addLine("\n==== Unknown Cluster");
-            }
-        }
     }
 
     public List<AprilTagDetection> getTagByColor(IntakeLayers.DetectedColor enemyColor) {
@@ -147,14 +133,27 @@ public class Turret {
     }
 
     public void updateTurret(List<AprilTagDetection> detections) {
+        if (detections == null || detections.isEmpty()) {
+            if (Math.abs(lastError) > angleTolerance) {
+                double recoveryPower = Math.signum(lastError) * 0.05;
+
+                if (turnMotor.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
+                    turnMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                }
+                turnMotor.setPower(recoveryPower);
+            } else {
+                turnMotor.setPower(0.0);
+            }
+            return;
+        }
+
+        if (turnMotor.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
+            turnMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
         double deltaTime = timer.seconds();
         timer.reset();
 
-        if (detections == null || detections.isEmpty()) {
-            turnMotor.setPower(0.0);
-            lastError = 0;
-            return;
-        }
         double bearingAvg = detections.get(0).ftcPose.bearing;
 
         double error = (goalX-bearingAvg);
@@ -245,10 +244,6 @@ public class Turret {
             turnMotor.setTargetPosition(0);
             turnMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             turnMotor.setPower(0.4);
-        }
-        if (turnMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION && !turnMotor.isBusy()) {
-            turnMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            turnMotor.setPower(0.0);
         }
     }
 }
