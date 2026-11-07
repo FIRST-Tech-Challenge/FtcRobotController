@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.RobotConstants;
+import org.firstinspires.ftc.teamcode.opmodes.auto.AutoBase;
 
 /* Ported from Rayden's blue_down_far_load with Limelight Vision & Path branching. */
 @Autonomous(name = "RedAudience", group = "Main")
@@ -15,15 +16,15 @@ public class RedAudience extends AutoBase {
 
         // Step 1: Forward 20 inches
         driveInches(20, p);
-
-        // Step 2: Limelight TipDetect scan (wait up to 8s for AprilTag cluster 38..41)
+        robot.launcher.spinUp();
+        // Step 2: Limelight TipDetect scan (wait up to 8s for AprilTag cluster 34..37)
         ElapsedTime waitTimer = new ElapsedTime();
         boolean isTipped = false;
 
         while (opModeIsActive() && waitTimer.seconds() < 8.0) {
             robot.update(); // CRITICAL: Updates Limelight camera feed and telemetry on every frame!
 
-            isTipped = robot.vision.isHiveTipped(RobotConstants.RIGHT_RED_APRIL_TAG_CODES[0], RobotConstants.RIGHT_RED_APRIL_TAG_CODES[1]);
+            isTipped = robot.vision.isHiveTipped(RobotConstants.TAG_RED_AUDIENCE_MIN, RobotConstants.TAG_RED_AUDIENCE_MAX);
 
             telemetry.addData("Scan Timer", "%.1fs remaining", 8.0 - waitTimer.seconds());
             telemetry.addData("Limelight Target", robot.vision.hasTarget() ? "YES" : "NO");
@@ -39,7 +40,7 @@ public class RedAudience extends AutoBase {
 
         // Branching Logic
         if (isTipped) {
-            //robot.launcher.spinUp(RobotConstants.LAUNCHER_TARGET_VEL);
+
             driveInches(19, -p);
             robot.intake.toggle();
             shoot(3);
@@ -64,10 +65,17 @@ public class RedAudience extends AutoBase {
         }
     }
 
-
     private void leaveAndPark() {
-        driveInches(24, RobotConstants.AUTO_POWER);
-        turnToDegrees(-90, RobotConstants.AUTO_POWER);
-        driveInches(41, RobotConstants.AUTO_POWER);
+        double p = RobotConstants.AUTO_POWER;
+
+        driveInches(12, p);
+        turnToDegrees(90, p);
+        driveInches(30, p);
+        turnToDegrees(0, p);
+        driveInches(79, p);
+        turnToDegrees(80, p);
+        driveInches(10, p);
+        driveSeconds(1.5, p);    // push into the wall to square up
+        driveSeconds(0.3, -p);   // back out
     }
 }
