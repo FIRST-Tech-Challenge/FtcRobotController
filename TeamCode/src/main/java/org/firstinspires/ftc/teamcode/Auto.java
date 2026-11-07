@@ -1,21 +1,26 @@
 package org.firstinspires.ftc.teamcode;
 
+import static com.pedropathing.ivy.Scheduler.schedule;
+import static com.pedropathing.ivy.groups.Groups.sequential;
+import static com.pedropathing.ivy.pedro.PedroCommands.follow;
+
+import com.pedropathing.follower.Follower;
+import com.pedropathing.ivy.Command;
+import com.pedropathing.ivy.Scheduler;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.teamcode.GamepadStates;
 
 @Autonomous(name = "Auto", group = "Autonomous")
 public class Auto extends LinearOpMode {
     boolean red = false;
     boolean blue = false;
-    boolean left = false;
-    boolean right = false;
+    boolean close = false;
+    boolean far = false;
     boolean colorSelected = false;
     boolean locationSelected = false;
     boolean confirmed = false;
     boolean telemetryFix = false;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -24,6 +29,8 @@ public class Auto extends LinearOpMode {
 
         // name subassembly classes
         // name
+
+        autoBlueFar ABFar = new autoBlueFar();
 
         telemetry.addLine("press X for blue, press B for red 'w'");
         telemetry.update();
@@ -39,16 +46,16 @@ public class Auto extends LinearOpMode {
                 }
             }
         }
-        telemetry.addLine("press X for left, press B for right");
+        telemetry.addLine("press Up for Far, press Down for Close");
         telemetry.update();
 
         while (!locationSelected) {
-            if (gamepad1.bWasReleased()) {
-                right = true;
+            if (gamepad1.dpadDownWasReleased()) {
+                close = true;
                 locationSelected = true;
             } else {
-                if (gamepad1.xWasReleased()) {
-                    left = true;
+                if (gamepad1.dpadUpWasReleased()) {
+                    far = true;
                     locationSelected = true;
                 }
             }
@@ -58,13 +65,13 @@ public class Auto extends LinearOpMode {
 
             while (opModeIsActive()) {
                 while (!confirmed) {
-                    if (blue && left) {
+                    if (blue && far) {
                         telemetry.addLine("blue left selected :]");
                         confirmed = true;
-                    } else if (blue && right) {
+                    } else if (blue && close) {
                         telemetry.addLine("blue right selected :]");
                         confirmed = true;
-                    } else if (red && left) {
+                    } else if (red && far) {
                         telemetry.addLine("red left without saying goodbye :(");
                         confirmed = true;
                     } else {
@@ -73,14 +80,32 @@ public class Auto extends LinearOpMode {
                     }
                 }
                 if (!telemetryFix) {
-                    telemetry.addLine("auto started waow :3");
+                    telemetry.addLine("auto started wow");
                     telemetry.update();
                     telemetryFix = true;
+                }
+            }
+            if (blue && far) {
+//                ABFar.autoRoutine();
+                Follower follower = ABFar.follower;
+
+
+                Scheduler.reset();
+                follower = Constants.create(hardwareMap);
+                follower.setPose(ABFar.startBlueFar);
+                schedule(follow(follower, ABFar.launchToFlowerABFar()));
+                schedule(follow(follower, ABFar.flowerToLaunch()));
+                schedule(follow(follower, ABFar.launchToFlower2()));
+                schedule(follow(follower, ABFar.flowerToLaunch2()));
+                schedule(follow(follower, ABFar.launchToPark()));
+
+                schedule(ABFar.autoRoutine());
+
+                while (opModeIsActive()) {
+                    follower.update();
+                    Scheduler.execute();
                 }
             }
         }
     }
 }
-// ju9tujtsj0utsj0u sj0isyr0jyrdsji0ysrjirysijyrsjpiyrsi0jrysji0yrsijjirys-ysrpijrysk-dyr-irdyko-rdyk-oyrdkoul-ydrk-oydrkojillililj
-// telemetry.addLine("My name is Gino.");
-// telemetry.addLine("My name is Gino and I don't larp ANYTHING.");
