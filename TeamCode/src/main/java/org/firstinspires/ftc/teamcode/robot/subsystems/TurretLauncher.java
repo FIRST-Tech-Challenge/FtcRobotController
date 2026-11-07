@@ -4,35 +4,33 @@ public class TurretLauncher {
     private LauncherRamp launcherRamp;
     //TODO: need to make flywheel class
     //private Flywheel flywheel;
-    //TODO: need to make turret class
-    //private Turret turret;
+    private Turret turret;
+    //TODO: Actual fuction to use once Flywheel done
 //        public TurretLauncher(LauncherRamp launcherRamp, Flywheel flywheel, Turret turret) {
-//                this.launcherRamp = launcherRamp;
+        public TurretLauncher(LauncherRamp launcherRamp, Turret turret) {
+                this.launcherRamp = launcherRamp;
+                //TODO: Uncomment once flywheel class made
 //                this.flywheel = flywheel;
-//                this.turret = turret;
-//        }
-    //TODO: need turret class
+                this.turret = turret;
+        }
 
         public void setTurretAngle(double angle) {
-//                turret.setTargetAngle(angle);
+                turret.setTurretAngle(angle);
         }
-//        public void setHoodAngle(double angle) {
-//                launcherRamp.setLaunchAngle(angle);
-//        }
+        public void setHoodAngle(double angle) {
+                launcherRamp.setLaunchAngle(angle);
+        }
     //TODO: need to add flywheel class
 
         public void setFlywheelSpeed(double speed) {
 //                flywheel.setTargetSpeed(speed);
         }
-    //TODO:  need to add turret class
 
         public double getTurretAngle() {
-//                return turret.getCurrentAngle();
-            return 0;
+                return turret.getTurretAngle();
         }
         public double getHoodAngle() {
-//                return launcherRamp.getCurrentAngle();
-            return 0;
+            return launcherRamp.getCurrentAngle();
         }
     //TODO: need flywheel class
 
@@ -40,10 +38,11 @@ public class TurretLauncher {
 //            return flywheel.getCurrentSpeed();
             return 0;
         }
-    //TODO: add the functions to flywheel and turret when added
 
+    //TODO: add the functions to flywheel when added
         public boolean isReadyToFire(){
+            //TODO: Use commented out code once flywheel implemented
 //            return flywheel.isAtTargetSpeed() && launcherRamp.isAtTargetAngle() && turret.isAtTargetAngle();
-            return false;
+            return launcherRamp.isAtTargetAngle() && turret.isAtAngle();
         }
 }
