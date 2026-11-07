@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.robot.BioBuzzRobot;
 
 @TeleOp
 public class FlywheelTesting extends LinearOpMode {
-    private static int FLYWHEEL_SPEED_RPM= 250;
+    public static int flywheelSpeedRPM= 250;
     @Override
         public void runOpMode()  {
             BioBuzzRobot robot = new BioBuzzRobot(hardwareMap, telemetry );
@@ -16,7 +16,7 @@ public class FlywheelTesting extends LinearOpMode {
 
             while(opModeIsActive()){
                 if(gamepad1.circle){
-                    robot.getFlywheelPollen().setTargetSpeed(FLYWHEEL_SPEED_RPM);
+                    robot.getFlywheelPollen().setTargetSpeed(flywheelSpeedRPM);
                 }else {
                     robot.getFlywheelPollen().setTargetSpeed(0);
                 }

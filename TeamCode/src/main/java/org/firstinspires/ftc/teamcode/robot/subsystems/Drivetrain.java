@@ -11,7 +11,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  * Drivetrain subsystem for a mecanum drive robot.
  * This class handles the control of the robot's drivetrain, including field-centric driving and telemetry.
  */
-
 public class Drivetrain implements Subsystem {
     // Motor declarations for the four mecanum wheels
     private DcMotor FLMotor;
@@ -40,10 +39,10 @@ public class Drivetrain implements Subsystem {
      * @param telemetryEnabled Flag to enable or disable telemetry output
      */
     public Drivetrain(HardwareMap hardwareMap, Telemetry telemetry, boolean telemetryEnabled){
-        FLMotor = hardwareMap.get(DcMotor.class, "fl");
-        FRMotor = hardwareMap.get(DcMotor.class, "fr");
-        BLMotor = hardwareMap.get(DcMotor.class, "bl");
-        BRMotor = hardwareMap.get(DcMotor.class, "br");
+        FLMotor = hardwareMap.get(DcMotor.class, "FLMotor");
+        FRMotor = hardwareMap.get(DcMotor.class, "FRMotor");
+        BLMotor = hardwareMap.get(DcMotor.class, "BLMotor");
+        BRMotor = hardwareMap.get(DcMotor.class, "BRMotor");
 
         motors = new DcMotor[]{FLMotor,FRMotor,BLMotor,BRMotor};
         for (DcMotor motor: motors){
