@@ -7,9 +7,13 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.teamcode.FieldCentric;
+import org.firstinspires.ftc.teamcode.MecanumDriveTestTeleop;
 import org.firstinspires.ftc.teamcode.subsystems.BeamBrakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.CameraTrackingSubsystems;
 import org.firstinspires.ftc.teamcode.subsystems.DepollenaterSubsystem;
@@ -26,7 +30,9 @@ public class BestRobotEverBioBuzzOpMode extends OpMode {
     private BeamBrakeSubsystem beamBrakeSubsystem;
     private CameraTrackingSubsystems cameraTrackingSubsystems;
     private DepollenaterSubsystem depollenaterSubsystem;
-    private MecanumDrive drive;
+    FieldCentric drive = new FieldCentric();
+    private IMU imu;
+
 
     private double rx;
     private double driveSpeed = 0;
@@ -37,6 +43,10 @@ public class BestRobotEverBioBuzzOpMode extends OpMode {
 
     public static double autoAimMultuplyer = 0.05;
 
+    private double forward;
+    private double strafe;
+    private double rotate;
+
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -44,9 +54,9 @@ public class BestRobotEverBioBuzzOpMode extends OpMode {
         shooterSubsystem = new ShooterSubsystem(hardwareMap, telemetry);
         feederSubsystem = new FeederSubsystem(hardwareMap, telemetry);
         beamBrakeSubsystem = new BeamBrakeSubsystem(hardwareMap, telemetry);
-        cameraTrackingSubsystems =new CameraTrackingSubsystems(hardwareMap,telemetry);
+        cameraTrackingSubsystems = new CameraTrackingSubsystems(hardwareMap,telemetry);
         depollenaterSubsystem = new DepollenaterSubsystem(hardwareMap,telemetry);
-        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+        imu = hardwareMap.get(IMU.class, "imu");
 
 
         beamBrakeSubsystem.Reset();
@@ -54,6 +64,9 @@ public class BestRobotEverBioBuzzOpMode extends OpMode {
         telemetry.update();
         shooterSubsystem.initShooter();
         depollenaterSubsystem.depollenaterUp();
+
+        drive.init(hardwareMap);
+
     }
 
     @Override
@@ -69,7 +82,11 @@ public class BestRobotEverBioBuzzOpMode extends OpMode {
         // endregion
 
         // region Drive code
-        drive.updatePoseEstimate();
+//        drive.updatePoseEstimate();
+
+        if (gamepad1.x) {
+            imu.resetYaw();
+        }
 
         if (gamepad1.left_bumper){
            driveSpeed = driveSpeedSlow;
@@ -80,18 +97,22 @@ public class BestRobotEverBioBuzzOpMode extends OpMode {
             driveSpeed = driveSpeedNormal;
         }
 
-        double  y = -gamepad1.left_stick_y * driveSpeed; // Forward/Backward
-        double x = -gamepad1.left_stick_x * driveSpeed;  // Strafing left/right
+         forward = gamepad1.left_stick_y * driveSpeed; // Forward/Backward
+         strafe = -gamepad1.left_stick_x * driveSpeed;  // Strafing left/right
         if (gamepad1.a){
-             rx = cameraTrackingSubsystems.autoAim() * autoAimMultuplyer * driveSpeed;// Rotation
+            rotate = cameraTrackingSubsystems.autoAim() * autoAimMultuplyer * driveSpeed;// Rotation
         } else {
-             rx = -gamepad1.right_stick_x * turnSpeed;// Rotation
+            rotate = -gamepad1.right_stick_x * turnSpeed;// Rotation
         }
 
         // Fixed: access pose through the localizer
-        Pose2d poseEstimate = drive.localizer.getPose();
-        Vector2d input = Rotation2d.exp(-poseEstimate.heading.toDouble()).times(new Vector2d(x, y));
-        drive.setDrivePowers(new PoseVelocity2d(new Vector2d(input.y, input.x), rx));
+//        Pose2d poseEstimate = drive.localizer.getPose();
+//        Vector2d input = Rotation2d.exp(-poseEstimate.heading.toDouble()).times(new Vector2d(x, y));
+//        drive.setDrivePowers(new PoseVelocity2d(new Vector2d(input.y, input.x), rx));
+//        drive.driveFieldRelative(y, x, rx);
+        drive.driveFieldRelative(forward, strafe, rotate);
+
+
         // endregion
 
         // region Intake code
