@@ -4,12 +4,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.LauncherConfig;
 import org.firstinspires.ftc.teamcode.RobotConstants;
 
 /*
  * INTAKE - picks up game pieces.
  *
- * toggle() flips the motor between off and RobotConstants.INTAKE_POWER (tested on the robot).
+ * toggle() flips the motor between off and LauncherConfig.INTAKE_POWER (tested on the robot).
  * TODO: reverse() to unjam, and a sensor to know when a piece is held.
  */
 public class Intake implements Subsystem {
@@ -41,10 +42,10 @@ public class Intake implements Subsystem {
         off();
     }
 
-    /** Flips the intake between off and RobotConstants.INTAKE_POWER. */
+    /** Flips the intake between off and LauncherConfig.INTAKE_POWER. */
     public void toggle() {
         running = !running;
-        motor.setPower(running ? RobotConstants.INTAKE_POWER : 0);
+        motor.setPower(running ? LauncherConfig.INTAKE_POWER : 0);
     }
 
     public void off() {

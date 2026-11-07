@@ -14,16 +14,16 @@ public class RedScoring extends AutoBase {
         double p = RobotConstants.AUTO_POWER;
 
         // Step 1: spin fly wheel for 3 seconds to get good power
-        robot.launcher.spinUp(RobotConstants.LAUNCHER_TARGET_VEL);
+        robot.launcher.spinUp();
         waitSeconds(2);
-        // Step 2: Limelight TipDetect scan (wait up to 8s for AprilTag cluster 38..41)
+        // Step 2: Limelight TipDetect scan (wait up to 8s for AprilTag cluster 30..33)
         ElapsedTime waitTimer = new ElapsedTime();
         boolean isTipped = false;
 
         while (opModeIsActive() && waitTimer.seconds() < 8.0) {
             robot.update(); // CRITICAL: Updates Limelight camera feed and telemetry on every frame!
 
-            isTipped = robot.vision.isHiveTipped(RobotConstants.LEFT_BLUE_APRIL_TAG_CODES[0], RobotConstants.LEFT_BLUE_APRIL_TAG_CODES[1]);
+            isTipped = robot.vision.isHiveTipped(RobotConstants.TAG_RED_SCORING_MIN, RobotConstants.TAG_RED_SCORING_MAX);
 
             telemetry.addData("Scan Timer", "%.1fs remaining", 8.0 - waitTimer.seconds());
             telemetry.addData("Limelight Target", robot.vision.hasTarget() ? "YES" : "NO");

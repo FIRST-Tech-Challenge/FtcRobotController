@@ -14,8 +14,7 @@ import com.qualcomm.robotcore.util.RobotLog;
  * Left stick: drive/strafe. Right stick: turn.
  * Right trigger: feed (hold). Right bumper: toggle intake.
  * Left bumper (hold): run the flywheel backward to clear a stuck ball.
- * Launcher spins continuously at LauncherConfig.DEFAULT_RPM so it's always ready to feed.
- * Controls ported from the tested SuperTestTeleop bench test.
+ * Launcher spins continuously at LauncherConfig.TARGET_VELOCITY so it's always ready to feed.
  * TODO: aiming controls (button mapping not decided yet)
  */
 @TeleOp(name = "Main TeleOp", group = "Main")
@@ -37,9 +36,9 @@ public class MainTeleOp extends OpMode {
 
         if (gamepad1.left_bumper) {
             // Held: run the flywheel backward to clear a stuck ball.
-            robot.launcher.reverse(RobotConstants.LAUNCHER_REVERSE_POWER);
+            robot.launcher.reverse(LauncherConfig.REVERSE_POWER);
         } else {
-            robot.launcher.spinUp(LauncherConfig.DEFAULT_RPM);
+            robot.launcher.spinUp();
             if (gamepad1.right_trigger >= 0.3) {
                 robot.launcher.feed();
             } else {

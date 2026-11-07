@@ -35,6 +35,7 @@ public abstract class AutoBase extends LinearOpMode {
 
     private final ElapsedTime matchTimer = new ElapsedTime();
     private boolean overdriveRunning = false;
+    private String lastShot = "none";
 
     /** Each auto puts its steps here. */
     protected abstract void runRoutine();
@@ -72,6 +73,7 @@ public abstract class AutoBase extends LinearOpMode {
         robot.update();
         double startX = robot.odo.getXInches();
         double startY = robot.odo.getYInches();
+
 
         while (!shouldStop() && distanceFrom(startX, startY) < inches) {
             robot.drive.drive(power, 0, 0);
@@ -119,23 +121,28 @@ public abstract class AutoBase extends LinearOpMode {
 
     /**
      * Shoot `count` pieces. Spins up, and for each piece waits for the flywheel to reach
-     * speed (gives up after SHOOT_READY_TIMEOUT_SECONDS and fires anyway, so one slow
+     * speed (gives up after LauncherConfig.READY_TIMEOUT and fires anyway, so one slow
      * flywheel doesn't eat the whole auto), feeds, then pauses before the next one.
-     * Feed-hold/pause timing in RobotConstants is a starting guess - tune on the robot.
+     * All timing is in LauncherConfig - tune live from Dashboard.
      */
     protected void shoot(int count) {
-        // robot.launcher.spinUp(LauncherConfig.DEFAULT_RPM);
+        robot.launcher.spinUp(); // safe if already spinning
 
-        for (int i = 0; i < count && !shouldStop(); i++) {
+        for (int i = 0; i < count && !shouldStop() && !timeToPark(); i++) {
             ElapsedTime readyTimer = new ElapsedTime();
-            while (!shouldStop() && !robot.launcher.isReady()
-                    && readyTimer.seconds() < RobotConstants.SHOOT_READY_TIMEOUT_SECONDS) {
+            while (!shouldStop() && !timeToPark() && !robot.launcher.isReady()
+                    && readyTimer.seconds() < LauncherConfig.READY_TIMEOUT) {
                 tick();
             }
+            if (timeToPark()) break;
+            lastShot = String.format("Shot %d: %s at %.0f, waited %.1fs", i + 1,
+                    robot.launcher.isReady() ? "READY" : "TIMEOUT",
+                    robot.launcher.getVelocity(), readyTimer.seconds());
+
             robot.launcher.feed();
-            waitSeconds(RobotConstants.SHOOT_FEED_HOLD_SECONDS);
+            waitSeconds(LauncherConfig.FEED_HOLD_TIME);
             robot.launcher.retractFeeder();
-            waitSeconds(RobotConstants.SHOOT_FEED_PAUSE_SECONDS);
+            waitSeconds(LauncherConfig.FEED_PAUSE_TIME);
         }
 
         robot.launcher.stopFlywheel();
@@ -145,6 +152,10 @@ public abstract class AutoBase extends LinearOpMode {
 
     private double distanceFrom(double startX, double startY) {
         return Math.hypot(robot.odo.getXInches() - startX, robot.odo.getYInches() - startY);
+    }
+
+    private boolean timeToPark() {
+        return secondsLeft() <= LauncherConfig.PARK_TIME;
     }
 
     private boolean shouldStop() {
@@ -157,7 +168,8 @@ public abstract class AutoBase extends LinearOpMode {
 
     /** One pass of the loop: show the match time and let every subsystem update. */
     private void tick() {
-        telemetry.addData("Match time", "%.1f", matchTimer.seconds());
+        telemetry.addData("Match time", "%.1f (%.1f left)", matchTimer.seconds(), secondsLeft());
+        telemetry.addData("Last shot", lastShot);
         robot.update();
     }
 

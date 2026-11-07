@@ -15,7 +15,7 @@ public class BlueAudience extends AutoBase {
 
         // Step 1: Forward 20 inches
         driveInches(20, p);
-        robot.launcher.spinUp(RobotConstants.LAUNCHER_TARGET_VEL);
+        robot.launcher.spinUp();
         // Step 2: Limelight TipDetect scan (wait up to 8s for AprilTag cluster 38..41)
         ElapsedTime waitTimer = new ElapsedTime();
         boolean isTipped = false;
@@ -23,7 +23,7 @@ public class BlueAudience extends AutoBase {
         while (opModeIsActive() && waitTimer.seconds() < 8.0) {
             robot.update(); // CRITICAL: Updates Limelight camera feed and telemetry on every frame!
 
-            isTipped = robot.vision.isHiveTipped(RobotConstants.RIGHT_BLUE_APRIL_TAG_CODES[0], RobotConstants.RIGHT_BLUE_APRIL_TAG_CODES[1]);
+            isTipped = robot.vision.isHiveTipped(RobotConstants.TAG_BLUE_AUDIENCE_MIN, RobotConstants.TAG_BLUE_AUDIENCE_MAX);
 
             telemetry.addData("Scan Timer", "%.1fs remaining", 8.0 - waitTimer.seconds());
             telemetry.addData("Limelight Target", robot.vision.hasTarget() ? "YES" : "NO");
