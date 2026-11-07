@@ -13,9 +13,10 @@ public class ExampleAction extends SWEEPAction {
      * @param pos2D trigger center pos2D
      * @param time action runtime in seconds
      * @param range trigger radius in inches
+     * @param waitTime time to wait before executing the action
      */
-    public ExampleAction (BioBuzzRobot robot, Pos2D pos2D, double time, double range){
-        super(robot, pos2D, time, range);
+    public ExampleAction (BioBuzzRobot robot, Pos2D pos2D, double time, double range, double waitTime){
+        super(robot, pos2D, time, range, waitTime);
     }
 
     /**
