@@ -8,6 +8,7 @@ import com.pedropathing.math.Pose;
 import com.pedropathing.math.Velocity;
 import com.pedropathing.revhub.drivetrains.MecanumConfig;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -41,6 +42,7 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
  * If no Pinpoint is configured, driving still works without it.
  */
 @TeleOp(name = "Drive Test", group = "Test")
+@Disabled
 public class DriveTest extends LinearOpMode {
 
     private static final double SLOW_SCALE = 0.4;

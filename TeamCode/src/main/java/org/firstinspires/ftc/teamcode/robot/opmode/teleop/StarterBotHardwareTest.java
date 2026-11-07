@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.opmode.teleop;
 
 import com.pedropathing.revhub.drivetrains.MecanumConfig;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -36,6 +37,7 @@ import java.util.List;
  * the rest can still be tested.
  */
 @TeleOp(name = "StarterBot Hardware Test", group = "Test")
+@Disabled
 public class StarterBotHardwareTest extends LinearOpMode {
 
     private static final double TEST_POWER = 0.5;

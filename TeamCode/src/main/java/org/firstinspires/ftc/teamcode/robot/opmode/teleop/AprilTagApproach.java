@@ -4,6 +4,7 @@ import com.pedropathing.revhub.drivetrains.MecanumConfig;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -39,6 +40,7 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
  * tag family and tag size set to the game's tags, so the camera can measure distance.
  */
 @TeleOp(name = "AprilTag Approach", group = "Test")
+@Disabled
 public class AprilTagApproach extends LinearOpMode {
 
     private static final String LIMELIGHT_NAME = "limelight";

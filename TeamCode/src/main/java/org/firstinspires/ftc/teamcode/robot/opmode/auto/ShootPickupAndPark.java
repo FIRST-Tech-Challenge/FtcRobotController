@@ -12,9 +12,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.robot.config.LeftServoMemory;
 
 /*
  * Autonomous for the mecanum StarterBot, using the same hardware and launch logic as
@@ -49,7 +51,7 @@ public class ShootPickupAndPark extends LinearOpMode {
     private static final double PICKUP_PAUSE_SECONDS = 1.0;
 
     private DcMotor intake;
-    private CRServo leftIntakeServo;
+    private Servo leftIntakeServo;
     private CRServo rightIntakeServo;
     private CRServo windmillServo;
 
@@ -75,7 +77,7 @@ public class ShootPickupAndPark extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         DcMotorEx launcher = hardwareMap.get(DcMotorEx.class, "launcher");
         windmillServo = hardwareMap.get(CRServo.class, "windmillServo");
-        leftIntakeServo = hardwareMap.get(CRServo.class, "left_intake_servo");
+        leftIntakeServo = hardwareMap.get(Servo.class, "left_intake_servo");
         rightIntakeServo = hardwareMap.get(CRServo.class, "right_intake_servo");
 
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -83,6 +85,7 @@ public class ShootPickupAndPark extends LinearOpMode {
         launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(40, 0, 0, 12.5));
         rightIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
         windmillServo.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftIntakeServo.setPosition(LeftServoMemory.position());
         setFeed(0);
 
         telemetry.update();
@@ -168,7 +171,6 @@ public class ShootPickupAndPark extends LinearOpMode {
         windmillServo.setPower(windmillPower);
         double intakePower = windmillPower * FEED_INTAKE_POWER;
         intake.setPower(intakePower);
-        leftIntakeServo.setPower(intakePower);
         rightIntakeServo.setPower(intakePower);
     }
 
@@ -187,12 +189,11 @@ public class ShootPickupAndPark extends LinearOpMode {
     }
 
     /*
-     * Runs the intake motor and corner servos to pull elements in, without the windmill, the
+     * Runs the intake motor and corner servo to pull elements in, without the windmill, the
      * same as the right trigger in the teleop. 0 stops them.
      */
     private void setIntake(double power) {
         intake.setPower(power);
-        leftIntakeServo.setPower(power);
         rightIntakeServo.setPower(power);
     }
 

@@ -5,6 +5,7 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -38,6 +39,7 @@ import java.util.List;
  * are saved in on the camera. Telemetry shows the slot the camera reports.
  */
 @TeleOp(name = "Ball Detect Test", group = "Test")
+@Disabled
 public class BallDetectTest extends LinearOpMode {
 
     private static final String LIMELIGHT_NAME = "limelight";

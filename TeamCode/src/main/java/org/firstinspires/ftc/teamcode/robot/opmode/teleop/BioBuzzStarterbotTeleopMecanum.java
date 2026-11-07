@@ -24,6 +24,7 @@ package org.firstinspires.ftc.teamcode.robot.opmode.teleop;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -31,6 +32,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
@@ -43,11 +45,12 @@ import com.pedropathing.math.Twist;
 import com.pedropathing.revhub.drivetrains.MecanumConfig;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.robot.config.LeftServoMemory;
 
 /*
  * This file includes a teleop (driver-controlled) file for the goBILDA® StarterBot with Mecanum
  * Wheels for the 2026-2027 FIRST® Tech Challenge. On top of a mecanum wheel drivetrain, it uses
- * one motor driving an intake roller, two servos which pull elements out of corners, and a high-speed
+ * one motor driving an intake roller, one servo which pulls elements out of corners, and a high-speed
  * launcher motor.
  *
  * Likely the most niche concept we'll use in this example is closed-loop motor velocity control.
@@ -66,7 +69,7 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
  */
 
 @TeleOp(name = "Standard Teleop", group = "_Compete")
-//@Disabled
+@Disabled
 public class BioBuzzStarterbotTeleopMecanum extends OpMode {
 
     // Declare OpMode members.
@@ -76,7 +79,7 @@ public class BioBuzzStarterbotTeleopMecanum extends OpMode {
     private DcMotor rightBackDrive = null;
     private DcMotorEx launcher = null;
     private DcMotor intake = null;
-    private CRServo leftIntakeServo = null;
+    private Servo leftIntakeServo = null;
     private CRServo rightIntakeServo = null;
     private CRServo windmillServo = null;
 
@@ -189,7 +192,7 @@ public class BioBuzzStarterbotTeleopMecanum extends OpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         launcher = hardwareMap.get(DcMotorEx.class, "launcher");
         windmillServo = hardwareMap.get(CRServo.class, "windmillServo");
-        leftIntakeServo = hardwareMap.get(CRServo.class, "left_intake_servo");
+        leftIntakeServo = hardwareMap.get(Servo.class, "left_intake_servo");
         rightIntakeServo = hardwareMap.get(CRServo.class, "right_intake_servo");
 
         /*
@@ -229,13 +232,13 @@ public class BioBuzzStarterbotTeleopMecanum extends OpMode {
         /*
          * set Feeders to an initial value to initialize the servo controller
          */
-        leftIntakeServo.setPower(0);
+        leftIntakeServo.setPosition(LeftServoMemory.position());
         rightIntakeServo.setPower(0);
         windmillServo.setPower(0);
 
         /*
-         * Much like our drivetrain motors, we set the right intake servo to reverse so that both
-         * servos work to pull elements into the intake.
+         * Much like our drivetrain motors, we set the right intake servo to reverse so that it
+         * works to pull elements into the intake.
          */
         rightIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
         windmillServo.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -308,7 +311,6 @@ public class BioBuzzStarterbotTeleopMecanum extends OpMode {
          */
 
         intake.setPower(intakePower);
-        leftIntakeServo.setPower(intakePower);
         rightIntakeServo.setPower(intakePower);
 
         /*
