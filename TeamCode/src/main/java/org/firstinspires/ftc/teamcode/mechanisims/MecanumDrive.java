@@ -22,14 +22,15 @@ public class MecanumDrive {
          frontRightMotor = hwMap.get(DcMotor.class, HardwareNames.DRIVE_MOTOR_FRONT_RIGHT);
          backRightMotor = hwMap.get(DcMotor.class, HardwareNames.DRIVE_MOTOR_REAR_RIGHT);
 
-         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
          backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
 
          frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
          backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
          frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-         imu = hwMap.get(IMU.class, "imu");
+         imu = hwMap.get(IMU.class, HardwareNames.IMU);
 
          RevHubOrientationOnRobot RevOrientation = new RevHubOrientationOnRobot(
                  RevHubOrientationOnRobot.LogoFacingDirection.UP,
@@ -39,6 +40,9 @@ public class MecanumDrive {
 
      }
 
+     public void resetIMU () {
+         imu.resetYaw();
+     }
      public void drive(double forward, double strafe, double rotate) {
          double frontLeftPower = forward + strafe + rotate;
          double backLeftPower = forward - strafe + rotate;
@@ -56,7 +60,7 @@ public class MecanumDrive {
          frontLeftMotor.setPower(maxSpeed * (frontLeftPower / maxPower));
          backLeftMotor.setPower(maxSpeed * (backLeftPower / maxPower));
          frontRightMotor.setPower(maxSpeed * (frontRightPower / maxPower));
-         backRightMotor.setPower(maxSpeed * (backRightPower / maxSpeed));
+         backRightMotor.setPower(maxSpeed * (backRightPower / maxPower));
 
      }
 
