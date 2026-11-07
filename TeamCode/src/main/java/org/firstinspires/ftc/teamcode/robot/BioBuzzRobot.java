@@ -6,10 +6,8 @@ import com.broombots.sweep.Classes.SWEEPRobot;
 import com.broombots.sweep.Classes.Subsystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.actions.ExampleAction;
-import org.firstinspires.ftc.teamcode.robot.actions.SetFlywheelSpeedAction;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Flywheel;
 
@@ -31,8 +29,8 @@ public class BioBuzzRobot extends SWEEPRobot {
     public BioBuzzRobot(HardwareMap hardwareMap, Telemetry telemetry){
         runtime = new ElapsedTime();
         this.drivetrain = new Drivetrain(hardwareMap, telemetry, false);
-        this.flywheelPollen = new Flywheel(hardwareMap, telemetry, new ElapsedTime(),true);
-        this.flywheelNectar = new Flywheel(hardwareMap,telemetry,new ElapsedTime(),false);
+        this.flywheelPollen = new Flywheel(hardwareMap, telemetry, new ElapsedTime(),true,"pollenFlywheel");
+        this.flywheelNectar = new Flywheel(hardwareMap,telemetry,new ElapsedTime(),false,"nectarFlywheel");
         subsystems = new Subsystem[]{
                 drivetrain,
                 flywheelPollen,

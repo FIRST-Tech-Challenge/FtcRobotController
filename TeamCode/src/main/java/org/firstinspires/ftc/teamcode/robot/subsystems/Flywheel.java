@@ -21,8 +21,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class Flywheel implements Subsystem {
 
-    public static double f = 13.5;
-
     // Hardware map for accessing robot hardware
     private HardwareMap hardwareMap = null;
     // Telemetry for reporting data to the driver station
@@ -37,12 +35,14 @@ public class Flywheel implements Subsystem {
     private DcMotorEx flywheel = null;
     // Acceptable error threshold for speed (rotations per minute)
     private double accuracyThreshold;
-    private final int POLLEN_P  = 70;
-    private final int NECTAR_P= 50;
-    private final int POLLEN_I = 65;
-    private final int NECTAR_I = 40;
-    private final int POLLEN_D = 45;
-    private final int NECTAR_D =65;
+    public static double pollenP = 70;
+    public static double nectarP = 50;
+    public static double pollenI = 65;
+    public static double nectarI = 40;
+    public static double pollenD = 45;
+    public static double nectarD =65;
+    public static double pollenF = 13.5;
+    public static double nectarF = 13.5;
     private boolean isDisabled = false;
 
     /**
@@ -52,20 +52,20 @@ public class Flywheel implements Subsystem {
      * @param runtime ElapsedTime instance for timing
      * @param isPollen Determines if it is pollen or nectar
      */
-    public Flywheel(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime runtime,Boolean isPollen){
+    public Flywheel(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime runtime,Boolean isPollen, String deviceName){
         this.telemetry = telemetry;
         this.runtime = runtime;
 
         // Initialize the flywheel motor
-        flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
+        flywheel = hardwareMap.get(DcMotorEx.class, deviceName);
         flywheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         flywheel.setMotorEnable();
         flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
         if(isPollen){
-            flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(POLLEN_P,POLLEN_I,POLLEN_D,0));
+            flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(pollenP, pollenI, pollenD, pollenF));
         }else {
-            flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(NECTAR_P,NECTAR_I,NECTAR_D,0));
+            flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(nectarP, nectarI, nectarD, nectarF));
         }
     }
     @Override
@@ -119,6 +119,9 @@ public class Flywheel implements Subsystem {
     public void updateSpeedControl(){
         flywheel.setVelocity(targetSpeed);
         currentSpeed = flywheel.getVelocity();
+    }
+    public void setPIDFCoefficients(double p, double i, double d, double f){
+        flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(p, i, d,f));
     }
 
     /**
