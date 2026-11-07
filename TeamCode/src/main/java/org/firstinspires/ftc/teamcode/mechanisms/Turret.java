@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.mechanisms;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.util.Size;
 
@@ -9,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -43,11 +43,15 @@ public class Turret {
 
     private final ElapsedTime timer = new ElapsedTime();
 
-    // ---------- Intake & Shooting Mechanism
+    // ---------- Intake & Shooting Mechanism + Backboard
     private NormalizedColorSensor colorSensor;
 
     private final float[] hsv = new float[3];
     private DcMotor shooter;
+
+    private Servo backboard;
+    private final double NECTAR_BB_POSITION = 0.5;
+    private final double POLLEN_BB_POSITION = 0.3;
 
     public void init(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -78,13 +82,16 @@ public class Turret {
         turnMotor.setPower(0.0);
         timer.reset();
 
-        // ---------- Intake & Shooting ----------
+        // ---------- Intake & Shooting + Backboard ----------
         shooter = hwMap.get(DcMotor.class, "shooter");
         shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        shooter.setDirection(DcMotor.Direction.REVERSE);
+//        shooter.setDirection(DcMotor.Direction.REVERSE);
 
-        colorSensor = hwMap.get(NormalizedColorSensor.class, "left_inner_color_sensor");
+        colorSensor = hwMap.get(NormalizedColorSensor.class, "turret_color_sensor");
+
+        backboard = hwMap.get(Servo.class, "backboard");
+//        backboard.setDirection(Servo.Direction.REVERSE);
     }
 
     public void updateTagProcessor() {
@@ -229,12 +236,15 @@ public class Turret {
 
     public void shoot(IntakeLayers.DetectedColor color) {
         if (color == IntakeLayers.DetectedColor.UNKNOWN) {
+            backboard.setPosition(NECTAR_BB_POSITION);
             shooter.setPower(0.8); // values need testing
         }
         else if (color == IntakeLayers.DetectedColor.YELLOW) {
+            backboard.setPosition(POLLEN_BB_POSITION);
             shooter.setPower(0.7); // values need testing
         }
         else {
+            backboard.setPosition(NECTAR_BB_POSITION);
             shooter.setPower(1.0); // values need testing
         }
     }
