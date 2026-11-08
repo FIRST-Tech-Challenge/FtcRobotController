@@ -38,7 +38,7 @@ public class GerthaHardwareMap extends HardwareMapper {
     public GerthaHardwareMap(HardwareMap map) {
         super(map);
 
-        pinpoint.setOffsets(0,  0, DistanceUnit.INCH);
+        pinpoint.setOffsets(-5,  -4.78, DistanceUnit.INCH);
         pinpoint.setEncoderResolution(GoBildaPinpoint2Driver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         pinpoint.setEncoderDirections(GoBildaPinpoint2Driver.EncoderDirection.REVERSED, GoBildaPinpoint2Driver.EncoderDirection.FORWARD);
     }
