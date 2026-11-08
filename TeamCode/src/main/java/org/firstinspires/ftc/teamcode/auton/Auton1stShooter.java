@@ -5,11 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.base.GreenBotBaseOpMode;
 import org.firstinspires.ftc.teamcode.base.OrangeBotBaseOpMode;
 
 
 @Autonomous(name = "Auton 1st Shooter", group = "Auton")
-public class Auton1stShooter extends OrangeBotBaseOpMode {
+public class Auton1stShooter extends GreenBotBaseOpMode {
 
     static final double START_X = 63;
     static final double START_Y = -12;
@@ -43,8 +44,12 @@ public class Auton1stShooter extends OrangeBotBaseOpMode {
 
         waitForStart();
 
-        // stay there and shoot
-        sleep(3000);
+        launcher.setPower(1.0);
+
+        sleep(2000);
+        feeder.setPower(1.0);
+        sleep(1000);
+        feeder.setPower(0);
 
         // pick up pollen from the garden
         drive.driveTo(GARDEN_START_X, GARDEN_Y, GARDEN_HEADING, FAST_DRIVE_POWER,0.8);
