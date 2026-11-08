@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.drivers.GoBildaPinpoint2Driver;
 import org.firstinspires.ftc.teamcode.hardware.HardwareMapper;
 import org.firstinspires.ftc.teamcode.hardware.HardwareName;
@@ -36,5 +37,9 @@ public class GerthaHardwareMap extends HardwareMapper {
 
     public GerthaHardwareMap(HardwareMap map) {
         super(map);
+
+        pinpoint.setOffsets(0,  0, DistanceUnit.INCH);
+        pinpoint.setEncoderResolution(GoBildaPinpoint2Driver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        pinpoint.setEncoderDirections(GoBildaPinpoint2Driver.EncoderDirection.REVERSED, GoBildaPinpoint2Driver.EncoderDirection.FORWARD);
     }
 }
