@@ -1,17 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
-
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-
-@TeleOp(name="Field-Centric Mecanum Drive")
 
 public class TeleOpDriver extends OpMode {
     GoBildaPinpointDriver odo;
@@ -20,8 +16,7 @@ public class TeleOpDriver extends OpMode {
     public DcMotor FrontLeft;
     public DcMotor FrontRight;
 
-    @Override
-    public void init() {
+    public void intialiseDriver() {
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
 
         BackLeft = hardwareMap.get(DcMotor.class,"BackLeftMotor");
@@ -49,12 +44,13 @@ public class TeleOpDriver extends OpMode {
         telemetry.addData("Device Version Number:", odo.getDeviceVersion());
         telemetry.addData("Device Scalar", odo.getYawScalar());
         telemetry.update();
+    }
 
-
+    @Override
+    public void init() {
     }
 
     public void GASGASGAS() {
-
         double forward = -gamepad1.left_stick_y; // Inverted Y-axis
         double strafe = gamepad1.left_stick_x;
         double rotate = gamepad1.right_stick_x;
@@ -62,8 +58,8 @@ public class TeleOpDriver extends OpMode {
         Pose2D pos = odo.getPosition();
         double heading = pos.getHeading(AngleUnit.RADIANS);
 
-        double cosAngle = Math.cos((Math.PI / 2)-heading);
-        double sinAngle = Math.sin((Math.PI / 2)-heading);
+        double cosAngle = Math.cos(-heading);
+        double sinAngle = Math.sin(-heading);
 
         double globalStrafe = -forward * sinAngle + strafe * cosAngle;
         double globalForward = forward * cosAngle + strafe * sinAngle;
@@ -75,10 +71,14 @@ public class TeleOpDriver extends OpMode {
         newWheelSpeeds[2] = globalForward - globalStrafe + rotate;
         newWheelSpeeds[3] = globalForward + globalStrafe - rotate;
 
-        FrontLeft.setPower(newWheelSpeeds[0]);
-        FrontRight.setPower(newWheelSpeeds[1]);
-        BackLeft.setPower(newWheelSpeeds[2]);
-        BackRight.setPower(newWheelSpeeds[3]);
+        double maxPower = 1.0;
+        for (double wheelSpeed : newWheelSpeeds) {
+            maxPower = Math.max(maxPower, Math.abs(wheelSpeed));
+        }
+        FrontLeft.setPower(newWheelSpeeds[0] / maxPower);
+        FrontRight.setPower(newWheelSpeeds[1] / maxPower);
+        BackLeft.setPower(newWheelSpeeds[2] / maxPower);
+        BackRight.setPower(newWheelSpeeds[3] / maxPower);
 
         //More Telemetry
         telemetry.addData("Robot XPos: ", pos.getX(DistanceUnit.MM));
@@ -86,27 +86,28 @@ public class TeleOpDriver extends OpMode {
         telemetry.addData("Robot Heading: ", heading);
         telemetry.addData("Forward Speed: ", globalForward);
         telemetry.addData("Strafe Speed: ", globalStrafe);
-
-
-
-
-
-
-
-
-
     }
 
-    @Override
-    public void loop() {
+    public void resetHeading() {
+        odo.resetPosAndIMU();
+    }
+
+    public void DriveLoop() {
+        odo.update();
         GASGASGAS();
 
-        Pose2D pos = odo.getPosition();
+        
+
+
+
         telemetry.addData("RobotX: ", odo.getPosX(DistanceUnit.MM));
         telemetry.addData("RobotY: ", odo.getPosY(DistanceUnit.MM));
         telemetry.addData("Robot Heading: ", odo.getHeading(AngleUnit.RADIANS));
         telemetry.update();
+    }
 
-        odo.update();
+    @Override
+    public void loop() {
     }
 }
+
