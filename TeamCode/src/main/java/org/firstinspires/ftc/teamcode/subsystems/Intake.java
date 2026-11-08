@@ -45,5 +45,5 @@ public final class Intake extends SubsystemBase {
         return commandedPower;
     }
 
-    public double tuningPow() { return intake.getPower(); }
+    public double getPow() { return intake.getPower(); }
 }

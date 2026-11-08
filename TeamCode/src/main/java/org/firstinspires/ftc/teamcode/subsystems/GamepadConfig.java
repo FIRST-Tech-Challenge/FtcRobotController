@@ -24,7 +24,7 @@ public final class GamepadConfig {
     }
 
     public double getTurn() {
-        return -gamepad.right_stick_x;
+        return gamepad.right_stick_x;
     }
 
     public boolean isIntakeHeld() {

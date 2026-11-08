@@ -2,7 +2,7 @@
 
 在 Driver Station 选择 **Testing → TEST - Shooter PIDF Tuner**。这是单独的调参 OpMode，不控制底盘。硬件沿用 `shooter`（FORWARD）和 `intake`（REVERSE）。需要 Shooter 电机编码器接入 Hub；只连接供电线无法做速度闭环。所有速度单位是 **编码器 ticks/s，不是 RPM**。
 
-程序使用 Hub 的速度 PIDF，与现有 Shooter 的 `setVelocity()` 相同。F 提供维持转速的基础输出，P/I/D 对速度误差作修正。不要套用其他软件 PID 控制器的系数，因为单位和实现可能不同。
+本调参器使用 Hub 的速度 PIDF。正式 `Shooter` 提供 `USE_PID` 开关：默认 `false` 使用 Hub 原有速度控制；设为 `true` 时在 `periodic()` 中运行自定义 PID，通过 `setPower()` 控制电机。本调参器的系数不能直接用于自定义 PID。以下操作仅用于 Hub PIDF 的独立实验。
 
 ## 操作
 
@@ -91,12 +91,13 @@ python3 scripts/sync_shooter_csv.py --output "$HOME/Desktop/Shooter数据"
 
 松开 RB 后按 Y，把当前设置和四球摘要写入 Robot Controller 应用文件目录下的 `shooter-tuning/trial-时间戳.csv`。Driver Station 的 `CSV` 行显示完整路径。可通过 Android Studio Device Explorer 或已有的 ADB 连接提取。CSV 的电压是保存时电压；射击过程中的负载电压请看 Panels 图表。CSV 不包含落点和完整波形，请另行记录落点。
 
-Panels 改值和 CSV 保存**不会自动修改 Java 源码或安装正式参数**。确认一组参数后，修改 `subsystems/Shooter.java`：
+Panels 改值和 CSV 保存**不会自动修改 Java 源码或安装正式参数**。本调参器的 Hub PIDF 系数不能复制到自定义 PID。正式 TeleOp 的参数需要单独在 Panels 的 `Shooter` 项下调节：
 
 - `SHOOT_VEL` 写入测得的目标 ticks/s。
-- `VELOCITY_P`、`VELOCITY_I`、`VELOCITY_D`、`VELOCITY_F` 写入选定值。
-- `USE_TUNED_PIDF = true`，重新编译部署。默认 false 保留原有 Hub 系数。
+- `VELOCITY_P`、`VELOCITY_I`、`VELOCITY_D` 从零开始单独调节；输出为 [-1, 1] 的电机功率，误差单位为 ticks/s，积分和微分按秒计算。启用自定义 PID 且系数全零时电机不会转动。先从很小的 P 开始，再按需要增加 I 和 D。
+- `USE_PID = true` 启用自定义 PID，`false` 使用 Hub 原有速度控制；支持在 Panels 中切换，切换时会先停止旧控制并重置 PID 状态。自定义 PID 不使用 F。松开射击按钮或改变目标速度会重置积分与微分状态；输出饱和时限制积分继续累积。
+- 实测确认后将参数写回 `subsystems/Shooter.java` 并重新编译部署，保留设置。
 
-调参器退出时会尝试停止两电机，并恢复进入时的 Hub PIDF。正式 Shooter 每次初始化时会在启用开关后设置你填写的系数。不要只依赖 Hub 暂存参数：FTC 官方说明 PIDF 修改不跨 Hub 断电保存，参见 [Changing PIDF Coefficients](https://ftc-docs.firstinspires.org/en/latest/programming_resources/shared/pidf_coefficients/pidf-coefficients.html)。
+调参器退出时会尝试停止两电机，并恢复进入时的 Hub PIDF。正式 Shooter 在 `USE_PID = true` 时使用 `RUN_WITHOUT_ENCODER` 模式，仍读取编码器速度作为反馈；`false` 时使用 `RUN_USING_ENCODER` 和 Hub 原有速度控制。
 
 本程序帮助稳定轮速并比较供球节奏；同一落点仍需靠实机确认仰角、球的压缩量/摩擦、供球路径和机器人姿态。尚未进行实机四球调参。

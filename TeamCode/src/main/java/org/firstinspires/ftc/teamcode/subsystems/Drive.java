@@ -17,12 +17,12 @@ public final class Drive extends SubsystemBase {
 
     public Drive(@NotNull final HardwareMap hMap) {
         frontLeft = hMap.get(DcMotorEx.class, "frontLeft");
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         frontRight = hMap.get(DcMotorEx.class, "frontRight");
-        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -32,7 +32,7 @@ public final class Drive extends SubsystemBase {
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         backRight = hMap.get(DcMotorEx.class, "backRight");
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 

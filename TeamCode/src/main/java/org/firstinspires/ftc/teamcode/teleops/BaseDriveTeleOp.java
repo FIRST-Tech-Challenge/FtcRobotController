@@ -51,6 +51,7 @@ public abstract class BaseDriveTeleOp extends CommandOpMode {
     public final void run() {
         beforeDriveRun();
 
+        // SubsystemBase auto-registers Shooter; the scheduler runs its PID periodic once.
         super.run();
 
         if (controls.isShootHeld()) {
@@ -66,10 +67,13 @@ public abstract class BaseDriveTeleOp extends CommandOpMode {
         }
 
         addDriveTelemetry();
-        telemetry.addData("Shooter velocity command", shooter.getCommandedVel());
-        telemetry.addData("Shooter velocity actual", shooter.tuningVel());
-        telemetry.addData("Intake power command", intake.getCommandedPower());
-        telemetry.addData("Intake power actual", intake.tuningPow());
+        telemetry.addData("Shooter Left Power Actual", shooter.getLeftPow());
+        telemetry.addData("Shooter Right Power Actual", shooter.getRightPow());
+        telemetry.addData("Shooter Velocity Command", shooter.getCommandedVel());
+        telemetry.addData("Shooter Left Velocity Actual", shooter.getLeftVel());
+        telemetry.addData("Shooter Right Velocity Actual", shooter.getRightVel());
+        telemetry.addData("Intake Power Command", intake.getCommandedPower());
+        telemetry.addData("Intake Power Actual", intake.getPow());
         telemetry.update();
     }
 
