@@ -50,7 +50,7 @@ public class TeleOpDriver extends OpMode {
     public void init() {
     }
 
-    public void GASGASGAS() {
+    public void GASGASGAS(double speedMultiplier) {
         double forward = -gamepad1.left_stick_y; // Inverted Y-axis
         double strafe = gamepad1.left_stick_x;
         double rotate = gamepad1.right_stick_x;
@@ -75,10 +75,10 @@ public class TeleOpDriver extends OpMode {
         for (double wheelSpeed : newWheelSpeeds) {
             maxPower = Math.max(maxPower, Math.abs(wheelSpeed));
         }
-        FrontLeft.setPower(newWheelSpeeds[0] / maxPower);
-        FrontRight.setPower(newWheelSpeeds[1] / maxPower);
-        BackLeft.setPower(newWheelSpeeds[2] / maxPower);
-        BackRight.setPower(newWheelSpeeds[3] / maxPower);
+        FrontLeft.setPower((newWheelSpeeds[0] / maxPower) * speedMultiplier);
+        FrontRight.setPower((newWheelSpeeds[1] / maxPower) * speedMultiplier);
+        BackLeft.setPower((newWheelSpeeds[2] / maxPower) * speedMultiplier);
+        BackRight.setPower((newWheelSpeeds[3] / maxPower) * speedMultiplier);
 
         //More Telemetry
         telemetry.addData("Robot XPos: ", pos.getX(DistanceUnit.MM));
@@ -92,13 +92,9 @@ public class TeleOpDriver extends OpMode {
         odo.resetPosAndIMU();
     }
 
-    public void DriveLoop() {
+    public void DriveLoop(double speedMultiplier) {
         odo.update();
-        GASGASGAS();
-
-        
-
-
+        GASGASGAS(speedMultiplier);
 
         telemetry.addData("RobotX: ", odo.getPosX(DistanceUnit.MM));
         telemetry.addData("RobotY: ", odo.getPosY(DistanceUnit.MM));
@@ -110,4 +106,3 @@ public class TeleOpDriver extends OpMode {
     public void loop() {
     }
 }
-
