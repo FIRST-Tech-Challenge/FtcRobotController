@@ -15,7 +15,7 @@ public class BlueAudience extends AutoBase {
 
         // only shoot if the hive is tipped
         if (scanForTip(RobotConstants.TAG_BLUE_AUDIENCE_MIN, RobotConstants.TAG_BLUE_AUDIENCE_MAX)) {
-            shoot(4);
+            shoot(3);
         }
 
         leaveAndPark();
