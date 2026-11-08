@@ -19,8 +19,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class SimpleTeleOp extends LinearOpMode {
 
     // flywheel speed is in ticks/sec
-    public static double KP = 120, KI = 0.2, KD = 12, KF = 150;
-    public static double LAUNCH_VEL = 1200;
+    public static double KP = 120, KI = 0.67, KD = 12, KF = 150;
+    public static double LAUNCH_VEL = 1150;
     public static double REVERSE_POWER = 0.5;
     public static double FEED_OPEN = 0.04;
     public static double FEED_CLOSED = 0.3;

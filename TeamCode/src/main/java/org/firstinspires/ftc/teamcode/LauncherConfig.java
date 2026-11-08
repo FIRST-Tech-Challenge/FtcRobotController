@@ -10,11 +10,11 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class LauncherConfig {
     public static double KP = 120.0;
-    public static double KI = 0.2;
+    public static double KI = 0.67;
     public static double KD = 12.0;
     public static double KF = 150.0;
 
-    public static double TARGET_VELOCITY = 1200;
+    public static double TARGET_VELOCITY = 1150;
     public static double VELOCITY_TOLERANCE = 50;
     public static double REVERSE_POWER = 0.5;
 

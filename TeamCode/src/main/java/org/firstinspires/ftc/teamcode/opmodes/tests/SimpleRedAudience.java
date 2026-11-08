@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Simple RedAudience", group = "Test")
+@Autonomous(name = "Simple RedAudience", group = "Competition")
 public class SimpleRedAudience extends SimpleAutoBase {
 
     @Override
@@ -22,6 +22,7 @@ public class SimpleRedAudience extends SimpleAutoBase {
         }
 
         // leave and park, then square up on the wall
+        // short tip down
         driveInches(12, p);
         turnToDegrees(90, p);
         driveInches(30, p);
