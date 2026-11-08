@@ -5,10 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.teamcode.base.OrangeBotBaseOpMode;
+import org.firstinspires.ftc.teamcode.base.GreenBotBaseOpMode;
 
 @Autonomous(name = "Auton 2nd Shooter", group = "Auton")
-public class Auton2ndShooter extends OrangeBotBaseOpMode {
+public class Auton2ndShooter extends GreenBotBaseOpMode {
 
     static final double START_X = -63.5;
     static final double START_Y = -12;

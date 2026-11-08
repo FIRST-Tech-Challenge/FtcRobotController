@@ -6,7 +6,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.base.GreenBotBaseOpMode;
-import org.firstinspires.ftc.teamcode.base.OrangeBotBaseOpMode;
 
 
 @Autonomous(name = "Auton 1st Shooter", group = "Auton")
@@ -32,6 +31,8 @@ public class Auton1stShooter extends GreenBotBaseOpMode {
     static final double FAST_DRIVE_POWER = 1.0;
     static final double SLOW_DRIVE_POWER = 0.3;
 
+    static final double LAUNCHER_TARGET_VELOCITY = 1250;
+
     @Override
     public void runOpMode() {
         config();
@@ -44,15 +45,16 @@ public class Auton1stShooter extends GreenBotBaseOpMode {
 
         waitForStart();
 
-        launcher.setPower(1.0);
+        //launcher.setPower(1.0);
+        launcher.setVelocity(LAUNCHER_TARGET_VELOCITY);
 
         sleep(2000);
         feeder.setPower(1.0);
-        sleep(1000);
+        sleep(3000);
         feeder.setPower(0);
 
         // pick up pollen from the garden
-        drive.driveTo(GARDEN_START_X, GARDEN_Y, GARDEN_HEADING, FAST_DRIVE_POWER,0.8);
+        drive.driveTo(GARDEN_START_X, GARDEN_Y, START_HEADING, FAST_DRIVE_POWER,0.8);
         sleep(500);
         drive.driveTo(GARDEN_END_X, GARDEN_Y, GARDEN_HEADING, SLOW_DRIVE_POWER);
         sleep(500);

@@ -106,6 +106,8 @@ public class Drive {
             showPose();
             telemetry.addData("Target", "x: %.1f  y: %.1f  heading: %.1f",
                     targetX, targetY, targetHeading);
+            telemetry.addData("Robot",  "x: %.1f  y: %.1f  heading: %.1f",
+                    x, y, heading);
             telemetry.addData("Error", "%.1f in   %.1f deg", distance, headingError);
             telemetry.update();
 
@@ -114,7 +116,7 @@ public class Drive {
             double power = atPosition ? 0 : drivePower;
             double turn = atHeading ? 0 : turnPower * Math.signum(headingError);
 
-            driveFieldRelative(errorX, errorY, heading, power, turn);
+            driveFieldRelative(errorX, errorY, heading, -power, turn);
         }
 
         stopDriving();
