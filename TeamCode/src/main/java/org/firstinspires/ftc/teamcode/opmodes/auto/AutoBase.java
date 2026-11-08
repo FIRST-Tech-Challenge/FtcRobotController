@@ -49,6 +49,7 @@ public abstract class AutoBase extends LinearOpMode {
     public void runOpMode() {
         robot = new Robot(hardwareMap, telemetry);
         robot.init();
+        robot.launcher.useAutoValues();
 
         waitForStart();
         matchTimer.reset();
@@ -120,13 +121,27 @@ public abstract class AutoBase extends LinearOpMode {
     }
 
     /**
-     * Shoot `count` pieces. Spins up, and for each piece waits for the flywheel to reach
-     * speed (gives up after LauncherConfig.READY_TIMEOUT and fires anyway, so one slow
-     * flywheel doesn't eat the whole auto), feeds, then pauses before the next one.
-     * All timing is in LauncherConfig - tune live from Dashboard.
+     * Look for a tag between minId and maxId for up to LauncherConfig.SCAN_TIME seconds.
+     * True means the hive is tipped.
+     */
+    protected boolean scanForTip(int minId, int maxId) {
+        ElapsedTime timer = new ElapsedTime();
+        while (!shouldStop() && timer.seconds() < LauncherConfig.SCAN_TIME) {
+            if (robot.vision.isHiveTipped(minId, maxId)) return true;
+            telemetry.addData("Scan", "%.1fs left", LauncherConfig.SCAN_TIME - timer.seconds());
+            tick();
+        }
+        return false;
+    }
+
+    /**
+     * Shoot `count` pieces. Turns the intake on, and before each piece waits for the flywheel
+     * to get back to speed (or READY_TIMEOUT), then opens the gate so the intake pushes a ball in.
+     * Stops early if it's time to park. Turns the flywheel and intake off at the end.
      */
     protected void shoot(int count) {
         robot.launcher.spinUp(); // safe if already spinning
+        robot.intake.on();
 
         for (int i = 0; i < count && !shouldStop() && !timeToPark(); i++) {
             ElapsedTime readyTimer = new ElapsedTime();
@@ -146,6 +161,7 @@ public abstract class AutoBase extends LinearOpMode {
         }
 
         robot.launcher.stopFlywheel();
+        robot.intake.off();
     }
 
     // ---- Helpers ----

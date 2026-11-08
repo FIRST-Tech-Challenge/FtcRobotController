@@ -12,10 +12,10 @@ import org.firstinspires.ftc.teamcode.RobotConstants;
 /*
  * LAUNCHER - flywheel plus the feeder that pushes a piece into it.
  *
- * The flywheel motor holds LauncherConfig.TARGET_VELOCITY (ticks/sec) using the motor
- * controller's built-in PIDF, exactly like SuperTestTeleop. Every value is in LauncherConfig
- * so it can be tuned live from FTC Dashboard.
+ * The flywheel holds a target velocity (ticks/sec) using the motor controller's PIDF.
+ * Teleop uses KP..KF and TARGET_VELOCITY, autos use the AUTO_ values. All are in LauncherConfig.
  *
+ *  - useAutoValues()
  *  - spinUp() / stopFlywheel() / reverse(power)
  *  - isReady() - flywheel within VELOCITY_TOLERANCE of the target
  *  - feed() / retractFeeder()
@@ -29,6 +29,7 @@ public class Launcher implements Subsystem {
     private Servo feeder;
 
     private boolean spinning = false;
+    private boolean autoValues = false;
 
     public Launcher(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -49,17 +50,16 @@ public class Launcher implements Subsystem {
 
     @Override
     public void update() {
-        // Every loop, so Dashboard changes to PIDF or TARGET_VELOCITY take effect right away.
+        // Every loop, so Dashboard changes to PIDF or velocity take effect right away.
         applyPidf();
-        if (spinning) flywheel.setVelocity(LauncherConfig.TARGET_VELOCITY);
+        if (spinning) flywheel.setVelocity(targetVelocity());
 
-        double target = spinning ? LauncherConfig.TARGET_VELOCITY : 0;
+        double target = spinning ? targetVelocity() : 0;
         telemetry.addData("Flywheel vel (ticks/s)", "%.0f", getVelocity());
         telemetry.addData("Flywheel target", "%.0f", target);
         telemetry.addData("Flywheel error", "%.0f", target - getVelocity());
         telemetry.addData("Flywheel ready", isReady());
-        telemetry.addData("PIDF", "%.1f / %.2f / %.1f / %.1f",
-                LauncherConfig.KP, LauncherConfig.KI, LauncherConfig.KD, LauncherConfig.KF);
+        telemetry.addData("Flywheel values", autoValues ? "auto" : "teleop");
     }
 
     @Override
@@ -68,10 +68,16 @@ public class Launcher implements Subsystem {
         retractFeeder();
     }
 
-    /** Spin the flywheel to LauncherConfig.TARGET_VELOCITY and keep it there. */
+    /** Autos call this once so the flywheel uses the AUTO_ values in LauncherConfig. */
+    public void useAutoValues() {
+        autoValues = true;
+        applyPidf();
+    }
+
+    /** Spin the flywheel to the target velocity and keep it there. */
     public void spinUp() {
         spinning = true;
-        flywheel.setVelocity(LauncherConfig.TARGET_VELOCITY);
+        flywheel.setVelocity(targetVelocity());
     }
 
     public void stopFlywheel() {
@@ -85,14 +91,14 @@ public class Launcher implements Subsystem {
         flywheel.setPower(-Math.abs(power));
     }
 
-    /** Flywheel speed in ticks/sec (same units as TARGET_VELOCITY). */
+    /** Flywheel speed in ticks/sec. */
     public double getVelocity() {
         return flywheel.getVelocity();
     }
 
     public boolean isReady() {
         return spinning
-                && Math.abs(getVelocity() - LauncherConfig.TARGET_VELOCITY) < LauncherConfig.VELOCITY_TOLERANCE;
+                && Math.abs(getVelocity() - targetVelocity()) < LauncherConfig.VELOCITY_TOLERANCE;
     }
 
     public void feed() {
@@ -103,8 +109,17 @@ public class Launcher implements Subsystem {
         feeder.setPosition(LauncherConfig.FEEDER_REST_POS);
     }
 
+    private double targetVelocity() {
+        return autoValues ? LauncherConfig.AUTO_TARGET_VELOCITY : LauncherConfig.TARGET_VELOCITY;
+    }
+
     private void applyPidf() {
-        flywheel.setVelocityPIDFCoefficients(
-                LauncherConfig.KP, LauncherConfig.KI, LauncherConfig.KD, LauncherConfig.KF);
+        if (autoValues) {
+            flywheel.setVelocityPIDFCoefficients(LauncherConfig.AUTO_KP, LauncherConfig.AUTO_KI,
+                    LauncherConfig.AUTO_KD, LauncherConfig.AUTO_KF);
+        } else {
+            flywheel.setVelocityPIDFCoefficients(LauncherConfig.KP, LauncherConfig.KI,
+                    LauncherConfig.KD, LauncherConfig.KF);
+        }
     }
 }

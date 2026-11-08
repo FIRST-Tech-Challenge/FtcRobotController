@@ -15,9 +15,9 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
-@TeleOp(name = "Standalone Teleop", group = "Competition")
+@TeleOp(name = "Standalone TeleOp", group = "Competition")
 @Config
-public class Standalone_Teleop extends LinearOpMode {
+public class StandaloneTeleOp extends LinearOpMode {
 
     private DcMotorEx launcher;
     private DcMotor intake;
