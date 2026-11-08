@@ -9,12 +9,21 @@ import com.acmerobotics.dashboard.config.Config;
  */
 @Config
 public class LauncherConfig {
+    // teleop flywheel
     public static double KP = 120.0;
-    public static double KI = 0.2;
+    public static double KI = 0.67;
     public static double KD = 12.0;
     public static double KF = 150.0;
 
-    public static double TARGET_VELOCITY = 1200;
+    public static double TARGET_VELOCITY = 1150;
+
+    // auto flywheel
+    public static double AUTO_KP = 125.0;
+    public static double AUTO_KI = 1.0;
+    public static double AUTO_KD = 110.0;
+    public static double AUTO_KF = 100.0;
+    public static double AUTO_TARGET_VELOCITY = 1050;
+
     public static double VELOCITY_TOLERANCE = 50;
     public static double REVERSE_POWER = 0.5;
 
@@ -25,6 +34,7 @@ public class LauncherConfig {
     public static double READY_TIMEOUT = 2.0;
     public static double FEED_HOLD_TIME = 0.3;
     public static double FEED_PAUSE_TIME = 0.5;
+    public static double SCAN_TIME = 8.0;
     public static double PARK_TIME = 8.0;
 
     public static double INTAKE_POWER = 0.8;

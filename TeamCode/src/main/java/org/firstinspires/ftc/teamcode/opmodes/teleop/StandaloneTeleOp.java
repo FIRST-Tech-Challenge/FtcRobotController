@@ -1,6 +1,6 @@
 
 
-package org.firstinspires.ftc.teamcode.opmodes.tests;
+package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -15,9 +15,9 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
-@TeleOp(name = "Supa dupa testing teleopmode")
+@TeleOp(name = "Standalone TeleOp", group = "Competition")
 @Config
-public class SuperTestTeleop extends LinearOpMode {
+public class StandaloneTeleOp extends LinearOpMode {
 
     private DcMotorEx launcher;
     private DcMotor intake;
@@ -27,15 +27,17 @@ public class SuperTestTeleop extends LinearOpMode {
     private DcMotor BR;
     private Servo feeder;
 
-    public static PIDFCoefficients Pidf = new PIDFCoefficients(120,0.2,12,150);
+    public static PIDFCoefficients Pidf = new PIDFCoefficients(120,0.67,12,150);
 
-    public static double vel = 1200;
+    public static double vel = 1150;
 
 
     double frontLeftPower;
     double backLeftPower;
     double frontRightPower;
     double backRightPower;
+
+    boolean intakeActive = false;
 
 
     @Override
@@ -80,11 +82,16 @@ public class SuperTestTeleop extends LinearOpMode {
         BL.setDirection(DcMotor.Direction.REVERSE);
         FR.setDirection(DcMotor.Direction.FORWARD);
         BR.setDirection(DcMotor.Direction.FORWARD);
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         feeder.setPosition(0.04);
         right_trigger_block = false;
+
         waitForStart();
         runtime.reset();
         // Run until the end of the match (driver presses STOP)
@@ -104,11 +111,12 @@ public class SuperTestTeleop extends LinearOpMode {
             }
             telemetry.addData("Feeder Servo:", feeder.getPosition());
             if (gamepad1.rightBumperWasPressed()) {
-                if (intake.getPower() != 0) {
-                    intake.setPower(0);
-                } else {
-                    intake.setPower(0.8);
-                }
+                intakeActive = !intakeActive;
+            }
+            if (intakeActive) {
+                intake.setPower(0.8);
+            } else {
+                intake.setPower(0);
             }
             axial = -gamepad1.left_stick_y;
             lateral = gamepad1.left_stick_x;
@@ -135,6 +143,7 @@ public class SuperTestTeleop extends LinearOpMode {
 
             telemetry.addData("Velocity",launcher.getVelocity());
             telemetry.addData("Current", launcher.getCurrent(CurrentUnit.MILLIAMPS));
+            telemetry.addData("Intake", intakeActive);
             telemetry.update();
         }
     }

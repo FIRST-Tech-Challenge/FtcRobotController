@@ -25,8 +25,8 @@ public abstract class SimpleAutoBase extends LinearOpMode {
     public static double DRIVE_POWER = 0.5;
 
     // flywheel speed is in ticks/sec
-    public static double KP = 120, KI = 0.2, KD = 12, KF = 150;
-    public static double LAUNCH_VEL = 1200;
+    public static double KP = 125, KI = 1, KD = 110, KF = 100;
+    public static double LAUNCH_VEL = 1050;
     public static double VEL_TOLERANCE = 50;
 
     public static double FEED_OPEN = 0.04;

@@ -2,25 +2,34 @@ package org.firstinspires.ftc.teamcode.opmodes.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Simple BlueScoring", group = "Test")
+@Autonomous(name = "Simple BlueScoring", group = "Competition")
 public class SimpleBlueScoring extends SimpleAutoBase {
 
     @Override
     protected void runRoutine() {
         double p = DRIVE_POWER;
 
-        // give the flywheel time to get up to speed
+        // drive up, start the flywheel, then check the hive
+        driveInches(20, p);
         spinUp();
-        waitSeconds(2);
 
-        // only shoot if the hive is tipped
+        // tipped: back up to the shooting spot and shoot. Not tipped: back up a little in
         if (scanForTip(42, 45)) {
-            shoot(4);
+            driveInches(19, -p);
+            shoot(3);
+        } else {
+            driveInches(8, -p);
         }
 
-        // leave and park
-        driveInches(24, p);
-        turnToDegrees(-90, p);
-        driveInches(41, p);
+        // leave and park, then square up on the wall
+        driveInches(12, p);
+        turnToDegrees(90, p);
+        driveInches(30, p);
+        turnToDegrees(0, p);
+        driveInches(79, p);
+        turnToDegrees(80, p);
+        driveInches(10, p);
+        driveSeconds(1.5, p);
+        driveSeconds(0.3, -p);
     }
 }

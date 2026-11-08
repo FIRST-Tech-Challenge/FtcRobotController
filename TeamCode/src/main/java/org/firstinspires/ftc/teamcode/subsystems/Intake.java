@@ -48,6 +48,11 @@ public class Intake implements Subsystem {
         motor.setPower(running ? LauncherConfig.INTAKE_POWER : 0);
     }
 
+    public void on() {
+        running = true;
+        motor.setPower(LauncherConfig.INTAKE_POWER);
+    }
+
     public void off() {
         running = false;
         motor.setPower(0);
