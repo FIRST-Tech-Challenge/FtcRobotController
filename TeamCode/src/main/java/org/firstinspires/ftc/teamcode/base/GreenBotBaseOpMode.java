@@ -48,13 +48,17 @@ public abstract class GreenBotBaseOpMode extends LinearOpMode {
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         turret.setDirection(DcMotor.Direction.REVERSE);
         feeder.setDirection(DcMotor.Direction.REVERSE);
+        rightIntakeServo.setDirection(DcMotor.Direction.REVERSE);
 
         frontRight.setZeroPowerBehavior(BRAKE);
         frontLeft.setZeroPowerBehavior(BRAKE);
         backRight.setZeroPowerBehavior(BRAKE);
         backLeft.setZeroPowerBehavior(BRAKE);
-        pinpoint.setOffsets(-7.375, -5.875, DistanceUnit.INCH);
-
+        pinpoint.setOffsets(3.2, -7.9, DistanceUnit.INCH);
+        pinpoint.setEncoderDirections(
+                GoBildaPinpointDriver.EncoderDirection.REVERSED,
+                GoBildaPinpointDriver.EncoderDirection.FORWARD
+        );
 
         launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         launcher.setPIDFCoefficients(

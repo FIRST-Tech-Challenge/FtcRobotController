@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.teamcode.base.GreenBotBaseOpMode;
 
+import java.util.Spliterator;
+
 @TeleOp(name = "TeleOp Main", group = "Main")
 public class TeleOpGreen extends GreenBotBaseOpMode {
 
@@ -21,6 +23,8 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
 
     private final double INTAKE_POWER = 1.0;
     private final double FEEDER_POWER = 1.0;
+
+    private final double SPEED_FACTOR = 0.5;
 
     private boolean intakeOn = true;
     private boolean intakeReversed = false;
@@ -40,9 +44,9 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
             /////////////////////////
             // handle driving - driver 1
             /////////////////////////
-            double forward = -gamepad1.left_stick_y;
-            double strafe = gamepad1.left_stick_x;
-            double turn = gamepad1.right_stick_x;
+            double forward = -gamepad1.left_stick_y * SPEED_FACTOR;
+            double strafe = gamepad1.left_stick_x * SPEED_FACTOR;
+            double turn = -gamepad1.right_stick_x * SPEED_FACTOR;
             drive.drive(forward, strafe, turn);
 
             /////////////////////////
