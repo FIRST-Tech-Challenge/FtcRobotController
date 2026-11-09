@@ -20,10 +20,8 @@ public class FullManualOpmode extends OpMode {
     // private Turretdriver turret;
     //private ServoMotorController turret;
     private MotorPowerController flywheel;
-    private State currentState;
-    private enum State {
-        GO
-    }
+    private boolean transferOn = false;
+
     
     // Code to run ONCE when the driver hits INIT
     @Override
@@ -31,12 +29,11 @@ public class FullManualOpmode extends OpMode {
         // Initialize the hardware variables. 
         loc = new Localizer(hardwareMap, "gbpoc");
         drive = new MecanumDrive(hardwareMap, loc);
-        intake = new IntakeDriver(hardwareMap, "intake"); 
-        transfer = new TransferDriver(hardwareMap, "transfer", "feed"); 
+        intake = new IntakeDriver(hardwareMap, "intake"); //TODO check name
+        transfer = new TransferDriver(hardwareMap, "transfer", "feed"); //TODO check name
         flywheel = new MotorPowerController(hardwareMap, "flywheel");
-        // turret = new TurretDriver(hardwareMap, "turretServo");    
+        // turret = new TurretDriver(hardwareMap, "turretServo"); //TODO check name        
 
-        currentState = State.GO;
         
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Init OK");
@@ -58,9 +55,13 @@ public class FullManualOpmode extends OpMode {
     @Override
     public void loop() {
         // read sensors here
+        if (gamepad1.a) transferOn = true;
+        if (gamepad1.y) {
+            transferOn =false;
+            
+        }
         loc.update();
         Pose2D currentLoc = loc.getPosition();
-        telemetry.addData("State",currentState);
         int currX = (int)currentLoc.getX(DistanceUnit.MM);
         int currY = (int)currentLoc.getY(DistanceUnit.MM);
         int theta = (int)currentLoc.getHeading(AngleUnit.DEGREES);
@@ -70,20 +71,16 @@ public class FullManualOpmode extends OpMode {
         double y = -gamepad1.left_stick_x;  // gamepad 'left' (-x) is robot +y
         double r = -gamepad1.right_stick_x; // gamepad 'left' (-x) is positive rotation
 
-        // STATE MACHINE START
-       if (currentState == State.GO){
-            drive.move(x, y, r);
-            //intake.run();
+        drive.move(x, y, r);
+        //intake.run();
+        if (transferOn){
             transfer.collect();
-            flywheel.setPower(0.75);
-            if(gamepad1.a){
-                transfer.loadTurret();
-            }
-            if (gamepad1.b){
-                drive.moveTo(0,0,0);
-            }
+        } else {
+            transfer.off();
         }
-        // STATE MACHINE END
+        //flywheel.setPower(0.75);
+        //transfer.loadTurret();
+        //drive.moveTo(0,0,0);
     }
 
     // Code to run ONCE after the driver hits STOP
