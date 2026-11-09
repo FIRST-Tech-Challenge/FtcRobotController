@@ -116,6 +116,7 @@ public class AutoStateMachine {
         while (opMode.opModeIsActive()) {
 
             navigator.update();
+            camera.updateRobotOrientation(odometry.getHeading());
             checkForFaults();
 
             switch (state) {
@@ -408,6 +409,7 @@ public class AutoStateMachine {
                     errorReason, retryCount, Constants.AUTO_MAX_RETRIES);
         }
         navigator.addTelemetry(opMode.telemetry);
+        camera.addTelemetry(opMode.telemetry);
         opMode.telemetry.update();
     }
 }

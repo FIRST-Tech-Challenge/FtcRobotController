@@ -197,12 +197,17 @@ public class LimelightCamera {
         telemetry.addData("tv", targetFound ? 1 : 0);
         telemetry.addData("Targets detected", targetCount);
         telemetry.addData("Target ID / class", targetId);
-        telemetry.addData("tx / ty (degrees)", "%.2f / %.2f", tx, ty);
+        telemetry.addData("tx / ty (degrees)", targetFound
+                ? String.format(java.util.Locale.US, "%.2f / %.2f", tx, ty) : "N/A");
         if (Double.isFinite(targetArea)) {
             telemetry.addData("Target area", "%.2f%%", targetArea);
         }
-        telemetry.addData("Limelight latency (ms)", result == null ? "N/A"
-                : "%.1f", result == null ? 0.0 : result.getCaptureLatency() + result.getTargetingLatency());
+        if (result == null) {
+            telemetry.addData("Limelight latency (ms)", "N/A");
+        } else {
+            telemetry.addData("Limelight latency (ms)", "%.1f",
+                    result.getCaptureLatency() + result.getTargetingLatency());
+        }
 
         if (aprilTagMode) {
             addMegaTagTelemetry(telemetry, result);
