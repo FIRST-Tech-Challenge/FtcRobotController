@@ -16,7 +16,7 @@ public final class Shooter extends SubsystemBase {
     // Shared velocity in encoder ticks per second; tune in Panels.
     public static double SHOOT_VEL = 1560;
     // Opt in after tuning; false uses the Hub's existing velocity controller.
-    public static boolean USE_PID = false;
+    public static boolean USE_PID = true;
     // Custom PID gains produce motor power from ticks/s error. Tune in Panels;
     // Hub PIDF tuner coefficients are incompatible. Zeros leave the motor off.
     public static double VELOCITY_P = 0.01;
