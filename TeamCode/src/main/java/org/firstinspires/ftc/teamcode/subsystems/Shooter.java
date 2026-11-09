@@ -22,6 +22,14 @@ public final class Shooter extends SubsystemBase {
     public static double VELOCITY_P = 0.01;
     public static double VELOCITY_I = 0.008;
     public static double VELOCITY_D = 0;
+    // Feedforward adds VELOCITY_F * target ticks/s to the PID power. Start near
+    // 1 / (full-power ticks/s), e.g. 1 / 2800 ≈ 0.00036, then lower I.
+    public static boolean USE_F = false;
+    public static double VELOCITY_F = 0;
+    // Flag the encoders when they disagree by more than this fraction of the
+    // faster reading; below the minimum speed the ratio is too noisy to judge.
+    public static double ENCODER_MISMATCH_RATIO = 0.2;
+    public static double ENCODER_CHECK_MIN_VEL = 300;
     private final DcMotorEx shooterLeft, shooterRight;
     private final ElapsedTime loopTimer = new ElapsedTime();
     private double commandedVel;
@@ -29,6 +37,8 @@ public final class Shooter extends SubsystemBase {
     private double previousError;
     private boolean hasPreviousError;
     private boolean usingPid;
+    private boolean usingF;
+    private boolean encoderMismatch;
 
     public Shooter(@NotNull final HardwareMap hMap) {
         shooterLeft = hMap.get(DcMotorEx.class, "shooterLeft");
@@ -42,6 +52,7 @@ public final class Shooter extends SubsystemBase {
         shooterRight.setPower(0.0);
 
         usingPid = USE_PID;
+        usingF = USE_F;
         shooterLeft.setMode(usingPid ? DcMotor.RunMode.RUN_WITHOUT_ENCODER
                 : DcMotor.RunMode.RUN_USING_ENCODER);
         shooterRight.setMode(usingPid ? DcMotor.RunMode.RUN_WITHOUT_ENCODER
@@ -75,30 +86,38 @@ public final class Shooter extends SubsystemBase {
         if (commandedVel == 0.0) {
             return;
         }
+        double measuredVel = measureVelocity();
         if (!usingPid) {
             shooterLeft.setVelocity(commandedVel);
             shooterRight.setVelocity(commandedVel);
             return;
         }
+        if (usingF != USE_F) {
+            // The integral was built for the old feedforward; start it fresh.
+            usingF = USE_F;
+            resetController();
+        }
 
         double dt = Math.max(loopTimer.seconds(), 0.001);
         loopTimer.reset();
-        double error = commandedVel - (shooterLeft.getVelocity() + shooterRight.getVelocity()) / 2;
+        double error = commandedVel - measuredVel;
         double slope = hasPreviousError ? (error - previousError) / dt : 0.0;
-        double candidateIntegral = VELOCITY_I == 0.0 ? 0.0 : integral + error * dt;
-        double output = VELOCITY_P * error + VELOCITY_I * candidateIntegral
-                + VELOCITY_D * slope;
+        double feedforward = usingF ? VELOCITY_F * commandedVel : 0.0;
+        double base = feedforward + VELOCITY_P * error + VELOCITY_D * slope;
+        double candidateIntegral = integral + error * dt;
+        double trial = base + VELOCITY_I * candidateIntegral;
 
         // Integrate only when unsaturated or when the error unwinds saturation.
-        if ((output >= -1.0 && output <= 1.0)
-                || (output > 1.0 && error < 0.0)
-                || (output < -1.0 && error > 0.0)) {
+        if ((trial >= -1.0 && trial <= 1.0)
+                || (trial > 1.0 && error < 0.0)
+                || (trial < -1.0 && error > 0.0)) {
             integral = candidateIntegral;
         }
         if (VELOCITY_I == 0.0) {
+            // Drop any integral left over from before I was set to zero.
             integral = 0.0;
         }
-        output = VELOCITY_P * error + VELOCITY_I * integral + VELOCITY_D * slope;
+        double output = base + VELOCITY_I * integral;
         previousError = error;
         hasPreviousError = true;
 
@@ -116,7 +135,24 @@ public final class Shooter extends SubsystemBase {
             shooterRight.setVelocity(0.0);
         }
         commandedVel = 0.0;
+        encoderMismatch = false;
         resetController();
+    }
+
+    /**
+     * Both motors spin one flywheel, so their encoders should agree. When they
+     * do not, an unplugged or dead encoder reads near zero, so trust the faster one.
+     */
+    private double measureVelocity() {
+        double left = shooterLeft.getVelocity();
+        double right = shooterRight.getVelocity();
+        double faster = Math.max(Math.abs(left), Math.abs(right));
+        encoderMismatch = faster >= ENCODER_CHECK_MIN_VEL
+                && Math.abs(left - right) > ENCODER_MISMATCH_RATIO * faster;
+        if (!encoderMismatch) {
+            return (left + right) / 2;
+        }
+        return Math.abs(left) >= Math.abs(right) ? left : right;
     }
 
     private void updateControlMode() {
@@ -149,6 +185,11 @@ public final class Shooter extends SubsystemBase {
     /** Requested velocity in ticks/s, not an RPM or motion measurement. */
     public double getCommandedVel() {
         return commandedVel;
+    }
+
+    /** True while the two shooter encoders disagree; check the wiring. */
+    public boolean isEncoderMismatch() {
+        return encoderMismatch;
     }
 
     public double getLeftVel() {

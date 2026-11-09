@@ -72,6 +72,7 @@ public abstract class BaseDriveTeleOp extends CommandOpMode {
         telemetry.addData("Shooter Velocity Command", shooter.getCommandedVel());
         telemetry.addData("Shooter Left Velocity Actual", shooter.getLeftVel());
         telemetry.addData("Shooter Right Velocity Actual", shooter.getRightVel());
+        telemetry.addData("Shooter Encoder Mismatch", shooter.isEncoderMismatch());
         telemetry.addData("Intake Power Command", intake.getCommandedPower());
         telemetry.addData("Intake Power Actual", intake.getPow());
         telemetry.update();
