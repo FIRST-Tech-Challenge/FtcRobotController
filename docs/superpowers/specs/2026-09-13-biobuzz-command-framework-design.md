@@ -4,12 +4,12 @@
 
 ## Goal
 
-Build a small, team-owned command-based framework under `TeamCode` for FTC team 20287's 2026–2027 BIOBUZZ season. The framework must remain understandable to student programmers, avoid an unmaintained FTCLib runtime dependency, and include a minimal mecanum TeleOp that proves the architecture works without claiming unverified robot behavior.
+Build a small, team-owned command-based framework under `TeamCode` for FTC team 20827's 2026–2027 BIOBUZZ season. The framework must remain understandable to student programmers, avoid an unmaintained FTCLib runtime dependency, and include a minimal mecanum TeleOp that proves the architecture works without claiming unverified robot behavior.
 
 ## Required execution order
 
 1. Pin and integrate FTC Knowledge Bank commit `105c8e47ddee734365af50dd2305caa13646ab21` into this project.
-2. Configure the integration for team `20287`, season `2026-2027`, and the explicit `command-based` profile.
+2. Configure the integration for team `20827`, season `2026-2027`, and the explicit `command-based` profile.
 3. Run the integration dry-run before its write operation.
 4. Run FTCKB `resolve` and treat the returned active rules as development requirements.
 5. Implement the TeamCode framework and example.

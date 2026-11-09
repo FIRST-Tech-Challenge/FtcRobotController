@@ -13,7 +13,7 @@
 ## Global Constraints
 
 - Pin FTC Knowledge Bank commit `105c8e47ddee734365af50dd2305caa13646ab21`; never track `main` or run `submodule update --remote`.
-- Configure team `20287`, season `2026-2027`, and explicit profile `command-based`.
+- Configure team `20827`, season `2026-2027`, and explicit profile `command-based`.
 - Complete FTCKB dry-run, installation, and `resolve` before modifying `TeamCode`.
 - Do not add FTCLib as a runtime dependency and do not recreate the full FTCLib/WPILib API.
 - Keep hardware names, directions, dimensions, gearing, PID values, servo endpoints, odometry offsets, and power limits centralized and explicitly marked unverified until checked on the current robot.
@@ -89,7 +89,7 @@ Run:
 JAVA_HOME='/Applications/Android Studio.app/Contents/jbr/Contents/Home' \
 python3 /private/tmp/ftckb-source-105c8e47/.agents/skills/ftckb-integrate/scripts/integrate.py \
   --project '/Users/xinlu/Documents/GitHub/FTC20287-BioBuzz' \
-  --team 20287 \
+  --team 20827 \
   --season 2026-2027 \
   --ref 105c8e47ddee734365af50dd2305caa13646ab21 \
   --profile command-based \
@@ -106,7 +106,7 @@ Run the same command without `--dry-run`:
 JAVA_HOME='/Applications/Android Studio.app/Contents/jbr/Contents/Home' \
 python3 /private/tmp/ftckb-source-105c8e47/.agents/skills/ftckb-integrate/scripts/integrate.py \
   --project '/Users/xinlu/Documents/GitHub/FTC20287-BioBuzz' \
-  --team 20287 \
+  --team 20827 \
   --season 2026-2027 \
   --ref 105c8e47ddee734365af50dd2305caa13646ab21 \
   --profile command-based
@@ -123,7 +123,7 @@ JAVA_HOME='/Applications/Android Studio.app/Contents/jbr/Contents/Home' \
 python3 tools/FTC-Knowledge-Bank/.agents/skills/ftckb-integrate/scripts/project.py resolve --project .
 ```
 
-Expected: exit 0 kernel JSON for team `20287`, season `2026-2027`, and normalized profile `command-based`. Save the active rule IDs in the execution notes and apply them to every following task.
+Expected: exit 0 kernel JSON for team `20827`, season `2026-2027`, and normalized profile `command-based`. Save the active rule IDs in the execution notes and apply them to every following task.
 
 - [ ] **Step 5: Verify integration state and staging scope**
 
@@ -753,7 +753,7 @@ git commit -m "feat: add centralized drivetrain hardware"
 
 **Interfaces:**
 - Consumes: `DoubleSupplier` gamepad inputs, `MecanumMixer.mix`, `DriveSubsystem.drive`, `CommandScheduler`, and `RobotHardware.createDrive`.
-- Produces: a supplier-driven nonterminating default command and Driver Station OpMode named `20287 Main TeleOp`.
+- Produces: a supplier-driven nonterminating default command and Driver Station OpMode named `20827 Main TeleOp`.
 
 - [ ] **Step 1: Implement the live-input default command**
 
@@ -827,7 +827,7 @@ import org.firstinspires.ftc.teamcode.framework.command.CommandScheduler;
 import org.firstinspires.ftc.teamcode.robot.RobotConfig;
 import org.firstinspires.ftc.teamcode.robot.RobotHardware;
 
-@TeleOp(name = "20287 Main TeleOp", group = "BIOBUZZ")
+@TeleOp(name = "20827 Main TeleOp", group = "BIOBUZZ")
 public final class MainTeleOp extends LinearOpMode {
     @Override public void runOpMode() throws InterruptedException {
         CommandScheduler scheduler = new CommandScheduler();
@@ -896,7 +896,7 @@ git commit -m "feat: add BIOBUZZ mecanum TeleOp"
 Create `TeamCode/README.md` with these exact sections and facts:
 
 ```markdown
-# Team 20287 BIOBUZZ TeamCode
+# FTC-20827 BioBuzz TeamCode
 
 This module contains the 2026–2027 team-owned command framework. It uses FTC SDK 12.0 and does not depend on FTCLib.
 
