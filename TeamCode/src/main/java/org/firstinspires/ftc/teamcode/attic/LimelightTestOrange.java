@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode.test;
+package org.firstinspires.ftc.teamcode.attic;
 
 import android.annotation.SuppressLint;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -28,8 +29,9 @@ import java.util.List;
  * tag's "Target Pose in Robot Space" for distance. For the distance to be right,
  * the camera's position on the robot MUST be entered in the Limelight web UI.
  */
-@TeleOp(name = "Limelight Tester", group = "BioBuzz")
-public class LimelightTester extends LinearOpMode {
+@Disabled
+@TeleOp(name = "Limelight Test Orange", group = "Test")
+public class LimelightTestOrange extends LinearOpMode {
 
     // ---------------- Tuning / configuration ----------------
     static final int PIPELINE = 0;

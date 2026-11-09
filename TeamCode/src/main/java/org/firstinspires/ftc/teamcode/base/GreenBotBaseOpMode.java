@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.robot.Aimer;
 import org.firstinspires.ftc.teamcode.robot.Drive;
 
 public abstract class GreenBotBaseOpMode extends LinearOpMode {
@@ -23,6 +24,7 @@ public abstract class GreenBotBaseOpMode extends LinearOpMode {
     protected GoBildaPinpointDriver pinpoint;
     protected Limelight3A limelight;
     protected Drive drive;
+    protected Aimer aimer;
 
     /**
      * Configures the hardware that all OpModes using this robot share.
@@ -41,7 +43,7 @@ public abstract class GreenBotBaseOpMode extends LinearOpMode {
         leftIntakeServo = hardwareMap.get(CRServo.class, "left_intake_servo");
         rightIntakeServo = hardwareMap.get(CRServo.class, "right_intake_servo");
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
-        //limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         // Configure hardware
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -54,10 +56,10 @@ public abstract class GreenBotBaseOpMode extends LinearOpMode {
         frontLeft.setZeroPowerBehavior(BRAKE);
         backRight.setZeroPowerBehavior(BRAKE);
         backLeft.setZeroPowerBehavior(BRAKE);
-        pinpoint.setOffsets(3.2, -7.9, DistanceUnit.INCH);
+        pinpoint.setOffsets(-2.44, -6.56, DistanceUnit.INCH);
         pinpoint.setEncoderDirections(
-                GoBildaPinpointDriver.EncoderDirection.REVERSED,
-                GoBildaPinpointDriver.EncoderDirection.FORWARD
+                GoBildaPinpointDriver.EncoderDirection.FORWARD,
+                GoBildaPinpointDriver.EncoderDirection.REVERSED
         );
 
         launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -74,6 +76,10 @@ public abstract class GreenBotBaseOpMode extends LinearOpMode {
                 pinpoint,
                 telemetry
         );
+
+        // Does NOT zero the turret encoder: each OpMode decides when the turret's position
+        // should count as 0 (call aimer.resetTurretEncoder()).
+        aimer = new Aimer(turret, limelight, telemetry);
     }
 
 }

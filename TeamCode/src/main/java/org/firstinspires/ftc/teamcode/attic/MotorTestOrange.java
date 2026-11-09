@@ -21,19 +21,17 @@
  */
 
 
-package org.firstinspires.ftc.teamcode.test;
+package org.firstinspires.ftc.teamcode.attic;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @TeleOp(name = "Motor Tester - Orange Bot", group = "StarterBot")
-//@Disabled
+@Disabled
 public class MotorTestOrange extends OpMode {
 
     // Declare OpMode members.

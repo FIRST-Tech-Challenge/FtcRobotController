@@ -36,7 +36,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.base.GreenBotBaseOpMode;
 
-@TeleOp(name = "Motor Tester - Green Bot", group = "StarterBot")
+@TeleOp(name = "Motor Tester - Green Bot", group = "Test")
 public class MotorTestGreen extends GreenBotBaseOpMode {
 
     private static final double DRIVE_POWER = 0.2;

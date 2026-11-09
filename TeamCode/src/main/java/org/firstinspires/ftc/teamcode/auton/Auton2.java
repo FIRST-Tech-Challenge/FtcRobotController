@@ -8,19 +8,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.base.GreenBotBaseOpMode;
 
 @Autonomous(name = "Auton 2nd Shooter", group = "Auton")
-public class Auton2ndShooter extends GreenBotBaseOpMode {
+public class Auton2 extends GreenBotBaseOpMode {
 
     static final double START_X = -63.5;
-    static final double START_Y = -12;
-    static final double START_HEADING = 0;
+    static final double START_Y = -16;
+    static final double START_HEADING = 180;
 
     static final double SHOOT_X = -60;
     static final double SHOOT_Y = -12;
-    static final double SHOOT_HEADING = 0;
+    static final double SHOOT_HEADING = 180;
 
     static final double PARK_LEFT_X = -40;
     static final double PARK_LEFT_Y = -57;
-    static final double PARK_HEADING = 0;
+    static final double PARK_HEADING = 180;
 
     static final double FAST_DRIVE_POWER = 1.0;
     static final double SLOW_DRIVE_POWER = 0.3;

@@ -1,10 +1,12 @@
-package org.firstinspires.ftc.teamcode.test;
+package org.firstinspires.ftc.teamcode.attic;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.base.OrangeBotBaseOpMode;
 
+@Disabled
 @TeleOp(name = "Intake Encoder Test", group = "Test")
 public class IntakeAsTurretTest extends OrangeBotBaseOpMode {
 

@@ -9,24 +9,28 @@ import org.firstinspires.ftc.teamcode.base.GreenBotBaseOpMode;
 
 
 @Autonomous(name = "Auton 1st Shooter", group = "Auton")
-public class Auton1stShooter extends GreenBotBaseOpMode {
+public class Auton1 extends GreenBotBaseOpMode {
 
     static final double START_X = 63;
-    static final double START_Y = -12;
-    static final double START_HEADING = 180;
+    static final double START_Y = -18;
+    static final double START_HEADING = 0;
 
     static final double GARDEN_START_X = 47;
-    static final double GARDEN_END_X = 58;
-    static final double GARDEN_Y = -56;
+    static final double GARDEN_END_X = 62.5;
+    static final double GARDEN_Y = -50;
     static final double GARDEN_HEADING = 0;
 
-    static final double SHOOT2_X = -52.5;
-    static final double SHOOT2_Y = -12;
-    static final double SHOOT2_HEADING = 0;
+    static final double MIDPOINT_X = -12.0;
+    static final double MIDPOINT_Y = -48.0;
+    static final double MIDPOINT_HEADING = 0;
 
-    static final double PARK_RIGHT_X = -20;
-    static final double PARK_RIGHT_Y = -57;
-    static final double PARK_HEADING = 90;
+    static final double SHOOT2_X = -52.5;
+    static final double SHOOT2_Y = -16;
+    static final double SHOOT2_HEADING = 180;
+
+    static final double PARK_RIGHT_X = -30;
+    static final double PARK_RIGHT_Y = -50;
+    static final double PARK_HEADING = 180;
 
     static final double FAST_DRIVE_POWER = 1.0;
     static final double SLOW_DRIVE_POWER = 0.3;
@@ -36,6 +40,7 @@ public class Auton1stShooter extends GreenBotBaseOpMode {
     @Override
     public void runOpMode() {
         config();
+        drive.setUsePid(true);
 
         telemetry.addData("Ready", "Press START");
         drive.showPose();
@@ -60,7 +65,12 @@ public class Auton1stShooter extends GreenBotBaseOpMode {
         sleep(500);
 
         // drive to 2nd shooting spot
-        drive.driveTo(SHOOT2_X, SHOOT2_Y, SHOOT2_HEADING, FAST_DRIVE_POWER);
+        drive.driveTo(MIDPOINT_X, MIDPOINT_Y, MIDPOINT_HEADING, FAST_DRIVE_POWER, 0.8, 8.0);
+        drive.showPose();
+
+        sleep(2000);
+        drive.driveTo(SHOOT2_X, SHOOT2_Y, SHOOT2_HEADING, FAST_DRIVE_POWER, 0.8, 8.0);
+        drive.showPose();
 
         // wait for hive, need timeout if hive never tips
         sleep(1000);

@@ -1,21 +1,11 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
-
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.teamcode.base.GreenBotBaseOpMode;
 
-import java.util.Spliterator;
-
 @TeleOp(name = "TeleOp Main", group = "Main")
-public class TeleOpGreen extends GreenBotBaseOpMode {
+public class TeleOpMain extends GreenBotBaseOpMode {
 
     private final int INITIAL_LAUNCHER_TARGET_VELOCITY = 1250;
     private final int MIN_LAUNCHER_TARGET_VELOCITY = 200;
@@ -26,7 +16,10 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
 
     private final double SPEED_FACTOR = 0.5;
 
+    private final double TURRET_NUDGE_POWER = 0.25;
+
     private boolean intakeOn = true;
+    private boolean wasOnTarget = false;
     private boolean intakeReversed = false;
 
     private double launcherTargetVelocity = INITIAL_LAUNCHER_TARGET_VELOCITY;
@@ -35,10 +28,22 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
     public void runOpMode() { // when driver hits INIT
         config();
 
-        helpMenu();
-        telemetry.update();
+        // The turret should be lined up facing straight backward before INIT; that becomes 0.
+        // TODO: once an auto moves the turret, skip this when TeleOp follows that auto.
+        aimer.resetTurretEncoder();
 
-        waitForStart();
+        // Pick the alliance during INIT (it decides which hive tags the aimer looks for).
+        while (opModeInInit()) {
+            if (gamepad1.x || gamepad2.x) aimer.setBlueAlliance(true);
+            if (gamepad1.b || gamepad2.b) aimer.setBlueAlliance(false);
+            telemetry.addData("Alliance", "%s   (X = BLUE, B = RED)",
+                    aimer.isBlueAlliance() ? "BLUE" : "RED");
+            telemetry.addLine("Turret encoder zeroed -- it should be facing straight backward.");
+            helpMenu();
+            telemetry.update();
+        }
+
+        aimer.start();
 
         while (opModeIsActive()) {
             /////////////////////////
@@ -78,8 +83,24 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
 
             /////////////////////////
             // handle turret - driver 2
+            // D-pad L/R nudges (within the soft limits) and overrides auto-aim.
+            // Hold Y to auto-aim at the hive.
             /////////////////////////
-            turret.setPower(gamepad2.left_stick_x);
+            aimer.update();
+            if (gamepad2.dpad_left || gamepad2.dpad_right) {
+                aimer.moveTurret(gamepad2.dpad_right ? TURRET_NUDGE_POWER : -TURRET_NUDGE_POWER);
+            } else if (gamepad2.y) {
+                aimer.aim();
+            } else {
+                aimer.stopTurret();
+            }
+
+            // Buzz driver 2's controller once when the turret first lines up.
+            boolean onTarget = aimer.isOnTarget();
+            if (onTarget && !wasOnTarget) {
+                gamepad2.rumble(200);
+            }
+            wasOnTarget = onTarget;
 
             /////////////////////////
             // handle launcher - driver 2
@@ -108,9 +129,13 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
                 double launcherVelocity = launcher.getVelocity();
                 telemetry.addData("Launcher - Target Velocity", launcherTargetVelocity);
                 telemetry.addData("Launcher - Current Velocity", launcherVelocity);
+                aimer.showStatus();
             }
             telemetry.update();
         }
+
+        drive.stopDriving();
+        aimer.stop();
     }
 
     private void helpMenu() {
@@ -121,7 +146,8 @@ public class TeleOpGreen extends GreenBotBaseOpMode {
         telemetry.addData("Feeder IN (Keep On)", "Gamepad 2 - Left Bumper");
         telemetry.addData("Feeder OUT (Keep On)", "Gamepad 2 - Right Bumper");
         telemetry.addData("Feeder OFF", "Gamepad 2 - A");
-        telemetry.addData("Turret L/R", "Gamepad 2 - Left Stick L/R");
+        telemetry.addData("Turret L/R", "Gamepad 2 - DPad Left/Right");
+        telemetry.addData("Turret Auto-Aim (Hold)", "Gamepad 2 - Y");
         telemetry.addData("Launcher +100", "Gamepad 2 - DPad Up");
         telemetry.addData("Launcher -100", "Gamepad 2 - DPad Down");
     }
