@@ -6,6 +6,12 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+
 import org.firstinspires.ftc.teamcode.quantumstorm.Constants;
 
 import java.util.List;
@@ -20,6 +26,8 @@ import java.util.List;
  * so the autonomous self-check can send the robot to ERROR -> PARK instead.
  */
 public class LimelightCamera {
+
+    private static final long MAX_TELEMETRY_RESULT_AGE_MS = 250;
 
     private final Limelight3A limelight;   // null if not in the configuration
     private final Servo tiltServo;         // null if not in the configuration
