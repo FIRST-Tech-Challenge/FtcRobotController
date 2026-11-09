@@ -8,11 +8,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class MotorSpeedController {
     
     private DcMotorEx motor;
-    double minRPM = -100;
-    double maxRPM = 100;
     // data below for GolBilda 5200 series motors
-    double TICKS_PER_REV = 28.0;
-    double tpsToRPM = 60 / TICKS_PER_REV;  // conversion factor - defaults to gear ratio = 1
+    double TICKS_PER_MOTOR_REV = 28.0;            // GoBilda 5202 series has 28 encoder ticks per motor rev
+    double ticksPerShaftRev = TICKS_PER_MOTOR_REV;   
 
     /**
      * Creates an object that controls the power of a single DC motor
@@ -26,11 +24,9 @@ public class MotorSpeedController {
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // allow overspeed by default
-        setLimits(-motorRPM * 1.5, motorRPM * 1.5);
         // look up ratio from data arrays and adjust tpsToRPM
         double ratio = findRatio(motorRPM);
-        tpsToRPM *= ratio;
+        ticksPerShaftRev = TICKS_PER_MOTOR_REV * ratio;
     }
 
     private double findRatio(int rpm){
@@ -51,32 +47,36 @@ public class MotorSpeedController {
     }
 
     /**
-     * Sets the minimum and maximum limits for motor speed. 
-     * Inputs beyond these limits will be capped at the limits.
-     * If not set, defaults to min=1 and max=1
-     * @param min has a lowest possible value of -6000 (fastest available motor)
-     * @param max has a highest possible value of 6000 (fastest available motor)
+     * Uses motor reverse power to force the motor to 0 rpm
      */
-    public void setLimits(double min, double max){
-        minRPM = Math.max(min, -6000);
-        maxRPM = Math.min(max, 6000);
+    public void brake(){
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setVelocity(0);
+    }
+
+    /**
+     * Cuts power to the motor and allows it to freely coast
+     */
+    public void coast(){
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        motor.setVelocity(0);
     }
 
     /**
      * Sets the power level of the motor - remains set until changed
-     * Set a power level of zero to stop
-     * @param power a double from -1.0 to 1.0 unless further limited by setLimits()
+     * Set a power level of zero to allow motor to coast
+     * @param rpm the targer rpm, with negative numbers giving reverse rotation
+     * @return the current motor rpm
      */
-    public void setRPM(double rpm){
-        rpm = Math.min(rpm, maxRPM);
-        rpm = Math.max(rpm, minRPM);
-        double ticksPerSec = (rpm / tpsToRPM);
+    public double setRPM(double rpm){
+        double ticksPerSec = ticksPerShaftRev * rpm / 60;
         motor.setVelocity(ticksPerSec);
+        return getRPM();
     }
 
     public double getRPM(){
         double ticksPerSecond = motor.getVelocity();
-        double rpm = ticksPerSecond * tpsToRPM;
+        double rpm = ticksPerSecond * 60 / ticksPerShaftRev;
         return rpm;
     }
 }
