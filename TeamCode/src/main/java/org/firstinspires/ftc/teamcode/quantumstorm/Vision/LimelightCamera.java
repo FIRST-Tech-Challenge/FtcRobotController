@@ -123,6 +123,121 @@ public class LimelightCamera {
         return result != null && isColorVisible() ? result.getTx() : 0;
     }
 
+    /** Supply robot heading to the Limelight's MegaTag2 localization. */
+    public void updateRobotOrientation(double yawDegrees) {
+        if (limelight != null && Double.isFinite(yawDegrees)) {
+            limelight.updateRobotOrientation(yawDegrees);
+        }
+    }
+
+    /** Add the current pipeline's target and pose data to Driver Station telemetry. */
+    public void addTelemetry(Telemetry telemetry) {
+        boolean connected = limelight != null && limelight.isConnected();
+        int pipeline = aprilTagMode
+                ? Constants.LIMELIGHT_APRILTAG_PIPELINE : Constants.LIMELIGHT_COLOR_PIPELINE;
+        telemetry.addData("Limelight", connected ? "Connected" : "Disconnected / not found");
+        telemetry.addData("Limelight pipeline", "%d (%s)", pipeline,
+                aprilTagMode ? "AprilTag" : "Color");
+
+        LLResult result = telemetryResultFor(pipeline);
+        boolean targetFound = false;
+        int targetCount = 0;
+        String targetId = "None";
+        double tx = Double.NaN;
+        double ty = Double.NaN;
+        double targetArea = Double.NaN;
+
+        if (result != null && aprilTagMode) {
+            List<LLResultTypes.FiducialResult> tags = result.getFiducialResults();
+            if (tags != null) {
+                targetCount = tags.size();
+                LLResultTypes.FiducialResult best = null;
+                for (LLResultTypes.FiducialResult tag : tags) {
+                    if (best == null || Math.abs(tag.getTargetXDegrees())
+                            < Math.abs(best.getTargetXDegrees())) {
+                        best = tag;
+                    }
+                }
+                if (best != null) {
+                    targetFound = true;
+                    targetId = Integer.toString(best.getFiducialId());
+                    tx = best.getTargetXDegrees();
+                    ty = best.getTargetYDegrees();
+                }
+            }
+        } else if (result != null) {
+            List<LLResultTypes.ColorResult> colors = result.getColorResults();
+            if (colors != null) {
+                targetCount += colors.size();
+                for (LLResultTypes.ColorResult color : colors) {
+                    if (color.getTargetArea() > targetArea) {
+                        targetFound = true;
+                        targetArea = color.getTargetArea();
+                        tx = color.getTargetXDegrees();
+                        ty = color.getTargetYDegrees();
+                        targetId = "Color target";
+                    }
+                }
+            }
+            List<LLResultTypes.DetectorResult> objects = result.getDetectorResults();
+            if (objects != null) {
+                targetCount += objects.size();
+                for (LLResultTypes.DetectorResult object : objects) {
+                    if (object.getTargetArea() > targetArea) {
+                        targetFound = true;
+                        targetArea = object.getTargetArea();
+                        tx = object.getTargetXDegrees();
+                        ty = object.getTargetYDegrees();
+                        targetId = object.getClassName();
+                    }
+                }
+            }
+        }
+
+        telemetry.addData("tv", targetFound ? 1 : 0);
+        telemetry.addData("Targets detected", targetCount);
+        telemetry.addData("Target ID / class", targetId);
+        telemetry.addData("tx / ty (degrees)", "%.2f / %.2f", tx, ty);
+        if (Double.isFinite(targetArea)) {
+            telemetry.addData("Target area", "%.2f%%", targetArea);
+        }
+        telemetry.addData("Limelight latency (ms)", result == null ? "N/A"
+                : "%.1f", result == null ? 0.0 : result.getCaptureLatency() + result.getTargetingLatency());
+
+        if (aprilTagMode) {
+            addMegaTagTelemetry(telemetry, result);
+        }
+    }
+
+    private LLResult telemetryResultFor(int pipeline) {
+        if (limelight == null || !limelight.isConnected()) {
+            return null;
+        }
+        LLResult result = limelight.getLatestResult();
+        return result != null && result.isValid() && result.getPipelineIndex() == pipeline
+                && result.getStaleness() >= 0 && result.getStaleness() <= MAX_TELEMETRY_RESULT_AGE_MS
+                ? result : null;
+    }
+
+    private void addMegaTagTelemetry(Telemetry telemetry, LLResult result) {
+        if (result == null || result.getBotposeTagCount() < 1) {
+            telemetry.addData("MegaTag2 botpose", "Unavailable");
+            telemetry.addLine("MegaTag2 requires a field map and configured camera pose.");
+            return;
+        }
+        Pose3D botpose = result.getBotpose_MT2();
+        if (botpose == null || botpose.getPosition() == null || botpose.getOrientation() == null) {
+            telemetry.addData("MegaTag2 botpose", "Unavailable");
+            return;
+        }
+        Position inches = botpose.getPosition().toUnit(DistanceUnit.INCH);
+        telemetry.addData("MegaTag2 X / Y / Z (in)", "%.1f / %.1f / %.1f",
+                inches.x, inches.y, inches.z);
+        telemetry.addData("MegaTag2 yaw (degrees)", "%.1f",
+                botpose.getOrientation().getYaw(AngleUnit.DEGREES));
+        telemetry.addData("MegaTag2 tags used", result.getBotposeTagCount());
+    }
+
     public void stop() {
         if (limelight != null) {
             limelight.stop();
