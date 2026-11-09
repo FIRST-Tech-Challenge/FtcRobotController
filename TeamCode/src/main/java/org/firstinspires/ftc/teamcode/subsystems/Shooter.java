@@ -19,8 +19,8 @@ public final class Shooter extends SubsystemBase {
     public static boolean USE_PID = false;
     // Custom PID gains produce motor power from ticks/s error. Tune in Panels;
     // Hub PIDF tuner coefficients are incompatible. Zeros leave the motor off.
-    public static double VELOCITY_P = 0;
-    public static double VELOCITY_I = 0;
+    public static double VELOCITY_P = 0.01;
+    public static double VELOCITY_I = 0.008;
     public static double VELOCITY_D = 0;
     private final DcMotorEx shooterLeft, shooterRight;
     private final ElapsedTime loopTimer = new ElapsedTime();
