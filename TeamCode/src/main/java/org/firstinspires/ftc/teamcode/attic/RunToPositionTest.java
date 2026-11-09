@@ -1,10 +1,12 @@
-package org.firstinspires.ftc.teamcode.test;
+package org.firstinspires.ftc.teamcode.attic;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.base.OrangeBotBaseOpMode;
 
+@Disabled
 @TeleOp(name = "Run To Position Test", group = "Test")
 public class RunToPositionTest extends OrangeBotBaseOpMode {
 
