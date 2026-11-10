@@ -18,23 +18,23 @@ public class ConveyorHandler implements NKNComponent {
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
         lServo = hardwareMap.crservo.get("lLift");
         rServo = hardwareMap.crservo.get("rLift");
-        lServo.setDirection(DcMotorSimple.Direction.REVERSE);
+        rServo.setDirection(DcMotorSimple.Direction.REVERSE);
         lServo.setPower(0);
         rServo.setPower(0);
         return true;
     }
 
-    public void spinUp() {
+    public void startUp() {
         lServo.setPower(servoPower);
         rServo.setPower(servoPower);
     }
 
-    public void spinStop() {
+    public void stopTransfer() {
         lServo.setPower(0);
         rServo.setPower(0);
     }
 
-    public void spinDown() {
+    public void startDown() {
         lServo.setPower(-servoPower);
         rServo.setPower(-servoPower);
     }

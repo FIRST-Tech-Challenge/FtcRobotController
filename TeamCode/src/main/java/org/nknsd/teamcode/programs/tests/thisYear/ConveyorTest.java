@@ -1,26 +1,28 @@
 package org.nknsd.teamcode.programs.tests.thisYear;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.teamcode.components.handlers.ConveyorHandler;
-import org.nknsd.teamcode.components.handlers.artifact.MicrowavePositions;
-import org.nknsd.teamcode.components.handlers.artifact.MicrowaveScoopHandler;
+import org.nknsd.teamcode.components.handlers.IntakeHandler;
 import org.nknsd.teamcode.components.utility.StateMachine;
 import org.nknsd.teamcode.frameworks.NKNComponent;
 import org.nknsd.teamcode.frameworks.NKNProgram;
-import org.nknsd.teamcode.programs.tests.thisYear.microwave.MicrowaveTester;
 
 import java.util.List;
 
+@TeleOp(name = "ConveyorServoTest", group = "Tests")
 public class ConveyorTest extends NKNProgram {
 
     static class StartConveyorsState extends StateMachine.State {
 
         final ConveyorHandler conveyorHandler;
+        final IntakeHandler intakeHandler;
 
-        StartConveyorsState(ConveyorHandler conveyorHandler) {
+        StartConveyorsState(ConveyorHandler conveyorHandler, IntakeHandler intakeHandler) {
             this.conveyorHandler = conveyorHandler;
+            this.intakeHandler = intakeHandler;
         }
 
         @Override
@@ -30,7 +32,8 @@ public class ConveyorTest extends NKNProgram {
 
         @Override
         protected void started() {
-            conveyorHandler.spinUp();
+            conveyorHandler.startUp();
+            intakeHandler.setIntakePower(.5);
         }
 
         @Override
@@ -45,8 +48,12 @@ public class ConveyorTest extends NKNProgram {
         components.add(conveyorHandler);
         telemetryEnabled.add(conveyorHandler);
 
+        IntakeHandler intakeHandler = new IntakeHandler();
+        components.add(intakeHandler);
+        telemetryEnabled.add(intakeHandler);
+
         components.add(StateMachine.INSTANCE);
 
-        StateMachine.INSTANCE.startAnonymous(new StartConveyorsState(conveyorHandler));
+        StateMachine.INSTANCE.startAnonymous(new StartConveyorsState(conveyorHandler, intakeHandler));
     }
 }
