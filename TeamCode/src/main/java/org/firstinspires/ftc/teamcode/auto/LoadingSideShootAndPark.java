@@ -6,9 +6,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.subsystems.CameraTrackingSubsystems;
+import org.firstinspires.ftc.teamcode.subsystems.DepollenaterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FeederSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystemAuto;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystemTeleop;
 
 @Autonomous
 public class LoadingSideShootAndPark extends LinearOpMode {
@@ -20,7 +22,8 @@ public class LoadingSideShootAndPark extends LinearOpMode {
     
     private double drivePower;
 
-    private ShooterSubsystem shooterSubsystem;
+    private DepollenaterSubsystem depollenaterSubsystem;
+    private ShooterSubsystemAuto shooterSubsystem;
     private FeederSubsystem feederSubsystem;
     private IntakeSubsystem intakeSubsystem;
 
@@ -31,11 +34,11 @@ public class LoadingSideShootAndPark extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
 
-        shooterSubsystem = new ShooterSubsystem(hardwareMap, telemetry);
+        shooterSubsystem = new ShooterSubsystemAuto(hardwareMap, telemetry);
         feederSubsystem = new FeederSubsystem(hardwareMap, telemetry);
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
         cameraTrackingSubsystems = new CameraTrackingSubsystems(hardwareMap, telemetry);
-
+        depollenaterSubsystem = new DepollenaterSubsystem(hardwareMap,telemetry);
 
 
         frontLeft = hardwareMap.get(DcMotor.class, "FLDrive");
@@ -53,12 +56,12 @@ public class LoadingSideShootAndPark extends LinearOpMode {
 
 
         waitForStart();
-
+        depollenaterSubsystem.depollenaterUp();
         // Turn on shooter
         shooterSubsystem.runShooter();
         
         // Wait
-        sleep(5000);
+        sleep(7000);
 
 //        if (cameraTrackingSubsystems.seeApirltag()) {
 //
@@ -67,7 +70,7 @@ public class LoadingSideShootAndPark extends LinearOpMode {
         // Shoot
         feederSubsystem.runIndexerForward(); 
         intakeSubsystem.runIntakeForward();
-        sleep(2000);
+        sleep(4000);
         feederSubsystem.stopIndexer();
         intakeSubsystem.stopIntake();
 
@@ -76,7 +79,7 @@ public class LoadingSideShootAndPark extends LinearOpMode {
         backLeft.setPower(drivePower);
         frontRight.setPower(drivePower);
         backRight.setPower(drivePower);
-        sleep(500);
+        sleep(300);
         frontLeft.setPower(0); // Stop driving
         backLeft.setPower(0);
         frontRight.setPower(0);
@@ -88,7 +91,7 @@ public class LoadingSideShootAndPark extends LinearOpMode {
         backLeft.setPower(-drivePower);
         frontRight.setPower(drivePower);
         backRight.setPower(drivePower);
-        sleep(290);
+        sleep(320);
         frontLeft.setPower(0); // Stop driving
         backLeft.setPower(0);
         frontRight.setPower(0);
@@ -102,7 +105,7 @@ public class LoadingSideShootAndPark extends LinearOpMode {
         backLeft.setPower(-drivePower);
         frontRight.setPower(-drivePower);
         backRight.setPower(-drivePower);
-        sleep(1500);
+        sleep(1600);
         frontLeft.setPower(0); // Stop driving
         backLeft.setPower(0);
         frontRight.setPower(0);

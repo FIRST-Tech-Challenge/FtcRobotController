@@ -12,21 +12,17 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.RaceAction;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.archive.PinpointLocalizer;
 import org.firstinspires.ftc.teamcode.subsystems.CameraTrackingSubsystems;
 import org.firstinspires.ftc.teamcode.subsystems.DepollenaterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FeederSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystemTeleop;
 
 
 @Config
@@ -38,7 +34,7 @@ public class GardenSideAuto extends LinearOpMode {
     protected MecanumDrive drive;
     // TODO: create instances of subsystems
     private IntakeSubsystem intakeSubsystem;
-    private ShooterSubsystem shooterSubsystem;
+    private ShooterSubsystemTeleop shooterSubsystem;
     private FeederSubsystem feederSubsystem;
     private DepollenaterSubsystem depollenaterSubsystem;
     private CameraTrackingSubsystems cameraTrackingSubsystems;
@@ -52,7 +48,7 @@ public class GardenSideAuto extends LinearOpMode {
 
         drive = new MecanumDrive(hardwareMap, GARDEN_BEGIN_POSE);
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
-        shooterSubsystem = new ShooterSubsystem(hardwareMap, telemetry);
+        shooterSubsystem = new ShooterSubsystemTeleop(hardwareMap, telemetry);
         feederSubsystem = new FeederSubsystem(hardwareMap, telemetry);
         cameraTrackingSubsystems = new CameraTrackingSubsystems(hardwareMap, telemetry);
         depollenaterSubsystem = new DepollenaterSubsystem(hardwareMap, telemetry);

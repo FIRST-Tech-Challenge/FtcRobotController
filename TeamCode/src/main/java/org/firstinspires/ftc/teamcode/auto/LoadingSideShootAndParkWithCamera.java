@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime; // <-- 1. Add this import
 import org.firstinspires.ftc.teamcode.subsystems.CameraTrackingSubsystems;
 import org.firstinspires.ftc.teamcode.subsystems.FeederSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystemTeleop;
 
 @Autonomous
 public class LoadingSideShootAndParkWithCamera extends LinearOpMode {
@@ -21,7 +21,7 @@ public class LoadingSideShootAndParkWithCamera extends LinearOpMode {
 
     private double drivePower;
 
-    private ShooterSubsystem shooterSubsystem;
+    private ShooterSubsystemTeleop shooterSubsystem;
     private FeederSubsystem feederSubsystem;
     private IntakeSubsystem intakeSubsystem;
 
@@ -29,7 +29,7 @@ public class LoadingSideShootAndParkWithCamera extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
 
-        shooterSubsystem = new ShooterSubsystem(hardwareMap, telemetry);
+        shooterSubsystem = new ShooterSubsystemTeleop(hardwareMap, telemetry);
         feederSubsystem = new FeederSubsystem(hardwareMap, telemetry);
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
         cameraTrackingSubsystems = new CameraTrackingSubsystems(hardwareMap, telemetry);

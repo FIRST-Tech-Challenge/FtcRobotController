@@ -3,28 +3,21 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.Rotation2d;
-import com.acmerobotics.roadrunner.Vector2d;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.FieldCentric;
-import org.firstinspires.ftc.teamcode.MecanumDriveTestTeleop;
 import org.firstinspires.ftc.teamcode.subsystems.BeamBrakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.CameraTrackingSubsystems;
 import org.firstinspires.ftc.teamcode.subsystems.DepollenaterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FeederSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystemTeleop;
 @Config
 @TeleOp(name = "BioBuzz", group = "Competition")
 public class BestRobotEverBioBuzzOpMode extends OpMode {
-    private ShooterSubsystem shooterSubsystem;
+    private ShooterSubsystemTeleop shooterSubsystem;
     private IntakeSubsystem intakeSubsystem;
     private FeederSubsystem feederSubsystem;
     private BeamBrakeSubsystem beamBrakeSubsystem;
@@ -51,7 +44,7 @@ public class BestRobotEverBioBuzzOpMode extends OpMode {
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
-        shooterSubsystem = new ShooterSubsystem(hardwareMap, telemetry);
+        shooterSubsystem = new ShooterSubsystemTeleop(hardwareMap, telemetry);
         feederSubsystem = new FeederSubsystem(hardwareMap, telemetry);
         beamBrakeSubsystem = new BeamBrakeSubsystem(hardwareMap, telemetry);
         cameraTrackingSubsystems = new CameraTrackingSubsystems(hardwareMap,telemetry);

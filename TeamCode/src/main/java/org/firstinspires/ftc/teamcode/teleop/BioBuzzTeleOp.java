@@ -16,12 +16,12 @@ import org.firstinspires.ftc.teamcode.subsystems.CameraTrackingSubsystems;
 import org.firstinspires.ftc.teamcode.subsystems.DepollenaterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FeederSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystemTeleop;
 @Disabled
 @Config
 @TeleOp(name = "BioBuzz-broken", group = "Competition")
 public class BioBuzzTeleOp extends OpMode {
-    private ShooterSubsystem shooterSubsystem;
+    private ShooterSubsystemTeleop shooterSubsystem;
     private IntakeSubsystem intakeSubsystem;
     private FeederSubsystem feederSubsystem;
     private BeamBrakeSubsystem beamBrakeSubsystem;
@@ -53,7 +53,7 @@ public class BioBuzzTeleOp extends OpMode {
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
-        shooterSubsystem = new ShooterSubsystem(hardwareMap, telemetry);
+        shooterSubsystem = new ShooterSubsystemTeleop(hardwareMap, telemetry);
         feederSubsystem = new FeederSubsystem(hardwareMap, telemetry);
         beamBrakeSubsystem = new BeamBrakeSubsystem(hardwareMap, telemetry);
         cameraTrackingSubsystems =new CameraTrackingSubsystems(hardwareMap,telemetry);

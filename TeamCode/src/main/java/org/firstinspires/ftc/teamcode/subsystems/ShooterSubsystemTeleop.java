@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.teamcode.archive.Shorty3Worlds.p;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -12,7 +10,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
-public class ShooterSubsystem {
+public class ShooterSubsystemTeleop {
 
     // public static double shooterSpeed = 1320;
     public static double shooterSpeed = 1340;
@@ -33,7 +31,7 @@ public class ShooterSubsystem {
 
     private Telemetry telemetry;
 
-    public ShooterSubsystem(HardwareMap hardwareMap,Telemetry telemetry) {
+    public ShooterSubsystemTeleop(HardwareMap hardwareMap, Telemetry telemetry) {
 
         this.telemetry = telemetry;
         shooter = hardwareMap.get(DcMotorEx.class,"Shooter");

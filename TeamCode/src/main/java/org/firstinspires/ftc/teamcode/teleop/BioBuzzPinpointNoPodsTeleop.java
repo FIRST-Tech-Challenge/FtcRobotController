@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -11,19 +9,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.teamcode.FieldCentric;
 import org.firstinspires.ftc.teamcode.archive.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.subsystems.BeamBrakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.CameraTrackingSubsystems;
 import org.firstinspires.ftc.teamcode.subsystems.DepollenaterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FeederSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystemTeleop;
 
 @Config
 @TeleOp(name = "BioBuzz No Pods", group = "Competition")
 public class BioBuzzPinpointNoPodsTeleop extends OpMode {
-    private ShooterSubsystem shooterSubsystem;
+    private ShooterSubsystemTeleop shooterSubsystem;
     private IntakeSubsystem intakeSubsystem;
     private FeederSubsystem feederSubsystem;
     private BeamBrakeSubsystem beamBrakeSubsystem;
@@ -58,7 +55,7 @@ public class BioBuzzPinpointNoPodsTeleop extends OpMode {
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
-        shooterSubsystem = new ShooterSubsystem(hardwareMap, telemetry);
+        shooterSubsystem = new ShooterSubsystemTeleop(hardwareMap, telemetry);
         feederSubsystem = new FeederSubsystem(hardwareMap, telemetry);
         beamBrakeSubsystem = new BeamBrakeSubsystem(hardwareMap, telemetry);
         cameraTrackingSubsystems =new CameraTrackingSubsystems(hardwareMap,telemetry);

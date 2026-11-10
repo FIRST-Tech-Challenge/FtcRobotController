@@ -9,7 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.subsystems.CameraTrackingSubsystems;
 import org.firstinspires.ftc.teamcode.subsystems.FeederSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystemAuto;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystemTeleop;
 
 @Autonomous
 public class GardenSideShootAndPark extends LinearOpMode {
@@ -21,7 +22,7 @@ public class GardenSideShootAndPark extends LinearOpMode {
     
     private double drivePower;
 
-    private ShooterSubsystem shooterSubsystem;
+    private ShooterSubsystemAuto shooterSubsystem;
     private FeederSubsystem feederSubsystem;
     private IntakeSubsystem intakeSubsystem;
 
@@ -32,7 +33,7 @@ public class GardenSideShootAndPark extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
 
-        shooterSubsystem = new ShooterSubsystem(hardwareMap, telemetry);
+        shooterSubsystem = new ShooterSubsystemAuto(hardwareMap, telemetry);
         feederSubsystem = new FeederSubsystem(hardwareMap, telemetry);
         intakeSubsystem = new IntakeSubsystem(hardwareMap, telemetry);
         cameraTrackingSubsystems = new CameraTrackingSubsystems(hardwareMap, telemetry);
@@ -48,6 +49,13 @@ public class GardenSideShootAndPark extends LinearOpMode {
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
         shooterSubsystem.initShooter();
         
         drivePower = 0.5;
@@ -59,7 +67,7 @@ public class GardenSideShootAndPark extends LinearOpMode {
         shooterSubsystem.runShooter();
         
         // Wait
-        sleep(5000);
+        sleep(2000);
 
 //        if (cameraTrackingSubsystems.seeApirltag()) {
 //
@@ -68,16 +76,17 @@ public class GardenSideShootAndPark extends LinearOpMode {
         // Shoot
         feederSubsystem.runIndexerForward(); 
         intakeSubsystem.runIntakeForward();
+        sleep(1000);
+        intakeSubsystem.stopIntake();
         sleep(2000);
         feederSubsystem.stopIndexer();
-        intakeSubsystem.stopIntake();
 
         // Drive forward
         frontLeft.setPower(drivePower);
         backLeft.setPower(drivePower);
         frontRight.setPower(drivePower);
         backRight.setPower(drivePower);
-        sleep(500);
+        sleep(600);
         frontLeft.setPower(0); // Stop driving
         backLeft.setPower(0);
         frontRight.setPower(0);
@@ -89,7 +98,7 @@ public class GardenSideShootAndPark extends LinearOpMode {
         backLeft.setPower(drivePower);
         frontRight.setPower(-drivePower);
         backRight.setPower(-drivePower);
-        sleep(310);
+        sleep(380);
         frontLeft.setPower(0); // Stop driving
         backLeft.setPower(0);
         frontRight.setPower(0);
@@ -103,7 +112,7 @@ public class GardenSideShootAndPark extends LinearOpMode {
         backLeft.setPower(-drivePower);
         frontRight.setPower(-drivePower);
         backRight.setPower(-drivePower);
-        sleep(1400);
+        sleep(1200);
         frontLeft.setPower(0); // Stop driving
         backLeft.setPower(0);
         frontRight.setPower(0);
@@ -111,11 +120,11 @@ public class GardenSideShootAndPark extends LinearOpMode {
         sleep(100);
         
         // strafe left
-        frontLeft.setPower(-drivePower);
-        backLeft.setPower(drivePower);
+        frontLeft.setPower(-drivePower - .03);
+        backLeft.setPower(drivePower - .03);
         frontRight.setPower(drivePower);
         backRight.setPower(-drivePower);
-        sleep(3000);
+        sleep(1800);
         frontLeft.setPower(0); // Stop driving
         backLeft.setPower(0);
         frontRight.setPower(0);
