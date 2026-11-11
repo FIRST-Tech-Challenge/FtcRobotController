@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystemTeleop;
 @Config
 @TeleOp(name = "BioBuzz No Pods", group = "Competition")
 public class BioBuzzPinpointNoPodsTeleop extends OpMode {
+    // region non magic numbers
     private ShooterSubsystemTeleop shooterSubsystem;
     private IntakeSubsystem intakeSubsystem;
     private FeederSubsystem feederSubsystem;
@@ -50,6 +51,7 @@ public class BioBuzzPinpointNoPodsTeleop extends OpMode {
     private GoBildaPinpointDriver pinpoint;
 
     private double headingOffset = 0;
+    // endregion
 
     @Override
     public void init() {
