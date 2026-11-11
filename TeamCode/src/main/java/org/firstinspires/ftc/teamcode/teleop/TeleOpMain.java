@@ -43,6 +43,8 @@ public class TeleOpMain extends GreenBotBaseOpMode {
             telemetry.update();
         }
 
+        waitForStart();
+        wedgeServo.setPosition(WEDGE_UP);
         aimer.start();
 
         while (opModeIsActive()) {
@@ -67,8 +69,16 @@ public class TeleOpMain extends GreenBotBaseOpMode {
             intakePower = intakeOn ? INTAKE_POWER : 0.0;
             intakePower = intakeReversed ? -intakePower : intakePower;
             intake.setPower(intakePower);
-            leftIntakeServo.setPower(intakePower);
-            rightIntakeServo.setPower(intakePower);
+
+            /////////////////////////
+            // handle wedge - driver 1
+            /////////////////////////
+            if (gamepad1.dpadUpWasPressed()) {
+                wedgeServo.setPosition(WEDGE_UP);
+            }
+            if (gamepad1.dpadDownWasPressed()) {
+                wedgeServo.setPosition(WEDGE_DOWN);
+            }
 
             /////////////////////////
             // handle feeder - driver 2
@@ -130,6 +140,7 @@ public class TeleOpMain extends GreenBotBaseOpMode {
                 telemetry.addData("Launcher - Target Velocity", launcherTargetVelocity);
                 telemetry.addData("Launcher - Current Velocity", launcherVelocity);
                 aimer.showStatus();
+                drive.showPose();
             }
             telemetry.update();
         }

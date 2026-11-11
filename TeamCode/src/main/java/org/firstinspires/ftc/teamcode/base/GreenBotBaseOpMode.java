@@ -5,11 +5,10 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot.Aimer;
@@ -19,12 +18,16 @@ public abstract class GreenBotBaseOpMode extends LinearOpMode {
 
     protected DcMotor frontLeft, frontRight, backLeft, backRight;
     protected DcMotorEx intake, turret, launcher, feeder;
-    protected CRServo leftIntakeServo, rightIntakeServo;
+    protected Servo wedgeServo;
 
     protected GoBildaPinpointDriver pinpoint;
     protected Limelight3A limelight;
     protected Drive drive;
     protected Aimer aimer;
+
+    protected double WEDGE_START = 0.7;
+    protected double WEDGE_UP = 0.55;
+    protected double WEDGE_DOWN = 0.25;
 
     /**
      * Configures the hardware that all OpModes using this robot share.
@@ -40,8 +43,7 @@ public abstract class GreenBotBaseOpMode extends LinearOpMode {
         turret = hardwareMap.get(DcMotorEx.class, "turret_motor");
         launcher = hardwareMap.get(DcMotorEx.class, "launcher_motor");
         feeder = hardwareMap.get(DcMotorEx.class, "feeder_motor");
-        leftIntakeServo = hardwareMap.get(CRServo.class, "left_intake_servo");
-        rightIntakeServo = hardwareMap.get(CRServo.class, "right_intake_servo");
+        wedgeServo = hardwareMap.get(Servo.class, "wedge_servo");
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
@@ -50,7 +52,6 @@ public abstract class GreenBotBaseOpMode extends LinearOpMode {
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         turret.setDirection(DcMotor.Direction.REVERSE);
         feeder.setDirection(DcMotor.Direction.REVERSE);
-        rightIntakeServo.setDirection(DcMotor.Direction.REVERSE);
 
         frontRight.setZeroPowerBehavior(BRAKE);
         frontLeft.setZeroPowerBehavior(BRAKE);

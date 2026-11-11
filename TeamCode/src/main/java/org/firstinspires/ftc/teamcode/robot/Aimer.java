@@ -66,6 +66,7 @@ public class Aimer {
     private boolean onTarget = false;
     private boolean atLimit = false;
     private String status = "idle";
+    private String lookDiagnostic = "not updated yet"; // why the last update() did/didn't find the hive
 
     /** What we know about the hive from one Limelight frame. */
     private static class HiveSighting {
@@ -252,6 +253,7 @@ public class Aimer {
         } else {
             telemetry.addData("Hive", "No hive tags seen");
         }
+        telemetry.addData("LL check", lookDiagnostic);
     }
 
     // ---------------- Finding the hive ----------------
@@ -262,14 +264,32 @@ public class Aimer {
      * Returns null if no usable tags.
      */
     private HiveSighting findHive(LLResult result) {
-        if (result == null || !result.isValid() || result.getStaleness() > MAX_STALENESS_MS) {
+        // lookDiagnostic records which check failed, for showStatus().
+        if (result == null) {
+            lookDiagnostic = "NO RESULT (Limelight not connected/started?)";
+            return null;
+        }
+        String frame = String.format("pipe %d, %d ms old",
+                result.getPipelineIndex(), (long) result.getStaleness());
+        if (!result.isValid()) {
+            lookDiagnostic = "INVALID result - nothing detected (" + frame + ")";
+            return null;
+        }
+        if (result.getStaleness() > MAX_STALENESS_MS) {
+            lookDiagnostic = "STALE result, ignored (" + frame + ")";
             return null;
         }
         List<LLResultTypes.FiducialResult> tags = result.getFiducialResults();
-        if (tags == null) return null;
+        if (tags == null || tags.isEmpty()) {
+            lookDiagnostic = "valid, but NO TAGS in frame (" + frame
+                    + ") - is pipeline set to AprilTags?";
+            return null;
+        }
 
+        StringBuilder ids = new StringBuilder();
         HiveSighting sighting = new HiveSighting();
         for (LLResultTypes.FiducialResult tag : tags) {
+            ids.append(tag.getFiducialId()).append(' ');
             if (!isOurHiveTag(tag.getFiducialId())) continue;
 
             Position p = tag.getTargetPoseRobotSpace().getPosition(); // meters
@@ -277,7 +297,12 @@ public class Aimer {
             sighting.distanceMeters += Math.sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
             sighting.tagCount++;
         }
-        if (sighting.tagCount == 0) return null;
+        if (sighting.tagCount == 0) {
+            lookDiagnostic = "tags seen: " + ids + "- none are " + (blueAlliance ? "BLUE" : "RED")
+                    + " hive (wrong alliance?) (" + frame + ")";
+            return null;
+        }
+        lookDiagnostic = "OK, tags seen: " + ids + "(" + frame + ")";
 
         sighting.txDeg /= sighting.tagCount;
         sighting.distanceMeters /= sighting.tagCount;

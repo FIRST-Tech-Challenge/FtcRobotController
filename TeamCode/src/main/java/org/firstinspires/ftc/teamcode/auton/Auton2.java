@@ -36,6 +36,7 @@ public class Auton2 extends GreenBotBaseOpMode {
                 AngleUnit.DEGREES, START_HEADING));
 
         waitForStart();
+        wedgeServo.setPosition(WEDGE_UP);
 
         // drive to shooting spot
         drive.driveTo(SHOOT_X, SHOOT_Y, SHOOT_HEADING, SLOW_DRIVE_POWER);

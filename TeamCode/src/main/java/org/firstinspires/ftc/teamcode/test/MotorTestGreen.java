@@ -58,9 +58,6 @@ public class MotorTestGreen extends GreenBotBaseOpMode {
             intake.setPower(gamepad1.a ? DRIVE_POWER : 0.0);
             feeder.setPower(gamepad1.x ? DRIVE_POWER * 2 : 0.0);
 
-            rightIntakeServo.setPower(gamepad1.right_bumper ? 1.0 : 0.0);
-            leftIntakeServo.setPower(gamepad1.left_bumper ? 1.0 : 0.0);
-
             telemetry.addData("D Pad Up", "frontRight");
             telemetry.addData("D Pad Right", "backRight");
             telemetry.addData("D Pad Down", "backLeft");
@@ -70,9 +67,6 @@ public class MotorTestGreen extends GreenBotBaseOpMode {
             telemetry.addData("B", "launcher");
             telemetry.addData("A", "intake");
             telemetry.addData("X", "feeder");
-
-            telemetry.addData("right bumper", "rightIntakeServo");
-            telemetry.addData("left bumper", "leftIntakeServo");
 
             telemetry.update();
         }

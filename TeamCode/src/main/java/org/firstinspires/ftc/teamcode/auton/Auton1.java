@@ -49,8 +49,7 @@ public class Auton1 extends GreenBotBaseOpMode {
                 AngleUnit.DEGREES, START_HEADING));
 
         waitForStart();
-
-        //launcher.setPower(1.0);
+        wedgeServo.setPosition(WEDGE_UP);
         launcher.setVelocity(LAUNCHER_TARGET_VELOCITY);
 
         sleep(2000);
@@ -84,5 +83,4 @@ public class Auton1 extends GreenBotBaseOpMode {
         drive.showPose();
         sleep(3000); // don't need this prolly
     }
-
 }
