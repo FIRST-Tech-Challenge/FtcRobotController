@@ -17,19 +17,34 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.robot.config.FrontWedge;
 
 @Autonomous(name = "PaulAuto", group = "zTest")
 @Disabled
 public class PaulAuto extends LinearOpMode {
 
     private Follower follower;
+    private FrontWedge frontWedge;
 
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
     private final Pose startRedGarden = poseFactory.of(36.2323, 8.4268, 90);
     private final Pose point1 = poseFactory.of(10.0556, 105.1716, 0);
 
-    // Autonomous routine
+    /*
+     * Autonomous routine.
+     *
+     * FRONT WEDGE: it stows at INIT and stays stowed unless you add it here. To use it, put
+     * these steps in the sequence where you need them (instant and waitMs come from
+     * com.pedropathing.ivy.commands.Commands):
+     *
+     *     instant(frontWedge::deploy),   // swing the wedge out
+     *     waitMs(500),                   // optional: give the servos time to get there first
+     *     follow(follower, path1()),
+     *     instant(frontWedge::stow),     // swing it back in
+     *
+     * Leave out the waitMs if the robot can start driving while the wedge is still moving.
+     */
     public Command autoRoutine() {
         return sequential(
                 follow(follower, path1())
@@ -40,6 +55,7 @@ public class PaulAuto extends LinearOpMode {
     public void runOpMode() {
         Scheduler.reset();
         follower = Constants.create(hardwareMap);
+        frontWedge = new FrontWedge(hardwareMap); // starts stowed
         follower.setPose(startRedGarden);
         follower.update();
 

@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.robot.opmode.auto;
 
 
 import static com.pedropathing.ivy.Scheduler.schedule;
+import static com.pedropathing.ivy.commands.Commands.instant;
+import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
@@ -16,18 +18,33 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.robot.config.FrontWedge;
 
 @Autonomous(name = "CornerPark", group = "Compete")
 public class CornerPark extends LinearOpMode {
 
     private Follower follower;
+    private FrontWedge frontWedge;
 
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
     private final Pose start = poseFactory.of(9.0, 132.0, 0);
     private final Pose end = poseFactory.of(9.0, 115.0, 0);
 
-    // Autonomous routine
+    /*
+     * Autonomous routine.
+     *
+     * FRONT WEDGE: it stows at INIT and stays stowed unless you add it here. To use it, put
+     * these steps in the sequence where you need them (instant and waitMs come from
+     * com.pedropathing.ivy.commands.Commands):
+     *
+     *     instant(frontWedge::deploy),   // swing the wedge out
+     *     waitMs(500),                   // optional: give the servos time to get there first
+     *     follow(follower, path1()),
+     *     instant(frontWedge::stow),     // swing it back in
+     *
+     * Leave out the waitMs if the robot can start driving while the wedge is still moving.
+     */
     public Command autoRoutine() {
         return sequential(
                 follow(follower, path1())
@@ -38,6 +55,7 @@ public class CornerPark extends LinearOpMode {
     public void runOpMode() {
         Scheduler.reset();
         follower = Constants.create(hardwareMap);
+        frontWedge = new FrontWedge(hardwareMap); // starts stowed
         follower.setPose(start);
         follower.update();
 

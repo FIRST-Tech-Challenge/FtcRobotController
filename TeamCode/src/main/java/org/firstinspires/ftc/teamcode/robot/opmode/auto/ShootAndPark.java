@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.robot.config.FrontWedge;
 import org.firstinspires.ftc.teamcode.robot.config.LeftServoMemory;
 
 /*
@@ -67,6 +68,21 @@ public class ShootAndPark extends LinearOpMode {
         windmillServo = hardwareMap.get(CRServo.class, "windmillServo");
         leftIntakeServo = hardwareMap.get(Servo.class, "left_intake_servo");
         rightIntakeServo = hardwareMap.get(CRServo.class, "right_intake_servo");
+
+        /*
+         * FRONT WEDGE: it stows here at INIT and stays stowed unless you add it below. To use it,
+         * call frontWedge.deploy() or frontWedge.stow() anywhere after waitForStart(), for example
+         * just before a follower.follow(...). The servos move on their own, so you don't need a
+         * loop for it. If the wedge must be all the way out before the robot drives, wait about
+         * half a second first, still calling follower.update():
+         *
+         *     frontWedge.deploy();
+         *     ElapsedTime wedgeTimer = new ElapsedTime();
+         *     while (opModeIsActive() && wedgeTimer.seconds() < 0.5) {
+         *         follower.update();
+         *     }
+         */
+        FrontWedge frontWedge = new FrontWedge(hardwareMap); // starts stowed
 
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
