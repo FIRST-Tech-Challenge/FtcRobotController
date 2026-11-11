@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.broombots.sweep.Classes.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -39,10 +40,10 @@ public class Drivetrain implements Subsystem {
      * @param telemetryEnabled Flag to enable or disable telemetry output
      */
     public Drivetrain(HardwareMap hardwareMap, Telemetry telemetry, boolean telemetryEnabled){
-        FLMotor = hardwareMap.get(DcMotor.class, "FLMotor");
-        FRMotor = hardwareMap.get(DcMotor.class, "FRMotor");
-        BLMotor = hardwareMap.get(DcMotor.class, "BLMotor");
-        BRMotor = hardwareMap.get(DcMotor.class, "BRMotor");
+        FLMotor = hardwareMap.get(DcMotor.class, "fl");
+        FRMotor = hardwareMap.get(DcMotor.class, "fr");
+        BLMotor = hardwareMap.get(DcMotor.class, "bl");
+        BRMotor = hardwareMap.get(DcMotor.class, "br");
 
         motors = new DcMotor[]{FLMotor,FRMotor,BLMotor,BRMotor};
         for (DcMotor motor: motors){
@@ -138,18 +139,18 @@ public class Drivetrain implements Subsystem {
         // Mecanum drive: distribute robot forces to individual motors
         double[] powers = {
                 forward + strafe + rotate, //FL
-                forward - strafe - rotate, //FR
-                forward - strafe + rotate, //BL
+                forward - strafe + rotate, //FR
+                forward - strafe - rotate, //BL
                 forward + strafe - rotate  //BR
         };
         // Calculate the max power value out of all possible solutions
-        double maxPower = 0;
+        double maxPower = 1;
         for (double power : powers){
-            maxPower = Math.max(maxPower, power);
+            maxPower = Math.max(maxPower, Math.abs(power));
         }
         // Apply motor power normalized to the greatest possible value
-        for (int i = 0; i < 4; i++){
-            motors[i].setPower(powers[i]/maxPower);
+        for (int i = 0; i < 4; i++) {
+            motors[i].setPower(powers[i] / maxPower);
         }
     }
     /**

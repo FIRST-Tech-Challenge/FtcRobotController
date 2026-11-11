@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.broombots.sweep.Classes.Coordinate;
 import com.broombots.sweep.Classes.Pos2D;
 import com.broombots.sweep.Classes.SWEEPRobot;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.robot.actions.ExampleAction;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Flywheel;
 
+@Config
 public class BioBuzzRobot extends SWEEPRobot {
     // Robot subsystems
     Drivetrain drivetrain;
@@ -49,13 +51,16 @@ public class BioBuzzRobot extends SWEEPRobot {
      * This method is called repeatedly during the teleop period.
      */
     public void teleopUpdate() {
+        drivetrain.update();
         updateActions();
+        telemetry.update();
     }
     /**
      * Updates the robot's subsystems and actions during autonomous mode.
      * This method is called repeatedly during the autonomous period.
      */
     public void autonomousUpdate() {
+        drivetrain.update();
         updateActions();
     }
     // Subsystem getters
