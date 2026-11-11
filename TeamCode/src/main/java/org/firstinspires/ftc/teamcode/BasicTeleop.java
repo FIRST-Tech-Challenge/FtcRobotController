@@ -62,9 +62,9 @@ public class BasicTeleop extends OpMode {
                 SIDEON = 1;
             }
         }
-                if (gamepad1.dpad_up){
-            // STARTON = 0;
-            // loc.startAt.startLocs.get(STARTON).giveX();
+            if (gamepad1.dpad_up){
+                // STARTON = 0;
+                // loc.startAt.startLocs.get(STARTON).giveX();
         }
         if (gamepad1.dpad_down){
             //STARTON = 1;
