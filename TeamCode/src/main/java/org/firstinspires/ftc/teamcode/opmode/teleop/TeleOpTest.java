@@ -23,13 +23,13 @@ public class TeleOpTest extends OpMode {
 
     private Follower follower;
 
-    DistanceSensorSS m_distanceSensor;
+//    DistanceSensorSS m_distanceSensor;
 
     @Override
     public void init() {
         follower = Constants.create(hardwareMap);
 
-        m_distanceSensor = new DistanceSensorSS((this));
+//        m_distanceSensor = new DistanceSensorSS((this));
 
 //        TelemetryManager panelsTelemetry =
 //            PanelsTelemetry.INSTANCE.getTelemetry();
@@ -38,7 +38,7 @@ public class TeleOpTest extends OpMode {
     @Override
     public void init_loop() {
 
-        telemetry.addData("Distance (IN): ", m_distanceSensor.getDistance());
+//        telemetry.addData("Distance (IN): ", m_distanceSensor.getDistance());
         telemetry.update();
     }
 
