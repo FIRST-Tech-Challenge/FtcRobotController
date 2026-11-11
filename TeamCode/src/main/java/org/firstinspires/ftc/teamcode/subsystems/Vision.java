@@ -6,8 +6,14 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.pedropathing.math.Pose;
 
+import com.pedropathing.math.Vector2D;
+import com.pedropathing.utils.Angle;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,9 +146,38 @@ public class Vision {
         return yellowBalls;
     }
 
+    public void stop() { limelight.stop(); }
 
+    //subclass for alignment procedure (stores boolean for applying and pose to apply to, to avoid redundant calculations
+    public static class Fix { //static so an instance is not needed to be created
+        public final boolean apply;
+        public final Pose pose;
 
-    public void stop() {
-        limelight.stop();
+        public Fix(boolean apply, Pose pose) {
+            this.apply = apply;
+            this.pose = pose;
+        }
     }
+
+    public Fix evaluateFix(Pose currentOdoPose) {
+        LLResult r = limelight.getLatestResult();
+        if (r == null || !r.isValid()) return new Fix(false, null);
+
+        Pose3D bp = r.getBotpose();
+        if (bp == null) return new Fix(false, null);
+
+        Position p = bp.getPosition().toUnit(DistanceUnit.INCH);
+
+        Pose camPose = new Pose(p.x + 72.0, p.y + 72.0, currentOdoPose.heading()); //convert to pedro coords
+
+        //calculate delta to determine if cam coords is significant enough to apply
+        double distanceDelta = Math.hypot(camPose.x() - currentOdoPose.x(), camPose.y() - currentOdoPose.y());
+
+        if (distanceDelta > 2.0 && distanceDelta < 12.0) {
+            return new Fix(true, camPose);
+        }
+
+        return new Fix(false, null);
+    }
+
 }

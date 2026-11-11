@@ -15,7 +15,7 @@ public class Shooter {
     Servo gateL, gateR, hood;
 
     private static final double SHOOT_POWER = 1360;
-    private static final double IDLE_HOOD_POS = 0.23;
+    private static final double IDLE_HOOD_POS = 0.25;
     double OPEN_GATE_L = .5, OPEN_GATE_R = 0.5, CLOSE_GATE_L = 0.34, CLOSE_GATE_R = 0.75;
     double P = 0.0055 , I = 0.0006 , D = 0, F = 0.009;
     public double currentVelocity;

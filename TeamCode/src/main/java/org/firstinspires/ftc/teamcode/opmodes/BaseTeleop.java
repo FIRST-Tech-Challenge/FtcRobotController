@@ -30,7 +30,6 @@ public abstract class BaseTeleop extends OpMode {
     protected DrivePowers powers;
 
     //controls
-    private boolean polliDown = false;
     ToggleButtonReader polliButton, headingReset, aimingButton;
 
     @Override
@@ -41,7 +40,7 @@ public abstract class BaseTeleop extends OpMode {
         charlie.intake.setPolliUp();
         charlie.shooter.setIdleHood();
 
-        polliButton = new ToggleButtonReader(new GamepadEx(gamepad1), GamepadKeys.Button.A);
+        polliButton = new ToggleButtonReader(new GamepadEx(gamepad1), GamepadKeys.Button.LEFT_BUMPER);
         headingReset = new ToggleButtonReader(new GamepadEx(gamepad1), GamepadKeys.Button.B);
         aimingButton = new ToggleButtonReader(new GamepadEx(gamepad1), GamepadKeys.Button.DPAD_LEFT);
 
@@ -53,50 +52,68 @@ public abstract class BaseTeleop extends OpMode {
 
     protected void handleAlignmentAndShooting() {
         boolean intentToShoot = gamepad1.right_trigger > 0.02 && gamepad1.left_trigger > 0.02;
+        boolean aimingPressed = aimingButton.isDown() || intentToShoot;
 
-        if (intentToShoot && !wasVisionAiming) {
-            align.reset();
+        //1. odo rough alignment
+        if (aimingPressed) {
+            if (!wasOdoAiming) {
+                //pick the point once, when the button goes down, so it can't flip mid-turn
+                Pose p = charlie.follower.pose();
+                align.setTarget(FieldConstants.closestHive(alliance, p.x(), p.y()));
+                align.reset();
+            }
+            powers = align.aim(charlie.follower, powers);
         }
 
-        if (intentToShoot) {
-            Vision.TargetState state = charlie.vision.getTargetState(tagsA, tagsB);
-
-            //determine which half of the field the robot is currently on
-            boolean onSideA = charlie.follower.pose().y() > FIELD_CENTER_Y;
-
-            //if we are on that side with the direction up
-            boolean validTarget = false;
-            if (onSideA && state == Vision.TargetState.A_UP_IN_RANGE) {
-                validTarget = true;
-            } else if (!onSideA && state == Vision.TargetState.B_UP_IN_RANGE) {
-                validTarget = true;
+        //2. vision validation and apply fix
+        if (Robot.visionEnabled) {
+            if (intentToShoot && !wasVisionAiming) {
+                align.reset();
             }
 
-            if (validTarget) {
+            if (intentToShoot) {
+                Vision.TargetState state = charlie.vision.getTargetState(tagsA, tagsB);
 
-                Pose visionPose = charlie.vision.getRobotFieldPose();
-                if (visionPose != null) {
-                    charlie.follower.setPose(new Pose(visionPose.x(), visionPose.y(), charlie.follower.pose().heading()));
+                //determine which half of the field the robot is currently on
+                boolean onSideA = charlie.follower.pose().y() > FIELD_CENTER_Y;
+
+                //if we are on that side with the direction up
+                boolean validTarget = false;
+                if (onSideA && state == Vision.TargetState.A_UP_IN_RANGE) {
+                    validTarget = true;
+                } else if (!onSideA && state == Vision.TargetState.B_UP_IN_RANGE) {
+                    validTarget = true;
                 }
 
-                //align explicitly to the side we are on
-                powers = align.autoAim(charlie.follower, powers, alliance, onSideA);
+                if (validTarget) {
 
-                charlie.shooter.openGates();
+                    //apply the fix subclass of vision
+                    Vision.Fix fix = charlie.vision.evaluateFix(charlie.follower.pose());
+                    if (fix.apply) {
+                        charlie.follower.setPose(fix.pose);
+                    }
 
+                    //align explicitly to the side we are on
+                    powers = align.autoAim(charlie.follower, powers, alliance, onSideA);
+
+                    charlie.shooter.openGates();
+
+                } else {
+                    //wrong side of field, out of range, or NONE (e.g. not valid tags detected)
+                    charlie.shooter.closeGates();
+
+                    if (!wasVisionAiming) {
+                        gamepad1.rumble(1.0, 1.0, 500);
+                    }
+                }
             } else {
-                //wrong side of field, out of range, or NONE (e.g. not valid tags detected)
                 charlie.shooter.closeGates();
-
-                if (!wasVisionAiming) {
-                    gamepad1.rumble(1.0, 1.0, 500);
-                }
             }
-        } else {
-            charlie.shooter.closeGates();
+
+            wasVisionAiming = intentToShoot;
         }
 
-        wasVisionAiming = intentToShoot;
+        wasOdoAiming = aimingPressed;
     }
 
     @Override
@@ -108,18 +125,8 @@ public abstract class BaseTeleop extends OpMode {
         DrivePowers robotRel = new DrivePowers(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
         powers = ManualDrive.fieldCentric(robotRel, charlie.follower.pose().heading(), -FieldConstants.driverForward(alliance));
 
-        //auto align
-        boolean aimingPressed = aimingButton.isDown();
-        if (aimingPressed) {
-            if (!wasOdoAiming) {
-                //pick the point once, when the button goes down, so it can't flip mid-turn
-                Pose p = charlie.follower.pose();
-                align.setTarget(FieldConstants.closestHive(alliance, p.x(), p.y()));
-                align.reset();
-            }
-            powers = align.aim(charlie.follower, powers);
-        }
-        wasOdoAiming = aimingPressed;
+        //sequential aiming and shooting handler
+        handleAlignmentAndShooting();
 
         // relocalise button
         if (headingReset.wasJustPressed()) {
@@ -131,11 +138,6 @@ public abstract class BaseTeleop extends OpMode {
         headingReset.readValue();
         polliButton.readValue();
         aimingButton.readValue();
-
-        if (Robot.visionEnabled) {
-            //update based on camera vision
-            handleAlignmentAndShooting();
-        }
 
         //update drivetrain
         ManualDrive.driveOrHold(charlie.follower, powers);
@@ -150,12 +152,8 @@ public abstract class BaseTeleop extends OpMode {
         else charlie.intake.stopTransfer();
 
         //polli
-        if (polliButton.wasJustPressed()) {
-            if (polliDown) { charlie.intake.setPolliUp(); }
-            else { charlie.intake.setPolliDown(); }
-
-            polliDown = !polliDown;
-        }
+        if (polliButton.isDown()) {  charlie.intake.setPolliUp(); }
+        else { charlie.intake.setPolliDown(); }
 
         //shooter
         if (!Robot.visionEnabled) {

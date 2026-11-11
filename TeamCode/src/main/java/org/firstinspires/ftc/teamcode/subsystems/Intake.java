@@ -10,9 +10,9 @@ public class Intake {
     Servo polliRollerServo;
 
     //constants
-    public double POLLI_UP_POS = 0.7, POLLI_MID_POS = 0.505, POLLI_DOWN_POS = 0.31;
+    public double POLLI_UP_POS = 0.73, POLLI_MID_POS = 0.505, POLLI_DOWN_POS = 0.32;
     private double INTAKE_POWER = 0.8, IDLE_INTAKE_POWER = 0.3;
-    private double TRANSFER_POWER = 0.47, IDLE_TRANSFER_POWER = 0.17625;
+    private double TRANSFER_POWER = 0.6, IDLE_TRANSFER_POWER = 0.17625;
 
     public Intake(HardwareMap h) {
         intakeMotor = h.get(DcMotorEx.class, "intake");

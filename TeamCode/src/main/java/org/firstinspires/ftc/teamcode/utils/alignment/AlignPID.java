@@ -68,4 +68,8 @@ public class AlignPID {
         return Math.abs(headingError(f.pose())) < Math.toRadians(tolerance)
                 && Math.abs(f.velocity().omega) < 0.35;
     }
+
+    public Pose alignedPose(Pose p) {
+        return new Pose(p.x(), p.y(), targetHeading(p));
+    }
 }
