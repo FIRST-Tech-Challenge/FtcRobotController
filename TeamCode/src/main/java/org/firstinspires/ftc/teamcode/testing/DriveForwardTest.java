@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,12 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @TeleOp(name = "Drive Forward Test", group = "Test")
 public class DriveForwardTest extends LinearOpMode {
 
-    // Highest power the wheels are allowed to reach (0.0 - 1.0). Keep it low
-    // so the test stays gentle on the drivetrain.
     private static final double MAX_POWER = 0.4;
 
-    // Most the power is allowed to change per loop. Smaller = smoother/slower
-    // ramp, so the chain never gets a sudden jerk.
     private static final double RAMP_RATE = 0.02;
 
     @Override
@@ -30,11 +26,8 @@ public class DriveForwardTest extends LinearOpMode {
 
         double currentPower = 0.0;
         while (opModeIsActive()) {
-            // Where the stick wants us to be (up = forward), scaled to MAX_POWER.
             double targetPower = -gamepad1.left_stick_y * MAX_POWER;
 
-            // Step currentPower toward targetPower, but never by more than
-            // RAMP_RATE in one loop -- this is what makes it gradual.
             double diff = targetPower - currentPower;
             if (diff > RAMP_RATE) {
                 currentPower += RAMP_RATE;

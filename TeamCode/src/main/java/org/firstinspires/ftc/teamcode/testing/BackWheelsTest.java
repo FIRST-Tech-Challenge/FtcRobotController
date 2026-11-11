@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TestCases;
+package org.firstinspires.ftc.teamcode.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -30,4 +30,3 @@ public class BackWheelsTest extends LinearOpMode {
         backRight.setPower(0);
     }
 }
-//make a edge case that polarity is reversed on the wires make it still go forward fix this in the code make a class that ust moves the wheels forward
