@@ -25,7 +25,7 @@ public class TeleOpMain extends GreenBotBaseOpMode {
     public void runOpMode() { // when driver hits INIT
         config();
 
-        // The turret should be lined up facing straight backward before INIT; that becomes 0.
+        // The turret should be lined up facing straight forward before INIT; that becomes 0.
         // TODO: once an auto moves the turret, skip this when TeleOp follows that auto.
         aimer.resetTurretEncoder();
 
@@ -35,7 +35,7 @@ public class TeleOpMain extends GreenBotBaseOpMode {
             if (gamepad1.b || gamepad2.b) aimer.setBlueAlliance(false);
             telemetry.addData("Alliance", "%s   (X = BLUE, B = RED)",
                     aimer.isBlueAlliance() ? "BLUE" : "RED");
-            telemetry.addLine("Turret encoder zeroed -- it should be facing straight backward.");
+            telemetry.addLine("Turret encoder zeroed -- it should be facing straight forward.");
             helpMenu();
             telemetry.update();
         }
