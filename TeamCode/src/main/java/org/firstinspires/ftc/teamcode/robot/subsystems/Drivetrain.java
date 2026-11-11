@@ -144,11 +144,10 @@ public class Drivetrain implements Subsystem {
                 forward + strafe - rotate  //BR
         };
         // Calculate the max power value out of all possible solutions
-        double maxPower = 0;
+        double maxPower = 1;
         for (double power : powers){
-            maxPower = Math.max(maxPower, power);
+            maxPower = Math.max(maxPower, Math.abs(power));
         }
-        maxPower = maxPower > 1? maxPower : 1;
         // Apply motor power normalized to the greatest possible value
         for (int i = 0; i < 4; i++) {
             motors[i].setPower(powers[i] / maxPower);
