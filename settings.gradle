@@ -8,6 +8,10 @@ pluginManagement {
     }
 }
 
+def localProps = new Properties()
+def localFile = new File(settingsDir, "local.properties")
+if (localFile.exists()) localFile.withInputStream { localProps.load(it) }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -16,8 +20,8 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://maven.pkg.github.com/FTC-21430/SWEEPDevelopment")
             credentials {
-                username = "FriendlyGuardian"
-                password = "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"
+                username = localProps.getProperty("gpr.user")
+                password = localProps.getProperty("gpr.key")
             }
         }
         maven {
