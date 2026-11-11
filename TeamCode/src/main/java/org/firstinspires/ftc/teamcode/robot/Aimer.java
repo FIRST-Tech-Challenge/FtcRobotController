@@ -209,6 +209,15 @@ public class Aimer {
         return onTarget;
     }
 
+    /**
+     * True if the last update() saw the hive and the turret is pointed within AIM_TOLERANCE_DEG
+     * of it. Unlike isOnTarget(), this doesn't depend on aim() running, so it stays true after
+     * the driver lets go of auto-aim or nudges the turret into line by hand.
+     */
+    public boolean isAimed() {
+        return hive != null && Math.abs(hive.txDeg) < AIM_TOLERANCE_DEG;
+    }
+
     /** Average tx of the visible hive tags in degrees (+ = right), or 0 with no target. */
     public double getTxDegrees() {
         return hive == null ? 0 : hive.txDeg;

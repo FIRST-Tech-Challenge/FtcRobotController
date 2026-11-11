@@ -7,9 +7,8 @@ import org.firstinspires.ftc.teamcode.base.GreenBotBaseOpMode;
 @TeleOp(name = "TeleOp Main", group = "Main")
 public class TeleOpMain extends GreenBotBaseOpMode {
 
-    private final int INITIAL_LAUNCHER_TARGET_VELOCITY = 1250;
-    private final int MIN_LAUNCHER_TARGET_VELOCITY = 200;
-    private final int MAX_LAUNCHER_TARGET_VELOCITY = 2000;
+    private final double INITIAL_LAUNCHER_TARGET_VELOCITY = 1250;
+    private final double LAUNCHER_VELOCITY_STEP = 100;
 
     private final double INTAKE_POWER = 1.0;
     private final double FEEDER_POWER = 1.0;
@@ -21,8 +20,6 @@ public class TeleOpMain extends GreenBotBaseOpMode {
     private boolean intakeOn = true;
     private boolean wasOnTarget = false;
     private boolean intakeReversed = false;
-
-    private double launcherTargetVelocity = INITIAL_LAUNCHER_TARGET_VELOCITY;
 
     @Override
     public void runOpMode() { // when driver hits INIT
@@ -46,6 +43,7 @@ public class TeleOpMain extends GreenBotBaseOpMode {
         waitForStart();
         wedgeServo.setPosition(WEDGE_UP);
         aimer.start();
+        launcher.setTargetVelocity(INITIAL_LAUNCHER_TARGET_VELOCITY);
 
         while (opModeIsActive()) {
             /////////////////////////
@@ -117,18 +115,16 @@ public class TeleOpMain extends GreenBotBaseOpMode {
             // (runs continuously)
             /////////////////////////
             if (gamepad2.dpadUpWasPressed()) {
-                launcherTargetVelocity += 100;
-                if (launcherTargetVelocity > MAX_LAUNCHER_TARGET_VELOCITY) {
-                    launcherTargetVelocity = MAX_LAUNCHER_TARGET_VELOCITY;
-                }
+                launcher.changeTargetVelocity(LAUNCHER_VELOCITY_STEP);
             }
             if (gamepad2.dpadDownWasPressed()) {
-                launcherTargetVelocity -= 100;
-                if (launcherTargetVelocity < MIN_LAUNCHER_TARGET_VELOCITY) {
-                    launcherTargetVelocity = MIN_LAUNCHER_TARGET_VELOCITY;
-                }
+                launcher.changeTargetVelocity(-LAUNCHER_VELOCITY_STEP);
             }
-            launcher.setVelocity(launcherTargetVelocity);
+
+            /////////////////////////
+            // update LEDs
+            /////////////////////////
+            updateLights();
 
             /////////////////////////
             // update telemetry
@@ -136,9 +132,7 @@ public class TeleOpMain extends GreenBotBaseOpMode {
             if (gamepad1.start || gamepad2.start) {
                 helpMenu();
             } else {
-                double launcherVelocity = launcher.getVelocity();
-                telemetry.addData("Launcher - Target Velocity", launcherTargetVelocity);
-                telemetry.addData("Launcher - Current Velocity", launcherVelocity);
+                launcher.showStatus();
                 aimer.showStatus();
                 drive.showPose();
             }
@@ -147,6 +141,7 @@ public class TeleOpMain extends GreenBotBaseOpMode {
 
         drive.stopDriving();
         aimer.stop();
+        launcher.stop();
     }
 
     private void helpMenu() {

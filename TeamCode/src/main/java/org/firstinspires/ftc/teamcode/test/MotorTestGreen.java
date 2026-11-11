@@ -54,7 +54,7 @@ public class MotorTestGreen extends GreenBotBaseOpMode {
             backLeft.setPower(gamepad1.dpad_down ? DRIVE_POWER : 0.0);
 
             turret.setPower(gamepad1.y ? DRIVE_POWER : 0.0);
-            launcher.setPower(gamepad1.b ? DRIVE_POWER : 0.0);
+            launcherMotor.setPower(gamepad1.b ? DRIVE_POWER : 0.0);
             intake.setPower(gamepad1.a ? DRIVE_POWER : 0.0);
             feeder.setPower(gamepad1.x ? DRIVE_POWER * 2 : 0.0);
 
