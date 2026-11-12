@@ -30,3 +30,9 @@ dependencies {
     implementation project(':FtcRobotController')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:2.0.21"
 }
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
