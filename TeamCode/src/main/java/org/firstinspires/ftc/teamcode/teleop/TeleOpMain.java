@@ -145,10 +145,16 @@ public class TeleOpMain extends GreenBotBaseOpMode {
     }
 
     private void helpMenu() {
-        telemetry.addData("Help Menu (this)", "Either Gamepad - Press Start");
+        telemetry.addData("Help Menu (this)", "Either Gamepad - Hold Start");
+
+        telemetry.addData("----------", "-----------");
         telemetry.addData("Drive controls", "Gamepad 1 - Standard Mecanum");
-        telemetry.addData("Intake IN (Toggle)", "Gamepad 1 - Left Bumper");
-        telemetry.addData("Intake OUT (Toggle)", "Gamepad 1 - Right Bumper");
+        telemetry.addData("Intake ON/OFF (Toggle)", "Gamepad 1 - Left Bumper");
+        telemetry.addData("Intake Reverse (Toggle)", "Gamepad 1 - Right Bumper");
+        telemetry.addData("Wedge UP", "Gamepad 1 - DPad Up");
+        telemetry.addData("Wedge DOWN", "Gamepad 1 - DPad Down");
+        telemetry.addData("----------", "-----------");
+
         telemetry.addData("Feeder IN (Keep On)", "Gamepad 2 - Left Bumper");
         telemetry.addData("Feeder OUT (Keep On)", "Gamepad 2 - Right Bumper");
         telemetry.addData("Feeder OFF", "Gamepad 2 - A");
