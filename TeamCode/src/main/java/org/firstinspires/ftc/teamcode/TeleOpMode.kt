@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 
 @TeleOp(name = "Teleop main", group = "")
 class TeleOpMode : LinearOpMode() {
+    val power = 1;
     lateinit var motorLeft : DcMotor;
     lateinit var motorRight : DcMotor;
     override fun runOpMode() {
@@ -22,8 +23,8 @@ class TeleOpMode : LinearOpMode() {
             val gX = gamepad1.right_stick_x.toDouble()
             val gY = gamepad1.right_stick_y.toDouble()
 
-            motorRight.power = gY - gX
-            motorLeft.power = gY + gX
+            motorRight.power = (gY - gX) * power
+            motorLeft.power = (gY + gX) * power
 
             telemetry.addData("Stick x", gX)
             telemetry.addData("Stick y", gY)
