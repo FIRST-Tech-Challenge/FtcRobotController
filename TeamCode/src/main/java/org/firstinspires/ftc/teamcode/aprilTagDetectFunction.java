@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Size;
 
 //import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -69,7 +70,7 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "April Tag Detector Function", group = "Concept")
+@Autonomous(name = "April Tag Detector Function", group = "Concept")
 //@Disabled
 public class aprilTagDetectBoolean extends LinearOpMode {
 
@@ -104,7 +105,8 @@ public class aprilTagDetectBoolean extends LinearOpMode {
     //Logitech Webcam C930e                  USB\VID_046D&PID_0843&MI_00\6&13F9E73C&0&0000
     static final int VENDOR_ID_LOGITECH = 0x046D;
     static final int PRODUCT_ID_C930E = 0x0843;
-
+    //this becomes true if the webcam sees at least one April Tag, and stays false if it doesn't.
+    //this becomes updated by the function detectAprilTags().
     public boolean aprilTagDetected = (false);
 
     @Override
@@ -129,7 +131,7 @@ public class aprilTagDetectBoolean extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            telemetryAprilTag();
+            detectAprilTags();
 
             // Push telemetry to the Driver Station.
             telemetry.update();
@@ -217,7 +219,9 @@ public class aprilTagDetectBoolean extends LinearOpMode {
         //visionPortal.setProcessorEnabled(aprilTag, true);
 
     }   // end method initAprilTag()
-    public boolean isAprilTagDetected(){
+
+    public boolean isAprilTagDetected() {
+        detectAprilTags();
         return aprilTagDetected;
     }
 
@@ -225,7 +229,7 @@ public class aprilTagDetectBoolean extends LinearOpMode {
     /**
      * Add telemetry about AprilTag detections.
      */
-    private void telemetryAprilTag() {
+    private void detectAprilTags() {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
@@ -279,4 +283,5 @@ public class aprilTagDetectBoolean extends LinearOpMode {
         }// end method telemetryAprilTag()
 
 
-    }  // end class
+    }    // end class
+}
