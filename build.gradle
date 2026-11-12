@@ -9,6 +9,10 @@ buildscript {
         mavenCentral()
         google()
     }
+    dependencies {
+        // AJOUTEZ CETTE LIGNE :
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21"
+    }
 }
 
 plugins {
