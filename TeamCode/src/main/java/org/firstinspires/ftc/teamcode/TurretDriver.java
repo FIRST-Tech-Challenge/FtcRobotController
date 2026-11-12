@@ -7,6 +7,7 @@ public class TurretDriver {
     
     private MotorSpeedController flywheelMotor;
     private ServoMotorController servoMotor;
+    private double currentRPM;
     final double FLYWHEEL_RPM = 1240; // TODO figure out correct RPM value
     final double FLYWHEEL_TOLERENCE = 0.05;
 
