@@ -11,12 +11,12 @@ public class TurretDriver {
     final double FLYWHEEL_RPM = 1240; // TODO figure out correct RPM value
     final double FLYWHEEL_TOLERENCE = 0.05;
 
-    public TurretDriver(HardwareMap hm, String flywheelMotorname, String servoName) {
+    public TurretDriver(HardwareMap hm, String flywheelMotorName, String servoName) {
         this.flywheelMotor = new MotorSpeedController(hm, flywheelMotorName, 6000);
-        this.servoMotor = new ServoMotorController(hm, servoName, 0);
+        this.servoMotor = new ServoMotorController(hm, servoName);
         //TODO check rotation direction
         this.flywheelMotor.setDirection(1);
-        this.servoMotor.setPosition(0); // takes a double from 0.0 to 1.0, our servos max turn is 1800 degrees,
+        this.servoMotor.runServoTurret(true); // takes a double from 0.0 to 1.0, our servos max turn is 1800 degrees,
                                    // so every 0.2 is 360 degrees
 
                                    // 205 - 70 gear ratio (2.9286)
@@ -35,7 +35,7 @@ public class TurretDriver {
     }
 
     public void turn(boolean dir) {
-        runServoTurret(dir);
+        servoMotor.runServoTurret(dir);
     }
 
     public boolean startFlywheel(){
