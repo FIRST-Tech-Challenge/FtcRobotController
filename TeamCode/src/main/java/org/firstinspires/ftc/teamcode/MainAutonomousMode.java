@@ -12,22 +12,22 @@ import org.firstinspires.ftc.teamcode.mechanisims.MecanumDrive;
 @Autonomous
 public class MainAutonomousMode extends OpMode {
 
-    private static final double ROLL_FORWARD_TIME = 0.25;
-    private static final double ROTATE_TIME_ROF = 0.25;
-    private static final double STRAFE_TIME_LOF = 1.;
-    private static final double STRAFE_TIME_ROF = 0.5;
+    private static final double ROLL_FORWARD_TIME = 0.75;
+    private static final double ROTATE_TIME_ROF = 0.5;
+    private static final double STRAFE_TIME_LOF = 2.0;
+    private static final double STRAFE_TIME_ROF = 0.75;
     private static final double ROLL_FORWARD_SPEED = 0.3;
     private static final double ROTATE_SPEED = 0.3;
-    private static final double STRAFE_SPEED = 0.3;
+    private static final double STRAFE_SPEED = 0.6;
 
-    private ElapsedTime timer = new ElapsedTime();
+    private final ElapsedTime timer = new ElapsedTime();
 
     private enum StartingPosition {
         LeftOfFlower, RightOfFlower
 
     }
 
-    private int shotsToFire;
+    private int shotsToFire = 4;
 
     private enum State {
         RollForward,
@@ -68,10 +68,13 @@ public class MainAutonomousMode extends OpMode {
 
     @Override
     public void loop() {
+        telemetry.addData("Current state", state);
+        telemetry.addData("Timer seconds", timer.seconds());
         switch (state) {
             case RollForward:
                 mecanumDrive.drive(ROLL_FORWARD_SPEED, 0.0, 0.0);
                 if (timer.seconds() >= ROLL_FORWARD_TIME) {
+                    mecanumDrive.stop();
                     timer.reset();
                     state = State.Launching;
                 }
@@ -79,12 +82,14 @@ public class MainAutonomousMode extends OpMode {
 
             case Launching:
                 launchSystem.update(1.0);
+                intake.update(1.0);
                 if (launchSystem.isReady()) {
                     if (shotsToFire > 0) {
                         shotsToFire--;
                         launchSystem.requestLaunch();
                     } else {
                         launchSystem.stopMotorIfIdle();
+                        intake.stop();
                         state = State.Rotating;
                         timer.reset();
                     }
@@ -94,6 +99,7 @@ public class MainAutonomousMode extends OpMode {
             case Rotating:
                 mecanumDrive.drive(0.0, 0.0, ROTATE_SPEED);
                 if (startingPosition == StartingPosition.LeftOfFlower || timer.seconds() >= ROTATE_TIME_ROF) {
+                    mecanumDrive.stop();
                     state = State.Strafing;
                     timer.reset();
                 }
@@ -103,6 +109,7 @@ public class MainAutonomousMode extends OpMode {
                 mecanumDrive.drive(0.0, STRAFE_SPEED, 0.0);
                 double secondsToStrafe = startingPosition == StartingPosition.LeftOfFlower ? STRAFE_TIME_LOF : STRAFE_TIME_ROF;
                 if (timer.seconds() >= secondsToStrafe) {
+                    mecanumDrive.stop();
                     timer.reset();
                     state = State.Complete;
                 }

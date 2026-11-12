@@ -43,6 +43,11 @@ public class MecanumDrive {
      public void resetIMU () {
          imu.resetYaw();
      }
+
+     public void stop() {
+         drive(0.0, 0.0, 0.0);
+     }
+
      public void drive(double forward, double strafe, double rotate) {
          double frontLeftPower = forward + strafe + rotate;
          double backLeftPower = forward - strafe + rotate;

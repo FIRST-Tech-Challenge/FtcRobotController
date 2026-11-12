@@ -17,11 +17,14 @@ public class InTake {
 
         motor = hardwareMap.get(DcMotorEx.class, HardwareNames.INTAKE_MOTOR);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motor.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 
     public void update(double speedMultiplier){
         motor.setVelocity(speedMultiplier * TARGET_VELOCITY);
+    }
+
+    public void stop() {
+        motor.setVelocity(0.0);
     }
 }
