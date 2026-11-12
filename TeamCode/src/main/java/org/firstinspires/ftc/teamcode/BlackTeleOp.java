@@ -23,7 +23,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -48,8 +50,8 @@ import org.firstinspires.ftc.teamcode.mechanisms.mecanumDrive;
  * we will also need to adjust the "PIDF" coefficients with some that are a better fit for our application.
  */
 
-@TeleOp(name = "TeleOpMode")
-public class TeleOpMode extends OpMode {
+@TeleOp(name = "BlackTeleOp")
+public class BlackTeleOp extends OpMode {
 
     // Declare OpMode members.
     private DcMotorEx launcher = null;
