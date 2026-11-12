@@ -5,6 +5,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -13,14 +14,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class LaunchSystem {
     //The feeder servos run this long when a shot is requested.
-    private final static double FEED_TIME_SECONDS = 0.35;
+    private final static double FEED_TIME_SECONDS = 0.55;
 
     //After feeding a ball, the servos reverse to ensure there isn't a preloaded ball.
     private final static double REVERSE_FEED_SECONDS = 0.2;
     private final static double STOP_SPEED = 0.0;
     private final static double FULL_SPEED = 1.0;
 
-    private final static double LAUNCHER_MOTOR_TIMEOUT = 3;
+    private final static double LAUNCHER_MOTOR_TIMEOUT = 6;
     private final static double LAUNCHER_TARGET_VELOCITY = 1125;
 
     private final DcMotorEx launcher;
@@ -48,6 +49,7 @@ public class LaunchSystem {
         rightFeeder = hardwareMap.get(CRServo.class, rightFeederName);
 
         launcher.setZeroPowerBehavior(BRAKE);
+        launcher.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFeeder.setPower(STOP_SPEED);
         rightFeeder.setPower(STOP_SPEED);
         launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(300, 0, 0, 10));
