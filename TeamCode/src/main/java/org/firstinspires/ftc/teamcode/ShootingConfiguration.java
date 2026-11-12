@@ -23,10 +23,12 @@ public final class ShootingConfiguration {
     public static final double CAMERA_HEIGHT_MM = 337;
     // Camera/muzzle offsets use turret-local +X along the muzzle and +Y left.
     // Ball exit is centered on the pivot in plan view and does not move significantly with hood.
+    // Zero yaw (servo 0.5 home) faces robot-right; the offset is set once in TurretSubsystem.
     public static final ShooterMount MOUNT = new ShooterMount(
             new Vec(TURRET_PIVOT_FORWARD_MM / 1000, TURRET_PIVOT_LEFT_MM / 1000),
             new Vec(CAMERA_FORWARD_FROM_PIVOT_MM / 1000, CAMERA_LEFT_FROM_PIVOT_MM / 1000),
-            new Vec(0, 0), -Math.PI / 2, Math.toRadians(CAMERA_YAW_FROM_MUZZLE_DEG),
+            new Vec(0, 0), Math.toRadians(TurretSubsystem.TURRET_ZERO_ROBOT_HEADING_OFFSET_DEG),
+            Math.toRadians(CAMERA_YAW_FROM_MUZZLE_DEG),
             Math.toRadians(CAMERA_PITCH_UP_DEG), CAMERA_HEIGHT_MM / 1000, true);
     // Legacy diagnostic tag-to-opening transform. SDK cluster coordinates use a different
     // origin/axes from Limelight individual-tag poses; verify that conversion before enabling.

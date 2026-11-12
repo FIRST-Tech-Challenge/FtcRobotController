@@ -53,7 +53,7 @@ class SensorsSimTest {
             BioBuzzSimHardware h = BioBuzzSimHardware.fullRobot().withCamera(BioBuzzSimHardware.raisedCornerRehomeTags(),physical);
             TeleOpScenario s = new TeleOpScenario(alliance+"-corner-vision-physical-"+physical+"-init-"+inInit,alliance+"MecanumTeleOp",
                     h,.02,160,260,(p,t,a,b) -> {
-                b.dpad_left = p == OpModePhase.INIT ? inInit && t >= 145
+                b.dpad_left = p == OpModePhase.INIT_LOOP ? inInit && t >= 145
                         : p == OpModePhase.ACTIVE && t >= (inInit ? 0 : 20) && t < 55;
                 if (p == OpModePhase.ACTIVE && t == 210) h.camera.stop();
             });

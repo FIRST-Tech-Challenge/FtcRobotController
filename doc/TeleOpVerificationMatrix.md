@@ -269,6 +269,20 @@ requests and verify that releasing RB preserves recovery when direction is uncha
 No production calibration or simulation assertions were relaxed. Full simulation and
 physical robot testing were not run; ball contact and loaded clearance remain unmodeled.
 
+Full-queue intake stop and 0.2 s confirmation (November 12, 2026): this supersedes the
+intake reversal and 0.5 s confirmation described below. Continuous HIGH for 0.2 s
+(was 0.5 s) now confirms full and stops automatic intake (no reversal) in both
+competition wrappers, the bench test and autonomous forward collection. The 0.5 s
+stage-1 run-on that seats the fourth ball is kept, so stage 1 stops about 0.7 s after
+HIGH begins. LOW immediately clears full and resumes forward intake and loading.
+RB/LB overrides and deliberate autonomous reverse are unchanged. Simulation was
+selected for this shared behavior change: `simTeleOpTest` with `SimRuntimeTest`,
+`MechanismsSimTest` and `CompetitionSimTest` passed (28 scenarios, both alliances),
+the full `testDebugUnitTest` suite passed (268 tests) and `assembleDebug` succeeded.
+Scenario assertions were retimed to the 0.2 s confirmation and expect 0 intake power
+during the run-on; no scenario or OpMode was added. These are command/timing checks,
+not physical ball seating, sensor-placement or loaded-jam validation.
+
 Sensor recovery and bumper overrides (November 1, 2026): this supersedes the earlier
 full-latch/intake-stop policy below. Continuous HIGH for 0.5 s reverses automatic
 intake; stage 1 runs on for 0.5 s and then stops while HIGH persists. LOW immediately
@@ -311,16 +325,17 @@ initialization/loop/STOP under its stated fixture; it does not certify every con
 | --- | --- | --- |
 | Drivetrain | DrivetrainTestOpMode, both competition wrappers, Pedro manual diagnostic | Two-stage motor-feedback-to-distance conversion with reported 104-mm wheels; forward/reverse/strafe/yaw, normalization, wheel selection, neutral/STOP, alias/missing hardware, 10/20ms, repeat decoded traces; chassis geometry/dynamics synthetic, loaded compression/slip unmeasured |
 | Gate | GateTestOpMode, TransferTestOpMode, both wrappers | Logical/physical direction, PWM, delayed feed, held/reopened gate, trigger priority, shutdown, missing/PWM-incapable device |
-| Intake | IntakeTestOpMode, bench, both wrappers | Forward/reverse/both/neutral, confirmed-HIGH reversal, LOW recovery, bumper overrides, independent shaft encoder, shutdown; shared 0.5-second jam recovery has controller and stalled-encoder tests; no ball-contact simulation |
-| Transfer | TransferTestOpMode, bench, both wrappers | 0.5-second HIGH dwell, 0.5-second stage-1 run-on, stage1-only loading, timed gate/both-stage feed, inhibit priority, STOP |
+| Intake | IntakeTestOpMode, bench, both wrappers | Forward/reverse/both/neutral, confirmed-HIGH stop (no reversal), LOW recovery, bumper overrides, independent shaft encoder, shutdown; shared 0.5-second jam recovery has controller and stalled-encoder tests; no ball-contact simulation |
+| Transfer | TransferTestOpMode, bench, both wrappers | 0.2-second HIGH dwell, 0.5-second stage-1 run-on, LOW resume, stage1-only loading, timed gate/both-stage feed, inhibit priority, STOP |
 | Depollinator | DepollinatorTestOpMode, both wrappers | Deploy/home edges, home priority, PWM range/endpoints; holds commanded position at STOP |
+| Linear slide / claw | LinearSlideTestOpMode, both wrappers | GP2 LS-click toggle raises across the analog 360/0 wrap and lowers to zero, no power in INIT, jam -> FAULT with zero power, GP1 B claw toggle, zero power at STOP. Scenarios: `linearSlideTogglesAcrossAnalogWrapAndClawToggles`, `jammedLinearSlideFaultsWithZeroPower`, `bothAlliancesToggleSlideOnGp2AndClawOnGp1`. SYNTHETIC unloaded slide (rated Axon speed, no gravity/lag); travel and claw positions are placeholders until measured |
 | Turret / hood / flywheel | TurretTestOpMode, bench, both wrappers | Independent finite-rate yaw on transfer motor 1's encoder input, SDK REVERSE sign normalization, paired servo commands, hood held-button edge, shaft response, startup and STOP; loaded response unmeasured |
 | Pinpoint | PinpointTestOpMode smoke, full competition fixture | SDK fake calibration/pod configuration and chassis coupling; NOT_READY fault blocks synthetic automatic shots; no physical pod calibration certified |
 | Limelight / goal state | LimelightTagTestOpMode, GoalStateTestOpMode smoke | Geometric camera; physical tag +Z-into-print convention resolved 2026-11-05 and converted once in `LimelightObservation`; inverted-camera rejection retained; physical height/plane accuracy unvalidated |
 | Localization | Both actual competition wrappers with raw (physical-convention) camera | Mapped-tag acquisition from unknown start and retention after camera loss; inverted convention rejection retained; production automatic feed remains blocked |
 | Automatic shot success | Test-only SyntheticRedTeleOp / SyntheticBlueTeleOp inheriting competition loop | Artificial calibrated rows exercise feed then Pinpoint-fault blocking; no production measured flags altered, no ball scoring |
 | Competition integration | RedMecanumTeleOp / BlueMecanumTeleOp | Manual drive before reference, queue/feed/inhibit, early START, STOP before START, partial-init cleanup, 180 simulated seconds each |
-| Bench | IntakeShooterTestOpMode | Actual intake/stage-1 loading, LB reverse and both-bumper stop, confirmed-HIGH reversal and immediate LOW recovery; staggered stage-2 feed after 0.10 s gate delay with stage 1 starting at the gate-open midpoint; GP2 continuous selection, immediate both-stage full-power feed, either-trigger release and B/re-arm; RB reload/STOP. Scenarios: `benchLoadsHoldsFullFeedsAndReloadsThroughActualMotorOutputs`, `benchContinuousFeedsImmediatelyUntilTriggerReleaseOrStop`. Modeled feedback, no physical clearance or ball-spacing claim |
+| Bench | IntakeShooterTestOpMode | Actual intake/stage-1 loading, LB reverse and both-bumper stop, confirmed-HIGH intake stop with stage-1 run-on and immediate LOW recovery; staggered stage-2 feed after 0.10 s gate delay with stage 1 starting at the gate-open midpoint; GP2 continuous selection, immediate both-stage full-power feed, either-trigger release and B/re-arm; RB reload/STOP. Scenarios: `benchLoadsHoldsFullFeedsAndReloadsThroughActualMotorOutputs`, `benchContinuousFeedsImmediatelyUntilTriggerReleaseOrStop`, `benchFusionControllerSpinsUpHoldsAndFeedsThroughActualOpMode` (GP2 B fusion selection, full-power spin-up, feedforward hold inside readiness, staggered feed). Modeled feedback, no physical clearance, ball-spacing or flywheel-tuning claim |
 | Aiming / calibration diagnostics | AutoAimTestOpMode, ShotCalibrationOpMode | Real lifecycle smoke; detailed planner/calibration logic remains covered by ordinary tests; calibration does not create real measured rows in simulation |
 | Pedro diagnostic | PedroDriveTestOpMode | Manual forward drive with both transmission stages, independent shaft-feedback-to-distance assertion and STOP in Drivetrain; idle lifecycle smoke in Sensors. Pedro clock instrumented; no autonomous path-accuracy claim |
 | Raw disconnected-servo programmer | Not simulated | Upstream FakeServo has no ServoController metadata; use actual disconnected-servo procedure |
@@ -691,3 +706,139 @@ mean <= 1); turn rate 300 deg/s aiming vs 419 free. The tracking-sample sanity c
 unwinds take much of each turn); error thresholds were set before the baseline run and not changed.
 Limits: the sim turret is a 180 deg/s slew with no servo lag, so it checks ordering and lead sign, not the robot's
 lead; sim drive gain is synthetic. Rear dead-zone unwinds still leave the turret off target once per chassis turn.
+
+## Auto-aim audit edge-case fixes (2026-11-10)
+
+Change (shared by both competition TeleOps and Test: Auto Aim; see CompetitionTeleOp.md):
+- `TeleOpFieldReference.nearestSide` switches cells only 5 cm past Y = 0 (`SIDE_SWITCH_HYSTERESIS_METERS`).
+  Measured before: the cell flipped at exactly Y = 0, swinging the aim 63 / 38 / 27 deg at 1.0 / 1.5 / 2.0 m.
+- `TurretControl` keeps a learned encoder correction through continuous target motion; a jump over
+  `ENCODER_CORRECTION_RESET_STEP_DEG` (10 deg) in one update or lost home resets it. Measured before (probe, servo
+  settling 4 deg short): outside the 3-deg shot tolerance 17% of the time at 2 deg/s and 90% at 5 deg/s.
+- `TurretSubsystem.reachableYawDegrees`: from the front half (|yaw| <= 90 deg, including mid-unwind) a dead-zone
+  bearing takes the nearer limit; the rear-half hold and 3-deg unwind hysteresis are unchanged.
+- `MecanumTeleOp`: with RT held, GP2 D-pad / Y / A trim hood/RPM only when `ShotCoordinator.automaticHoodRpmAvailable()`
+  (calibrated, aimable solution before trims); otherwise they step the manual hood/RPM the shot is using.
+
+Simulation decision: shared aiming behavior in both competition wrappers, so ran `verify-teleop.ps1 -Sim -Scenario
+Competition,Sensors`: 251 unit tests, 21 scenarios, `assembleDebug` and `lintDebug` (0 errors, 14 existing warnings),
+all pass. New scenario `bothAlliancesAdjustManualHoodAndRpmWhileAimingWithoutACalibratedProfile` (real Red/Blue
+TeleOps, installed uncalibrated profile, RT held, one GP2 D-pad Up + Y press): baseline HEAD 27fe90b fails (hood
+stayed at home 0.54507 instead of the +0.5-deg 0.54789); after, hood moves 0.5 deg, target RPM 3550, trims stay
+0 / 0 / 0. The synthetic calibrated trims scenario still passes unchanged. Spin tracking unchanged: Red mean 0.61 /
+max 0.63 deg, Blue 0.55 / 0.58 deg. New unit cases: midline band and weave (pure and through `ShotCoordinator`),
+nearer dead-zone limit and no unwind reversal, correction kept at 0 / +/-5 / 2 / 20 deg/s and reset by an 11-deg jump
+or lost home, and hood/RPM trim availability including an out-of-range trim.
+Limits: the 4-deg servo shortfall and 30-ms response are synthetic; the robot's real servo error, backlash and
+direction-reversal behavior are unmeasured (a large backlash would need re-learning after a reversal). The 5-cm
+band and 10-deg step are starting values.
+
+## Autonomous-to-TeleOp pose handoff (2026-11-10)
+
+Change: new `AutoPoseHandoff` (RAM, one app session). `BioBuzzRobot` (both alliance autonomous wrappers) clears it
+at INIT and on a Pinpoint localization fault and saves the READY, field-referenced pose every running loop
+(cleared-area local starts are ignored). `MecanumTeleOp` (both competition wrappers) consumes it at INIT; a
+same-alliance pose at most 60 s old is written to the Pinpoint after it has reported READY for 0.5 s following the
+INIT IMU recalibration, before that loop's Pinpoint read. GP2 D-pad Left discards a pending pose; START discards one
+not yet applied. Driver INIT view shows **Auto pose handoff**; GP2 Back diagnostics show it while active.
+Test: Auto Aim, diagnostics and the pollen test are unchanged.
+
+Simulation decision: new TeleOp INIT behavior in both competition wrappers, so ran `verify-teleop.ps1 -Sim -Scenario
+Competition,Sensors`. New scenario `bothAlliancesStartTeleOpAimingFromTheHandedOffAutonomousPose` runs the real
+Red/Blue TeleOps through test-only `HandoffRed/BlueTeleOp` subclasses that save the autonomous end pose inside the
+simulated class loader and clock, with no camera. Asserts LOCAL at INIT tick 5, APPLIED and EXPLICIT FIELD by tick
+150 (applied at tick 38, 0.76 s), LOCALIZED in ACTIVE and turret yaw within 2 deg of the plant bearing (87.49 vs
+87.5 deg computed by hand, both alliances). Result: 257 unit tests, 22 scenarios, `assembleDebug` and `lintDebug`
+(0 errors, 14 existing warnings), all pass. Baseline: HEAD has no handoff, and the existing no-camera scenario
+`unknownFieldReferenceInhibitsAutoFireWithoutBlockingDrive` shows TeleOp then stays unlocalized. New unit cases:
+apply once after the settle interval, settle restart after a CALIBRATING read, other alliance / over 60 s / clock
+going backwards ignored and consumed, only READY field-referenced finite poses saved, corner rehome / early START
+discard, and autonomous INIT plus localization fault clearing the stored pose.
+Limits: the sim Pinpoint's reset/READY timing is the fake's, not the device's; the 60-s age and 0.5-s settle are
+starting values. A wrong pose from a robot moved in practice is not corrected by the camera beyond 0.5 m / 8 deg
+(superseded the same day by the confirmed re-localization below, when 2+ tags are visible).
+
+## Confirmed camera re-localization of large odometry errors (2026-11-10)
+
+Change: `PoseHistory.checkDrift3d` (both competition TeleOps and Test: Auto Aim, `TELEOP_ODOMETRY` only) no longer
+ignores every frame that disagrees with odometry by more than 0.5 m / 8 deg. Such frames are collected; once at least
+10 settled frames spanning 0.5 s within 1 s, each fusing 2+ agreeing tags, imply the same rigid correction (within
+the drift agreement 4 cm / 1.5 deg, about their mean odometry position) and an on-field pose, the correction is
+blended in over 0.4 s through the existing drift blend. A frame that agrees with odometry, an inconsistent set, a
+single-tag frame or an off-field camera pose restarts the count. Small-drift handling, the diagnostic `observe3d`
+limits and autonomous (no camera corrections) are unchanged. `ShotCoordinator` shows **Camera pose check**
+(CAMERA DISAGREES with progress for 1 s, RE-LOCALIZED for 3 s) in the driver view and diagnostics.
+
+Simulation decision: shared TeleOp localization in both wrappers, so ran `verify-teleop.ps1 -Sim -Scenario
+Competition,Sensors`: 259 unit tests, 23 scenarios, `assembleDebug`, `lintDebug` (0 errors, 14 existing warnings),
+all pass. New scenario `bothAlliancesCameraReLocalizesAWrongHandedOffPose`: real Red/Blue TeleOps via test-only
+`MisplacedHandoffRed/BlueTeleOp` hand off a pose 0.6 m and 12 deg wrong in front of the audience cell, with the
+raised-tag camera. Both alliances: disagreement reported at INIT tick 99 (as the turret finished homing),
+re-localized at tick 126 (moved 60 cm, turned 12.0 deg), ACTIVE yaw -4.58 deg vs -4.58 deg true bearing (assert
+<= 2 deg); the wrong pose would have aimed at 28.6 deg (Red) / -34.2 deg (Blue), asserted > 20 deg off. Baseline:
+before this change every such frame returned `Camera disagrees with odometry ... ignored` (existing
+`largeCameraDisagreementIsReportedAndIgnored`, which still passes: 8 frames over 0.14 s stay unconfirmed).
+Spin tracking unchanged (Red 0.61 / 0.63, Blue 0.55 / 0.58 deg). New unit cases: confirmation timing, blended
+convergence with bounded steps (< 6 cm, < 0.7 deg per loop) to the true pose; single-tag, inconsistent and
+agreeing-frame-interrupted evidence never re-localize; driver status text.
+Limits: a systematic camera/map error seen consistently on 2+ tags would also be trusted; the 10-frame / 0.5-s /
+2-tag gates are starting values, and real Limelight noise on the physical robot is unmeasured.
+
+## Bench bang-bang + feedforward fusion flywheel controller (2026-11-11)
+
+Change: in **Test: Intake + Index + Shooter** only, the GP2 B alternative to hub PIDF is now a fusion controller
+instead of plain bang-bang. Speed error above 80 motor ticks/s (about 171 flywheel RPM): full power when slow,
+zero power (FLOAT coast) when fast. Within 80 ticks/s: `(kS + kV * target + kP * error) * 12 / batteryVolts`.
+The command never opposes the spin direction: the first version used full reverse power when fast, per the source
+description, and the team chose coasting the same day.
+The law is `ShooterVelocityTuning.fusionPower`; `TurretSubsystem.ShooterController.BANG_BANG_FUSION` replaces
+`BANG_BANG` and is selected by no other OpMode, so both competition TeleOps, autonomous and the other tests keep
+hub PIDF unchanged. Gains are live in Dashboard (`FUSION_KS`, `FUSION_KV`, `FUSION_KP`); initial kS 0.05 and kP 0.001
+are estimates and kV is solved from the 5400 RPM at 14 V observation. Readiness tolerance (+/-100 RPM), feed timing,
+arming and stop behavior are unchanged. A zero target still coasts in FLOAT, and FLOAT behavior is retained.
+
+Simulation decision: bench-only controller, so ran the Mechanisms class (all four actual-bench scenarios, including
+the new `benchFusionControllerSpinsUpHoldsAndFeedsThroughActualOpMode`) rather than Competition; the PIDF path the
+competition wrappers use is not modified. The new scenario drives the real OpMode through the GP2 B switch (no spin
+from switching alone), full-power spin-up, feedforward hold and a staggered feed. Result: 12 Mechanisms scenarios
+pass. Trace: three coast loops alternating with full power on spin-up overshoot, zero negative-power loops, then
+a steady 53% command holding 2836 RPM for a 2800 RPM target, 62 stage-2 feed ticks. Focused unit tests:
+`ShooterVelocityTuningTest` (7) and `ShooterLiveTuningTest` (4) pass, replacing the two plain bang-bang cases with
+fusion threshold, direction, overspeed-coasts, voltage-compensation, invalid-input and gain-bound cases; the
+scenario and the fake-flywheel test both assert the command is never negative. `assembleDebug` passes. The full unit suite,
+lint and the Competition/Sensors/Drivetrain simulations were not run for this bench-only change.
+Limits: the flywheel fixture has synthetic response (0 to 2800 RPM in about 80 ms), no friction, ball load, current
+limit or voltage sag, so overshoot, coast-down time after lowering a target, recovery time and all three gains
+require tuning on the robot. No assertion, tolerance or calibration flag was relaxed.
+
+## Full-codebase audit: corner rehome settle, slide fault text, INIT-phase sim coverage (2026-11-11)
+
+Change: a review of every subsystem, both competition TeleOps, autonomous and the test OpModes found three issues.
+(1) GP2 D-pad Left wrote the corner pose to the Pinpoint immediately, even during the INIT IMU recalibration, while
+`AutoPoseHandoff` and `PedroDrive.setFieldPose` both require a READY device. `PinpointOdometry` now tracks how long it
+has reported READY since the last recalibration request (`READY_SETTLE_SECONDS` = 0.5 s, `isSettled`), and
+`AutoPoseHandoff.PINPOINT_SETTLE_SECONDS` reads that constant. New `CornerRehomeRequest` (both competition wrappers):
+an INIT press during calibration shows WAITING and applies once settled; START discards a waiting press; after START
+an unsettled press is REFUSED and never queued, because the robot may be moving. A settled press behaves as before.
+(2) The slide FAULT text said "press again to retry", but the button toggles, so a fault while raising lowers on the
+next press; telemetry now names the direction of the next press. Slide control logic is unchanged.
+(3) Test harness: SimLoop runs the INIT loop in phase `INIT_LOOP` (`INIT` is one constructor tick). The INIT presses
+in `bothAlliancesFieldRehomeInInitAndActiveUsesPressEdgesWithoutCamera` and
+`bothAllianceCornerRehomesFallBackToCornerWhenRaisedTagsAreBelowTheImage` were gated on `INIT && t >= 150/145`, so they
+never fired and their "in INIT" variants only pressed at ACTIVE tick 0. The two "slide unpowered during INIT" checks
+inspected only that single tick. All four now use `INIT_LOOP`; no assertion or tolerance was changed.
+
+Simulation decision: shared TeleOp localization in both wrappers, so ran `verify-teleop.ps1 -Sim -Scenario
+Competition,Sensors,Mechanisms`. New scenario `bothAlliancesCornerRehomeDuringInitCalibrationWaitsForSettledPinpoint`
+presses D-pad Left on INIT_LOOP ticks 0-2 (before the first Pinpoint read) in the real Red/Blue TeleOps. Asserts the
+Pinpoint pose stays at the origin through tick 30, WAITING at tick 5, the corner pose and heading applied between ticks
+30 and 60 and held to tick 99 (applied at tick 37 = 0.25 s fake calibration + 0.5 s settle, both alliances), APPLIED in
+INIT, LOCALIZED and no corner-rehome line in ACTIVE. The corrected scenarios now exercise real INIT presses and pass.
+Baseline (code inspection; the pre-change scenario was not run): previously the press was applied in the same
+loop, during CALIBRATING. The SimLoop fake firmware zeroes
+the pose at the reset command and keeps a pose written during calibration, so the possible device-side loss itself is
+not reproducible in simulation; this verifies ordering only. New unit cases: `CornerRehomeRequestTest` (4).
+Result: 268 unit tests, 36 scenarios (Competition 15, Sensors 8, Mechanisms 12, runtime 1),
+`assembleDebug` and `lintDebug` (0 errors, 14 existing warnings), all pass; corner applied at INIT_LOOP tick 37 for both alliances.
+Limits: whether the physical Pinpoint discards a pose written during calibration is unmeasured; the 0.5-s settle is the
+existing handoff starting value. A refused ACTIVE press must be repeated by the operator.

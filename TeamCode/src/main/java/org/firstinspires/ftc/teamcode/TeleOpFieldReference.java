@@ -10,10 +10,21 @@ public final class TeleOpFieldReference {
     public static final double START_Y_METERS = -FIELD_HALF_WIDTH_METERS + CENTER_FROM_SIDE_METERS;
     public static final double START_HEADING_DEG = 180;
     public static final double OPENING_Y_OFFSET_METERS = FieldGeometry.OPENING_Y_OFFSET_METERS;
+    /**
+     * The selected cell changes only once the robot is this far past the field midline (Y = 0). Switching cells
+     * swings the aim 25-65 deg and restarts feed readiness, so position noise or slow driving along the
+     * midline must not flip it back and forth.
+     */
+    public static final double SIDE_SWITCH_HYSTERESIS_METERS = .05;
 
+    /** Cell on the robot's half of the field, keeping {@code previous} within the midline hysteresis band. */
     public static TurretSubsystem.HiveSide nearestSide(double fieldY, TurretSubsystem.HiveSide previous) {
+        if (previous == TurretSubsystem.HiveSide.FAR)
+            return fieldY < -SIDE_SWITCH_HYSTERESIS_METERS ? TurretSubsystem.HiveSide.AUDIENCE : previous;
+        if (previous == TurretSubsystem.HiveSide.AUDIENCE)
+            return fieldY > SIDE_SWITCH_HYSTERESIS_METERS ? TurretSubsystem.HiveSide.FAR : previous;
         return fieldY < 0 ? TurretSubsystem.HiveSide.AUDIENCE
-                : fieldY > 0 ? TurretSubsystem.HiveSide.FAR : previous;
+                : fieldY > 0 ? TurretSubsystem.HiveSide.FAR : null;
     }
     public static GoalTarget target(TurretSubsystem.Alliance alliance, TurretSubsystem.HiveSide side) {
         // RAISED describes the aim geometry only. Drivers decide when this cell is shootable.

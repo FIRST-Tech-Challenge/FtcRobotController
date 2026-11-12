@@ -78,7 +78,7 @@ public final class IntakeShooterTestController {
         if (conflictingBumpers) return 0.0;
         if (forwardIntake) return 1.0;
         if (reverseIntake) return -1.0;
-        return loadIndex ? (full ? -1.0 : 1.0) : 0.0;
+        return loadIndex ? (full ? IntakeQueueController.FULL_QUEUE_INTAKE_POWER : 1.0) : 0.0;
     }
 
     /** Call once per loop after updating controls; pass this processed power directly to the motor. */

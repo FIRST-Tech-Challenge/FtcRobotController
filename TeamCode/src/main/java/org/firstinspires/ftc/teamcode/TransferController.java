@@ -13,13 +13,14 @@ public final class TransferController {
     private double runOnUntil = Double.NEGATIVE_INFINITY;
     private boolean full;
     private double stage1, stage2;
+    /** Continuous HIGH for the confirmation time means full; any LOW clears full immediately. */
     public void observe(double now, boolean sensorHigh) {
         boolean wasFull = full();
         if (sensorHigh) {
             if (Double.isNaN(highSince)) highSince = now;
             full = now - highSince >= confirmationSeconds;
         } else { highSince = Double.NaN; full = false; runOnUntil = Double.NEGATIVE_INFINITY; }
-        // Start once when a loading queue becomes full (the intake's automatic reversal).
+        // Start once when a loading queue becomes full so stage 1 seats the fourth ball.
         if (!wasFull && full() && stage1 > 0)
             runOnUntil = now + TransferSubsystem.STAGE_1_FULL_RUN_ON_SECONDS;
     }
@@ -30,7 +31,11 @@ public final class TransferController {
     public void update(double now, boolean sensorHigh, boolean feed, boolean pause, boolean feedStage1) {
         update(now, sensorHigh, feed, pause, feedStage1, false);
     }
-    /** Forward intake override bypasses full for stage 1 only; feed and loading pauses retain priority. */
+    /**
+     * Loading runs stage 1 on briefly after full is confirmed, then stops it until the sensor reads LOW,
+     * which resumes loading automatically. Forward intake override bypasses full for stage 1 only;
+     * feed and loading pauses retain priority and cancel the run-on.
+     */
     public void update(double now, boolean sensorHigh, boolean feed, boolean pause, boolean feedStage1,
                        boolean forceStage1Loading) {
         observe(now, sensorHigh);

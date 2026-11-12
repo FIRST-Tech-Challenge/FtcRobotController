@@ -15,19 +15,19 @@ bypassing readiness and timing. See [bench controls](IntakeShooterTest.md).
 
 | Phase | Gate | Stage 1 | Stage 2 | Duration |
 | --- | --- | --- | --- | --- |
-| Ordinary loading | Closed | Full loading power until full or paused | Off | Until the full sensor is HIGH continuously for 0.5 s |
-| Full confirmation / intake reversal | Closed | Continue forward | Off | 0.5 s run-on; pause, feed or shutdown cancels it |
+| Ordinary loading | Closed | Full loading power until full or paused | Off | Until the full sensor is HIGH continuously for 0.2 s |
+| Full confirmation / intake stop | Closed | Continue forward | Off | 0.5 s run-on to seat the fourth ball; pause, feed or shutdown cancels it |
 | Confirmed full | Closed | Off | Off | While HIGH remains confirmed; LOW resumes loading |
 | Shot readiness | Closed | Paused by the existing shooting controls | Off | Readiness stable for 0.15 s for timed shots |
 | Gate command delay | Held open | Off | Off | 0.20 s after the open command |
 | Timed shot feed | Held open | Full forward-feed power | Full forward-feed power | 0.50 s |
 | Recovery | Closed | Off | Off | 0.35 s before readiness requalifies |
 
-Each fresh HIGH confirmation starts the run-on once while stage 1 is already loading.
-LOW immediately clears full and resets the confirmation/run-on timers. Another HIGH
-needs a fresh continuous 0.5 seconds. Both bench and competition intake reverse at
-confirmation and resume forward on LOW, with RB/LB overriding the sensor. This replaces
-the previous full-queue stop/latch policy. Both use the same stage-1 run-on timing.
+Each fresh confirmation starts the 0.5 s stage-1 run-on once while stage 1 is loading. LOW immediately
+clears full, resets the confirmation/run-on timers and resumes loading. Another HIGH needs a
+fresh continuous 0.2 seconds. Bench, competition and autonomous intake stop (never
+reverse) at confirmation and resume forward on LOW, with RB/LB overriding the sensor.
+This replaces the previous full-queue intake reversal; the stage-1 run-on is unchanged.
 
 An uninterrupted timed attempt commands the gate open for about **0.70 seconds**:
 0.20 seconds after the open command plus 0.50 seconds of feeding. Both transfer stages

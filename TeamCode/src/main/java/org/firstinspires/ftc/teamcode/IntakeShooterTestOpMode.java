@@ -16,6 +16,12 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
     public static volatile double D = ShooterVelocityTuning.INITIAL_D;
     public static volatile double F_SCALE = ShooterVelocityTuning.INITIAL_F_SCALE;
     public static volatile double TARGET_RPM = TurretSubsystem.SHOOTER_DEFAULT_TARGET_RPM;
+    // Fusion controller (GP2 B): beyond 80 ticks/s error, full power when slow and coast when fast;
+    // inside that band, kS + kV * target + kP * error.
+    // Motor power at 12 V; kV and kP are per motor tick/s. Untuned starting estimates.
+    public static volatile double FUSION_KS = ShooterVelocityTuning.INITIAL_FUSION_KS;
+    public static volatile double FUSION_KV = ShooterVelocityTuning.INITIAL_FUSION_KV;
+    public static volatile double FUSION_KP = ShooterVelocityTuning.INITIAL_FUSION_KP;
     private static final double PITCH_STEP_DEG = 0.5;
     private static final double SHOOTER_RPM_STEP = 100.0;
     private static final double MAX_LOOP_DT_SECONDS = 0.1;
@@ -106,7 +112,7 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
                 previousControllerToggle = gamepad2.b;
                 if (controllerChanged) {
                     turret.setShooterController(turret.getShooterController() == TurretSubsystem.ShooterController.PIDF
-                            ? TurretSubsystem.ShooterController.BANG_BANG : TurretSubsystem.ShooterController.PIDF);
+                            ? TurretSubsystem.ShooterController.BANG_BANG_FUSION : TurretSubsystem.ShooterController.PIDF);
                     minimumFeedRpm = Double.NaN;
                     recoveryStarted = lastRecoverySeconds = Double.NaN;
                     wasFeeding = false;
@@ -122,6 +128,9 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
                     I = ShooterVelocityTuning.INITIAL_I;
                     D = ShooterVelocityTuning.INITIAL_D;
                     F_SCALE = ShooterVelocityTuning.INITIAL_F_SCALE;
+                    FUSION_KS = ShooterVelocityTuning.INITIAL_FUSION_KS;
+                    FUSION_KV = ShooterVelocityTuning.INITIAL_FUSION_KV;
+                    FUSION_KP = ShooterVelocityTuning.INITIAL_FUSION_KP;
                 } else if (!timing) {
                     if (deltaP != 0) P = bounded(P + deltaP, turret.getShooterP(), 0, 100);
                     if (deltaI != 0) I = bounded(I + deltaI, turret.getShooterI(), 0, ShooterVelocityTuning.MAX_I);
@@ -132,6 +141,10 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
                         bounded(I, turret.getShooterI(), 0, ShooterVelocityTuning.MAX_I),
                         bounded(D, turret.getShooterD(), 0, 100),
                         bounded(F_SCALE, turret.getShooterFScale(), .5, 1.5));
+                turret.setShooterFusionTuning(
+                        bounded(FUSION_KS, turret.getShooterFusionKs(), 0, ShooterVelocityTuning.MAX_FUSION_KS),
+                        bounded(FUSION_KV, turret.getShooterFusionKv(), 0, ShooterVelocityTuning.MAX_FUSION_KV),
+                        bounded(FUSION_KP, turret.getShooterFusionKp(), 0, ShooterVelocityTuning.MAX_FUSION_KP));
                 previousPidUp = gamepad2.dpad_up; previousPidDown = gamepad2.dpad_down;
                 previousFUp = gamepad2.dpad_right; previousFDown = gamepad2.dpad_left;
                 previousPidReset = gamepad2.x;
@@ -271,6 +284,13 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
                     packet.put("D", turret.getShooterD());
                     packet.put("F scale", turret.getShooterFScale());
                     packet.put("Applied F (PIDF only)", turret.getShooterAppliedF());
+                    packet.put("Error ticks/s", ShooterSpeed.motorTicksPerSecond(turret.getTargetShooterRpm())
+                            - turret.getShooterTicksPerSecond());
+                    packet.put("Fusion power", turret.getShooterFusionPower());
+                    packet.put("Fusion bang-bang (0/1)", turret.isShooterFusionBangBang() ? 1 : 0);
+                    packet.put("Fusion kS", turret.getShooterFusionKs());
+                    packet.put("Fusion kV", turret.getShooterFusionKv());
+                    packet.put("Fusion kP", turret.getShooterFusionKp());
                     packet.put("Feeding (0/1)", feeding ? 1 : 0);
                     packet.put("At speed (0/1)", atSpeed ? 1 : 0);
                     if (Double.isFinite(minimumFeedRpm)) packet.put("Minimum feed RPM", minimumFeedRpm);
@@ -306,13 +326,13 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
 
     private void addControlsTelemetry() {
         telemetry.addLine("Dashboard: 192.168.43.1:8080/dash | Config: IntakeShooterTestOpMode");
-        telemetry.addLine("Live P/I/D/F_SCALE/TARGET_RPM; applied gains shown below; GP2 X resets gains unless LB held");
-        telemetry.addLine("Automatic intake/index after arming: LOW forward, 0.5 s HIGH reverse | RB forces forward / LB reverse / Both stop");
+        telemetry.addLine("Live P/I/D/F_SCALE/TARGET_RPM and FUSION_KS/KV/KP; applied gains shown below; GP2 X resets gains unless LB held");
+        telemetry.addLine("Automatic intake/index after arming: LOW forward, 0.2 s HIGH stop | RB forces forward / LB reverse / Both stop");
         telemetry.addLine("Hold RT = Flywheel | RT + LT: Continuous = Immediate Full Feed; Staggered = Readiness + Timed Cycle");
         telemetry.addLine("GP2 RB = Continuous/Staggered (default); changes require GP1 controls released");
         telemetry.addLine("Hold GP2 LB: Dpad U/D = Recovery Pause, R/L = Feed Duration, Y/A = Ready Delay +/-0.05 s; X = Timing Reset");
-        telemetry.addLine("GP2 PID tuning: Dpad U/D = P +/-1 | R/L = F scale +/-0.05 | Y/A = I +/-0.05 | X = Reset");
-        telemetry.addLine("GP2 B = Toggle PIDF / Bang-Bang; release GP1 motor controls to re-arm after switching");
+        telemetry.addLine("GP2 PID tuning (PIDF only): Dpad U/D = P +/-1 | R/L = F scale +/-0.05 | Y/A = I +/-0.05 | X = Reset All Gains");
+        telemetry.addLine("GP2 B = Toggle PIDF / Fusion (Full Power when 80+ ticks/s slow, Coast when 80+ fast, else kS/kV/kP Feedforward); release GP1 motor controls to re-arm");
         telemetry.addLine("Y/A = RPM +/-100 | Dpad Up = Lower Hood, Down = Raise Hood (0.5 deg) | RS-X = Turret");
         telemetry.addLine("B = Stop Motors + Close Gate (release controls to resume) | X = Rehome with motor controls released");
     }

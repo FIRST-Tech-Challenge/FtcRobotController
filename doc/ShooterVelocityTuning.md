@@ -33,11 +33,11 @@ Gamepad 2 can adjust gains while testing:
 
 | GP2 control | Change |
 | --- | --- |
-| B | Toggle PIDF / bang-bang in this bench test; stops motors and requires GP1 controls released to re-arm |
+| B | Toggle PIDF / bang-bang + feedforward fusion in this bench test; stops motors and requires GP1 controls released to re-arm |
 | D-pad Up / Down | P +1 / -1, bounded 0..100 |
 | D-pad Right / Left | Feedforward multiplier +0.05 / -0.05, bounded 0.5..1.5 |
 | Y / A | I +0.05 / -0.05, bounded 0..5 |
-| X | Reset P, I, D and feedforward multiplier to the initial settings |
+| X | Reset P, I, D, feedforward multiplier and the fusion kS/kV/kP to the initial settings |
 
 Bench settings are shared with FTC Dashboard and remain in memory across bench restarts
 until the Robot Controller app restarts. Record validated values in
@@ -57,7 +57,8 @@ excluded so the project retains SDK 12.0.0. See the official
    Hub's Wi-Fi and open [Dashboard](http://192.168.43.1:8080/dash).
 2. Select **Test: Intake + Index + Shooter** on the Driver Station. In Dashboard's
    Config view, expand **IntakeShooterTestOpMode**. Editable fields are `P`, `I`, `D`,
-   `F_SCALE` and `TARGET_RPM` (flywheel output RPM, not motor RPM).
+   `F_SCALE` and `TARGET_RPM` (flywheel output RPM, not motor RPM), plus the fusion
+   controller's `FUSION_KS`, `FUSION_KV` and `FUSION_KP`.
 3. Start, then release the bumpers/triggers to arm. Hold GP1 RT to spin. GP1 Y/A
    adjusts the same target as Dashboard. Hold RT + LT for the existing timed,
    readiness-controlled feed/recovery cycle; GP1 B stops motors and closes the gate.
@@ -75,7 +76,8 @@ RPM selection commands zero. Graph/Driver Station gains show the bounded values
 actually selected; Config can still display an out-of-range requested value.
 The hub F coefficient remains `BASE_F * 12 / batteryVolts * F_SCALE`: edit the
 multiplier rather than replacing voltage compensation. PIDF gains do not affect
-bang-bang mode. Other OpModes keep their compiled defaults; no Dashboard values
+fusion mode, and the fusion gains (bounded to kS 0..0.3, kV 0..0.002, kP 0..0.02)
+do not affect PIDF. Other OpModes keep their compiled defaults; no Dashboard values
 automatically transfer into competition. Save winning gains in Java source and
 rebuild. Save P/I/D in `INITIAL_P`/`INITIAL_I`/`INITIAL_D` and the F multiplier in
 `INITIAL_F_SCALE` in `ShooterVelocityTuning`.
@@ -104,17 +106,53 @@ not run on a Control Hub.
 
 ## Controller comparison and loaded trials
 
-Bang-bang is available only through the combined bench test's controller toggle.
-It switches the motor to RUN_WITHOUT_ENCODER and commands full power below the
-selected RPM, coasting at or above it with FLOAT. It uses each main loop's cached
-encoder sample; the hub PIDF loop is not active in that mode. No I/D gains or
-deadband delay its maximum-power recovery. GP2 gain adjustments are retained for
-switching back to PIDF but do not affect bang-bang. Other OpModes still start in
-PIDF. Switching resets minimum-feed-RPM and return-time measurements. Compare
-both modes with identical target, battery and loading; last return-to-tolerance
-time includes spin-up and is not a measured ball-to-ball recovery time. These
-settings cannot be called optimized until loaded trials confirm sag, overshoot,
-recovery time and shot distance.
+The bang-bang + feedforward fusion controller (added November 11, 2026, replacing
+the plain bang-bang option) is available only through the combined bench test's
+controller toggle. It switches the motor to RUN_WITHOUT_ENCODER and uses each main
+loop's cached encoder sample; the hub PIDF loop is not active in that mode.
+
+- Speed error above 80 motor ticks/s (`FUSION_BANG_BANG_ERROR_TICKS_PER_SECOND`,
+  about 171 flywheel RPM): bang-bang. Full power when slow; zero power and a FLOAT
+  coast when fast, as the earlier plain bang-bang did. The team chose coasting over
+  the reverse-power braking in the source description (November 11, 2026).
+- Error within 80 ticks/s: `(kS + kV * target + kP * error) * 12 / batteryVolts`,
+  clipped to 0..1 in the commanded direction. Velocities are motor ticks/s; battery
+  voltage is the same 5 Hz lowest-valid-hub reading used for PIDF, with the 12 V
+  reference as the fallback.
+- The command never opposes the spin direction. A zero target (spin released,
+  STOP, controller switch) is zero power and a FLOAT coast.
+
+Initial values in `ShooterVelocityTuning`: `INITIAL_FUSION_KS` 0.05 (estimate),
+`INITIAL_FUSION_KV` `(14 / 12 - kS) / 2520`, about 0.000443 (so kS + kV reproduces
+full power at 5400 RPM and 14 V), and `INITIAL_FUSION_KP` 0.001 (estimate; 0.08
+power at the 80 ticks/s edge). None is validated on this flywheel. Suggested order:
+set kP to 0 and adjust kV until an unloaded mid-range target holds steady, check a
+low and a high target and move kS if the bias differs between them, then restore
+and raise kP in small steps for loaded recovery. If the zone alternates between
+BANG-BANG and FEEDFORWARD while holding, the feedforward alone settles outside the
+band; fix kV/kS first. Watch `Fusion power`, `Fusion bang-bang (0/1)` and
+`Error ticks/s` in Dashboard. Because overspeed only coasts, a lowered target is
+reached at the wheel's natural coast-down rate.
+
+GP2 gain adjustments (D-pad, Y/A) are retained for switching back to PIDF but do
+not affect fusion; fusion gains are edited in Dashboard. Other OpModes still start
+in PIDF and cannot select fusion. Switching resets minimum-feed-RPM and return-time
+measurements. Compare both modes with identical target, battery and loading; last
+return-to-tolerance time includes spin-up and is not a measured ball-to-ball
+recovery time. These settings cannot be called optimized until loaded trials
+confirm sag, overshoot, recovery time and shot distance. Migrate the winning
+controller and gains into the competition TeleOps only after that comparison.
+
+Simulation decision for the fusion controller: added the Mechanisms scenario
+`benchFusionControllerSpinsUpHoldsAndFeedsThroughActualOpMode`, which runs the real
+bench OpMode through the GP2 B switch, spin-up, hold and a staggered feed. The
+flywheel fixture responds far faster than the real wheel and has no friction, ball
+load or voltage sag, so it checks wiring and interlocks, not tuning. In that
+fixture each 20 ms loop moves the wheel by more than the width of the band, so
+spin-up alternates full power and coast three times before landing inside it; it
+then holds 2836 RPM for a 2800 RPM target (+36 RPM, the frictionless fixture not
+needing kS) inside the unchanged +/-100 RPM readiness tolerance. The scenario also
+asserts that the commanded power is never negative.
 
 First verify unloaded speed is steady at the intended target. During repeated
 loaded trials, adjust P in small steps and compare RPM sag and overshoot. Reduce P

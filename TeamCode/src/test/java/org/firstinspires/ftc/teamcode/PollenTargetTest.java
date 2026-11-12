@@ -7,13 +7,13 @@ import static org.junit.Assert.*;
 public class PollenTargetTest {
     private PollenTarget project(double xPx, double yPx, double forwardOffsetMm, double rightOffsetMm) {
         return PollenTarget.fromFloorContact(1_000_000_000L, xPx, yPx - 10.0, xPx, yPx, 100.0,
-                280.0, 280.0, 160.0, 120.0, 180.0, 10.0, forwardOffsetMm, rightOffsetMm);
+                280.0, 280.0, 160.0, 120.0, 180.0, 15.0, forwardOffsetMm, rightOffsetMm);
     }
 
     @Test public void opticalCenterIntersectsFloorUsingMeasuredHeightAndPitch() {
         PollenTarget target = project(160.0, 120.0, 0.0, 0.0);
         assertNotNull(target);
-        assertEquals(180.0 / Math.tan(Math.toRadians(10.0)), target.forwardMm, 1e-6);
+        assertEquals(180.0 / Math.tan(Math.toRadians(15.0)), target.forwardMm, 1e-6);
         assertEquals(0.0, target.rightMm, 1e-6);
         assertEquals(0.0, target.bearingDeg, 1e-6);
     }
@@ -40,7 +40,7 @@ public class PollenTargetTest {
 
     @Test public void invalidIntrinsicsAndPixelsAreRejected() {
         assertNull(PollenTarget.fromFloorContact(1L, 160, 120, 160, 200, 100,
-                0, 280, 160, 120, 180, 10, 0, 0));
+                0, 280, 160, 120, 180, 15, 0, 0));
         assertNull(project(Double.NaN, 200, 0, 0));
         assertNull(project(160, Double.POSITIVE_INFINITY, 0, 0));
     }

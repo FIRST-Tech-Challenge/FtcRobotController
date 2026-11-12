@@ -25,11 +25,11 @@ As of November 4, the combined bench, intake-only, competition and autonomous
 intake paths share the same encoder-based recovery algorithm. If a nonzero intake command stays below 20 ticks/s in magnitude for
 0.20 seconds, it alternates opposite/requested direction every 0.125 seconds for
 0.50 seconds total, then resumes the requested direction. This also handles a stalled
-manual reverse or full-queue reverse. A persistent jam retries after another 0.20-second
+manual reverse. A persistent jam retries after another 0.20-second
 stall window. A moving encoder resets the stall timer. Both bumpers, B, or a feed
 request without an intake bumper override cancels recovery immediately. Releasing
 RB restores automatic loading, so recovery continues if the requested direction
-stays the same; a full queue restores reverse instead. Changing requested direction
+stays the same; a full queue stops the intake instead. Changing requested direction
 starts a fresh detection window. Transfer, gate and shooter keep updating throughout.
 Telemetry shows intake velocity in ticks/s and the recovery state. Thresholds are
 shared IntakeJamRecovery constants, with compatibility aliases for bench callers;
@@ -53,7 +53,7 @@ wrappers; modeled shaft motion does not establish loaded jam-clearing behavior.
 
 | Control | Action |
 | --- | --- |
-| Bumpers released, armed, no feed request | Automatic intake/index: forward on LOW; reverse intake after 0.5 s HIGH, stage 1 runs on 0.5 s then stops; LOW resumes forward/loading |
+| Bumpers released, armed, no feed request | Automatic intake/index: forward on LOW; intake stops (no reversal) after 0.2 s HIGH, stage 1 runs on 0.5 s then stops; LOW resumes forward/loading |
 | Hold RB | Force intake forward regardless of sensor or feed request; index still follows its sensor/feed controls |
 | Hold LB | Reverse intake only; transfer stops and gate closes |
 | Both bumpers | Stop intake and loading; inhibit feeding |
@@ -138,26 +138,41 @@ Verification of this bench-only sequence (November 1, 2026):
 was performed. Retained scenario traces are under `TeamCode/build/sim/teleop/`.
 
 The flywheel starts with the FTC SDK's encoder velocity PIDF controller in
-`RUN_USING_ENCODER` mode. **Tap GP2 B** to switch between PIDF and bang-bang.
+`RUN_USING_ENCODER` mode. **Tap GP2 B** to switch between PIDF and the bang-bang +
+feedforward fusion controller (this replaced the earlier plain bang-bang option).
 Switching stops the motors and closes the gate; release GP1 B, bumpers and triggers
 to re-arm, then hold RT again. A held GP2 B toggles only once. The selected RPM and
-PIDF tuning are retained, while comparison measurements reset.
+both controllers' tuning are retained, while comparison measurements reset.
 
-Bang-bang uses `RUN_WITHOUT_ENCODER` (encoder readings still work), full forward
-power whenever measured RPM is below target, and zero power/coast at or above
-target. It runs every main loop, including recovery, using one cached velocity
-sample per loop. There is no deadband delaying recovery and no reverse braking;
-the motor stays in FLOAT. PIDF remains P=40, I=0, D=0 with voltage-compensated F
-and GP2 live tuning. These are starting values, requiring loaded verification.
-PID tuning controls retain settings in bang-bang mode but only affect PIDF.
+Fusion uses `RUN_WITHOUT_ENCODER` (encoder readings still work) and runs every main
+loop, including recovery, using one cached velocity sample per loop:
 
-Actual/selected RPM, active controller, bang-bang commanded power, lowest RPM in
-the last/current feed, and elapsed/last return to RPM tolerance (seconds) are
-displayed. Return time also includes spin-up, and ends at first entry into the
-RPM tolerance, before the separate stable-readiness check. Compare controllers
-at the same target, battery condition and ball supply. Feed/recovery timing and
-RPM interlocks are identical for both controllers. Full power cannot compensate
-for insufficient motor power under sustained load.
+- **Speed error above 80 motor ticks/s (about 171 flywheel RPM):** bang-bang. Full
+  power when slow, zero power (FLOAT coast) when fast. There is no reverse braking.
+- **Error within 80 ticks/s:** feedforward, `kS + kV * target + kP * error`, scaled by
+  `12 V / battery`. `kS` overcomes static friction, `kV` holds the target speed and
+  `kP` is a small correction for the remaining error.
+
+Starting values are `kS` 0.05, `kV` about 0.000443 and `kP` 0.001 (motor power at
+12 V; `kV` and `kP` per motor tick/s). `kS` and `kP` are estimates and `kV` is
+solved from the 5400 RPM at 14 V observation; none is tuned on this flywheel. Edit
+`FUSION_KS`, `FUSION_KV` and `FUSION_KP` live in Dashboard. Releasing RT or stopping
+commands zero power and coasts in FLOAT. The command never opposes the spin
+direction, so lowering the target by 200 RPM or more simply coasts down to the
+band, which takes longer than a powered brake would. PIDF remains P=40, I=0, D=0 with
+voltage-compensated F. The GP2 D-pad and Y/A tuning controls only affect PIDF;
+GP2 X resets both controllers' gains.
+
+Actual/selected RPM, active controller, fusion zone (BANG-BANG or FEEDFORWARD),
+commanded power and error in ticks/s, lowest RPM in the last/current feed, and
+elapsed/last return to RPM tolerance (seconds) are displayed. Return time also
+includes spin-up, and ends at first entry into the RPM tolerance, before the
+separate stable-readiness check. Compare controllers at the same target, battery
+condition and ball supply. Feed/recovery timing and RPM interlocks are identical
+for both controllers. Full power cannot compensate for insufficient motor power
+under sustained load. If the zone keeps flipping between BANG-BANG and FEEDFORWARD
+while holding a target, the feedforward is too far off to stay inside the band:
+correct `kV` (or `kS`) before raising `kP`.
 
 The installed hood uses increasing PWM to lower away from its upper stop: home
 is 0.545070 and full downward travel is approximately 0.714085. D-pad Up increases
@@ -207,7 +222,7 @@ configuration/controller/motor path on the robot. A 0.00 command requires checki
 the displayed full confirmation, OpMode pause or FEED STATUS first. Correct motor cabling
 does not establish the full sensor's digital state or flywheel/yaw readiness.
 
-HIGH continuously for 0.5 seconds confirms full even if the physical queue is empty;
+HIGH continuously for 0.2 seconds confirms full even if the physical queue is empty;
 LOW immediately clears full and resumes intake/index loading. Check sensor placement,
 threshold and raw state if an empty queue reports HIGH/FULL. Polarity, full hold,
 motor directions and shooting interlocks were preserved pending physical evidence.
@@ -226,10 +241,9 @@ Start empty: check directions and clearance, then spin the flywheel and exercise
 gate/feed into a clear catch area. Next hold RB to collect one ball, release RB,
 hold RT until speed is steady, and add LT to feed. Release LT after the ball exits.
 Add more balls only after that works. Stage 2 stays off during loading; both transfers feed forward during qualified feeding.
-The full sensor must remain HIGH for 0.5 seconds to reverse the intake. Stage 1
-continues forward for another 0.5 seconds, then holds stopped; stage 2 stays off.
-Pause, feed, or shutdown cancels the run-on. LOW resumes loading immediately; a new
-continuous 0.5 s HIGH can start a new run-on. Check sensor
+The full sensor must remain HIGH for 0.2 seconds to stop the intake (it does not
+reverse). Stage 1 runs on another 0.5 seconds to seat the fourth ball, then holds; stage 2 stays off. Pause, feed, or shutdown cancels the run-on. LOW resumes loading
+immediately; a new continuous 0.2 s HIGH starts a new run-on. Check sensor
 placement and that this delay does not cause a jam. Full does not prevent shooting.
 
 B removes motor commands; the flywheel coasts and a ball already in the shooter

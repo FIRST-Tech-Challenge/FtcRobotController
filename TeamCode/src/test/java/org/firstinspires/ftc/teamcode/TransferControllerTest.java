@@ -31,7 +31,7 @@ public class TransferControllerTest {
         transfer.update(0, true, false, false);
         assertEquals(1, intake.update(transfer.full(), false, false), 0);
         transfer.update(2, true, false, false);
-        assertEquals(-1, intake.update(transfer.full(), false, false), 0);
+        assertEquals(0, intake.update(transfer.full(), false, false), 0); // Full stops, never reverses.
         transfer.update(2.1, false, false, false);
         assertEquals(1, intake.update(transfer.full(), false, false), 0);
         assertEquals(1, intake.update(transfer.full(), true, false), 0);
@@ -54,16 +54,19 @@ public class TransferControllerTest {
         c.stop(); assertEquals(0,c.stage1(),0); assertEquals(0,c.stage2(),0);
     }
     @Test public void confirmedFullHoldsTransfersUntilFeedingEvenIfSensorClears() {
-        TransferController c=new TransferController(); c.update(0,true,false,false); c.update(.499,true,false,false);
+        TransferController c=new TransferController(); c.update(0,true,false,false); c.update(.199,true,false,false);
         assertFalse(c.full()); assertEquals(1,c.stage1(),0); assertEquals(0,c.stage2(),0);
-        c.update(.5,true,false,false); assertTrue(c.full()); assertEquals(1,c.stage1(),0); assertEquals(0,c.stage2(),0);
-        c.update(.51,true,false,false); assertTrue(c.full()); assertEquals(1,c.stage1(),0); assertEquals(0,c.stage2(),0);
-        c.update(.999,true,false,false); assertEquals(1,c.stage1(),0);
-        c.update(1,true,false,false); assertEquals(0,c.stage1(),0);
-        c.update(1.1,false,false,false); assertFalse(c.full()); assertEquals(1,c.stage1(),0);
-        c.update(1.7,true,false,false); assertFalse(c.full()); // New HIGH needs a fresh confirmation.
-        c.update(2.199,true,false,false); assertFalse(c.full());
-        c.update(2.2,true,false,false); assertTrue(c.full()); assertEquals(1,c.stage1(),0);
+        // 0.2 s of continuous HIGH confirms full; stage 1 runs on 0.5 s to seat the fourth ball.
+        c.update(.2,true,false,false); assertTrue(c.full()); assertEquals(1,c.stage1(),0); assertEquals(0,c.stage2(),0);
+        c.update(.21,true,false,false); assertTrue(c.full()); assertEquals(1,c.stage1(),0); assertEquals(0,c.stage2(),0);
+        c.update(.699,true,false,false); assertEquals(1,c.stage1(),0);
+        c.update(.7,true,false,false); assertEquals(0,c.stage1(),0); // Run-on ends.
+        c.update(1,true,false,false); assertEquals(0,c.stage1(),0); // Stays stopped while HIGH.
+        c.update(1.1,false,false,false); assertFalse(c.full()); assertEquals(1,c.stage1(),0); // LOW resumes.
+        c.update(2,true,false,false); assertFalse(c.full()); assertEquals(1,c.stage1(),0); // Fresh confirmation.
+        c.update(2.199,true,false,false); assertFalse(c.full()); assertEquals(1,c.stage1(),0);
+        c.update(2.2,true,false,false); assertTrue(c.full()); assertEquals(1,c.stage1(),0); // Fresh run-on.
+        c.update(2.699,true,false,false); assertEquals(1,c.stage1(),0);
         c.update(2.7,true,false,false); assertEquals(0,c.stage1(),0);
         c.update(3,false,true,true); assertFalse(c.full()); assertEquals(1,c.stage1(),0); assertEquals(1,c.stage2(),0);
         c.update(4,false,false,false); assertEquals(1,c.stage1(),0); assertEquals(0,c.stage2(),0);
@@ -77,34 +80,38 @@ public class TransferControllerTest {
     @Test public void intakeAlwaysFollowsQueueAndBumpersAlwaysOverride() {
         IntakeQueueController c=new IntakeQueueController();
         assertEquals(1,c.update(false,false,false),0);
-        assertEquals(-1,c.update(true,false,false),0);
+        assertEquals(0,c.update(true,false,false),0);
         assertEquals(1,c.update(true,true,false),0);
         assertEquals(0,c.update(true,true,true),0);
         assertEquals(-1,c.update(false,false,true),0);
+        assertEquals(-1,c.update(true,false,true),0); // LB still reverses a full queue on request.
         assertEquals(0,c.update(false,true,true),0);
-        assertEquals(-1,c.update(true,false,false),0);
+        assertEquals(0,c.update(true,false,false),0);
         assertEquals(1,c.update(false,false,false),0);
     }
     @Test public void fullQueueShotAndReloadCycleResumesWithoutBumpers() {
         TransferController transfer=new TransferController();
         IntakeQueueController intake=new IntakeQueueController();
         transfer.update(0,true,false,false);
-        transfer.update(.499,true,false,false);
+        transfer.update(.199,true,false,false);
         assertFalse(transfer.full());
         assertEquals(1,intake.update(transfer.full(),false,false),0);
-        transfer.update(.5,false,false,false); // LOW resets the incomplete HIGH interval.
-        transfer.update(.75,true,false,false);
-        transfer.update(1.249,true,false,false);
+        transfer.update(.2,false,false,false); // LOW resets the incomplete HIGH interval.
+        transfer.update(.25,true,false,false);
+        transfer.update(.449,true,false,false);
         assertFalse(transfer.full());
         assertEquals(1,intake.update(transfer.full(),false,false),0);
-        transfer.update(1.25,true,false,false); // Fresh continuous 0.5 s HIGH reverses intake.
+        transfer.update(.45,true,false,false); // Fresh continuous 0.2 s HIGH stops the intake at once.
         assertTrue(transfer.full());
-        assertEquals(-1,intake.update(transfer.full(),false,false),0);
-        assertEquals(1,transfer.stage1(),0); assertEquals(0,transfer.stage2(),0);
-        transfer.update(1.749,true,false,false);
+        assertEquals(0,intake.update(transfer.full(),false,false),0);
+        assertEquals(1,transfer.stage1(),0); assertEquals(0,transfer.stage2(),0); // Stage-1 run-on.
+        transfer.update(.949,true,false,false);
         assertEquals(1,transfer.stage1(),0);
+        transfer.update(.95,true,false,false);
+        assertEquals(0,transfer.stage1(),0);
         transfer.update(1.75,true,false,false);
         assertEquals(0,transfer.stage1(),0);
+        assertEquals(0,intake.update(transfer.full(),false,false),0);
         transfer.update(2.1,false,false,false); // LOW resumes collection immediately.
         assertFalse(transfer.full()); assertEquals(1,transfer.stage1(),0); assertEquals(0,transfer.stage2(),0);
         assertEquals(1,intake.update(transfer.full(),false,false),0);

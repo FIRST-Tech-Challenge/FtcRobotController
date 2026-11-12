@@ -29,6 +29,26 @@ public class TeleOpFieldReferenceTest {
         assertEquals(TurretSubsystem.HiveSide.AUDIENCE,
                 TeleOpFieldReference.nearestSide(0, TurretSubsystem.HiveSide.AUDIENCE));
     }
+    @Test public void cellSelectionHoldsThroughTheMidlineHysteresisBand() {
+        double h = TeleOpFieldReference.SIDE_SWITCH_HYSTERESIS_METERS;
+        TurretSubsystem.HiveSide far = TurretSubsystem.HiveSide.FAR, audience = TurretSubsystem.HiveSide.AUDIENCE;
+        // Within the band either selection is kept; just beyond it the robot's half wins.
+        for (double y : new double[] { -h, -h / 2, 0, h / 2, h }) {
+            assertEquals(far, TeleOpFieldReference.nearestSide(y, far));
+            assertEquals(audience, TeleOpFieldReference.nearestSide(y, audience));
+        }
+        assertEquals(audience, TeleOpFieldReference.nearestSide(-h - .001, far));
+        assertEquals(far, TeleOpFieldReference.nearestSide(h + .001, audience));
+        // Driving along the midline with a few centimeters of weave never toggles the cell.
+        TurretSubsystem.HiveSide side = far;
+        for (int i = 0; i < 500; i++) {
+            TurretSubsystem.HiveSide next = TeleOpFieldReference.nearestSide(.6 * h * Math.sin(i * .7), side);
+            assertEquals(side, next);
+        }
+        assertEquals(far, TeleOpFieldReference.nearestSide(Double.NaN, far));
+        assertNull(TeleOpFieldReference.nearestSide(0, null));
+        assertEquals(audience, TeleOpFieldReference.nearestSide(-.001, null));
+    }
     @Test public void odometryBearingUsesChassisHeadingAndTurretPivot() {
         GoalTarget g = TeleOpFieldReference.target(TurretSubsystem.Alliance.BLUE, TurretSubsystem.HiveSide.FAR);
         MotionSample pose = new MotionSample(1, g.x - ShootingConfiguration.MOUNT.pivot.x, g.y - 1,

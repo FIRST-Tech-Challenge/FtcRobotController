@@ -10,7 +10,11 @@ public final class PedroMecanumAdapter implements Drivetrain {
     private final double powerLimit;
 
     public PedroMecanumAdapter(MecanumDrivetrain drive) {
-        this(p -> drive.setWheelPowers(p[0], p[1], p[2], p[3]), PedroConfiguration.MAX_WHEEL_POWER);
+        this(drive, PedroConfiguration.MAX_WHEEL_POWER);
+    }
+    /** Pedro tuning only: the Foresight tuner identifies full-power dynamics. */
+    PedroMecanumAdapter(MecanumDrivetrain drive, double powerLimit) {
+        this(p -> drive.setWheelPowers(p[0], p[1], p[2], p[3]), powerLimit);
     }
     PedroMecanumAdapter(Consumer<double[]> output, double powerLimit) {
         this.output = output; this.powerLimit = powerLimit;

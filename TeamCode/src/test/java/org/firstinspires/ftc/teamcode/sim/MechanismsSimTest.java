@@ -61,9 +61,12 @@ class MechanismsSimTest {
             a.left_bumper = p == OpModePhase.ACTIVE && t >= 210;
         });
         s.run();
-        assertTrue(s.trace.at(OpModePhase.ACTIVE, 20).transfer1Power > 0);
-        assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 20).transfer2Power);
-        assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 35).transfer1Power);
+        assertTrue(s.trace.at(OpModePhase.ACTIVE, 5).transfer1Power > 0);
+        assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 5).transfer2Power);
+        // 0.2 s HIGH (about tick 10) confirms full; stage 1 runs on 0.5 s (to about tick 35), then stops.
+        assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 20).transfer1Power);
+        assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 30).transfer1Power);
+        assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 45).transfer1Power);
         assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 55).transfer1Power);
         assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 120).transfer1Power);
         assertTrue(s.trace.samples.stream().anyMatch(v -> v.transfer2Power > 0 && Math.abs(v.gatePosition - .2) < 1e-9));
@@ -83,6 +86,45 @@ class MechanismsSimTest {
         assertEquals(165.0/355, s.trace.at(OpModePhase.ACTIVE, 20).depollinator, 1e-9);
         assertEquals(30.0/355, s.trace.at(OpModePhase.ACTIVE, 40).depollinator, 1e-9);
         assertEquals(Math.round(500 + 2000 * 30.0/355), s.hardware.depollinator.getPulseWidth(), 1e-6);
+    }
+
+    @Test void linearSlideTogglesAcrossAnalogWrapAndClawToggles() throws Exception {
+        BioBuzzSimHardware h = new BioBuzzSimHardware().withSlide();
+        TeleOpScenario s = new TeleOpScenario("linear-slide", "LinearSlideTestOpMode", h, .02, 5, 180, (p,t,a,b) -> {
+            boolean press = p == OpModePhase.ACTIVE && ((t >= 10 && t < 13) || (t >= 90 && t < 93));
+            b.left_stick_button = press;
+            a.b = press;
+        });
+        s.run();
+        // INIT only tracks; no slide power before START.
+        assertTrue(s.trace.samples.stream().filter(v -> v.phase == OpModePhase.INIT || v.phase == OpModePhase.INIT_LOOP).allMatch(v -> v.slidePower == 0), s.diagnostic());
+        assertEquals(.60, s.trace.at(OpModePhase.ACTIVE, 5).claw, 1e-9);
+        assertTrue(s.trace.at(OpModePhase.ACTIVE, 15).slidePower > 0, s.diagnostic());
+        assertEquals(.40, s.trace.at(OpModePhase.ACTIVE, 15).claw, 1e-9);
+        // Start shaft 300 deg + 180 crosses the analog 360/0 wrap.
+        TeleOpTrace.Sample up = s.trace.at(OpModePhase.ACTIVE, 80);
+        assertEquals(180, up.slideTravelDeg, 5, s.diagnostic());
+        assertEquals(0, up.slidePower, 0, s.diagnostic());
+        assertTrue(up.telemetry.contains("Slide (GP2 LS) : UP"), up.telemetry);
+        TeleOpTrace.Sample down = s.trace.at(OpModePhase.ACTIVE, 170);
+        assertEquals(0, down.slideTravelDeg, 5, s.diagnostic());
+        assertEquals(0, down.slidePower, 0, s.diagnostic());
+        assertEquals(.60, down.claw, 1e-9);
+        assertTrue(down.telemetry.contains("Slide (GP2 LS) : DOWN"), down.telemetry);
+        assertEquals(0, h.slideServo.getPower(), 0);
+    }
+
+    @Test void jammedLinearSlideFaultsWithZeroPower() throws Exception {
+        BioBuzzSimHardware h = new BioBuzzSimHardware().withSlide();
+        TeleOpScenario s = new TeleOpScenario("linear-slide-jam", "LinearSlideTestOpMode", h, .02, 3, 80, (p,t,a,b) -> {
+            b.left_stick_button = p == OpModePhase.ACTIVE && t >= 10 && t < 13;
+        });
+        s.model.jamSlide = true; // explicit mechanical jam: power produces no shaft motion
+        s.run();
+        assertTrue(s.trace.at(OpModePhase.ACTIVE, 15).slidePower > 0, s.diagnostic());
+        TeleOpTrace.Sample faulted = s.trace.at(OpModePhase.ACTIVE, 70);
+        assertEquals(0, faulted.slidePower, 0, s.diagnostic());
+        assertTrue(faulted.telemetry.contains("Slide (GP2 LS) : FAULT: stalled"), faulted.telemetry);
     }
 
     @Test void turretIndependentEncoderHoodEdgesAndFlywheel() throws Exception {
@@ -135,13 +177,15 @@ class MechanismsSimTest {
         assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 90).transfer1Power, s.diagnostic());
         assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 120).intakePower, s.diagnostic());
         assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 120).transfer1Power, s.diagnostic());
-        assertEquals(-1, s.trace.at(OpModePhase.ACTIVE, 175).intakePower, s.diagnostic());
-        assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 175).transfer1Power, s.diagnostic());
-        assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 175).transfer2Power, s.diagnostic());
+        // Confirmed full (HIGH since tick 140, confirmed about tick 150) stops the intake instead of
+        // reversing it, while stage 1 runs on until about tick 175 to seat the fourth ball.
+        assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 165).intakePower, s.diagnostic());
+        assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 165).transfer1Power, s.diagnostic());
+        assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 165).transfer2Power, s.diagnostic());
         assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 200).transfer1Power, s.diagnostic());
         assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 220).intakePower, s.diagnostic()); // RB while HIGH/full.
         for (int tick : new int[]{200, 250}) {
-            assertEquals(-1, s.trace.at(OpModePhase.ACTIVE, tick).intakePower, s.diagnostic());
+            assertEquals(0, s.trace.at(OpModePhase.ACTIVE, tick).intakePower, s.diagnostic());
             assertEquals(0, s.trace.at(OpModePhase.ACTIVE, tick).transfer1Power, s.diagnostic());
         }
         assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 275).intakePower, s.diagnostic());
@@ -199,6 +243,50 @@ class MechanismsSimTest {
             assertEquals(tick == 100 || tick == 105 ? 1 : 0, v.transfer1Power, s.diagnostic());
             assertEquals(0, v.transfer2Power, s.diagnostic());
         }
+        assertEquals(0, h.transfer1.getPower());
+        assertEquals(0, h.transfer2.getPower());
+        assertEquals(.5, h.gate.getPosition());
+    }
+
+    /** Wiring and interlocks only: the flywheel fixture has synthetic response and no friction or ball load. */
+    @Test void benchFusionControllerSpinsUpHoldsAndFeedsThroughActualOpMode() throws Exception {
+        BioBuzzSimHardware h = new BioBuzzSimHardware().withIntake().withTransfer().withTurret();
+        TeleOpScenario s = new TeleOpScenario("bench-fusion", "IntakeShooterTestOpMode",
+                h, .02, 160, 300, (p,t,a,b) -> {
+            boolean active = p == OpModePhase.ACTIVE;
+            b.b = active && t >= 10 && t < 16; // One held press: PIDF -> fusion exactly once.
+            a.right_trigger = active && t >= 40 && t < 260 ? 1 : 0;
+            a.left_trigger = active && t >= 120 && t < 260 ? 1 : 0;
+        });
+        s.run();
+        assertFalse(s.result.endedBeforeStop(), s.diagnostic());
+        assertTrue(s.result.warnings().isEmpty(), s.diagnostic());
+        assertTrue(s.trace.at(OpModePhase.ACTIVE, 5).telemetry.contains("Flywheel regulation : PIDF"), s.diagnostic());
+        TeleOpTrace.Sample switched = s.trace.at(OpModePhase.ACTIVE, 30);
+        assertTrue(switched.telemetry.contains("Flywheel regulation : BANG_BANG_FUSION"), s.diagnostic());
+        assertTrue(switched.telemetry.contains("Fusion zone / power : OFF"), s.diagnostic());
+        assertEquals(0, switched.flywheelVelocity, s.diagnostic()); // Switching alone never spins.
+        // From rest the error is far above 80 ticks/s: full forward power.
+        assertTrue(s.trace.at(OpModePhase.ACTIVE, 41).telemetry.contains("Fusion zone / power : BANG-BANG | +100%"),
+                s.diagnostic());
+        double targetTicksPerSecond = org.firstinspires.ftc.teamcode.IntakeShooterTestOpMode.TARGET_RPM / 60 * 28;
+        double readyToleranceTicksPerSecond = 100.0 / 60 * 28;
+        for (TeleOpTrace.Sample v : s.trace.samples) if (v.phase == OpModePhase.ACTIVE) {
+            if (v.tick >= 100 && v.tick < 260) {
+                // Held by feedforward inside the unchanged +/-100 RPM readiness tolerance, not by cycling.
+                assertEquals(targetTicksPerSecond, v.flywheelVelocity, readyToleranceTicksPerSecond, s.diagnostic());
+                assertTrue(v.telemetry.contains("Fusion zone / power : FEEDFORWARD"), s.diagnostic());
+            }
+            if (v.tick < 120 || v.tick >= 260) assertEquals(0, v.transfer2Power, s.diagnostic());
+            // Overspeed coasts: the commanded power is never negative in either zone.
+            assertFalse(v.telemetry.contains("Fusion zone / power : BANG-BANG | -"), s.diagnostic());
+            assertFalse(v.telemetry.contains("Fusion zone / power : FEEDFORWARD | -"), s.diagnostic());
+        }
+        // The unchanged staggered readiness interlock permits feeding under fusion regulation.
+        assertTrue(s.trace.samples.stream().anyMatch(v -> v.phase == OpModePhase.ACTIVE
+                && v.tick >= 120 && v.tick < 260 && v.transfer2Power == 1), s.diagnostic());
+        assertEquals(com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER, h.flywheel.getMode());
+        assertEquals(0, h.flywheel.getPower());
         assertEquals(0, h.transfer1.getPower());
         assertEquals(0, h.transfer2.getPower());
         assertEquals(.5, h.gate.getPosition());

@@ -54,6 +54,7 @@ public final class BioBuzzRobot implements ZenithRobot {
     public static BioBuzzRobot pollenTest() { return new BioBuzzRobot(null, AutonomousProfile.POLLEN_TEST); }
 
     @Override public void init(AutoFromFile opMode) {
+        AutoPoseHandoff.clear(); // An older run's pose must never reach the next TeleOp.
         observeSteps(opMode.spec().steps);
         alliance = selectedAlliance != null ? selectedAlliance : TurretSubsystem.Alliance.valueOf(opMode.spec().alliance);
         try {
@@ -153,11 +154,14 @@ public final class BioBuzzRobot implements ZenithRobot {
     @Override public void periodic(AutoFromFile opMode) {
         readSensors();
         if (!drive.ready(now())) {
+            AutoPoseHandoff.clear(); // A pose from before a localization fault is not trustworthy for TeleOp.
             terminalOutcome("FAULT", "Pinpoint localization unavailable or stale");
             IllegalStateException failure = new IllegalStateException(outcomeReason);
             try { stopOutputs(); } catch (RuntimeException cleanup) { failure.addSuppressed(cleanup); }
             throw failure;
         }
+        // Field-referenced routes only (a cleared-area local start is ignored); TeleOp may start from it.
+        AutoPoseHandoff.save(alliance, drive.sample());
         if (remainingSeconds() <= 0) { terminalOutcome("TIMEOUT", "Global autonomous deadline"); finish(opMode); return; }
         drive.update();
     }

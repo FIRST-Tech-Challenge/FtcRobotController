@@ -5,7 +5,10 @@ import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-/** Three independent goBILDA 3118-0808-0002 PWM indicators; missing lights are reported, optional hardware. */
+/**
+ * Three independent goBILDA 3118-0808-0002 PWM indicators on Control Hub servo ports 3 (led_intake),
+ * 4 (led_shooter) and 5 (led_status); missing lights are reported, optional hardware.
+ */
 public final class RobotStatusLights {
     public static final String HW_INTAKE = "led_intake", HW_SHOOTER = "led_shooter", HW_STATUS = "led_status";
     public static final double PWM_MIN_US = 600, PWM_MAX_US = 2400;

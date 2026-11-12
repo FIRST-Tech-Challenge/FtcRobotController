@@ -24,10 +24,15 @@ final class BioBuzzSimModel implements DrivetrainSimConfig {
             + "flywheel=5203 Yellow Jacket,observed 5400 RPM at 14 V,28 ticks/rev,1:1 output; "
             + "turret=355 deg/servo span,8192 CPR*108/40,synthetic slew=180 deg/s; "
             + "Pinpoint=32,-74 mm,reversed pods,2000/(32pi) ticks/mm; "
-            + "camera=synthetic FOV54x41,30Hz,35ms latency; no contact/ball/Lynx model";
+            + "camera=synthetic FOV54x41,30Hz,35ms latency; "
+            + "SYNTHETIC slide=CR power*521.74 deg/s shaft (rated Axon MAX+ 6 V),no load/lag,starts 300 deg; "
+            + "no contact/ball/Lynx model";
     final MecanumDrivePlant drive;
     final BioBuzzSimHardware hardware;
     double yawDegrees, yawVelocity;
+    // Unwrapped slide servo shaft angle; independent of production constants.
+    double slideShaftDeg = BioBuzzSimHardware.SLIDE_START_SHAFT_DEG;
+    boolean jamSlide;
     boolean jamTurret;
 
     BioBuzzSimModel(BioBuzzSimHardware hardware) {
@@ -43,6 +48,11 @@ final class BioBuzzSimModel implements DrivetrainSimConfig {
             double delta = jamTurret ? 0 : Math.max(-180 * seconds, Math.min(180 * seconds, target - yawDegrees));
             yawDegrees += delta; yawVelocity = delta / seconds;
             hardware.encoder.setEncoderMeasuringAnotherMechanism(yawDegrees * 61.44, yawVelocity * 61.44);
+        }
+        if (hardware.slideServo != null) {
+            if (!jamSlide) slideShaftDeg += hardware.slideServo.getPhysicalPower() * (60.0 / .115) * seconds;
+            double wrapped = ((slideShaftDeg % 360) + 360) % 360;
+            hardware.slideEncoder.setVoltage(wrapped / 360 * hardware.slideEncoder.getMaxVoltage());
         }
         double x = drive == null ? 0 : drive.getX();
         double y = drive == null ? 0 : drive.getY();

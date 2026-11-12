@@ -73,12 +73,121 @@ class CompetitionSimTest {
             assertStopped(h);
         }
     }
+    /**
+     * The installed competition profile is uncalibrated, so auto aim sets yaw only and the shot uses the manual
+     * hood/RPM. While RT is held, GP2 D-pad Up / Y must change those (previously they changed hidden trims).
+     */
+    @Test void bothAlliancesAdjustManualHoodAndRpmWhileAimingWithoutACalibratedProfile() throws Exception {
+        for (String alliance : new String[]{"Red", "Blue"}) {
+            BioBuzzSimHardware h = BioBuzzSimHardware.fullRobot();
+            TeleOpScenario s = new TeleOpScenario(alliance + "-uncalibrated-aim-manual-hood-rpm", alliance + "MecanumTeleOp",
+                    h, .02, 160, 120, (p,t,a,b) -> {
+                boolean active = p == OpModePhase.ACTIVE;
+                a.right_trigger = active ? 1 : 0;
+                b.dpad_up = b.y = active && t >= 50 && t < 75; // One press of each, held 0.5 s.
+            });
+            s.run();
+            TeleOpTrace.Sample before = s.trace.at(OpModePhase.ACTIVE, 40), after = s.trace.at(OpModePhase.ACTIVE, 95);
+            assertEquals(org.firstinspires.ftc.teamcode.TurretSubsystem.pitchDegreesToServoPos(0), before.hood, 1e-9, s.diagnostic());
+            assertEquals(org.firstinspires.ftc.teamcode.TurretSubsystem.pitchDegreesToServoPos(.5), after.hood, 1e-9, s.diagnostic());
+            assertTrue(java.util.regex.Pattern.compile("Flywheel \\(RPM\\) : -?\\d+ / 3550 \\|")
+                    .matcher(after.telemetry).find(), s.diagnostic());
+            assertTrue(after.telemetry.contains("Auto trims (yaw deg / hood deg / RPM) : 0.0 / 0.0 / 0"), s.diagnostic());
+            assertStopped(h);
+        }
+    }
+    /**
+     * Autonomous left a same-alliance field pose: TeleOp applies it in INIT once the Pinpoint settles and auto aim
+     * points at the goal from the first ACTIVE loops, with no camera and no corner rehome.
+     */
+    @Test void bothAlliancesStartTeleOpAimingFromTheHandedOffAutonomousPose() throws Exception {
+        for (String alliance : new String[]{"Red", "Blue"}) {
+            boolean red = alliance.equals("Red");
+            double sign = red ? 1 : -1;
+            double x = sign * HandoffRedTeleOp.X_METERS, y = sign * HandoffRedTeleOp.Y_METERS;
+            double heading = HandoffRedTeleOp.HEADING_RAD + (red ? 0 : Math.PI);
+            BioBuzzSimHardware h = BioBuzzSimHardware.fullRobot(); // No camera: only the handoff can localize.
+            TeleOpScenario s = new TeleOpScenario(alliance + "-auto-pose-handoff", "sim.Handoff" + alliance + "TeleOp",
+                    h, .02, 160, 100, (p,t,a,b) -> a.right_trigger = p == OpModePhase.ACTIVE ? 1 : 0);
+            s.model.drive.setPose(x / .0254, y / .0254, heading);
+            h.pinpoint.attachChassisAt(x * 1000, y * 1000, heading);
+            s.run();
+            TeleOpTrace.Sample early = s.trace.at(OpModePhase.INIT_LOOP, 5), init = s.trace.at(OpModePhase.INIT_LOOP, 150);
+            assertTrue(early.telemetry.contains("| LOCAL"), s.diagnostic()); // Pinpoint still settling.
+            assertTrue(init.telemetry.contains("Auto pose handoff : APPLIED from autonomous"), s.diagnostic());
+            assertTrue(init.telemetry.contains("| EXPLICIT FIELD"), s.diagnostic());
+            TeleOpTrace.Sample end = s.trace.at(OpModePhase.ACTIVE, 90);
+            assertTrue(end.telemetry.contains("Field localization : LOCALIZED"), s.diagnostic());
+            org.firstinspires.ftc.teamcode.MotionSample truth = new org.firstinspires.ftc.teamcode.MotionSample(0,
+                    end.xIn * .0254, end.yIn * .0254, end.headingRad, 0, 0, 0, 0, .02, true, true, "plant");
+            org.firstinspires.ftc.teamcode.GoalTarget goal = org.firstinspires.ftc.teamcode.TeleOpFieldReference.target(
+                    red ? org.firstinspires.ftc.teamcode.TurretSubsystem.Alliance.RED : org.firstinspires.ftc.teamcode.TurretSubsystem.Alliance.BLUE,
+                    org.firstinspires.ftc.teamcode.TeleOpFieldReference.nearestSide(truth.y,
+                            org.firstinspires.ftc.teamcode.TurretSubsystem.HiveSide.AUDIENCE));
+            double expected = org.firstinspires.ftc.teamcode.TurretSubsystem.reachableYawDegrees(Math.toDegrees(
+                    org.firstinspires.ftc.teamcode.TeleOpFieldReference.yawRadians(truth, goal,
+                            org.firstinspires.ftc.teamcode.ShootingConfiguration.MOUNT)), end.yaw);
+            assertEquals(expected, end.yaw, 2.0, s.diagnostic());
+            assertStopped(h);
+        }
+    }
+    /**
+     * The handed-off pose is 0.6 m and 12 deg wrong (robot moved after autonomous). The camera sees the raised
+     * audience-cell tags during INIT, confirms the large disagreement, re-localizes, and auto aim then points at
+     * the real goal. Before this change such a disagreement was ignored and the turret aimed from the wrong pose.
+     */
+    @Test void bothAlliancesCameraReLocalizesAWrongHandedOffPose() throws Exception {
+        for (String alliance : new String[]{"Red", "Blue"}) {
+            boolean red = alliance.equals("Red");
+            double x = (red ? 1 : -1) * MisplacedHandoffRedTeleOp.TRUE_X_METERS, y = MisplacedHandoffRedTeleOp.TRUE_Y_METERS;
+            double heading = MisplacedHandoffRedTeleOp.TRUE_HEADING_RAD;
+            BioBuzzSimHardware h = BioBuzzSimHardware.fullRobot().withCamera(BioBuzzSimHardware.raisedAudienceTags(), true);
+            TeleOpScenario s = new TeleOpScenario(alliance + "-wrong-handoff-relocalized", "sim.MisplacedHandoff" + alliance + "TeleOp",
+                    h, .02, 250, 100, (p,t,a,b) -> a.right_trigger = p == OpModePhase.ACTIVE ? 1 : 0);
+            s.model.drive.setPose(x / .0254, y / .0254, heading);
+            h.pinpoint.attachChassisAt(x * 1000, y * 1000, heading);
+            s.run();
+            int disagree = -1, relocalized = -1;
+            for (TeleOpTrace.Sample v : s.trace.samples) if (v.phase == OpModePhase.INIT_LOOP) {
+                if (disagree < 0 && v.telemetry.contains("Camera pose check : CAMERA DISAGREES")) disagree = v.tick;
+                if (relocalized < 0 && v.telemetry.contains("Camera pose check : RE-LOCALIZED from camera")) relocalized = v.tick;
+            }
+            assertTrue(s.trace.at(OpModePhase.INIT_LOOP, 60).telemetry.contains("Auto pose handoff : APPLIED"), s.diagnostic());
+            assertTrue(disagree >= 0, "never reported the disagreement " + s.diagnostic());
+            assertTrue(relocalized > disagree, "disagree " + disagree + ", re-localized " + relocalized + " " + s.diagnostic());
+            TeleOpTrace.Sample end = s.trace.at(OpModePhase.ACTIVE, 90);
+            assertTrue(end.telemetry.contains("Field localization : LOCALIZED"), s.diagnostic());
+            org.firstinspires.ftc.teamcode.TurretSubsystem.Alliance goalAlliance = red
+                    ? org.firstinspires.ftc.teamcode.TurretSubsystem.Alliance.RED : org.firstinspires.ftc.teamcode.TurretSubsystem.Alliance.BLUE;
+            org.firstinspires.ftc.teamcode.MotionSample truth = new org.firstinspires.ftc.teamcode.MotionSample(0,
+                    end.xIn * .0254, end.yIn * .0254, end.headingRad, 0, 0, 0, 0, .02, true, true, "plant");
+            org.firstinspires.ftc.teamcode.GoalTarget goal = org.firstinspires.ftc.teamcode.TeleOpFieldReference.target(goalAlliance,
+                    org.firstinspires.ftc.teamcode.TeleOpFieldReference.nearestSide(truth.y,
+                            org.firstinspires.ftc.teamcode.TurretSubsystem.HiveSide.AUDIENCE));
+            double expected = org.firstinspires.ftc.teamcode.TurretSubsystem.reachableYawDegrees(Math.toDegrees(
+                    org.firstinspires.ftc.teamcode.TeleOpFieldReference.yawRadians(truth, goal,
+                            org.firstinspires.ftc.teamcode.ShootingConfiguration.MOUNT)), end.yaw);
+            // Aiming from the wrong handed-off pose would have been far off: the scenario really tests the fix.
+            double errorX = (red ? 1 : -1) * MisplacedHandoffRedTeleOp.ERROR_X_METERS;
+            double errorHeading = (red ? 1 : -1) * MisplacedHandoffRedTeleOp.ERROR_HEADING_RAD;
+            org.firstinspires.ftc.teamcode.MotionSample wrong = new org.firstinspires.ftc.teamcode.MotionSample(0,
+                    x + errorX, y, heading + errorHeading, 0, 0, 0, 0, .02, true, true, "handoff");
+            double wrongYaw = Math.toDegrees(org.firstinspires.ftc.teamcode.TeleOpFieldReference.yawRadians(wrong, goal,
+                    org.firstinspires.ftc.teamcode.ShootingConfiguration.MOUNT));
+            assertTrue(Math.abs(org.firstinspires.ftc.teamcode.TurretSubsystem.normalizeAngleDegrees(wrongYaw - expected)) > 20,
+                    "wrong-pose aim " + wrongYaw + " vs " + expected);
+            assertEquals(expected, end.yaw, 2.0, s.diagnostic());
+            System.out.println("Wrong handoff " + alliance + ": disagreement at INIT tick " + disagree + ", re-localized at "
+                    + relocalized + ", final yaw " + end.yaw + " vs " + expected + " (wrong pose would aim " + wrongYaw + ")");
+            assertStopped(h);
+        }
+    }
     @Test void bothAlliancesFieldRehomeInInitAndActiveUsesPressEdgesWithoutCamera() throws Exception {
         for (String alliance : new String[]{"Red", "Blue"}) for (boolean inInit : new boolean[]{false, true}) {
             BioBuzzSimHardware h = BioBuzzSimHardware.fullRobot();
             TeleOpScenario s = new TeleOpScenario(alliance + "-field-rehome-" + inInit,
                     alliance + "MecanumTeleOp", h, .02, 160, 130, (p,t,a,b) -> {
-                b.dpad_left = p == OpModePhase.INIT ? inInit && t >= 150
+                b.dpad_left = p == OpModePhase.INIT_LOOP ? inInit && t >= 150
                         : p == OpModePhase.ACTIVE && ((t >= (inInit ? 0 : 20) && t < 60)
                         || (t >= 80 && t < 110));
                 a.left_stick_y = p == OpModePhase.ACTIVE ? -.25f : 0;
@@ -119,6 +228,56 @@ class CompetitionSimTest {
             assertTrue(sign * (poses.get(105)[0] - poses.get(80)[0]) < -.01, s.diagnostic());
             assertTrue(s.trace.at(OpModePhase.ACTIVE, 50).powers[0] != 0, s.diagnostic());
             assertEquals(.5, s.trace.at(OpModePhase.ACTIVE, 105).gatePosition, s.diagnostic());
+            assertStopped(h);
+        }
+    }
+
+    /**
+     * A corner rehome pressed while TeleOp INIT is still recalibrating the Pinpoint IMU waits for a settled READY
+     * device (the rule the autonomous handoff and Pedro setFieldPose already follow), then applies exactly once.
+     * The SimLoop firmware keeps a pose written during calibration, so this checks the ordering, not pose loss.
+     */
+    @Test void bothAlliancesCornerRehomeDuringInitCalibrationWaitsForSettledPinpoint() throws Exception {
+        for (String alliance : new String[]{"Red", "Blue"}) {
+            BioBuzzSimHardware h = BioBuzzSimHardware.fullRobot();
+            TeleOpScenario s = new TeleOpScenario(alliance + "-corner-rehome-during-calibration",
+                    alliance + "MecanumTeleOp", h, .02, 100, 20, (p,t,a,b) -> {
+                b.dpad_left = p == OpModePhase.INIT_LOOP && t < 3; // Pressed before the first loop's Pinpoint read.
+            });
+            java.util.Map<Integer, double[]> poses = new java.util.HashMap<>();
+            s.observer = v -> {
+                if (v.phase != OpModePhase.INIT_LOOP) return;
+                org.firstinspires.ftc.robotcore.external.navigation.Pose2D p = h.pinpoint.getPosition();
+                poses.put(v.tick, new double[]{
+                        p.getX(org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.METER),
+                        p.getY(org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.METER),
+                        p.getHeading(org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS)});
+            };
+            s.run();
+            double sign = alliance.equals("Blue") ? 1 : -1;
+            double cornerX = sign * (72 * .0254 - .262481), cornerY = -sign * (72 * .0254 - .15835);
+            double cornerHeading = alliance.equals("Blue") ? Math.PI : 0;
+            // Calibration (0.25 s) plus the 0.5 s READY settle: nothing is written for the first ~0.7 s.
+            for (int tick = 0; tick <= 30; tick++) {
+                assertEquals(0, poses.get(tick)[0], 1e-6, "tick " + tick + " " + s.diagnostic());
+                assertEquals(0, poses.get(tick)[1], 1e-6, "tick " + tick + " " + s.diagnostic());
+            }
+            assertTrue(s.trace.at(OpModePhase.INIT_LOOP, 5).telemetry.contains("Corner rehome (GP2 D-pad Left) : WAITING"),
+                    s.diagnostic());
+            int applied = -1;
+            for (int tick = 0; tick < 100 && applied < 0; tick++)
+                if (Math.abs(poses.get(tick)[0] - cornerX) < 1e-6) applied = tick;
+            assertTrue(applied > 30 && applied < 60, "applied at INIT tick " + applied + " " + s.diagnostic());
+            for (int tick = applied; tick < 100; tick++) {
+                assertEquals(cornerX, poses.get(tick)[0], 1e-6, s.diagnostic());
+                assertEquals(cornerY, poses.get(tick)[1], 1e-6, s.diagnostic());
+                assertEquals(0, org.firstinspires.ftc.teamcode.RobotMath.wrap(poses.get(tick)[2] - cornerHeading), 1e-6);
+            }
+            assertTrue(s.trace.at(OpModePhase.INIT_LOOP, 99).telemetry.contains("Corner rehome (GP2 D-pad Left) : APPLIED"),
+                    s.diagnostic());
+            assertTrue(s.trace.at(OpModePhase.ACTIVE, 10).telemetry.contains("Field localization : LOCALIZED"), s.diagnostic());
+            assertFalse(s.trace.at(OpModePhase.ACTIVE, 10).telemetry.contains("Corner rehome"), s.diagnostic());
+            System.out.println("Corner rehome during calibration " + alliance + ": applied at INIT tick " + applied);
             assertStopped(h);
         }
     }
@@ -242,13 +401,17 @@ class CompetitionSimTest {
             assertFalse(s.result.endedBeforeStop(), s.diagnostic());
             assertTrue(s.result.warnings().isEmpty(), s.diagnostic());
             assertTrue(s.trace.at(OpModePhase.ACTIVE, 35).xIn > 0, s.diagnostic());
-            assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 35).transfer1Power, s.diagnostic());
-            assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 35).transfer2Power, s.diagnostic());
-            assertEquals(-1, s.trace.at(OpModePhase.ACTIVE, 35).intakePower, s.diagnostic());
+            // 0.2 s HIGH (about tick 10) confirms full: the intake stops (no reversal) while stage 1
+            // runs on 0.5 s (to about tick 35) to seat the fourth ball, then stops.
+            assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 25).transfer1Power, s.diagnostic());
+            assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 25).transfer2Power, s.diagnostic());
+            assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 25).intakePower, s.diagnostic());
+            assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 39).transfer1Power, s.diagnostic());
+            assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 39).intakePower, s.diagnostic());
             assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 55).transfer1Power, s.diagnostic());
             assertEquals(-1, s.trace.at(OpModePhase.ACTIVE, 45).intakePower, s.diagnostic());
             assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 65).intakePower, s.diagnostic());
-            assertEquals(-1, s.trace.at(OpModePhase.ACTIVE, 130).intakePower, s.diagnostic());
+            assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 130).intakePower, s.diagnostic());
             assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 130).transfer1Power, s.diagnostic());
             // RB overrides confirmed full on GP2 as well as GP1, without running stage 2 or opening the gate.
             assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 95).intakePower, s.diagnostic());
@@ -356,6 +519,31 @@ class CompetitionSimTest {
             peak = Math.max(peak, Math.abs(Math.toDegrees(org.firstinspires.ftc.teamcode.RobotMath.wrap(b - a))) / (5 * .02));
         }
         return peak;
+    }
+
+    @Test void bothAlliancesToggleSlideOnGp2AndClawOnGp1() throws Exception {
+        for (String alliance : new String[]{"Red", "Blue"}) {
+            BioBuzzSimHardware h = BioBuzzSimHardware.fullRobot();
+            TeleOpScenario s = new TeleOpScenario(alliance + "-slide-claw", alliance + "MecanumTeleOp", h,
+                    .02, 3, 200, (p,t,a,b) -> {
+                boolean press = p == OpModePhase.ACTIVE && ((t >= 10 && t < 13) || (t >= 100 && t < 103));
+                b.left_stick_button = press;
+                a.b = press;
+            });
+            s.run();
+            assertTrue(s.trace.samples.stream().filter(v -> v.phase == OpModePhase.INIT || v.phase == OpModePhase.INIT_LOOP).allMatch(v -> v.slidePower == 0), s.diagnostic());
+            assertEquals(.60, s.trace.at(OpModePhase.ACTIVE, 5).claw, 1e-9);
+            assertEquals(.40, s.trace.at(OpModePhase.ACTIVE, 20).claw, 1e-9);
+            TeleOpTrace.Sample up = s.trace.at(OpModePhase.ACTIVE, 90);
+            assertEquals(180, up.slideTravelDeg, 5, s.diagnostic());
+            assertEquals(0, up.slidePower, 0, s.diagnostic());
+            assertTrue(up.telemetry.contains("Slide (GP2 LS) : UP"), up.telemetry);
+            TeleOpTrace.Sample down = s.trace.at(OpModePhase.ACTIVE, 190);
+            assertEquals(0, down.slideTravelDeg, 5, s.diagnostic());
+            assertEquals(.60, down.claw, 1e-9);
+            assertEquals(0, h.slideServo.getPower(), 0);
+            assertStopped(h);
+        }
     }
 
     static void assertStopped(BioBuzzSimHardware h) {

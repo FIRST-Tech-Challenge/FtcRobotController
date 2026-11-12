@@ -36,6 +36,18 @@ public final class PoseHistory {
     public static final double DRIFT_WINDOW_SECONDS = 1.0, DRIFT_BLEND_SECONDS = .4;
     public static final double DRIFT_POSITION_DEADBAND_METERS = .04, DRIFT_HEADING_DEADBAND_RAD = Math.toRadians(1.5);
     public static final double DRIFT_FRAME_AGREEMENT_METERS = .04, DRIFT_FRAME_AGREEMENT_RAD = Math.toRadians(1.5);
+    /**
+     * A disagreement beyond MAX_JUMP_METERS / MAX_HEADING_CORRECTION_RAD usually means the odometry reference itself
+     * is wrong (pods slipped in a collision, a corner rehome or autonomous handoff from the wrong place). It
+     * re-localizes only after at least RELOCALIZE_FRAMES settled frames, each fusing at least RELOCALIZE_MIN_TAGS
+     * agreeing tags, spanning RELOCALIZE_MIN_SPAN_SECONDS inside RELOCALIZE_WINDOW_SECONDS, all imply the same rigid
+     * correction (drift agreement limits) and put the robot on the field. Any frame that agrees with odometry, an
+     * inconsistent frame set or a single-tag frame restarts the count. The correction blends in like drift.
+     */
+    public static final int RELOCALIZE_FRAMES = 10, RELOCALIZE_MIN_TAGS = 2;
+    public static final double RELOCALIZE_MIN_SPAN_SECONDS = .5, RELOCALIZE_WINDOW_SECONDS = 1.0;
+    /** How long the driver view keeps showing a large disagreement / a completed re-localization. */
+    public static final double DISAGREEMENT_DISPLAY_SECONDS = 1.0, RELOCALIZED_DISPLAY_SECONDS = 3.0;
     public static final class Entry {
         public final MotionSample pose;
         public final double turretYaw;
@@ -50,19 +62,24 @@ public final class PoseHistory {
     private double lastObservation = Double.NEGATIVE_INFINITY;
     /** Settled camera-minus-odometry samples: {capture, headingError, dx, dy, pivotX, pivotY}. */
     private final Deque<double[]> driftFrames = new ArrayDeque<>();
+    /** Large-disagreement frames: {capture, cameraHeading, cameraX, cameraY, odometryHeading, odometryX, odometryY}. */
+    private final Deque<double[]> largeFrames = new ArrayDeque<>();
+    private double largeSeenAt = Double.NEGATIVE_INFINITY, relocalizedAt = Double.NEGATIVE_INFINITY;
+    private String largeStatus = "", relocalizedSummary = "";
     private double blendYaw, blendX, blendY, blendPivotX, blendPivotY, blendRemaining, blendTime;
     private double acceptedUncertainty = Double.NaN;
     private String reason = "No target observation";
     public void reset() {
         history.clear(); acceptedUncertainty = Double.NaN; correctionX = correctionY = 0; lastFrame = lastObservation = Double.NEGATIVE_INFINITY;
         correctionYaw = 0; visionFieldReference = false; candidateFrames = 0;
-        driftFrames.clear(); blendRemaining = 0;
+        driftFrames.clear(); largeFrames.clear(); blendRemaining = 0;
+        largeSeenAt = relocalizedAt = Double.NEGATIVE_INFINITY;
         reason = "Reference / target changed";
     }
     /** A new target or encoder home does not change the established local-to-field transform. */
     public void invalidateObservation(boolean clearHistory) {
         if (clearHistory) history.clear();
-        candidateFrames = 0; driftFrames.clear();
+        candidateFrames = 0; driftFrames.clear(); largeFrames.clear();
         lastFrame = lastObservation = Double.NEGATIVE_INFINITY;
         if (!visionFieldReference) acceptedUncertainty = Double.NaN;
         reason = "Target / turret reference changed";
@@ -352,8 +369,8 @@ public final class PoseHistory {
         double headingError = RobotMath.wrap(fix[0]-e.pose.heading);
         double dx = fix[1]-e.pose.x, dy = fix[2]-e.pose.y;
         if (Math.hypot(dx,dy) > MAX_JUMP_METERS || Math.abs(headingError) > MAX_HEADING_CORRECTION_RAD)
-            return reject(String.format(java.util.Locale.US,"Camera disagrees with odometry by %.0f cm / %.1f deg; ignored",
-                    100*Math.hypot(dx,dy),Math.toDegrees(headingError)));
+            return largeDisagreement(now,capture,tags.size(),fix,e.pose);
+        largeFrames.clear(); // This frame agrees with odometry: no evidence that the reference is wrong.
         while (!driftFrames.isEmpty() && (capture-driftFrames.peekFirst()[0] > DRIFT_WINDOW_SECONDS || driftFrames.size() >= DRIFT_FRAMES))
             driftFrames.removeFirst();
         driftFrames.addLast(new double[]{capture,headingError,dx,dy,e.pose.x,e.pose.y});
@@ -383,6 +400,78 @@ public final class PoseHistory {
         driftFrames.clear();
         reason = "Odometry drift corrected (" + delta + ")";
         return true;
+    }
+    /**
+     * One settled frame whose camera pose disagrees with odometry beyond the drift limits. Collects consistent
+     * multi-tag evidence and, once confirmed, re-localizes through the same blended rigid correction as drift.
+     */
+    private boolean largeDisagreement(double now, double capture, int tagCount, double[] fix, MotionSample odometry) {
+        double headingError = RobotMath.wrap(fix[0]-odometry.heading);
+        String size = String.format(java.util.Locale.US,"%.0f cm / %.1f deg",
+                100*Math.hypot(fix[1]-odometry.x,fix[2]-odometry.y),Math.toDegrees(headingError));
+        String disagreement = "Camera disagrees with odometry by " + size;
+        largeSeenAt = now;
+        if (tagCount < RELOCALIZE_MIN_TAGS) {
+            largeFrames.clear(); largeStatus = size + " | needs " + RELOCALIZE_MIN_TAGS + "+ tags in view";
+            return reject(disagreement + "; ignored (re-localizing needs " + RELOCALIZE_MIN_TAGS + "+ tags per frame)");
+        }
+        if (Math.abs(fix[1]) > TeleOpFieldReference.FIELD_HALF_WIDTH_METERS || Math.abs(fix[2]) > TeleOpFieldReference.FIELD_HALF_WIDTH_METERS) {
+            largeFrames.clear(); largeStatus = size + " | camera pose off the field";
+            return reject(disagreement + "; ignored (camera pose outside field)");
+        }
+        while (!largeFrames.isEmpty() && (capture-largeFrames.peekFirst()[0] > RELOCALIZE_WINDOW_SECONDS || largeFrames.size() >= 256))
+            largeFrames.removeFirst();
+        largeFrames.addLast(new double[]{capture,fix[0],fix[1],fix[2],odometry.heading,odometry.x,odometry.y});
+        double span = capture-largeFrames.peekFirst()[0];
+        if (largeFrames.size() < RELOCALIZE_FRAMES || span < RELOCALIZE_MIN_SPAN_SECONDS) {
+            largeStatus = String.format(java.util.Locale.US,"%s | confirming %d/%d frames, %.1f/%.1f s",size,
+                    Math.min(largeFrames.size(),RELOCALIZE_FRAMES),RELOCALIZE_FRAMES,span,RELOCALIZE_MIN_SPAN_SECONDS);
+            return reject(disagreement + "; confirming " + Math.min(largeFrames.size(),RELOCALIZE_FRAMES) + "/" + RELOCALIZE_FRAMES + " frames");
+        }
+        // The rigid correction rotates about the mean odometry position, then translates: frame i is matched when
+        // move_i = camera_i - pivot - R(turn)(odometry_i - pivot). Every frame must imply the same turn and move.
+        double sin = 0, cos = 0, pivotX = 0, pivotY = 0;
+        for (double[] f : largeFrames) {
+            double turn = RobotMath.wrap(f[1]-f[4]);
+            sin += Math.sin(turn); cos += Math.cos(turn); pivotX += f[5]; pivotY += f[6];
+        }
+        int n = largeFrames.size();
+        double turn = Math.atan2(sin,cos); pivotX /= n; pivotY /= n;
+        Vec pivot = new Vec(pivotX,pivotY);
+        Vec[] moves = new Vec[n];
+        double moveX = 0, moveY = 0;
+        int i = 0;
+        for (double[] f : largeFrames) {
+            moves[i] = new Vec(f[2],f[3]).minus(pivot).minus(new Vec(f[5],f[6]).minus(pivot).rotate(turn));
+            moveX += moves[i].x; moveY += moves[i].y; i++;
+        }
+        moveX /= n; moveY /= n;
+        i = 0;
+        for (double[] f : largeFrames) {
+            if (Math.abs(RobotMath.wrap(f[1]-f[4]-turn)) > DRIFT_FRAME_AGREEMENT_RAD
+                    || Math.hypot(moves[i].x-moveX,moves[i].y-moveY) > DRIFT_FRAME_AGREEMENT_METERS) {
+                largeFrames.clear(); largeStatus = size + " | camera frames inconsistent";
+                return reject(disagreement + "; camera frames inconsistent, odometry kept");
+            }
+            i++;
+        }
+        blendYaw = turn; blendX = moveX; blendY = moveY; blendPivotX = pivotX; blendPivotY = pivotY;
+        blendRemaining = DRIFT_BLEND_SECONDS; blendTime = history.getLast().pose.time;
+        driftFrames.clear(); largeFrames.clear();
+        relocalizedAt = now;
+        relocalizedSummary = String.format(java.util.Locale.US,"moved %.0f cm, turned %.1f deg",
+                100*Math.hypot(moveX,moveY),Math.toDegrees(turn));
+        acceptRelative(capture,fix[3]);
+        reason = "Odometry re-localized from camera after " + n + " consistent frames (" + relocalizedSummary + ")";
+        return true;
+    }
+    /** Driver view: a recent re-localization or large camera disagreement; null when there is nothing to report. */
+    public String largeCorrectionStatus(double now) {
+        if (now >= relocalizedAt && now-relocalizedAt <= RELOCALIZED_DISPLAY_SECONDS)
+            return "RE-LOCALIZED from camera (" + relocalizedSummary + ")";
+        if (now >= largeSeenAt && now-largeSeenAt <= DISAGREEMENT_DISPLAY_SECONDS)
+            return "CAMERA DISAGREES " + largeStatus;
+        return null;
     }
     /** Spreads a drift correction over several loops: rotate about the drift pivot, then translate. */
     private void applyBlend(double time) {

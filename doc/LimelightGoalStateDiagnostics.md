@@ -127,7 +127,13 @@ After the first field reference, Pinpoint odometry owns the pose. Each settled c
 turret and chassis turning under 20 deg/s) is compared with odometry. The last five such frames within one second
 are averaged; if they agree with odometry within 4 cm and 1.5 deg, nothing changes (`Vision decision : Odometry agrees
 with camera`). A consistent larger difference is real drift: it is blended in over 0.4 s (`Odometry drift corrected`).
-Differences over 0.5 m or 8 deg are reported and ignored (`Camera disagrees with odometry ... ignored`).
+Differences over 0.5 m or 8 deg are not drift: the odometry reference itself is probably wrong (pods slipped, a
+corner rehome or autonomous handoff from the wrong place). Since 2026-11-10 they re-localize the pose only when
+confirmed: at least 10 settled frames spanning 0.5 s within 1 s, each fusing 2+ agreeing tags, all implying the same
+correction (4 cm / 1.5 deg) and a pose on the field (`PoseHistory.RELOCALIZE_*`). The correction blends in over 0.4 s
+like drift (`Odometry re-localized from camera`). Until then frames are reported and ignored (`Camera disagrees with
+odometry ... confirming n/10`, `... needs 2+ tags`, `... inconsistent`); any frame that agrees with odometry restarts
+the count. The driver view shows **Camera pose check** (CAMERA DISAGREES / RE-LOCALIZED) while this happens.
 
 ## Camera delay breakdown
 

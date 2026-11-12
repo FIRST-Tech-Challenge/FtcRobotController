@@ -16,7 +16,8 @@ public class TransferSubsystem {
     public static final DcMotor.Direction MOTOR_DIRECTION = DcMotor.Direction.REVERSE;
     public static final DcMotor.Direction STAGE_2_MOTOR_DIRECTION = DcMotor.Direction.FORWARD;
     public static final double TRANSFER_POWER = 1.0;
-    public static final double FULL_CONFIRM_TIME_SECONDS = 0.5;
+    public static final double FULL_CONFIRM_TIME_SECONDS = 0.2;
+    // After full confirmation stage 1 keeps running this long to seat the fourth ball.
     public static final double STAGE_1_FULL_RUN_ON_SECONDS = 0.5;
     // goBILDA 3124-0001-0001 digital mode: HIGH = object within the configured threshold.
     public static final boolean FULL_SENSOR_ACTIVE_STATE = true;
@@ -61,8 +62,8 @@ public class TransferSubsystem {
      * Feed runs both stages regardless of the full sensor; caller owns gate timing and interlocks,
      * including immediate continuous feed and closed-gate timed recovery in competition TeleOp.
      * Otherwise stage 1 loads unless full or paused for aiming/gate delay; stage 2 stays stopped.
-     * Stage 1 runs on for 0.5 s after full confirmation, then stops while HIGH remains confirmed.
-     * LOW clears full immediately and resumes loading unless paused.
+     * Full is confirmed after 0.2 s of continuous HIGH; stage 1 runs on for 0.5 s to seat the fourth
+     * ball, then stays stopped while HIGH. LOW clears full immediately and resumes loading unless paused.
      * Pausing or feeding cancels the run-on; stage 2 stays off outside feeding.
      */
     public void update(boolean feedBalls, boolean pauseLoading) {

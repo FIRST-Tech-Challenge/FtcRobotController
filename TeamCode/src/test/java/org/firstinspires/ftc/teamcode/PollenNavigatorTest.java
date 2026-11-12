@@ -9,10 +9,10 @@ public class PollenNavigatorTest {
     private PollenNavigator navigator;
     private static long at(double seconds) { return START + (long) (seconds * 1e9); }
     private static PollenTarget target(long time, double forwardMm, double rightMm) {
-        double pitch = Math.toRadians(10), z = forwardMm * Math.cos(pitch) + 180 * Math.sin(pitch);
+        double pitch = Math.toRadians(15), z = forwardMm * Math.cos(pitch) + 180 * Math.sin(pitch);
         double down = -forwardMm * Math.sin(pitch) + 180 * Math.cos(pitch);
         double x = 160 + 280 * rightMm / z, y = 120 + 280 * down / z;
-        return PollenTarget.fromFloorContact(time, x, y - 10, x, y, 150, 280, 280, 160, 120, 180, 10, 0, 0);
+        return PollenTarget.fromFloorContact(time, x, y - 10, x, y, 150, 280, 280, 160, 120, 180, 15, 0, 0);
     }
     private void update(double t, PollenTarget target, double x, double y, double heading, boolean ready, boolean full) {
         navigator.update(at(t), target, x, y, heading, ready, full);

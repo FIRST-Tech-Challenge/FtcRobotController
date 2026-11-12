@@ -25,6 +25,7 @@ final class TeleOpTrace {
         double xIn, yIn, headingRad, gatePosition, gatePhysical, gatePulseUs;
         boolean feedAllowed;
         double intakePower, transfer1Power, transfer2Power, flywheelVelocity, yaw, yawCommand, hood, depollinator;
+        double slidePower, slideTravelDeg, claw;
         boolean distanceHigh;
 
         String decoded() {
@@ -34,7 +35,8 @@ final class TeleOpTrace {
                     + "\t" + gatePhysical + "\t" + gatePulseUs + "\t" + feedAllowed
                     + "\t" + intakePower + "\t" + transfer1Power + "\t" + transfer2Power
                     + "\t" + flywheelVelocity + "\t" + yaw + "\t" + yawCommand + "\t" + hood
-                    + "\t" + depollinator + "\t" + distanceHigh + "\t" + telemetry;
+                    + "\t" + depollinator + "\t" + slidePower + "\t" + slideTravelDeg + "\t" + claw
+                    + "\t" + distanceHigh + "\t" + telemetry;
         }
     }
 
@@ -99,6 +101,11 @@ final class TeleOpTrace {
         if (hardware.yaw1 != null) { s.yawCommand = hardware.yaw1.getPosition(); s.yaw = model.yawDegrees; }
         if (hardware.hood != null) s.hood = hardware.hood.getPosition();
         if (hardware.depollinator != null) s.depollinator = hardware.depollinator.getPosition();
+        if (hardware.slideServo != null) {
+            s.slidePower = hardware.slideServo.getPower();
+            s.slideTravelDeg = model.slideShaftDeg - BioBuzzSimHardware.SLIDE_START_SHAFT_DEG;
+        }
+        if (hardware.claw != null) s.claw = hardware.claw.getPosition();
         if (hardware.distance != null) s.distanceHigh = hardware.distance.getState();
         s.feedAllowed = telemetry.lastTransmission().contains("Gate Feed Allowed : true");
         samples.add(s);
@@ -119,7 +126,7 @@ final class TeleOpTrace {
         List<String> rows = new ArrayList<>();
         rows.add("phase\ttick\tseconds\tinput\twheelPowers\tshaftTicksPerSecond\txIn\tyIn\theadingRad"
                 + "\tgateLogical\tgatePhysical\tgatePulseUs\tfeedAllowed\tintakePower\ttransfer1Power\ttransfer2Power"
-                + "\tflywheelTicksPerSecond\tyawDegrees\tyawServoCommand\thoodServo\tdepollinatorServo\tdistanceHigh\ttelemetry");
+                + "\tflywheelTicksPerSecond\tyawDegrees\tyawServoCommand\thoodServo\tdepollinatorServo\tslidePower\tslideTravelDeg\tclawServo\tdistanceHigh\ttelemetry");
         rows.addAll(decoded());
         Files.write(directory.resolve("trace.tsv"), rows, StandardCharsets.UTF_8);
         track.close();

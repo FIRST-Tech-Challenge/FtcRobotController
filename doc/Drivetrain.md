@@ -46,7 +46,9 @@ encoder-controlled TeleOp and open-loop Pedro/autonomous, including direct wheel
 commands. Joysticks keep the usual negative-Y-to-forward mapping; positive wheel
 power means wheel-forward after the motor-direction correction. Use
 **Test: Drivetrain Only** and its RB + X/Y/A/B wheel
-checks to verify actual forward/strafe/turn signs after mechanical work. The gear
+checks to verify actual forward/strafe/turn signs after mechanical work. Without RB,
+hold Y/A/X/B for a repeatable 30% forward/backward/strafe-left/strafe-right drive
+to compare loaded wheel velocities. The gear
 mesh reverses shaft rotation; the installed orientation determines each wheel's sign.
 
 `MecanumDrivetrain` also owns the nominal wheel diameter, circumference, motor
@@ -55,7 +57,8 @@ speed depend on roller compression and slip. Pinpoint uses its own
 odometry pods; their resolution and offsets do not change with drive gearing.
 Pedro's Java/editor velocities and braking remain explicit unmeasured examples,
 with `TUNING_VERIFIED = false`. Measure loaded forward/strafe speed and braking on
-this transmission before replacing those examples. Shooter and intake gearing
+this transmission with the [Pedro web tuner](Autonomous.md#pedro-web-tuner) before
+replacing those examples. Shooter and intake gearing
 are separate mechanisms.
 
 November 2 transmission simulation decision: use the isolated drive test, both actual competition wrappers

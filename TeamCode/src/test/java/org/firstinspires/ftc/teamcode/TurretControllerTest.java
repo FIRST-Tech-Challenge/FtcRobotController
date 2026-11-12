@@ -230,6 +230,16 @@ public class TurretControllerTest {
         assertEquals(2, TurretControl.robotHeadingToYawDegrees(359)
                 - TurretControl.robotHeadingToYawDegrees(1), 1e-8);
     }
+    /** Home direction is set once in TurretSubsystem; heading telemetry and the shooter mount both read it. */
+    @Test public void rightFacingHomeIsOneOffsetSharedByHeadingsAndShooterMount() {
+        assertEquals(90, TurretSubsystem.ROTATION_HOME_ROBOT_HEADING_DEG, 0);
+        assertEquals(TurretSubsystem.ROTATION_HOME_ROBOT_HEADING_DEG,
+                TurretControl.yawToRobotHeadingDegrees(TurretSubsystem.ROTATION_HOME_ANGLE_DEG), 1e-8);
+        // CCW mount offset and CW robot heading describe the same direction.
+        assertEquals(0, TurretSubsystem.normalizeAngleDegrees(TurretSubsystem.TURRET_ZERO_ROBOT_HEADING_OFFSET_DEG
+                + TurretSubsystem.ROTATION_HOME_ROBOT_HEADING_DEG), 1e-8);
+        assertEquals(-Math.PI / 2, ShootingConfiguration.MOUNT.zeroYaw, 1e-12);
+    }
     @Test public void hoodDownIncreasesPwmAwayFromUpperStopAndUpReturnsHome() {
         assertEquals(15, TurretSubsystem.hoodTravelToLaunchAngleDegrees(0), 0);
         assertEquals(0, TurretSubsystem.hoodTravelToLaunchAngleDegrees(15), 0);
@@ -278,5 +288,55 @@ public class TurretControllerTest {
         // Mid-unwind (turret near home) the far-side target stays committed even near the zone.
         assertEquals(-(max - 1), TurretSubsystem.reachableYawDegrees(-(max - 1), 30), 1e-9);
         assertTrue(Double.isNaN(TurretSubsystem.reachableYawDegrees(Double.NaN, 0)));
+    }
+
+    @Test public void deadZoneBearingFromTheFrontHalfTakesTheNearerLimit() {
+        double max = TurretSubsystem.ROTATION_MAX_ANGLE_DEG;
+        // Freshly homed (0 deg) or anywhere in the front half: go to the limit next to the bearing.
+        assertEquals(-max, TurretSubsystem.reachableYawDegrees(-178, 0), 1e-9);
+        assertEquals(max, TurretSubsystem.reachableYawDegrees(178, 0), 1e-9);
+        assertEquals(-max, TurretSubsystem.reachableYawDegrees(-178, 60), 1e-9);
+        assertEquals(max, TurretSubsystem.reachableYawDegrees(178, -60), 1e-9);
+        assertEquals(-max, TurretSubsystem.reachableYawDegrees(-178, Double.NaN), 1e-9);
+        // Mid-unwind toward -172, a bearing that slips into the zone keeps the unwind going instead of reversing.
+        assertEquals(-max, TurretSubsystem.reachableYawDegrees(-177, 30), 1e-9);
+        assertEquals(max, TurretSubsystem.reachableYawDegrees(177, -30), 1e-9);
+        // In the rear half the turret still holds the side it already reached.
+        assertEquals(max, TurretSubsystem.reachableYawDegrees(-178, 120), 1e-9);
+        assertEquals(-max, TurretSubsystem.reachableYawDegrees(178, -120), 1e-9);
+    }
+
+    /** Servo settles {@code shortDeg} short of its command; first-order 30 ms response. Returns {not-ready ticks, final correction}. */
+    private static double[] trackDrift(TurretControl c, double driftDegPerSecond, double shortDeg) {
+        double t = 0, dt = .02, measured = 0, velocity = 0, target = 10;
+        int notReady = 0;
+        for (int i = 0; i < 400; i++) { // 2 s stationary learning, then 6 s of steady drift
+            t += dt;
+            if (i >= 100) target += driftDegPerSecond * dt;
+            double command = c.updateYawCommand(t, target, measured, velocity, true);
+            double next = measured + ((command - shortDeg) - measured) * -Math.expm1(-dt / .03);
+            velocity = (next - measured) / dt; measured = next;
+            if (i >= 100 && !ShotReadiness.angleReady(target - measured)) notReady++;
+        }
+        return new double[] { notReady, c.getEncoderCorrectionDegrees(), target };
+    }
+
+    @Test public void learnedCorrectionIsKeptWhileTrackingAndResetOnlyByATargetJump() {
+        for (double drift : new double[] { 0, 2, 5, -5, 20 }) { // 20 deg/s ends at 130 deg, inside the travel limits
+            TurretControl c = new TurretControl(); c.setEncoderCorrectionEnabled(true);
+            double[] result = trackDrift(c, drift, 4);
+            // Previously the offset was dropped every 3 deg of target motion: 17% (2 deg/s) to 90% (5 deg/s) not ready.
+            assertEquals("drift " + drift, 0, result[0], 0);
+            assertEquals("drift " + drift, 4, result[1], .2);
+            // A jump larger than one loop of rated travel is a new episode: start again from the servo position.
+            c.updateYawCommand(8.02, result[2] + TurretControl.ENCODER_CORRECTION_RESET_STEP_DEG + 1, result[2], 0, true);
+            assertEquals(0, c.getEncoderCorrectionDegrees(), 0);
+            assertFalse(c.hasAppliedEncoderCorrection());
+        }
+        // Losing home also discards it.
+        TurretControl c = new TurretControl(); c.setEncoderCorrectionEnabled(true);
+        double[] result = trackDrift(c, 2, 4);
+        c.updateYawCommand(8.02, result[2], result[2], 0, false);
+        assertEquals(0, c.getEncoderCorrectionDegrees(), 0);
     }
 }

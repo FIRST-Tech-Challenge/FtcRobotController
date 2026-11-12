@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.sim;
 import org.horizon36596.simloop.fakehardware.FakeHardwareMap;
 import org.horizon36596.simloop.fakehardware.FakeMotor;
 import org.horizon36596.simloop.fakehardware.FakeServo;
+import org.horizon36596.simloop.fakehardware.FakeCRServo;
+import org.horizon36596.simloop.fakehardware.FakeAnalogInput;
 import org.horizon36596.simloop.fakehardware.FakeDigitalChannel;
 import org.horizon36596.simloop.fakehardware.FakeVoltageSensor;
 import org.horizon36596.simloop.fakehardware.FakeGoBildaPinpoint;
@@ -19,6 +21,9 @@ final class BioBuzzSimHardware {
     FakeMotor intake, transfer1, transfer2, flywheel, encoder;
     FakeServo yaw1, yaw2, hood, depollinator;
     FakeServo ledIntake, ledShooter, ledStatus;
+    FakeCRServo slideServo;
+    FakeAnalogInput slideEncoder;
+    FakeServo claw;
     FakeDigitalChannel distance;
     FakeGoBildaPinpoint pinpoint;
     FakeLimelight3A camera;
@@ -51,6 +56,16 @@ final class BioBuzzSimHardware {
     }
     BioBuzzSimHardware withDepollinator() {
         depollinator = servo("depollinator"); return this;
+    }
+    /** Slide CR servo, its analog feedback and the claw. The model starts the servo shaft at
+     * 300 deg so the first raise crosses the analog 360/0 wrap. */
+    static final double SLIDE_START_SHAFT_DEG = 300;
+    BioBuzzSimHardware withSlide() {
+        slideServo = new FakeCRServo(); map.register("slide_servo", slideServo);
+        slideEncoder = new FakeAnalogInput(); map.register("slide_encoder", slideEncoder);
+        slideEncoder.setVoltage(SLIDE_START_SHAFT_DEG / 360 * slideEncoder.getMaxVoltage());
+        claw = servo("claw_servo");
+        return this;
     }
     BioBuzzSimHardware withTurret() {
         yaw1 = servo("turret_servo_1"); yaw2 = servo("turret_servo_2"); hood = servo("turret_pitch");
@@ -91,7 +106,7 @@ final class BioBuzzSimHardware {
         return this;
     }
     static BioBuzzSimHardware fullRobot() {
-        return drivetrain().withIntake().withTransfer().withDepollinator().withTurret()
+        return drivetrain().withIntake().withTransfer().withDepollinator().withSlide().withTurret()
                 .withPinpoint().withCamera(AprilTagLayout.empty());
     }
 
@@ -140,6 +155,7 @@ final class BioBuzzSimHardware {
             case "LightsTestOpMode": return new BioBuzzSimHardware().withLights();
             case "TransferTestOpMode": return new BioBuzzSimHardware().withTransfer();
             case "DepollinatorTestOpMode": return new BioBuzzSimHardware().withDepollinator();
+            case "LinearSlideTestOpMode": return new BioBuzzSimHardware().withSlide();
             case "TurretTestOpMode": return new BioBuzzSimHardware().withTurret();
             case "PinpointTestOpMode": return new BioBuzzSimHardware().withPinpoint();
             case "ShotCalibrationOpMode":

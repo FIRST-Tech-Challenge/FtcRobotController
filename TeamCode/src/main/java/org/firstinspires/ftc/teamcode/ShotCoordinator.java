@@ -30,7 +30,7 @@ public final class ShotCoordinator {
     private GoalTarget target;
     private ShotPlanner.Solution solution = ShotPlanner.Solution.invalid("Not requested");
     private boolean previousAutomatic, previousHomed;
-    private boolean presetValid, automaticTrackingReady;
+    private boolean presetValid, automaticTrackingReady, automaticHoodRpmAvailable;
     private double yawOffsetDeg, hoodOffsetDeg, rpmOffset;
     private MotionSample pose;
     private double lastFrame = Double.NEGATIVE_INFINITY;
@@ -94,6 +94,11 @@ public final class ShotCoordinator {
     }
     /** Current checks only; the firing state machine still enforces the stable readiness interval. */
     public boolean automaticTrackingReady() { return automaticTrackingReady; }
+    /**
+     * Last update had a calibrated, aimable solution before operator trims, so automatic aim sets hood and RPM
+     * and hood/RPM trims mean something. False with an uncalibrated profile: the shot uses manual hood/RPM.
+     */
+    public boolean automaticHoodRpmAvailable() { return automaticHoodRpmAvailable; }
     /** Call after one odometry update and one turret update. No second hardware reads. */
     public void update(double now, MotionSample sample, boolean automatic, boolean manualFeed,
                        boolean inhibit, boolean flywheelStop) {
@@ -123,6 +128,8 @@ public final class ShotCoordinator {
         }
         solution = !turret.isHomed() ? ShotPlanner.Solution.invalid("Turret: " + turret.getHomingStatus())
                 : planner.solve(now, pose, relativeTarget != null ? relativeTarget : target, profile);
+        // Before trims, so an out-of-range trim can still be adjusted back.
+        automaticHoodRpmAvailable = solution.aimable;
         solution = solution.withOffsets(yawOffsetDeg, hoodOffsetDeg, rpmOffset);
         // Timing blocks feed only; keep current-pose hood/RPM/yaw updates available while tuning.
         if (solution.valid && !timingMeasured) solution = solution.inhibit(fieldOdometryOnly
@@ -181,6 +188,7 @@ public final class ShotCoordinator {
     public void updatePreset(double now, MotionSample sample, AutonomousShotPresets.Preset preset,
                              boolean automaticFeed, boolean manualFeed, boolean inhibit) {
         updatePose(now, sample);
+        automaticHoodRpmAvailable = false;
         boolean valid = preset.measured && timingMeasured && turret.isHomed()
                 && sample != null && sample.fieldReferenced && sample.fresh(now, ShotPlanner.MAX_SAMPLE_AGE_SECONDS);
         presetValid = valid;
@@ -361,6 +369,11 @@ public final class ShotCoordinator {
     public ShotPlanner.Solution solution() { return solution; }
     public MotionSample pose() { return pose; }
     public String visionDecision() { return visionDecision; }
+    /** Shown only around a large camera/odometry disagreement or a re-localization (TeleOp odometry aiming). */
+    private void addPoseCheckTelemetry(Telemetry telemetry, double now) {
+        String check = mode == AimMode.TELEOP_ODOMETRY ? history.largeCorrectionStatus(now) : null;
+        if (check != null) telemetry.addData("Camera pose check", check);
+    }
     private String localizationStatus(double now) {
         return pose != null && pose.fieldReferenced
                 ? pose.fresh(now,ShotPlanner.MAX_SAMPLE_AGE_SECONDS) ? "LOCALIZED" : "FIELD REFERENCE RETAINED; ODOMETRY NOT READY / STALE"
@@ -373,6 +386,7 @@ public final class ShotCoordinator {
      */
     public void addDriverTelemetry(Telemetry telemetry, double now, boolean aiming) {
         if (fieldOdometryOnly) telemetry.addData("Field localization", localizationStatus(now));
+        addPoseCheckTelemetry(telemetry, now);
         if (mode == AimMode.TELEOP_ODOMETRY && !FieldRehomeRefinement.NOT_REQUESTED.equals(fieldRehome.status()))
             telemetry.addData("Field rehome refinement", fieldRehome.status());
         if (aiming || yawOffsetDeg != 0 || hoodOffsetDeg != 0 || rpmOffset != 0)
@@ -389,6 +403,7 @@ public final class ShotCoordinator {
                     ? "No tag field map" : ShootingConfiguration.FIELD_RELOCALIZATION_ENABLED
                     ? "Enabled | nominal TU06 map | " + history.reason() : "Disabled by configuration");
             telemetry.addData("Field localization", localizationStatus(now));
+            addPoseCheckTelemetry(telemetry, now);
             if (mode == AimMode.TELEOP_ODOMETRY) telemetry.addData("Field rehome refinement", fieldRehome.status());
             if (pose != null && pose.fieldReferenced) {
                 telemetry.addData("Aiming field pose (m, deg)", "%.3f, %.3f | %.1f", pose.x, pose.y, Math.toDegrees(pose.heading));

@@ -110,7 +110,7 @@
   "commands": [
     {
       "name": "intakeOn",
-      "summary": "Request forward intake; confirmed HIGH reverses it, LOW restores forward.",
+      "summary": "Request forward intake; confirmed HIGH stops it, LOW restores forward.",
       "estimateS": "0",
       "requires": [
         "intake"
@@ -140,7 +140,7 @@
     },
     {
       "name": "intakeSet",
-      "summary": "Request motor power [-1,1]; confirmed HIGH reverses positive loading, LOW restores it.",
+      "summary": "Request motor power [-1,1]; confirmed HIGH stops positive loading, LOW restores it.",
       "params": {
         "power": {
           "type": "number",
@@ -213,7 +213,7 @@
     },
     {
       "name": "loadUntilFull",
-      "summary": "Intake and stage-1 loading until confirmed full (0.5 seconds HIGH) or timeout; stop afterward.",
+      "summary": "Intake and stage-1 loading until confirmed full (0.2 seconds HIGH) or timeout; stop afterward.",
       "params": {
         "seconds": {
           "type": "number",
@@ -867,7 +867,7 @@
   "conditions": [
     {
       "name": "queueFull",
-      "summary": "HIGH continuously for 0.5 seconds; LOW immediately clears full."
+      "summary": "HIGH continuously for 0.2 seconds; LOW immediately clears full."
     },
     {
       "name": "queueSensorHigh",

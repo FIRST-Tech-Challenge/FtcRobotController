@@ -248,8 +248,11 @@ public class AutonomousIntegrationTest {
     }
     @Test public void confirmedFullSurvivesPauseAndAllowsReverseUntilActualFeeding() {
         full.setSimulatedInputState(true); set("loadOn"); set("intakeOn");
-        tick(0); tick(.499); assertFalse(robot.transfer.isFull());
-        tick(.002); assertTrue(robot.transfer.isFull()); assertEquals(-1,power("intake_motor"),0);
+        tick(0); tick(.199); assertFalse(robot.transfer.isFull());
+        tick(.002); assertTrue(robot.transfer.isFull()); assertEquals(0,power("intake_motor"),0);
+        assertEquals(1,power("transfer_motor_1"),0); // Intake stops; stage 1 runs on to seat the ball.
+        tick(.498); assertEquals(1,power("transfer_motor_1"),0); assertEquals(0,power("intake_motor"),0);
+        tick(.003); assertEquals(0,power("transfer_motor_1"),0); assertEquals(0,power("intake_motor"),0);
         set("transferStop"); full.setSimulatedInputState(false); set("loadOn"); tick(.02);
         assertFalse(robot.transfer.isFull()); assertEquals(1,power("transfer_motor_1"),0);
         assertEquals(1,power("intake_motor"),0);
@@ -413,6 +416,15 @@ public class AutonomousIntegrationTest {
         assertEquals("intake disconnected during stop",failure.getSuppressed()[0].getMessage());
         assertEquals("FAULT",robot.lastOutcome());
         assertFalse(robot.gate.isOpenCommanded()); assertEquals(0,power("transfer_motor_2"),0);
+    }
+    @Test public void autonomousInitAndLocalizationFaultNeverHandAPoseToTeleOp() {
+        MotionSample earlier = new MotionSample(System.nanoTime() * 1e-9, .5, .5, 0, 0, 0, 0, 0, .02, true, true, "earlier run");
+        AutoPoseHandoff.save(TurretSubsystem.Alliance.RED, earlier);
+        Harness op=new Harness(); op.hardwareMap=map; robot.init(op);
+        assertFalse(AutoPoseHandoff.take(TurretSubsystem.Alliance.RED, System.nanoTime() * 1e-9).pending());
+        AutoPoseHandoff.save(TurretSubsystem.Alliance.RED, earlier);
+        assertThrows(IllegalStateException.class,()->robot.periodic(op)); // Pinpoint has no field reference.
+        assertFalse(AutoPoseHandoff.take(TurretSubsystem.Alliance.RED, System.nanoTime() * 1e-9).pending());
     }
     @Test public void actualZenithUiSavedRoutineRunsThroughNativeFactoriesAndStops() throws Exception {
         AutoFile file=AutoFile.load(AutoSource.directory(new File("src/test/resources/zenith")),"new-auto");

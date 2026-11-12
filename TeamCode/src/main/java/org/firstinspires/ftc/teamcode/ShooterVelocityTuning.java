@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-/** Initial hub velocity PIDF gains and voltage-compensated feedforward; requires loaded tuning. */
+/** Initial hub velocity PIDF gains, voltage-compensated feedforward and the bench-only
+ * bang-bang + feedforward fusion law; all require loaded tuning. */
 public final class ShooterVelocityTuning {
     private ShooterVelocityTuning() { }
     // Stronger initial proportional recovery; validate overshoot during loaded trials.
@@ -21,13 +22,51 @@ public final class ShooterVelocityTuning {
             * ShooterSpeed.REPORTED_MEASUREMENT_VOLTAGE_VOLTS
             / BareMotorSpecifications.REFERENCE_VOLTAGE_VOLTS;
 
-    /** Maximum recovery effort below target; coast above it, never actively brake.
-     * No deadband delays recovery after a shot. Supports either commanded direction.
+    // ---- Bang-bang + feedforward fusion (bench comparison controller; untuned initial values) ----
+    /** Above this absolute speed error the fusion controller is bang-bang: full power when slow, coast when fast. */
+    public static final double FUSION_BANG_BANG_ERROR_TICKS_PER_SECOND = 80.0;
+    // Motor power (0..1) at the 12 V reference; all three are estimates until measured on the robot.
+    // kS: power that just overcomes static friction. Estimate, not a measurement.
+    public static final double INITIAL_FUSION_KS = 0.05;
+    // kV: power per motor tick/s. Solved so kS + kV * speed reproduces the installed-speed
+    // observation (full power = 5400 RPM at 14 V) after voltage compensation.
+    public static final double INITIAL_FUSION_KV = (ShooterSpeed.REPORTED_MEASUREMENT_VOLTAGE_VOLTS
+            / BareMotorSpecifications.REFERENCE_VOLTAGE_VOLTS - INITIAL_FUSION_KS)
+            / (ShooterSpeed.REPORTED_MAX_OBSERVED_RPM / 60 * ShooterSpeed.MOTOR_TICKS_PER_REV);
+    // kP: small correction, power per tick/s of remaining error (0.08 power at the 80 ticks/s edge).
+    public static final double INITIAL_FUSION_KP = 0.001;
+    public static final double MAX_FUSION_KS = 0.3;
+    public static final double MAX_FUSION_KV = 0.002;
+    public static final double MAX_FUSION_KP = 0.02;
+
+    /** True when the speed error is large enough that the fusion controller is in its bang-bang zone. */
+    public static boolean fusionUsesBangBang(double targetTicksPerSecond, double measuredTicksPerSecond) {
+        return Double.isFinite(targetTicksPerSecond) && Double.isFinite(measuredTicksPerSecond)
+                && targetTicksPerSecond != 0 && Math.abs(targetTicksPerSecond - measuredTicksPerSecond)
+                > FUSION_BANG_BANG_ERROR_TICKS_PER_SECOND;
+    }
+
+    /**
+     * Fusion flywheel power. Speed error above 80 ticks/s: bang-bang, full power when slow and
+     * zero power (FLOAT coast) when fast. Inside that band: kS + kV * target + kP * error, scaled
+     * by 12 V / battery so the same gains hold as the battery sags. The command never opposes the
+     * target direction, so the flywheel is never reverse-power braked. A zero target or any
+     * non-finite input commands zero. Supports either commanded direction.
      */
-    public static double bangBangPower(double targetRpm, double measuredRpm) {
-        if (!Double.isFinite(targetRpm) || !Double.isFinite(measuredRpm) || targetRpm == 0) return 0;
-        double direction = Math.signum(targetRpm);
-        return measuredRpm * direction < Math.abs(targetRpm) ? direction : 0;
+    public static double fusionPower(double targetTicksPerSecond, double measuredTicksPerSecond,
+            double batteryVolts, double kS, double kV, double kP) {
+        if (!RobotMath.finite(targetTicksPerSecond, measuredTicksPerSecond, kS, kV, kP)
+                || targetTicksPerSecond == 0) return 0;
+        double direction = Math.signum(targetTicksPerSecond);
+        // Positive when the wheel is slower than commanded, in the commanded direction.
+        double error = (targetTicksPerSecond - measuredTicksPerSecond) * direction;
+        if (error > FUSION_BANG_BANG_ERROR_TICKS_PER_SECOND) return direction;
+        if (error < -FUSION_BANG_BANG_ERROR_TICKS_PER_SECOND) return 0;
+        double voltage = Double.isFinite(batteryVolts) && batteryVolts >= 9 && batteryVolts <= 16
+                ? batteryVolts : BareMotorSpecifications.REFERENCE_VOLTAGE_VOLTS;
+        double power = (kS + kV * Math.abs(targetTicksPerSecond) + kP * error)
+                * BareMotorSpecifications.REFERENCE_VOLTAGE_VOLTS / voltage;
+        return direction * Math.max(0, Math.min(1, power));
     }
 
     public static double feedforward(double batteryVolts, double scale) {

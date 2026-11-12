@@ -15,7 +15,7 @@ public class TransferTestOpMode extends LinearOpMode {
         telemetry.addLine("transfer_motor_1: Expansion Hub motor port 2, REVERSE, no encoder");
         telemetry.addLine("transfer_motor_2: Expansion Hub motor port 3, FORWARD, no encoder | off during loading");
         telemetry.addLine("distance_sensor: Expansion Hub digital port 0, Digital Device input");
-        telemetry.addLine("After START: stage 1 loads, stage 2 off | 0.5 s HIGH = full, then 0.5 s stage-1 run-on");
+        telemetry.addLine("After START: stage 1 loads, stage 2 off | 0.2 s HIGH = full, then 0.5 s stage-1 run-on | LOW resumes");
         telemetry.addLine("Hold RB = Timed Gate + Both Stages | LB = Pause / Close Gate (priority)");
         telemetry.addLine("Transfer-only feed test: flywheel is NOT initialized or powered; start empty.");
         transfer.addTelemetry(telemetry);

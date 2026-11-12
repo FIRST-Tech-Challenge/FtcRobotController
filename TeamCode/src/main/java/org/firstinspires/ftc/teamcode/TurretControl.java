@@ -16,6 +16,12 @@ public final class TurretControl {
     public static final double ENCODER_CORRECTION_SETTLE_SECONDS = .25;
     public static final double ENCODER_CORRECTION_MAX_VELOCITY_DEG_PER_SECOND = 3.0;
     public static final double MAX_ENCODER_CORRECTION_DEG = 25.0;
+    /**
+     * A target jump larger than this between consecutive updates starts a new correction episode (cell switch,
+     * long-way unwind, new target). It is about one 50 Hz loop of rated turret travel, so continuous tracking,
+     * even through a capped chassis turn, keeps the learned offset instead of dropping it every few degrees.
+     */
+    public static final double ENCODER_CORRECTION_RESET_STEP_DEG = 10.0;
     public static final double MANUAL_STICK_DEADBAND = .08;
     public static final double MAX_UPDATE_SECONDS = .1;
     /**
@@ -94,11 +100,11 @@ public final class TurretControl {
     public double updateYawCommand(double now, double targetYawDeg, double measuredYawDeg,
                                    double measuredVelocityDegPerSecond, boolean homed) {
         double target = TurretSubsystem.clampYawAngle(targetYawDeg);
-        // Ignore tiny odometry target changes when qualifying; large moves start a new episode.
-        if (!Double.isFinite(lastTargetDeg) || Math.abs(target - lastTargetDeg) > ENCODER_CORRECTION_MARGIN_DEG || !homed) {
+        // Continuous tracking keeps the learned offset; only a target jump (new episode) or lost home resets it.
+        if (!Double.isFinite(lastTargetDeg) || Math.abs(target - lastTargetDeg) > ENCODER_CORRECTION_RESET_STEP_DEG || !homed) {
             correctionDeg = 0; correctionApplied = correctionActive = false; errorSince = Double.NaN;
-            lastTargetDeg = target;
         }
+        lastTargetDeg = target;
         double error = target - measuredYawDeg;
         if (!encoderCorrectionEnabled || !homed || !RobotMath.finite(error, measuredVelocityDegPerSecond)) {
             correctionActive = false; errorSince = Double.NaN;
@@ -178,10 +184,10 @@ public final class TurretControl {
         return TurretSubsystem.clampYawAngle(targetYawDeg + distance);
     }
     public static double yawToRobotHeadingDegrees(double yawDeg) {
-        return ((90 - yawDeg) % 360 + 360) % 360;
+        return ((TurretSubsystem.ROTATION_HOME_ROBOT_HEADING_DEG - yawDeg) % 360 + 360) % 360;
     }
     /** Signed, continuous servo yaw: front=+90, right=0, back=-90, left=+/-180. */
     public static double robotHeadingToYawDegrees(double headingDeg) {
-        return Math.toDegrees(RobotMath.wrap(Math.toRadians(90 - headingDeg)));
+        return Math.toDegrees(RobotMath.wrap(Math.toRadians(TurretSubsystem.ROTATION_HOME_ROBOT_HEADING_DEG - headingDeg)));
     }
 }

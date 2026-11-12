@@ -28,6 +28,7 @@ repositories {
     maven { url = 'https://maven.brott.dev/' }
     maven { url = 'https://central.sonatype.com/repository/maven-snapshots' }
     maven { url = 'https://jitpack.io' }
+    maven { url = 'https://repo.dairy.foundation/releases/' } // Sinister/Sloth for Pedro's web tuner
 }
 
 dependencies {
@@ -41,6 +42,11 @@ dependencies {
         version { strictly '3.0.0-20260828.185437-17' }
     }
     implementation 'com.pedropathing.ivy:pedro:1.1.1'
+    // Pedro's web tuner (http://192.168.43.1:10158). The library itself uses no Pedro core;
+    // revhub is excluded so the strictly pinned core above stays the only Pedro core.
+    implementation('com.pedropathing:tuning:1.0.1') {
+        exclude group: 'com.pedropathing', module: 'revhub'
+    }
     implementation 'com.github.Horizon-36596:zenith:v0.1.2'
     testImplementation 'junit:junit:4.13.2'
 }

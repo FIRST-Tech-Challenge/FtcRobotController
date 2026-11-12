@@ -11,16 +11,16 @@ public class PollenConfigurationTest {
     }
     @Test public void measuredZeroOffsetsStillRequireOtherCalibration() {
         assertFalse(PollenConfiguration.diagnostic().autonomousEligible(true));
-        PollenConfiguration c = new PollenConfiguration(180,10,0,0,60,0,0,0,0,true,false,true,true,false,20,40,80,80,350,200);
+        PollenConfiguration c = new PollenConfiguration(180,15,0,0,60,0,0,0,0,true,false,true,true,false,20,40,80,80,350,200);
         assertFalse(c.autonomousEligible(false)); assertTrue(c.autonomousEligible(true));
         assertTrue(c.status(false).contains("Approximate"));
-        c = new PollenConfiguration(180,10,0,0,60,200,200,160,120,true,true,true,true,false,20,40,80,80,350,200);
+        c = new PollenConfiguration(180,15,0,0,60,200,200,160,120,true,true,true,true,false,20,40,80,80,350,200);
         assertTrue(c.autonomousEligible(false));
     }
     @Test public void invalidCalibrationIsRejected() {
-        assertThrows(IllegalArgumentException.class,()->new PollenConfiguration(0,10,0,0,60,0,0,0,0,false,false,false,false,false,20,40,80,80,350,200));
-        assertThrows(IllegalArgumentException.class,()->new PollenConfiguration(180,10,0,0,60,0,0,0,0,true,true,true,true,false,20,40,80,80,350,200));
-        assertThrows(IllegalArgumentException.class,()->new PollenConfiguration(180,10,0,0,60,200,200,160,120,true,true,true,true,false,80,40,80,80,350,200));
+        assertThrows(IllegalArgumentException.class,()->new PollenConfiguration(0,15,0,0,60,0,0,0,0,false,false,false,false,false,20,40,80,80,350,200));
+        assertThrows(IllegalArgumentException.class,()->new PollenConfiguration(180,15,0,0,60,0,0,0,0,true,true,true,true,false,20,40,80,80,350,200));
+        assertThrows(IllegalArgumentException.class,()->new PollenConfiguration(180,15,0,0,60,200,200,160,120,true,true,true,true,false,80,40,80,80,350,200));
     }
     @Test public void clippingFreshnessAndContinuityUseActualFrameTimes() {
         PollenTracker t = new PollenTracker(PollenConfiguration.diagnostic());
@@ -37,10 +37,10 @@ public class PollenConfigurationTest {
         assertFalse(PollenTracker.fresh(a.captureTimeNanos,1000000000L));
     }
     @Test public void floorContactOffsetTransformAndInvalidRay() {
-        PollenTarget a=PollenTarget.fromFloorContact(1,160,160,160,200,1000,200,200,160,120,180,10,0,0);
-        PollenTarget b=PollenTarget.fromFloorContact(1,160,160,160,200,1000,200,200,160,120,180,10,50,-20);
+        PollenTarget a=PollenTarget.fromFloorContact(1,160,160,160,200,1000,200,200,160,120,180,15,0,0);
+        PollenTarget b=PollenTarget.fromFloorContact(1,160,160,160,200,1000,200,200,160,120,180,15,50,-20);
         assertNotNull(a); assertEquals(a.forwardMm+50,b.forwardMm,1e-8); assertEquals(-20,b.rightMm,1e-8);
         assertEquals(200,b.contactYPx,0);
-        assertNull(PollenTarget.fromFloorContact(1,160,160,Double.NaN,200,1000,200,200,160,120,180,10,0,0));
+        assertNull(PollenTarget.fromFloorContact(1,160,160,Double.NaN,200,1000,200,200,160,120,180,15,0,0));
     }
 }

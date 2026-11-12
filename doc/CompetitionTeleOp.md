@@ -33,7 +33,11 @@ The nominal center poses are Blue `(1.566319, -1.670450 m, 180 deg)` and Red
 side offsets. Each alliance wrapper defines its own `getFieldRehomePose()`.
 This sets localization; it does not drive the robot to the corner. It works during
 INIT and ACTIVE, once per press (including a button held across START), without
-requiring a visible tag or turret hardware. It sets Pinpoint position and heading
+requiring a visible tag or turret hardware. Like the autonomous pose handoff, the corner pose is written
+only after the Pinpoint has reported READY for 0.5 s (`PinpointOdometry.READY_SETTLE_SECONDS`) following
+the INIT IMU recalibration (`CornerRehomeRequest`, 2026-11-11 audit): an INIT press during calibration shows
+**Corner rehome: WAITING** and applies once settled; START discards a press still waiting; after START an
+unsettled Pinpoint shows REFUSED and the press must be repeated (the robot may be moving, so it is never queued). It sets Pinpoint position and heading
 without IMU recalibration, clears prior camera correction/capture history through
 the existing reference ID, and requests a non-blocking Limelight refinement.
 The turret points toward the nearest alliance hive while the camera collects
@@ -50,10 +54,27 @@ for shooting, while raw Pinpoint telemetry continues to show the corner-seeded
 odometry frame. Normal periodic vision corrections resume afterward.
 
 **Automatic aim and the turret dead zone.** The turret reaches -175 to +175 degrees; the rear 10 degrees is a
-dead zone. While the goal bearing is inside it, the turret holds the limit on its current side. Once the bearing
+dead zone. While the goal bearing is inside it, a turret already in its rear half (beyond +/-90 degrees) holds the
+limit on its current side; from the front half (for example just homed, or mid-unwind) it takes the limit nearest
+the bearing (2026-11-10), so it ends closest to the goal and never reverses an unwind. Once the bearing
 is 3 degrees past the zone on the other side, the turret unwinds the long way through home to keep aiming, so a
 spinning robot never drives the turret through the dead zone and edge noise cannot cause repeated spins.
 A full chassis turn still forces one long-way unwind; the turret cannot aim (and auto feed waits) during it.
+
+**Auto-aim edge-case fixes (2026-11-10).** From the auto-aim audit, shared by both competition TeleOps and Test: Auto Aim:
+- *Cell switching hysteresis.* The selected cell changes only 5 cm past the field midline
+  (`TeleOpFieldReference.SIDE_SWITCH_HYSTERESIS_METERS`). Before, a few millimeters across Y = 0 swung the aim
+  25-65 degrees and restarted feed readiness, and weaving along the midline could repeat that every loop.
+- *Encoder correction kept while tracking.* A learned external yaw correction now survives continuous target
+  motion; only a target jump over 10 degrees in one update (cell switch, unwind, new target) or a lost home
+  resets it. Before, it was dropped every 3 degrees of target motion, which (for a servo settling 4 degrees short)
+  left auto aim outside the 3-degree shot tolerance 17% of the time at 2 deg/s and 90% at 5 deg/s.
+- *Nearer dead-zone limit from the front half* (see above).
+- *GP2 hood/RPM buttons while RT is held.* D-pad Up/Down and Y/A trim the automatic hood/RPM only when auto aim
+  actually sets them (a calibrated shot solution, judged before trims so an out-of-range trim can still be
+  undone). With the current uncalibrated profile they keep stepping the manual hood/RPM the shot is using,
+  instead of changing hidden trims that would suddenly apply once a profile is installed. GP2 RS-X still trims
+  yaw whenever RT is held.
 
 **Automatic aim while turning (2026-11-06).** Three changes keep the turret on the goal while the chassis turns:
 - *Same-loop servo write.* `TurretSubsystem.update()` now only reads sensors; every OpMode calls
@@ -73,7 +94,9 @@ Both constants are UNMEASURED starting values (25 ms, 300 deg/s). To measure the
    reports the residual lag and a **suggested lead**. Put that in `AIM_LEAD_SECONDS`; the residual should then
    read near 0 ms. The same lines appear on the GP2 Back diagnostics page in both competition TeleOps.
 After the first field reference, odometry owns the pose and the Limelight only corrects consistent drift
-(more than 4 cm or 1.5 degrees); see [Limelight diagnostics](LimelightGoalStateDiagnostics.md).
+(more than 4 cm or 1.5 degrees). A disagreement over 0.5 m or 8 degrees re-localizes the pose only after 0.5 s of
+consistent multi-tag frames (2026-11-10); the driver view then shows **Camera pose check**. See
+[Limelight diagnostics](LimelightGoalStateDiagnostics.md).
 
 Keep the chassis stationary until **Field rehome refinement** reports
 **VISION REFINED** or **CORNER ONLY**. Chassis speed above 0.05 m/s or rotation
@@ -107,21 +130,23 @@ Desktop verification on October 26 passed all 153 tests (zero failures, errors o
 | Item | Competition behavior | Intake + index + shooter test |
 | --- | --- | --- |
 | Flywheel | Starts at 3500 output RPM; Y/A steps 50 RPM | RT hold, initially 2800 RPM; Y/A steps 100 RPM; B stops motors |
-| Full queue | After 0.5 s HIGH, reverse intake; stage 1 runs on 0.5 s, then holds until LOW | Same full-queue policy |
+| Full queue | After 0.2 s HIGH, intake stops (no reversal); stage 1 runs on 0.5 s, then holds until LOW | Same full-queue policy |
 | Collection override | RB: intake + stage 1 forward past full; LB: intake reverse only, pause loading; both: stop collection | Existing bench controls and interlocks |
 | Transfer loading | Stage 1 loads; stage 2 stays off until gate-open feeding | Same stage-2 rule |
 | Feeding mode | GP2 B toggles continuous/staggered; starts continuous | GP2 RB selects bench continuous/staggered |
 | Manual feeding | GP1 A or GP2 RT bypasses readiness; follows selected mode; continuous feeds immediately; GP2 LT inhibits | RT + LT uses selected bench mode |
 | Staggered feeding | Automatic readiness, 0.10 s delay for both stages, 0.30 s feed, then 0.10 s closed-gate recovery with both transfers running | Bench 0.10 s delay, stage 1 at 0.25 s, 0.40 s feed; bench yaw checks |
 | Turret release | Capture measured yaw once on stick/auto-aim release, discarding queued travel | Preserve diagnostic commanded-target hold |
-| External yaw correction | Enabled: start above 3 degrees after 250 ms at <=3 deg/s; stop adjusting below 1.5 degrees | Disabled by default |
+| External yaw correction | Enabled: start above 3 degrees after 250 ms at <=3 deg/s; stop adjusting below 1.5 degrees; kept while tracking, reset by a >10-degree target jump | Disabled by default |
 
 The staggered gate-open window is 0.40 s. Continuous commands both transfers immediately.
 See [shared transfer sequence and diagnostic controls](TransferAndShooting.md).
 
-GP1 RT prepares odometry-based yaw aiming and calibrated hood/RPM selection. Hold RT+LT to request automatic shooting; RT alone keeps the gate closed and transfer feeding off. Releasing either trigger cancels automatic shooting. GP1 LT alone does not feed; hold GP1 A for the manual readiness override. The nearest cell of the selected alliance is chosen continuously: audience cell for field Y < 0, far cell for Y > 0, previous selection at exactly zero. Crossing halves resets automatic feed readiness. D-pad left/right no longer selects a competition target. The robot does not classify hive state in this mode; drivers decide whether the selected cell is raised and when to request shooting. Manual yaw remains available when RT is released.
+GP1 RT prepares odometry-based yaw aiming and calibrated hood/RPM selection. Hold RT+LT to request automatic shooting; RT alone keeps the gate closed and transfer feeding off. Releasing either trigger cancels automatic shooting. GP1 LT alone does not feed; hold GP1 A for the manual readiness override. The nearest cell of the selected alliance is chosen continuously: the far cell once field Y exceeds +5 cm, the audience cell once Y is below -5 cm, and the previous selection within that midline band. Switching cells resets automatic feed readiness. D-pad left/right no longer selects a competition target. The robot does not classify hive state in this mode; drivers decide whether the selected cell is raised and when to request shooting. Manual yaw remains available when RT is released.
 
-The field origin is its center; +X points toward blue and +Y toward the far/scoring-table end. Both competition TeleOps can initialize at an arbitrary autonomous finish position and heading. They do not automatically assign a corner pose; GP2 D-pad Left explicitly sets the alliance rehome pose. Pinpoint resets/calibrates during INIT while stationary, providing local motion until Limelight establishes the field reference. Acquisition runs during INIT and continues after an early START, whether or not RT is held. The homed turret and three distinct, consistent frames of a nominal raised hive tag are required. Tags 30-45 from either alliance/cell can localize; the firing target remains the selected alliance's nearest cell. The existing corner dimensions also define the explicit alliance rehome poses above. Pinpoint pod offsets remain +32/-74 mm.
+The field origin is its center; +X points toward blue and +Y toward the far/scoring-table end. Both competition TeleOps can initialize at an arbitrary autonomous finish position and heading. They do not automatically assign a corner pose; GP2 D-pad Left explicitly sets the alliance rehome pose. Pinpoint resets/calibrates during INIT while stationary, providing local motion until a field reference exists: the autonomous pose handoff (below), a corner rehome, or Limelight acquisition.
+
+**Autonomous pose handoff (2026-11-10).** Competition autonomous (`BioBuzzRobot`, both alliances) saves its READY, field-referenced Pinpoint pose every loop in `AutoPoseHandoff` (RAM only, this Robot Controller app session). At TeleOp INIT the stored pose is consumed and, if it is from the same alliance and at most 60 s old (`MAX_AGE_SECONDS`), written to the Pinpoint once it has reported READY for 0.5 s after its INIT IMU recalibration. The driver view shows **Auto pose handoff**: APPLIED (with the pose), Waiting, Ignored (other alliance / too old) or None. Auto aim then works from the first ACTIVE loop without a visible tag, and Limelight drift checks continue as usual. It is never applied after START (the robot may be moving). A new autonomous INIT or an autonomous localization fault clears it; an app restart loses it. Match rules keep the robot still between periods, but practice does not: if the robot was moved, press GP2 D-pad Left (corner rehome), which also discards a pose not yet applied. If the camera can see two or more raised hive tags, a pose that wrong is also re-localized from the camera after 0.5 s of consistent frames (**Camera pose check : RE-LOCALIZED**); without a view of the tags, the corner rehome is the fix. Acquisition runs during INIT and continues after an early START, whether or not RT is held. The homed turret and three distinct, consistent frames of a nominal raised hive tag are required. Tags 30-45 from either alliance/cell can localize; the firing target remains the selected alliance's nearest cell. The existing corner dimensions also define the explicit alliance rehome poses above. Pinpoint pod offsets remain +32/-74 mm.
 
 Opening X is +/-0.32385 m (blue/red). Drawing-derived nominal aim height is 1.51257 m (opening mid-height), tag height 1.2676124 m, opening Y magnitude 0.38322519 m and tag-row Y magnitude 0.31383184 m. `FieldGeometry` and `HiveTagGeometry` share the TU06 dimensions. The Y values retain the approved half-length projection, whose exact pivot-to-surface transform still needs CAD/field verification. See [field reference](FieldReference.md).
 
@@ -147,7 +172,7 @@ The known competition behavior mismatches in this review are resolved, including
 - Check that Limelight pipeline 0 uses 36h11, 3.25-in. individual tags and returns valid metric tag poses. Java uses the documented 337-mm-high, 55-degree-upward camera mount (lens axis; front glass team-measured 55 degrees from vertical on 2026-11-05); camera settings were not remotely changed. On the field, INIT each competition TeleOp at several known positions/headings, with the robot level and stationary during Pinpoint calibration. Confirm LOCALIZED and the reported aiming field pose, including heading; repeat with each visible hive and several turret angles. Cover the camera and move/turn the chassis, then uncover it and check that tracking and bounded corrections continue. Verify waiting behavior with no tag, and that lowered/moving cells cannot establish the nominal raised reference. The field map, tag orientation convention and capture timing still need this physical validation.
 - Opening/tag Y coordinates remain drawing-model approximations until the pivot-to-surface CAD transform or an installed-field reference is available. Relative tag spacing and the source drawing dimensions are already entered; no need to remeasure sixteen unrelated tags.
 
-The combined intake/shooter bench test intentionally retains 2800-RPM startup, its own RPM adjustment steps, B-to-stop, full-intake reversal and 4-degree/3-degree-per-second yaw readiness. Competition retains 3500 RPM, automatic intake reversal on confirmed full, no B stop and angle-only 3-degree feeding readiness. Turret-only diagnostics, pollen pickup tuning and match routes remain deferred as requested.
+The combined intake/shooter bench test intentionally retains 2800-RPM startup, its own RPM adjustment steps, B-to-stop and 4-degree/3-degree-per-second yaw readiness. Competition retains 3500 RPM, no B stop and angle-only 3-degree feeding readiness. Both stop (never reverse) the intake on confirmed full. Turret-only diagnostics, pollen pickup tuning and match routes remain deferred as requested.
 
 ## Desktop verification and human review
 
@@ -172,11 +197,31 @@ Both competition TeleOps show a short driver view by default, most important fir
 | Turret | HOMED with measured heading, or the homing state and reason |
 | Battery (V) | Shooter-hub battery voltage |
 | Field localization | LOCALIZED, retained/stale, or WAITING with the vision reason |
+| Camera pose check | Only around a camera/odometry disagreement over 0.5 m / 8 deg: CAMERA DISAGREES (size and confirming progress, or why it cannot confirm) for 1 s, RE-LOCALIZED (correction size) for 3 s |
+| Auto pose handoff | INIT only (diagnostics while active): APPLIED with the pose, Waiting, Ignored with the reason, or None |
+| Corner rehome (GP2 D-pad Left) | INIT: WAITING for a settled Pinpoint, then APPLIED. ACTIVE: shown only while a press was refused or discarded at START |
 | Field rehome refinement | Shown after a GP2 D-pad Left corner rehome: VISION REFINED or CORNER ONLY with the reason |
 | Auto trims | Yaw / hood / RPM offsets, shown while aiming or while any trim is non-zero |
 | Pose (in, deg) | Pinpoint X / Y / heading and EXPLICIT FIELD or LOCAL; a Pinpoint warning appears only when it is not READY |
 | Transfer, Collection | Transfer state (LOADING, FULL, FEEDING SHOT, ...) and intake override, power and jam recovery |
 | Feed mode, Depollinator | CONTINUOUS/STAGGERED (GP2 B) and DEPLOYED/HOME |
+| Slide (GP2 LS) | DOWN, MOVING_UP, UP or MOVING_DOWN with position / target (deg), or FAULT with the reason and the direction the next press moves; UNAVAILABLE if not configured |
+| Claw (GP1 B) | OPEN or CLOSED; UNAVAILABLE if not configured |
 | Loop (Hz) | Control loop rate |
+
+### Linear slide and claw (November 7)
+
+Both competition TeleOps share the slide controls. **GP2 left-stick click** toggles the side
+linear slide between fully down and fully up. **GP1 B** toggles the claw open/closed (the claw
+starts closed). The claw toggle always commands `claw_servo`; with the shot-blocker end effector
+mounted it has no effect. The slide must be **fully down at INIT**: the Axon analog feedback only
+covers one turn, so turns are counted from that position. The slide is not powered during INIT.
+A stall (under 5 degrees of progress in 0.5 s), wrong-direction movement or overall timeout cuts
+slide power and shows FAULT. The button toggles, so the next press reverses the faulted move (a fault while
+raising lowers on the next press); telemetry names the direction the next press will move. A missing slide or claw
+shows UNAVAILABLE instead of stopping the OpMode. Autonomous does not use the slide.
+Travel (`LinearSlideController.MAX_TRAVEL_DEG`, 180-degree placeholder) and claw positions
+(`SlideClawSubsystem`, 0.40 open / 0.60 closed placeholders) must be measured with
+`Test: Linear Slide + Claw`.
 
 Missing status lights are listed only when one is absent. INIT shows alliance, turret, localization, pose and the GP2 X / D-pad Left / Back reminders. Press GP2 Back (INIT or ACTIVE) to add the full subsystem diagnostics below the driver view; press again to hide them.

@@ -12,6 +12,7 @@ Use the [Zenith authoring guide](ZenithAuthoringGuide.md) for the complete comma
 | Ivy Pedro adapter and core | `1.1.1`, Maven Central |
 | Zenith robot runtime | `v0.1.2`, JitPack |
 | Zenith CLI | `0.1.2`, npm, locked in package-lock.json |
+| Pedro web tuner | `com.pedropathing:tuning:1.0.1` (Sinister/Sloth from repo.dairy.foundation), revhub excluded |
 
 These are the versions documented and tested together by [Zenith](https://github.com/Horizon-36596/zenith/blob/v0.1.2/robot/README.md). This Pedro v3 API uses `Paths`, `Pose`, and `Follower.follow`; v1/v2 examples using `PathChain` do not apply. Keep the exact Pedro version in TeamCode/build.gradle and autos/robot.json identical. The npm override pins patched Zod 4.6.6 for the CLI; it does not enter the APK.
 
@@ -21,7 +22,25 @@ These are the versions documented and tested together by [Zenith](https://github
 
 Use **Test: Pedro Drive**, which initializes only the drive subsystem (four motors and Pinpoint). Keep the chassis stationary through calibration. Sticks command at most 0.2 power, A requests 12 inches forward from the current pose, B requests a 90-degree CCW hold, and X cancels. Stick movement cancels a running test. A/B use Ivy commands, have a five-second timeout, and stop on completion. This diagnostic deliberately allows testing before TUNING_VERIFIED is set.
 
-Verify forward, left and CCW motion and the matching odometry signs. Measure maximum forward/strafe velocities under the configured wheel-power cap, natural deceleration, linear/quadratic braking, rotational braking, and feedback gains using [Pedro's tuning procedures](https://pedropathing.com/docs/pathing/tuning). Update `PedroConfiguration.create()` and the matching kinematics/follower values in autos/robot.json. The current wheel cap is 0.35. Adjust the diagnostic's manual limit deliberately when measuring at that cap. Measure robot footprint and height too; the editor currently has explicit 18-inch example dimensions. Set TUNING_VERIFIED only after low-speed path, hold, stop, and turn checks pass.
+Verify forward, left and CCW motion and the matching odometry signs, then measure Pedro's dynamics, braking and gains with the web tuner below. Update `PedroConfiguration` and the matching kinematics/follower values in autos/robot.json together. Measure robot footprint and height too; the editor currently has explicit 18-inch example dimensions. Set TUNING_VERIFIED only after low-speed path, hold, stop, and turn checks pass.
+
+### Pedro web tuner
+
+V1 includes [Pedro's AutoTune procedures](https://pedropathing.com/docs/pathing/tuning), adapted from master's `pedro/` package: `pedro/Tuning.java` registers them and `pedro/procedures/` holds them. Connect to the robot's Wi-Fi, open **http://192.168.43.1:10158**, and run them in this order. Each step starts a temporary **Pedro Tuning** OpMode; Driver Station STOP ends it, stops the wheels and reports nothing for that step.
+
+| Order | Procedure | What it needs | Where results go |
+| --- | --- | --- | --- |
+| 1 | Mecanum Tuner | Wheels off the floor; each motor spins at 0.5 power | `MecanumDrivetrain.LEFT/RIGHT_MOTOR_DIRECTION` (aborts if front and back disagree on a side) |
+| 2 | Pinpoint Tuner | Push forward, push left, then spin 180 degrees CCW by hand | `PinpointOdometry` pod directions and offsets in mm; compare with the measured pod geometry before replacing it |
+| 3 | Foresight Tuner | Lots of clear floor; drives at full power (default 48 in runs, 36 in braking runs) | `PedroConfiguration` constants, `create()` gains, and the `robot.json` values it prints |
+| 4 | Tests | Hold, line, curve, odometry and driving tests of the installed follower | Check before setting TUNING_VERIFIED |
+
+All procedures use V1's own hardware through `PedroTuningHardware`, not Pedro's revhub classes. The tuning library itself has no Pedro core dependency, so the strictly pinned core above is unchanged. What this means for V1:
+
+- The Foresight tuner drives V1's open-loop `MecanumDrivetrain` at full power and reads V1's `PinpointOdometry` (measured pod offsets/directions) through the same adapters as `PedroDrive`. Pedro's model wants full-power velocities; `PedroDrive` applies the 0.35 wheel cap separately.
+- V1 keeps BRAKE at zero power, while Pedro's stock mecanum floats while following. The tuner's coasting stop is therefore V1's braking stop, so natural deceleration is measured the way V1 autonomous actually slows.
+- Tests run the installed `PedroConfiguration` follower at the 0.35 autonomous cap, matching match routines.
+- The Foresight tuner prints Java for `PedroConfiguration` and a JSON fragment for robot.json. Its two-step translational gain uses the lower gain below 2.5 inches of error and the higher one above. Zenith's sim models one gain, so robot.json takes the lower one. `PedroAdapterTest` checks that Java and robot.json agree.
 
 The pinned Pedro snapshot normalizes a zero displacement inside ForesightV3's hold calculation. `PedroForesight` guards only that numerical case using a 0.0001-inch offset, below Pedro's translation deadband, and delegates the control calculations to Pedro. Regression tests exercise exact-position holds and in-place turns.
 
@@ -40,6 +59,10 @@ New routines get exactly one generated OpMode in the Generated group; authors ne
 
 Each path's speed fraction is applied through `ForesightConfig.setPathSpeed`, in addition to the independent wheel-power cap. Estimates remain provisional until Java and robot.json contain measured, matching values. Put timeouts/end conditions on path and command steps. Parking and fallback decisions belong in the authored routine; the old controller's automatic park fallback was removed with it. The runtime does not provide live obstacle avoidance. A global 29-second deadline, localization loss, routine completion, Driver Station STOP, and exceptions stop outputs and close the gate. Explicitly canceling the Ivy routine ensures running commands receive their end hooks before scheduler reset. Camera shutdown follows motor shutdown.
 
+## Pose handoff to TeleOp
+
+While a field-referenced routine runs, `BioBuzzRobot` saves the latest READY Pinpoint pose in `AutoPoseHandoff` each loop; autonomous INIT and a Pinpoint localization fault clear it. The next competition TeleOp of the same alliance applies it during INIT if it is at most 60 s old, so auto aim is localized from the first TeleOp loop. Cleared-area local starts (the pollen test) are never saved. See [competition TeleOp](CompetitionTeleOp.md) for the TeleOp side and the practice caveat.
+
 ## Named command contract
 
 The [authoring guide](ZenithAuthoringGuide.md) documents all 43 supported actions and 23 cached conditions. `autos/robot.json` provides editor controls, units/defaults/bounds and resource keys. Old command names/defaults remain compatible. Independent yaw/hood/RPM modes cannot be overwritten by later background aim updates; requested forward intake reverses on confirmed HIGH and resumes forward on LOW; explicit reverse is allowed. Transfer pause/end cleanup preserves queue knowledge.
@@ -55,7 +78,7 @@ right REVERSE, reversing all four motor outputs for Pedro diagnostics, Red/Blue
 competition autonomous, Pollen navigation and generated Zenith routines. Path
 coordinates, Pinpoint pod directions and Pedro's left/CCW convention stay consistent.
 
-Tests cover unit conversion, mecanum signs and saturation, actual Pedro hold/path-speed behavior, the pollen planner and replanning, the packaged pollen asset, and Zenith curves, markers (including endpoint and interrupted markers), parallel timeouts, branches, deferred starts, cancellation, and invalid files. These are JVM checks, not evidence of physical robot tuning.
+Tests cover unit conversion, mecanum signs and saturation, actual Pedro hold/path-speed behavior, the web tuner's hardware wiring (full-power tuner drive, capped verification drive, one Pinpoint update per localizer update) and registration rules, the pollen planner and replanning, the packaged pollen asset, and Zenith curves, markers (including endpoint and interrupted markers), parallel timeouts, branches, deferred starts, cancellation, and invalid files. These are JVM checks, not evidence of physical robot tuning.
 
 The canonical pollen source is `autos/pollen-navigation-test.auto.json`. Team deployment copies it and all field metadata into APK assets while preserving its isolated POLLEN_TEST profile and sole Test wrapper. Its start pose is explicitly a cleared-area local reference, not an absolute field reference. The cleared-area field intentionally has no season plugin, so scoring/ledger checks are inert and the CLI reports that notice. The camera-guided collection estimate is unknown; its 28-second bound is not a predicted trajectory.
 

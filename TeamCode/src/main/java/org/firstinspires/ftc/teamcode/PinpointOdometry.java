@@ -55,7 +55,15 @@ public class PinpointOdometry {
     private double lastVelocityTime = Double.NaN, lastVx, lastVy, lastOmega;
     // Team policy: assume no odometry drift; placement uncertainty is telemetry, not a timer.
     public static final double STARTING_POSE_UNCERTAINTY_METERS = .02;
+    /**
+     * INIT recalibrates the IMU (about 0.25 s, CALIBRATING), and a pose written during that reset can be lost
+     * while this class already reports it as an explicit field reference. Field placement (corner rehome,
+     * autonomous handoff) waits until the device has reported READY continuously for this long. The window
+     * restarts at each recalibration request, so a stale READY read from before the reset cannot count.
+     */
+    public static final double READY_SETTLE_SECONDS = .5;
     private GoBildaPinpointDriver.DeviceStatus cachedStatus;
+    private double readySince = Double.NaN;
     public MotionSample getSample() { return sample; }
     public boolean hasFieldReference() { return fieldReferenced; }
 
@@ -74,7 +82,7 @@ public class PinpointOdometry {
         pinpoint.setOffsets(PINPOINT_X_POD_OFFSET_MM, PINPOINT_Y_POD_OFFSET_MM, DistanceUnit.MM);
         pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         pinpoint.setEncoderDirections(X_POD_DIRECTION, Y_POD_DIRECTION);
-        referenceId++; fieldReferenced = false; lastVelocityTime = Double.NaN;
+        referenceId++; fieldReferenced = false; lastVelocityTime = Double.NaN; readySince = Double.NaN;
         pinpoint.resetPosAndIMU();
         pinpoint.setPosition(new Pose2D(DistanceUnit.MM, 0, 0, AngleUnit.DEGREES, 0));
     }
@@ -88,6 +96,8 @@ public class PinpointOdometry {
         double now = System.nanoTime() * 1e-9;
         cachedPose = pinpoint.getPosition();
         cachedStatus = pinpoint.getDeviceStatus();
+        if (cachedStatus != GoBildaPinpointDriver.DeviceStatus.READY) readySince = Double.NaN;
+        else if (Double.isNaN(readySince)) readySince = now;
         // Pinpoint fixed/global X/Y velocity: same axes as its reported X/Y position.
         // setPosition establishes our team field frame; do not rotate global velocities again.
         double vx = pinpoint.getVelX(DistanceUnit.METER), vy = pinpoint.getVelY(DistanceUnit.METER);
@@ -159,8 +169,17 @@ public class PinpointOdometry {
      * Resets the pose to (0, 0, 0 deg) and recalibrates the IMU (robot must be stationary).
      */
     public void resetPoseAndIMU() {
-        referenceId++; fieldReferenced = false; lastVelocityTime = Double.NaN;
+        referenceId++; fieldReferenced = false; lastVelocityTime = Double.NaN; readySince = Double.NaN;
         pinpoint.resetPosAndIMU();
+    }
+
+    /**
+     * True once the last {@link #update()} has seen READY continuously for {@link #READY_SETTLE_SECONDS} since
+     * the most recent IMU recalibration request, so a field pose written now cannot be lost to that reset.
+     * Time is on the System.nanoTime clock in seconds. No hardware access.
+     */
+    public boolean isSettled(double now) {
+        return !Double.isNaN(readySince) && now - readySince >= READY_SETTLE_SECONDS;
     }
 
     public Pose2D getPose() {

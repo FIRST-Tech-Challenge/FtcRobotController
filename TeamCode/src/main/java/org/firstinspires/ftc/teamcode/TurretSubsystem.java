@@ -74,7 +74,7 @@ public class TurretSubsystem {
     // and keeps the servos safely away from the 0.0 / 1.0 PWM discontinuity.
     public static final double ROTATION_GEAR_RATIO = 1.0; // 1:1 servo-to-turret rotation
     public static final double ROTATION_HOME_SERVO_POS = 0.5;
-    public static final double ROTATION_HOME_ROBOT_HEADING_DEG = 90.0;
+    public static final double ROTATION_HOME_ROBOT_HEADING_DEG = 90.0; // Single source for TurretControl headings
     public static final double ROTATION_HOME_ANGLE_DEG = 0.0;
     public static final double ROTATION_DEADZONE_HALF_DEG = 5.0; // +/- 5 deg deadzone on the left
     public static final double ROTATION_MIN_ANGLE_DEG = -180.0 + ROTATION_DEADZONE_HALF_DEG; // -175.0 deg
@@ -157,6 +157,7 @@ public class TurretSubsystem {
     public static final double TURRET_OFFSET_LEFT_IN = ShootingConfiguration.TURRET_PIVOT_LEFT_MM / 25.4;
 
     // Math uses CCW radians: right-facing home is -90 deg (clockwise robot heading 90 deg).
+    // Single source for ShootingConfiguration.MOUNT.zeroYaw; must equal -ROTATION_HOME_ROBOT_HEADING_DEG (mod 360).
     public static final double TURRET_ZERO_ROBOT_HEADING_OFFSET_DEG = -90.0;
 
     // TU06 drawing dimensions share one source; derived field positions remain nominal.
@@ -220,9 +221,14 @@ public class TurretSubsystem {
     private final boolean visionEnabled;
     private final java.util.List<VoltageSensor> voltageSensors = new java.util.ArrayList<>();
     private double batteryVolts = Double.NaN, shooterCurrentAmps = Double.NaN;
-    public enum ShooterController { PIDF, BANG_BANG }
+    /** PIDF is the default everywhere; the fusion law is selected only by the combined bench test. */
+    public enum ShooterController { PIDF, BANG_BANG_FUSION }
     private ShooterController shooterController = ShooterController.PIDF;
-    private double bangBangPower;
+    private double fusionPower, shooterTicksPerSecond;
+    private boolean fusionBangBang;
+    private double fusionKs = ShooterVelocityTuning.INITIAL_FUSION_KS;
+    private double fusionKv = ShooterVelocityTuning.INITIAL_FUSION_KV;
+    private double fusionKp = ShooterVelocityTuning.INITIAL_FUSION_KP;
     private double shooterP = ShooterVelocityTuning.INITIAL_P, shooterFScale = ShooterVelocityTuning.INITIAL_F_SCALE;
     private double shooterI = ShooterVelocityTuning.INITIAL_I;
     private double shooterD = ShooterVelocityTuning.INITIAL_D;
@@ -400,7 +406,8 @@ public class TurretSubsystem {
         rawTicks = throughBoreEncoderPort.getCurrentPosition() * encoderPortSign;
         encoderVelocity = throughBoreEncoderPort.getVelocity() * encoderPortSign
                 / TURRET_TICKS_PER_DEGREE * ENCODER_DIRECTION_SIGN;
-        currentRpm = ShooterSpeed.flywheelRpm(shooterMotor.getVelocity());
+        shooterTicksPerSecond = shooterMotor.getVelocity();
+        currentRpm = ShooterSpeed.flywheelRpm(shooterTicksPerSecond);
         if (Double.isFinite(encoderVelocity)) peakTurretRateDegPerSecond = Math.max(peakTurretRateDegPerSecond, Math.abs(encoderVelocity));
         boolean wasReady = homing.ready();
         homing.update(now, rawTicks, rawTicks / TURRET_TICKS_PER_DEGREE * ENCODER_DIRECTION_SIGN);
@@ -492,19 +499,21 @@ public class TurretSubsystem {
         return Range.clip(pos, Math.min(a, b), Math.max(a, b));
     }
     /**
-     * Shared automatic-aim yaw rule. Any desired bearing (any wrap) becomes a reachable target:
-     * inside the rear +/-5-deg dead zone the turret holds the limit on the side it is already on;
-     * once the bearing leaves the zone on the other side by the hysteresis margin, the target moves
-     * there and the turret unwinds the long way through home instead of crossing the dead zone.
+     * Shared automatic-aim yaw rule. Any desired bearing (any wrap) becomes a reachable target.
+     * Inside the rear +/-5-deg dead zone: with the turret already in its rear half, hold the limit on
+     * that side; from the front half (including mid-unwind), take the limit nearest the bearing, so the
+     * turret ends closest to the goal and does not reverse an unwind. Once the bearing leaves the zone on
+     * the other side by the hysteresis margin, the target moves there and the turret unwinds the long way
+     * through home instead of crossing the dead zone.
      */
     public static double reachableYawDegrees(double desiredDeg, double currentDeg) {
         if (!Double.isFinite(desiredDeg)) return Double.NaN;
         double desired = normalizeAngleDegrees(desiredDeg);
-        double side = Double.isFinite(currentDeg) && currentDeg < 0 ? -1 : 1;
-        if (Math.abs(desired) > ROTATION_MAX_ANGLE_DEG) return side * ROTATION_MAX_ANGLE_DEG;
-        boolean nearBackOnOtherSide = Double.isFinite(currentDeg) && Math.abs(currentDeg) > 90
-                && Math.signum(desired) != side;
-        if (nearBackOnOtherSide && Math.abs(desired) > ROTATION_MAX_ANGLE_DEG - ROTATION_WRAP_HYSTERESIS_DEG)
+        boolean nearBack = Double.isFinite(currentDeg) && Math.abs(currentDeg) > 90;
+        double side = nearBack && currentDeg < 0 ? -1 : 1;
+        if (Math.abs(desired) > ROTATION_MAX_ANGLE_DEG)
+            return (nearBack ? side : desired < 0 ? -1 : 1) * ROTATION_MAX_ANGLE_DEG;
+        if (nearBack && Math.signum(desired) != side && Math.abs(desired) > ROTATION_MAX_ANGLE_DEG - ROTATION_WRAP_HYSTERESIS_DEG)
             return side * ROTATION_MAX_ANGLE_DEG;
         return desired;
     }
@@ -550,21 +559,39 @@ public class TurretSubsystem {
         if (controller == ShooterController.PIDF) updateShooterPidf(clock.getAsDouble(), true);
     }
     public ShooterController getShooterController() { return shooterController; }
+    /** Bench fusion gains in motor power at 12 V. Software-only: no hub writes; invalid values are ignored. */
+    public void setShooterFusionTuning(double kS, double kV, double kP) {
+        if (!RobotMath.finite(kS, kV, kP)) return;
+        fusionKs = Range.clip(kS, 0, ShooterVelocityTuning.MAX_FUSION_KS);
+        fusionKv = Range.clip(kV, 0, ShooterVelocityTuning.MAX_FUSION_KV);
+        fusionKp = Range.clip(kP, 0, ShooterVelocityTuning.MAX_FUSION_KP);
+    }
+    public double getShooterFusionKs() { return fusionKs; }
+    public double getShooterFusionKv() { return fusionKv; }
+    public double getShooterFusionKp() { return fusionKp; }
+    /** Last fusion motor command (-1..1); zero in PIDF mode or while stopped. */
+    public double getShooterFusionPower() { return fusionPower; }
+    /** True while the last fusion command was bang-bang (full power or coast): error above 80 ticks/s. */
+    public boolean isShooterFusionBangBang() { return fusionBangBang; }
+    public double getShooterTicksPerSecond() { return shooterTicksPerSecond; }
 
-    /** Call once per loop after update(); bang-bang uses that loop's cached encoder sample. */
+    /** Call once per loop after update(); the fusion law uses that loop's cached encoder sample. */
     public void setShooterRpm(double rpm) {
         if (!Double.isFinite(rpm)) { stopShooter(); return; }
         targetShooterRpm = ShooterSpeed.clampFlywheelRpm(rpm);
         if (targetShooterRpm == 0) { stopShooter(); return; }
-        if (shooterController == ShooterController.BANG_BANG) {
-            bangBangPower = ShooterVelocityTuning.bangBangPower(targetShooterRpm, currentRpm);
-            shooterMotor.setPower(bangBangPower);
+        if (shooterController == ShooterController.BANG_BANG_FUSION) {
+            double targetTicksPerSecond = ShooterSpeed.motorTicksPerSecond(targetShooterRpm);
+            fusionBangBang = ShooterVelocityTuning.fusionUsesBangBang(targetTicksPerSecond, shooterTicksPerSecond);
+            fusionPower = ShooterVelocityTuning.fusionPower(targetTicksPerSecond, shooterTicksPerSecond,
+                    batteryVolts, fusionKs, fusionKv, fusionKp);
+            shooterMotor.setPower(fusionPower);
         } else shooterMotor.setVelocity(ShooterSpeed.motorTicksPerSecond(targetShooterRpm));
     }
     public void setShooterPower(double power) {
         targetShooterRpm = Range.clip(power, -1, 1) * SHOOTER_MAX_RPM; shooterMotor.setPower(Range.clip(power, -1, 1));
     }
-    public void stopShooter() { targetShooterRpm = 0; bangBangPower = 0; shooterMotor.setPower(0); }
+    public void stopShooter() { targetShooterRpm = 0; fusionPower = 0; fusionBangBang = false; shooterMotor.setPower(0); }
     public double getShooterCurrentRpm() { return currentRpm; }
     public double getTargetShooterRpm() { return targetShooterRpm; }
     public boolean isShooterAtSpeed() { return targetShooterRpm > 0 && Math.abs(currentRpm - targetShooterRpm) <= SHOOTER_READY_TOLERANCE_RPM; }
@@ -636,11 +663,18 @@ public class TurretSubsystem {
         telemetry.addData("Flywheel reported max (RPM at 14 V; PIDF and bang-bang)",
                 ShooterSpeed.REPORTED_MAX_OBSERVED_RPM);
         telemetry.addData("Flywheel controller", shooterController);
-        if (shooterController == ShooterController.BANG_BANG)
-            telemetry.addData("Bang-bang commanded power", "%.0f%% (full recovery / coast)", 100 * bangBangPower);
+        if (shooterController == ShooterController.BANG_BANG_FUSION) {
+            telemetry.addData("Fusion zone / power", "%s | %+.0f%% | error %+.0f ticks/s (bang-bang above %.0f)",
+                    targetShooterRpm == 0 ? "OFF" : fusionBangBang ? "BANG-BANG" : "FEEDFORWARD", 100 * fusionPower,
+                    targetShooterRpm == 0 ? 0 : ShooterSpeed.motorTicksPerSecond(targetShooterRpm) - shooterTicksPerSecond,
+                    ShooterVelocityTuning.FUSION_BANG_BANG_ERROR_TICKS_PER_SECOND);
+            telemetry.addData("Fusion gains (power at 12 V; untuned)", "kS %.3f | kV %.6f | kP %.4f per tick/s",
+                    fusionKs, fusionKv, fusionKp);
+        }
         telemetry.addData("Shooter motor (RPM, encoder)", "%.0f | flywheel/motor ratio %.3f",
                 currentRpm / SHOOTER_FLYWHEEL_REVS_PER_MOTOR_REV, SHOOTER_FLYWHEEL_REVS_PER_MOTOR_REV);
-        telemetry.addData("Flywheel PIDF (initial gains; tune loaded)", "P %.1f | I %.2f | D %.1f | F %.3f | F scale %.2f",
+        telemetry.addData(shooterController == ShooterController.PIDF ? "Flywheel PIDF (initial gains; tune loaded)"
+                        : "Flywheel PIDF (inactive in fusion mode)", "P %.1f | I %.2f | D %.1f | F %.3f | F scale %.2f",
                 shooterP, shooterI, shooterD, appliedShooterF, shooterFScale);
         telemetry.addData("Shooter battery (V) / current (A)", "%.2f / %.2f (5 Hz)", batteryVolts, shooterCurrentAmps);
         telemetry.addData("Shooter limit (output RPM)", "%.0f command cap | %.0f catalog RPM",

@@ -34,8 +34,8 @@ The user's latest decision to keep the newer working-tree controls is authoritat
 | GP2 B | Continuous/staggered toggle; starts continuous |
 | Flywheel | Starts at 3500 output RPM; returns to the manual setting when RT is released |
 | GP2 RS-X | Manual yaw with RT released; clockwise-positive fine yaw offset while RT is held |
-| GP2 Dpad Up/Down | Hood travel +/-0.5 degrees; trims automatic solution while RT is held |
-| GP2 Y/A | RPM +/-50; trims automatic solution while RT is held |
+| GP2 Dpad Up/Down | Hood travel +/-0.5 degrees; trims the automatic hood only while RT is held with a calibrated solution |
+| GP2 Y/A | RPM +/-50; trims the automatic RPM only while RT is held with a calibrated solution |
 | GP2 Dpad Right | Clear all auto offsets; also cleared by turret rehome |
 | GP2 X | Turret rehome with auto aim released |
 | GP2 Dpad Left | Explicit alliance-corner field reference and optional camera refinement |
@@ -52,8 +52,8 @@ GP2 B remains the feeding-mode selector.
 
 Shooting requests, gate travel, recovery and inhibit pause ordinary intake/loading;
 RT alone does not. Explicit intake direction overrides remain available. Actual
-feeding takes priority over stage-1 collection controls. Full confirmation remains
-0.5 s HIGH, followed by 0.5 s stage-1 run-on; LOW resumes ordinary loading.
+feeding takes priority over stage-1 collection controls. Full confirmation is
+0.2 s HIGH, which stops the intake and starts a 0.5 s stage-1 run-on; LOW resumes ordinary loading.
 
 ## Gaps fixed
 
@@ -81,7 +81,7 @@ feeding takes priority over stage-1 collection controls. Full confirmation remai
 | --- | --- |
 | DrivetrainTestOpMode | Same MecanumDrivetrain motor setup, gearing, robot-centric commands; single-wheel debug remains isolated |
 | IntakeTestOpMode | Shared motor setup and jam recovery; competition adds sensor-based automatic direction and shooting coordination |
-| TransferTestOpMode | Shared full debounce, run-on, stage-2-off loading and inhibit; competition adds selected feed sequence |
+| TransferTestOpMode | Shared full debounce, 0.5 s stage-1 run-on, stage-2-off loading and inhibit; competition adds selected feed sequence |
 | GateTestOpMode | Shared positions/PWM; direct diagnostic gate commands stay isolated |
 | IntakeShooterTestOpMode | Intake recovery, queue logic, motor/servo setup shared; bench arming, stop button, live tuning and unrestricted continuous feed remain diagnostic |
 | TurretTestOpMode | Shared homing, hood, flywheel and bounded yaw; competition deliberately uses measured-angle release hold and encoder correction |
@@ -98,15 +98,15 @@ feeding takes priority over stage-1 collection controls. Full confirmation remai
 
 ## Three independent lights
 
-These ports are unassigned in the repository wiring map. The active Hub configuration
-and physical installation have not been inspected. Configure standard positional Servo
-entries with these exact names; software finds names, not hardcoded port numbers.
+Control Hub servo 0 is the slide claw (`claw_servo`); the lights use servo ports 3-5.
+Configure standard positional Servo entries with these exact names; software finds
+names, not hardcoded port numbers.
 
-| Proposed connection | Name | Meaning |
+| Connection | Name | Meaning |
 | --- | --- | --- |
-| Control Hub servo 0 | led_intake | Blue loading/forward override; green confirmed full; orange reverse; blinking orange jam recovery; off paused/stopped |
-| Control Hub servo 1 | led_shooter | Yellow standby/preparation/recovery; green automatic tracking checks pass; violet gate opening/feeding; blinking violet manual bypass; red inhibit/fault |
-| Control Hub servo 2 | led_status | Green homed with fresh field pose; orange field reference unavailable/stale; yellow homing; red turret unavailable/home fault |
+| Control Hub servo 3 | led_intake | Blue loading/forward override; green confirmed full; orange reverse; blinking orange jam recovery; off paused/stopped |
+| Control Hub servo 4 | led_shooter | Yellow standby/preparation/recovery; green automatic tracking checks pass; violet gate opening/feeding; blinking violet manual bypass; red inhibit/fault |
+| Control Hub servo 5 | led_status | Green homed with fresh field pose; orange field reference unavailable/stale; yellow homing; red turret unavailable/home fault |
 
 Full/empty and successful launches cannot be inferred from motor commands. A full
 light reports the queue sensor's confirmed state; green reference reports available

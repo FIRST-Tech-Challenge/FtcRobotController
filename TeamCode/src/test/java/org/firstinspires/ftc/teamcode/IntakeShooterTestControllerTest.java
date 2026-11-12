@@ -207,16 +207,16 @@ public class IntakeShooterTestControllerTest {
         assertFalse(c.isIntakeClearing());
 
         c = jammedIntake(false);
-        // RB keeps requesting forward even when full; releasing it restores automatic reverse.
+        // RB keeps requesting forward even when full; releasing it stops automatic collection.
         assertEquals(1, c.intakePower(true), 0);
         c.update(.3, false, false, false, false, false, true, false);
-        // Full-queue reverse replaces inward recovery immediately.
-        assertEquals(-1, c.updateIntakePower(.3, true, 0), 0);
+        // A full queue stops the intake and cancels inward recovery immediately.
+        assertEquals(0, c.updateIntakePower(.3, true, 0), 0);
         assertFalse(c.isIntakeClearing());
-        assertEquals(1, c.updateIntakePower(.51, true, 0), 0);
-        assertTrue(c.isIntakeClearing());
+        assertEquals(0, c.updateIntakePower(.51, true, 0), 0); // A stopped intake cannot start recovery.
+        assertFalse(c.isIntakeClearing());
         c.update(.55, false, true, false, false, false, true, false);
-        assertEquals(1, c.updateIntakePower(.55, true, 0), 0);
+        assertEquals(-1, c.updateIntakePower(.55, true, 0), 0); // LB still reverses on request.
         c.update(.6, true, false, false, false, false, true, false);
         assertEquals(1, c.updateIntakePower(.6, false, 0), 0);
         assertFalse(c.isIntakeClearing());
@@ -355,11 +355,11 @@ public class IntakeShooterTestControllerTest {
         transfer.update(3.01, true, false, !c.loadIndex());
         assertTrue(transfer.full());
         assertEquals(1, c.intakePower(transfer.full()), 0); // RB overrides confirmed HIGH.
-        assertEquals(1, transfer.stage1(), 0);
+        assertEquals(1, transfer.stage1(), 0); // Stage-1 run-on seats the fourth ball.
         assertEquals(0, transfer.stage2(), 0);
 
         c.update(3.02, false, false, false, false, false, true, false);
-        assertEquals(-1, c.intakePower(transfer.full()), 0); // Release RB: automatic reverse.
+        assertEquals(0, c.intakePower(transfer.full()), 0); // Release RB: automatic stop, not reverse.
         transfer.update(3.03, false, false, !c.loadIndex());
         assertFalse(transfer.full()); assertEquals(1, transfer.stage1(), 0);
         assertEquals(1, c.intakePower(transfer.full()), 0); // LOW restores automatic forward.

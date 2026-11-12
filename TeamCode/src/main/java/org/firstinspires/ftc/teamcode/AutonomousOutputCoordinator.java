@@ -25,7 +25,10 @@ public final class AutonomousOutputCoordinator {
         return lease != null && lease.containsKey(channel) && lease.get(channel).equals(generations.get(channel));
     }
     public void intake(double power) { intakePower = power; }
-    public double intakePower(boolean queueFull) { return queueFull && intakePower > 0 ? -intakePower : intakePower; }
+    /** Forward collection stops on a confirmed full queue; deliberate reverse is still allowed. */
+    public double intakePower(boolean queueFull) {
+        return queueFull && intakePower > 0 ? IntakeQueueController.FULL_QUEUE_INTAKE_POWER : intakePower;
+    }
     public void loading(boolean enabled) { loading = enabled; }
     public boolean loading() { return loading; }
     public void aim(boolean spin) {

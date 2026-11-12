@@ -405,4 +405,92 @@ public class TeleOpLocalizationTest {
         assertTrue(history.reason(),history.reason().contains("Camera disagrees with odometry"));
         assertEquals(before.x,history.current(1.34).x,1e-9); assertEquals(before.y,history.current(1.34).y,1e-9);
     }
+    @Test public void largeConsistentDisagreementReLocalizesAfterConfirmationWithoutAJump() {
+        GoalTarget target = audience(); PoseHistory history = new PoseHistory();
+        double yaw = turretFacing(target,field(1,.8,-1.3,2.8));
+        int frame = acquireAudience(history,yaw);
+        // Pods slipped 70 cm and the heading is 11.5 deg off (a collision, or a handoff from the wrong place).
+        double dh = .2;
+        for (double t = 1.06; t < 1.199; t += .02) history.add(local(t,.7,0,dh,0,0),yaw);
+        MotionSample wrong = history.current(1.18);
+        boolean relocalized = false;
+        int count = 0;
+        double t = 1.20;
+        while (!relocalized && count < 60) {
+            t = 1.20+count*.02; count++;
+            history.add(local(t,.7,0,dh,0,0),yaw);
+            java.util.List<TagObservation> tags = cell(target,field(t,.8,-1.3,2.8),yaw);
+            relocalized = history.checkDrift3d(t,frame++,t,tags,landmarks(tags),MOUNT);
+            if (!relocalized) {
+                assertTrue(history.reason(),history.reason().contains("Camera disagrees with odometry") && history.reason().contains("confirming"));
+                assertTrue(history.largeCorrectionStatus(t+1e-6).startsWith("CAMERA DISAGREES"));
+                assertEquals(wrong.x,history.current(t).x,1e-9); // Still confirming: unchanged.
+            }
+        }
+        assertTrue(history.reason(),relocalized);
+        assertTrue(history.reason(),history.reason().contains("re-localized"));
+        assertTrue(count >= PoseHistory.RELOCALIZE_FRAMES);
+        assertEquals(PoseHistory.RELOCALIZE_MIN_SPAN_SECONDS,t-1.20,.02+1e-9); // Needed (about) the full span, no more.
+        double last = t-.02;
+        assertTrue(history.largeCorrectionStatus(t+1e-6).startsWith("RE-LOCALIZED"));
+        // Blended over 0.4 s like drift: bounded steps, then the true pose.
+        MotionSample previous = history.current(t);
+        for (t = last+.04; t < last+.7; t += .02) {
+            history.add(local(t,.7,0,dh,0,0),yaw);
+            MotionSample pose = history.current(t);
+            assertTrue("step " + Math.hypot(pose.x-previous.x,pose.y-previous.y), Math.hypot(pose.x-previous.x,pose.y-previous.y) < .06);
+            assertTrue(Math.abs(RobotMath.wrap(pose.heading-previous.heading)) < Math.toRadians(.7));
+            previous = pose;
+        }
+        assertEquals(.8,previous.x,.005); assertEquals(-1.3,previous.y,.005);
+        assertEquals(2.8,previous.heading,Math.toRadians(.2));
+        assertNull(history.largeCorrectionStatus(last+.02+PoseHistory.RELOCALIZED_DISPLAY_SECONDS+.1));
+    }
+    @Test public void singleTagInconsistentOrInterruptedLargeDisagreementNeverReLocalizes() {
+        GoalTarget target = audience();
+        double yaw = turretFacing(target,field(1,.8,-1.3,2.8));
+        // 1) One tag per frame: never enough to overrule odometry.
+        PoseHistory history = new PoseHistory();
+        int frame = acquireAudience(history,yaw);
+        for (double t = 1.06; t < 1.199; t += .02) history.add(local(t,.7,0,0,0,0),yaw);
+        MotionSample wrong = history.current(1.18);
+        for (int k = 0; k < 75; k++) {
+            double t = 1.20+k*.02;
+            history.add(local(t,.7,0,0,0,0),yaw);
+            java.util.List<TagObservation> one = new java.util.ArrayList<>(cell(target,field(t,.8,-1.3,2.8),yaw).subList(0,1));
+            assertFalse(history.checkDrift3d(t,frame++,t,one,landmarks(one),MOUNT));
+        }
+        assertTrue(history.reason(),history.reason().contains("2+ tags"));
+        assertTrue(history.largeCorrectionStatus(2.69).contains("tags in view"));
+        assertEquals(wrong.x,history.current(2.68).x,1e-9); assertEquals(wrong.y,history.current(2.68).y,1e-9);
+        // 2) Camera poses that disagree with each other by 10 cm: inconsistent, odometry kept.
+        history = new PoseHistory();
+        frame = acquireAudience(history,yaw);
+        for (double t = 1.06; t < 1.199; t += .02) history.add(local(t,.7,0,0,0,0),yaw);
+        wrong = history.current(1.18);
+        boolean inconsistent = false;
+        for (int k = 0; k < 75; k++) {
+            double t = 1.20+k*.02;
+            history.add(local(t,.7,0,0,0,0),yaw);
+            java.util.List<TagObservation> tags = cell(target,field(t,k % 2 == 0 ? .8 : .9,-1.3,2.8),yaw);
+            assertFalse(history.checkDrift3d(t,frame++,t,tags,landmarks(tags),MOUNT));
+            inconsistent |= history.reason().contains("inconsistent");
+        }
+        assertTrue(inconsistent);
+        assertEquals(wrong.x,history.current(2.68).x,1e-9);
+        // 3) A frame that agrees with odometry restarts the confirmation: two 0.38-s runs never add up to 0.5 s.
+        history = new PoseHistory();
+        frame = acquireAudience(history,yaw);
+        for (double t = 1.06; t < 1.199; t += .02) history.add(local(t,.7,0,0,0,0),yaw);
+        java.util.List<Boolean> results = new java.util.ArrayList<>();
+        frame = driftFrames(history,frame,1.20,20,.7,0,0,yaw,results);
+        double t = 1.60;
+        history.add(local(t,.7,0,0,0,0),yaw);
+        MotionSample odometry = history.current(t);
+        java.util.List<TagObservation> agreeing = cell(target,field(t,odometry.x,odometry.y,odometry.heading),yaw);
+        assertTrue(history.reason(),history.checkDrift3d(t,frame++,t,agreeing,landmarks(agreeing),MOUNT));
+        driftFrames(history,frame,t+.02,20,.7,0,0,yaw,results);
+        assertFalse(results.contains(true));
+        assertTrue(history.reason(),history.reason().contains("confirming"));
+    }
 }
