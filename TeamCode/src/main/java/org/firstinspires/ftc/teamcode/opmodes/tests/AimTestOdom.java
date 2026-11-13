@@ -58,10 +58,8 @@ public class AimTestOdom extends LinearOpMode {
     // ==========================================
     // AUTOMATIC DRIVE SETTINGS
     // ==========================================
-
-    public static double smoothingFactor = 0.50;
-
-    public static double axialForwardGain = 0.025;
+    public static double axialAdjust = 2.25;
+    public static double axialForwardGain = 0.03;
     public static double maxAutoAxial = 0.35;
 
     public static double yawGain = 0.025;
@@ -70,6 +68,20 @@ public class AimTestOdom extends LinearOpMode {
 
     public static double axialDeadband = 1.0;
     public static double yawDeadband = 0.7;
+
+    public static final int SMOOTHING_WINDOW = 10;
+    public static double SMOOTHING_ALPHA = 0.2;
+    public static double yawOffsetDegrees = -9.0;
+
+    private double[] aimYawHistory = new double[SMOOTHING_WINDOW];
+    private double[] aimAxialHistory = new double[SMOOTHING_WINDOW];
+
+    private int smoothingIndex = 0;
+    private int previousSmoothingCluster = -1;
+    private int smoothingCount = 0;
+
+    private double smoothedAimYaw = 0;
+    private double smoothedAimAxial = 0;
 
     // ==========================================
     // DRIVE VARIABLES
@@ -111,13 +123,8 @@ public class AimTestOdom extends LinearOpMode {
     double targetLauncherVelocity = 1150;
 
     double autoYaw = 0;
-    double smoothedAimYaw = 0;
-    double smoothedAimAxial = 0;
-
     double yawError = 0;
     double axialError = 0;
-
-    boolean smoothingInitialized = false;
     boolean targetFound = false;
 
     int selectedCluster = -1;
@@ -229,7 +236,7 @@ public class AimTestOdom extends LinearOpMode {
             // FEEDER
             // ==========================================
 
-            if (gamepad1.right_trigger >= 0.3) {
+            if (gamepad1.left_trigger >= 0.3) {
                 feeder.setPosition(0.04);
             } else {
                 feeder.setPosition(0.3);
@@ -436,40 +443,74 @@ public class AimTestOdom extends LinearOpMode {
                     }
                 }
 
+                //Fix yaw mistakes
+
+                aimYaw -= yawOffsetDegrees;
+
                 targetFound = true;
 
                 // ==========================================
                 // SMOOTHING
                 // ==========================================
 
-                double alpha = Math.max(
-                        0.0,
-                        Math.min(1.0, smoothingFactor)
-                );
 
-                if (!smoothingInitialized) {
+                // Reset history if the selected cluster changes
+                if (selectedCluster != previousSmoothingCluster) {
 
-                    smoothedAimYaw = aimYaw;
-                    smoothedAimAxial = aimAxial;
+                    smoothingIndex = 0;
+                    smoothingCount = 0;
 
-                    smoothingInitialized = true;
-
-                } else {
-
-                    smoothedAimYaw =
-                            alpha * aimYaw +
-                                    (1.0 - alpha) * smoothedAimYaw;
-
-                    smoothedAimAxial =
-                            alpha * aimAxial +
-                                    (1.0 - alpha) * smoothedAimAxial;
+                    previousSmoothingCluster = selectedCluster;
                 }
+
+
+                // Store newest readings
+                aimYawHistory[smoothingIndex] = aimYaw;
+                aimAxialHistory[smoothingIndex] = aimAxial;
+
+// Advance circular buffer
+                smoothingIndex = (smoothingIndex + 1) % SMOOTHING_WINDOW;
+
+                if (smoothingCount < SMOOTHING_WINDOW) {
+                    smoothingCount++;
+                }
+
+                // Calculate exponentially weighted averages
+                double yawSum = 0;
+                double axialSum = 0;
+                double totalWeight = 0;
+
+// Find newest reading
+                int newestIndex =
+                        (smoothingIndex - 1 + SMOOTHING_WINDOW)
+                                % SMOOTHING_WINDOW;
+
+                for (int age = 0; age < smoothingCount; age++) {
+
+                    // Find the actual buffer position for this reading
+                    int index =
+                            (newestIndex - age + SMOOTHING_WINDOW)
+                                    % SMOOTHING_WINDOW;
+
+                    // Newer readings receive greater weight
+                    double weight =
+                            Math.pow(1.0 - SMOOTHING_ALPHA, age);
+
+                    yawSum += aimYawHistory[index] * weight;
+                    axialSum += aimAxialHistory[index] * weight;
+
+                    totalWeight += weight;
+                }
+
+                smoothedAimYaw = yawSum / totalWeight;
+                smoothedAimAxial = axialSum / totalWeight;
+
 
                 // ==========================================
                 // AUTOMATIC AIMING
                 // ==========================================
 
-                if (gamepad1.left_trigger >= 0.5) {
+                if (gamepad1.right_trigger >= 0.5) {
 
                     yawError =
                             Math.abs(smoothedAimYaw) < yawDeadband
@@ -488,7 +529,7 @@ public class AimTestOdom extends LinearOpMode {
                             Math.min(maxAutoYaw, autoYaw)
                     );
 
-                    axial = -axialError * axialForwardGain;
+                    axial = (-axialError + axialAdjust) * axialForwardGain;
 
                     axial = Math.max(
                             -maxAutoAxial,
@@ -503,19 +544,21 @@ public class AimTestOdom extends LinearOpMode {
                     }
                 }
             } else {
+            // Reset smoothing when no target is found
+                smoothingIndex = 0;
+                smoothingCount = 0;
 
-                aimYaw = 0;
-                aimAxial = 0;
+                previousSmoothingCluster = -1;
 
-                // Reset smoothing when no target is found.
-                smoothingInitialized = false;
+                smoothedAimYaw = 0;
+                smoothedAimAxial = 0;
             }
 
             // ==========================================
             // STOP IF AUTOMATIC AIMING HAS NO TARGET
             // ==========================================
 
-            if (gamepad1.left_trigger >= 0.5 && !targetFound) {
+            if (gamepad1.right_trigger >= 0.5 && !targetFound) {
                 axial = 0;
                 lateral = 0;
                 yaw = 0;
