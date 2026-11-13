@@ -1,12 +1,12 @@
 ## NOTICE
 
-This repository contains the public FTC SDK for the DECODE (2025-2026) competition season.
+This repository contains the public FTC SDK for the BIOBUZZ (2026-2027) competition season.
 
 ## Welcome!
 This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
 
 ## Requirements
-To use this Android Studio project, you will need Android Studio Ladybug (2024.2) or later.
+To use this Android Studio project, you will need Android Studio Narwhal 3 Feature Drop or later.
 
 To program your robot in Blocks or OnBot Java, you do not need Android Studio.
 
@@ -58,6 +58,54 @@ Samples Folder: &nbsp;&nbsp; [/FtcRobotController/src/main/java/org/firstinspire
 The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc/teamcode](TeamCode/src/main/java/org/firstinspires/ftc/teamcode) folder contains an explanation of the sample naming convention, and instructions on how to copy them to your own project space.
 
 # Release Information
+
+## Version 12.0 (20260907-090034)
+
+### Breaking Changes
+* The new AprilTag Cluster capability breaks legacy AprilTag OpModes resulting in compile errors for software that uses AprilTagDetection objects in both Android Studio and OnBot Java.
+  * Legacy AprilTag OpModes must be updated to check whether the returned AprilTag is a cluster or singleton,
+     and cast the returned detection into the correct type to access its elements.  See below:    
+     
+	 **Old method for AprilTag processing**
+    ```
+     for (AprilTagDetection detection : currentDetections) {
+       // Do single Tag processing here  
+     }
+    ```
+
+     **New method for AprilTag Singleton/Cluster processing**
+
+    ```
+     for (AprilTagDetection detection : currentDetections) {
+       if (detection instanceof AprilTagSingleDetection) {
+         AprilTagSingleDetection singleDet = (AprilTagSingleDetection) detection;
+         // Do single Tag processing here  
+       } else {
+         AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
+         // Do cluster Tag processing here  
+       }
+     }
+     ```
+    For more information about how to update your OpModes to fix the breaking change see: https://ftc-docs.firstinspires.org/apriltag-clusters
+    
+  * About AprilTag clusters:  
+    * Clusters are co-planar groups of two or more AprilTags wherein the position of each member tag is defined relative to a common origin
+    * This origin may be placed outside the bounds of the tags themselves to provide a more suitable "aiming" target
+    * Clusters are resilient to partial occlusion. Full 6DOF pose can be estimated from a cluster even if only a single member tag is visible. Of course, the more tags that are visible, the better and more stable the pose estimate will be
+    * All AprilTag samples have been updated to differentiate between standalone tags and clusters
+  
+### Enhancements
+* Adds a tree view for robot configurations [issue 1821](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/1821)
+* Gamepad indicators on the Driver Station are now colored orange if the respective gamepads are connected to the Android generic gamepad driver instead of the Driver Station's usermode USB driver 
+* Updated AprilTag Library for BIOBUZZ. Notably, getCurrentGameTagLibrary() now returns BIOBUZZ tags.
+  * In BIOBUZZ, the Origin of each cluster is located in the center of the Cell opening for easy aiming.
+  * The Origin X,Y & Z Axes are now displayed by default on the preview image.
+  * <B>Unfortunately, since BIOBUZZ AprilTags move, they are not suitable for absolute Field Localization.</B>
+* Supports OctoQuad MK2 firmware v3.1.0, which adds diagnostics parameters for the IMU and MCU uptime
+
+### Bug Fixes
+* Fixes issue [2078](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/2078) where battery
+voltage was not updated on driver station if OpMode did not send any telemetry.
 
 ## Version 11.2.1 (20260724-093406)
 

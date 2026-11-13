@@ -39,25 +39,32 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagClusterDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.apriltag.AprilTagSingleDetection;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /*
- * This OpMode illustrates using a camera to locate and drive towards a specific AprilTag.
+ * This OpMode illustrates using a camera to locate and drive towards a specific AprilTag or AprilTag Cluster
+ * A "Cluster" is a group of Apriltags that share a common origin, and are identified by name.
  * The code assumes a Holonomic (Mecanum or X Drive) Robot.
  *
  * For an introduction to AprilTags, see the ftc-docs link below:
  * https://ftc-docs.firstinspires.org/en/latest/apriltag/vision_portal/apriltag_intro/apriltag-intro.html
  *
- * When an AprilTag in the TagLibrary is detected, the SDK provides location and orientation of the tag, relative to the camera.
+ * When an AprilTag/Cluster in the TagLibrary is detected, the SDK provides location and orientation of the target, relative to the camera.
  * This information is provided in the "ftcPose" member of the returned "detection", and is explained in the ftc-docs page linked below.
  * https://ftc-docs.firstinspires.org/apriltag-detection-values
  *
- * The drive goal is to rotate to keep the Tag centered in the camera, while strafing to be directly in front of the tag, and
- * driving towards the tag to achieve the desired distance.
+ * For a single tag, the "Drive Target" is the center of the Tag.  For a cluster of tags, the "Drive Target" will be the
+ * (0,0,0) ORIGIN of the cluster, which may have been positioned somewhere other than the center of the cluster in order
+ * to help to locate a game objective.
+ *
+ * The driving goal is to rotate to keep the Target centered in the camera, while strafing to be directly in front of the target,
+ *  and driving towards the target to achieve the desired distance.
  * To reduce any motion blur (which will interrupt the detection process) the Camera exposure is reduced to a very low value (5mS)
  * You can determine the best Exposure and Gain values by using the ConceptAprilTagOptimizeExposure OpMode in this Samples folder.
  *
@@ -73,9 +80,9 @@ import java.util.concurrent.TimeUnit;
  * Release the Left Bumper to return to manual driving mode.
  *
  * Under "Drive To Target" mode, the robot has three goals:
- * 1) Turn the robot to always keep the Tag centered on the camera frame. (Use the Target Bearing to turn the robot.)
- * 2) Strafe the robot towards the centerline of the Tag, so it approaches directly in front  of the tag.  (Use the Target Yaw to strafe the robot)
- * 3) Drive towards the Tag to get to the desired distance.  (Use Tag Range to drive the robot forward/backward)
+ * 1) Turn the robot to always keep the Target centered on the camera frame. (Use the Target Bearing to turn the robot.)
+ * 2) Strafe the robot towards the centerline of the Target, so it approaches directly in front  of the tag.  (Use the Target Yaw to strafe the robot)
+ * 3) Drive towards the Target to get to the desired distance.  (Use TargetRange to drive the robot forward/backward)
  *
  * Use DESIRED_DISTANCE to set how close you want the robot to get to the target.
  * Speed and Turn sensitivity can be adjusted using the SPEED_GAIN, STRAFE_GAIN and TURN_GAIN constants.
@@ -90,7 +97,7 @@ import java.util.concurrent.TimeUnit;
 public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
-    final double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
+    final double DESIRED_DISTANCE = 30.0; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
@@ -99,24 +106,31 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
     final double STRAFE_GAIN =  0.015 ;   //  Strafe Speed Control "Gain".  e.g. Ramp up to 37% power at a 25 degree Yaw error.   (0.375 / 25.0)
     final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
-    final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_STRAFE= 0.5;   //  Clip the strafing speed to this max value (adjust for your robot)
-    final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
+    final double MAX_AUTO_SPEED = 0.5;    //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_STRAFE= 0.5;    //  Clip the strafing speed to this max value (adjust for your robot)
+    final double MAX_AUTO_TURN  = 0.3;    //  Clip the turn speed to this max value (adjust for your robot)
 
     private DcMotor frontLeftDrive = null;  //  Used to control the left front drive wheel
-    private DcMotor frontRightDrive = null;  //  Used to control the right front drive wheel
-    private DcMotor backLeftDrive = null;  //  Used to control the left back drive wheel
+    private DcMotor frontRightDrive = null; //  Used to control the right front drive wheel
+    private DcMotor backLeftDrive = null;   //  Used to control the left back drive wheel
     private DcMotor backRightDrive = null;  //  Used to control the right back drive wheel
 
-    private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
-    private static final int DESIRED_TAG_ID = -1;     // Choose the tag you want to approach or set to -1 for ANY tag.
+    private final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
+    private final int DESIRED_TAG_ID = -1;    // The tag you want to approach, or set to -1 for ANY tag.
+    private final String DESIRED_CLUSTER_NAME = null; // The cluster name you want to approach, or set null for ANY cluster.
+
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
-    private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
+
+    private boolean targetFound  = false;    // Set to true when an AprilTag/Cluster target is detected
+    private String targetName    = "none";
+    private int    targetID      = 0;
+    private double targetRange   = 0;
+    private double targetBearing = 0;
+    private double targetYaw     = 0;
 
     @Override public void runOpMode()
     {
-        boolean targetFound     = false;    // Set to true when an AprilTag target is detected
         double  drive           = 0;        // Desired forward power/speed (-1 to +1)
         double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
         double  turn            = 0;        // Desired turning power/speed (-1 to +1)
@@ -152,36 +166,57 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
         while (opModeIsActive())
         {
             targetFound = false;
-            desiredTag  = null;
 
             // Step through the list of detected tags and look for a matching tag
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
             for (AprilTagDetection detection : currentDetections) {
-                // Look to see if we have size info on this tag.
-                if (detection.metadata != null) {
-                    //  Check to see if we want to track towards this tag.
-                    if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
-                        // Yes, we want to use this tag.
-                        targetFound = true;
-                        desiredTag = detection;
-                        break;  // don't look any further.
+
+                if (detection instanceof AprilTagSingleDetection) {
+                    AprilTagSingleDetection singleDetection = (AprilTagSingleDetection) detection;
+
+                    // Look to see if we have size info on this tag.
+                    if (singleDetection.metadata != null) {
+                        //  Check to see if we want to track towards this tag.
+                        if ((DESIRED_TAG_ID < 0) || (singleDetection.id == DESIRED_TAG_ID)) {
+                            // Yes, we want to use this tag.
+                            targetName    = singleDetection.metadata.name;
+                            targetID      = singleDetection.id;
+                            targetRange   = singleDetection.ftcPose.range;
+                            targetBearing = singleDetection.ftcPose.bearing;
+                            targetYaw     = singleDetection.ftcPose.yaw;
+                            targetFound = true;
+                            break;  // don't look any further.
+                        } else {
+                            // This tag is in the library, but we do not want to track it right now.
+                            telemetry.addData("Skipping", "Tag ID %d is not desired", singleDetection.id);
+                        }
                     } else {
-                        // This tag is in the library, but we do not want to track it right now.
-                        telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                        // This tag is NOT in the library, so we don't have enough information to track to it.
+                        telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", singleDetection.id);
                     }
                 } else {
-                    // This tag is NOT in the library, so we don't have enough information to track to it.
-                    telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+                    AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
+
+                    if (DESIRED_CLUSTER_NAME == null || clusterDet.metadata.shortName.equals(DESIRED_CLUSTER_NAME) ) {
+                        // Yes, we want to use this tag.
+                        targetName    = clusterDet.metadata.shortName;
+                        targetID      = -1;
+                        targetRange   = clusterDet.ftcPose.range;
+                        targetBearing = clusterDet.ftcPose.bearing;
+                        targetYaw     = clusterDet.ftcPose.yaw;
+                        targetFound = true;
+                        break;  // don't look any further.
+                    }
                 }
             }
 
             // Tell the driver what we see, and what to do.
             if (targetFound) {
                 telemetry.addData("\n>","HOLD Left-Bumper to Drive to Target\n");
-                telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-                telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
-                telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
-                telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+                telemetry.addData("Found", "ID %d (%s)", targetID, targetName);
+                telemetry.addData("Range",  "%5.1f inches", targetRange);
+                telemetry.addData("Bearing","%3.0f degrees", targetBearing);
+                telemetry.addData("Yaw","%3.0f degrees", targetYaw);
             } else {
                 telemetry.addData("\n>","Drive using joysticks to find valid target\n");
             }
@@ -190,9 +225,9 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
             if (gamepad1.left_bumper && targetFound) {
 
                 // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-                double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-                double  headingError    = desiredTag.ftcPose.bearing;
-                double  yawError        = desiredTag.ftcPose.yaw;
+                double  rangeError      = targetRange - DESIRED_DISTANCE;
+                double  headingError    = targetBearing;
+                double  yawError        = targetYaw;
 
                 // Use the speed and turn "gains" to calculate how we want the robot to move.
                 drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
@@ -201,7 +236,6 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
 
                 telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
             } else {
-
                 // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
                 drive  = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
                 strafe = -gamepad1.left_stick_x  / 2.0;  // Reduce strafe rate to 50%.
@@ -218,11 +252,8 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
 
     /**
      * Move robot according to desired axes motions
-     * <p>
      * Positive X is forward
-     * <p>
      * Positive Y is strafe left
-     * <p>
      * Positive Yaw is counter-clockwise
      */
     public void moveRobot(double x, double y, double yaw) {
