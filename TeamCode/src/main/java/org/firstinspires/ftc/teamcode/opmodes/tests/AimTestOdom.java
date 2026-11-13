@@ -4,15 +4,12 @@ package org.firstinspires.ftc.teamcode.opmodes.tests;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -23,9 +20,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @TeleOp(name = "AimTestOdom", group = "Test")
 @Config
@@ -58,13 +55,13 @@ public class AimTestOdom extends LinearOpMode {
     // ==========================================
     // AUTOMATIC DRIVE SETTINGS
     // ==========================================
-    public static double axialAdjust = 2.25;
+    public static double axialAdjust = 2.15;
     public static double axialForwardGain = 0.03;
-    public static double maxAutoAxial = 0.35;
+    public static double maxAutoAxial = 0.5;
 
     public static double yawGain = 0.025;
     public static double rotationVelocityGain = 0.12;
-    public static double maxAutoYaw = 0.35;
+    public static double maxAutoYaw = 0.5;
 
     public static double axialDeadband = 1.0;
     public static double yawDeadband = 0.7;
@@ -444,8 +441,6 @@ public class AimTestOdom extends LinearOpMode {
                 }
 
                 //Fix yaw mistakes
-
-                aimYaw -= yawOffsetDegrees;
 
                 targetFound = true;
 
