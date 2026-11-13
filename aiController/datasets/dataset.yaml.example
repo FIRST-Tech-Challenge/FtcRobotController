@@ -1,0 +1,8 @@
+# Copy to dataset.yaml and replace the path with this computer's real absolute path.
+path: /ABSOLUTE/PATH/TO/aiController/datasets
+train: images/train
+val: images/val
+test: images/test
+names:
+  0: pollen
+  1: nectar

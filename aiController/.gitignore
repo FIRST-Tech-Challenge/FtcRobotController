@@ -1,0 +1,9 @@
+# Large or generated data stays off Git by default.
+runs/
+datasets/images/
+datasets/labels/
+models/*.pt
+models/*.onnx
+models/*.tflite
+__pycache__/
+*.pyc
