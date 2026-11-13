@@ -20,7 +20,7 @@ import org.lhssa.ftc.teamcode.pedroPathing.PedroPather;
 
 
 @Autonomous
-public class BiobuzzAutonomousMk1 extends OpMode {
+public class BiobuzzAutonomousmk1 extends OpMode {
 
     private StartingSide startingSide = StartingSide.HIVEUP;
     private AllianceColor allianceColor = AllianceColor.RED;

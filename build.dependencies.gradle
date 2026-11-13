@@ -1,11 +1,14 @@
 repositories {
     mavenCentral()
     google() // Needed for androidx
+    maven { url = 'https://mymaven.bylazar.com/releases' }
+    maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
     implementation 'org.firstinspires.ftc:Inspection:12.0.0'
     implementation 'org.firstinspires.ftc:Blocks:12.0.0'
+    //noinspection Aligned16KB
     implementation 'org.firstinspires.ftc:RobotCore:12.0.0'
     implementation 'org.firstinspires.ftc:RobotServer:12.0.0'
     implementation 'org.firstinspires.ftc:OnBotJava:12.0.0'
@@ -13,5 +16,7 @@ dependencies {
     implementation 'org.firstinspires.ftc:FtcCommon:12.0.0'
     implementation 'org.firstinspires.ftc:Vision:12.0.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.pedropathing:revhub:3.0.2'
+    implementation 'com.github.alwoodd:PedroLib:3.1.0'
 }
 
