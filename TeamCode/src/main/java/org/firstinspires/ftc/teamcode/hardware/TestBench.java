@@ -25,11 +25,15 @@ public class TestBench {
     private DcMotorEx launcherNectar;
     public double ticksPerRev;
 
-    RobotHardwareMap robotHardwareMap;
+//    RobotHardwareMap robotHardwareMap;
 
     public TestBench(RobotHardwareMap robotHardwareMap) {
-        this.robotHardwareMap = robotHardwareMap;
+//        this.robotHardwareMap = robotHardwareMap;
     }
+    public TestBench() {
+//        this.robotHardwareMap = robotHardwareMap;
+    }
+
 
     public void init(HardwareMap haMap){
         motor0 = haMap.get(DcMotorEx.class, "motor0");
@@ -47,14 +51,14 @@ public class TestBench {
 
 
     }
-    public DcMotorEx setMotorBrake(DcMotorEx motor, boolean brake){
-        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    public DcMotorEx setMotorBrake(DcMotorEx currMotor, boolean brake){
+        currMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         if (brake) {
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            currMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         } else {
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            currMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
-        return motor;
+        return currMotor;
     }
 
     public void setMotorSpeed(double speed){

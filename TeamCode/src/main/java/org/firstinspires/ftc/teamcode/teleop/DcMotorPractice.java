@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.RobotHardwareMap;
 import org.firstinspires.ftc.teamcode.hardware.TestBench;
@@ -21,8 +22,12 @@ public class DcMotorPractice extends OpMode {
         robotHardwareMap.initialize();
         bench = new TestBench(robotHardwareMap);
         bench.init(hardwareMap);
-        motor = bench.getLauncherPollen();
-
+        this.motor = hardwareMap.get(DcMotorEx.class,"launcher_pollen");
+        this.motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        bench.getLauncherNectar().setDirection(DcMotorSimple.Direction.REVERSE);
+        bench.getIntake().setDirection(DcMotorSimple.Direction.REVERSE);
+        bench.getTransfer().setDirection(DcMotorSimple.Direction.REVERSE);
+//
     }
     double speedIncrement = 0;
     @Override
@@ -50,8 +55,15 @@ public class DcMotorPractice extends OpMode {
         }
         if (gamepad1.a) {
            bench.setMotorSpeed(0);
+           bench.getLauncherNectar().setPower(0);
+            bench.getIntake().setPower(0);
+            bench.getTransfer().setPower(0);
         } else {
             bench.setMotorSpeed(speedIncrement);
+            bench.getLauncherNectar().setPower(speedIncrement);
+            bench.getIntake().setPower(speedIncrement);
+            bench.getTransfer().setPower(speedIncrement);
+
 
         }
     }

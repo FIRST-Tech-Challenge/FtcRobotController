@@ -56,13 +56,18 @@ public class Teleopmain extends OpMode {
         currentGamepad2.copy(gamepad2);
         //Control State
         if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up){
-            if (motorSpeed <= 1) {
-                motorSpeed += .1;
+            if (this.motorSpeed <= 1) {
+                this.motorSpeed += .1;
+            }
+        }
+        if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper){
+            if (this.motorSpeed <= 1) {
+                this.motorSpeed += .1;
             }
         }
         if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down){
-            if (motorSpeed >= .2) {
-                motorSpeed -= .1;
+            if (this.motorSpeed >= .2) {
+                this.motorSpeed -= .1;
             }
 
         }
@@ -78,11 +83,11 @@ public class Teleopmain extends OpMode {
 
         //Activations
         if (runPollen){
-            pollenmotor.setPower(.1);
+           // pollenmotor.setPower(.1);
 //            pollenShooter.getMotor().setPower(.1);
 //            pollenShooter.setMotorSpeed(0);
         } else {
-            pollenmotor.setPower(0);
+           // pollenmotor.setPower(0);
 //            pollenShooter.getMotor().setPower(0);
         }
 //        if (runNectar){
@@ -115,7 +120,7 @@ public class Teleopmain extends OpMode {
 //        telemetry.addData("runningPollen",pollenShooter.isRunning());
         telemetry.addData("pollenPower",pollenmotor.getPower());
 //        telemetry.addData("runningNectar",nectarShooter.isRunning());
-        telemetry.addData("intendedPower", motorSpeed);
+        telemetry.addData("intendedPower", this.motorSpeed);
 //        telemetry.addData("nectarVelocity",robotHardwareMap.launcherNectar.getVelocity());
         telemetry.addData("pollenVelocity",pollenmotor.getVelocity());
 
