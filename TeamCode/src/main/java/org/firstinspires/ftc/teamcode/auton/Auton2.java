@@ -29,11 +29,16 @@ public class Auton2 extends GreenBotBaseOpMode {
     public void runOpMode() {
         config();
 
-        telemetry.addData("Ready", "Press START");
-        drive.showPose();
-
         pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, START_X, START_Y,
                 AngleUnit.DEGREES, START_HEADING));
+
+        // Pick the alliance during INIT; the LEDs show the alliance color until START.
+        while (opModeInInit()) {
+            selectAlliance();
+            telemetry.addData("Ready", "Press START");
+            drive.showPose();
+            telemetry.update();
+        }
 
         waitForStart();
         wedgeServo.setPosition(WEDGE_UP);

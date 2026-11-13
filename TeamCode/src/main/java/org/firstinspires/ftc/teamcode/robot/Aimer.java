@@ -26,7 +26,7 @@ import java.util.List;
  * </pre>
  *
  * Setup: call {@link #resetTurretEncoder()} once, while the turret is lined up facing straight
- * backward (that position is 0), then {@link #start()} when the match starts.
+ * forward (that position is 0), then {@link #start()} when the match starts.
  */
 public class Aimer {
 
@@ -49,7 +49,8 @@ public class Aimer {
     public static double TURRET_AIM_DIRECTION = 1;   // flip to -1 if the turret turns away
     public static double AIM_TOLERANCE_DEG = 1.5;    // "on target" if |tx| is below this
 
-    // Soft limits in encoder ticks, measured from the backward-facing start (0).
+    // Soft limits in encoder ticks, measured from the forward-facing start (0). They're
+    // symmetric, so 0 must be the middle of the turret's safe travel (as far as the wires allow).
     public static int TURRET_MIN_TICKS = -428;
     public static int TURRET_MAX_TICKS = 428;
 
@@ -86,7 +87,7 @@ public class Aimer {
 
     // ---------------- Setup ----------------
 
-    /** Make the turret's current position 0. Call while it faces straight backward. */
+    /** Make the turret's current position 0. Call while it faces straight forward. */
     public void resetTurretEncoder() {
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -207,6 +208,15 @@ public class Aimer {
     /** True if the last aim() ended on target. */
     public boolean isOnTarget() {
         return onTarget;
+    }
+
+    /**
+     * True if the last update() saw the hive and the turret is pointed within AIM_TOLERANCE_DEG
+     * of it. Unlike isOnTarget(), this doesn't depend on aim() running, so it stays true after
+     * the driver lets go of auto-aim or nudges the turret into line by hand.
+     */
+    public boolean isAimed() {
+        return hive != null && Math.abs(hive.txDeg) < AIM_TOLERANCE_DEG;
     }
 
     /** Average tx of the visible hive tags in degrees (+ = right), or 0 with no target. */

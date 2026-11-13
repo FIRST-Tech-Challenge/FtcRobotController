@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.robot.Aimer;
  * D-pad L/R:     nudge the turret slowly by hand. This IGNORES the soft limits so you can
  *                calibrate them -- watch the wires.
  *
- * During INIT: line the turret up facing straight backward, then press INIT. The turret
+ * During INIT: line the turret up facing straight forward, then press INIT. The turret
  * encoder is zeroed there. Press X for BLUE alliance or B for RED (default BLUE).
  *
  * Tuning values (gains, soft limits, tag IDs) are in Aimer.
@@ -29,14 +29,14 @@ public class LimelightTestGreen extends GreenBotBaseOpMode {
     public void runOpMode() {
         config();   // also builds the aimer
 
-        // Wherever the turret is right now (lined up facing backward) becomes 0.
+        // Wherever the turret is right now (lined up facing forward) becomes 0.
         aimer.resetTurretEncoder();
 
         // Pick the alliance during INIT.
         while (opModeInInit()) {
             if (gamepad1.x) aimer.setBlueAlliance(true);
             if (gamepad1.b) aimer.setBlueAlliance(false);
-            telemetry.addLine("Turret encoder zeroed -- it should be facing straight backward.");
+            telemetry.addLine("Turret encoder zeroed -- it should be facing straight forward.");
             telemetry.addLine("Alliance: X = BLUE, B = RED");
             telemetry.addData("Alliance", aimer.isBlueAlliance() ? "BLUE" : "RED");
             telemetry.addLine("Hold Y to aim the turret. D-pad L/R nudges it.");

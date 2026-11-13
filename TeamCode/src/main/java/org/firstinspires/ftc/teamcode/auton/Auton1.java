@@ -42,17 +42,23 @@ public class Auton1 extends GreenBotBaseOpMode {
         config();
         drive.setUsePid(true);
 
-        telemetry.addData("Ready", "Press START");
-        drive.showPose();
-
         pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, START_X, START_Y,
                 AngleUnit.DEGREES, START_HEADING));
 
+        // Pick the alliance during INIT; the LEDs show the alliance color until START.
+        while (opModeInInit()) {
+            selectAlliance();
+            telemetry.addData("Ready", "Press START");
+            drive.showPose();
+            telemetry.update();
+        }
+
         waitForStart();
         wedgeServo.setPosition(WEDGE_UP);
-        launcher.setVelocity(LAUNCHER_TARGET_VELOCITY);
+        aimer.start(); // so the aimer LED shows whether the hive is in view
+        launcher.setTargetVelocity(LAUNCHER_TARGET_VELOCITY);
 
-        sleep(2000);
+        waitForLauncher(2.0); // feed as soon as it's up to speed (gives up after 2 s)
         feeder.setPower(1.0);
         sleep(3000);
         feeder.setPower(0);

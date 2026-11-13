@@ -7,9 +7,8 @@ import org.firstinspires.ftc.teamcode.base.GreenBotBaseOpMode;
 @TeleOp(name = "TeleOp Main", group = "Main")
 public class TeleOpMain extends GreenBotBaseOpMode {
 
-    private final int INITIAL_LAUNCHER_TARGET_VELOCITY = 1250;
-    private final int MIN_LAUNCHER_TARGET_VELOCITY = 200;
-    private final int MAX_LAUNCHER_TARGET_VELOCITY = 2000;
+    private final double INITIAL_LAUNCHER_TARGET_VELOCITY = 1250;
+    private final double LAUNCHER_VELOCITY_STEP = 50;
 
     private final double INTAKE_POWER = 1.0;
     private final double FEEDER_POWER = 1.0;
@@ -22,23 +21,17 @@ public class TeleOpMain extends GreenBotBaseOpMode {
     private boolean wasOnTarget = false;
     private boolean intakeReversed = false;
 
-    private double launcherTargetVelocity = INITIAL_LAUNCHER_TARGET_VELOCITY;
-
     @Override
     public void runOpMode() { // when driver hits INIT
         config();
 
-        // The turret should be lined up facing straight backward before INIT; that becomes 0.
+        // The turret should be lined up facing straight forward before INIT; that becomes 0.
         // TODO: once an auto moves the turret, skip this when TeleOp follows that auto.
         aimer.resetTurretEncoder();
 
-        // Pick the alliance during INIT (it decides which hive tags the aimer looks for).
+        // Pick the alliance during INIT; the LEDs show the alliance color until START.
         while (opModeInInit()) {
-            if (gamepad1.x || gamepad2.x) aimer.setBlueAlliance(true);
-            if (gamepad1.b || gamepad2.b) aimer.setBlueAlliance(false);
-            telemetry.addData("Alliance", "%s   (X = BLUE, B = RED)",
-                    aimer.isBlueAlliance() ? "BLUE" : "RED");
-            telemetry.addLine("Turret encoder zeroed -- it should be facing straight backward.");
+            selectAlliance();
             helpMenu();
             telemetry.update();
         }
@@ -46,6 +39,7 @@ public class TeleOpMain extends GreenBotBaseOpMode {
         waitForStart();
         wedgeServo.setPosition(WEDGE_UP);
         aimer.start();
+        launcher.setTargetVelocity(INITIAL_LAUNCHER_TARGET_VELOCITY);
 
         while (opModeIsActive()) {
             /////////////////////////
@@ -117,18 +111,16 @@ public class TeleOpMain extends GreenBotBaseOpMode {
             // (runs continuously)
             /////////////////////////
             if (gamepad2.dpadUpWasPressed()) {
-                launcherTargetVelocity += 100;
-                if (launcherTargetVelocity > MAX_LAUNCHER_TARGET_VELOCITY) {
-                    launcherTargetVelocity = MAX_LAUNCHER_TARGET_VELOCITY;
-                }
+                launcher.changeTargetVelocity(LAUNCHER_VELOCITY_STEP);
             }
             if (gamepad2.dpadDownWasPressed()) {
-                launcherTargetVelocity -= 100;
-                if (launcherTargetVelocity < MIN_LAUNCHER_TARGET_VELOCITY) {
-                    launcherTargetVelocity = MIN_LAUNCHER_TARGET_VELOCITY;
-                }
+                launcher.changeTargetVelocity(-LAUNCHER_VELOCITY_STEP);
             }
-            launcher.setVelocity(launcherTargetVelocity);
+
+            /////////////////////////
+            // update LEDs
+            /////////////////////////
+            updateLights();
 
             /////////////////////////
             // update telemetry
@@ -136,9 +128,7 @@ public class TeleOpMain extends GreenBotBaseOpMode {
             if (gamepad1.start || gamepad2.start) {
                 helpMenu();
             } else {
-                double launcherVelocity = launcher.getVelocity();
-                telemetry.addData("Launcher - Target Velocity", launcherTargetVelocity);
-                telemetry.addData("Launcher - Current Velocity", launcherVelocity);
+                launcher.showStatus();
                 aimer.showStatus();
                 drive.showPose();
             }
@@ -147,25 +137,26 @@ public class TeleOpMain extends GreenBotBaseOpMode {
 
         drive.stopDriving();
         aimer.stop();
+        launcher.stop();
     }
 
     private void helpMenu() {
         telemetry.addData("Help Menu (this)", "Either Gamepad - Hold Start");
+        telemetry.addData("", "");
 
-        telemetry.addData("----------", "-----------");
-        telemetry.addData("Drive controls", "Gamepad 1 - Standard Mecanum");
-        telemetry.addData("Intake ON/OFF (Toggle)", "Gamepad 1 - Left Bumper");
-        telemetry.addData("Intake Reverse (Toggle)", "Gamepad 1 - Right Bumper");
-        telemetry.addData("Wedge UP", "Gamepad 1 - DPad Up");
-        telemetry.addData("Wedge DOWN", "Gamepad 1 - DPad Down");
-        telemetry.addData("----------", "-----------");
+        telemetry.addData("DRIVER 1", "Controls");
+        telemetry.addData("Sticks", "Standard Mecanum");
+        telemetry.addData("L Bumper", "Intake ON/OFF (Toggle)");
+        telemetry.addData("R Bumper", "Intake Reverse (Toggle)");
+        telemetry.addData("DPad Up/Down", "Wedge Up/Down");
+        telemetry.addData("", "");
 
-        telemetry.addData("Feeder IN (Keep On)", "Gamepad 2 - Left Bumper");
-        telemetry.addData("Feeder OUT (Keep On)", "Gamepad 2 - Right Bumper");
-        telemetry.addData("Feeder OFF", "Gamepad 2 - A");
-        telemetry.addData("Turret L/R", "Gamepad 2 - DPad Left/Right");
-        telemetry.addData("Turret Auto-Aim (Hold)", "Gamepad 2 - Y");
-        telemetry.addData("Launcher +100", "Gamepad 2 - DPad Up");
-        telemetry.addData("Launcher -100", "Gamepad 2 - DPad Down");
+        telemetry.addData("DRIVER 2", "Controls");
+        telemetry.addData("Y (Hold)", "Turret Auto-Aim (Hold)");
+        telemetry.addData("DPad L/R", "Turret L/R");
+        telemetry.addData("L Bumper", "Feeder SHOOT (Keep On)");
+        telemetry.addData("R Bumper", "Feeder REVERSE (Keep On)");
+        telemetry.addData("A", "Feeder OFF");
+        telemetry.addData("DPad Up/Down", "Launcher +/-50");
     }
 }
