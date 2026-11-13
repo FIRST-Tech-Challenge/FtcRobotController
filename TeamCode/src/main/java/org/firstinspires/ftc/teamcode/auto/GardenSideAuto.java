@@ -4,9 +4,10 @@ import static org.firstinspires.ftc.teamcode.Constants.GARDEN_BEGIN_POSE;
 import static org.firstinspires.ftc.teamcode.Constants.GARDEN_CAMERA_CHECK_HEADING;
 import static org.firstinspires.ftc.teamcode.Constants.GARDEN_CAMERA_CHECK_POSE;
 import static org.firstinspires.ftc.teamcode.Constants.GARDEN_CAMERA_CHECK_VECTOR;
+import static org.firstinspires.ftc.teamcode.Constants.GARDEN_SHOOT_POSE;
 import static org.firstinspires.ftc.teamcode.Constants.INTAKE_GARDEN_HEADING;
 import static org.firstinspires.ftc.teamcode.Constants.INTAKE_GARDEN_VECTOR;
-import static org.firstinspires.ftc.teamcode.Constants.SLOW_INTAKE_VEL;
+import static org.firstinspires.ftc.teamcode.Constants.SLOW_VEL;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -29,7 +30,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystemTeleop;
 
 
 @Autonomous
-public class GardenSideAuto extends LinearOpMode {
+public class gardenSideAuto extends LinearOpMode {
 
     protected MecanumDrive drive;
     // TODO: create instances of subsystems
@@ -90,10 +91,10 @@ public class GardenSideAuto extends LinearOpMode {
                         .waitSeconds(feederOnTime)
                         .stopAndAdd(() -> feederSubsystem.stopIndexer()) // stop shooting
                         .stopAndAdd(() -> intakeSubsystem.runIntakeForward()) //turn on intake
-                        .strafeToSplineHeading(INTAKE_GARDEN_VECTOR, INTAKE_GARDEN_HEADING, SLOW_INTAKE_VEL) // intake
+                        .strafeToSplineHeading(INTAKE_GARDEN_VECTOR, INTAKE_GARDEN_HEADING, SLOW_VEL) // intake
                         .waitSeconds(.5)
                         .stopAndAdd(() -> intakeSubsystem.stopIntake()) // turn off intake
-                        .strafeToLinearHeading(GARDEN_CAMERA_CHECK_VECTOR, GARDEN_CAMERA_CHECK_HEADING, SLOW_INTAKE_VEL) // camera check
+                        .strafeToLinearHeading(GARDEN_CAMERA_CHECK_VECTOR, GARDEN_CAMERA_CHECK_HEADING, SLOW_VEL) // camera check
                         .waitSeconds(1)
                         .build()
 
@@ -108,7 +109,7 @@ public class GardenSideAuto extends LinearOpMode {
                     drive.actionBuilder(GARDEN_CAMERA_CHECK_POSE)
 
                             .setTangent(180)
-                            .splineToLinearHeading((GARDEN_BEGIN_POSE), Math.toRadians(180)) // move to garden side
+                            .splineToLinearHeading((GARDEN_SHOOT_POSE), Math.toRadians(180)) // move to garden side
                             .stopAndAdd(() -> feederSubsystem.runIndexerForward()) // pew pew
                             .waitSeconds(feederOnTime)
                             .stopAndAdd(() -> feederSubsystem.stopIndexer()) // stop shooter
