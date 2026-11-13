@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import static com.pedropathing.ivy.Scheduler.schedule;
-import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -99,7 +97,7 @@ public class Auto extends LinearOpMode {
                 schedule(follow(follower, ABFar.flowerToLaunch2()));
                 schedule(follow(follower, ABFar.launchToPark()));
 
-                schedule(ABFar.autoRoutine());
+                schedule(ABFar.autoBlueFar());
 
                 while (opModeIsActive()) {
                     follower.update();

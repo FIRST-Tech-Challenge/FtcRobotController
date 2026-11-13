@@ -99,3 +99,4 @@ public class autoRedFar extends LinearOpMode {
         return Paths.line(point5, point6).reverseTangent();
     }
 }
+

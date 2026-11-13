@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.pedropathing.api.Paths.line;
 import static com.pedropathing.ivy.Scheduler.schedule;
+import static com.pedropathing.ivy.commands.Commands.instant;
+import static com.pedropathing.ivy.commands.Commands.waitUntil;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
@@ -17,6 +19,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name = "autoBlueFar", group = "Autonomous")
 public class autoBlueFar extends LinearOpMode {
+
     private final PoseFactory poseFactory = PoseFactory.degrees();
     public final Pose startBlueFar = poseFactory.of(83.5188, 133.5213, -90);
     private final Pose launchFlower = poseFactory.of(135.5383, 94.766, 0);
@@ -51,7 +54,7 @@ public class autoBlueFar extends LinearOpMode {
         return Paths.line(launchParkStart, launchPark).linear(launchParkStart, launchPark);
     }
 
-    public Command autoRoutine() {
+    public Command autoBlueFar() {
         return sequential(
                 follow(follower, launchToFlowerABFar()),
                 follow(follower, flowerToLaunch()),
@@ -76,7 +79,7 @@ public class autoBlueFar extends LinearOpMode {
         schedule(follow(follower, flowerToLaunch2()));
         schedule(follow(follower, launchToPark()));
 
-        schedule(autoRoutine());
+        schedule(autoBlueFar());
 
         waitForStart();
 
