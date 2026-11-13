@@ -10,11 +10,14 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 public class IndicatorLight {
 
-    // Servo positions for each color. RED and GREEN were tested last season.
+    // Servo positions for each color (checked with the Light Test OpMode).
+    // RED and BLUE are kept for showing the alliance; PINK is the "not ready" status color.
     public static double OFF = 0.0;
     public static double RED = 0.31;
-    public static double YELLOW = 0.4;   // first guess -- check on the robot
+    public static double YELLOW = 0.37;
     public static double GREEN = 0.5;
+    public static double BLUE = 0.59;
+    public static double PINK = 0.69;
 
     private final Servo servo;
     private double color = Double.NaN;   // last color sent; NaN = nothing sent yet

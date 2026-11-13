@@ -42,9 +42,9 @@ public class LightTest extends GreenBotBaseOpMode {
             telemetry.addData("D-pad Right / Left", "+/- %.2f", SMALL_STEP);
             telemetry.addLine();
             telemetry.addData("Current colors in IndicatorLight",
-                    "OFF %.2f, RED %.2f, YELLOW %.2f, GREEN %.2f",
-                    IndicatorLight.OFF, IndicatorLight.RED,
-                    IndicatorLight.YELLOW, IndicatorLight.GREEN);
+                    "OFF %.2f, RED %.2f, YELLOW %.2f, GREEN %.2f, BLUE %.2f, PINK %.2f",
+                    IndicatorLight.OFF, IndicatorLight.RED, IndicatorLight.YELLOW,
+                    IndicatorLight.GREEN, IndicatorLight.BLUE, IndicatorLight.PINK);
             telemetry.update();
         }
     }

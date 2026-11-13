@@ -30,7 +30,7 @@ public abstract class GreenBotBaseOpMode extends LinearOpMode {
     protected IndicatorLight aimerLed, launcherLed;
 
     protected double WEDGE_START = 0.7;
-    protected double WEDGE_UP = 0.55;
+    protected double WEDGE_UP = 0.65;
     protected double WEDGE_DOWN = 0.25;
 
     /**
@@ -88,17 +88,39 @@ public abstract class GreenBotBaseOpMode extends LinearOpMode {
      * Set both LEDs from what the aimer and launcher know right now.
      * Call once per loop, after aimer.update().
      *
-     *   Aimer LED:    red = no hive seen, yellow = hive seen but not lined up, green = lined up
-     *   Launcher LED: off = launcher stopped, red = spinning up / recovering, green = at speed
+     *   Aimer LED:    pink = no hive seen, yellow = hive seen but not lined up, green = lined up
+     *   Launcher LED: off = launcher stopped, pink = spinning up / recovering, green = at speed
+     *
+     * (Red and blue are saved for showing the alliance during INIT.)
      */
     protected void updateLights() {
         if (aimer.isAimed()) aimerLed.setColor(IndicatorLight.GREEN);
         else if (aimer.hasTarget()) aimerLed.setColor(IndicatorLight.YELLOW);
-        else aimerLed.setColor(IndicatorLight.RED);
+        else aimerLed.setColor(IndicatorLight.PINK);
 
         if (!launcher.isRunning()) launcherLed.off();
         else if (launcher.isAtSpeed()) launcherLed.setColor(IndicatorLight.GREEN);
-        else launcherLed.setColor(IndicatorLight.RED);
+        else launcherLed.setColor(IndicatorLight.PINK);
+    }
+
+    /**
+     * Call once per INIT loop, before telemetry.update(). Either driver picks the alliance
+     * (X = BLUE, B = RED; it decides which hive tags the aimer looks for), both LEDs show the
+     * alliance color, and the choice is added to telemetry.
+     */
+    protected void selectAlliance() {
+        if (gamepad1.x || gamepad2.x) aimer.setBlueAlliance(true);
+        if (gamepad1.b || gamepad2.b) aimer.setBlueAlliance(false);
+        showAllianceLights();
+        telemetry.addData("Alliance", "%s   (X = BLUE, B = RED)",
+                aimer.isBlueAlliance() ? "BLUE" : "RED");
+    }
+
+    /** Set both LEDs to the alliance color (red or blue). */
+    protected void showAllianceLights() {
+        double color = aimer.isBlueAlliance() ? IndicatorLight.BLUE : IndicatorLight.RED;
+        aimerLed.setColor(color);
+        launcherLed.setColor(color);
     }
 
     /**

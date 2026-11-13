@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.base.GreenBotBaseOpMode;
 public class TeleOpMain extends GreenBotBaseOpMode {
 
     private final double INITIAL_LAUNCHER_TARGET_VELOCITY = 1250;
-    private final double LAUNCHER_VELOCITY_STEP = 100;
+    private final double LAUNCHER_VELOCITY_STEP = 50;
 
     private final double INTAKE_POWER = 1.0;
     private final double FEEDER_POWER = 1.0;
@@ -29,13 +29,9 @@ public class TeleOpMain extends GreenBotBaseOpMode {
         // TODO: once an auto moves the turret, skip this when TeleOp follows that auto.
         aimer.resetTurretEncoder();
 
-        // Pick the alliance during INIT (it decides which hive tags the aimer looks for).
+        // Pick the alliance during INIT; the LEDs show the alliance color until START.
         while (opModeInInit()) {
-            if (gamepad1.x || gamepad2.x) aimer.setBlueAlliance(true);
-            if (gamepad1.b || gamepad2.b) aimer.setBlueAlliance(false);
-            telemetry.addData("Alliance", "%s   (X = BLUE, B = RED)",
-                    aimer.isBlueAlliance() ? "BLUE" : "RED");
-            telemetry.addLine("Turret encoder zeroed -- it should be facing straight forward.");
+            selectAlliance();
             helpMenu();
             telemetry.update();
         }
@@ -146,21 +142,21 @@ public class TeleOpMain extends GreenBotBaseOpMode {
 
     private void helpMenu() {
         telemetry.addData("Help Menu (this)", "Either Gamepad - Hold Start");
+        telemetry.addData("", "");
 
-        telemetry.addData("----------", "-----------");
-        telemetry.addData("Drive controls", "Gamepad 1 - Standard Mecanum");
-        telemetry.addData("Intake ON/OFF (Toggle)", "Gamepad 1 - Left Bumper");
-        telemetry.addData("Intake Reverse (Toggle)", "Gamepad 1 - Right Bumper");
-        telemetry.addData("Wedge UP", "Gamepad 1 - DPad Up");
-        telemetry.addData("Wedge DOWN", "Gamepad 1 - DPad Down");
-        telemetry.addData("----------", "-----------");
+        telemetry.addData("DRIVER 1", "Controls");
+        telemetry.addData("Sticks", "Standard Mecanum");
+        telemetry.addData("L Bumper", "Intake ON/OFF (Toggle)");
+        telemetry.addData("R Bumper", "Intake Reverse (Toggle)");
+        telemetry.addData("DPad Up/Down", "Wedge Up/Down");
+        telemetry.addData("", "");
 
-        telemetry.addData("Feeder IN (Keep On)", "Gamepad 2 - Left Bumper");
-        telemetry.addData("Feeder OUT (Keep On)", "Gamepad 2 - Right Bumper");
-        telemetry.addData("Feeder OFF", "Gamepad 2 - A");
-        telemetry.addData("Turret L/R", "Gamepad 2 - DPad Left/Right");
-        telemetry.addData("Turret Auto-Aim (Hold)", "Gamepad 2 - Y");
-        telemetry.addData("Launcher +100", "Gamepad 2 - DPad Up");
-        telemetry.addData("Launcher -100", "Gamepad 2 - DPad Down");
+        telemetry.addData("DRIVER 2", "Controls");
+        telemetry.addData("Y (Hold)", "Turret Auto-Aim (Hold)");
+        telemetry.addData("DPad L/R", "Turret L/R");
+        telemetry.addData("L Bumper", "Feeder SHOOT (Keep On)");
+        telemetry.addData("R Bumper", "Feeder REVERSE (Keep On)");
+        telemetry.addData("A", "Feeder OFF");
+        telemetry.addData("DPad Up/Down", "Launcher +/-50");
     }
 }
