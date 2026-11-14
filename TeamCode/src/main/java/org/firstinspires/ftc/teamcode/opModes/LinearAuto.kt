@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.GerthaHardwareMap
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.DriveMachine
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.GamepadState
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.RobotState
+import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.utils.StaticStore
 
 class LinearAuto : LinearOpMode() {
 
@@ -50,7 +51,7 @@ class LinearAuto : LinearOpMode() {
         }
 
         //init everything
-        robotState.init()
+//        robotState.ppX //finish this
         driveMachine.init()
 
         //remover roll to starting pose
@@ -61,6 +62,7 @@ class LinearAuto : LinearOpMode() {
         waitForStart()
 
         while (opModeIsActive()) {
+            StaticStore.mark()
 
             for (module in lynxModules) {
                 module.clearBulkCache()
@@ -79,7 +81,7 @@ class LinearAuto : LinearOpMode() {
                     //hello
                 }
                 State.DONE -> {
-                    //???
+                    StaticStore.mark()
                 }
             }
 

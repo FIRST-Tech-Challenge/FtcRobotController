@@ -6,7 +6,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit
 import org.firstinspires.ftc.teamcode.GerthaHardwareMap
+import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.utils.StaticStore
 import kotlin.math.hypot
+import kotlin.time.Duration.Companion.seconds
 
 class RobotState(private val hw: GerthaHardwareMap) {
 
@@ -24,11 +26,6 @@ class RobotState(private val hw: GerthaHardwareMap) {
     var velInch: Double = 0.0
 
     var angVelRad: Double = 0.0
-
-    fun init() {
-        hw.pinpoint.resetPosAndIMU()
-        hw.pinpoint.setPosition(Pose2D(DistanceUnit.INCH, 0.0, 0.0, AngleUnit.RADIANS, 0.0))
-    }
 
     fun update() {
         hw.pinpoint.update()

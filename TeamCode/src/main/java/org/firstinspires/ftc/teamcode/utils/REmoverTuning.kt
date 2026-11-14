@@ -20,7 +20,6 @@ class REmoverTuning: LinearOpMode() {
 
         waitForStart()
 
-        robotState.init()
         driveMachine.init()
 
         var wasLT = false

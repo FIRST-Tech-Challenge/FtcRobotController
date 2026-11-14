@@ -9,6 +9,9 @@ import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.IntakeShootMachine
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.RampMachine
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.RobotState
+import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.utils.StaticStore
+import kotlin.compareTo
+import kotlin.time.Duration.Companion.seconds
 
 @TeleOp
 class TeleOp: LinearOpMode() {
@@ -21,11 +24,15 @@ class TeleOp: LinearOpMode() {
         val gamepadState = GamepadState(gamepad1, gamepad2)
         val intakeShootMachine = IntakeShootMachine(hw)
         val rampMachine = RampMachine(hw)
+
+        if (StaticStore.duration() > 30.seconds) {
+            hw.pinpoint.resetPosAndIMU()
+        }
+
         waitForStart()
 
         driveMachine.init()
         intakeShootMachine.init()
-        robotState.init()
         rampMachine.init()
 
         while (opModeIsActive()) {
@@ -42,5 +49,8 @@ class TeleOp: LinearOpMode() {
             telemetry.addData("count", intakeShootMachine.count)
             telemetry.update()
         }
+
+        StaticStore.mark()
+
     }
 }
