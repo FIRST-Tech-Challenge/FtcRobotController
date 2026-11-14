@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.common.HardwareNames;
+
 @TeleOp(name="DriveOpMode", group="Linear OpMode")
 //@Disabled
 public class DriveOpMode extends LinearOpMode {
@@ -22,7 +24,7 @@ public class DriveOpMode extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "fl"); //0
+        frontLeftDrive = hardwareMap.get(DcMotor.class, HardwareNames.fl); //0
         backLeftDrive = hardwareMap.get(DcMotor.class, "bl"); //3
         frontRightDrive = hardwareMap.get(DcMotor.class, "fr"); //1
         backRightDrive = hardwareMap.get(DcMotor.class, "br"); //2
