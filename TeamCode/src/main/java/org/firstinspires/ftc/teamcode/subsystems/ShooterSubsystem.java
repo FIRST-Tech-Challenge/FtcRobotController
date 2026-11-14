@@ -29,9 +29,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * "RPM" in this class is the speed of the motor's OUTPUT SHAFT, worked out from the encoder.
  * (For the 1620 RPM flywheel motor that is the shaft AFTER the 3.7:1 gearbox, which is why it
  * has more encoder ticks per turn than the hood wheel motor.)
- * The belt to each wheel is believed to be 1:1, so that is also the wheel speed.
- * [CONFIRM] Check the pulleys. If a belt is not 1:1, the wheel turns at a different speed,
- * but the numbers still work because we tune the shot RPMs by measuring on the robot.
+ * TODO (issue #38): The flywheel belt is 20T to 18T, NOT 1:1, so the flywheel itself turns a
+ * little faster or slower than this number. Which pulley is on the motor, and the hood wheel's
+ * pulleys, still need checking. The numbers still work because we tune the shot RPMs by
+ * measuring on the robot.
  *
  * Robot configuration (on the Driver Station):
  *   Motor name: flywheel   (goBILDA 5203 series, 1620 RPM 3.7:1, encoder plugged in)

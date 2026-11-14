@@ -1,6 +1,6 @@
 # BIOBUZZ Game Strategy
 
-*DRAFT for the coach to review. Status as of 2026-11-03 (robot is at `TeleOp - Alpha 8`). Facts come from the Competition Manual (TU02) and `biobuzz-game-essentials.md`; if they disagree with this file, the manual wins. Numbers marked **(derived)** are arithmetic from the manual's point table, not measurements. A `[#nn]` marker (a GitHub Issue labeled `needs-decision`) or an old `[CONFIRM]` (being converted, issue #70) marks something nobody has decided or measured yet. The Auto plan is in `biobuzz-auto-strategy.md`.*
+*DRAFT for the coach to review. Status as of 2026-11-03 (robot is at `TeleOp - Alpha 8`). Facts come from the Competition Manual (TU02) and `biobuzz-game-essentials.md`; if they disagree with this file, the manual wins. Numbers marked **(derived)** are arithmetic from the manual's point table, not measurements. A `[#nn]` marker (the number of a GitHub Issue) marks something nobody has decided or measured yet. The Auto plan is in `biobuzz-auto-strategy.md`.*
 
 ## 1. The one-sentence strategy
 
@@ -36,7 +36,7 @@
 
 So the most useful thing we can say to a partner before a match is: "Please just LEAVE in Auto. We will do the rest." It costs them almost nothing.
 
-**POLLINATOR needs many tips, and we do not yet know what a tip costs.** Planning for 4 or 7 tips in 2 minutes 30 seconds only makes sense once we have the number from section 4 `[CONFIRM]`.
+**POLLINATOR needs many tips, and we do not yet know what a tip costs.** Planning for 4 or 7 tips in 2 minutes 30 seconds only makes sense once we have the number from section 4 `[#60]`.
 
 ## 4. The scoring cycle (what the robot does over and over)
 
@@ -47,7 +47,7 @@ So the most useful thing we can say to a partner before a match is: "Please just
 5. **Shoot.** The sequence opens the gate and **keeps feeding while the operator holds the trigger** (3 or 4 balls is normal). It pauses by itself if the flywheel drops off speed or the turret leaves the hive. If the last ball needs help, the operator **holds Y** to lift it in. Let go of the trigger to stop.
 6. **Check for a tip**, then go to step 1 again, from the other side.
 
-**Planning formula.** If it takes `N` balls to tip (`[CONFIRM]`, the manual does not say), we need `ceil(N / 4)` trips per tip.
+**Planning formula.** If it takes `N` balls to tip (`[#60]`, the manual does not say), we need `ceil(N / 4)` trips per tip.
 `time per tip = (reload + drive + aim + spin-up + shoot) x ceil(N / 4)`
 Fill in the pieces from timed practice runs (`biobuzz-test-and-match-log.md`). The tip count we can honestly aim for is `120 seconds / time per tip`.
 
@@ -61,7 +61,7 @@ There are only **40 POLLEN** on the field in total, so we are competing for them
 | FLOWERS | 4 in each of the 4 flowers (16) | Take them out of the **bottom** retrieval opening only (G418). |
 | GARDENS | 4 in each of the 2 gardens (8) | Not a protected zone. Either alliance can take from either garden. |
 | Balls spilled when a hive tips | varies | Do not catch them in the air (G409). Pick them up after they land. Do not park under the hive waiting for a tip (also G409). |
-| NECTAR | 8 per alliance | Our shooter is for pollen only. Never pick up the other alliance's nectar (G408). `[CONFIRM]` whether nectar is ever added to the shooter. |
+| NECTAR | 8 per alliance | Our shooter is for pollen only. Never pick up the other alliance's nectar (G408). Whether nectar is ever added to the shooter is `[#68]`. |
 
 Do not corral balls into a corner to keep the other alliance away from them (G411).
 
@@ -76,7 +76,7 @@ Do not corral balls into a corner to keep the other alliance away from them (G41
 | 0:20 | "Train Whistle" | **Start thinking about PARK.** Decide now whether one more cycle fits. |
 | 0:00 | End | Robot must be **motionless** (G404) and, for PARK, partly in the LOADING ZONE. |
 
-**PARK needs a plan.** The LOADING ZONE is small (about 23 in by 11 in) and our human player also drops nectar there (G427), so an alliance partner may be heading to the same spot. Decide in advance: how many seconds the drive back takes from our usual shooting spots (measure it, `[CONFIRM]`), and the field-clock time when the driver must stop shooting and go. Write it here once measured: **start the PARK drive at ____ seconds left.**
+**PARK needs a plan.** The LOADING ZONE is small (about 23 in by 11 in) and our human player also drops nectar there (G427), so an alliance partner may be heading to the same spot. Decide in advance: how many seconds the drive back takes from our usual shooting spots (measure it, `[#68]`), and the field-clock time when the driver must stop shooting and go. Write it here once measured: **start the PARK drive at ____ seconds left.**
 
 ## 7. Rules that shape the strategy
 
@@ -103,7 +103,7 @@ A drive team has up to 4 students/mentors: a drive coach, up to 3 drivers, and a
 | **Human player** | Adds nectar through the LOADING ZONE only (G427): one per hive tip, or all of it once 1:00 is left (G426). Counts tips. Does not touch the robot. |
 | **Drive coach** | Watches the clock and the field, calls the PARK time, picks the OpMode and presses INIT/start for the drivers (allowed by G423). |
 
-Controls are in `biobuzz-teleop-controls.md`. `[CONFIRM]` who is doing which job at each event.
+Controls are in `biobuzz-teleop-controls.md`. Who is doing which job at each event is `[#68]`.
 
 ## 9. Working with the partner
 

@@ -78,7 +78,7 @@ public class PinpointSubsystem {
 
     // ------------------------------------------------------------------
     // Where the pods are. These numbers are copied from last season's code (same chassis), and
-    // were measured then. [CONFIRM] Measure them again with a tape measure if either pod has
+    // were measured then. TODO (issue #48): Measure them again with a tape measure if either pod has
     // been moved. Wrong numbers do NOT hurt the heading, but the X and Y readings drift sideways
     // whenever the robot turns.
     // ------------------------------------------------------------------

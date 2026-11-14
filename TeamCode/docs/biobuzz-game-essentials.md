@@ -70,7 +70,7 @@ See `biobuzz-hive-apriltag-geometry.md` for the numbers.
 3. **Tier 3, last minute:** nectar into flowers, for the bottom bonus and ownership.
 4. **Skip:** we don't build a mechanism just for the garden.
 
-## Still unknown `[CONFIRM]`
+## Still unknown `[#60]`
 
 - How many balls does it take to tip the hive? The manual doesn't say. Find out from field CAD, a Team Update, or testing.
 - Can our drivetrain reach the hive, shoot, and get back to the loading zone in 30 s of auto?

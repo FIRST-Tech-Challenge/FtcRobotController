@@ -42,7 +42,7 @@ import java.util.List;
  *      spread about 13 inches across, so aiming at a single tag would aim up to 6.5 inches off
  *      center. The average lands near the middle of the cluster, which is the middle of the cell
  *      opening side to side. (The arm can hide some tags, so we use whatever is visible.)
- *   [CONFIRM] If the arm hides only the LEFT pair or only the RIGHT pair, the average shifts
+ *   TODO (issue #64): If the arm hides only the LEFT pair or only the RIGHT pair, the average shifts
  *   toward the visible side. Look at this on the real hive and tell us how big the error is.
  *
  * STATE (what we last saw) is NO_TARGET or TARGET_VISIBLE.
@@ -68,8 +68,12 @@ public class VisionSubsystem {
     // Camera settings
     // ------------------------------------------------------------------
     // Which pipeline (0 to 9 in the Limelight's web page) finds the AprilTags.
-    // [CONFIRM] Change this if your AprilTag pipeline is not number 0.
+    // TODO (issue #64): Check each robot's camera. Change this if your AprilTag pipeline is not
+    // number 0.
     private static final int APRILTAG_PIPELINE_INDEX = 0;
+
+    // TODO (issue #88): We have not yet SEEN a restarted Limelight come back on a different
+    // pipeline. After a bump or a brownout, watch "Camera pipeline fixes" on the screen.
 
     // How often (in seconds) update() asks the camera "which pipeline are you on?". If it is not
     // the AprilTag one, update() tells it to switch back. WHY: the Limelight can restart in the
@@ -134,11 +138,11 @@ public class VisionSubsystem {
     // switch to it. Why 3: with the camera 10 inches off the floor, the raised and lowered
     // clusters are about 7 degrees apart at 10 feet and more than 12 degrees apart at 6 feet, so a
     // real switch is far bigger than 3, while noise in ty is only a degree or so.
-    // [CONFIRM] Raise it if the target flips during a tip. Lower it if it is slow to switch.
+    // TODO (issue #48): Raise it if the target flips during a tip. Lower it if it is slow to switch.
     private static final double CELL_SWITCH_MARGIN_DEGREES = 3.0;
 
     // If the locked cell is out of view, wait this many seconds before we accept our other cell.
-    // [CONFIRM] Long enough to ride out the arm hiding the tags, short enough to be ready
+    // TODO (issue #48): Long enough to ride out the arm hiding the tags, short enough to be ready
     // quickly once the robot has driven to the other side of the hive.
     private static final double LOCK_RELEASE_SECONDS = 0.5;
 

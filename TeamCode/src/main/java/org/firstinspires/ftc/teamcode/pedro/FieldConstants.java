@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 /*
  * Field Constants
  * Where our robot STARTS and PARKS in Autonomous, written in Pedro's coordinates.
- * Two Autos need these numbers (LeaveAndParkAuto and ShootAndParkAuto), so they live here once.
+ * Two Autos need these numbers (AutoLeaveAndPark and ShootAndParkAuto), so they live here once.
  * (ARCHITECTURE.md: a shared constants class is made when a second class needs the value.)
  *
  * PEDRO'S MAP OF THE BIOBUZZ FIELD
@@ -46,7 +46,7 @@ import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
  *   inside the zone line. Odometry drifts a few inches, and this way a small miss in either
  *   direction still scores both.
  *
- * [CONFIRM] The field size comes from Pedro's field picture, and the other numbers are estimates
+ * TODO (issue #55): The field size comes from Pedro's field picture, and the other numbers are estimates
  *   read from the field pictures. Before trusting them at an event:
  *   - check the real inside width of the field with a tape measure (FIELD_SIZE_INCHES, 141.5),
  *   - measure the robot (ROBOT_WIDTH / LENGTH) and where its center of turning is,
@@ -61,14 +61,14 @@ public class FieldConstants {
     // ------------------------------------------------------------------
     // The inside width and length of the field, in inches: 141.5, from Pedro's field picture
     // (TeamCode/docs/pedro-fieldcoordinates-dark.png). It is a little under six 24 inch tiles (144).
-    // [CONFIRM] check it wall to wall on the real field. This matters for the RED rotation and for
+    // TODO (issue #55): check it wall to wall on the real field. This matters for the RED rotation and for
     // the parking spot next to the far wall.
     public static final double FIELD_SIZE_INCHES = 141.5;
 
     // ------------------------------------------------------------------
     // The robot
     // ------------------------------------------------------------------
-    // Width is side to side. Length is front to back. [CONFIRM] These are the coach's numbers;
+    // Width is side to side. Length is front to back. TODO (issue #55): These are the coach's numbers;
     // a GitHub issue asks for them to be re-measured, and for the robot's center of turning
     // (the point Pedro and the Pinpoint call "the robot") to be checked. We assume the center of
     // turning is the middle of this rectangle.

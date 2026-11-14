@@ -57,7 +57,7 @@ public class ShooterServoSubsystem {
     // 90 degree gate move is about 0.30 (90 / 300). That is only a rough guide, because
     // the SDK's default pulse range is not exactly goBILDA's.
     //
-    // TBD: these three numbers are still being tuned. Find them with the Shooter Alpha OpModes:
+    // TODO (issue #88): these three numbers are still being tuned. Find them with the Shooter Alpha OpModes:
     // the D-pad moves the current position by a small step, so you can creep the gate to the
     // right spot (the OpMode shows the number). Then type the numbers you found in here.
     // (They used to be LOADING 0.30 and SHOOTING 0.0, before the gate had a third position.)
@@ -68,7 +68,7 @@ public class ShooterServoSubsystem {
     // The servo does not tell us when it arrives. This is how long we assume a move takes.
     // (CLOSED to LIFTED is the whole travel, so it may need more time than a shorter move.)
     // Too short and isAtPosition() lies. Too long and we wait for nothing.
-    // Starting guess. Time the gate with a phone stopwatch, then change this number.
+    // TODO (issue #88): Starting guess. Time the gate with a phone stopwatch, then change this number.
     private static final double SERVO_TRAVEL_SECONDS = 0.50;
 
     // How many SECONDS the intake should run in REVERSE after the gate starts to close from OPENED or
@@ -77,7 +77,7 @@ public class ShooterServoSubsystem {
     // only our guess for "long enough to clear the chute", not how long the gate takes.
     //   Bigger  = the intake reverses longer (more sure the chute is clear, slower to get going again).
     //   Smaller = a shorter reverse.
-    // Starting guess (it was 0.75 s from OPENED and 2 s from LIFTED, which was too long). Play with it
+    // TODO (issue #88): Starting guess (it was 0.75 s from OPENED and 2 s from LIFTED, which was too long). Play with it
     // on the robot with a ball left in the chute.
     private static final double CLOSE_REVERSE_SECONDS = 0.50;
 

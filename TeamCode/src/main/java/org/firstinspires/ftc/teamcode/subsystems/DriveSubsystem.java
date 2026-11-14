@@ -121,7 +121,7 @@ public class DriveSubsystem {
     //   5.0 -> 0 to full takes 0.20 seconds. Gentle. Most drivers will not notice it.
     //   10.0 -> 0.10 seconds. Barely there.
     //   2.5 -> 0.40 seconds. Clearly softer, and the robot feels heavy.
-    // [CONFIRM] Let the driver try it. If the robot feels sluggish, raise this. If the battery
+    // TODO (issue #88): Let the driver try it. If the robot feels sluggish, raise this. If the battery
     // still dips (see the POWER lines on the screen), or the robot still tips, lower it.
     private static final double MAX_POWER_CHANGE_PER_SECOND = 5.0;
 

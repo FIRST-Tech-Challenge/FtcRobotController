@@ -1,6 +1,6 @@
 # BIOBUZZ Robot Design (2026-2027)
 
-*The current robot concept and the decisions behind it. Update this file when a decision changes. Anything still open is a GitHub Issue labeled `needs-decision`, and this file points to it with a `[#nn]` marker (old `[CONFIRM]` markers are being converted, issue #70).*
+*The current robot concept and the decisions behind it. Update this file when a decision changes. Anything still open is a GitHub Issue labeled `needs-decision`, and this file points to it with a `[#nn]` marker.*
 
 ## Concept
 
@@ -12,7 +12,7 @@
 ## Hardware facts
 
 - **Turret gearing:** the turret ring has **47 teeth** and the gear that rotates it has **16 teeth**. That is a **47/16 = 2.9375 : 1** reduction, so one turn of the 16T gear moves the turret about **122.6°** *(derived; 360 ÷ 2.9375)*. Any gearbox on the turret motor adds to this ratio. Use this ratio when converting encoder ticks to turret degrees.
-- **Intake and index/transfer:** **one motor drives all of it**: the intake, the index, and the transfer. It is a goBILDA 5203, **probably the 1620 RPM, 3.71:1 version** `[CONFIRM]` (see the open decisions). Because it is one motor, the intake, index, and transfer always run together and can't be controlled separately.
+- **Intake and index/transfer:** **one motor drives all of it**: the intake, the index, and the transfer. It is a goBILDA 5203, **probably the 1620 RPM, 3.71:1 version** `[#65]` (see the open decisions). Because it is one motor, the intake, index, and transfer always run together and can't be controlled separately.
 - **Encoder counts on the intake motor:** the 28 counts per revolution in `CLAUDE.md` is at the *motor* shaft. At the output shaft of a 3.71:1 gearbox that becomes about 28 × 3.71 ≈ **104 counts per output revolution** *(derived)*. The intake doesn't need velocity control, so this only matters if we decide to use encoders on it.
 
 ## Why
@@ -59,13 +59,13 @@ Build this first, and keep it working all season:
 - **Tilt it up about 40°** as a starting point. Recalculate once the lens height is known (see the geometry doc).
 - It connects to the Control Hub's **USB 3.0 port** with one USB-C to USB-A cable (power and data). The Control Hub sees it as an Ethernet device. Plan the cable routing and turret rotation limits so that cable can't wrap or snag.
 
-## Open decisions `[CONFIRM]`
+## Open decisions
 
 - [x] **Vision source:** **Limelight 3A is final.** (A webcam with `VisionPortal` would have given SDK 12.0 clusters with the origin at the cell opening, but we are not using it, so we apply the opening offset ourselves.)
-- [ ] **Intake motor ratio:** goBILDA 5203 at 1620 RPM (3.71:1) is the likely choice, not final. Confirm it before writing `Intake` constants.
-- [ ] **One motor for intake and transfer:** the firing gate says "only feed when the flywheel is ready." With one shared motor, feeding a ball means the intake runs too. Decide how the driver handles that (for example, intake runs only while the shooter is ready, or the driver holds a button to feed).
-- [ ] Turret range of motion and homing method (limit switch versus absolute encoder)
-- [ ] Turret drive: motor + encoder, or servo
-- [ ] Lens height and final camera tilt
-- [ ] Number of balls needed to tip the hive
-- [ ] Whether nectar (3.6 in) is ever added to the shooter
+- [ ] **Intake motor ratio:** goBILDA 5203 at 1620 RPM (3.71:1) is the likely choice, not final. Confirm it before writing `Intake` constants. `[#65]`
+- [x] **One motor for intake and transfer:** decided in #63. While the fire trigger is held, the gate opens and the intake feeds **only while the flywheel is at speed and the turret is aimed** (`FiringSequence`).
+- [ ] Turret homing method (limit switch versus absolute encoder) `[#61]`. The range is decided: about 270° (soft limits at ±120°). A 360° turret is not feasible for this design (coach, 2026-11-13, #12).
+- [x] Turret drive: **a motor with its built-in encoder** (goBILDA 5203, 435 RPM). The separate encoder issue, #32, was closed on 2026-11-13.
+- [ ] Lens height and final camera tilt `[#83]`
+- [ ] Number of balls needed to tip the hive `[#60]`
+- [ ] Whether nectar (3.6 in) is ever added to the shooter `[#68]`

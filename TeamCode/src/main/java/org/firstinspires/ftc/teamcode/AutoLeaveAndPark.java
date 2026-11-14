@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.pedro.FieldConstants;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 
 /*
- * Auto - Leave and Park, Alpha 1
+ * Leave and Park - Mark 1
  * The simplest scoring Auto (rung A-1 in TeamCode/docs/biobuzz-auto-strategy.md).
  * The robot drives off the wall and ends partly inside our LOADING ZONE:
  *     LEAVE = 3 points, PARK = 5 points, so 8 points. No shooter, no camera, no turret.
@@ -43,7 +43,7 @@ import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
  * HOW TO RUN IT
  *   1. Set the robot on its start spot and leave it STILL. (INIT recalibrates the Pinpoint's gyro,
  *      so a robot that moves during INIT will be off.)
- *   2. Select "Auto - Leave and Park - Alpha 1" and press INIT. Wait for "Pinpoint ready".
+ *   2. Select "Leave and Park - Mark 1" and press INIT. Wait for "Pinpoint ready".
  *   3. Check the ALLIANCE line. gamepad1 X = BLUE, gamepad1 B = RED. BLUE is the default.
  *   4. Press START. (The 30 second timer should be ON, like in a match.)
  *
@@ -54,7 +54,7 @@ import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
  *     really is. A big gap means the start spot was wrong or the Pinpoint settings are wrong.
  *   - Run it 5 times in a row before you trust it (rung rule). Write each run in
  *     TeamCode/docs/biobuzz-test-and-match-log.md.
- *   - Once it is solid, change group = "Testing" to "Competition" below.
+ *   - It is in group "Auto" (below), with the other match Autos.
  */
 @Autonomous(name = "Leave and Park - Mark 1", group = "Auto",
         preselectTeleOp = "TeleOp - Alpha 14")

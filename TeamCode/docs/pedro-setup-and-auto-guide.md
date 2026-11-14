@@ -1,6 +1,6 @@
 # Pedro Pathing 3: Robot Setup and Auto Guide
 
-*How to get a robot ready for Pedro, and the rules for writing every Pedro Auto after this one. Status as of 2026-11-04: the code is in the repo and compiles against the real libraries, but **nothing has run on a robot yet**. A `[#nn]` marker (a GitHub Issue labeled `needs-decision`) or an old `[CONFIRM]` (being converted, issue #70) marks things only a robot test can settle. If this doc and Pedro's own docs disagree, Pedro's docs win: https://pedropathing.com/ and https://github.com/Pedro-Pathing*
+*How to get a robot ready for Pedro, and the rules for writing every Pedro Auto after this one. Status as of 2026-11-04: the code is in the repo and compiles against the real libraries, but **nothing has run on a robot yet**. A `[#nn]` marker (the number of a GitHub Issue) marks things only a robot test can settle. If this doc and Pedro's own docs disagree, Pedro's docs win: https://pedropathing.com/ and https://github.com/Pedro-Pathing*
 
 ## 1. What is installed
 
@@ -20,7 +20,7 @@
 2. **Robot configuration.** Names must match exactly: `pinpoint`, `left_front`, `left_rear`, `right_front`, `right_rear`. Same names as `DriveSubsystem` and `PinpointSubsystem`, so no new config entries are needed.
 3. **Gradle sync.** The first sync downloads Pedro. If it fails, read the red error:
    - "Could not resolve com.pedropathing..." means the computer is offline or `repo.dairy.foundation` is blocked. Try another network.
-   - A `compileSdk` error means Android Studio wants a newer one. `CLAUDE.md` (Dev environment) says what to do. `[CONFIRM]` we did not need it when this was written, because Pedro's libraries accept any `compileSdk`.
+   - A `compileSdk` error means Android Studio wants a newer one. `CLAUDE.md` (Dev environment) says what to do. We did not need it when this was written, because Pedro's libraries accept any `compileSdk`.
 4. **Deploy** to the Control Hub, then connect the laptop to the robot's wifi.
 5. **Open AutoTune:** http://192.168.43.1:10158 in a browser. The procedures come from `Tuning.java`.
 6. **Fresh battery, robot on the floor** (not on blocks), a clear space of at least 8 feet in front and to the left, and someone ready to stop the OpMode.
@@ -59,8 +59,8 @@ These add to `ARCHITECTURE.md` and `biobuzz-auto-strategy.md`.
 3. **Never call `sleep()`.** Use an `ElapsedTime` for pauses and waits. A shoot step is a state that waits for "shooter at speed" and "turret aimed" (A-2 and up).
 4. **Build paths once, in `init()`,** never inside `loop()`.
 5. **Poses are made with a `PoseFactory` from named constants.** Every X, Y, and heading is a `private static final` at the top with a comment. No numbers buried in the code.
-6. **Know the coordinates.** Pedro's X is "right" and Y is "up" on the field, the origin is the bottom-left corner, and heading 0 faces +X. Counterclockwise is positive. This is **not** the FTC field coordinate system. Read https://pedropathing.com/ (Reference > Coordinates) before the first real path. Our map of the BIOBUZZ field (audience at the bottom, red on the left, blue on the right, origin at the bottom-left corner of tile A1, 141.5 in square, see `TeamCode/docs/pedro-fieldcoordinates-dark.png`) and the start, waypoint and park poses are in `pedro/FieldConstants.java`. `[CONFIRM]` measure the real field width, the robot's size and its center of turning (a GitHub issue tracks this).
-7. **Write the blue path once, build red from it, and RED IS A 180 DEGREE ROTATION, NOT A MIRROR.** Red's LOADING ZONE is top-left and blue's is bottom-right, so the field looks the same after turning it 180 degrees around its middle, not after flipping it left to right. So `mirrorX()` is **wrong** for this field. `FieldConstants.makePose()` does it: `x' = FIELD_SIZE - x`, `y' = FIELD_SIZE - y`, `heading' = heading + 180`. (An earlier version of this rule said to use `mirrorX()`; that was a mistake.) Blue D6 (top wall, facing down) becomes red C1 (bottom wall, facing up). `[CONFIRM]` red has not been driven yet.
+6. **Know the coordinates.** Pedro's X is "right" and Y is "up" on the field, the origin is the bottom-left corner, and heading 0 faces +X. Counterclockwise is positive. This is **not** the FTC field coordinate system. Read https://pedropathing.com/ (Reference > Coordinates) before the first real path. Our map of the BIOBUZZ field (audience at the bottom, red on the left, blue on the right, origin at the bottom-left corner of tile A1, 141.5 in square, see `TeamCode/docs/pedro-fieldcoordinates-dark.png`) and the start, waypoint and park poses are in `pedro/FieldConstants.java`. The real field width, the robot's size and its center of turning still need measuring `[#55]`.
+7. **Write the blue path once, build red from it, and RED IS A 180 DEGREE ROTATION, NOT A MIRROR.** Red's LOADING ZONE is top-left and blue's is bottom-right, so the field looks the same after turning it 180 degrees around its middle, not after flipping it left to right. So `mirrorX()` is **wrong** for this field. `FieldConstants.makePose()` does it: `x' = FIELD_SIZE - x`, `y' = FIELD_SIZE - y`, `heading' = heading + 180`. (An earlier version of this rule said to use `mirrorX()`; that was a mistake.) Blue D6 (top wall, facing down) becomes red C1 (bottom wall, facing up). Red has not been driven yet `[#58]`.
 8. **Start pose = where the robot really sits.** Call `follower.setPose(startPose)` in `init()` (and again in `start()`, as our scoring Autos do). If the robot is placed crooked or in the wrong spot, every path is wrong. Mark the start spot on the practice field with tape.
 9. **Stop in `stop()`:** `follower.stop()` then `follower.drivetrain.stop()`, as in `PedroForwardBackAlpha`.
 10. **Never use `DriveSubsystem` or `PinpointSubsystem` in an OpMode that has a Follower.** Pedro owns the drive motors and the Pinpoint. The other subsystems (shooter, turret, intake, vision) are fine, and we call their `update()` in `loop()` right after `follower.update()`.
@@ -70,13 +70,13 @@ These add to `ARCHITECTURE.md` and `biobuzz-auto-strategy.md`.
 14. **Annotation:** `@Autonomous(name = "...", group = "...")`. For match Autos add `preselectTeleOp = "TeleOp - Alpha 14"` (the name on the screen for `BiobuzzTeleOp`) so the Driver Station loads TeleOp after Auto.
 15. **After a change to the robot, run `PedroForwardBackAlpha` again** before trusting any longer Auto.
 
-## 6. Open items `[CONFIRM]`
+## 6. Open items
 
-- Everything above is untested on a robot. The first real run may show that a number or step here needs fixing; update this doc when it does.
+- Everything above is untested on a robot `[#57]`. The first real run may show that a number or step here needs fixing; update this doc when it does.
 - **One place for each number.** The motor names and directions are in `DriveSubsystem`, and the Pinpoint name, pod offsets, pod type and pod directions are in `PinpointSubsystem`. `pedro/Constants.java` reads them (they are `public static final` for that reason). Only the Foresight numbers are typed in `Constants.java`.
 - `PinpointSubsystem` also has `DISTANCE_CALIBRATION_MULTIPLIER` and `INVERT_HEADING`, which fix readings in software. **Pedro does not use those two.** They are 1.0 and false now, which changes nothing. If the 48 inch push test says the distance is off, do not just change the multiplier: Pedro would not see it. Ask the coach (Pedro's Pinpoint config has a ticks-per-unit setting for that).
 - The Foresight numbers in `Constants.java` are an **example from another robot** until each robot is tuned. `FORESIGHT_TUNED` stops the Auto from using them.
-- Which start spots and which field coordinates each robot will use (see `biobuzz-auto-strategy.md` section 8).
+- Which start spots and which field coordinates each robot will use (see `biobuzz-auto-strategy.md` section 8). `[#60]`
 
 ## 7. If something goes wrong
 

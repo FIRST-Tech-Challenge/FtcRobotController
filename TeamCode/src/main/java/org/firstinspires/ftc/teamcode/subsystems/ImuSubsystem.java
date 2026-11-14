@@ -74,7 +74,7 @@ public class ImuSubsystem {
     //       hub on the RIGHT side of the robot  -> the logo faces LEFT
     //       hub at the BACK of the robot        -> the logo faces FORWARD
     //       hub at the FRONT of the robot       -> the logo faces BACKWARD
-    // [CONFIRM] Not yet run on the robot. ImuAlpha will tell you if it is wrong: with the robot
+    // TODO (issue #88): Not yet run on the robot. ImuAlpha will tell you if it is wrong: with the robot
     // flat, pitch and roll are about 0, and turning the robot LEFT makes the heading go UP. If
     // "left wall" meant the VIEWER's left and not the robot's, the logo would be LEFT instead.
     // ------------------------------------------------------------------

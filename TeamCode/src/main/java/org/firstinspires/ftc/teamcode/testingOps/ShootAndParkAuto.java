@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 /*
  * Auto - Shoot and Park, Alpha 1
  * Shoots our preloaded POLLEN at the hive, then drives into our LOADING ZONE (rungs A-3 + A-1 in
- * TeamCode/docs/biobuzz-auto-strategy.md). It is LeaveAndParkAuto plus a firing sequence.
+ * TeamCode/docs/biobuzz-auto-strategy.md). It is AutoLeaveAndPark plus a firing sequence.
  *
  *   1. FIND_HIVE         : the turret turns until the camera is locked on the hive, and the
  *                          flywheel starts spinning at PRE_REV_FLYWHEEL_RPM so it is already
@@ -85,7 +85,7 @@ import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
  *   - To drive, Pedro must be tuned (TeamCode/docs/pedro-setup-and-auto-guide.md) and
  *     FORESIGHT_TUNED set to true. If it is NOT tuned, this OpMode still does the SHOT but does
  *     not drive, so you can test the firing sequence on its own. (Until Pedro is tuned, use
- *     EmergencyLeaveAuto to get the LEAVE points.)
+ *     AutoEmergencyLeave to get the LEAVE points.)
  *   - Test the shot with the robot on its start spot before you trust the park: check that the
  *     camera sees the hive from there (see the INIT screen), and that the ty on the screen is
  *     near a row of the shot table.
@@ -155,7 +155,7 @@ public class ShootAndParkAuto extends OpMode {
     private static final double FLYWHEEL_AT_SPEED_TOLERANCE_RPM = 25.0;
     private static final double FLYWHEEL_AT_SPEED_HOLD_SECONDS = 0.15;
 
-    // The most time one drive step is allowed to take. (Same idea as in LeaveAndParkAuto.)
+    // The most time one drive step is allowed to take. (Same idea as in AutoLeaveAndPark.)
     private static final double LEG_TIMEOUT_SECONDS = 6.0;
 
     // Same numbers as BiobuzzTeleOp's auto-align. We only pick a new turret target when the camera

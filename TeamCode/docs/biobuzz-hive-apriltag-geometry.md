@@ -85,8 +85,8 @@ The viewing angle is fine. **Tag size limits range.** A 3.25 in tag probably bec
 
 The tags sit in the cell's shadow, and the camera looks up toward the arena lights. Expect to retune exposure and gain on a real field; our usual 1000 / 8 may be too dark.
 
-## Verify on the real field `[CONFIRM]`
+## Verify on the real field
 
-- [ ] Tag cluster center height (~50 in derived)
-- [ ] Opening center height (~59.5 in derived)
-- [ ] Maximum reliable Limelight detection range on these tags under gym lighting
+- [ ] Tag cluster center height (~50 in derived) `[#88]`
+- [ ] Opening center height (~59.5 in derived) `[#88]`
+- [ ] Maximum reliable Limelight detection range on these tags under gym lighting `[#64]`

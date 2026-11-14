@@ -291,6 +291,8 @@ public class BiobuzzTeleOp extends OpMode {
     // the next (a loop is about 20 milliseconds, and 45 degrees in that time would be over 2000
     // degrees per second, far faster than the robot can turn). A bigger jump means the Pinpoint
     // restarted or glitched, so the remembered hive direction can no longer be trusted.
+    // TODO (issue #88): measure how fast our robot really spins (the Pinpoint "Turn deg/s" line).
+    // One slow loop (100 to 150 ms) could make a real turn look like a jump.
     private static final double MAX_PINPOINT_HEADING_JUMP_DEGREES = 45.0;
 
     // A Pinpoint that is "not READY" for LESS than this many seconds is treated as a GLITCH (one
@@ -360,19 +362,19 @@ public class BiobuzzTeleOp extends OpMode {
     // ------------------------------------------------------------------
     // The flywheel and hood wheel speeds for the wall shot. Both are our best guess, not measured.
     // The hood wheel is 2 x the flywheel, the same ratio the dial starts at (see RATIO_HUNDREDTHS_START).
-    // TODO: verify WALL_SHOT_FLYWHEEL_RPM on the robot. Shoot from the wall spot and change it until
+    // TODO (issue #88): verify WALL_SHOT_FLYWHEEL_RPM on the robot. Shoot from the wall spot and change it until
     // the balls land in the hive. Then check WALL_SHOT_HOOD_WHEEL_RPM the same way.
     private static final double WALL_SHOT_FLYWHEEL_RPM = 1300.0;
     private static final double WALL_SHOT_HOOD_WHEEL_RPM = 2600.0;
 
     // The turret angle for the wall shot. 0 is straight ahead.
-    // TODO: verify that 0 really points at the hive from the wall spot. There is no home switch yet,
+    // TODO (issue #88): verify that 0 really points at the hive from the wall spot. There is no home switch yet,
     // so 0 is wherever the turret pointed when the Control Hub powered on (see TurretSubsystem).
     private static final double WALL_SHOT_TURRET_DEGREES = 0.0;
 
     // How long the gate stays CLOSED after the trigger is pressed, so the wheels can spin up before
     // the first ball goes. The wall shot does NOT check the wheel speed, so this is only a time guess.
-    // TODO: verify this delay on the robot. Time how long the flywheel takes to get from stopped to
+    // TODO (issue #88): verify this delay on the robot. Time how long the flywheel takes to get from stopped to
     // WALL_SHOT_FLYWHEEL_RPM (the screen shows the real RPM). A normal volley's "Last volley: seconds
     // to ready" is a starting point. Too short = a weak first ball. Too long = we wait for nothing.
     private static final double WALL_SHOT_GATE_DELAY_SECONDS = 1.5;

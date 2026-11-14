@@ -45,7 +45,7 @@ public class ShotTable {
     // ------------------------------------------------------------------
     // The table. Each row is one spot on the field.
     // ------------------------------------------------------------------
-    // [CONFIRM] FIRST PASS, measured with ShotTableAlpha (7 saves from 5 different spots, the
+    // TODO (issue #4): FIRST PASS, measured with ShotTableAlpha (7 saves from 5 different spots, the
     // repeats were merged). The RPMs were found in 50 RPM dial steps, so each is only good to
     // about +/- 50. Row 0 (the farthest spot) is a judgment call between two dial settings:
     // 1400 made the shot and 1450 felt more comfortable, so it is 1425, in between.

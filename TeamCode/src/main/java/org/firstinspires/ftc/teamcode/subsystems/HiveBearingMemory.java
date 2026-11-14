@@ -39,7 +39,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 public class HiveBearingMemory {
 
     // ------------------------------------------------------------------
-    // When the memory goes stale. [CONFIRM] Both are starting guesses to tune on the robot.
+    // When the memory goes stale. TODO (issue #48): Both are starting guesses to tune on the robot.
     // ------------------------------------------------------------------
     // Stale once the robot has driven this many inches (in a straight line) from the spot where
     // the camera last saw the hive. Why 12: the Limelight sees about 27 degrees to each side,

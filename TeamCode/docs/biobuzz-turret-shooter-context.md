@@ -1,6 +1,6 @@
 # BIOBUZZ: Turret, Shooter, and Limelight Context
 
-*Cyber Coyotes FTC (Reed City). Handoff doc for Claude Code. Suggested repo location: `docs/biobuzz-turret-shooter-context.md`. If a Team Update changes anything, the Competition Manual wins. Items marked **[#nn]** (a GitHub Issue labeled `needs-decision`) or with an old **[CONFIRM]** (being converted, issue #70) are unresolved: stop and ask the coach before proceeding past them. Values marked **derived** have not been measured on a real field.*
+*Cyber Coyotes FTC (Reed City). Handoff doc for Claude Code. Suggested repo location: `docs/biobuzz-turret-shooter-context.md`. If a Team Update changes anything, the Competition Manual wins. Items marked **[#nn]** (the number of a GitHub Issue) are unresolved: stop and ask the coach before proceeding past them. Values marked **derived** have not been measured on a real field.*
 
 ## 1. How to work with the coach
 
@@ -18,7 +18,7 @@ Build a shooter on a rotating turret for BIOBUZZ:
 - A **weighted flywheel** with **variable output**, plus a **companion hood wheel motor** (independently controlled).
 - A **Limelight 3A** reads AprilTags to aim the turret and to estimate distance, which sets flywheel and hood wheel speed.
 - Shooter is designed for **pollen** (2.8 in ball) only for now.
-- **All motors are goBILDA.** Exact models and gear ratios: **[CONFIRM]** (needed for ticks-to-degrees and ticks-per-rev math).
+- **All motors are goBILDA 5203.** Turret: 435 RPM (13.7:1). Flywheel: 1620 RPM (3.7:1). Hood wheel: 6000 RPM (1:1). The encoder counts for each are in `CLAUDE.md` (Known gotchas). The intake motor is believed to be 1620 RPM (3.7:1) **[#65]**.
 
 ## 3. Stack and conventions
 
@@ -26,7 +26,7 @@ Build a shooter on a rotating turret for BIOBUZZ:
 - **2026-27 approach:** standard FTC SDK style. One class per mechanism for hardware code. Test OpModes are iterative OpModes (existing examples: `AlphaIntakeTesting`, `AlphaShooterTesting`).
 - Shared subsystem classes live in `src/main/`. Robot-specific OpModes live in flavor directories: `src/practiceBot/`, `src/team11940/`, `src/team22091/`.
 - Naming: packages lowercase, classes PascalCase, variables and methods camelCase, constants ALL_CAPS, hardware variables location-first (e.g., `leftIntakeServo`), hardware map names snake_case (e.g., `left_intake_servo`), doc filenames kebab-case.
-- Proposed hardware map names **[CONFIRM]**: `turret_motor`, `flywheel`, `hood_wheel`. Limelight config entry is `limelight`.
+- Hardware map names (decided): `turret_motor`, `flywheel`, `hood_wheel`. Limelight config entry is `limelight`.
 - This is the final season of this Java setup. The program moves to SystemCore in 2027-28, so keep things simple and standard.
 
 ## 4. Hardware and API gotchas (learned the hard way)
@@ -40,7 +40,7 @@ Build a shooter on a rotating turret for BIOBUZZ:
 
 ## 4a. Vision source decision
 
-The Limelight 3A is the FTC-supported, legal camera (`LL_3A`) and is already in the team's code. The alternative is a webcam with the SDK's `VisionPortal`, whose AprilTag library groups each cell's four tags into a **cluster** with its origin at the center of the cell opening. **Current plan: Limelight 3A. [CONFIRM] before writing aiming code.** The Limelight does not know about clusters, so our code must add the offset from the tags to the opening.
+The Limelight 3A is the FTC-supported, legal camera (`LL_3A`) and is already in the team's code. The alternative is a webcam with the SDK's `VisionPortal`, whose AprilTag library groups each cell's four tags into a **cluster** with its origin at the center of the cell opening. **Decided: Limelight 3A (final).** The Limelight does not know about clusters, so our code must add the offset from the tags to the opening.
 
 ## 5. Game facts that drive the design
 
@@ -106,11 +106,11 @@ Log `tx`, flywheel and hood wheel speed, and turret angle to telemetry in every 
 
 ## 9. Open items
 
-- [ ] **[CONFIRM]** Exact goBILDA motor models and gear ratios for turret, flywheel, hood wheel.
-- [ ] **[CONFIRM]** Hardware map names for the three motors.
-- [ ] **[CONFIRM]** Vision source: Limelight 3A (current plan) versus webcam with `VisionPortal`.
-- [ ] Measure actual tag and opening heights on the practice field or field CAD.
-- [ ] Find the Limelight 3A's max reliable detection range on a 3.25 in tag under gym lighting.
-- [ ] Turret travel range and cable management approach.
-- [ ] How many balls does it take to tip the hive? (Not in the manual; check field CAD, a Team Update, or test.)
-- [ ] Confirm the robot cannot drive over or inside the frame base bars.
+- [x] Motor models and gear ratios: turret 435 RPM (13.7:1), flywheel 1620 RPM (3.7:1), hood wheel 6000 RPM (1:1), all goBILDA 5203. The intake motor's label still needs reading **[#65]**.
+- [x] Hardware map names: `turret_motor`, `flywheel`, `hood_wheel`.
+- [x] Vision source: Limelight 3A (final).
+- [ ] Measure actual tag and opening heights on the practice field or field CAD. **[#88]**
+- [ ] Find the Limelight 3A's max reliable detection range on a 3.25 in tag under gym lighting. **[#64]**
+- [ ] Turret travel range and cable management approach. (360° was ruled out on 2026-11-13, #12.) **[#29]**, **[#6]**
+- [ ] How many balls does it take to tip the hive? (Not in the manual; check field CAD, a Team Update, or test.) **[#60]**
+- [ ] Confirm the robot cannot drive over or inside the frame base bars. **[#68]**

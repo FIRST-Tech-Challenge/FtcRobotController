@@ -7,13 +7,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
 /*
- * Auto - Emergency Leave (A-0), Alpha 1
+ * Drive Forward - Mark 1 (the A-0 Emergency Leave Auto)
  * The simplest Auto there is (rung A-0 in TeamCode/docs/biobuzz-auto-strategy.md). The robot drives
  * straight FORWARD for a fixed time and stops. That is LEAVE = 3 points, as long as the robot is
  * no longer touching the perimeter wall when AUTO ends.
  *
  * WHEN TO USE IT
- *   - Pedro Pathing is not tuned yet (FORESIGHT_TUNED is false), so LeaveAndParkAuto will not
+ *   - Pedro Pathing is not tuned yet (FORESIGHT_TUNED is false), so AutoLeaveAndPark will not
  *     drive. This is the stopgap until it is tuned.
  *   - Or something else is broken at an event (the Pinpoint is not READY, the camera is dead) and
  *     we want to be sure of the 3 LEAVE points.

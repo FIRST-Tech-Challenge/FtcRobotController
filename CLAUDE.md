@@ -18,7 +18,7 @@ Claude Code loads this file automatically at the start of every session. It hold
 3. **One subsystem class (plus its test OpMode) or one OpMode per session.**
 4. **Open decisions live in GitHub Issues, not in the docs.** An open issue labeled `needs-decision` is an unresolved decision. Docs and code point to it with a `[#nn]` marker (the issue number). The issue holds the question, the options, who decides, a due date, and later the answer. The file holds only the number.
    - **Before starting work,** search the open `needs-decision` issues for any that touch the task, and look for `[#nn]` markers in the files you will change. If one blocks the work, **stop and ask**. If you can't reach GitHub, stop and ask too. Don't assume the answer.
-   - **Old bare `[CONFIRM]` markers** are still being converted (issue #70). Treat each one as an open decision: stop and ask, and draft an issue for it.
+   - **Small robot checks are `// TODO` comments in the code,** next to the constant they are about ("time this on the robot", "starting guess"). They are not decisions and they do not block work. The ones with no other issue are listed in #88. **The old `[CONFIRM]` markers are gone.** Don't add new ones: use a `// TODO` for a number to check, or an issue and a `[#nn]` marker for a decision.
    - **Draft, don't create.** When you find a decision with no issue, show the coach the draft (title, question, options, who decides, due date). Create the issue only after the coach approves.
    - **When the coach answers and closes the issue,** replace the marker with the answer (leave no marker behind) and put `Closes #nn` in the commit message.
    - GitHub may not be reachable at events (no internet in the pits), which is why the `[#nn]` pointer stays in the file.
