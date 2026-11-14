@@ -32,7 +32,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -51,7 +54,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Pollinator Drivetrain", group="Linear OpMode")
-@Disabled
+
 public class The_Bee_Bot extends LinearOpMode {
 
     // Declare OpMode members.
@@ -59,22 +62,37 @@ public class The_Bee_Bot extends LinearOpMode {
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
 
+    private DcMotor outtake_large_wheel;
+
+    CRServo outtake_small_wheel;
+
+    double outtake_small_wheel_power;
+
+    double servo_arm_position;
+
+    boolean launcher_idk;
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
+        int i_hate_honey_bees_tbh = 0;
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
         leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        outtake_small_wheel = hardwareMap.get(CRServo.class, "outtake_small_wheel");
+        outtake_large_wheel  = hardwareMap.get(DcMotor.class, "outtake_large_wheel");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        outtake_large_wheel.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses START)
         waitForStart();
@@ -83,7 +101,7 @@ public class The_Bee_Bot extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            // Setup a variable for each drive wheel to save power level for telemetry
+            // Set up a variable for each drive wheel to save power level for telemetry
             double leftPower;
             double rightPower;
 
@@ -94,6 +112,21 @@ public class The_Bee_Bot extends LinearOpMode {
             // - This uses basic math to combine motions and is easier to drive straight.
             double drive = -gamepad1.left_stick_y;
             double turn  =  gamepad1.right_stick_x;
+            double outtake_large_wheel_power;
+
+            if (gamepad1.yWasPressed()){  
+                i_hate_honey_bees_tbh ++;
+            }
+
+            if (i_hate_honey_bees_tbh%2 == 1){
+                outtake_large_wheel_power = 0.25;
+                outtake_small_wheel_power = 0.4;
+            }
+            else{
+                outtake_large_wheel_power = 0.0;
+                outtake_small_wheel_power = 0.0;
+            }
+
             leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
             rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
@@ -110,6 +143,23 @@ public class The_Bee_Bot extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
+
+
+            outtake_large_wheel.setPower (outtake_large_wheel_power);
+
+//            if (gamepad1.y == true){
+//                outtake_small_wheel_power = 0.05;
+//            }
+//            else{
+//                outtake_small_wheel_power = 0.0;
+//            }
+
+             outtake_small_wheel.setPower(outtake_small_wheel_power);
+
+
+
+
+
         }
     }
 }
