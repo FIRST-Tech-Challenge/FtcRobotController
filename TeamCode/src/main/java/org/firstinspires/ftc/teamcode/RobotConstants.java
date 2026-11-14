@@ -56,11 +56,9 @@ public final class RobotConstants {
     public static final double DRIVE_MAX_RPM = 435;
     public static final double DRIVE_TICKS_PER_REV = 383.6;  // 435 RPM goBILDA motor (check the spec sheet)
 
-    // ---- Aiming (TODO: tune) ----
-    public static final double AIM_KP = 0;
-    public static final double AIM_DEADBAND_DEG = 1.0;
+    // ---- Aiming: gains and deadbands are in AimConfig ----
 
-    // ---- AprilTag fiducial ID ranges (Limelight pipeline), used by Vision.isHiveTipped ----
+    // ---- AprilTag fiducial ID ranges (Limelight pipeline), used by Vision.isHiveTipped and aiming ----
     // From the game manual (Fig 9-17). "Scoring" = far side from audience.
     public static final int TAG_RED_SCORING_MIN = 30;
     public static final int TAG_RED_SCORING_MAX = 33;
