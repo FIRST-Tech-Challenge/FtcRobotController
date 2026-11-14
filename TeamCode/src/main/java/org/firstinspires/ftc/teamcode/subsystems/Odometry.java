@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.teamcode.RobotConstants;
 
 /*
@@ -60,6 +61,11 @@ public class Odometry implements Subsystem {
 
     public double getYInches() {
         return pinpoint.getPosition().getY(DistanceUnit.INCH);
+    }
+
+    /** Turn rate in radians/sec (counterclockwise +). Used to damp auto-aim. */
+    public double getHeadingVelocityRadPerSec() {
+        return pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS);
     }
 
     public double getHeadingDegrees() {
