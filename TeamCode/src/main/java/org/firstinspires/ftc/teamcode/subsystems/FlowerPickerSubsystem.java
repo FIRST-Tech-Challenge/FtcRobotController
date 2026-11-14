@@ -67,7 +67,7 @@ public class FlowerPickerSubsystem {
     // swapped on both sides. The distance between UP and DOWN was right, so only the direction
     // was wrong. The exact numbers are still to be tuned.
     private static final double LEFT_UP_POSITION = 0.82;
-    private static final double LEFT_DOWN_POSITION = 0.30;
+    private static final double LEFT_DOWN_POSITION = 0.32;
     private static final double RIGHT_UP_POSITION = 0.30;
     private static final double RIGHT_DOWN_POSITION = 0.80;
 
