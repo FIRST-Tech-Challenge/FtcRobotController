@@ -66,10 +66,10 @@ public class FlowerPickerSubsystem {
     // First robot test: both servos moved about 90 degrees the WRONG way, so UP and DOWN were
     // swapped on both sides. The distance between UP and DOWN was right, so only the direction
     // was wrong. The exact numbers are still to be tuned.
-    private static final double LEFT_UP_POSITION = 0.70;
+    private static final double LEFT_UP_POSITION = 0.82;
     private static final double LEFT_DOWN_POSITION = 0.30;
     private static final double RIGHT_UP_POSITION = 0.30;
-    private static final double RIGHT_DOWN_POSITION = 0.70;
+    private static final double RIGHT_DOWN_POSITION = 0.80;
 
     // The servos do not tell us when they arrive. This is how long we assume a move takes.
     // Too short and isAtPosition() lies. Too long and we wait for nothing.
