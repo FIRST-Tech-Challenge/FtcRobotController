@@ -6,6 +6,8 @@
             <goBILDA5202SeriesMotor name="flywheel" port="1" />
             <goBILDA5202SeriesMotor name="hood_wheel" port="2" />
             <goBILDA5202SeriesMotor name="turret_motor" port="3" />
+            <Servo name="right_flower_servo" port="0" />
+
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
@@ -14,6 +16,7 @@
             <goBILDA5202SeriesMotor name="right_front" port="2" />
             <goBILDA5202SeriesMotor name="right_rear" port="3" />
             <Servo name="shooter_servo" port="0" />
+            <Servo name="left_flower_servo" port="1 />
             <goBILDAPinpoint name="pinpoint" port="0" bus="3" />
         </LynxModule>
     </LynxUsbDevice>
