@@ -14,7 +14,9 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
     enum class State {
         OFF,
         ON,
-        OUTTAKE
+        OUTTAKE,
+        PRE_SHOOT,
+        SHOOT
     }
 
     lateinit var state: State
@@ -28,6 +30,7 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
     companion object {
         private val INTAKE_POWER = 1.0
         private val OUTTAKE_POWER = -1.0
+        private val SHOOT_POWER = 0.8
     }
 
     private var conditionContiniousStartTimeNs: Long = 0L
@@ -38,6 +41,7 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
     fun init(){
         state = State.OFF
         prevState = State.ON
+        hw.pollenBallStop.position = POLLEN_STOP
         //??
     }
 
@@ -58,11 +62,14 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
                     state = State.ON
                 } else if (gamepadState.lb1) {
                     state = State.OUTTAKE
+                } else if (gamepadState.b2) {
+                    state = State.PRE_SHOOT
                 }
             }
             State.ON -> {
                 val distance = hw.color.getDistance(DistanceUnit.CM)
                 if (justTransitioned) {
+                    hw.pollenBallStop.position = POLLEN_STOP
                     hw.setIntakePower(INTAKE_POWER)
                 }
                 if(distance < DISTANCE_THRESHOLD && !continuous) {
@@ -86,6 +93,24 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
                     hw.setIntakePower(OUTTAKE_POWER)
                 }
                 if (getElapsedSec(stateStartTimeNs) > 0.1){
+                    state = State.OFF
+                }
+            }
+            State.PRE_SHOOT -> {
+                if (justTransitioned){
+                    if (hw.pollenBallStop.position != POLLEN_GO) {
+                        hw.pollenBallStop.position = POLLEN_GO
+                    }
+                    count = 0
+                }
+                if (getElapsedSec(stateStartTimeNs) > 0.1)
+                    state = State.SHOOT
+            }
+            State.SHOOT -> {
+                if (justTransitioned){
+                    hw.setIntakePower(SHOOT_POWER)
+                }
+                if (getElapsedSec(stateStartTimeNs) > 1){
                     state = State.OFF
                 }
             }

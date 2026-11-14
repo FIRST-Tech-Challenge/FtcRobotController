@@ -21,6 +21,10 @@ class GamepadState(private val gp1: Gamepad, private val gp2: Gamepad) {
     var rt1 = false
     var wasrt1 = false
 
+    //shoot
+    var b2 = false
+    var wasb2 = false
+
 
 
     fun update() {
@@ -36,5 +40,8 @@ class GamepadState(private val gp1: Gamepad, private val gp2: Gamepad) {
 
         rt1 = gp1.right_trigger > 0.5 && !wasrt1
         wasrt1 = gp1.right_trigger > 0.5
+
+        b2 = gp2.b && ! wasb2
+        wasb2 = gp2.b
     }
 }

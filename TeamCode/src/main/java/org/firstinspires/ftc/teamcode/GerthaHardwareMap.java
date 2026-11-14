@@ -7,6 +7,7 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -22,6 +23,8 @@ public class GerthaHardwareMap extends HardwareMapper {
     public static final double POLLEN_ONLY = 0.53;
     public static final double POLLEN_EXTRACT = 0.57;
     public static final double DISTANCE_THRESHOLD = 4.0;
+    public static final double POLLEN_GO = 0.58;
+    public static final double POLLEN_STOP = 0.32;
 
     @HardwareName("frontRight")
     @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
@@ -41,6 +44,10 @@ public class GerthaHardwareMap extends HardwareMapper {
     @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
     public DcMotorEx backLeft;
 
+    @HardwareName("pollenShooter")
+    @Reversed
+    public DcMotorEx pollenShooter;
+
     @HardwareName("leftIntake")
     public DcMotor leftIntake;
 
@@ -57,6 +64,10 @@ public class GerthaHardwareMap extends HardwareMapper {
     @HardwareName("leftRamp")
     public Servo leftRamp;
 
+    @HardwareName("pollenBallStop")
+    public Servo pollenBallStop;
+
+
     @HardwareName("color")
     public RevColorSensorV3 color;
 
@@ -66,6 +77,8 @@ public class GerthaHardwareMap extends HardwareMapper {
         pinpoint.setOffsets(4.78,  -5, DistanceUnit.INCH);
         pinpoint.setEncoderResolution(GoBildaPinpoint2Driver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         pinpoint.setEncoderDirections(GoBildaPinpoint2Driver.EncoderDirection.REVERSED, GoBildaPinpoint2Driver.EncoderDirection.REVERSED);
+        pollenShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(760, 40, 20, 0));
+
     }
 
 
@@ -96,6 +109,11 @@ public class GerthaHardwareMap extends HardwareMapper {
     public void setPollenExtractor(double pos) {
         rightRamp.setPosition(pos);
         leftRamp.setPosition(1.03 - pos);
+    }
+
+    public void setPollenVelocity(double target){
+        pollenShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pollenShooter.setVelocity(target);
     }
 
 }
