@@ -13,7 +13,7 @@ public class Auton1 extends GreenBotBaseOpMode {
 
     static final double START_X = 63;
     static final double START_Y = -18;
-    static final double START_HEADING = 0;
+    static final double START_HEADING = 180;
 
     static final double GARDEN_START_X = 47;
     static final double GARDEN_END_X = 62.5;
