@@ -16,7 +16,7 @@
             <goBILDA5202SeriesMotor name="right_front" port="2" />
             <goBILDA5202SeriesMotor name="right_rear" port="3" />
             <Servo name="shooter_servo" port="0" />
-            <Servo name="left_flower_servo" port="1 />
+            <Servo name="left_flower_servo" port="1" />
             <goBILDAPinpoint name="pinpoint" port="0" bus="3" />
         </LynxModule>
     </LynxUsbDevice>

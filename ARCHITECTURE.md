@@ -155,6 +155,8 @@ Names already in use:
 | `turret_motor` | Turret rotation motor (goBILDA 5203 series, 435 RPM, 13.7:1; spec sheet `5203-2402-0014` in `TeamCode/docs/`). The REV Through Bore Encoder (incremental/quadrature, on the turret ring gear) is plugged into this same port's encoder connector, so there is no separate encoder entry. |
 | `turret_home_switch` | REV magnetic limit switch (active-low) that re-zeros the turret angle (digital port). Name approved. |
 | `shooter_servo` | Shooter gate: goBILDA dual mode 300° torque servo, set to positional mode. Has three positions: CLOSED, OPENED and LIFTED (about 90° between CLOSED and OPENED, and the whole travel to LIFTED). |
+| `left_flower_servo` | Flower picker, left side (`FlowerPickerSubsystem`, issue #75): a positional servo that moves the flower bar UP / DOWN. Mounted mirrored to the right one, so it turns the opposite way. In the 11940 and 22091 configs it is on the Control Hub, port 1. |
+| `right_flower_servo` | Flower picker, right side: the mirror of `left_flower_servo`. In the 11940 and 22091 configs it is on Expansion Hub 2, port 0. |
 | `limelight` | Limelight 3A (Ethernet device) |
 | `pinpoint` | goBILDA Pinpoint Odometry Computer (I2C device, Control Hub bus 1, 2 or 3). Last season's name was `odo`, so each robot's config needs a one-time rename. |
 | `imu` | The Control Hub's **built-in** gyro (I2C bus 0, "IMU (BHI260AP)" or "IMU (BNO055)"). A new configuration normally already has it. The field-centric drive's heading comes from it (see `ImuSubsystem`). |
