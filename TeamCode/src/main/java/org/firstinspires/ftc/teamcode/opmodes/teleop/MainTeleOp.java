@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.test;
+package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.common.Robot;
 
 @TeleOp(name="TestDriveOpMode", group="Linear OpMode")
-public class TestDriveOpMode extends LinearOpMode {
+public class MainTeleOp extends LinearOpMode {
 
     public Robot robot;
     private ElapsedTime runtime = new ElapsedTime();
