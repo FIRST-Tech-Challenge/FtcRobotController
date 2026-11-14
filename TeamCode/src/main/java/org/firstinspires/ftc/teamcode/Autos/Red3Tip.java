@@ -75,7 +75,7 @@ public class Red3Tip extends OpMode {
                 autoCommand.toggleAuto,
                 autoCommand.fWheelTogg,
                 follow(follower, AutoPaths.TweaTip.path1()),
-                Commands.waitMs(750),
+                Commands.waitMs(1000),
                 autoCommand.shooterTogg,
                 autoCommand.intakeTogg,
                 Commands.waitMs(1500),
@@ -85,10 +85,13 @@ public class Red3Tip extends OpMode {
                 autoCommand.flowerCollectClose(follower),
                 autoCommand.intakeTogg,
                 autoCommand.toggleAuto,
-                follow(follower, AutoPaths.TweaTip.path3()),
+                follow(follower, AutoPaths.TweaTip.path3()
+                        .with(Constants.foresightConfig.maxPathSpeed.at(0.6))
+                ),
                 autoCommand.intakeTogg,
+                Commands.waitMs(2500),
                 autoCommand.shooterTogg,
-                Commands.waitMs(1500),
+                Commands.waitMs(2000),
                 autoCommand.shooterTogg,
                 autoCommand.rampTogg,
                 follow(follower, AutoPaths.TweaTip.WallTo()),
@@ -104,7 +107,7 @@ public class Red3Tip extends OpMode {
                         )
                 ),
                 autoCommand.shooterTogg,
-                Commands.waitMs(1500),
+                Commands.waitMs(2000),
                 autoCommand.shooterTogg,
                 follow(follower, AutoPaths.TweaTip.park())
                 );
