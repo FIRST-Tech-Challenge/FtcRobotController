@@ -29,7 +29,7 @@ import java.util.List;
 public class AutonBase extends LinearOpMode {
 
     /* Declare OpMode members. */
-    RobotHardwareMap theHardwareMap;
+    protected RobotHardwareMap theHardwareMap;
     Intake intake;
 
     Outtake outtake;
