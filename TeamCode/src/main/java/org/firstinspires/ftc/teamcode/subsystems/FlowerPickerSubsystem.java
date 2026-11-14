@@ -62,10 +62,14 @@ public class FlowerPickerSubsystem {
     // bar is exactly where you want it (the OpMode shows the number), then type the numbers in here.
     // 11940 and 22091 may end up with different numbers. Per-robot numbers wait for the build
     // flavors (issue #66), so for now there is one set.
-    private static final double LEFT_UP_POSITION = 0.30;
-    private static final double LEFT_DOWN_POSITION = 0.70;
-    private static final double RIGHT_UP_POSITION = 0.70;
-    private static final double RIGHT_DOWN_POSITION = 0.30;
+    //
+    // First robot test: both servos moved about 90 degrees the WRONG way, so UP and DOWN were
+    // swapped on both sides. The distance between UP and DOWN was right, so only the direction
+    // was wrong. The exact numbers are still to be tuned.
+    private static final double LEFT_UP_POSITION = 0.70;
+    private static final double LEFT_DOWN_POSITION = 0.30;
+    private static final double RIGHT_UP_POSITION = 0.30;
+    private static final double RIGHT_DOWN_POSITION = 0.70;
 
     // The servos do not tell us when they arrive. This is how long we assume a move takes.
     // Too short and isAtPosition() lies. Too long and we wait for nothing.
