@@ -111,16 +111,14 @@ public class TurretSubsystem {
     // The gear on the encoder's shaft and the ring gear mesh, so the encoder turns more than
     // the turret does. Here that gear is the MOTOR'S 16T pinion, because the motor's encoder
     // is on the motor shaft: 3 motor turns make 1 turret turn.
-    // TODO (issue #6): The coach counted 47 teeth on the ring gear (2026-11-12), but this still
-    // says 48. Changing it moves every turret angle by about 2%, so re-check the soft limits
-    // on the robot after the change. Both pinions are 16.
-    private static final double RING_GEAR_TEETH = 48.0;
+    // The ring gear has 47 teeth (the coach checked it, 2026-11-12). Both pinions are 16.
+    private static final double RING_GEAR_TEETH = 47.0;
     private static final double ENCODER_PINION_TEETH = 16.0;
 
     private static final double DEGREES_PER_REV = 360.0;
 
-    // Encoder ticks for ONE degree of turret turn. With the motor encoder and 48 / 16 teeth this
-    // is about 3.2. (The Through Bore Encoder would give about 68.3.)
+    // Encoder ticks for ONE degree of turret turn. With the motor encoder and 47 / 16 teeth this
+    // is about 3.14. (The Through Bore Encoder would give about 66.8.)
     // Check it on the robot: turn the turret by hand through a marked 90 degrees and see
     // that the angle on screen reads 90. If not, check the tooth counts above.
     private static final double TICKS_PER_TURRET_DEGREE =
