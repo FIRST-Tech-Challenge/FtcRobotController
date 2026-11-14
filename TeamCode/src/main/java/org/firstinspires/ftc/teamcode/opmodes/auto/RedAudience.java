@@ -9,18 +9,12 @@ public class RedAudience extends AutoBase {
 
     @Override
     protected void runRoutine() {
-        double p = RobotConstants.AUTO_POWER;
-
-        // drive up, start the flywheel, then check the hive
-        driveInches(20, p);
+        // start the flywheel, then scan for the hive tags from the starting position
         robot.launcher.spinUp();
 
-        // tipped: back up to the shooting spot and shoot. Not tipped: back up a little
+        // tags in view: shoot to tip the hive. Not in view: nothing to shoot at
         if (scanForTip(RobotConstants.TAG_RED_AUDIENCE_MIN, RobotConstants.TAG_RED_AUDIENCE_MAX)) {
-            driveInches(19, -p);
             shoot(3);
-        } else {
-            driveInches(8, -p);
         }
 
         leaveAndPark();

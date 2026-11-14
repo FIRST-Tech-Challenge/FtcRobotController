@@ -17,12 +17,11 @@ public class LauncherConfig {
 
     public static double TARGET_VELOCITY = 1150;
 
-    // auto flywheel
     public static double AUTO_KP = 125.0;
-    public static double AUTO_KI = 1.0;
-    public static double AUTO_KD = 110.0;
-    public static double AUTO_KF = 100.0;
-    public static double AUTO_TARGET_VELOCITY = 1050;
+    public static double AUTO_KI = 0.78;
+    public static double AUTO_KD = 12.0;
+    public static double AUTO_KF = 150.0;
+    public static double AUTO_TARGET_VELOCITY = 1150;
 
     public static double VELOCITY_TOLERANCE = 50;
     public static double REVERSE_POWER = 0.5;
