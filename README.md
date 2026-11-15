@@ -58,6 +58,12 @@ java -cp "$classes" org.firstinspires.ftc.teamcode.quantumstorm.Vision.HiveRaise
 rm -rf "$classes"
 ```
 
+## Shared Blue Team One autonomous
+
+[BlueTeamOneAutonomous.java](TeamCode/src/main/java/org/firstinspires/ftc/teamcode/quantumstorm/Auto/BlueTeamOneAutonomous.java) delegates shooting to [AutoStateMachine.java](TeamCode/src/main/java/org/firstinspires/ftc/teamcode/quantumstorm/Auto/AutoStateMachine.java). After startup checks, **Blue Team One immediately enters the preload shooting sequence at its starting pose**, without waiting for an odometry move. Place and aim the robot for this shot before PLAY. Subsequent pickup and shooting moves still use the existing odometry route; other starting positions retain their initial Hive navigation. Limelight only permits or blocks feeding: seeing a tag alone does not start the sequence or turn the robot. Permission requires camera **tv=1** (`LLResult.isValid()` in the FTC SDK), a connected Limelight, the AprilTag pipeline, a frame aged 0-250 ms, and a detected AprilTag; there is no camera-angle requirement. The existing sequence also waits for shooter spin-up. During feeding, losing validity, freshness, or detection stops the feeder on the next loop and returns to waiting for permission; the flywheel stays spun up. Reacquisition restarts the spin-up wait and timed feed attempt without clearing the estimated ball count. Telemetry reports AprilTag feeding permission. This shared camera gate also applies to the other OpModes using the state machine.
+
+The route poses in [Constants.java](TeamCode/src/main/java/org/firstinspires/ftc/teamcode/quantumstorm/Constants.java), including the Blue Garden and Flower poses, currently remain `(0, 0, 0)` placeholders. Enter measured field poses before expecting travel to those locations; odometry does not generate a route from placeholder coordinates.
+
 ## Ryan's BioBuzz autonomous test
 
 Select **Ryan's auto test** after deploying. Set the `Team` string near the top of [Auto30sec.java](TeamCode/src/main/java/org/firstinspires/ftc/teamcode/quantumstorm/Auto/Auto30sec.java):

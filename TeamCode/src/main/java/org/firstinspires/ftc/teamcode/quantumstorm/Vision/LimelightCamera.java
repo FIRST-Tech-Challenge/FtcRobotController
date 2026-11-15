@@ -70,10 +70,11 @@ public class LimelightCamera {
 
     // ---- AprilTag pipeline ----
 
-    /** True if the AprilTag pipeline currently sees at least one tag. */
+    /** Requires camera tv=1 (SDK isValid), a fresh frame, and an AprilTag detection. */
     public boolean isAprilTagVisible() {
-        LLResult result = resultFor(Constants.LIMELIGHT_APRILTAG_PIPELINE);
-        return result != null && !result.getFiducialResults().isEmpty();
+        LLResult result = telemetryResultFor(Constants.LIMELIGHT_APRILTAG_PIPELINE);
+        return result != null && result.getFiducialResults() != null
+                && !result.getFiducialResults().isEmpty();
     }
 
     /** Horizontal angle to the seen AprilTag in degrees (right = positive), or 0 if none. */

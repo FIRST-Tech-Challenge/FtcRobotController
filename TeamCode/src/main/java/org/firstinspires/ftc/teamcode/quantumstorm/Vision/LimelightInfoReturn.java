@@ -4,8 +4,10 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -15,15 +17,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.quantumstorm.Constants;
+import org.firstinspires.ftc.teamcode.quantumstorm.DriveChain.MecanumDrive;
 
 import java.util.List;
 
-@Autonomous(name = "Limelight: AprilTag Auto Monitor", group = "Vision")
+@TeleOp(name = "Limelight: AprilTag Drive Monitor", group = "Vision")
 public class LimelightInfoReturn extends LinearOpMode {
 
     private static final double MAX_TAG_AGE_MS = 250;
     private static final double PIPELINE_SETTLE_SECONDS = 0.3;
     private static final double PIPELINE_RETRY_SECONDS = 1.0;
+    private static final double FEEDER_POWER = 0.55;
+    private static final double FEEDER_PULSE_MS = 200;
 
     @Override
     public void runOpMode() {
@@ -42,6 +47,38 @@ public class LimelightInfoReturn extends LinearOpMode {
             return;
         }
 
+        MecanumDrive drive = new MecanumDrive(hardwareMap);
+        String[] driveNames = {Constants.FRONT_LEFT_DRIVE, Constants.BACK_LEFT_DRIVE,
+                Constants.FRONT_RIGHT_DRIVE, Constants.BACK_RIGHT_DRIVE};
+        for (String driveName : driveNames) {
+            hardwareMap.get(DcMotor.class, driveName).setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+        DcMotor intake = hardwareMap.get(DcMotor.class, Constants.INTAKE_MOTOR);
+        DcMotor shooter = hardwareMap.get(DcMotor.class, Constants.SHOOTER_MOTOR);
+        CRServo feeder = hardwareMap.get(CRServo.class, Constants.SHOOTER_SERVO);
+        intake.setDirection(DcMotor.Direction.FORWARD);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setPower(0);
+        shooter.setDirection(DcMotor.Direction.FORWARD);
+        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooter.setPower(0);
+        feeder.setDirection(CRServo.Direction.REVERSE);
+        feeder.setPower(0);
+
+        boolean intakeOn = false;
+        boolean shooterOn = false;
+        boolean previousA = false;
+        boolean previousB = false;
+        boolean previousX = false;
+        boolean previousLeftBumper = false;
+        boolean previousRightBumper = false;
+        int shooterPowerSteps = (int) Math.round(Constants.SHOOTER_POWER / 0.05);
+        int pendingFeedPulses = 0;
+        boolean feeding = false;
+        ElapsedTime feederTimer = new ElapsedTime();
+
         IMU imu = hardwareMap.tryGet(IMU.class, "imu");
         boolean imuReady = imu != null && imu.initialize(new IMU.Parameters(
                 new RevHubOrientationOnRobot(
@@ -53,12 +90,54 @@ public class LimelightInfoReturn extends LinearOpMode {
         limelight.start();
         boolean pipelineSwitchSucceeded = limelight.pipelineSwitch(Constants.LIMELIGHT_APRILTAG_PIPELINE);
         pipelineTimer.reset();
-        telemetry.addLine("Press PLAY to monitor AprilTags; no drive or tilt-servo motion.");
+        telemetry.addLine("Gamepad 1: left stick drives/strafe; right stick X turns.");
+        telemetry.addLine("A: intake toggle; B: shooter toggle; X: feeder pulse.");
+        telemetry.addLine("Y: stop intake and shooter.");
+        telemetry.addLine("RB/LB: shooter power +/- 5%.");
+        telemetry.addLine("AprilTag monitoring only; no automatic aiming or tilt-servo motion.");
         telemetry.update();
 
         try {
             waitForStart();
             while (opModeIsActive()) {
+                drive.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+                if (gamepad1.a && !previousA) {
+                    intakeOn = !intakeOn;
+                }
+                if (gamepad1.b && !previousB) {
+                    shooterOn = !shooterOn;
+                }
+                if (gamepad1.y) {
+                    intakeOn = false;
+                    shooterOn = false;
+                }
+                if (gamepad1.right_bumper && !previousRightBumper) {
+                    shooterPowerSteps = Math.min(20, shooterPowerSteps + 1);
+                }
+                if (gamepad1.left_bumper && !previousLeftBumper) {
+                    shooterPowerSteps = Math.max(0, shooterPowerSteps - 1);
+                }
+                if (gamepad1.x && !previousX) {
+                    pendingFeedPulses++;
+                }
+                previousA = gamepad1.a;
+                previousB = gamepad1.b;
+                previousX = gamepad1.x;
+                previousLeftBumper = gamepad1.left_bumper;
+                previousRightBumper = gamepad1.right_bumper;
+
+                intake.setPower(intakeOn ? Constants.INTAKE_POWER : 0);
+                shooter.setPower(shooterOn ? shooterPowerSteps * 0.05 : 0);
+                if (feeding && feederTimer.milliseconds() >= FEEDER_PULSE_MS) {
+                    feeder.setPower(0);
+                    feeding = false;
+                }
+                if (!feeding && pendingFeedPulses > 0) {
+                    pendingFeedPulses--;
+                    feeder.setPower(FEEDER_POWER);
+                    feederTimer.reset();
+                    feeding = true;
+                }
                 double imuYaw = Double.NaN;
                 if (imuReady) {
                     YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
@@ -111,7 +190,6 @@ public class LimelightInfoReturn extends LinearOpMode {
                 int tv = target == null ? 0 : 1;
                 double tx = target == null ? Double.NaN : target.getTargetXDegrees();
                 double ty = target == null ? Double.NaN : target.getTargetYDegrees();
-                String action = "Monitoring only; no drive commands";
 
                 telemetry.addData("Limelight", connected ? "Connected" : "Disconnected");
                 telemetry.addData("Requested pipeline", Constants.LIMELIGHT_APRILTAG_PIPELINE + " (AprilTag)");
@@ -130,7 +208,11 @@ public class LimelightInfoReturn extends LinearOpMode {
                 telemetry.addData("Target ID", target == null ? "None" : target.getFiducialId());
                 telemetry.addData("tx (degrees)", Double.isFinite(tx) ? String.format("%.2f", tx) : "N/A");
                 telemetry.addData("ty (degrees)", Double.isFinite(ty) ? String.format("%.2f", ty) : "N/A");
-                telemetry.addData("Drive action", action);
+                telemetry.addData("Drive action", "Manual gamepad 1; no automatic aiming");
+                telemetry.addData("Intake", intakeOn ? "On" : "Off");
+                telemetry.addData("Shooter", "%s (power %d%%)", shooterOn ? "On" : "Off",
+                        shooterPowerSteps * 5);
+                telemetry.addData("Feeder", feeding ? "Pulse active" : "Stopped");
                 telemetry.addData("IMU yaw", Double.isFinite(imuYaw) ? String.format("%.1f°", imuYaw) : "Not configured");
                 telemetry.addData("Image + processing latency (ms)", hasFreshAprilTagResult
                         ? String.format("%.1f", result.getCaptureLatency() + result.getTargetingLatency())
@@ -142,6 +224,10 @@ public class LimelightInfoReturn extends LinearOpMode {
                 sleep(20);
             }
         } finally {
+            drive.stop();
+            intake.setPower(0);
+            shooter.setPower(0);
+            feeder.setPower(0);
             limelight.stop();
         }
     }
