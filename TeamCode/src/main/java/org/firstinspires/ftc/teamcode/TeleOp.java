@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.configuration.Settings.Positions.STORED_POSE;
-import static org.firstinspires.ftc.teamcode.configuration.Settings.Rollers.END_IN;
-import static org.firstinspires.ftc.teamcode.configuration.Settings.Rollers.END_OUT;
-import static org.firstinspires.ftc.teamcode.configuration.Settings.Rollers.END_STOP;
-import static org.firstinspires.ftc.teamcode.configuration.Settings.Rollers.INTAKE_SPEED;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -24,6 +20,7 @@ public class TeleOp extends LinearOpMode {
 		system = new System(hardwareMap);
 
 		telemetry.addData("Status", "Initialized");
+		telemetry.addData("Installed", system.installedSummary());
 		telemetry.update();
 
 		waitForStart();
@@ -31,32 +28,27 @@ public class TeleOp extends LinearOpMode {
 		system.follower.startTeleOpDrive();
 		runtime.reset();
 
-		// run until the end of the match (driver presses STOP)
+		// Run until the end of the match (driver presses STOP)
 		while (opModeIsActive()) {
 			system.update();
+
 			// POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-			double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+			double axial = -gamepad1.left_stick_y;  // Pushing stick forward gives negative value
 			double lateral = gamepad1.left_stick_x;
 			double yaw = -gamepad1.right_stick_x;
 
 			if (gamepad1.a || gamepad1.b || gamepad1.x || gamepad1.y) {
-				if (gamepad1.aWasPressed()) {
+				if (gamepad1.a) {
 					system.follower.holdPoint(Settings.Positions.SIDE == Sides.BLUE ? Settings.Positions.Launch.close : Settings.Positions.Launch.close.mirror());
 				}
-				if (gamepad1.bWasPressed()) {
+				if (gamepad1.b) {
 					system.follower.holdPoint(Settings.Positions.SIDE == Sides.BLUE ? Settings.Positions.Launch.far : Settings.Positions.Launch.far.mirror());
 				}
-				if (gamepad1.xWasPressed()) {
+				if (gamepad1.x) {
 					system.follower.holdPoint(Settings.Positions.SIDE == Sides.BLUE ? Settings.Positions.human.HUMAN : Settings.Positions.human.HUMAN.mirror());
 				}
-				if (gamepad1.yWasPressed()) {
+				if (gamepad1.y) {
 					system.follower.holdPoint(Settings.Positions.SIDE == Sides.BLUE ? Settings.Positions.Endgame.PARK : Settings.Positions.Endgame.PARK.mirror());
-				}
-				if (gamepad1.xWasPressed()) {
-					system.follower.holdPoint(Settings.Positions.SIDE == CloseAuto.Side.BLUE ? Settings.Positions.human.HUMAN : Settings.Positions.human.HUMAN.mirror());
-				}
-				if (gamepad1.yWasPressed()) {
-					system.follower.holdPoint(Settings.Positions.SIDE == CloseAuto.Side.BLUE ? Settings.Positions.Endgame.PARK : Settings.Positions.Endgame.PARK.mirror());
 				}
 			} else {
 				if (!system.follower.isTeleopDrive()) {
@@ -66,20 +58,20 @@ public class TeleOp extends LinearOpMode {
 			}
 
 			// Intake control — use right trigger for intake in, left trigger for reverse
-			system.rollers.intake.setPower(INTAKE_SPEED * (gamepad2.right_trigger - gamepad2.left_trigger));
+			system.rollers.setIntakePower(gamepad2.right_trigger - gamepad2.left_trigger);
 
-			// Outtake control — press 'A' to run both outtakes, 'B' to reverse
-			// LOW GOAL
+			// Turret: gamepad 2 right stick left/right
+			double turretInput = Math.abs(gamepad2.right_stick_x) < 0.05 ? 0 : gamepad2.right_stick_x;
+			system.turret.setPower(turretInput);
+
+			// Outtake control — press 'A' to run low goal, 'X' for high goal
 			if (gamepad2.a) {
 				system.launcher.setRPM(Settings.Launcher.CLOSE_VELOCITY);
 			} else if (gamepad2.b) {
 				system.launcher.setRPM(-Settings.Launcher.CLOSE_VELOCITY);
 			}
 
-			// HIGH GOAL (overrides low)
-			if (gamepad2.x) {
-				system.launcher.setRPM(Settings.Launcher.FAR_VELOCITY);
-			} else if (gamepad2.y) {
+			if (gamepad2.x || gamepad2.y) {
 				system.launcher.setRPM(Settings.Launcher.FAR_VELOCITY);
 			}
 
@@ -89,30 +81,48 @@ public class TeleOp extends LinearOpMode {
 				system.launcher.spinDown();
 			}
 
-			// Roller control (CRServo)
+			// Middle roller (gamepad 2 d-pad) and end roller (gamepad 1 d-pad)
 			if (gamepad2.dpad_up) {
-				system.rollers.middle.setPower(END_IN);   // forward
+				system.rollers.middleIn();    // Forward
 			} else if (gamepad2.dpad_down) {
-				system.rollers.middle.setPower(END_OUT);  // reverse
+				system.rollers.middleOut();   // Reverse
 			} else if (gamepad2.dpad_left || gamepad2.dpad_right) {
-				system.rollers.middle.setPower(END_STOP);   // stop
+				system.rollers.middleStop();  // Stop
 			}
 
 			if (gamepad1.dpad_up) {
-				system.rollers.end.setPower(END_IN);
+				system.rollers.endIn();
 			} else if (gamepad1.dpad_down) {
-				system.rollers.end.setPower(END_OUT);
+				system.rollers.endOut();
 			} else if (gamepad1.dpad_left || gamepad1.dpad_right) {
-				system.rollers.end.setPower(END_STOP);
+				system.rollers.endStop();
 			}
 
-			// Show the elapsed game time and wheel power.
+			// Telemetry diagnostics
 			telemetry.addData("Pose", system.follower.getPose());
-			telemetry.addData("Middle Wheels Power", system.rollers.middle.getPower());
-			telemetry.addData("End Wheels Power", system.rollers.end.getPower());
-			telemetry.addData("Intake Power", system.rollers.intake.getPower());
-			telemetry.addData("Outtake Target", Launcher.ticksPerSecToRPM(system.launcher.targetTPS));
-			telemetry.addData("Outtake Actual", system.launcher.getRPM());
+
+			if (system.rollers.hasIntake()) {
+				telemetry.addData("Intake Power", system.rollers.intake.getPower());
+			} else {
+				telemetry.addData("Intake Power", "NOT FOUND");
+			}
+
+			if (system.rollers.hasMiddle()) {
+				telemetry.addData("Middle Wheels Power", system.rollers.getMiddlePower());
+			}
+			if (system.rollers.hasEnd()) {
+				telemetry.addData("End Wheels Power", system.rollers.getEndPower());
+			}
+			if (system.launcher.isInstalled()) {
+				telemetry.addData("Outtake Target", Launcher.ticksPerSecToRPM(system.launcher.targetTPS));
+				telemetry.addData("Outtake Actual", system.launcher.getRPM());
+			}
+			if (system.turret.isInstalled()) {
+				telemetry.addData("Turret Position", system.turret.getPosition());
+			} else {
+				telemetry.addData("Turret", "NOT FOUND");
+			}
+			telemetry.addData("Installed", system.installedSummary());
 			telemetry.addData("Status", "Run Time: " + runtime);
 			Drawing.drawDebug(system.follower);
 			Drawing.update();

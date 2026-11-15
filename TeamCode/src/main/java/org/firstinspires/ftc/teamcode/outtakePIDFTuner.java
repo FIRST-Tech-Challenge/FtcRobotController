@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-@TeleOp
+@TeleOp(name = "Outtake PIDF Tuner", group = "Tuning")
 public class outtakePIDFTuner extends OpMode {
 	public DcMotorEx outtakeright;
 	public DcMotorEx outtakeleft;
@@ -43,8 +44,8 @@ public class outtakePIDFTuner extends OpMode {
 
 	@Override
 	public void loop() {
-		// Get all gamepad commands
-		if (gamepad1.yWasPressed()) {
+		// Get all gamepad commands (using standard boolean states or wrapper depending on your setup)
+		if (gamepad1.y) {
 			if (curTargetVelocity == highVelocity) {
 				curTargetVelocity = lowVelocity;
 			} else {
@@ -52,20 +53,20 @@ public class outtakePIDFTuner extends OpMode {
 			}
 		}
 
-		if (gamepad1.bWasPressed()) {
+		if (gamepad1.b) {
 			stepIndex = (stepIndex + 1) % stepSizes.length;
 		}
 
-		if (gamepad1.dpadLeftWasPressed()) {
+		if (gamepad1.dpad_left) {
 			F -= stepSizes[stepIndex];
 		}
-		if (gamepad1.dpadRightWasPressed()) {
+		if (gamepad1.dpad_right) {
 			F += stepSizes[stepIndex];
 		}
-		if (gamepad1.dpadDownWasPressed()) {
+		if (gamepad1.dpad_down) {
 			P -= stepSizes[stepIndex];
 		}
-		if (gamepad1.dpadUpWasPressed()) {
+		if (gamepad1.dpad_up) {
 			P += stepSizes[stepIndex];
 		}
 

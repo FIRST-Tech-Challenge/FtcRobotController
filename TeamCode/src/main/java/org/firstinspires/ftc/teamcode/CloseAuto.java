@@ -10,12 +10,14 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.configuration.Settings;
 import org.firstinspires.ftc.teamcode.configuration.Sides;
 import org.firstinspires.ftc.teamcode.hardware.System;
 
+@Disabled // PHASE 1: hidden from the Driver Hub list. Delete this line to bring it back.
 @Autonomous(name = "Close Auto", group = "Autonomous", preselectTeleOp = "TeleOp")
 @Configurable // Panels
 public class CloseAuto extends OpMode {
@@ -74,7 +76,8 @@ public class CloseAuto extends OpMode {
 		return new Pose(
 				144 - pose.getX(),
 				pose.getY(),
-				Math.PI - pose.getHeading());
+				Math.PI - pose.getHeading()
+		);
 	}
 
 	private void initializePaths() {
@@ -374,7 +377,8 @@ public class CloseAuto extends OpMode {
 			return new Pose(
 					144 - pose.getX(),
 					pose.getY(),
-					Math.PI - pose.getHeading());
+					Math.PI - pose.getHeading()
+			);
 		}
 	}
 }

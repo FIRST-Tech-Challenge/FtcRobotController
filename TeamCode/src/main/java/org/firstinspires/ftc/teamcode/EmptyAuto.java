@@ -10,12 +10,14 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.configuration.Settings;
 import org.firstinspires.ftc.teamcode.configuration.Sides;
 import org.firstinspires.ftc.teamcode.hardware.System;
 
+@Disabled // PHASE 1: hidden from the Driver Hub list. Delete this line to bring it back.
 @Autonomous(name = "Empty Auto", group = "Autonomous", preselectTeleOp = "TeleOp")
 @Configurable // Panels
 public class EmptyAuto extends OpMode {
@@ -70,11 +72,12 @@ public class EmptyAuto extends OpMode {
 	 * Mirrors a pose across the field center (x=72)
 	 * X: 144 - x, Heading: π - heading
 	 */
-	private Pose mirrorPose(Pose pose) {
+	private static Pose mirrorPose(Pose pose) {
 		return new Pose(
 				144 - pose.getX(),
 				pose.getY(),
-				Math.PI - pose.getHeading());
+				Math.PI - pose.getHeading()
+		);
 	}
 
 	private void initializePaths() {
@@ -173,14 +176,14 @@ public class EmptyAuto extends OpMode {
 	}
 
 	public int autonomousPathUpdate() {
-		// State machine for Empty Auto
+		// State machine for Empty Auto (Far side)
 		switch (pathState) {
-			case 0: // First launch - from starting position
+			case 0: // First launch - drive from Starting.far to Launch.far
 				currentLaunchPath = paths.toLaunchPosition;
 				pathState = 3; // Enter launch sequence
 				break;
 
-			case 1: // Go to Move path
+			case 1: // Go to Move/Park path after launching
 				follower.followPath(paths.toMove);
 				pathState = 2;
 				break;
@@ -194,7 +197,7 @@ public class EmptyAuto extends OpMode {
 			case 3: // Launch sequence
 				if (launch(currentLaunchPath)) {
 					if (currentLaunchPath == paths.toLaunchPosition) {
-						pathState = 1; // First launch done, proceed to move
+						pathState = 1; // First launch done, proceed to move path
 					}
 				}
 				break;
@@ -214,13 +217,6 @@ public class EmptyAuto extends OpMode {
 
 		public PathChain toLaunchPosition;
 		public PathChain toMove;
-		public PathChain toPreset3Prep;
-		public PathChain toPreset3End;
-		public PathChain toLaunchPosition2;
-		public PathChain toPreset2Prep;
-		public PathChain toPreset2End;
-		public PathChain toLaunchPosition3;
-		public PathChain toPark;
 
 		public Paths(Follower follower, Sides side) {
 			// Helper to get pose (mirrored if RED)
@@ -239,90 +235,15 @@ public class EmptyAuto extends OpMode {
 							getPose.apply(Settings.Positions.Launch.far).getHeading())
 					.build();
 
-			// Path from far launch position to move destination
+			// Path from far launch position to move/park destination
 			toMove = follower
 					.pathBuilder()
 					.addPath(
 							new BezierLine(
 									getPose.apply(Settings.Positions.Launch.far),
 									getPose.apply(Settings.Positions.Move.move)))
-					.setLinearHeadingInterpolation(getPose.apply(Settings.Positions.Starting.far).getHeading(),
+					.setLinearHeadingInterpolation(getPose.apply(Settings.Positions.Launch.far).getHeading(),
 							getPose.apply(Settings.Positions.Move.move).getHeading())
-					.build();
-
-			// Path from launch position to PRESET_3_PREP
-			toPreset3Prep = follower
-					.pathBuilder()
-					.addPath(
-							new BezierLine(
-									getPose.apply(Settings.Positions.Launch.close),
-									getPose.apply(Settings.Positions.Preset3.PREP)))
-					.setLinearHeadingInterpolation(getPose.apply(Settings.Positions.Launch.close).getHeading(),
-							getPose.apply(Settings.Positions.Preset3.PREP).getHeading())
-					.setTangentHeadingInterpolation()
-					.build();
-
-			// Path from PRESET_3_PREP to PRESET_3_END
-			toPreset3End = follower
-					.pathBuilder()
-					.addPath(
-							new BezierLine(
-									getPose.apply(Settings.Positions.Preset3.PREP),
-									getPose.apply(Settings.Positions.Preset3.END)))
-					.setTangentHeadingInterpolation()
-					.build();
-
-			// Path from PRESET_3_END back to launch position
-			toLaunchPosition2 = follower
-					.pathBuilder()
-					.addPath(
-							new BezierLine(
-									getPose.apply(Settings.Positions.Preset3.END),
-									getPose.apply(Settings.Positions.Launch.close)))
-					.setLinearHeadingInterpolation(getPose.apply(Settings.Positions.Preset3.END).getHeading(),
-							getPose.apply(Settings.Positions.Launch.close).getHeading())
-					.build();
-
-			// Path from launch position to PRESET_2_PREP
-			toPreset2Prep = follower
-					.pathBuilder()
-					.addPath(
-							new BezierLine(
-									getPose.apply(Settings.Positions.Launch.close),
-									getPose.apply(Settings.Positions.Preset2.PREP)))
-					.setLinearHeadingInterpolation(getPose.apply(Settings.Positions.Launch.close).getHeading(),
-							getPose.apply(Settings.Positions.Preset2.PREP).getHeading())
-					.build();
-
-			// Path from PRESET_2_PREP to PRESET_2_END
-			toPreset2End = follower
-					.pathBuilder()
-					.addPath(
-							new BezierLine(
-									getPose.apply(Settings.Positions.Preset2.PREP),
-									getPose.apply(Settings.Positions.Preset2.END)))
-					.setTangentHeadingInterpolation()
-					.build();
-
-			// Path from PRESET_2_END back to launch position
-			toLaunchPosition3 = follower
-					.pathBuilder()
-					.addPath(
-							new BezierLine(
-									getPose.apply(Settings.Positions.Preset2.END),
-									getPose.apply(Settings.Positions.Launch.close)))
-					.setLinearHeadingInterpolation(getPose.apply(Settings.Positions.Preset2.END).getHeading(),
-							getPose.apply(Settings.Positions.Launch.close).getHeading())
-					.build();
-
-			// Path from launch position to PARK
-			toPark = follower
-					.pathBuilder()
-					.addPath(
-							new BezierLine(
-									getPose.apply(Settings.Positions.Launch.close),
-									getPose.apply(Settings.Positions.Park.close)))
-					.setTangentHeadingInterpolation()
 					.build();
 		}
 
@@ -334,7 +255,8 @@ public class EmptyAuto extends OpMode {
 			return new Pose(
 					144 - pose.getX(),
 					pose.getY(),
-					Math.PI - pose.getHeading());
+					Math.PI - pose.getHeading()
+			);
 		}
 	}
 }
