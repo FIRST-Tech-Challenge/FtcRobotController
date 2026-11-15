@@ -52,7 +52,7 @@ class LinearAuto : LinearOpMode() {
 
         //init everything
 //        robotState.ppX //finish this
-        driveMachine.init()
+        driveMachine.init(robotState)
 
         //remover roll to starting pose
         while(opModeInInit()){

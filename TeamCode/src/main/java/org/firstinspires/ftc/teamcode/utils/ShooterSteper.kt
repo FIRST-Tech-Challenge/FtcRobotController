@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.utils
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.GerthaHardwareMap
-import org.firstinspires.ftc.teamcode.ShooterImpl2
+import org.firstinspires.ftc.teamcode.GerthaHardwareMap.*
+import org.firstinspires.ftc.teamcode.ShooterImpl
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.GamepadState
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.IntakeShootMachine
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.RobotState
@@ -23,7 +24,7 @@ class ShooterSteper : LinearOpMode() {
         hw = GerthaHardwareMap(hardwareMap)
         val robotState = RobotState(hw)
         val gamepadState = GamepadState(gamepad1, gamepad2)
-        val shooterImpl = ShooterImpl2(hw)
+        val shooterImpl = ShooterImpl(hw)
         val intakeShootMachine = IntakeShootMachine(hw)
 
         waitForStart()
@@ -42,6 +43,13 @@ class ShooterSteper : LinearOpMode() {
                 targetVel -= 20
             }
 
+            if (gamepad2.x) {
+                hw.pollenBallStop.position = POLLEN_GO
+            }
+            else if (gamepad2.y) {
+                hw.pollenBallStop.position = POLLEN_STOP
+            }
+
             wasa = gamepad1.a
             wasb = gamepad1.b
 
@@ -51,7 +59,7 @@ class ShooterSteper : LinearOpMode() {
             shooterImpl.tickShooter()
 
 
-
+            telemetry.addData("power", hw.pollenShooter.power)
             telemetry.addData("targetVel", targetVel)
             telemetry.addData("actualVel", hw.pollenShooter.velocity)
             telemetry.update()

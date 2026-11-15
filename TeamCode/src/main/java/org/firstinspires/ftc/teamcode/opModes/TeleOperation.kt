@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.opModes
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.robotcore.external.Telemetry
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.GerthaHardwareMap
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.DriveMachine
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.GamepadState
@@ -10,17 +9,16 @@ import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.RampMachine
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.RobotState
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.utils.StaticStore
-import kotlin.compareTo
 import kotlin.time.Duration.Companion.seconds
 
-@TeleOp
-class TeleOp: LinearOpMode() {
+
+abstract class TeleOperation(val isRed: Boolean): LinearOpMode() {
     lateinit var hw: GerthaHardwareMap
 
     override fun runOpMode() {
         hw = GerthaHardwareMap(hardwareMap)
         val driveMachine = DriveMachine(hw)
-        val robotState = RobotState(hw)
+        val robotState = RobotState(hw, isRed)
         val gamepadState = GamepadState(gamepad1, gamepad2)
         val intakeShootMachine = IntakeShootMachine(hw)
         val rampMachine = RampMachine(hw)
@@ -31,7 +29,7 @@ class TeleOp: LinearOpMode() {
 
         waitForStart()
 
-        driveMachine.init()
+        driveMachine.init(robotState)
         intakeShootMachine.init()
         rampMachine.init()
 
@@ -42,6 +40,14 @@ class TeleOp: LinearOpMode() {
             driveMachine.update(robotState, gamepadState)
             intakeShootMachine.update(robotState, gamepadState)
             rampMachine.update(gamepadState)
+
+            if (gamepadState.start1) {
+                hw.pinpoint.setHeading(0.0, AngleUnit.RADIANS);
+            }
+
+            if (gamepadState.back2) {
+                intakeShootMachine.count = 0
+            }
 
 
 

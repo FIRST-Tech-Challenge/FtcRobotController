@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems
 
+import com.qualcomm.robotcore.robot.Robot
 import org.firstinspires.ftc.teamcode.GerthaHardwareMap
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.max
@@ -17,15 +19,21 @@ class DriveMachine(private val hw: GerthaHardwareMap) {
 
     val removerImpl = REmoverImpl()
 
-    fun init() {
+    var skew = 0.0
+
+    fun init(robotState: RobotState) {
+        if (!robotState.isRed) {
+            skew = PI
+        }
         state = State.FIELD_CENTRIC
     }
 
     fun update(robotState: RobotState, input: GamepadState) {
 
+
         when (state) {
             State.FIELD_CENTRIC -> {
-                val angle = -(robotState.ppThetaRad + Math.PI/2)
+                val angle = -(robotState.ppThetaRad + Math.PI/2 + skew)
 
                 var rotX = input.jx1 * cos(angle) - input.jy1 * sin(angle)
                 val rotY = input.jx1 * sin(angle) + input.jy1 * cos(angle)

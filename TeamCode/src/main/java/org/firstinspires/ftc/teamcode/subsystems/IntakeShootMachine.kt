@@ -30,7 +30,7 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
     companion object {
         private val INTAKE_POWER = 1.0
         private val OUTTAKE_POWER = -1.0
-        private val SHOOT_POWER = 0.8
+        private val SHOOT_POWER = 1.0
     }
 
     private var conditionContiniousStartTimeNs: Long = 0L
@@ -89,8 +89,16 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
                 lastDistance = distance
             }
             State.OUTTAKE -> {
+                val distance = hw.color.getDistance(DistanceUnit.CM)
                 if (justTransitioned) {
                     hw.setIntakePower(OUTTAKE_POWER)
+                }
+                if(distance < DISTANCE_THRESHOLD && !continuous) {
+                    count--
+                    continuous = true
+                }
+                else if ((distance > DISTANCE_THRESHOLD) || (abs(distance - lastDistance)>0.5)) {
+                    continuous = false
                 }
                 if (getElapsedSec(stateStartTimeNs) > 0.1){
                     state = State.OFF

@@ -21,9 +21,24 @@ class GamepadState(private val gp1: Gamepad, private val gp2: Gamepad) {
     var rt1 = false
     var wasrt1 = false
 
+    var lt1 = false
+    var waslt1 = false
+
+    var a1 = false
+    var wasa1 = false
+
+    var b1 = false
+    var wasb1 = false
+
     //shoot
     var b2 = false
     var wasb2 = false
+
+    var start1 = false
+    var wasStart1 = false
+
+    var back2 = false
+    var wasBack2 = false
 
 
 
@@ -41,7 +56,22 @@ class GamepadState(private val gp1: Gamepad, private val gp2: Gamepad) {
         rt1 = gp1.right_trigger > 0.5 && !wasrt1
         wasrt1 = gp1.right_trigger > 0.5
 
-        b2 = gp2.b && ! wasb2
+        lt1 = gp1.left_trigger > 0.5 && !waslt1
+        waslt1 = gp1.left_trigger > 0.5
+
+        b1 = gp1.b && !wasb1
+        wasb1 = gp1.b
+
+        b2 = gp2.b && !wasb2
         wasb2 = gp2.b
+
+        a1 = gp1.a && !wasa1
+        wasa1 = gp1.a
+
+        start1 = gp1.start && !wasStart1
+        wasStart1 = gp1.start
+
+        back2 = gp2.back && ! wasBack2
+        wasBack2 = gp2.back
     }
 }

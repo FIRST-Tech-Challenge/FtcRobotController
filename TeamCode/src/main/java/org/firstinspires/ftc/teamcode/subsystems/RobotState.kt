@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.utils.Stati
 import kotlin.math.hypot
 import kotlin.time.Duration.Companion.seconds
 
-class RobotState(private val hw: GerthaHardwareMap) {
+class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true) {
 
     val initPose = Pose2D (DistanceUnit.INCH, 0.0, 0.0, AngleUnit.RADIANS, 0.0)
     var ppX: Double = 0.0

@@ -24,7 +24,7 @@ public class GerthaHardwareMap extends HardwareMapper {
     public static final double POLLEN_EXTRACT = 0.57;
     public static final double DISTANCE_THRESHOLD = 4.0;
     public static final double POLLEN_GO = 0.58;
-    public static final double POLLEN_STOP = 0.32;
+    public static final double POLLEN_STOP = 0.31;
 
     @HardwareName("frontRight")
     @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
