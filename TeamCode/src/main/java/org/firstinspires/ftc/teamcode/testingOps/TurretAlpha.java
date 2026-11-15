@@ -69,7 +69,7 @@ import org.firstinspires.ftc.teamcode.subsystems.TurretSubsystem;
  *   (Home switch, Digital Device "turret_home_sensor": not installed yet, so not needed.)
  *
  * HIDDEN FROM THE DRIVER STATION LIST
- *   TeleOp - Alpha 14 tracks the hive by itself (ALWAYS-TRACK), so this OpMode is @Disabled to
+ *   TeleOp - Alpha 15 tracks the hive by itself (ALWAYS-TRACK), so this OpMode is @Disabled to
  *   keep the list short. (The turret stick and the presets were taken out of the TeleOp in
  *   issue #74, so this is the place to turn the turret by hand.) The code is all still here.
  *   To bring it back

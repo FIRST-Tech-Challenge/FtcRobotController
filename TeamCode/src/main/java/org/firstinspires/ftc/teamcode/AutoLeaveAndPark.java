@@ -57,7 +57,7 @@ import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
  *   - It is in group "Auto" (below), with the other match Autos.
  */
 @Autonomous(name = "Leave and Park - Mark 1", group = "Auto",
-        preselectTeleOp = "TeleOp - Alpha 14")
+        preselectTeleOp = "TeleOp - Alpha 15")
 public class AutoLeaveAndPark extends OpMode {
 
     // ------------------------------------------------------------------

@@ -7,13 +7,13 @@ Print this and keep it at the driver station. It lists **what every button does 
 - **Start** and **Back** are in the middle. (The old PS5 "Share" button is **Back**.)
 - **Pairing:** **Start + A** pairs gamepad 1. **Start + B** pairs gamepad 2. Pairing while an OpMode is running also presses Start and A or B in that OpMode, so check the alliance and any saved rows afterward. (In the TeleOp, **Start on either gamepad** switches the alliance, and gamepad 2's B starts a FORCED SHOT (wheels, gate and intake), so pair before START.)
 
-**Names on the Driver Station:** `TeleOp - Alpha 14`, `Pinpoint - Alpha`, `Firing Sequence - Alpha`, `Drive Alpha` (shown for now, for the field-centric test). **Hidden** (`@Disabled`, put `//` in front of that line and redeploy to bring them back): `Shooter RPM - Alpha 2`, `Shooter Ratio - Alpha`, `Shot Table - Alpha`, `Intake Testing - Alpha`, `Shooter Power - Alpha`, `Turret Testing`, `Vision - Alpha`. Their controls are still listed below.
+**Names on the Driver Station:** `TeleOp - Alpha 15`, `Pinpoint - Alpha`, `Firing Sequence - Alpha`, `Drive Alpha` (shown for now, for the field-centric test), `Flower Picker Testing - Alpha` (shown for now). **Hidden** (`@Disabled`, put `//` in front of that line and redeploy to bring them back): `Shooter RPM - Alpha 2`, `Shooter Ratio - Alpha`, `Shot Table - Alpha`, `Intake Testing - Alpha`, `Shooter Power - Alpha`, `Turret Testing`, `Vision - Alpha`. Their controls are still listed below.
 
 **The same button does different jobs in different OpModes.** Check the OpMode name before you press anything.
 
 ---
 
-## 1. TeleOp - Alpha 14 (the real TeleOp)
+## 1. TeleOp - Alpha 15 (the real TeleOp)
 
 Two controllers. The turret **tracks the hive all the time** (ALWAYS-TRACK, always ON, no switch). The drive starts **FIELD-centric**: the left stick's "forward" is **away from the driver** (the screen shows **DRIVE MODE** under the alliance). Details are on the printable sheet, `biobuzz-teleop-controls.md`.
 
@@ -50,7 +50,9 @@ Two controllers. The turret **tracks the hive all the time** (ALWAYS-TRACK, alwa
 | **Start** | **Alliance** BLUE / RED (starts **BLUE**, check it on the screen). The driver's Start does the same |
 | **Back** | Drive **FIELD-centric / ROBOT-centric** (starts FIELD). The driver's **BACK** does the same. (The physical **MODE** button cannot be read by the code: see the controls sheet. The INIT screen has a **BUTTON TEST** to check your controller.) |
 | **LOGO** (the center **guide** button) | Flywheel speed source **TABLE / DIAL** (starts **TABLE**, the camera). (On the driver's controller the same button is the SOLO MODE toggle.) |
-| **Sticks, LT, bumpers** | Not used. The turret has no manual control, the intake is the driver's, and the shooter wheels cannot be reversed from this OpMode |
+| **RB** | **Flower picker UP** (issue #75): lifts the flower bar. One move per press. If both bumpers go down on the same loop, UP wins |
+| **LB** | **Flower picker DOWN**: lowers the flower bar, ready to pick a flower. One move per press. Works at any time, also during a volley |
+| **Sticks, LT** | Not used. The turret has no manual control, the intake is the driver's, and the shooter wheels cannot be reversed from this OpMode |
 
 **Starts at:** flywheel 1300 RPM, ratio 2.00, so the hood wheel is 2600 RPM. The screen shows loop time, the alliance, **PRE-REV**, the firing sequence step and what it is **Waiting for**, and **OK to shoot?** (both wheels, for information: the volley itself checks the flywheel only).
 
@@ -238,14 +240,30 @@ The robot does **not** drive. Move it **by hand** to a spot where the camera see
 
 ---
 
+## 11. Flower Picker Testing - Alpha (gamepad 1 only)
+
+Moves the flower bar with `FlowerPickerSubsystem`, to check both servos and to find the UP and DOWN positions (issue #75). **Robot on blocks, hands and cables clear:** at INIT both servos jump to UP.
+
+| Control | What it does |
+|---|---|
+| **RB** | Picker **UP** (one move per press) |
+| **LB** | Picker **DOWN** (one move per press). If both bumpers go down on the same loop, UP wins |
+| **D-pad Up / Down** | Nudge the **LEFT** servo **+ / - 0.01** (moves the current state's number: UP or DOWN) |
+| **Y / A** | Nudge the **RIGHT** servo **+ / - 0.01** |
+
+A nudge only lasts while the OpMode runs. When a position is right, type the four numbers from the screen into `FlowerPickerSubsystem` (`LEFT_UP_POSITION`, `LEFT_DOWN_POSITION`, `RIGHT_UP_POSITION`, `RIGHT_DOWN_POSITION`). The TeleOp uses the same bumpers on gamepad 2.
+
+---
+
 ## Quick "which OpMode am I in" differences
 
-| Job | TeleOp Alpha 14 | The test OpModes |
+| Job | TeleOp Alpha 15 | The test OpModes |
 |---|---|---|
 | Shoot | Operator **RT** (hold) = a whole volley (the driver's RT only in SOLO MODE) | **Y / X** hold (RPM and Power Alpha), **Y** on / **X** off (Ratio Alpha), **RT / LT** (Shot Table) |
 | Gate | Automatic during a volley. Between volleys, operator **X** closed / **B** (hold) forced shot / **Y** (hold) lifted. During a feed, hold **Y** to lift | Shooter RPM Alpha 2: **D-pad Left** closed / **D-pad Right** opened / **LT** lifted. Power and Ratio Alpha: **LT** toggles closed / opened. Shot Table: none |
 | Flywheel speed | Operator **D-pad Up / Down** | **B / A** (Ratio Alpha), **D-pad Up / Down** (Shot Table) |
 | Alliance | **Start** on either gamepad | **Start** (Vision, Shot Table) |
 | Slow mode | Driver **LT** | Driver **RT** (Drive Alpha) |
+| Flower picker | Operator **RB** up / **LB** down | **RB** up / **LB** down on gamepad 1 (Flower Picker Alpha) |
 
 If a button here doesn't match the robot, the code changed. Update this sheet.

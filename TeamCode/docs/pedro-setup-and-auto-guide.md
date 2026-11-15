@@ -67,7 +67,7 @@ These add to `ARCHITECTURE.md` and `biobuzz-auto-strategy.md`.
 11. **Do not copy Pedro's command library "Ivy".** Pedro's guides use it, and they recommend it over a state machine. Our rule is no command-based code (`CLAUDE.md`), so we use the `enum` and `switch`. This is a deliberate choice, not an oversight.
 12. **Keep the 30 seconds in mind.** Add up the step times (`biobuzz-auto-strategy.md` section 6). A route that does not finish with spare time is the wrong route.
 13. **Plan for a dead Pinpoint.** If the Pinpoint is not working at INIT, Pedro cannot drive. The drive team picks the A-0 Emergency Auto instead (`biobuzz-auto-strategy.md`).
-14. **Annotation:** `@Autonomous(name = "...", group = "...")`. For match Autos add `preselectTeleOp = "TeleOp - Alpha 14"` (the name on the screen for `BiobuzzTeleOp`) so the Driver Station loads TeleOp after Auto.
+14. **Annotation:** `@Autonomous(name = "...", group = "...")`. For match Autos add `preselectTeleOp = "TeleOp - Alpha 15"` (the name on the screen for `BiobuzzTeleOp`) so the Driver Station loads TeleOp after Auto.
 15. **After a change to the robot, run `PedroForwardBackAlpha` again** before trusting any longer Auto.
 
 ## 6. Open items

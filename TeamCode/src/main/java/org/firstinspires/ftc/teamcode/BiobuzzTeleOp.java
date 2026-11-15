@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.BiobuzzLog;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FiringSequence;
+import org.firstinspires.ftc.teamcode.subsystems.FlowerPickerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.HiveBearingMemory;
 import org.firstinspires.ftc.teamcode.subsystems.ImuSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PinpointSubsystem;
@@ -23,7 +24,7 @@ import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 import java.util.List;
 
 /*
- * TeleOp Alpha 14
+ * TeleOp Alpha 15
  * An iterative OpMode with TWO controllers:
  *   gamepad1 = the DRIVER: drives the robot, runs the INTAKE, and holds the trigger to FIRE a volley
  *              (the FIRING SEQUENCE, see the change log, Alpha 13).
@@ -90,7 +91,12 @@ import java.util.List;
  *                       intake reversing for that moment) and the wheels go to 0 power (unless PRE-REV is
  *                       on). While it is held, B and the Right Trigger do nothing. A still floats the
  *                       turret. There is no SOLO MODE copy: the driver's Left Trigger is SLOW MODE.
- *   Both sticks, both bumpers: not used. (The intake is the driver's only.)
+ *   Right Bumper     -> FLOWER PICKER UP (issue #75): the flower bar lifts. One move per press.
+ *   Left Bumper      -> FLOWER PICKER DOWN: the flower bar lowers, ready to pick a flower. One move
+ *                       per press. If both bumpers go down on the same loop, UP wins. It works at any
+ *                       time, also during a volley. There is no SOLO MODE copy: the driver's bumpers
+ *                       are the intake. (The positions are in FlowerPickerSubsystem.)
+ *   Both sticks: not used. (The intake is the driver's only.)
  *   The turret has no other operator control. It tracks the hive all the time (see ALWAYS-TRACK
  *   below). It will not go past +/-120 degrees (see TurretSubsystem). 0 degrees is where
  *   the turret pointed when the Control Hub powered on, because the home switch is not
@@ -115,7 +121,7 @@ import java.util.List;
  *   BACK         -> switch the drive FIELD-CENTRIC <-> ROBOT-CENTRIC, the same as gamepad2's BACK.
  *   Right Bumper -> INTAKE (pull balls in)      Left Bumper -> REVERSE (push balls out)
  *      (Left Bumper beats Right Bumper, so clearing a jam always works. Only the DRIVER has the
- *       intake: the operator's bumpers do nothing. The intake runs at the power set in
+ *       intake: the operator's bumpers move the FLOWER PICKER instead. The intake runs at the power set in
  *       IntakeSubsystem, DEFAULT_INTAKE_POWER.)
  *   LOGO (the center "guide" button) -> SOLO MODE on / off, for a match with one person (see NEW IN
  *      ALPHA 13). It starts OFF.
@@ -196,13 +202,15 @@ import java.util.List;
  *   Motor name:  intake                                           (IntakeSubsystem)
  *   Motor names: flywheel, hood_wheel                             (ShooterSubsystem)
  *   Servo name:  shooter_servo   (ShooterServoSubsystem, goBILDA dual mode, POSITIONAL mode)
+ *   Servo names: left_flower_servo, right_flower_servo            (FlowerPickerSubsystem, POSITIONAL mode.
+ *                                      This robot's config MUST have both, or this OpMode stops at INIT.)
  *   Motor name:  turret_motor    (TurretSubsystem, with its encoder cable in the same port)
  *   Ethernet Device name: limelight   (VisionSubsystem, Limelight 3A. This robot's config MUST
  *                                      have it, or this OpMode stops at INIT.)
  *   I2C Device name: pinpoint         (PinpointSubsystem, goBILDA Pinpoint Odometry Computer. If it
  *                                      is missing, the screen says so and the OpMode still runs.)
  */
-@TeleOp(name = "TeleOp - Alpha 14", group = "Testing")
+@TeleOp(name = "TeleOp - Alpha 15", group = "Testing")
 public class BiobuzzTeleOp extends OpMode {
 
     // ------------------------------------------------------------------
@@ -409,6 +417,8 @@ public class BiobuzzTeleOp extends OpMode {
     private IntakeSubsystem intakeSubsystem;
     private ShooterSubsystem shooterSubsystem;
     private ShooterServoSubsystem shooterServoSubsystem;
+    // The flower picker bar (two mirrored servos). The operator's bumpers move it.
+    private FlowerPickerSubsystem flowerPickerSubsystem;
     private TurretSubsystem turretSubsystem;
     private VisionSubsystem visionSubsystem;
     private PinpointSubsystem pinpointSubsystem;
@@ -475,6 +485,8 @@ public class BiobuzzTeleOp extends OpMode {
     private boolean wasStartPressed = false;
     private boolean wasDriverStartPressed = false;
     private boolean wasSpeedSourceTogglePressed = false;
+    private boolean wasPickerUpPressed = false;
+    private boolean wasPickerDownPressed = false;
 
     // The push the turret got this loop to follow the robot's spin, for the screen.
     private double turretFeedforward = 0.0;
@@ -560,6 +572,7 @@ public class BiobuzzTeleOp extends OpMode {
         telemetry.addLine("B (HOLD) = FORCED SHOT: wheels on, gate OPEN, intake runs, even if not ready (let go = gate closes)");
         telemetry.addLine("Right Trigger (hold) = FIRE a volley (let go = abort)");
         telemetry.addLine("Left Trigger (hold) = WALL SHOT: turret straight ahead, fixed RPM, gate opens after a delay (let go = gate closes, wheels stop)");
+        telemetry.addLine("Right Bumper = FLOWER PICKER UP   Left Bumper = FLOWER PICKER DOWN");
         telemetry.addLine("A (hold) = float the turret by hand (it tracks again when you let go)");
     }
 
@@ -660,6 +673,27 @@ public class BiobuzzTeleOp extends OpMode {
             preRevOn = !preRevOn;
         }
         wasPreRevPressed = preRevPressed;
+    }
+
+    /*
+     * The OPERATOR's bumpers move the FLOWER PICKER bar (issue #75). One move per press.
+     *   Right Bumper -> UP     Left Bumper -> DOWN
+     * If both bumpers go down on the same loop, UP wins (UP is the lifted, out-of-the-way place).
+     * It does not touch the gate, the intake or the shooter, so it works at any time, even during a
+     * volley. The DRIVER's bumpers are the intake, so there is no SOLO MODE copy of this.
+     */
+    private void checkFlowerPickerButtons() {
+        boolean pickerUpPressed = gamepad2.right_bumper;
+        boolean pickerDownPressed = gamepad2.left_bumper;
+
+        if (isNewPress(pickerUpPressed, wasPickerUpPressed)) {
+            flowerPickerSubsystem.goToUp();
+        } else if (isNewPress(pickerDownPressed, wasPickerDownPressed)) {
+            flowerPickerSubsystem.goToDown();
+        }
+
+        wasPickerUpPressed = pickerUpPressed;
+        wasPickerDownPressed = pickerDownPressed;
     }
 
     /*
@@ -1045,6 +1079,9 @@ public class BiobuzzTeleOp extends OpMode {
         shooterSubsystem = new ShooterSubsystem(hardwareMap);
         // The gate servo moves to CLOSED here, so it starts from a known place.
         shooterServoSubsystem = new ShooterServoSubsystem(hardwareMap);
+        // The flower picker bar moves to UP here, so it starts from a known place. Keep hands and
+        // cables clear of it at INIT: if it was left DOWN, it swings up.
+        flowerPickerSubsystem = new FlowerPickerSubsystem(hardwareMap);
         // The turret does not move at INIT. It only starts reading its encoder.
         turretSubsystem = new TurretSubsystem(hardwareMap);
         // The Limelight starts polling here. It needs about 30 seconds to boot after power-up.
@@ -1503,7 +1540,7 @@ public class BiobuzzTeleOp extends OpMode {
             gateControl = "manual (no press)";
         }
 
-        // Intake. It is the DRIVER's only (gamepad1 bumpers: the operator's bumpers do nothing).
+        // Intake. It is the DRIVER's only (gamepad1 bumpers: the operator's bumpers move the flower picker instead).
         //   1. REVERSE (Left Bumper) goes first, so clearing a jam always works.
         //   2. GATE CLOSING: for CLOSE_REVERSE_SECONDS after the gate closes from OPENED or from
         //      LIFTED, the intake runs in REVERSE, on its own. A ball that is in the gate's way is
@@ -1536,6 +1573,9 @@ public class BiobuzzTeleOp extends OpMode {
             intakeControl = "None";
             intakeSubsystem.stop();
         }
+
+        // The operator's bumpers move the flower picker (it has nothing to do with the intake above).
+        checkFlowerPickerButtons();
 
         // Remember this loop's buttons for the next loop.
         wasDpadUpPressed = dpadUpPressed;
@@ -1654,6 +1694,9 @@ public class BiobuzzTeleOp extends OpMode {
         shooterServoSubsystem.addTelemetry(telemetry);
         telemetry.addData("Gate control", gateControl);
 
+        // The flower picker prints its own "--- FLOWER PICKER ---" heading.
+        flowerPickerSubsystem.addTelemetry(telemetry);
+
         // The firing sequence prints its own "--- FIRING SEQUENCE ---" heading and the last volley's
         // log. While a volley waits, say what it is waiting for.
         firingSequence.addTelemetry(telemetry);
@@ -1724,5 +1767,6 @@ public class BiobuzzTeleOp extends OpMode {
         // Stop polling the camera.
         visionSubsystem.stop();
         // The Pinpoint only reads, so there is nothing to stop.
+        // The flower picker has no motor. Its servos just stay where they were told to be.
     }
 }

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 /*
  * IMU Subsystem
  * Owns the Control Hub's BUILT-IN gyroscope (the "IMU"). It only READS. It never moves a motor and
- * has no gamepad code. Another class (for now TeleOp - Alpha 14 and ImuAlpha) asks it which way the
+ * has no gamepad code. Another class (for now TeleOp - Alpha 15 and ImuAlpha) asks it which way the
  * robot is facing.
  *
  * WHY WE HAVE IT: the field-centric drive needs the robot's HEADING. It used to take it from the

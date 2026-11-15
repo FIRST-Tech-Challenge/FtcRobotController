@@ -61,7 +61,7 @@ import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
  *   Motor name:           turret_motor (TurretSubsystem, with its encoder cable in the same port)
  *
  * HIDDEN FROM THE DRIVER STATION LIST
- *   The camera reading and the auto-align are tested, and TeleOp - Alpha 14 now has auto-align
+ *   The camera reading and the auto-align are tested, and TeleOp - Alpha 15 now has auto-align
  *   (ALWAYS-TRACK) built in, so this OpMode is @Disabled to keep the list short.
  *   The code is all still here. To bring it back (for example after moving the camera), put //
  *   in front of the @Disabled line below and redeploy.
