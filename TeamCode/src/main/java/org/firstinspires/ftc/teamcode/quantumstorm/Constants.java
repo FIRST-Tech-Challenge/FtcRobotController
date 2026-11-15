@@ -39,8 +39,6 @@ public class Constants {
     public final static String SHOOTER_MOTOR = "shooter";
 
     // CR servos
-    public final static String RIGHT_INTAKE_SERVO = "right_intake_servo";
-    public final static String LEFT_INTAKE_SERVO = "left_intake_servo";
     public final static String SHOOTER_SERVO = "shooter_servo";
 
     // Position servo (goBILDA Dual Mode Servo in servo mode) that swings the flower intake
@@ -94,8 +92,8 @@ public class Constants {
 
     // =========================================================
     // FLOWER INTAKE SERVO (goBILDA Dual Mode Servo 2000-0025-0002)
-    // Angles are arm degrees: 0 = the arm position installed with the
-    // servo centered by the goBILDA programmer; positive = toward UP.
+    // Angles are arm degrees: 0 = arm pointing straight UP (neutral), installed with
+    // the servo centered by the goBILDA programmer; negative = toward forward and down.
     // =========================================================
 
     // In servo mode it turns 300 degrees over a 500..2500 us pulse
@@ -107,18 +105,16 @@ public class Constants {
     // TODO: tune so the "Flower Angle" telemetry matches the real arm
     public final static double FLOWER_SERVO_ZERO_POSITION = 0.5;
 
-    // Flip if a bigger angle moves the arm DOWN instead of UP
-    public final static boolean FLOWER_SERVO_REVERSED = false;
+    // Flip if a more negative angle moves the arm BACKWARD instead of forward/down
+    public final static boolean FLOWER_SERVO_REVERSED = true;
 
     // Hard limits: the arm is never commanded outside these
-    public final static double FLOWER_ANGLE_MIN_DEG = -10;
-    // 90 for now: past 90 the arm presses against the intake. Raise to 95 once there is room.
-    public final static double FLOWER_ANGLE_MAX_DEG = 90;
+    public final static double FLOWER_ANGLE_MIN_DEG = -135;
+    public final static double FLOWER_ANGLE_MAX_DEG = 0;
 
-    public final static double FLOWER_UP_DEG = 90;     // lifted/stowed; also where it goes on INIT
-    // Up is 90 degrees and down is 0 degrees: a 90-degree deploy/retract sweep.
-    public final static double FLOWER_DOWN_DEG = 0;
-    public final static double FLOWER_NUDGE_DEG = 2;   // per LB + D-pad press, for tuning
+    public final static double FLOWER_UP_DEG = 0;       // neutral, pointing up; also where it goes on INIT
+    public final static double FLOWER_DOWN_DEG = -135;  // forward and down, for intaking
+    public final static double FLOWER_NUDGE_DEG = 2;    // per LB + D-pad press on gamepad 2, for tuning
 
     // =========================================================
     // LIMELIGHT

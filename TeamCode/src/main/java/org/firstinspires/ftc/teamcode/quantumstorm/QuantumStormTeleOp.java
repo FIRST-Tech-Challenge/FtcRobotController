@@ -21,8 +21,6 @@ public class QuantumStormTeleOp extends LinearOpMode {
     private DcMotorEx shooter;
 
     // CR servos
-    private CRServo rightIntakeServo;
-    private CRServo leftIntakeServo;
     private CRServo shooterServo;
     private final org.firstinspires.ftc.teamcode.biobuzz.FeedCadence feedCadence=new org.firstinspires.ftc.teamcode.biobuzz.FeedCadence(Constants.SPINDEXER_FEED_PULSE_SEC,Constants.SPINDEXER_SHOT_GAP_SEC);
 
@@ -66,10 +64,6 @@ public class QuantumStormTeleOp extends LinearOpMode {
 
         shooter = hardwareMap.get(DcMotorEx.class, Constants.SHOOTER_MOTOR);
 
-        rightIntakeServo = hardwareMap.get(CRServo.class, Constants.RIGHT_INTAKE_SERVO);
-
-        leftIntakeServo = hardwareMap.get(CRServo.class, Constants.LEFT_INTAKE_SERVO);
-
         shooterServo = hardwareMap.get(CRServo.class, Constants.SHOOTER_SERVO);
 
         flowerIntake = new FlowerIntake(hardwareMap);
@@ -87,9 +81,6 @@ public class QuantumStormTeleOp extends LinearOpMode {
         // =========================================================
         // SERVO DIRECTIONS
         // =========================================================
-
-        rightIntakeServo.setDirection(CRServo.Direction.FORWARD);
-        leftIntakeServo.setDirection(CRServo.Direction.REVERSE);
 
         // D-pad UP = spindexer forward; DOWN = spindexer reverse, matching autonomous.
         shooterServo.setDirection(CRServo.Direction.REVERSE);
@@ -127,9 +118,6 @@ public class QuantumStormTeleOp extends LinearOpMode {
         telemetry.addLine("B = Intake OFF (also with START held)");
         telemetry.addLine("Hold BACK + tap A = Intake Reverse ON (release START)");
         telemetry.addLine("START + A = Assign gamepad 1; no intake direction command");
-        telemetry.addLine("START + D-Pad DOWN = Flower Intake DROP");
-        telemetry.addLine("START + D-Pad UP = Flower Intake LIFT");
-        telemetry.addLine("LB + D-Pad UP/DOWN = Flower Angle Nudge");
 
         telemetry.addLine("");
 
@@ -141,6 +129,9 @@ public class QuantumStormTeleOp extends LinearOpMode {
         telemetry.addLine("Hold D-Pad UP = Spindexer Forward (pulsed)");
         telemetry.addLine("Hold D-Pad DOWN = Spindexer Reverse");
         telemetry.addLine("Release D-Pad = Spindexer STOP");
+        telemetry.addLine("BACK + D-Pad DOWN = Flower Intake DROP (-135 deg)");
+        telemetry.addLine("BACK + D-Pad UP = Flower Intake UP (0 deg)");
+        telemetry.addLine("LB + D-Pad UP/DOWN = Flower Angle Nudge");
 
         telemetry.update();
 
@@ -191,7 +182,7 @@ public class QuantumStormTeleOp extends LinearOpMode {
 
 
             // =====================================================
-            // INTAKE MOTOR + INTAKE SERVOS
+            // INTAKE MOTOR
             // =====================================================
 
             double intakeOutput =
@@ -199,16 +190,20 @@ public class QuantumStormTeleOp extends LinearOpMode {
 
             intake.setPower(intakeOutput);
 
-            rightIntakeServo.setPower(intakeOutput);
-            leftIntakeServo.setPower(intakeOutput);
-
 
             // =====================================================
             // GAMEPAD 1 - FLOWER INTAKE SERVO
             // =====================================================
 
-            // START + D-pad UP/DOWN = lift/drop, LB + D-pad = nudge
-            flowerIntake.handleGamepad(gamepad1);
+            // Gamepad 2: BACK + D-pad UP/DOWN = lift/drop, LB + D-pad = nudge
+            flowerIntake.handleGamepad(gamepad2);
+
+            // The flower combos share gamepad 2's D-pad, so the spindexer
+            // ignores the D-pad while BACK or LB is held
+            boolean spindexerDpadUp =
+                    gamepad2.dpad_up && !gamepad2.back && !gamepad2.left_bumper;
+            boolean spindexerDpadDown =
+                    gamepad2.dpad_down && !gamepad2.back && !gamepad2.left_bumper;
 
 
             // =====================================================
@@ -270,11 +265,11 @@ public class QuantumStormTeleOp extends LinearOpMode {
             // your actual physical mechanism.
             // =====================================================
 
-            if (gamepad2.dpad_up) {
+            if (spindexerDpadUp) {
 
                 shooterServo.setPower(feedCadence.apply(1,System.nanoTime()/1e9)*Constants.SHOOTER_SERVO_POWER);
 
-            } else if (gamepad2.dpad_down) {
+            } else if (spindexerDpadDown) {
 
                 shooterServo.setPower(feedCadence.apply(-1,System.nanoTime()/1e9)*Constants.SHOOTER_SERVO_POWER);
 
@@ -313,14 +308,6 @@ public class QuantumStormTeleOp extends LinearOpMode {
                         "STOPPED");
             }
 
-            telemetry.addData(
-                    "Flower Intake",
-                    "%s  %.0f deg  (servo pos %.3f)",
-                    flowerIntake.isDown() ? "DOWN" : "UP",
-                    flowerIntake.getAngle(),
-                    flowerIntake.getPosition());
-
-
             telemetry.addLine("");
             telemetry.addLine("=== DRIVER 2 ===");
             telemetry.addData("Shooter power adjustment", gamepad2.back ? "UNLOCKED: tap LB/LT" : "LOCKED: hold BACK");
@@ -343,13 +330,21 @@ public class QuantumStormTeleOp extends LinearOpMode {
                     shooterPower);
 
 
-            if (gamepad2.dpad_up) {
+            telemetry.addData(
+                    "Flower Intake",
+                    "%s  %.0f deg  (servo pos %.3f)",
+                    flowerIntake.isDown() ? "DOWN" : "UP",
+                    flowerIntake.getAngle(),
+                    flowerIntake.getPosition());
+
+
+            if (spindexerDpadUp) {
 
                 telemetry.addData(
                         "Spindexer",
                         "FORWARD");
 
-            } else if (gamepad2.dpad_down) {
+            } else if (spindexerDpadDown) {
 
                 telemetry.addData(
                         "Spindexer",
@@ -381,8 +376,6 @@ public class QuantumStormTeleOp extends LinearOpMode {
         intake.setPower(0);
         shooter.setPower(0);
 
-        rightIntakeServo.setPower(0);
-        leftIntakeServo.setPower(0);
         feedCadence.apply(0,System.nanoTime()/1e9);
         shooterServo.setPower(0);
     }
