@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.drivers.GoBildaPinpoint2Driver;
@@ -24,7 +25,7 @@ public class GerthaHardwareMap extends HardwareMapper {
     public static final double POLLEN_EXTRACT = 0.57;
     public static final double DISTANCE_THRESHOLD = 4.0;
     public static final double POLLEN_GO = 0.58;
-    public static final double POLLEN_STOP = 0.31;
+    public static final double POLLEN_STOP = 0.34;
 
     @HardwareName("frontRight")
     @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
@@ -71,6 +72,10 @@ public class GerthaHardwareMap extends HardwareMapper {
     @HardwareName("color")
     public RevColorSensorV3 color;
 
+    @HardwareName("Control Hub")
+    public VoltageSensor voltageSensor;
+
+
     public GerthaHardwareMap(HardwareMap map) {
         super(map);
 
@@ -108,7 +113,7 @@ public class GerthaHardwareMap extends HardwareMapper {
 
     public void setPollenExtractor(double pos) {
         rightRamp.setPosition(pos);
-        leftRamp.setPosition(1.03 - pos);
+        leftRamp.setPosition(1.05 - pos);
     }
 
     public void setPollenVelocity(double target){

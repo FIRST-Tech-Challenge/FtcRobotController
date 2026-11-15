@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.hardware.PoseSet;
 
 @TeleOp(name = "Pinpoint Offsets")
 public class PinpointOffsets extends LinearOpMode{
@@ -15,7 +16,9 @@ public class PinpointOffsets extends LinearOpMode{
     @Override
     public void runOpMode(){
         hw = new GerthaHardwareMap(hardwareMap);
-        hw.pinpoint.setPosition(new Pose2D(DistanceUnit.INCH,0,0, AngleUnit.DEGREES,0));
+        PoseSet poseSet = new PoseSet();
+        hw.pinpoint.setPosition(poseSet.getCORNER_START().asPose2D());
+//        hw.pinpoint.setPosition(new Pose2D(DistanceUnit.INCH,0,0, AngleUnit.DEGREES,0));
         waitForStart();
         while (opModeIsActive()) {
             hw.pinpoint.update();

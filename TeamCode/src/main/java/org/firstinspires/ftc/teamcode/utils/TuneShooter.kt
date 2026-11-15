@@ -33,31 +33,33 @@ class TuneShooter: LinearOpMode() {
 
         while (opModeIsActive()) {
             if (gamepadState.lb1) {
-                ShooterImpl.KP += 0.5
+                ShooterImpl.KP += 0.001
             }
             if (gamepadState.rb1) {
-                ShooterImpl.KP -= 0.5
+                ShooterImpl.KP -= 0.001
             }
 
             if (gamepadState.lt1) {
-                ShooterImpl.KD += 0.5
+                ShooterImpl.KD += 0.001
             }
             if (gamepadState.rt1) {
-                ShooterImpl.KD -= 0.5
+                ShooterImpl.KD -= 0.001
             }
 
             if (gamepadState.a1) {
-                ShooterImpl.KI += 0.5
+                ShooterImpl.KI += 0.001
             }
             if (gamepadState.b1) {
-                ShooterImpl.KI -= 0.5
+                ShooterImpl.KI -= 0.001
             }
 
             shooterImpl.tickShooter()
+            telemetry.addData("kf", shooterImpl.f)
             telemetry.addData("kp", ShooterImpl.KP)
             telemetry.addData("kd", ShooterImpl.KD)
             telemetry.addData("ki", ShooterImpl.KI)
             telemetry.addData("vel", hw.pollenShooter.velocity)
+            telemetry.addData("power", hw.pollenShooter.power)
             telemetry.update()
 
             gamepadState.update()

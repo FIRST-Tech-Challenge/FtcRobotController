@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode
 
 import android.util.Log
 import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.VoltageSensor
+import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap
 import kotlin.math.abs
 import kotlin.reflect.KProperty
 
@@ -10,14 +12,23 @@ class ShooterImpl (private val hw: GerthaHardwareMap) {
     companion object{
         private const val ACCEPTABLE_VELOCITY_DIFF = 30.0
 
-        var KP = 16.0
-        var KD = 3.5
-        var KI = 1.5
+//        private const val maxVoltage = 12.0
+//
+//        private const val maxVelocity = 1820.0
+
+        private const val KF = 0.00659
+        var KP = 0.002
+        var KD = 0.001
+        var KI = 0.0
+
     }
 
     var target: Double = 0.0
         private set
 
+    var targetInRPM = 0.0
+
+    public var f = 0.0
     val defaultPushThreshold = 200
     var pushThreshold = defaultPushThreshold
 
@@ -40,6 +51,8 @@ class ShooterImpl (private val hw: GerthaHardwareMap) {
     }
 
     fun tickShooter() {
+        val currentVoltage = hw.voltageSensor.voltage
+        val targetVoltage = KF * target
         val currentTime = System.nanoTime() / 1_000_000
         val currentVel = hw.pollenShooter.velocity
         val error = target - currentVel
@@ -50,12 +63,14 @@ class ShooterImpl (private val hw: GerthaHardwareMap) {
 
         val d = ((error - prevError) / (currentTime - prevTime)) * KD
 
+        f = targetVoltage / currentVoltage
+
         if (error > 50) {
             hw.pollenShooter.power = 1.0
         }
         else {
-            Log.i("shooterPID", (p + i + d).toString())
-            hw.pollenShooter.power = (p + i + d)
+            Log.i("shooterPID", (p + i + d + f).toString())
+            hw.pollenShooter.power = (p + i + d + f)
         }
 
         prevTime = currentTime

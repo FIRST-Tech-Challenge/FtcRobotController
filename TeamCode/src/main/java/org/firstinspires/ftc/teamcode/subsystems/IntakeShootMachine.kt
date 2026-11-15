@@ -28,7 +28,7 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
     var justTransitioned = true
 
     companion object {
-        private val INTAKE_POWER = 1.0
+        private val INTAKE_POWER = 0.7
         private val OUTTAKE_POWER = -1.0
         private val SHOOT_POWER = 1.0
     }
@@ -76,7 +76,7 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
                     count++
                     continuous = true
                 }
-                else if ((distance > DISTANCE_THRESHOLD) || (abs(distance - lastDistance)>0.5)) {
+                else if ((distance > DISTANCE_THRESHOLD)) {
                     continuous = false
                 }
                 Log.i("color", hw.color.getDistance(DistanceUnit.CM).toString())
@@ -111,7 +111,7 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
                     }
                     count = 0
                 }
-                if (getElapsedSec(stateStartTimeNs) > 0.1)
+                if (getElapsedSec(stateStartTimeNs) > 1.0)
                     state = State.SHOOT
             }
             State.SHOOT -> {
