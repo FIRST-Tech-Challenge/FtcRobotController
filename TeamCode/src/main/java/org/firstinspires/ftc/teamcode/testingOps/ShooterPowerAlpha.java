@@ -82,7 +82,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
  * The motor directions are set inside the subsystems, not in this file.
  *
  * HIDDEN FROM THE DRIVER STATION LIST
- *   The shooter now runs on speed control (RPM), and ShooterRPMAlpha and TeleOp - Alpha 14 cover
+ *   The shooter now runs on speed control (RPM), and ShooterRPMAlpha and TeleOp - Alpha 15 cover
  *   everything this open-loop POWER test did, so this OpMode is @Disabled to keep the list short.
  *   The code is all still here. To bring it back (for example for the raw ticks/sec jitter test
  *   in issue #43), put // in front of the @Disabled line below and redeploy.

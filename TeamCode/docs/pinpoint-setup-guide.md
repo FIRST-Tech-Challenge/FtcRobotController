@@ -22,7 +22,7 @@ Do this with the Driver Station connected to the Control Hub.
 5. The name must be **exactly** `pinpoint`, all lowercase.
 6. Tap **Done**, **Save**, and make that configuration **Active** (the one the Driver Station shows).
 
-If you skip this, nothing breaks. `TeleOp - Alpha 14` and `Pinpoint - Alpha` still run, and the screen just says **Pinpoint: NOT FOUND**.
+If you skip this, nothing breaks. `TeleOp - Alpha 15` and `Pinpoint - Alpha` still run, and the screen just says **Pinpoint: NOT FOUND**.
 
 ## Step 2: Deploy and run the test
 

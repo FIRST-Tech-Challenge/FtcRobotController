@@ -2,6 +2,28 @@
 
 *This text used to be the top of `BiobuzzTeleOp.java`. It was moved here, unchanged, so the file's header can describe how the TeleOp works **right now**. Each entry is what the code did when that Alpha was written: later Alphas may have replaced it (for example, the gentle gate close in Alpha 13 was removed later). When something here and the code disagree, the code wins. The current button map is in `biobuzz-teleop-controls.md`.*
 
+## ALPHA 15: THE FLOWER PICKER (issue #75)
+
+*The screen name became "TeleOp - Alpha 15" (it was Alpha 14). The three Autos' `preselectTeleOp`, the comments and the docs that name it were changed to match, and the Alpha 14 entries below stay as they were written.*
+
+```text
+WHAT CHANGED
+  1. THE FLOWER PICKER (FlowerPickerSubsystem): the OPERATOR's Right Bumper lifts the flower bar (UP) and
+     the Left Bumper lowers it (DOWN). One move per press. If both bumpers go down on the same loop, UP
+     wins. It works at any time, also during a volley, and does not touch the gate, the intake or the
+     shooter. The two mirrored servos (left_flower_servo, right_flower_servo) start at UP at INIT.
+  2. WHY THE OPERATOR AND THE BUMPERS (the coach's choice): the driver is busy driving and running the
+     intake (the left thumb is on the stick and the D-pad, the index fingers are on the intake bumpers).
+     The operator's D-pad Up / Down was turned down because it is the flywheel RPM dial. The operator's
+     bumpers were free (they did nothing before this).
+  3. NO SOLO MODE COPY: the driver's bumpers are the intake, so in a one-person match nobody can move
+     the picker. A free driver button (A, X, D-pad Down or D-pad Right) would be needed if we want it.
+  4. A robot config without the two servos stops this OpMode at INIT (the same as a missing
+     shooter_servo). Both competition configs (11940, 22091) have them.
+  5. The four servo positions were tuned on the robot with FlowerPickerAlpha. This TeleOp wiring has
+     not been run on the robot yet.
+```
+
 ## ALPHA 14: THE IMU DRIVE, A BATTERY BLACK BOX AND A LOG
 
 *The screen name became "TeleOp - Alpha 14" (it was Alpha 13). The three Autos' `preselectTeleOp`, the comments and the docs that name it were changed to match, and the Alpha 13 entries in these notes stay as they were written.*
