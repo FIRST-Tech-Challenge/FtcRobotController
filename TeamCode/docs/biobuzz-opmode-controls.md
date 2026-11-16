@@ -42,7 +42,7 @@ Two controllers. The turret **tracks the hive all the time** (ALWAYS-TRACK, alwa
 |---|---|
 | **X** | Gate **CLOSED** (holds the ball back). **Between volleys only** |
 | **B** (HOLD) | **FORCED SHOT**: the wheels spin, the gate **OPENS** and the intake runs forward **right now**, without waiting for flywheel speed or turret aim. Works with RT held or not. Let go and the gate **CLOSES** (with the auto-reverse). If RT is still held, the volley starts over at "waiting". Y still lifts. For when the camera or the READY check is wrong |
-| **Y** (HOLD) | Gate **LIFTED**, to push the very last ball into the flywheel (OPENED is between LIFTED and CLOSED). **While a volley feeds:** hold to lift, let go and the gate goes back to OPENED. **Between volleys:** let go and the gate closes (with the auto-reverse). Ignored while a volley waits. The firing sequence never lifts by itself. If X and Y are pressed at once, CLOSED wins. X does nothing during a volley or a forced shot |
+| **Y** (HOLD) | Gate **LIFTED**, to push the very last ball into the flywheel (OPENED is between LIFTED and CLOSED). **While a volley feeds:** hold to lift, let go and the gate goes back to OPENED. **Between volleys:** let go and the gate closes (with the auto-reverse). **While a volley waits** (RT held, not ready yet): hold to lift anyway, let go and the gate closes again (issue #92). The firing sequence never lifts by itself. If X and Y are pressed at once, CLOSED wins. X does nothing during a volley or a forced shot |
 | **A** (hold) | **Float** the turret so you can turn it by hand. Let go and it tracks the hive again |
 | **D-pad Up / Down** | Flywheel target RPM **+ / - 100** (range 500 to 1450) |
 | **D-pad Right / Left** | Hood / flywheel **ratio + / - 0.05** (range 1.00 to 3.00, starts 2.00) |
@@ -234,7 +234,7 @@ The robot does **not** drive. Move it **by hand** to a spot where the camera see
 | **D-pad Up** (tap) | **PRE-REV** on / off: the wheels spin without firing, so the spin-up wait is over before you fire. Shown big on the screen. Starts OFF |
 | **Right Bumper** (hold) | **INTAKE** (pick up balls). The gate stays where it is. While a volley is feeding, the sequence runs the intake instead |
 | **Left Bumper** (hold) | **REVERSE** both wheels and the intake (clear a jam). Beats everything. (A volley carries on feeding by itself when you let go) |
-| **X / B / Y** | Gate by hand: **X** CLOSED (only while no volley is running), **B** (hold) FORCED SHOT (wheels on, gate OPENED, intake running, checks skipped; let go and it closes), **Y** (hold) LIFTED: while a volley feeds, hold it to push the last ball in and let go to go back to OPENED; between volleys let go to close |
+| **X / B / Y** | Gate by hand: **X** CLOSED (only while no volley is running), **B** (hold) FORCED SHOT (wheels on, gate OPENED, intake running, checks skipped; let go and it closes), **Y** (hold) LIFTED: while a volley feeds, hold it to push the last ball in and let go to go back to OPENED; while a volley only waits, hold it to lift anyway and let go to close (issue #92); between volleys let go to close |
 | **Back** | Speed source **TABLE / DIAL**. TABLE (starts here): the table sets the flywheel speed, and a volley will **not** start with no camera target. DIAL: a fixed speed, no camera needed |
 | **START** | Alliance BLUE / RED. Starts as BLUE. (Pairing the controller is Start + A, so check the alliance after pairing) |
 
@@ -260,7 +260,7 @@ A nudge only lasts while the OpMode runs. When a position is right, type the fou
 | Job | TeleOp Alpha 15 | The test OpModes |
 |---|---|---|
 | Shoot | Operator **RT** (hold) = a whole volley (the driver's RT only in SOLO MODE) | **Y / X** hold (RPM and Power Alpha), **Y** on / **X** off (Ratio Alpha), **RT / LT** (Shot Table) |
-| Gate | Automatic during a volley. Between volleys, operator **X** closed / **B** (hold) forced shot / **Y** (hold) lifted. During a feed, hold **Y** to lift | Shooter RPM Alpha 2: **D-pad Left** closed / **D-pad Right** opened / **LT** lifted. Power and Ratio Alpha: **LT** toggles closed / opened. Shot Table: none |
+| Gate | Automatic during a volley. Between volleys, operator **X** closed / **B** (hold) forced shot / **Y** (hold) lifted. During a feed or while a volley waits, hold **Y** to lift | Shooter RPM Alpha 2: **D-pad Left** closed / **D-pad Right** opened / **LT** lifted. Power and Ratio Alpha: **LT** toggles closed / opened. Shot Table: none |
 | Flywheel speed | Operator **D-pad Up / Down** | **B / A** (Ratio Alpha), **D-pad Up / Down** (Shot Table) |
 | Alliance | **Start** on either gamepad | **Start** (Vision, Shot Table) |
 | Slow mode | Driver **LT** | Driver **RT** (Drive Alpha) |

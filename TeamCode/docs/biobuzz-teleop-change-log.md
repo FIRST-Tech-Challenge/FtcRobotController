@@ -22,6 +22,12 @@ WHAT CHANGED
      shooter_servo). Both competition configs (11940, 22091) have them.
   5. The four servo positions were tuned on the robot with FlowerPickerAlpha. This TeleOp wiring has
      not been run on the robot yet.
+  6. Y LIFTS THE GATE WHILE A VOLLEY WAITS (issue #92). On the robot, with RT held and the volley still
+     waiting (flywheel not at speed or turret not aimed), the operator's Y did nothing, and the servo
+     only moved after RT was let go. The sequence orders CLOSE every loop while it waits, and the gate
+     block handled that first, so Y was never read. Now held Y lifts the gate while the volley waits,
+     and when Y is let go the gate closes again (with the usual 0.5 s intake reverse) and the volley
+     keeps waiting. The intake stays the driver's, so nothing feeds by itself. Not run on the robot yet.
 ```
 
 ## ALPHA 14: THE IMU DRIVE, A BATTERY BLACK BOX AND A LOG

@@ -63,7 +63,10 @@ import java.util.List;
  *          go and the gate goes back to OPENED and the volley carries on.
  *        - Between volleys: hold Y to LIFT, let go and the gate CLOSES (with the intake
  *          reversing for that moment, see GATE CLOSING AUTO-REVERSE).
- *        - While a volley WAITS: ignored.
+ *        - While a volley WAITS (the trigger is held, but the flywheel is not at speed or the turret is
+ *          not aimed yet): hold Y to LIFT anyway, as an override (issue #92). Let go and the gate
+ *          CLOSES again (with the intake reversing for that moment) and the volley keeps waiting. The
+ *          intake stays the driver's, so nothing feeds by itself: the driver feeds while Y is held.
  *      X is ONE move per press. The gate positions are CLOSED_POSITION, OPENED_POSITION and
  *       LIFTED_POSITION in ShooterServoSubsystem. If X and Y are pressed on the same loop,
  *       CLOSED wins. X only works BETWEEN volleys: during a volley (and a forced shot) the
@@ -1486,7 +1489,11 @@ public class BiobuzzTeleOp extends OpMode {
         // intake block below).
         // The gate has three positions, and OPENED is BETWEEN the other two: LIFTED, OPENED, CLOSED.
         // While a volley runs the FIRING SEQUENCE is in charge:
-        //   - WAITING: it holds the gate CLOSED, and the operator's buttons do nothing.
+        //   - WAITING: it holds the gate CLOSED. The one exception is the Y button (issue #92): while Y is
+        //     HELD the gate is LIFTED anyway, so the operator can override a volley that is stuck waiting
+        //     (the flywheel not at speed, the turret not aimed, or the camera not seeing the hive). When Y
+        //     is let go the sequence closes the gate again. It still does not feed: the intake stays the
+        //     driver's. X does nothing here.
         //   - FEEDING: it holds the gate OPENED, until the trigger is let go. The one exception is
         //     the Y button: while Y is HELD the gate is LIFTED instead (to push the last ball up into
         //     the flywheel), and when Y is let go the gate goes back to OPENED and the volley carries on.
@@ -1505,8 +1512,17 @@ public class BiobuzzTeleOp extends OpMode {
         boolean liftedNewPress = isNewPress(gateLiftedPressed, wasGateLiftedPressed);
         boolean liftedReleased = wasGateLiftedPressed && !gateLiftedPressed;
         FiringSequence.GateCommand gateCommand = firingSequence.getGateCommand();
+        // WAITING + Y (issue #92): while the sequence waits for its checks it only holds the gate CLOSED,
+        // so held Y is allowed to override that. We look at the sequence's STEP, not only at its gate
+        // order, because the sequence also orders CLOSE once when a volley ENDS, and Y must not hold the
+        // gate up then. (When a volley ends its step is IDLE, so volleyWaiting is false. If the trigger
+        // is let go while Y is still held, the gate closes once: press Y again to lift.)
+        boolean volleyWaiting = firingSequence.getState() == FiringSequence.SequenceState.WAIT_FOR_READY;
         String gateControl;
-        if (gateCommand == FiringSequence.GateCommand.CLOSE) {
+        if (gateCommand == FiringSequence.GateCommand.CLOSE && volleyWaiting && gateLiftedPressed) {
+            shooterServoSubsystem.goToLifted();
+            gateControl = "volley WAITING, Y HELD: LIFTED (operator override)";
+        } else if (gateCommand == FiringSequence.GateCommand.CLOSE) {
             shooterServoSubsystem.goToClosed();
             gateControl = "firing sequence (CLOSED)";
         } else if (gateCommand == FiringSequence.GateCommand.OPEN) {
