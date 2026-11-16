@@ -68,9 +68,7 @@ class REmoverImpl {
     var rotateBack = false
 
     fun init(
-        ppx: Double,
-        ppy: Double,
-        ppaRad: Double,
+        currentPose: RobotPose,
         target: RobotPose,
         maxPower: Double = 1.0,
         stopCond: StopConditions = StopConditions.Default,
@@ -80,6 +78,10 @@ class REmoverImpl {
 ) {
 
         finished = false
+
+        val ppx = currentPose.x
+        val ppy = currentPose.y
+        val ppaRad = currentPose.a
 
         this.target = target
         tgtx = target.x

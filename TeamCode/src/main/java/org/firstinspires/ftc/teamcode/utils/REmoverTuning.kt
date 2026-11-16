@@ -21,6 +21,7 @@ class REmoverTuning: LinearOpMode() {
         waitForStart()
 
         driveMachine.init(robotState)
+        robotState.init(RobotPose(0.0, 0.0, 0.0))
 
         var wasLT = false
         var wasRT = false
@@ -56,9 +57,7 @@ class REmoverTuning: LinearOpMode() {
             if (gamepad1.a && !wasA) {
                 driveMachine.state = DriveMachine.State.PID2POINT
                 driveMachine.removerImpl.init(
-                    robotState.ppX,
-                    robotState.ppY,
-                    robotState.ppThetaRad,
+                    robotState.ppRobotPose,
                     RobotPose(12.0,-20.0,Math.PI/2),
                 )
             }
@@ -66,9 +65,7 @@ class REmoverTuning: LinearOpMode() {
             if (gamepad1.y && !wasY) {
                 driveMachine.state = DriveMachine.State.PID2POINT
                 driveMachine.removerImpl.init(
-                    robotState.ppX,
-                    robotState.ppY,
-                    robotState.ppThetaRad,
+                    robotState.ppRobotPose,
                     RobotPose(0.0,0.0,0.0),
                 )
             }

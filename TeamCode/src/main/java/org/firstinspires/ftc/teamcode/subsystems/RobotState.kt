@@ -6,17 +6,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit
 import org.firstinspires.ftc.teamcode.GerthaHardwareMap
+import org.firstinspires.ftc.teamcode.hardware.RobotPose
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.utils.StaticStore
 import kotlin.math.hypot
 import kotlin.time.Duration.Companion.seconds
 
 class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true) {
 
-    val initPose = Pose2D (DistanceUnit.INCH, 0.0, 0.0, AngleUnit.RADIANS, 0.0)
     var ppX: Double = 0.0
     var ppY: Double = 0.0
     var ppThetaDeg: Double = 0.0
     var ppThetaRad: Double = 0.0
+    var ppRobotPose = RobotPose(ppX, ppY, ppThetaRad)
+
 
     var velXM: Double = 0.0
     var velYM: Double = 0.0
@@ -27,6 +29,17 @@ class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true) {
 
     var angVelRad: Double = 0.0
 
+    fun init(ppStartPose: RobotPose){
+//        hw.pinpoint.resetPosAndIMU()
+        hw.pinpoint.position = ppStartPose.asPose2D
+        val ppPose = hw.pinpoint.position
+        ppX = ppPose.getX(DistanceUnit.INCH)
+        ppY = ppPose.getY(DistanceUnit.INCH)
+        ppThetaRad = ppPose.getHeading(AngleUnit.RADIANS)
+        ppThetaDeg = ppPose.getHeading(AngleUnit.DEGREES)
+        ppRobotPose = RobotPose(ppX, ppY, ppThetaRad)
+    }
+
     fun update() {
         hw.pinpoint.update()
 
@@ -35,6 +48,8 @@ class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true) {
         ppY = ppPose.getY(DistanceUnit.INCH)
         ppThetaRad = ppPose.getHeading(AngleUnit.RADIANS)
         ppThetaDeg = ppPose.getHeading(AngleUnit.DEGREES)
+        ppRobotPose = RobotPose(ppX, ppY, ppThetaRad)
+
 
         velXM = hw.pinpoint.getVelX(DistanceUnit.METER)
         velYM = hw.pinpoint.getVelY(DistanceUnit.METER)
