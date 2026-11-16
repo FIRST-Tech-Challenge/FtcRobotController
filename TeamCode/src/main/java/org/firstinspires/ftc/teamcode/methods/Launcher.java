@@ -35,7 +35,7 @@ public class Launcher {
     /** Legacy setting retained for compatibility; readiness timeouts are disabled. */
     public static double FEED_READY_TIMEOUT_SECONDS = 3.0;
 
-    private final Iterable<VoltageSensor> voltageSensors;
+    private final BatteryVoltage battery;
     private final DcMotorEx fWheel;
     private final FlywheelIntegralControl flywheelController = new FlywheelIntegralControl();
     private boolean flywheelsOn = false;
@@ -54,11 +54,20 @@ public class Launcher {
     private double distanceFromHive = 0;
 
     public Launcher(HardwareMap hardwareMap) {
-        this(hardwareMap.get(DcMotorEx.class, "fWheel"), hardwareMap.voltageSensor);
+        this(hardwareMap, new BatteryVoltage(hardwareMap));
+    }
+
+    /** Preferred: share one BatteryVoltage between Launcher, Transfer and Intake. */
+    public Launcher(HardwareMap hardwareMap, BatteryVoltage battery) {
+        this(hardwareMap.get(DcMotorEx.class, "fWheel"), battery);
     }
 
     Launcher(DcMotorEx motor, Iterable<VoltageSensor> sensors) {
-        voltageSensors = sensors;
+        this(motor, new BatteryVoltage(sensors));
+    }
+
+    Launcher(DcMotorEx motor, BatteryVoltage battery) {
+        this.battery = battery;
         fWheel = motor;
         configureFlywheel(fWheel);
         //stopAll();
@@ -206,8 +215,8 @@ public class Launcher {
         }
         firing = fireRequested && flywheelsOn && feedStarted && !ejecting;
 
-        //ball just shot logic
-        if (getFlywheelVelo() >= flywheelThreshold) {
+        //ball just shot logic (signed-corrected speed; the raw encoder reads negative)
+        if (measuredVelocity >= flywheelThreshold) {
             flywheelReady = true;
             flywheelDropped = false;
             ballJustShot = false;
@@ -219,15 +228,9 @@ public class Launcher {
     }
 
     private double readBatteryVoltage() {
-        double result = Double.POSITIVE_INFINITY;
-        for (VoltageSensor sensor : voltageSensors) {
-            double voltage = sensor.getVoltage();
-            if (Double.isFinite(voltage) && voltage > 0) {
-                result = Math.min(result, voltage);
-            }
-        }
+        double result = battery.get();
         // Missing voltage data does not latch a fault or stop operator commands.
-        return Double.isFinite(result) ? result : batteryVoltage;
+        return Double.isFinite(result) && result > 0 ? result : batteryVoltage;
     }
 
     private static double clip(double value, double low, double high) {
@@ -258,7 +261,8 @@ public class Launcher {
     public boolean isEjecting() { return ejecting; }
     public double getTargetVelocity() { return targetVelocity; }
     public double getError() { return targetVelocity - measuredVelocity; }
-    public double getFlywheelVelo() { return fWheel.getVelocity(); }
+    /** Signed-corrected flywheel speed from the last update() (positive when shooting). */
+    public double getFlywheelVelo() { return measuredVelocity; }
     public double getMeasuredVelocity() { return measuredVelocity; }
     public double getMotorPower() { return motorPower; }
     /** Unclipped controller demand, before conversion to available battery power. */

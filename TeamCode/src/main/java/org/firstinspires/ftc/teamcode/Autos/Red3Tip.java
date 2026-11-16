@@ -17,6 +17,7 @@ import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 
 import org.firstinspires.ftc.teamcode.methods.AutoCommands;
+import org.firstinspires.ftc.teamcode.methods.BulkReads;
 import org.firstinspires.ftc.teamcode.methods.AutoPaths;
 import org.firstinspires.ftc.teamcode.methods.OpModeStorage;
 import org.firstinspires.ftc.teamcode.methods.PathVisualizer;
@@ -40,6 +41,7 @@ public class Red3Tip extends OpMode {
     private int turretZeroTicks;
     private Launcher launcher;
     private Servo led;
+    private BulkReads bulk;
     //private Transfer transfer;
 
     boolean started = false;
@@ -119,14 +121,17 @@ public class Red3Tip extends OpMode {
         follower = Constants.create(hardwareMap);
         follower.update();
         autoCommand = new AutoCommands(hardwareMap);
+        bulk = new BulkReads(hardwareMap);   // MANUAL bulk caching; cleared every loop
         turret = new Turret(hardwareMap);
         turretMotor = hardwareMap.get(DcMotorEx.class, "TurretRot");
         launcher = autoCommand.getLauncher();
         led = hardwareMap.get(Servo.class, "led");
+        led.setPosition(0.722);   // violet; set once (a per-loop write costs loop time)
 
         turret.stopRotation();
         // This auto begins with the turret physically forward-zero. Preserve that raw
         // encoder reference across the autonomous-to-TeleOp OpMode transition.
+        bulk.clear();   // fresh encoder read for the forward-zero handoff
         turretZeroTicks = turretMotor.getCurrentPosition();
         OpModeStorage.turretForwardZeroTicks = turretZeroTicks;
         OpModeStorage.turretForwardZeroConfirmed = true;
@@ -145,6 +150,7 @@ public class Red3Tip extends OpMode {
 
     @Override
     public void loop() {
+        bulk.clear();   // FIRST: one bulk read per hub for all encoders
         Scheduler.execute();
         turret.update();
         follower.update();
@@ -195,7 +201,6 @@ public class Red3Tip extends OpMode {
 
         autoCommand.updateTransfer();
 
-        led.setPosition(Math.random());
 
         telemetry.addData("X", follower.pose().x());
         telemetry.addData("Y", follower.pose().y());

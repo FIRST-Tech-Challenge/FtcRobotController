@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.teamcode.methods.BatteryVoltage;
+import org.firstinspires.ftc.teamcode.methods.BulkReads;
 import org.firstinspires.ftc.teamcode.methods.Intake;
 import org.firstinspires.ftc.teamcode.methods.Launcher;
 import org.firstinspires.ftc.teamcode.methods.OpModeStorage;
@@ -82,6 +84,7 @@ public class MainTeleOp extends OpMode {
 
     private Transfer transfer;
     private ShootingCoordinator shooting;
+    private BulkReads bulk;
 
     private String yawSource = "Pedro";
     private IMU imu;
@@ -135,9 +138,11 @@ public class MainTeleOp extends OpMode {
         //hardware mapping
         follower = Constants.create(hardwareMap);
         led = hardwareMap.get(Servo.class, "led");
-        launcher    = new Launcher(hardwareMap);
-        transfer = new Transfer(hardwareMap);
-        intake      = new Intake(hardwareMap);
+        // One shared, rate-limited battery reading instead of per-class reads every loop.
+        BatteryVoltage battery = new BatteryVoltage(hardwareMap);
+        launcher    = new Launcher(hardwareMap, battery);
+        transfer = new Transfer(hardwareMap, battery);
+        intake      = new Intake(hardwareMap, battery);
         shooting = new ShootingCoordinator(launcher, transfer, intake);
         turret      = new Turret(hardwareMap);
         turretMotor = hardwareMap.get(DcMotorEx.class, "TurretRot");
@@ -174,6 +179,9 @@ public class MainTeleOp extends OpMode {
             imuAvailable = false; // Pedro heading-rate fallback
         }
 
+        // MANUAL bulk caching: one hub read per loop for every encoder (cleared at loop start).
+        bulk = new BulkReads(hardwareMap);
+
         //setting up turret auto stuff
         //Turret.ROT_MAX_POWER = 0.2;
         //Turret.ROBOT_YAW_FF_GAIN = 0.003;
@@ -191,6 +199,7 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void loop() {
+        bulk.clear();   // FIRST: fresh encoder data for this loop
 
         turret.update();
 

@@ -27,9 +27,11 @@ public class AutoCommands {
     LimelightVision vision;
 
     public AutoCommands(HardwareMap hardwareMap) {
-        launcher = new Launcher(hardwareMap);
-        intake = new Intake(hardwareMap);
-        transfer = new Transfer(hardwareMap);
+        // One shared, rate-limited battery reading instead of per-class reads every loop.
+        BatteryVoltage battery = new BatteryVoltage(hardwareMap);
+        launcher = new Launcher(hardwareMap, battery);
+        intake = new Intake(hardwareMap, battery);
+        transfer = new Transfer(hardwareMap, battery);
         shooting = new ShootingCoordinator(launcher, transfer, intake);
         turret = new Turret(hardwareMap);
         vision = new LimelightVision(hardwareMap, 4);

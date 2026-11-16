@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class Intake {
     /** Calibrated at 12.76 V; command is compensated for measured battery voltage. */
@@ -21,14 +20,19 @@ public class Intake {
 
     private final DcMotorEx intake;
     private final Servo ramp;
-    private final HardwareMap hardwareMap;
+    private final BatteryVoltage battery;
     private RampState rampState = RampState.UP;
     private boolean intakeOn = false;
     private double requestedPower;
 
     public Intake(HardwareMap hardwareMap) {
+        this(hardwareMap, new BatteryVoltage(hardwareMap));
+    }
+
+    /** Preferred: share one BatteryVoltage between Launcher, Transfer and Intake. */
+    public Intake(HardwareMap hardwareMap, BatteryVoltage battery) {
         this(hardwareMap.get(DcMotorEx.class, "Intake"),
-                hardwareMap.get(Servo.class, "Ramp"), hardwareMap);
+                hardwareMap.get(Servo.class, "Ramp"), battery);
     }
 
     // Hardware injection for desktop regression tests.
@@ -36,10 +40,10 @@ public class Intake {
         this(intake, ramp, null);
     }
 
-    private Intake(DcMotorEx intake, Servo ramp, HardwareMap hardwareMap) {
+    Intake(DcMotorEx intake, Servo ramp, BatteryVoltage battery) {
         this.intake = intake;
         this.ramp = ramp;
-        this.hardwareMap = hardwareMap;
+        this.battery = battery;
         stop();
         // Intake and outtake are power commands; stop must not switch to velocity control.
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -88,14 +92,9 @@ public class Intake {
     }
 
     private double readBatteryVoltage() {
-        if (hardwareMap == null) return Double.NaN;
-        double minimum = Double.POSITIVE_INFINITY;
-        for (VoltageSensor sensor : hardwareMap.voltageSensor) {
-            double voltage = sensor.getVoltage();
-            if (Double.isFinite(voltage) && voltage >= 6.0 && voltage <= 16.8)
-                minimum = Math.min(minimum, voltage);
-        }
-        return Double.isFinite(minimum) ? minimum : Double.NaN;
+        if (battery == null) return Double.NaN;
+        double voltage = battery.get();
+        return voltage >= 6.0 && voltage <= 16.8 ? voltage : Double.NaN;
     }
 
     /** UP toggles to DOWN; DOWN, HOLD and DOWNER toggle to UP. */

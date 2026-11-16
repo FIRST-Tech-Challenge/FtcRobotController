@@ -33,7 +33,7 @@ public class Transfer {
     /** Legacy setting retained for compatibility; readiness timeouts are disabled. */
     public static double FEED_READY_TIMEOUT_SECONDS = 3.0;
 
-    private final Iterable<VoltageSensor> voltageSensors;
+    private final BatteryVoltage battery;
     private final DcMotorEx fWheel;
     private boolean flywheelsOn = false;
     private boolean fireRequested = false, firing = false, ejecting = false;
@@ -48,11 +48,20 @@ public class Transfer {
     private double flywheelThreshold = 1200;
 
     public Transfer(HardwareMap hardwareMap) {
-        this(hardwareMap.get(DcMotorEx.class, "LaunchMech"), hardwareMap.voltageSensor);
+        this(hardwareMap, new BatteryVoltage(hardwareMap));
+    }
+
+    /** Preferred: share one BatteryVoltage between Launcher, Transfer and Intake. */
+    public Transfer(HardwareMap hardwareMap, BatteryVoltage battery) {
+        this(hardwareMap.get(DcMotorEx.class, "LaunchMech"), battery);
     }
 
     Transfer(DcMotorEx motor, Iterable<VoltageSensor> sensors) {
-        voltageSensors = sensors;
+        this(motor, new BatteryVoltage(sensors));
+    }
+
+    Transfer(DcMotorEx motor, BatteryVoltage battery) {
+        this.battery = battery;
         fWheel = motor;
         configureFlywheel(fWheel);
         //stopAll();
@@ -62,7 +71,9 @@ public class Transfer {
         motor.setPower(0.0);
         motor.setDirection(DcMotorSimple.Direction.FORWARD);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        // BRAKE so a paced stop halts the next ball quickly instead of coasting it
+        // into the flywheel. Forward control never commands 0 while feeding.
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void toggleOn() {
@@ -168,7 +179,7 @@ public class Transfer {
         firing = fireRequested && flywheelsOn && feedStarted && !ejecting;
 
         //ball just shot logic
-        if (getFlywheelVelo() >= flywheelThreshold) {
+        if (measuredVelocity >= flywheelThreshold) {
             flywheelReady = true;
             flywheelDropped = false;
             ballJustShot = false;
@@ -180,14 +191,8 @@ public class Transfer {
     }
 
     private double readBatteryVoltage() {
-        double result = Double.POSITIVE_INFINITY;
-        for (VoltageSensor sensor : voltageSensors) {
-            double voltage = sensor.getVoltage();
-            if (Double.isFinite(voltage) && voltage > 0) {
-                result = Math.min(result, voltage);
-            }
-        }
-        return Double.isFinite(result) ? result : batteryVoltage;
+        double result = battery.get();
+        return Double.isFinite(result) && result > 0 ? result : batteryVoltage;
     }
 
     private static double clip(double value, double low, double high) {
