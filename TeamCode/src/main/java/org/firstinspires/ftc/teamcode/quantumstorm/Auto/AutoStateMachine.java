@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.quantumstorm.Vision.LimelightCamera;
  *                            (Hive -> SHOOTING, pickup zone -> INTAKE)
  *   SHOOTING [ReadyToShoot]  not enough balls -> go pick up. Else camera up, reposition if
  *                            the Hive flipped, align to AprilTag, shoot until empty -> go pick up
- *   INTAKE   [ReadyToPickup] Intake at Garden, Flower, or ground for a 30-second
+ *   INTAKE   [ReadyToPickup] Intake at Garden, Flower, or ground for a 9-second
  *                            color-pipeline scan; detections do not control the robot
  *   ERROR    [Error]         recoverable and retries left -> resume dest; else PARK
  *   PARK     [Parked]        drive to park (touching the perimeter) and stay

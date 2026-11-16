@@ -75,8 +75,8 @@ public class Constants {
     public final static double LIMELIGHT_SERVO_TRAVEL_DEGREES = 300.0;
     public final static double LIMELIGHT_SERVO_NEUTRAL_POSITION = 0.5;
     public final static double LIMELIGHT_SERVO_MAX_OFFSET_DEGREES = 120.0;
-    public final static double LIMELIGHT_COLOR_PIPELINE_DWELL_SEC = 10.0;
-    public final static double LIMELIGHT_COLOR_SCAN_CYCLE_SEC = 30.0;
+    public final static double LIMELIGHT_COLOR_PIPELINE_DWELL_SEC = 3.0;
+    public final static double LIMELIGHT_COLOR_SCAN_CYCLE_SEC = 3.0 * LIMELIGHT_COLOR_PIPELINE_DWELL_SEC;
 
     // Pipeline indices must match the pipelines configured in the Limelight web UI.
     public final static int LIMELIGHT_APRILTAG_PIPELINE = 0;
