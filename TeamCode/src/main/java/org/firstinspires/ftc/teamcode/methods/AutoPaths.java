@@ -4,34 +4,52 @@ import com.pedropathing.api.Paths;
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
+import com.pedropathing.paths.interpolator.Interpolator;
 
 public final class AutoPaths {
     private AutoPaths() {}
     private static final PoseFactory poseFactory = PoseFactory.degrees();
 
-    // GENERAL PATHS
-    public static final class GeneralPaths {
+    public static final class GeneralPoints {
+        private GeneralPoints() {}
 
-        private GeneralPaths() {}
+        // close (bottom) side
+        public static final Pose startClose =
+                poseFactory.of(56, 8, 90);
 
-        // ---------- POSES ----------
-
-        public static final Pose shooterStart =
+        public static final Pose shootClose =
                 poseFactory.of(56, 12, 90);
 
-        public static final Pose shooterControl1 =
-                poseFactory.of(24, 39.5, 0);
-
-        public static final Pose shooterControl2 =
-                poseFactory.of(34.5, 50, 0);
         public static final Pose flowerWaitClose =
                 poseFactory.of(33, 46.5, 180);
 
-        public static final Pose flowerWaitFar =
-                poseFactory.of(47, 120, 60);
-
         public static final Pose flowerClose =
                 poseFactory.of(12, 48.5, 180);
+
+        public static final Pose jiggleC =
+                poseFactory.of(11.7, 48.5, 170);
+
+        public static final Pose cornerCollect =
+                poseFactory.of(9, 8.5, 180);
+
+        public static final Pose parkCorner =
+                poseFactory.of(12, 10, 180);
+
+        public static final Pose parkUp =
+                poseFactory.of(12, 94, 270);
+
+        // far (top) side
+        public static final Pose startFar =
+                poseFactory.of(59, 135, 270);
+
+        public static final Pose shootFar =
+                poseFactory.of(57, 130, 270);
+
+        public static final Pose farFlowerVia =
+                poseFactory.of(60, 130, 270);
+
+        public static final Pose flowerWaitFar =
+                poseFactory.of(47, 120, 80);
 
         public static final Pose flowerFar =
                 poseFactory.of(47, 128.5, 90);
@@ -39,264 +57,164 @@ public final class AutoPaths {
         public static final Pose jiggle =
                 poseFactory.of(47, 128.3, 90);
 
-        public static final Pose jiggleC =
-                poseFactory.of(11.7, 48.5, 170);
+        public static final Pose midBack =
+                poseFactory.of(47, 125, 90);
 
+        public static final Pose parkFar =
+                poseFactory.of(26, 130, 90);
+    }
 
-        // ---------- PATHS ----------
+    // GENERAL PATHS (shared by more than one auto)
+    public static final class GeneralPaths {
+
+        private GeneralPaths() {}
+
+        // start -> close shooting spot (first move of every close auto)
+        public static Path startToShootClose() {
+            return Paths.line(GeneralPoints.startClose, GeneralPoints.shootClose)
+                    .linear(GeneralPoints.startClose, GeneralPoints.shootClose);
+        }
+
+        // close shooting spot -> close flower wait spot
+        public static Path shootCloseToFlowerWait() {
+            return Paths.line(GeneralPoints.shootClose, GeneralPoints.flowerWaitClose)
+                    .linear(GeneralPoints.shootClose, GeneralPoints.flowerWaitClose);
+        }
 
         public static Path flowerCloseTo() {
-            return Paths.line(flowerWaitClose, flowerClose)
-                    .linear(flowerWaitClose, flowerClose);
+            return Paths.line(GeneralPoints.flowerWaitClose, GeneralPoints.flowerClose)
+                    .linear(GeneralPoints.flowerWaitClose, GeneralPoints.flowerClose);
         }
 
-        public static Path shooter2WaitClose() {
-            return Paths.curve(
-                    shooterStart,
-                    shooterControl1,
-                    shooterControl2,
-                    flowerWaitClose
-            ).linear(shooterStart, flowerWaitClose);
-        }
         public static Path flowerCloseFro() {
-            return Paths.line(flowerClose, flowerWaitClose)
-                    .linear(flowerClose, flowerWaitClose);
+            return Paths.line(GeneralPoints.flowerClose, GeneralPoints.flowerWaitClose)
+                    .linear(GeneralPoints.flowerClose, GeneralPoints.flowerWaitClose);
         }
 
         public static Path flowerFarTo() {
-            return Paths.line(flowerWaitFar, flowerFar)
-                    .linear(flowerWaitFar, flowerFar);
+            return Paths.line(GeneralPoints.flowerWaitFar, GeneralPoints.flowerFar)
+                    .linear(GeneralPoints.flowerWaitFar, GeneralPoints.flowerFar);
+        }
+
+        public static Path flowerFarFro() {
+            return Paths.line(GeneralPoints.flowerFar, GeneralPoints.flowerWaitFar)
+                    .linear(GeneralPoints.flowerFar, GeneralPoints.flowerWaitFar);
         }
 
         public static Path flowerJiggle() {
-            return Paths.line(flowerFar, jiggle)
-                    .linear(flowerFar, jiggle);
+            return Paths.line(GeneralPoints.flowerFar, GeneralPoints.jiggle)
+                    .linear(GeneralPoints.flowerFar, GeneralPoints.jiggle);
         }
 
         public static Path jiggleFlower() {
-            return Paths.line(jiggle, flowerFar)
-                    .linear(jiggle, flowerFar);
+            return Paths.line(GeneralPoints.jiggle, GeneralPoints.flowerFar)
+                    .linear(GeneralPoints.jiggle, GeneralPoints.flowerFar);
         }
 
+        public static Path halfJiggle() {
+            return Paths.line(GeneralPoints.flowerFar, GeneralPoints.midBack)
+                    .linear(GeneralPoints.flowerFar, GeneralPoints.midBack);
+        }
+
+
+
         public static Path flowerJiggleC() {
-            return Paths.line(flowerClose, jiggleC)
-                    .linear(flowerClose, jiggleC);
+            return Paths.line(GeneralPoints.flowerClose, GeneralPoints.jiggleC)
+                    .linear(GeneralPoints.flowerClose, GeneralPoints.jiggleC);
         }
 
         public static Path jiggleFlowerC() {
-            return Paths.line(jiggleC, flowerClose)
-                    .linear(jiggleC, flowerClose);
-        }
-
-
-        public static Path flowerFarFro() {
-            return Paths.line(flowerFar, flowerWaitFar)
-                    .linear(flowerFar, flowerWaitFar);
+            return Paths.line(GeneralPoints.jiggleC, GeneralPoints.flowerClose)
+                    .linear(GeneralPoints.jiggleC, GeneralPoints.flowerClose);
         }
     }
 
-    // TIP
+    // TIP (2Tip)
     public static final class Tip {
 
         private Tip() {}
 
         // ---------- POSES ----------
 
-        public static final Pose start =
-                poseFactory.of(56, 8, 90);
+        // corner -> far shoot curve: runs up the x~32 lane, left of the hive
+        public static final Pose farControl1 =
+                poseFactory.of(51, 28, 0);
 
-        public static final Pose point1 =
-                poseFactory.of(56, 12, 90);
+        public static final Pose farControl2 =
+                poseFactory.of(36, 63, 0);
 
-        public static final Pose point2Control1 =
-                poseFactory.of(24, 39.5, 0);
+        public static final Pose farControl3 =
+                poseFactory.of(6, 90, 0);
 
-        public static final Pose point2Control2 =
-                poseFactory.of(34.5, 50, 0);
+        public static final Pose farControl4 =
+                poseFactory.of(49, 112, 0);
 
-        public static final Pose point2=
-                poseFactory.of(30, 11, 180);
-
-        public static final Pose pointwall=
-                poseFactory.of(9, 8.5, 180);
-
-        public static final Pose point3 =
-                poseFactory.of(60, 130, 270);
-
-        public static final Pose point3Control1 =
-                poseFactory.of(47, 44, 0);
-
-        public static final Pose point3Control2 =
-                poseFactory.of(6, 107, 0);
-
-        public static final Pose point3Control3 =
-                poseFactory.of(35, 109, 0);
-
-        public static final Pose point4Control1 =
-                poseFactory.of(45, 113, 0);
-
-        public static final Pose point5 =
-                poseFactory.of(26, 126, 90);
-
-        public static final Pose point6 =
-                poseFactory.of(26, 130, 90);
-
-        public static final Pose point7 =
+        public static final Pose park =
                 poseFactory.of(10, 122, 90);
 
-        public static final Pose point7Control1=
-                poseFactory.of(5,135,0);
+        public static final Pose parkControl =
+                poseFactory.of(5, 135, 0);
 
         // ---------- PATHS ----------
 
-        public static Path path1() {
-            return Paths.line(start, point1)
-                    .linear(start, point1);
+        // shoot spot -> corner in one move (was path2wall + path21).
+        // Same straight lane along the wall; the 90->180 turn is done by 55%,
+        // which is where the old (30, 11) stop was.
+        public static Path shootCloseToCorner() {
+            return Paths.line(GeneralPoints.shootClose, GeneralPoints.cornerCollect)
+                    .linear(GeneralPoints.shootClose, GeneralPoints.cornerCollect, 0.55);
         }
 
-        public static Path path2() {
+        // corner -> far shoot spot in one move (was path22 + path3).
+        // Holds 180 until the robot is ~30" off both walls, then turns to 270.
+        public static Path cornerToFarShoot() {
             return Paths.curve(
-                    point1,
-                    point2Control1,
-                    point2Control2,
-                    GeneralPaths.flowerWaitClose
-            ).linear(point1, GeneralPaths.flowerWaitClose);
+                    GeneralPoints.cornerCollect,
+                    farControl1,
+                    farControl2,
+                    farControl3,
+                    farControl4,
+                    GeneralPoints.farFlowerVia
+            ).heading(Interpolator.piecewise()
+                    .until(0.2, Interpolator.constant(GeneralPoints.cornerCollect))
+                    .until(1.0, Interpolator.linear(GeneralPoints.cornerCollect, GeneralPoints.farFlowerVia)));
         }
 
-        public static Path path2wall() {
-            return Paths.line(
-                    point1, point2
-            ).linear(point1,point2);
+        // far shoot spot -> far flower wait (was path4, which had a hairpin)
+        public static Path farShootToFlowerWait() {
+            return Paths.line(GeneralPoints.farFlowerVia, GeneralPoints.flowerWaitFar)
+                    .linear(GeneralPoints.farFlowerVia, GeneralPoints.flowerWaitFar);
         }
 
-        public static Path path21() {
-            return Paths.line(
-                    point2, pointwall
-            ).linear(point2,pointwall);
-        }
-
-        public static Path path22() {
-            return Paths.line(
-                    pointwall, point2
-            ).linear(pointwall,GeneralPaths.flowerWaitClose);
-        }
-
-
-        public static Path path3wall() {
-            return Paths.line(
-                    point2, point3
-            ).linear(point2,point3);
-        }
-
-
-
-        public static Path path3() {
+        // far flower wait -> park (was path5, unchanged)
+        public static Path park() {
             return Paths.curve(
-                    GeneralPaths.flowerWaitClose,
-                    point3Control1,
-                    point3Control2,
-                    point3Control3,
-                    point3
-            ).linear(GeneralPaths.flowerWaitClose, point3);
-        }
-
-        public static Path path4() {
-            return Paths.curve(
-                    point3,
-                    point4Control1,
-                    GeneralPaths.flowerWaitFar
-            ).linear(point3, GeneralPaths.flowerWaitFar);
-        }
-
-        public static Path path5() {
-            return Paths.curve(
-                    GeneralPaths.flowerWaitFar,
-                    point7Control1,
-                    point7
-            ).linear(GeneralPaths.flowerWaitFar, point7);
-        }
-
-        public static Path path6() {
-            return Paths.line(point5, point6)
-                    .linear(point5, point6);
-        }
-
-        public static Path path7() {
-            return Paths.line(point6, point7)
-                    .linear(point6, point7);
+                    GeneralPoints.flowerWaitFar,
+                    parkControl,
+                    park
+            ).linear(GeneralPoints.flowerWaitFar, park);
         }
     }
 
-    // CORNER
+    // CORNER (1Tip)
     public static final class Corner {
 
         private Corner() {}
 
-        // ---------- POSES ----------
-
-        public static final Pose start =
-                poseFactory.of(56, 8, 90);
-
-        public static final Pose point1 =
-                poseFactory.of(56, 12, 90);
-
-        public static final Pose point2 =
-                poseFactory.of(11.3459, 10, 270);
-
-        // ---------- PATHS ----------
-
-        public static Path path1() {
-            return Paths.line(start, point1)
-                    .linear(start, point1);
-        }
-
-        public static Path path2() {
-            return Paths.line(point1, point2)
-                    .linear(point1, point2);
+        public static Path park() {
+            return Paths.line(GeneralPoints.shootClose, GeneralPoints.parkCorner)
+                    .linear(GeneralPoints.shootClose, GeneralPoints.parkCorner);
         }
     }
 
-    // FLOWER
+    // FLOWER (1Tip + Flower)
     public static final class Flower {
 
         private Flower() {}
 
-        // ---------- POSES ----------
-
-        public static final Pose start =
-                poseFactory.of(56, 8, 90);
-
-        public static final Pose point1 =
-                poseFactory.of(56, 12, 90);
-
-        public static final Pose point2Control1 =
-                poseFactory.of(24, 39.5, 0);
-
-        public static final Pose point2Control2 =
-                poseFactory.of(34.5, 50, 0);
-
-        public static final Pose point3 =
-                poseFactory.of(11.3459, 10, 270);
-
-        // ---------- PATHS ----------
-
-        public static Path path1() {
-            return Paths.line(start, point1)
-                    .linear(start, point1);
-        }
-
-        public static Path path2() {
-            return Paths.curve(
-                    point1,
-                    point2Control1,
-                    point2Control2,
-                    GeneralPaths.flowerWaitClose
-            ).linear(point1, GeneralPaths.flowerWaitClose);
-        }
-
-        public static Path path3() {
-            return Paths.line(GeneralPaths.flowerWaitClose, point3)
-                    .linear(GeneralPaths.flowerWaitClose, point3);
+        public static Path park() {
+            return Paths.line(GeneralPoints.flowerWaitClose, GeneralPoints.parkCorner)
+                    .linear(GeneralPoints.flowerWaitClose, GeneralPoints.parkCorner);
         }
     }
 
@@ -307,216 +225,102 @@ public final class AutoPaths {
 
         // ---------- POSES ----------
 
-        public static final Pose start =
-                poseFactory.of(56, 8, 90);
-
-        public static final Pose point1 =
-                poseFactory.of(56, 12, 90);
-
-        public static final Pose point2Control1 =
-                poseFactory.of(24, 39.5, 0);
-
-        public static final Pose point2Control2 =
-                poseFactory.of(34.5, 50, 0);
-
-        public static final Pose point3 =
+        public static final Pose shoot =
                 poseFactory.of(36, 12, 180);
-
-        public static final Pose wall =
-                poseFactory.of(9, 8.5, 180);
 
         public static final Pose park =
                 poseFactory.of(10, 90, 270);
 
-
-
-
         // ---------- PATHS ----------
 
-        public static Path path1() {
-            return Paths.line(start, point1)
-                    .linear(start, point1);
-        }
-
-        public static Path path2() {
-            return Paths.curve(
-                    point1,
-                    point2Control1,
-                    point2Control2,
-                    GeneralPaths.flowerWaitClose
-            ).linear(point1, GeneralPaths.flowerWaitClose);
-        }
-
-        public static Path path3() {
-            return Paths.line(GeneralPaths.flowerWaitClose, point3)
-                    .linear(GeneralPaths.flowerWaitClose, point3);
+        public static Path flowerWaitToShoot() {
+            return Paths.line(GeneralPoints.flowerWaitClose, shoot)
+                    .linear(GeneralPoints.flowerWaitClose, shoot);
         }
 
         public static Path WallTo() {
-            return Paths.line(point3, wall)
-                    .linear(point3, wall);
+            return Paths.line(shoot, GeneralPoints.cornerCollect)
+                    .linear(shoot, GeneralPoints.cornerCollect);
         }
 
         public static Path WallFro() {
-            return Paths.line(wall, point3)
-                    .linear(wall, point3);
+            return Paths.line(GeneralPoints.cornerCollect, shoot)
+                    .linear(GeneralPoints.cornerCollect, shoot);
         }
 
         public static Path park() {
-            return Paths.line(point3, park)
-                    .linear(point3, park);
+            return Paths.line(shoot, park)
+                    .linear(shoot, park);
         }
-
     }
 
-    // CORNERUP
+    // CORNERUP (1Tip + Park)
     public static final class CornerUp {
 
         private CornerUp() {}
 
-        // ---------- POSES ----------
-
-        public static final Pose start =
-                poseFactory.of(56, 8, 90);
-
-        public static final Pose point1 =
-                poseFactory.of(56, 12, 90);
-
-        public static final Pose point2Control1 =
+        public static final Pose parkControl =
                 poseFactory.of(20, 37, 0);
 
-        public static final Pose point2 =
-                poseFactory.of(12, 94, 270);
-
-        // ---------- PATHS ----------
-
-        public static Path path1() {
-            return Paths.line(start, point1)
-                    .linear(start, point1);
-        }
-
-        public static Path path2() {
+        public static Path park() {
             return Paths.curve(
-                    point1,
-                    point2Control1,
-                    point2
-            ).linear(point1, point2);
+                    GeneralPoints.shootClose,
+                    parkControl,
+                    GeneralPoints.parkUp
+            ).linear(GeneralPoints.shootClose, GeneralPoints.parkUp);
         }
-
     }
 
-    // FLOWERUP
+    // FLOWERUP (1Tip + Flower + Park)
     public static final class FlowerUp {
 
         private FlowerUp() {}
 
-        // ---------- POSES ----------
-
-        public static final Pose start =
-                poseFactory.of(56, 8, 90);
-
-        public static final Pose point1 =
-                poseFactory.of(56, 12, 90);
-
-        public static final Pose point2Control1 =
-                poseFactory.of(24, 39.5, 0);
-
-        public static final Pose point2Control2 =
-                poseFactory.of(34.5, 50, 0);
-
-        public static final Pose point3 =
-                poseFactory.of(12, 94, 270);
-
-        // ---------- PATHS ----------
-
-        public static Path path1() {
-            return Paths.line(start, point1)
-                    .linear(start, point1);
-        }
-
-        public static Path path2() {
-            return Paths.curve(
-                    point1,
-                    point2Control1,
-                    point2Control2,
-                    GeneralPaths.flowerWaitClose
-            ).linear(point1, GeneralPaths.flowerWaitClose);
-        }
-
-        public static Path path3() {
-            return Paths.line(GeneralPaths.flowerWaitClose, point3)
-                    .linear(GeneralPaths.flowerWaitClose, point3);
+        public static Path park() {
+            return Paths.line(GeneralPoints.flowerWaitClose, GeneralPoints.parkUp)
+                    .linear(GeneralPoints.flowerWaitClose, GeneralPoints.parkUp);
         }
     }
 
-    // OPP
+    // OPP (1TipFar)
     public static final class Opp {
 
         private Opp() {}
 
         // ---------- POSES ----------
 
-        public static final Pose start =
-                poseFactory.of(59, 135, 270);
-
-        public static final Pose point1 =
-                poseFactory.of(57, 131, 270);
-
-        // same as Tip.point3
-        public static final Pose point2 =
-                poseFactory.of(60, 130, 270);
-
-        // same as Tip.point4Control1
-        public static final Pose point3Control1 =
-                poseFactory.of(45, 113, 0);
-
-        // same as Tip.point5 / point6 / point7
-        public static final Pose point4 =
+        public static final Pose collect =
                 poseFactory.of(26, 126, 90);
 
-        public static final Pose point5 =
-                poseFactory.of(26, 130, 90);
-
-        public static final Pose point6 =
+        public static final Pose park =
                 poseFactory.of(15, 113, 90);
 
         // ---------- PATHS ----------
 
-        public static Path path1() {
-            return Paths.line(start, point1)
-                    .linear(start, point1);
+        public static Path startToShoot() {
+            return Paths.line(GeneralPoints.startFar, GeneralPoints.shootFar)
+                    .linear(GeneralPoints.startFar, GeneralPoints.shootFar);
         }
 
-        public static Path path2() {
-            return Paths.line(point1, point2)
-                    .linear(point1, point2);
+        // far shoot spot -> far flower wait (was path3, which had a hairpin)
+        public static Path shootToFlowerWait() {
+            return Paths.line(GeneralPoints.shootFar, GeneralPoints.flowerWaitFar)
+                    .linear(GeneralPoints.shootFar, GeneralPoints.flowerWaitFar);
         }
 
-        // same as Tip.path4()
-        public static Path path3() {
-            return Paths.curve(
-                    point2,
-                    point3Control1,
-                    GeneralPaths.flowerWaitFar
-            ).linear(point2, GeneralPaths.flowerWaitFar);
+        public static Path flowerWaitToCollect() {
+            return Paths.line(GeneralPoints.flowerWaitFar, collect)
+                    .linear(GeneralPoints.flowerWaitFar, collect);
         }
 
-        // same as Tip.path5()
-        public static Path path4() {
-            return Paths.line(GeneralPaths.flowerWaitFar, point4)
-                    .linear(GeneralPaths.flowerWaitFar, point4);
+        public static Path collectCreep() {
+            return Paths.line(collect, GeneralPoints.parkFar)
+                    .linear(collect, GeneralPoints.parkFar);
         }
 
-        // same as Tip.path6()
-        public static Path path5() {
-            return Paths.line(point4, point5)
-                    .linear(point4, point5);
-        }
-
-        // same as Tip.path7()
-        public static Path path6() {
-            return Paths.line(point5, point6)
-                    .linear(point5, point6);
+        public static Path park() {
+            return Paths.line(GeneralPoints.parkFar, park)
+                    .linear(GeneralPoints.parkFar, park);
         }
     }
 }

@@ -74,27 +74,26 @@ public class Red1TipFar extends OpMode {
         return sequential(
                 autoCommand.toggleAuto,
                 autoCommand.fWheelTogg,
-                follow(follower, AutoPaths.Opp.path1()),
+                follow(follower, AutoPaths.Opp.startToShoot()),
                 Commands.waitMs(5000),
                 autoCommand.shooterTogg,
                 autoCommand.intakeTogg,
                 Commands.waitMs(1500),
                 autoCommand.intakeTogg,
                 autoCommand.shooterTogg,
-                follow(follower, AutoPaths.Opp.path2()),
                 autoCommand.startVis,
                 autoCommand.toggleAuto,
-                follow(follower, AutoPaths.Opp.path3()),
+                follow(follower, AutoPaths.Opp.shootToFlowerWait()),
                 autoCommand.rampTogg,
                 autoCommand.flowerCollectFarShoot(follower),
                 follow(
-                        follower, AutoPaths.Opp.path4()
+                        follower, AutoPaths.Opp.flowerWaitToCollect()
                                 .with(Constants.foresightConfig.maxPathSpeed.at(0.4))
                 ),
                 autoCommand.rampTogg,
-                follow(follower, AutoPaths.Opp.path5()),
+                follow(follower, AutoPaths.Opp.collectCreep()),
                 follow(
-                        follower, AutoPaths.Opp.path6()
+                        follower, AutoPaths.Opp.park()
                                 .with(Constants.foresightConfig.maxPathSpeed.at(0.8))
                 )
         );
@@ -119,19 +118,18 @@ public class Red1TipFar extends OpMode {
         OpModeStorage.turretForwardZeroConfirmed = true;
 
         vision = new LimelightVision(hardwareMap, 4);
-        follower.setPose(AutoPaths.Opp.start);
+        follower.setPose(AutoPaths.GeneralPoints.startFar);
 
        // transfer = new Transfer(hardwareMap);
 
 
 
         /*visualizer = new PathVisualizer(
-                AutoPaths.Opp.path1(),
-                AutoPaths.Opp.path2(),
-                AutoPaths.Opp.path3(),
-                AutoPaths.Opp.path4(),
-                AutoPaths.Opp.path5(),
-                AutoPaths.Opp.path6()
+                AutoPaths.Opp.startToShoot(),
+                AutoPaths.Opp.shootToFlowerWait(),
+                AutoPaths.Opp.flowerWaitToCollect(),
+                AutoPaths.Opp.collectCreep(),
+                AutoPaths.Opp.park()
         );*/
 
         //visualizer.drawNow(follower.pose());

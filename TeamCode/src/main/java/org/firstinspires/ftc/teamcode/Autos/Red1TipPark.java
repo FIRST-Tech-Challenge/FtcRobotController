@@ -74,7 +74,7 @@ public class Red1TipPark extends OpMode {
         return sequential(
                 autoCommand.toggleAuto,
                 autoCommand.fWheelTogg,
-                follow(follower, AutoPaths.CornerUp.path1()),
+                follow(follower, AutoPaths.GeneralPaths.startToShootClose()),
                 Commands.waitMs(750),
                 autoCommand.shooterTogg,
                 autoCommand.intakeTogg,
@@ -83,7 +83,7 @@ public class Red1TipPark extends OpMode {
                 autoCommand.shooterTogg,
                 autoCommand.toggleAuto,
                 autoCommand.fWheelTogg,
-                follow(follower, AutoPaths.CornerUp.path2())
+                follow(follower, AutoPaths.CornerUp.park())
         );
     }
 
@@ -106,15 +106,15 @@ public class Red1TipPark extends OpMode {
         OpModeStorage.turretForwardZeroConfirmed = true;
 
         vision = new LimelightVision(hardwareMap, 4);
-        follower.setPose(AutoPaths.CornerUp.start);
+        follower.setPose(AutoPaths.GeneralPoints.startClose);
 
        // transfer = new Transfer(hardwareMap);
 
 
 
         /*visualizer = new PathVisualizer(
-                AutoPaths.CornerUp.path1(),
-                AutoPaths.CornerUp.path2()
+                AutoPaths.GeneralPaths.startToShootClose(),
+                AutoPaths.CornerUp.park()
         );*/
 
         //visualizer.drawNow(follower.pose());

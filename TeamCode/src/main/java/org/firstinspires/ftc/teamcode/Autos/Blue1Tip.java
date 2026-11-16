@@ -74,7 +74,7 @@ public class Blue1Tip extends OpMode {
         return sequential(
                 autoCommand.toggleAuto,
                 autoCommand.fWheelTogg,
-                follow(follower, AutoPaths.Corner.path1()),
+                follow(follower, AutoPaths.GeneralPaths.startToShootClose()),
                 Commands.waitMs(750),
                 autoCommand.shooterTogg,
                 autoCommand.intakeTogg,
@@ -83,7 +83,7 @@ public class Blue1Tip extends OpMode {
                 autoCommand.shooterTogg,
                 autoCommand.toggleAuto,
                 autoCommand.fWheelTogg,
-                follow(follower, AutoPaths.Corner.path2())
+                follow(follower, AutoPaths.Corner.park())
         );
     }
 
@@ -106,15 +106,15 @@ public class Blue1Tip extends OpMode {
         OpModeStorage.turretForwardZeroConfirmed = true;
 
         vision = new LimelightVision(hardwareMap, 5);
-        follower.setPose(AutoPaths.Corner.start);
+        follower.setPose(AutoPaths.GeneralPoints.startClose);
 
        // transfer = new Transfer(hardwareMap);
 
 
 
         /*visualizer = new PathVisualizer(
-                AutoPaths.Corner.path1(),
-                AutoPaths.Corner.path2()
+                AutoPaths.GeneralPaths.startToShootClose(),
+                AutoPaths.Corner.park()
         );*/
 
         //visualizer.drawNow(follower.pose());

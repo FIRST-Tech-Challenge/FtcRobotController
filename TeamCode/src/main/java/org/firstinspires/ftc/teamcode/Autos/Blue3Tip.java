@@ -74,18 +74,18 @@ public class Blue3Tip extends OpMode {
         return sequential(
                 autoCommand.toggleAuto,
                 autoCommand.fWheelTogg,
-                follow(follower, AutoPaths.TweaTip.path1()),
+                follow(follower, AutoPaths.GeneralPaths.startToShootClose()),
                 Commands.waitMs(1000),
                 autoCommand.shooterTogg,
                 autoCommand.intakeTogg,
                 Commands.waitMs(1500),
                 autoCommand.intakeTogg,
                 autoCommand.shooterTogg,
-                follow(follower, AutoPaths.TweaTip.path2()),
+                follow(follower, AutoPaths.GeneralPaths.shootCloseToFlowerWait()),
                 autoCommand.flowerCollectClose(follower),
                 autoCommand.intakeTogg,
                 autoCommand.toggleAuto,
-                follow(follower, AutoPaths.TweaTip.path3()
+                follow(follower, AutoPaths.TweaTip.flowerWaitToShoot()
                         .with(Constants.foresightConfig.maxPathSpeed.at(0.6))
                 ),
                 autoCommand.intakeTogg,
@@ -132,7 +132,7 @@ public class Blue3Tip extends OpMode {
         OpModeStorage.turretForwardZeroConfirmed = true;
 
         vision = new LimelightVision(hardwareMap, 5);
-        follower.setPose(AutoPaths.TweaTip.start);
+        follower.setPose(AutoPaths.GeneralPoints.startClose);
     }
     @Override
     public void start() {

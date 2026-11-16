@@ -74,41 +74,38 @@ public class Blue2Tip extends OpMode {
         return sequential(
                 autoCommand.toggleAuto,
                 autoCommand.fWheelTogg,
-                follow(follower, AutoPaths.Tip.path1()),
+                follow(follower, AutoPaths.GeneralPaths.startToShootClose()),
                 Commands.waitMs(750),
                 autoCommand.shooterTogg,
                 autoCommand.intakeTogg,
                 Commands.waitMs(1500),
                 //autoCommand.intakeTogg,
                 autoCommand.shooterTogg,
-                follow(follower, AutoPaths.Tip.path2wall()),
-                follow(follower, AutoPaths.Tip.path21()),
+                follow(follower, AutoPaths.Tip.shootCloseToCorner()),
                 autoCommand.shooterTogg,
                 autoCommand.waitForFeedMs(50),
                 autoCommand.shooterTogg,
                 Commands.waitMs(500),
                 parallel(
-                        follow(follower, AutoPaths.Tip.path22()),
+                        follow(
+                                follower, AutoPaths.Tip.cornerToFarShoot()
+                                        .with(Constants.foresightConfig.brakeAggression.at(0.5)).with(Constants.foresightConfig.maxPathSpeed.at(0.8))
+                        ),
                         sequential(
                                 Commands.waitMs(500),
                                 autoCommand.rampTogg
                         )
-                ),
-                //autoCommand.flowerCollectClose(follower),
-                follow(
-                        follower, AutoPaths.Tip.path3()
-                                .with(Constants.foresightConfig.brakeAggression.at(0.5)).with(Constants.foresightConfig.maxPathSpeed.at(0.8))
                 ),
                 autoCommand.shooterTogg,
                 autoCommand.startVis,
                 Commands.waitMs(2500),
                 autoCommand.shooterTogg,
                 autoCommand.toggleAuto,
-                follow(follower, AutoPaths.Tip.path4()),
+                follow(follower, AutoPaths.Tip.farShootToFlowerWait()),
                 autoCommand.flowerCollectFarShoot(follower),
                 autoCommand.rampTogg,
                 follow(
-                        follower, AutoPaths.Tip.path5()
+                        follower, AutoPaths.Tip.park()
                                 .with(Constants.foresightConfig.maxPathSpeed.at(0.4))
                 ),
                 //Commands.waitMs(2000),
@@ -138,22 +135,22 @@ public class Blue2Tip extends OpMode {
         OpModeStorage.turretForwardZeroConfirmed = true;
 
         vision = new LimelightVision(hardwareMap, 5);
-        follower.setPose(AutoPaths.Tip.start);
+        follower.setPose(AutoPaths.GeneralPoints.startClose);
 
        // transfer = new Transfer(hardwareMap);
 
 
 
         /*visualizer = new PathVisualizer(
-                AutoPaths.Tip.path1(),
-                AutoPaths.Tip.path2(),
+                AutoPaths.GeneralPaths.startToShootClose(),
+                AutoPaths.Tip.shootCloseToCorner(),
                 AutoPaths.GeneralPaths.flowerCloseTo(),
                 AutoPaths.GeneralPaths.flowerCloseFro(),
-                AutoPaths.Tip.path3(),
-                AutoPaths.Tip.path4(),
+                AutoPaths.Tip.cornerToFarShoot(),
+                AutoPaths.Tip.farShootToFlowerWait(),
                 AutoPaths.GeneralPaths.flowerFarTo(),
                 AutoPaths.GeneralPaths.flowerFarFro(),
-                AutoPaths.Tip.path5()
+                AutoPaths.Tip.park()
         );*/
 
         //visualizer.drawNow(follower.pose());
