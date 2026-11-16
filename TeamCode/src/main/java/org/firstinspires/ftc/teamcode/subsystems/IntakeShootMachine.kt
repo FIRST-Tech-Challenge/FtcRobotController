@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.robot.Robot
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.GerthaHardwareMap
 import org.firstinspires.ftc.teamcode.GerthaHardwareMap.*
+import org.firstinspires.ftc.teamcode.ShooterImpl
 import kotlin.math.abs
 
 class IntakeShootMachine(private val hw: GerthaHardwareMap) {
@@ -28,7 +29,7 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
     var justTransitioned = true
 
     companion object {
-        private val INTAKE_POWER = 0.7
+        private val INTAKE_POWER = 1.0
         private val OUTTAKE_POWER = -1.0
         private val SHOOT_POWER = 1.0
     }
@@ -111,14 +112,14 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
                     }
                     count = 0
                 }
-                if (getElapsedSec(stateStartTimeNs) > 1.0)
+                if (getElapsedSec(stateStartTimeNs) > 0.2)
                     state = State.SHOOT
             }
             State.SHOOT -> {
                 if (justTransitioned){
                     hw.setIntakePower(SHOOT_POWER)
                 }
-                if (getElapsedSec(stateStartTimeNs) > 1){
+                if (getElapsedSec(stateStartTimeNs) > 2.0){
                     state = State.OFF
                 }
             }

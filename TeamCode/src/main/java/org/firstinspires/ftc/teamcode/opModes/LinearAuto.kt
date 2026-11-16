@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.robot.Robot
 import org.firstinspires.ftc.teamcode.GerthaHardwareMap
+import org.firstinspires.ftc.teamcode.ShooterImpl
 import org.firstinspires.ftc.teamcode.hardware.RobotPose
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.hardware.PoseSet
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.DriveMachine
@@ -80,6 +81,7 @@ class LinearAuto : LinearOpMode() {
         val gamepadState = GamepadState(gamepad1, gamepad2)
 
         //create state machines
+        val shooterImpl = ShooterImpl(hw)
         val driveMachine = DriveMachine(hw)
         val intakeShootMachine = IntakeShootMachine(hw)
         val rampMachine = RampMachine(hw)

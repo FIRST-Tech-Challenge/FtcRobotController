@@ -9,6 +9,9 @@ class GamepadState(private val gp1: Gamepad, private val gp2: Gamepad) {
     var jy1 = 0.0
     var rx1 = 0.0
 
+    var start2 = false
+    var wasStart2 = false
+
     //outtake
     var lb1 = false
     var waslb1 = false
@@ -73,5 +76,8 @@ class GamepadState(private val gp1: Gamepad, private val gp2: Gamepad) {
 
         back2 = gp2.back && ! wasBack2
         wasBack2 = gp2.back
+
+        start2 = gp2.start && !wasStart2
+        wasStart2 = gp2.start
     }
 }

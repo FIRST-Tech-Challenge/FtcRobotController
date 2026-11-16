@@ -16,11 +16,12 @@ class Test: LinearOpMode(){
         waitForStart()
         while (opModeIsActive()){
 
-            telemetry.addData("red", hw.color.red())
-            telemetry.addData("blue", hw.color.blue())
-            telemetry.addData("green", hw.color.green())
-            Log.i("distance", hw.color.getDistance(DistanceUnit.CM).toString())
-            telemetry.addData("distance", hw.color.getDistance(DistanceUnit.CM))
+//            telemetry.addData("ticks", hw.pollenTurretEncoder.getCurrentPosition())
+//            telemetry.addData("red", hw.color.red())
+//            telemetry.addData("blue", hw.color.blue())
+//            telemetry.addData("green", hw.color.green())
+//            Log.i("distance", hw.color.getDistance(DistanceUnit.CM).toString())
+//            telemetry.addData("distance", hw.color.getDistance(DistanceUnit.CM))
             telemetry.update()
         }
     }

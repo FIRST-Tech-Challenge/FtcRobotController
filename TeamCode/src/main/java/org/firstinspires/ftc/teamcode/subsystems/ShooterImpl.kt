@@ -17,7 +17,7 @@ class ShooterImpl (private val hw: GerthaHardwareMap) {
 //        private const val maxVelocity = 1820.0
 
         private const val KF = 0.00659
-        var KP = 0.002
+        var KP = 0.004
         var KD = 0.001
         var KI = 0.0
 
@@ -38,6 +38,7 @@ class ShooterImpl (private val hw: GerthaHardwareMap) {
     var prevError = 0.0
 
     fun init(){
+
         hw.pollenShooter.mode = DcMotor.RunMode.RUN_USING_ENCODER
     }
 
@@ -64,20 +65,21 @@ class ShooterImpl (private val hw: GerthaHardwareMap) {
         val d = ((error - prevError) / (currentTime - prevTime)) * KD
 
         f = targetVoltage / currentVoltage
+        
+//        val targetMode = (target - hw.pollenShooter.velocity) <= pushThreshold
+//        if (targetMode != mode){
+//            if (targetMode){
+//                hw.pollenShooter.power = (p + i + d + f)
+//            }
+//        }
+//        mode = targetMode
+//        if(!mode) {
+//            hw.pollenShooter.power = 1.0
+//        }
 
-        if (error > 50) {
-            hw.pollenShooter.power = 1.0
-        }
-        else {
-            Log.i("shooterPID", (p + i + d + f).toString())
-            hw.pollenShooter.power = (p + i + d + f)
-        }
-
+        hw.pollenShooter.power = (p + i + d + f)
         prevTime = currentTime
         prevError = error
-
-
-
     }
 
     fun setTarget(vel: Double){
