@@ -160,7 +160,15 @@ public class RobotHardwareMap {
     public CRServo getFlowerServo() {
         return FlowerServo;
     }
-
+    public boolean hasNectarServo(){
+        return NectarServo != null;
+    }
+    public boolean hasPollenServo(){
+        return PollenServo != null;
+    }
+    public boolean hasFlowerServo(){
+        return FlowerServo != null;
+    }
     public void setFlowerServo(CRServo flowerServo) {
         FlowerServo = flowerServo;
     }
