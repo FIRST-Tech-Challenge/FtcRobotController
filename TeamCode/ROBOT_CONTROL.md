@@ -83,6 +83,10 @@ A is no longer a toggle. Tapping A alone again leaves forward intake on. Hold Ba
 | Hold D-pad Up | Spindexer forward, using timed pulses |
 | Hold D-pad Down | Spindexer reverse continuously for unjamming |
 | Release D-pad Up/Down | Spindexer STOP |
+| Back + D-pad Up / Down | Flower arm up / down |
+| LB + D-pad Up / Down | Nudge flower arm +2° / −2° |
+
+Flower-arm combinations reserve the D-pad until **both Up and Down are released**. Releasing Back or LB first does not run the spindexer. Release the D-pad, then press it again without either modifier to feed or reverse.
 
 Gamepad 2 A/B are ignored while Start is held for controller assignment. RPM multiplier changes happen once per new shoulder press; holding a shoulder or pressing Back after it is held does not repeat/change RPM. LB and LT together cancel. The RPM multiplier starts at +0.54 (3240 RPM), with bounds -1.0 to +1.0 (−6000 to +6000 RPM); adjustment does not start a stopped shooter. Shooter 2 remains removed. Other buttons/stick axes have no robot action in this TeleOp; the F310 Mode button changes the controller's stick/D-pad behavior internally.
 
