@@ -58,6 +58,9 @@ public class RobotHardwareMap {
 
     boolean controlHubBatteryVoltageEnabled = true;
     boolean expansionHubBatteryVoltageEnabled = true;
+    private CRServo PollenServo;
+    private CRServo NectarServo;
+    private CRServo FlowerServo;
 
 //    public RobotHardwareMap(HardwareMap baseHardwareMap, LinearOpMode operationMode) {
 //        this.linearOpMode = operationMode;
@@ -98,10 +101,10 @@ public class RobotHardwareMap {
         launcherNectar = baseHardwareMap.get(DcMotorEx.class, "launcher_nectar");
 
         //Drive Motors
-//        backLeftMotor = baseHardwareMap.get(DcMotorEx.class, "RL");
-//        backRightMotor = baseHardwareMap.get(DcMotorEx.class, "RR");
-//        frontLeftMotor = baseHardwareMap.get(DcMotorEx.class, "FL");
-//        frontRightMotor = baseHardwareMap.get(DcMotorEx.class, "FR");
+        backLeftMotor = baseHardwareMap.tryGet(DcMotorEx.class, "RL");
+        backRightMotor = baseHardwareMap.tryGet(DcMotorEx.class, "RR");
+        frontLeftMotor = baseHardwareMap.tryGet(DcMotorEx.class, "FL");
+        frontRightMotor = baseHardwareMap.tryGet(DcMotorEx.class, "FR");
 
 //        intakeMotorFront = baseHardwareMap.tryGet(DcMotorEx.class, "IF");
 //        outtakeMotorBack1 = baseHardwareMap.tryGet(DcMotorEx.class, "BRO");
@@ -114,9 +117,13 @@ public class RobotHardwareMap {
 //        LED2Green = baseHardwareMap.tryGet(DigitalChannel.class, "LED2Green");
 //        LED2Red = baseHardwareMap.tryGet(DigitalChannel.class, "LED2Red");
 
-        LeftTransferServo = baseHardwareMap.tryGet(CRServo.class, "LTS");
-        RightTransferServo = baseHardwareMap.tryGet(CRServo.class, "RTS");
-        CenterTransferServo = baseHardwareMap.tryGet(CRServo.class, "CTS");
+//        LeftTransferServo = baseHardwareMap.tryGet(CRServo.class, "LTS");
+//        RightTransferServo = baseHardwareMap.tryGet(CRServo.class, "RTS");
+//        CenterTransferServo = baseHardwareMap.tryGet(CRServo.class, "CTS");
+
+        PollenServo = baseHardwareMap.tryGet(CRServo.class, "pollen_servo");
+        NectarServo = baseHardwareMap.tryGet(CRServo.class, "nectar_servo");
+        FlowerServo = baseHardwareMap.tryGet(CRServo.class, "flower_servo");
 
         chImu = baseHardwareMap.get(IMU.class, "imu");
 
@@ -143,8 +150,34 @@ public class RobotHardwareMap {
     public boolean hasTransfer() {
         return LeftTransferServo != null && RightTransferServo != null && CenterTransferServo != null;
     }
-
+    public boolean hasDrive(){
+        return backLeftMotor != null && backRightMotor != null && frontLeftMotor != null && frontRightMotor != null;
+    }
     public boolean hasArm() {
         return armMotor != null && clawRotator != null;
+    }
+
+    public CRServo getFlowerServo() {
+        return FlowerServo;
+    }
+
+    public void setFlowerServo(CRServo flowerServo) {
+        FlowerServo = flowerServo;
+    }
+
+    public CRServo getNectarServo() {
+        return NectarServo;
+    }
+
+    public void setNectarServo(CRServo nectarServo) {
+        NectarServo = nectarServo;
+    }
+
+    public CRServo getPollenServo() {
+        return PollenServo;
+    }
+
+    public void setPollenServo(CRServo pollenServo) {
+        PollenServo = pollenServo;
     }
 }
