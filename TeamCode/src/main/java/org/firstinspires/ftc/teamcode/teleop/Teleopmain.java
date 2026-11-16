@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.hardware.TestBench;
 public class Teleopmain extends OpMode {
 
     private Shooter pollenShooter;
-//    private NectarShooter nectarShooter;
+    private NectarShooter nectarShooter;
 
     private DcMotorEx pollenmotor;
 
@@ -37,10 +37,16 @@ public class Teleopmain extends OpMode {
     public void init(){
         robotHardwareMap = new RobotHardwareMap(hardwareMap,this);
         robotHardwareMap.initialize();
+
         pollenShooter = new Shooter(robotHardwareMap,this);
-//        nectarShooter = new NectarShooter(robotHardwareMap);
-//        intake = new Intake(robotHardwareMap);
         pollenShooter.init();
+
+        nectarShooter = new NectarShooter(robotHardwareMap,this);
+        nectarShooter.init();
+
+        intake = new Intake(robotHardwareMap,this);
+        intake.initialize();
+
         pollenmotor = pollenShooter.getMotor();
 //        pollenmotor = hardwareMap.get(DcMotorEx.class,      "launcher_pollen");
 //        nectarShooter.init(hardwareMap,"launcher_nectar");
@@ -60,14 +66,22 @@ public class Teleopmain extends OpMode {
                 this.motorSpeed += .1;
             }
         }
-        if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper){
-            if (this.motorSpeed <= 1) {
-                this.motorSpeed += .1;
-            }
-        }
+//        if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper){
+//            if (this.motorSpeed <= 1) {
+//                this.motorSpeed += .1;
+//            }
+//        }
         if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down){
-            if (this.motorSpeed >= .2) {
+            if (this.motorSpeed >= .5) {
                 this.motorSpeed -= .1;
+            }
+
+        }
+        if (currentGamepad1.right_trigger > .5){
+            if (pollenShooter.isAtSpeed()) {
+                pollenShooter.shoot();
+            } else {
+                pollenShooter.setMotorSpeed(motorSpeed);
             }
 
         }
@@ -83,26 +97,26 @@ public class Teleopmain extends OpMode {
 
         //Activations
         if (runPollen){
-           // pollenmotor.setPower(.1);
-//            pollenShooter.getMotor().setPower(.1);
-//            pollenShooter.setMotorSpeed(0);
+//            pollenmotor.setPower(.1);
+            pollenShooter.getMotor().setPower(motorSpeed);
+            pollenShooter.setMotorSpeed(0);
         } else {
            // pollenmotor.setPower(0);
-//            pollenShooter.getMotor().setPower(0);
+            pollenShooter.getMotor().setPower(0);
         }
-//        if (runNectar){
-//            nectarShooter.setMotorSpeed(motorSpeed);
-////            nectarShooter
-////            pollenShooter.setMotorSpeed(0);
-//        } else {
-//            nectarShooter.setMotorSpeed(0);
-//        }
-//        if (runIntake){
-//            intake.on();
-////            pollenShooter.setMotorSpeed(0);
-//        } else {
-//            intake.off();
-//        }
+        if (runNectar){
+            nectarShooter.setMotorSpeed(motorSpeed);
+//            nectarShooter
+//            pollenShooter.setMotorSpeed(0);
+        } else {
+            nectarShooter.setMotorSpeed(0);
+        }
+        if (runIntake){
+             intake.on();
+//            pollenShooter.setMotorSpeed(0);
+        } else {
+            intake.off();
+        }
 
         //Telemtry
         buttonState.delete(0,buttonState.length());
