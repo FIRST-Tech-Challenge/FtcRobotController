@@ -26,8 +26,8 @@ import org.firstinspires.ftc.teamcode.quantumstorm.Vision.LimelightCamera;
  *                            (Hive -> SHOOTING, pickup zone -> INTAKE)
  *   SHOOTING [ReadyToShoot]  not enough balls -> go pick up. Else camera up, reposition if
  *                            the Hive flipped, align to AprilTag, shoot until empty -> go pick up
- *   INTAKE   [ReadyToPickup] Garden, then Flower, then ground search (camera down);
- *                            done -> dest = Hive 1 -> MOVING
+ *   INTAKE   [ReadyToPickup] Intake at Garden, Flower, or ground for a 30-second
+ *                            color-pipeline scan; detections do not control the robot
  *   ERROR    [Error]         recoverable and retries left -> resume dest; else PARK
  *   PARK     [Parked]        drive to park (touching the perimeter) and stay
  * Global guard every loop: isAutoTimeUp() -> PARK from any state.
@@ -106,7 +106,7 @@ public class AutoStateMachine {
         camera = new LimelightCamera(opMode.hardwareMap);
 
         opMode.telemetry.addData("Autonomous", position.label);
-        opMode.telemetry.addData("Camera", camera.isConnected() ? "OK" : "NOT FOUND");
+        opMode.telemetry.addData("Camera", camera.getConnectionStatus());
         opMode.telemetry.addLine("Place robot at the " + position.label + " start, then press PLAY");
         opMode.telemetry.update();
     }
@@ -133,6 +133,7 @@ public class AutoStateMachine {
                 setState(State.PARK);
             }
 
+            camera.updateColorPipelineScan();
             addTelemetry();
         }
 
@@ -150,7 +151,7 @@ public class AutoStateMachine {
 
         // Self-check: a failed check goes straight to ERROR
         if (!camera.isConnected()) {
-            fail("Limelight or tilt servo not found", false);
+            fail(camera.getConnectionStatus(), false);
             return;
         }
 
@@ -173,7 +174,6 @@ public class AutoStateMachine {
                     goToPickup();
                     return;
                 }
-                camera.tiltUp();
                 shooter.spinUp();          // spins up while aligning
                 setShootStep(ShootStep.AIM);
                 break;
@@ -192,10 +192,17 @@ public class AutoStateMachine {
                 } else if (stateTimer.seconds() > Constants.AUTO_APRILTAG_TIMEOUT_SEC) {
                     fail(camera.isAprilTagVisible() ? "Could not align to AprilTag" : "AprilTag not found", true);
                 } else if (camera.isAprilTagVisible()) {
-                    // Turn in place to center the tag
-                    double turn = Range.clip(camera.getAprilTagAngle() * Constants.AUTO_AIM_TURN_KP,
-                            -Constants.MOVE_MAX_POWER, Constants.MOVE_MAX_POWER);
-                    navigator.driveRobotRelative(0, 0, turn);
+                    double angle = camera.getAprilTagAngle();
+                    if (Math.abs(angle) >= Constants.AUTO_AIM_TOLERANCE_DEG) {
+                        double turn = Math.copySign(
+                                Range.clip(Math.abs(angle * Constants.AUTO_AIM_TURN_KP),
+                                        Constants.AUTO_AIM_MIN_TURN_POWER, Constants.MOVE_MAX_POWER),
+                                angle);
+                        navigator.driveRobotRelative(0, 0, turn);
+                    } else {
+                        // Stay aligned while waiting for the flywheel to spin up.
+                        navigator.stop();
+                    }
                 } else {
                     navigator.stop();
                 }
@@ -223,8 +230,12 @@ public class AutoStateMachine {
         switch (pickupSource) {
             case GARDEN:
             case FLOWER:
-                // Already at the pickup spot (MOVING brought us here): intake until full or timeout
+                // Color detections are telemetry-only. Stop intake when full or timed out,
+                // but stay here until all three pipelines have had their 10-second scan.
                 if (isFull() || stateTimer.seconds() > Constants.AUTO_PICKUP_TIMEOUT_SEC) {
+                    intake.stop();
+                }
+                if (stateTimer.seconds() >= Constants.LIMELIGHT_COLOR_SCAN_CYCLE_SEC) {
                     if (pickupSource == PickupSource.GARDEN) {
                         gardenPickedUp = true;
                     } else {
@@ -236,15 +247,11 @@ public class AutoStateMachine {
 
             case GROUND:
                 if (isFull() || stateTimer.seconds() > Constants.AUTO_GROUND_SEARCH_TIMEOUT_SEC) {
+                    intake.stop();
+                }
+                navigator.stop();
+                if (stateTimer.seconds() >= Constants.LIMELIGHT_COLOR_SCAN_CYCLE_SEC) {
                     finishPickup();
-                } else if (camera.isBallVisible()) {
-                    // Drive toward the ball, turning to keep it centered
-                    double turn = Range.clip(camera.getBallAngle() * Constants.AUTO_GROUND_TURN_KP,
-                            -Constants.AUTO_GROUND_DRIVE_POWER, Constants.AUTO_GROUND_DRIVE_POWER);
-                    navigator.driveRobotRelative(Constants.AUTO_GROUND_DRIVE_POWER, 0, turn);
-                } else {
-                    // No ball in view: spin slowly to look for one
-                    navigator.driveRobotRelative(0, 0, Constants.AUTO_GROUND_SEARCH_TURN_POWER);
                 }
                 break;
         }
@@ -252,7 +259,6 @@ public class AutoStateMachine {
 
     private void runError() {
         stopEverything();
-        camera.tiltUp();   // back to the AprilTag pipeline to re-localize
         // TODO: re-localize odometry from the Limelight AprilTag bot pose
 
         if (errorRecoverable && retryCount < Constants.AUTO_MAX_RETRIES) {
@@ -326,7 +332,6 @@ public class AutoStateMachine {
 
     private void finishPickup() {
         intake.stop();
-        camera.tiltUp();
         // Without ball sensors, assume the pickup filled the indexer
         indexer.setBallCount(Constants.AUTO_BALLS_TO_SHOOT);
         moveThen(shootingPose(), "Hive 1", State.SHOOTING);
@@ -365,15 +370,20 @@ public class AutoStateMachine {
 
         state = newState;
         stateTimer.reset();
+        if (newState == State.INTAKE) {
+            camera.setTiltAngleFromNeutralDegrees(Constants.LIMELIGHT_SERVO_MAX_OFFSET_DEGREES);
+            camera.startColorPipelineScan();
+        } else {
+            camera.setTiltAngleFromNeutralDegrees(newState == State.SHOOTING
+                    ? -Constants.LIMELIGHT_SERVO_MAX_OFFSET_DEGREES : 0.0);
+            camera.selectAprilTagPipeline();
+        }
 
         // Entering a state
         if (newState == State.SHOOTING) {
             shootStep = ShootStep.CHECK_BALLS;
         } else if (newState == State.INTAKE) {
             intake.start();
-            // Intake searches for color targets from every pickup source.
-            // The Limelight helper sets false/color mode when the servo moves down.
-            camera.tiltDown();
         } else if (newState == State.PARK) {
             stopEverything();
             parked = false;

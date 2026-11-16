@@ -15,6 +15,9 @@ import java.util.List;
 
 public class LimeServo {
 
+    private static final double APRIL_TAG_TILT_FROM_NEUTRAL_DEGREES = -100.0;
+    private static final double COLOR_TILT_FROM_NEUTRAL_DEGREES = 60.0;
+
     public enum Pipeline {
         APRIL_TAG(Constants.LIMELIGHT_APRILTAG_PIPELINE),
         BLUE(Constants.LIMELIGHT_BLUE_PIPELINE),
@@ -37,7 +40,7 @@ public class LimeServo {
         tiltServo = hardwareMap.tryGet(Servo.class, Constants.LIMELIGHT_TILT_SERVO);
 
         if (tiltServo != null) {
-            tiltServo.setPosition(Constants.LIMELIGHT_TILT_DOWN);
+            tiltServo.setPosition(Constants.LIMELIGHT_SERVO_NEUTRAL_POSITION);
         }
         if (limelight != null) {
             limelight.pipelineSwitch(activePipeline.index);
@@ -95,23 +98,26 @@ public class LimeServo {
         return ids;
     }
 
-    public void setTiltPosition(double position) {
+    /** Positive angles command clockwise motion; reverse servo direction if the mounting is opposite. */
+    public void setTiltAngleFromNeutralDegrees(double clockwisePositiveDegrees) {
+        if (!Double.isFinite(clockwisePositiveDegrees)) {
+            throw new IllegalArgumentException("Tilt angle must be finite");
+        }
         if (tiltServo != null) {
-            double enforcedPosition = activePipeline == Pipeline.APRIL_TAG
-                    ? Constants.LIMELIGHT_APRILTAG_TILT_POSITION
-                    : Range.clip(position, 0.0, 1.0);
-            tiltServo.setPosition(enforcedPosition);
+            double limitedAngle = Range.clip(clockwisePositiveDegrees,
+                    -Constants.LIMELIGHT_SERVO_MAX_OFFSET_DEGREES,
+                    Constants.LIMELIGHT_SERVO_MAX_OFFSET_DEGREES);
+            double servoPosition = Constants.LIMELIGHT_SERVO_NEUTRAL_POSITION
+                    + limitedAngle / Constants.LIMELIGHT_SERVO_TRAVEL_DEGREES;
+            tiltServo.setPosition(servoPosition);
         }
     }
 
     private void setTiltForActivePipeline() {
-        if (tiltServo == null) {
-            return;
-        }
-        double position = activePipeline == Pipeline.APRIL_TAG
-                ? Constants.LIMELIGHT_APRILTAG_TILT_POSITION
-                : Constants.LIMELIGHT_TILT_DOWN;
-        tiltServo.setPosition(position);
+        double angle = activePipeline == Pipeline.APRIL_TAG
+                ? APRIL_TAG_TILT_FROM_NEUTRAL_DEGREES
+                : COLOR_TILT_FROM_NEUTRAL_DEGREES;
+        setTiltAngleFromNeutralDegrees(angle);
     }
 
     public void stop() {

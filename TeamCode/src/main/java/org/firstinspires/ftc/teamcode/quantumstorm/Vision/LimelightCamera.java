@@ -5,6 +5,8 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -17,31 +19,41 @@ import org.firstinspires.ftc.teamcode.quantumstorm.Constants;
 import java.util.List;
 
 /**
- * Limelight 3A on a tilt servo. One pipeline runs at a time:
- *  - false / tiltDown(): color pipeline, used to find game pieces
- *  - true / tiltUp(): AprilTag pipeline, used to find the Hive
+ * Limelight 3A and tilt servo. AprilTags are used outside INTAKE; INTAKE cycles
+ * the yellow, blue, and red color pipelines for telemetry only.
  *
  * If the camera or servo is missing from the Robot Configuration, this does not
- * crash INIT: isConnected() returns false and every query reports "nothing seen",
- * so the autonomous self-check can send the robot to ERROR -> PARK instead.
+ * crash INIT: isConnected() returns false, so the autonomous self-check sends
+ * the robot to ERROR -> PARK. A connected camera can still report detections
+ * when the tilt servo is missing; detections do not imply hardware readiness.
  */
 public class LimelightCamera {
 
     private static final long MAX_TELEMETRY_RESULT_AGE_MS = 250;
+    private static final int[] COLOR_PIPELINES = {
+            Constants.LIMELIGHT_YELLOW_PIPELINE,
+            Constants.LIMELIGHT_BLUE_PIPELINE,
+            Constants.LIMELIGHT_RED_PIPELINE
+    };
+    private static final String[] COLOR_PIPELINE_NAMES = {"Yellow", "Blue", "Red"};
 
     private final Limelight3A limelight;   // null if not in the configuration
     private final Servo tiltServo;         // null if not in the configuration
-    private boolean aprilTagMode = false;  // Start in color-search mode.
+    private final ElapsedTime colorPipelineTimer = new ElapsedTime();
+    private boolean aprilTagMode = true;
+    private boolean colorPipelineScanActive;
+    private int activePipeline = Constants.LIMELIGHT_APRILTAG_PIPELINE;
+    private int colorPipelineScanIndex;
 
     public LimelightCamera(HardwareMap hardwareMap) {
         limelight = hardwareMap.tryGet(Limelight3A.class, Constants.LIMELIGHT);
         tiltServo = hardwareMap.tryGet(Servo.class, Constants.LIMELIGHT_TILT_SERVO);
-        // Initialize in false/color mode without toggling the mode flag.
+        // Start neutral and use AprilTags until autonomous enters INTAKE.
         if (tiltServo != null) {
-            tiltServo.setPosition(Constants.LIMELIGHT_TILT_DOWN);
+            tiltServo.setPosition(Constants.LIMELIGHT_SERVO_NEUTRAL_POSITION);
         }
         if (limelight != null) {
-            limelight.pipelineSwitch(Constants.LIMELIGHT_COLOR_PIPELINE);
+            limelight.pipelineSwitch(Constants.LIMELIGHT_APRILTAG_PIPELINE);
             limelight.start();
         }
     }
@@ -50,15 +62,43 @@ public class LimelightCamera {
         return limelight != null && tiltServo != null && limelight.isConnected();
     }
 
-    public void tiltUp() {
+    public String getConnectionStatus() {
+        if (limelight == null) {
+            return "Limelight not configured: " + Constants.LIMELIGHT;
+        }
+        if (tiltServo == null) {
+            return "Tilt servo not configured: " + Constants.LIMELIGHT_TILT_SERVO;
+        }
+        return limelight.isConnected() ? "Ready" : "Limelight disconnected: " + Constants.LIMELIGHT;
+    }
+
+    public void selectAprilTagPipeline() {
         setMode(true);
     }
 
-    public void tiltDown() {
+    public void selectColorPipeline() {
         setMode(false);
     }
 
-    /** Toggle modes whenever the Limelight tilt servo should move. */
+    public void startColorPipelineScan() {
+        aprilTagMode = false;
+        colorPipelineScanActive = true;
+        colorPipelineScanIndex = 0;
+        colorPipelineTimer.reset();
+        switchPipeline(COLOR_PIPELINES[colorPipelineScanIndex]);
+    }
+
+    public void updateColorPipelineScan() {
+        if (!colorPipelineScanActive
+                || colorPipelineTimer.seconds() < Constants.LIMELIGHT_COLOR_PIPELINE_DWELL_SEC) {
+            return;
+        }
+        colorPipelineScanIndex = (colorPipelineScanIndex + 1) % COLOR_PIPELINES.length;
+        switchPipeline(COLOR_PIPELINES[colorPipelineScanIndex]);
+        colorPipelineTimer.reset();
+    }
+
+    /** Toggle between color and AprilTag pipelines. */
     public void toggleMode() {
         setMode(!aprilTagMode);
     }
@@ -66,6 +106,21 @@ public class LimelightCamera {
     /** True means AprilTag mode; false means color-search mode. */
     public boolean isAprilTagMode() {
         return aprilTagMode;
+    }
+
+    /** Positive angles command clockwise motion; reverse servo direction if the mounting is opposite. */
+    public void setTiltAngleFromNeutralDegrees(double clockwisePositiveDegrees) {
+        if (!Double.isFinite(clockwisePositiveDegrees)) {
+            throw new IllegalArgumentException("Tilt angle must be finite");
+        }
+        if (tiltServo != null) {
+            double limitedAngle = Range.clip(clockwisePositiveDegrees,
+                    -Constants.LIMELIGHT_SERVO_MAX_OFFSET_DEGREES,
+                    Constants.LIMELIGHT_SERVO_MAX_OFFSET_DEGREES);
+            double servoPosition = Constants.LIMELIGHT_SERVO_NEUTRAL_POSITION
+                    + limitedAngle / Constants.LIMELIGHT_SERVO_TRAVEL_DEGREES;
+            tiltServo.setPosition(servoPosition);
+        }
     }
 
     // ---- AprilTag pipeline ----
@@ -79,7 +134,7 @@ public class LimelightCamera {
 
     /** Horizontal angle to the seen AprilTag in degrees (right = positive), or 0 if none. */
     public double getAprilTagAngle() {
-        LLResult result = resultFor(Constants.LIMELIGHT_APRILTAG_PIPELINE);
+        LLResult result = telemetryResultFor(Constants.LIMELIGHT_APRILTAG_PIPELINE);
         return result != null ? result.getTx() : 0;
     }
 
@@ -101,13 +156,13 @@ public class LimelightCamera {
 
     /** Horizontal angle to the seen ball in degrees (right = positive), or 0 if none. */
     public double getBallAngle() {
-        LLResult result = resultFor(Constants.LIMELIGHT_COLOR_PIPELINE);
+        LLResult result = currentColorResult();
         return result != null ? result.getTx() : 0;
     }
 
     /** True when the color pipeline reports an actual color or detector target. */
     public boolean isColorVisible() {
-        LLResult result = resultFor(Constants.LIMELIGHT_COLOR_PIPELINE);
+        LLResult result = currentColorResult();
         if (result == null) {
             return false;
         }
@@ -120,7 +175,7 @@ public class LimelightCamera {
 
     /** Horizontal angle to the target in the color pipeline, or 0 if none. */
     public double getColorAngle() {
-        LLResult result = resultFor(Constants.LIMELIGHT_COLOR_PIPELINE);
+        LLResult result = currentColorResult();
         return result != null && isColorVisible() ? result.getTx() : 0;
     }
 
@@ -134,11 +189,15 @@ public class LimelightCamera {
     /** Add the current pipeline's target and pose data to Driver Station telemetry. */
     public void addTelemetry(Telemetry telemetry) {
         boolean connected = limelight != null && limelight.isConnected();
-        int pipeline = aprilTagMode
-                ? Constants.LIMELIGHT_APRILTAG_PIPELINE : Constants.LIMELIGHT_COLOR_PIPELINE;
+        int pipeline = activePipeline;
         telemetry.addData("Limelight", connected ? "Connected" : "Disconnected / not found");
-        telemetry.addData("Limelight pipeline", "%d (%s)", pipeline,
-                aprilTagMode ? "AprilTag" : "Color");
+        telemetry.addData("Camera hardware", getConnectionStatus());
+        telemetry.addData("Limelight pipeline", "%d (%s)", pipeline, pipelineName(pipeline));
+        if (colorPipelineScanActive) {
+            telemetry.addData("Color pipeline scan", "next switch in %.1f s",
+                    Math.max(0.0, Constants.LIMELIGHT_COLOR_PIPELINE_DWELL_SEC
+                            - colorPipelineTimer.seconds()));
+        }
 
         LLResult result = telemetryResultFor(pipeline);
         boolean targetFound = false;
@@ -245,6 +304,7 @@ public class LimelightCamera {
     }
 
     public void stop() {
+        colorPipelineScanActive = false;
         if (limelight != null) {
             limelight.stop();
         }
@@ -253,22 +313,38 @@ public class LimelightCamera {
     // ---- helpers ----
 
     private void setMode(boolean useAprilTags) {
-        if (aprilTagMode == useAprilTags) {
-            return; // No servo movement, so do not toggle the mode.
-        }
-
+        colorPipelineScanActive = false;
         aprilTagMode = useAprilTags;
-        double tilt = useAprilTags ? Constants.LIMELIGHT_TILT_UP : Constants.LIMELIGHT_TILT_DOWN;
         int pipeline = useAprilTags
                 ? Constants.LIMELIGHT_APRILTAG_PIPELINE
                 : Constants.LIMELIGHT_COLOR_PIPELINE;
+        switchPipeline(pipeline);
+    }
 
-        if (tiltServo != null) {
-            tiltServo.setPosition(tilt);
+    private void switchPipeline(int pipeline) {
+        if (activePipeline == pipeline) {
+            return;
         }
+        activePipeline = pipeline;
         if (limelight != null) {
             limelight.pipelineSwitch(pipeline);
         }
+    }
+
+    private LLResult currentColorResult() {
+        return aprilTagMode ? null : resultFor(activePipeline);
+    }
+
+    private String pipelineName(int pipeline) {
+        if (pipeline == Constants.LIMELIGHT_APRILTAG_PIPELINE) {
+            return "AprilTag";
+        }
+        for (int index = 0; index < COLOR_PIPELINES.length; index++) {
+            if (pipeline == COLOR_PIPELINES[index]) {
+                return COLOR_PIPELINE_NAMES[index];
+            }
+        }
+        return "Unknown";
     }
 
     /** Latest valid result from the given pipeline, or null after a pipeline switch. */

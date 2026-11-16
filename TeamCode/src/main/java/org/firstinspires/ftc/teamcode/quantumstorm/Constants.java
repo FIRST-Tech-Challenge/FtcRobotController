@@ -72,6 +72,11 @@ public class Constants {
     public final static double LIMELIGHT_TILT_DOWN = 0.7;   // position for color pipelines
     // Standard 180-degree servo mapping: 30 degrees / 180 degrees = 0.167 position.
     public final static double LIMELIGHT_APRILTAG_TILT_POSITION = 30.0 / 180.0;
+    public final static double LIMELIGHT_SERVO_TRAVEL_DEGREES = 300.0;
+    public final static double LIMELIGHT_SERVO_NEUTRAL_POSITION = 0.5;
+    public final static double LIMELIGHT_SERVO_MAX_OFFSET_DEGREES = 120.0;
+    public final static double LIMELIGHT_COLOR_PIPELINE_DWELL_SEC = 10.0;
+    public final static double LIMELIGHT_COLOR_SCAN_CYCLE_SEC = 30.0;
 
     // Pipeline indices must match the pipelines configured in the Limelight web UI.
     public final static int LIMELIGHT_APRILTAG_PIPELINE = 0;
@@ -168,6 +173,7 @@ public class Constants {
     public final static double AUTO_FEED_TIME_SEC = 2.0;           // feed time to empty the indexer
     public final static double AUTO_AIM_TOLERANCE_DEG = 2.0;       // AprilTag tx within this = aligned
     public final static double AUTO_AIM_TURN_KP = 0.02;            // turn power per degree of tag offset
+    public final static double AUTO_AIM_MIN_TURN_POWER = 0.15;    // tune on robot to overcome static friction
     public final static double AUTO_PICKUP_TIMEOUT_SEC = 3.0;      // time spent intaking at garden/flower
     public final static double AUTO_GROUND_SEARCH_TIMEOUT_SEC = 6.0;
     public final static double AUTO_GROUND_DRIVE_POWER = 0.3;      // forward speed toward a seen ball
