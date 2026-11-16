@@ -55,9 +55,9 @@ public class FlowerIntake {
     }
 
     /**
-     * Driver controls, called once per loop:
-     *   START + D-pad UP   = lift to FLOWER_UP_DEG
-     *   START + D-pad DOWN = drop to FLOWER_DOWN_DEG
+     * Driver controls (gamepad 2 in TeleOp), called once per loop:
+     *   BACK + D-pad UP    = lift to FLOWER_UP_DEG
+     *   BACK + D-pad DOWN  = drop to FLOWER_DOWN_DEG
      *   LB + D-pad UP/DOWN = nudge by FLOWER_NUDGE_DEG (tuning)
      * Acts when the whole combo becomes true, so the buttons can be pressed
      * in any order or together. The D-pad alone never moves the arm.
@@ -67,10 +67,10 @@ public class FlowerIntake {
         boolean up = gamepad.dpad_up && !gamepad.dpad_down;
         boolean down = gamepad.dpad_down && !gamepad.dpad_up;
 
-        boolean lift = gamepad.start && up;
-        boolean drop = gamepad.start && down;
-        boolean nudgeUp = !gamepad.start && gamepad.left_bumper && up;
-        boolean nudgeDown = !gamepad.start && gamepad.left_bumper && down;
+        boolean lift = gamepad.back && up;
+        boolean drop = gamepad.back && down;
+        boolean nudgeUp = !gamepad.back && gamepad.left_bumper && up;
+        boolean nudgeDown = !gamepad.back && gamepad.left_bumper && down;
 
         if (lift && !previousLift) lift();
         if (drop && !previousDrop) drop();

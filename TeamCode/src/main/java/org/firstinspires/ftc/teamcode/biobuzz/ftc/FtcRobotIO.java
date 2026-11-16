@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.biobuzz.RobotIO;
 public final class FtcRobotIO implements RobotIO,AutoCloseable {
     private final FtcHardwareConfig config;
     private final DcMotor fl,fr,bl,br,intake,shooter;
-    private final CRServo leftIntake,rightIntake,feeder;
+    private final CRServo feeder;
     private final GoBildaPinpointDriver pinpoint;
     private final Limelight3A limelight;
     private final Servo cameraTilt;
@@ -35,7 +35,7 @@ public final class FtcRobotIO implements RobotIO,AutoCloseable {
         fl=map.get(DcMotor.class,config.frontLeft);fr=map.get(DcMotor.class,config.frontRight);
         bl=map.get(DcMotor.class,config.backLeft);br=map.get(DcMotor.class,config.backRight);
         intake=map.get(DcMotor.class,config.intake);shooter=map.get(DcMotor.class,config.shooter);
-        leftIntake=map.get(CRServo.class,config.leftIntakeServo);rightIntake=map.get(CRServo.class,config.rightIntakeServo);feeder=map.get(CRServo.class,config.feeder);
+        feeder=map.get(CRServo.class,config.feeder);
         pinpoint=map.get(GoBildaPinpointDriver.class,config.pinpoint);
         checkStop();
         limelight=config.useVision?map.get(Limelight3A.class,config.limelight):null;
@@ -46,7 +46,7 @@ public final class FtcRobotIO implements RobotIO,AutoCloseable {
         for(DcMotor motor:new DcMotor[]{fl,fr,bl,br,intake})motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         for(DcMotor motor:new DcMotor[]{fl,fr,bl,br,intake,shooter})motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        leftIntake.setDirection(CRServo.Direction.REVERSE);rightIntake.setDirection(CRServo.Direction.FORWARD);feeder.setDirection(CRServo.Direction.REVERSE);
+        feeder.setDirection(CRServo.Direction.REVERSE);
         apply(new Outputs());
         checkStop();
         pinpoint.setOffsets(config.podXOffsetMm,config.podYOffsetMm,DistanceUnit.MM);
@@ -89,7 +89,7 @@ public final class FtcRobotIO implements RobotIO,AutoCloseable {
         actuatorsStopped=false;
         double[] w=o.wheelPowers();
         fl.setPower(w[0]);fr.setPower(w[1]);bl.setPower(w[2]);br.setPower(w[3]);
-        intake.setPower(o.intakePower);leftIntake.setPower(o.intakePower);rightIntake.setPower(o.intakePower);
+        intake.setPower(o.intakePower);
         shooter.setPower(o.shooterPower);feeder.setPower(cadence.apply(o.shooterPower>0?o.feederPower:0,nowSeconds()));
         if(pipeline!=o.pipeline){
             pipeline=o.pipeline;pipelineChangedAt=nowSeconds();frameTimestamp=Double.NaN;
@@ -100,7 +100,7 @@ public final class FtcRobotIO implements RobotIO,AutoCloseable {
     private void stopActuators(){
         if(actuatorsStopped)return;actuatorsStopped=true;
         SafeShutdown.run(()->fl.setPower(0),()->fr.setPower(0),()->bl.setPower(0),()->br.setPower(0),
-            ()->intake.setPower(0),()->shooter.setPower(0),()->leftIntake.setPower(0),()->rightIntake.setPower(0),()->feeder.setPower(0));
+            ()->intake.setPower(0),()->shooter.setPower(0),()->feeder.setPower(0));
     }
     public void close() { if(closed)return;closed=true;stopActuators();if(limelight!=null)SafeShutdown.run(limelight::stop); }
 }

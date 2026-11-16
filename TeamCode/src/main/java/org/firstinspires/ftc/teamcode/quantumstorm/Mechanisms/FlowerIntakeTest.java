@@ -27,32 +27,32 @@ public class FlowerIntakeTest extends LinearOpMode {
         flowerIntake.lift();
 
         telemetry.addLine("Flower arm moved to UP. Press START to test.");
-        telemetry.addLine("START + D-Pad DOWN = DROP");
-        telemetry.addLine("START + D-Pad UP = LIFT");
+        telemetry.addLine("Gamepad 2: BACK + D-Pad DOWN = DROP");
+        telemetry.addLine("Gamepad 2: BACK + D-Pad UP = UP");
         telemetry.addLine("LB + D-Pad UP/DOWN = Nudge");
-        telemetry.addLine("Bench only: A = DROP, Y = LIFT");
-        telemetry.addLine("Gamepad not responding? Press START+A on it to make it User 1");
+        telemetry.addLine("Bench only: A = DROP, Y = UP");
+        telemetry.addLine("Gamepad not responding? Press START+B on it to make it User 2");
         telemetry.update();
 
         waitForStart();
 
-        boolean previousA = gamepad1.a;
-        boolean previousY = gamepad1.y;
+        boolean previousA = gamepad2.a;
+        boolean previousY = gamepad2.y;
 
         while (opModeIsActive()) {
 
             // Same controls as QuantumStormTeleOp
-            flowerIntake.handleGamepad(gamepad1);
+            flowerIntake.handleGamepad(gamepad2);
 
             // Bench-only single buttons, to rule out the combos while testing.
-            // Ignored with START held, since START+A assigns the gamepad.
-            if (!gamepad1.start) {
-                if (gamepad1.a && !previousA) flowerIntake.drop();
-                if (gamepad1.y && !previousY) flowerIntake.lift();
+            // Ignored with START held, since START+B assigns the gamepad.
+            if (!gamepad2.start) {
+                if (gamepad2.a && !previousA) flowerIntake.drop();
+                if (gamepad2.y && !previousY) flowerIntake.lift();
             }
 
-            previousA = gamepad1.a;
-            previousY = gamepad1.y;
+            previousA = gamepad2.a;
+            previousY = gamepad2.y;
 
             telemetry.addData(
                     "Flower Intake",
@@ -62,21 +62,21 @@ public class FlowerIntakeTest extends LinearOpMode {
                     flowerIntake.getPosition());
             telemetry.addData("Limits", "%.0f .. %.0f deg",
                     Constants.FLOWER_ANGLE_MIN_DEG, Constants.FLOWER_ANGLE_MAX_DEG);
-            telemetry.addLine("START+D-Pad DOWN/UP = DROP/LIFT,  LB+D-Pad = Nudge");
-            telemetry.addLine("Bench only: A = DROP, Y = LIFT");
+            telemetry.addLine("BACK+D-Pad DOWN/UP = DROP/UP,  LB+D-Pad = Nudge");
+            telemetry.addLine("Bench only: A = DROP, Y = UP");
 
             // Live gamepad readout: if nothing here changes when buttons are
-            // pressed, the gamepad is not assigned as User 1.
+            // pressed, the gamepad is not assigned as User 2.
             telemetry.addLine("");
-            telemetry.addData("Gamepad 1",
-                    gamepad1.getGamepadId() == Gamepad.ID_UNASSOCIATED
-                            ? "NOT ASSIGNED - press START+A on the gamepad"
-                            : "assigned (" + gamepad1.type() + ")");
+            telemetry.addData("Gamepad 2",
+                    gamepad2.getGamepadId() == Gamepad.ID_UNASSOCIATED
+                            ? "NOT ASSIGNED - press START+B on the gamepad"
+                            : "assigned (" + gamepad2.type() + ")");
             telemetry.addData("Buttons",
-                    "START %s  LB %s  UP %s  DOWN %s  A %s  Y %s",
-                    onOff(gamepad1.start), onOff(gamepad1.left_bumper),
-                    onOff(gamepad1.dpad_up), onOff(gamepad1.dpad_down),
-                    onOff(gamepad1.a), onOff(gamepad1.y));
+                    "BACK %s  LB %s  UP %s  DOWN %s  A %s  Y %s",
+                    onOff(gamepad2.back), onOff(gamepad2.left_bumper),
+                    onOff(gamepad2.dpad_up), onOff(gamepad2.dpad_down),
+                    onOff(gamepad2.a), onOff(gamepad2.y));
             telemetry.update();
         }
     }
