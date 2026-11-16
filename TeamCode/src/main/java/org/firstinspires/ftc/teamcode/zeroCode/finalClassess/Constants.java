@@ -15,7 +15,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.zeroCode.utils.ColorLocator;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
@@ -113,6 +112,20 @@ public final class Constants {
 
     }
 
+    public static final class intakes{
+        public static String intakePollenName = "intakePollen";
+        public static String intakeNectarName = "intakeNectar";
+        public static DcMotor intakePollen;
+        public static DcMotor intakeNectar;
+    }
+
+    public static final class ramp{
+        public static String rampName = "ramp";
+        public static Servo ramp;
+        public static double rampPollenAngle = 0.0;
+        public static double rampNectarAngle = 180.0;
+    }
+
     public static final class drive{
         public static final String frontLeftMotorName = "frontLeftMotor";
         public static final String frontRightMotorName = "frontRightMotor";
@@ -140,7 +153,8 @@ public final class Constants {
         public static boolean initializeIMU = false;
         public static boolean initializeTurret = false;
         public static boolean initializeShooter = false;
-        public static boolean initializeIntake = false;
+        public static boolean initializeIntakes = false;
+        public static boolean initializeRamp = false;
         public static boolean initializeLimelight = false;
         public static boolean initializeWebcam = false;
         public static boolean initializeColorBlobLocator = false;
@@ -150,7 +164,8 @@ public final class Constants {
             initializeIMU = false;
             initializeTurret = false;
             initializeShooter = false;
-            initializeIntake = false;
+            initializeIntakes = false;
+            initializeRamp = false;
             initializeLimelight = false;
             initializeWebcam = false;
             initializeColorBlobLocator = false;
@@ -307,6 +322,33 @@ public final class Constants {
             } else {
                 telemetry.addLine("Shooter parts NOT initialized.");
             }
+
+            if (initializeIntakes) {
+                try {
+                    intakes.intakeNectar = hardwareMap.get(DcMotor.class, intakes.intakeNectarName);
+                    intakes.intakePollen = hardwareMap.get(DcMotor.class, intakes.intakePollenName);
+                    telemetry.addLine("Intakes initialized.");
+                } catch (Exception e) {
+                    telemetry.addLine("Not all intake hardware maps configured.");
+                    telemetry.addLine("Intakes not initialized.");
+                    return false;
+                }
+            } else {
+                telemetry.addLine("Intakes not initialized.");
+            }
+
+            if (initializeRamp) {
+                try {
+                    ramp.ramp = hardwareMap.get(Servo.class, ramp.rampName);
+                    telemetry.addLine("Ramp initialized.");
+                } catch (Exception e) {
+                    telemetry.addLine("Ramp hardware map not configured.");
+                    telemetry.addLine("Ramp not initialized.");
+                }
+            } else {
+                telemetry.addLine("Ramp not initialized.");
+            }
+
 
             telemetry.update();
 

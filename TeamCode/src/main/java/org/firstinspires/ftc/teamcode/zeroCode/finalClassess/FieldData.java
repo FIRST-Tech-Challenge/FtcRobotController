@@ -25,6 +25,7 @@ public final class FieldData {
     public static double nectarRadius = nectarDiameter/2;
 
     private static Pose2D robotPose;
+    private static double robotHeading = 0;
 
     public static LiveMap fieldMap;
 
@@ -39,4 +40,5 @@ public final class FieldData {
 
     public static void updateRobotPose(Pose2D pose2D) {robotPose = pose2D;}
     public static Pose2D getPose2D() {return robotPose;}
+    public static double getHeading() {return robotHeading;}
 }
