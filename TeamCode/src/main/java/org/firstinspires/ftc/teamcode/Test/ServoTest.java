@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.concurrent.TimeUnit;
 
-@TeleOp
+@TeleOp(group = "Intake Transfer", name = "Servo")
 @Config
 public class ServoTest extends LinearOpMode {
     public Servo transferServo;

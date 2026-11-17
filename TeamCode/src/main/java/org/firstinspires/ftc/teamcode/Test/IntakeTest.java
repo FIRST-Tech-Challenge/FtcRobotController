@@ -9,7 +9,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp
+@TeleOp(group = "Intake Transfer", name = "Roller")
 @Config
 public class IntakeTest extends LinearOpMode {
 

@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.Intake;
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Core.IntakeTransferHardwareMap;
 import org.firstinspires.ftc.teamcode.Core.Logger;
 import org.firstinspires.ftc.teamcode.Core.MotorWrapper;
+import org.firstinspires.ftc.teamcode.Core.NewIntakeTransferHWmap;
 
 
 @Config
@@ -29,7 +29,7 @@ public class RollerFSM {
         EJECTING,
     }
 
-    public RollerFSM(IntakeTransferHardwareMap hwMap, Telemetry telemetry, Logger logger) {
+    public RollerFSM(NewIntakeTransferHWmap hwMap, Telemetry telemetry) {
         intakeMotor = new MotorWrapper(hwMap.getIntakeMotor(), true, 1, true);
         State = State.INTAKING;
         this.logger = logger;

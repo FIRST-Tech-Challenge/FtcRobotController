@@ -5,8 +5,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.util.Timing;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Core.IntakeTransferHardwareMap;
 import org.firstinspires.ftc.teamcode.Core.Logger;
+import org.firstinspires.ftc.teamcode.Core.NewIntakeTransferHWmap;
 import org.firstinspires.ftc.teamcode.Core.ServoWrapper;
 
 import java.util.concurrent.TimeUnit;
@@ -23,13 +23,13 @@ public class GateFSM {
     private Telemetry telemetry;
     private ServoWrapper transferServo;
     public State currentState;
-    public static double targetPosition = 0;
-    public static double positionUp = .38;
-    public static double positionDown = 0;
+    public static double targetPosition = .43;
+    public static double positionUp = .16;
+    public static double positionDown = .43;
     static Timing.Timer transferPostitionTimer;
     public Logger logger;
 
-    public GateFSM(IntakeTransferHardwareMap intaketransferhwmap, Telemetry telemetry, Logger logger) {
+    public GateFSM( NewIntakeTransferHWmap intaketransferhwmap, Telemetry telemetry) {
         transferServo = new ServoWrapper(intaketransferhwmap.getTransferServo());
         transferPostitionTimer = new Timing.Timer(1, TimeUnit.SECONDS);
         this.logger = logger;
@@ -41,18 +41,18 @@ public class GateFSM {
     public void updateState() {
 
         double percentError = Math.abs((transferServo.getPosition() - targetPosition) / targetPosition);
-        if (!transferPostitionTimer.isTimerOn() && percentError >= 0.001) {
+        if (/*!transferPostitionTimer.isTimerOn() &&*/ percentError >= 0.001) {
             currentState = State.MOVING_TO_POSITION;
             transferServo.setPosition(targetPosition);
             transferPostitionTimer.start();
         }
 
-        if (transferPostitionTimer.done()) {
+/*        if (transferPostitionTimer.done()) {
             transferPostitionTimer.pause();
             if (currentState == State.AT_UP) {
                 targetPosition = positionDown;
             }
-        }
+        }*/
 
 
         if (targetPosition == positionUp) {
