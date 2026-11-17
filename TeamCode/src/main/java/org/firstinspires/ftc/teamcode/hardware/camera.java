@@ -4,14 +4,18 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.RobotHardwareMap;
-
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+
+import java.util.List;
 
 public class camera {
     RobotHardwareMap robotHardwareMap;
@@ -28,7 +32,7 @@ public class camera {
     public camera(RobotHardwareMap robotHardwareMap, LinearOpMode opMode) {
         this.opMode = opMode;
         this.robotHardwareMap = robotHardwareMap;
-        limelight = robotHardwareMap.baseHardwareMap.get(Limelight3A.class, "limelight");
+        limelight = robotHardwareMap.baseHMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0); // 0 is 20, 1 is 24
         goalColor = 0;
     }
@@ -56,6 +60,80 @@ public class camera {
         }
     }
 
+    // true if this tag ID belongs to the chosen color: 1 = blue (38-45), 2 = red (30-37)
+    private boolean inGroup(int selection, int id) {
+        if (selection == 1) return id >= 38 && id <= 45;
+        if (selection == 2) return id >= 30 && id <= 37;
+        return false;
+    }
+
+    // Reads 6 frames and adds every tag in the chosen color to 'data'.
+    // offsetDeg = how far the robot is turned from its starting heading (right is positive),
+    // so every reading is stored as an angle from the START heading, not from the camera.
+    // data values are {sum of angles, sum of areas, number of frames seen}.
+    public void scanFrames(int selection, double offsetDeg, Map<Integer, double[]> data) {
+        limelight.pipelineSwitch(2);
+
+        for (int run = 0; run < 6 && !opMode.isStopRequested(); run++) {
+            LLResult result = limelight.getLatestResult();
+            if (result != null && result.isValid()) {
+                for (LLResultTypes.FiducialResult tag : result.getFiducialResults()) {
+                    int id = tag.getFiducialId();
+                    if (inGroup(selection, id)) {
+                        double[] d = data.get(id);
+                        if (d == null) {
+                            d = new double[3];
+                            data.put(id, d);
+                        }
+                        d[0] += offsetDeg + tag.getTargetXDegrees();
+                        d[1] += tag.getTargetArea();
+                        d[2] += 1;
+                    }
+                }
+            }
+            opMode.sleep(50); // gives the Limelight time to produce a new frame
+        }
+    }
+
+    // Takes everything gathered by scanFrames, keeps only the prominent tags,
+    // and returns the average angle (degrees from the starting heading, right is positive).
+    // Returns NaN if no tags were seen at all.
+    public double centerFromScans(Map<Integer, double[]> data) {
+        final double PROMINENCE_CUTOFF = 0.5; // keep tags with at least 50% of the biggest tag's area
+
+        if (data.isEmpty()) {
+            opMode.telemetry.addData("Aim center", "no tags seen");
+            return Double.NaN;
+        }
+
+        // biggest average area among the tags seen
+        double maxArea = 0;
+        for (double[] d : data.values()) {
+            maxArea = Math.max(maxArea, d[1] / d[2]);
+        }
+
+        // average angle of only the prominent tags
+        double total = 0;
+        int kept = 0;
+        for (double[] d : data.values()) {
+            if (d[1] / d[2] >= maxArea * PROMINENCE_CUTOFF) {
+                total += d[0] / d[2];
+                kept++;
+            }
+        }
+        double center = total / kept;
+
+        opMode.telemetry.addData("Aim center", String.format("%.2f deg, %d seen, %d kept", center, data.size(), kept));
+        return center;
+    }
+
+    // Single scan at the current heading (6 frames).
+    public double Aim(int selection) {
+        Map<Integer, double[]> data = new HashMap<>();
+        scanFrames(selection, 0, data);
+        return centerFromScans(data);
+    }
+
     public int checkTags(int selection) {
         int minId;
         int maxId;
@@ -69,7 +147,7 @@ public class camera {
         }
 
         Set<Integer> found = new HashSet<>();
-        for (int run = 0; run < 40 && !opMode.isStopRequested(); run++) {
+        for (int run = 0; run < 20 && !opMode.isStopRequested(); run++) {
             LLResult result = limelight.getLatestResult();
             if (result != null && result.isValid()) {
                 for (LLResultTypes.FiducialResult tag : result.getFiducialResults()) {
@@ -129,4 +207,3 @@ public class camera {
     }
 
 }
-
