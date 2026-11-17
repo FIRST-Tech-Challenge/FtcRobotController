@@ -20,7 +20,7 @@ public class GamepadController {
     public boolean toggleIntakeButton() { return gamepad1.rightBumperWasPressed(); }
     public boolean toggleTransferButton() { return gamepad1.rightBumperWasPressed(); }
     public boolean toggleOuttakeButton() { return gamepad1.leftBumperWasPressed(); }
-    public boolean shootButton() { return gamepad1.aWasPressed(); }
+    public boolean shootButton() { return gamepad1.a; }
 
     public boolean hiveCentricDriveButton() { return gamepad1.x; }
     public boolean toggleReverseIntakeButton() { return gamepad1.right_trigger <= 0.1; }

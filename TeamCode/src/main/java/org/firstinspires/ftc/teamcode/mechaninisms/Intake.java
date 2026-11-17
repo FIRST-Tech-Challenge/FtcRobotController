@@ -17,14 +17,20 @@ public class Intake {
         robotVars = robotVarsRef;
 
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
-        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 
     public void runIntake_ToggleMode(boolean intakeButton, boolean toggleReverseIntake) {
-        if (intakeButton) {
-            intakeMotor.setPower(robotVars.constants.intakeMotorSpeed);
+        if (intakeButton && !robotVars.isStopperDown) {
+            robotVars.isIntakeActive = !robotVars.isIntakeActive;
+        }
+
+        if (robotVars.isIntakeActive) {
+            intakeMotor.setPower(robotVars.constants.intakeMotorSpeed * (toggleReverseIntake ? -1: 1));
+        } else {
+            intakeMotor.setPower(0);
         }
     }
 

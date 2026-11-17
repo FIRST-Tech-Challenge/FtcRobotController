@@ -6,11 +6,11 @@ public class RobotConstants {
 
 
     public double intakeMotorSpeed = 1;
-    public double outtakeMotorSpeed = 1175;
+    public double outtakeMotorSpeed = 1150;
     public double allowedOuttakeSpeedError = 25;
     public double transferMotorSpeed = 0.55;
-    public double stopperDownPosition = 0.42;
-    public double stopperUpPosition = 0.47;
+    public double stopperDownPosition = 0.12;
+    public double stopperUpPosition = 0.07;
     public double hiveCentricRotationSpeed = 0.496;
 
 

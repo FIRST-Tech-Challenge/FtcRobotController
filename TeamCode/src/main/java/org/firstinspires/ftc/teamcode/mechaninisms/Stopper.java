@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotVars;
-import org.firstinspires.ftc.teamcode.mechaninisms.Outtake;
 
 public class Stopper {
 
@@ -22,23 +21,15 @@ public class Stopper {
 
 
     public void runStopper_ToggleMode(boolean shootButton) {
-        if (shootButton && outtake.outtakeMotor.getVelocity() > robotVars.constants.outtakeMotorSpeed-50) {
+        if (shootButton) {
             robotVars.isStopperDown = true;
 
             stopperServo.setPosition(robotVars.constants.stopperDownPosition);
 
-            robotVars.isShooting = true;
         } else {
             robotVars.isStopperDown = false;
-
             stopperServo.setPosition(robotVars.constants.stopperUpPosition);
-            robotVars.isShooting  = false;
         }
-
-
-
     }
-
-
 
 }

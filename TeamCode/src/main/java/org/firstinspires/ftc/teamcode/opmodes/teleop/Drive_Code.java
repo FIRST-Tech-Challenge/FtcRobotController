@@ -1,17 +1,19 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import com.bylazar.gamepad.GamepadManager;
+import static org.firstinspires.ftc.teamcode.mechaninisms.RobotStateHandler.outtake;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotVars;
-import org.firstinspires.ftc.teamcode.mechaninisms.Drivetrain;
 import org.firstinspires.ftc.teamcode.mechaninisms.RobotStateHandler;
 import org.firstinspires.ftc.teamcode.utils.commands.AllianceColor;
 import org.firstinspires.ftc.teamcode.utils.commands.GamepadController;
 
 @TeleOp(name = "Main TeleOP", group = "Linear OpMode")
 public class Drive_Code extends LinearOpMode {
+    public Servo stopperServo;
 
 //    public static double outtakeSpeed = 1500;
     @Override
@@ -20,6 +22,7 @@ public class Drive_Code extends LinearOpMode {
         RobotVars robotVars = new RobotVars();
         RobotStateHandler robotStateHandler = new RobotStateHandler(hardwareMap, robotVars);
         GamepadController gamepadController = new GamepadController(gamepad1, gamepad2);
+        stopperServo = hardwareMap.get(Servo.class, "stopper");
 
         RobotVars.init_TeleOp(telemetry);
 
@@ -51,7 +54,6 @@ public class Drive_Code extends LinearOpMode {
         // Start ↑ and Primary Loop ↓
         //-----------------------------------------------------------------
 
-
         // Primary loop
         while (opModeIsActive() && !isStopRequested()) {
 
@@ -63,9 +65,6 @@ public class Drive_Code extends LinearOpMode {
                     gamepadController.hiveCentricDriveButton()
             );
 
-
-
-
             RobotStateHandler.RunStateMachine(gamepadController);
 
 //            if (gamepad2.dpadDownWasPressed()) {
@@ -74,7 +73,7 @@ public class Drive_Code extends LinearOpMode {
 //                robotVars.constants.outtakeMotorSpeed = robotVars.constants.outtakeMotorSpeed + 10;
 //            }
 
-
+            telemetry.addData("VELOCITY", outtake.outtakeMotor.getVelocity());
             telemetry.addData("TeleOp: ", (robotVars.allianceColor == AllianceColor.Red ? "Red " : "Blue ") + (robotVars.startsInCorner ? "Corner" : "Wall"));
 //            telemetry.addData("Start Pose: ", robotVars.startPose);
             telemetry.addData("Left Front", RobotStateHandler.drive.leftFront.getCurrentPosition());

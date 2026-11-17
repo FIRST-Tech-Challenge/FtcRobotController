@@ -17,17 +17,13 @@ public class Transfer {
         robotVars = robotVarsRef;
 
         transferMotor = hardwareMap.get(DcMotorEx.class, "transfer");
-        transferMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        transferMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         transferMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 
     public void runTransfer_ToggleMode(boolean transferButton, boolean toggleReverseIntake) {
-        if (transferButton) {
-            robotVars.isTransferActive = !robotVars.isTransferActive;
-        }
-
-        if (robotVars.isShooting || robotVars.isTransferActive) {
+        if (robotVars.isIntakeActive) {
             transferMotor.setPower(robotVars.constants.transferMotorSpeed * (toggleReverseIntake ? -1 : 1));
         } else {
             transferMotor.setPower(0);
