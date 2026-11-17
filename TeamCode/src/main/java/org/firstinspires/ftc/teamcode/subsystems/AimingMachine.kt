@@ -1,16 +1,18 @@
 package org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems
 
+import android.util.Log
 import org.firstinspires.ftc.teamcode.GerthaHardwareMap
 import org.firstinspires.ftc.teamcode.GerthaHardwareMap.*
 import org.firstinspires.ftc.teamcode.ShooterImpl
-import org.firstinspires.ftc.teamcode.hardware.RobotPose
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.hardware.PoseSet
+import kotlin.math.tan
 
 class AimingMachine(private val hw: GerthaHardwareMap) {
 
     enum class State {
         FULL,
-        NO_TURRET
+        NO_TURRET,
+        AUTO
     }
 
     lateinit var state: State
@@ -23,22 +25,38 @@ class AimingMachine(private val hw: GerthaHardwareMap) {
     val turretImpl = TurretImpl(hw)
     val poseSet = PoseSet()
 
+    var constantVel = 0.0
+
+    fun setHardcode(vel: Double) {
+        constantVel = vel
+    }
+
     fun init() {
         state = State.FULL
         prevState = State.FULL
         turretImpl.targetPose = poseSet.LEFT_HIVE_AT
-        shooterImpl.setTarget(SHOOT_SPEED)
+        shooterImpl.setTarget(AUTO_SHOOT_SPEED)
     }
 
     fun update (robotState: RobotState, input: GamepadState) {
 
         justTransitioned = prevState != state
         prevState = state
+        val horizontalDistance = distance(robotState, poseSet) * 0.0254
+        val top = (-9.8) * (horizontalDistance * horizontalDistance)
+        val bottom = (2 * Math.cos(ANGLE_OF_SHOT) * Math.cos(ANGLE_OF_SHOT) * (DISTANCE_TO_TOP - (horizontalDistance * tan(ANGLE_OF_SHOT))))
+        val velMps = Math.sqrt(top / bottom)
+        // 126.25m 474.5b
+        val velShooter = (126.25 * velMps) + 474.5
+        Log.i("distance", horizontalDistance.toString())
+        Log.i("top", top.toString())
+        Log.i("bottom", bottom.toString())
+        Log.i("ShooterImpl", velShooter.toString())
 
         when (state) {
             State.FULL -> {
                 turretImpl.update(robotState)
-                shooterImpl.setTarget(SHOOT_SPEED)
+                shooterImpl.setTarget(velShooter)
                 shooterImpl.tickShooter()
 
                 if (input.start2) {
@@ -50,12 +68,25 @@ class AimingMachine(private val hw: GerthaHardwareMap) {
                 if (justTransitioned) {
                     turretImpl.setToZero()
                 }
-                shooterImpl.setTarget(SHOOT_SPEED)
+                shooterImpl.setTarget(velShooter)
                 shooterImpl.tickShooter()
 
                 if (input.start2) {
                     state = State.FULL
                 }
+            }
+            State.AUTO -> {
+                if (justTransitioned) {
+                    turretImpl.setToZero()
+                }
+                shooterImpl.setTarget(constantVel)
+                shooterImpl.tickShooter()
+//                if (robotState.ppX > 0) {
+//                    turretImpl.setDegrees(15.0)
+//                }
+//                else {
+//                    turretImpl.setDegrees(-15.0)
+//                }
             }
         }
     }

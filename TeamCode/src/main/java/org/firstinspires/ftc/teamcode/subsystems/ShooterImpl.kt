@@ -16,8 +16,8 @@ class ShooterImpl (private val hw: GerthaHardwareMap) {
 //
 //        private const val maxVelocity = 1820.0
 
-        private const val KF = 0.00659
-        var KP = 0.004
+        private const val KF = 0.0075
+        var KP = 0.002
         var KD = 0.001
         var KI = 0.0
 
@@ -77,7 +77,14 @@ class ShooterImpl (private val hw: GerthaHardwareMap) {
 //            hw.pollenShooter.power = 1.0
 //        }
 
-        hw.pollenShooter.power = (p + i + d + f)
+        if (error > 300) {
+            hw.pollenShooter.power = 1.0
+        }
+        else {
+            hw.pollenShooter.power = (p + i + d + f)
+        }
+//        hw.pollenShooter.power = (p + i + d + f)
+
         prevTime = currentTime
         prevError = error
     }

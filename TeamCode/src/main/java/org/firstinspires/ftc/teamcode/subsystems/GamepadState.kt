@@ -43,6 +43,9 @@ class GamepadState(private val gp1: Gamepad, private val gp2: Gamepad) {
     var back2 = false
     var wasBack2 = false
 
+    var a2 = false
+    var wasA2 = false
+
 
 
     fun update() {
@@ -79,5 +82,8 @@ class GamepadState(private val gp1: Gamepad, private val gp2: Gamepad) {
 
         start2 = gp2.start && !wasStart2
         wasStart2 = gp2.start
+
+        a2 = gp2.a && !wasA2
+        wasA2 = gp2.a
     }
 }

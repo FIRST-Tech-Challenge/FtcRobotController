@@ -4,11 +4,12 @@ import android.util.Log
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.robot.Robot
 import org.firstinspires.ftc.teamcode.GerthaHardwareMap
+import org.firstinspires.ftc.teamcode.GerthaHardwareMap.*
 import org.firstinspires.ftc.teamcode.ShooterImpl
 import org.firstinspires.ftc.teamcode.hardware.RobotPose
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.hardware.PoseSet
+import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.AimingMachine
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.DriveMachine
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.GamepadState
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.IntakeShootMachine
@@ -40,19 +41,24 @@ class LinearAuto : LinearOpMode() {
     }
 
     private val autoSequence = listOf(
-        State.HIVE_WAYPOINT,
         State.DRIVE_TO_SCORE,
-        State.HIVE_WAYPOINT,
+        State.SCAN_HIVE,
+        State.SHOOT,
         State.DRIVE_TO_OTHER_FLOWER,
         State.PICKUP_OTHER_FLOWER,
-        State.HIVE_WAYPOINT,
         State.DRIVE_TO_SCORE,
+        State.SCAN_HIVE,
+        State.SHOOT,
         State.DRIVE_TO_DRIVER_FLOWER,
         State.PICKUP_DRIVER_FLOWER,
         State.DRIVE_TO_SCORE,
+        State.SCAN_HIVE,
+        State.SHOOT,
         State.DRIVE_TO_GARDEN,
         State.PICKUP_GARDEN,
         State.DRIVE_TO_SCORE,
+        State.SCAN_HIVE,
+        State.SHOOT,
         State.PARK_RIGHT,
         State.DONE
     )
@@ -60,7 +66,7 @@ class LinearAuto : LinearOpMode() {
     private var currentIndex = 0
 
     private var state = autoSequence[currentIndex]
-    var prevState = state
+    var prevState = State.DONE
 
     var justTransitioned = true
 
@@ -85,6 +91,7 @@ class LinearAuto : LinearOpMode() {
         val driveMachine = DriveMachine(hw)
         val intakeShootMachine = IntakeShootMachine(hw)
         val rampMachine = RampMachine(hw)
+        val aimingMachine = AimingMachine(hw)
         //aim
 
         //prep to bulk read
@@ -96,6 +103,7 @@ class LinearAuto : LinearOpMode() {
         driveMachine.init(robotState)
         intakeShootMachine.init()
         rampMachine.init()
+        aimingMachine.init()
 
         //remover roll to starting pose
         while(opModeInInit()){
@@ -103,12 +111,15 @@ class LinearAuto : LinearOpMode() {
         }
 
         waitForStart()
-
+        aimingMachine.state = AimingMachine.State.AUTO
+        aimingMachine.setHardcode(AUTO_SHOOT_SPEED)
         driveMachine.state = DriveMachine.State.PID2POINT
         driveMachine.removerImpl.init(
             robotState.ppRobotPose,
             poseSet.SCORE_RIGHT
         )
+
+
 
 
         while (opModeIsActive()) {
@@ -129,13 +140,23 @@ class LinearAuto : LinearOpMode() {
             when (state) {
                 State.DRIVE_TO_SCORE -> {
                     if (justTransitioned){
-                        if (poseSet.RIGHT_HIVE){
+                        if (robotState.rightHive){
+                            if (distance(poseSet.SCORE_RIGHT) > 80.0) {
+                                state = State.HIVE_WAYPOINT
+                                continue
+                            }
+                            Log.i("driveToScore", "driving to right side when hive " + robotState.rightHive.toString())
                             driveMachine.removerImpl.init(
                                 robotState.ppRobotPose,
                                 poseSet.SCORE_RIGHT
                             )
                         }
                         else {
+                            if(distance(poseSet.SCORE_LEFT) > 100) {
+                                state = State.HIVE_WAYPOINT
+                                continue
+                            }
+                            Log.i("driveToScore", "driving to left side when hive " + robotState.rightHive.toString())
                             driveMachine.removerImpl.init(
                                 robotState.ppRobotPose,
                                 poseSet.SCORE_LEFT
@@ -185,6 +206,10 @@ class LinearAuto : LinearOpMode() {
                 }
                 State.DRIVE_TO_OTHER_FLOWER -> {
                     if (justTransitioned){
+                        if (distance(poseSet.OTHER_FLOWER_PRESCORE) > 80.0) {
+                            state = State.HIVE_WAYPOINT
+                            continue
+                        }
                         driveMachine.removerImpl.init(
                             robotState.ppRobotPose,
                             poseSet.OTHER_FLOWER_PRESCORE
@@ -236,12 +261,12 @@ class LinearAuto : LinearOpMode() {
                     if (justTransitioned){
                         driveMachine.removerImpl.init(
                             robotState.ppRobotPose,
-                            poseSet.HIVE_WAYPOINT,
+                            RobotPose(poseSet.HIVE_WAYPOINT.x, poseSet.HIVE_WAYPOINT.y, robotState.ppThetaRad),
                             stopCond = StopConditions.Waypoint
                         )
                     }
                     if (driveMachine.removerImpl.finished){
-                        nextState()
+                        state = autoSequence[currentIndex]
                     }
                 }
                 State.PARK_RIGHT -> {
@@ -270,13 +295,26 @@ class LinearAuto : LinearOpMode() {
                     StaticStore.mark()
                 }
                 State.SCAN_HIVE -> {
-                    //
+                    if (justTransitioned) {
+
+                    }
+
+                    if (getElapsedSec(stateStartTimeNs) > 0.1) {
+                        if (!robotState.isNotEmpty || robotState.onlySeesOtherColor) {
+                            Log.i("empty", robotState.isNotEmpty.toString())
+                            Log.i("onlyOtherColor", robotState.onlySeesOtherColor.toString())
+                            Log.i("auto", "flipped")
+                            robotState.rightHive = !robotState.rightHive
+                        }
+                        state = State.DRIVE_TO_SCORE
+                    }
                 }
             }
 
             driveMachine.update(robotState, gamepadState)
             intakeShootMachine.update(robotState, gamepadState)
             rampMachine.update(gamepadState)
+            aimingMachine.update(robotState,gamepadState)
 
             telemetry.addData("targetx", driveMachine.removerImpl.target.x)
             telemetry.addData("targety", driveMachine.removerImpl.target.y)

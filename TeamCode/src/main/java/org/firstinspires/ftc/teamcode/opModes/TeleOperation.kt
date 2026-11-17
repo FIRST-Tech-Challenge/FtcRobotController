@@ -57,10 +57,15 @@ abstract class TeleOperation(val isRed: Boolean): LinearOpMode() {
                 intakeShootMachine.count = 0
             }
 
+            if (gamepadState.a2) {
+                robotState.rightHive = !robotState.rightHive
+            }
+
             telemetry.addData("aimingMode", aimingMachine.state)
+            telemetry.addData("rightHive", robotState.rightHive)
+            telemetry.addLine("XYA: (%.2f %.2f)".format(robotState.ppX, robotState.ppY, robotState.ppThetaDeg))
             telemetry.addData("vel", hw.pollenShooter.velocity)
             telemetry.addData("power", hw.pollenShooter.power)
-            telemetry.addData("pose", robotState.ppRobotPose)
             telemetry.addData("count", intakeShootMachine.count)
             telemetry.update()
         }

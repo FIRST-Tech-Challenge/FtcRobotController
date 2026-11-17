@@ -17,6 +17,7 @@ class RampMachine(private val hw: GerthaHardwareMap) {
     private var prevState = State.UP
 
     fun init() {
+        hw.setPollenExtractor(POLLEN_UP)
         state = State.UP
     }
 

@@ -27,8 +27,25 @@ class TurretImpl(private val hw: GerthaHardwareMap) {
         hw.pollenTurret.position = zeroPosition
     }
 
+    fun setDegrees(degrees :Double) {
+        var targetTicks = (degrees + 81.0) / 150.0
+        if (targetTicks > 0.93) {
+            targetTicks = 0.93
+        }
+        else if (targetTicks < 0.0) {
+            targetTicks = 0.0
+        }
+        hw.pollenTurret.position = targetTicks
+    }
+
 
     fun update (robotState: RobotState) {
+        if (robotState.rightHive) {
+            targetPose = poseSet.RIGHT_HIVE_AT
+        }
+        else {
+            targetPose = poseSet.LEFT_HIVE_AT
+        }
         val currentPose = robotState.ppRobotPose
         val targetDegrees = getTargetFromPinpoint(currentPose)
         var targetTicks = (targetDegrees + 81.0) / 150.0

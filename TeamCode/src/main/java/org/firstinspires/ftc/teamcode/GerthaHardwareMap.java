@@ -11,12 +11,15 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.drivers.GoBildaPinpoint2Driver;
 import org.firstinspires.ftc.teamcode.hardware.HardwareMapper;
 import org.firstinspires.ftc.teamcode.hardware.HardwareName;
 import org.firstinspires.ftc.teamcode.hardware.Reversed;
 import org.firstinspires.ftc.teamcode.hardware.ZeroPower;
+import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.hardware.PoseSet;
+import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.RobotState;
 
 public class GerthaHardwareMap extends HardwareMapper {
 
@@ -26,7 +29,9 @@ public class GerthaHardwareMap extends HardwareMapper {
     public static final double DISTANCE_THRESHOLD = 4.0;
     public static final double POLLEN_GO = 0.58;
     public static final double POLLEN_STOP = 0.34;
-    public static final double SHOOT_SPEED = 1220.0;
+    public static final double AUTO_SHOOT_SPEED = 1120.0;
+    public static final double ANGLE_OF_SHOT = 1.222;
+    public static final double DISTANCE_TO_TOP = (64.0 - 13.5) * 0.0254;
 
     @HardwareName("frontRight")
     @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
@@ -69,7 +74,6 @@ public class GerthaHardwareMap extends HardwareMapper {
     @HardwareName("pollenBallStop")
     public Servo pollenBallStop;
 
-
     @HardwareName("color")
     public RevColorSensorV3 color;
 
@@ -78,6 +82,9 @@ public class GerthaHardwareMap extends HardwareMapper {
 
     @HardwareName("pollenTurretServo")
     public Servo pollenTurret;
+
+    @HardwareName("Webcam 1")
+    public WebcamName webcam1;
 
     public GerthaHardwareMap(HardwareMap map) {
         super(map);
@@ -107,6 +114,15 @@ public class GerthaHardwareMap extends HardwareMapper {
             diff = (2 * PI) - diff;
         }
         return diff;
+    }
+
+    public static double distance(RobotState robotState, PoseSet poseSet) {
+        if (!robotState.getRightHive()){
+            return Math.hypot((poseSet.getLEFT_HIVE_AT().x  - robotState.getPpX()), (poseSet.getLEFT_HIVE_AT().y - robotState.getPpY()));
+        }
+        else {
+            return Math.hypot((poseSet.getRIGHT_HIVE_AT().x  - robotState.getPpX()), (poseSet.getRIGHT_HIVE_AT().y - robotState.getPpY()));
+        }
     }
 
     public void setIntakePower(double power){
