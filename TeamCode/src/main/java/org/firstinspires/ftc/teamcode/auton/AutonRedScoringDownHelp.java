@@ -40,6 +40,7 @@ public class AutonRedScoringDownHelp extends AutonBase {
             //shoot 4 preloaded pollen
             sleep(5000);
             imuTurn(imuSpeed, -90);
+            imuDrive(imuSpeed, 6, 0);
             //turn on intake
             sleep(1000);
             //turn off intake
@@ -50,7 +51,7 @@ public class AutonRedScoringDownHelp extends AutonBase {
             sleep(5000);
             //go park
             imuDrive(imuSpeed, -12, 0);
-            imuStrafe(imuSpeed, -45, 0, 30);
+            imuStrafe(imuSpeed, -63, 0, 30);
         }
         else {
             imuDrive(imuSpeed, -100, 0);
@@ -66,6 +67,7 @@ public class AutonRedScoringDownHelp extends AutonBase {
             encoderStrafe(imuSpeed, -20 , 30);
             sleep(500);
             imuDrive(imuSpeed, 70, 0);
+            imuStrafe(imuSpeed, -7, 0, 30);
         }
     }
 }
