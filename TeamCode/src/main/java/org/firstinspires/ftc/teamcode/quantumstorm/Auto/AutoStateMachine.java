@@ -119,13 +119,13 @@ public final class AutoStateMachine implements AutoCloseable {
                 if(stopRequested()||o.forward==0&&o.strafeRight==0&&o.turnClockwise==0&&o.shooterPower==0&&o.feederPower==0&&o.intakePower==0){
                     if(!stopped){stopped=true;SafeShutdown.run(drive::stop,shooter::stop,intake::stop);}
                     // Stop actuators BEFORE any camera SDK call, including a pipeline transition.
-                    if(camera!=null&&!stopRequested())camera.select(o.pipeline);
+                    if(camera!=null&&!stopRequested())camera.select(o.pipeline,idleCameraScan());
                     return;
                 }
                 stopped=false;
                 double[] wheels=o.wheelPowers(Constants.AUTO_FORWARD_POWER_SIGN);drive.setPowers(wheels[0],wheels[1],wheels[2],wheels[3]);
                 shooter.apply(o.shooterPower,o.feederPower);intake.setPower(o.intakePower*Constants.INTAKE_POWER);
-                if(camera!=null&&!stopRequested())camera.select(o.pipeline);
+                if(camera!=null&&!stopRequested())camera.select(o.pipeline,idleCameraScan());
             }
         };
         RobotIO io=robotIO;
@@ -141,6 +141,7 @@ public final class AutoStateMachine implements AutoCloseable {
             one.gardenFirstPassSeconds=Constants.AUTO_GARDEN_FIRST_PASS_SEC;
             one.gardenIntakeHeadingRadians=Math.toRadians(Constants.TEAM_ONE_GARDEN_INTAKE_HEADING_DEG);
             one.allowAnyFreshAprilTag=Constants.PRACTICE_ALLOW_ANY_FRESH_APRILTAG;
+            one.aimForShooting=true;
             one.useTeamTwoFollowUpShot=teamOneBackup;
             one.gardenPassLimit=teamOneBackup?2:0;
             // The contingency route crosses to the opposite wall after Garden.
@@ -170,6 +171,7 @@ public final class AutoStateMachine implements AutoCloseable {
             TeamTwoHiveAuto two=new TeamTwoHiveAuto(io,field);
             two.spinUpSeconds=Constants.AUTO_SHOOTER_SPINUP_SEC;two.feedSeconds=Constants.AUTO_TEAM_TWO_FEED_TIME_SEC;
             two.allowAnyFreshAprilTag=Constants.PRACTICE_ALLOW_ANY_FRESH_APRILTAG;
+            two.aimForShooting=true;
             routine=two;
         }else{
             org.firstinspires.ftc.teamcode.biobuzz.AutoStateMachine two=new org.firstinspires.ftc.teamcode.biobuzz.AutoStateMachine(io,field,false,selectedRoutine,false,false);
@@ -246,6 +248,7 @@ public final class AutoStateMachine implements AutoCloseable {
         if(camera!=null){
             opMode.telemetry.addData("Limelight status",camera.cachedStatus());
             opMode.telemetry.addData("Limelight requested pipeline",camera.selectedPipeline());
+            camera.addTelemetry(opMode.telemetry,now);
         }
         opMode.telemetry.addData("Raw AprilTag IDs",AutoDebugSnapshot.ids(debugRawVision,now));
         opMode.telemetry.addData("Raw tag measurements",AutoDebugSnapshot.details(debugRawVision,now));
@@ -272,6 +275,15 @@ public final class AutoStateMachine implements AutoCloseable {
         opMode.telemetry.addData("Measured pollen",debugSensors==null||debugSensors.pollenCount<0?"UNKNOWN":debugSensors.pollenCount+" / 4");
         if(!debugReadError.isEmpty())opMode.telemetry.addData("Sensor read error",debugReadError);
         odometry.addTelemetry(opMode.telemetry);
+    }
+
+    private boolean idleCameraScan(){
+        if(routine instanceof TeamOnePollenAuto)return ((TeamOnePollenAuto)routine).getState()==TeamOnePollenAuto.State.WAITING;
+        if(routine instanceof TeamTwoHiveAuto){
+            TeamTwoHiveAuto.State state=((TeamTwoHiveAuto)routine).getState();
+            return state==TeamTwoHiveAuto.State.WAITING||state==TeamTwoHiveAuto.State.SETTLING||state==TeamTwoHiveAuto.State.RECOVERING;
+        }
+        return false;
     }
 
     public void run(){
