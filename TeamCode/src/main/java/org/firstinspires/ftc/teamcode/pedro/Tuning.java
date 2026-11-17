@@ -18,8 +18,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Drawing;
+//import org.firstinspires.ftc.teamcode.Drawing;
 import org.firstinspires.ftc.teamcode.configuration.Constants;
+import static org.firstinspires.ftc.teamcode.pedro.Tuning.follower;
+import static org.firstinspires.ftc.teamcode.pedro.Tuning.telemetryM;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,6 +118,7 @@ public class Tuning extends SelectableOpMode {
  * This is the LocalizationTest OpMode.
  */
 class LocalizationTest extends OpMode {
+
 	@Override
 	public void init() {
 		follower.setStartingPose(new Pose(72, 72));
@@ -123,17 +126,17 @@ class LocalizationTest extends OpMode {
 
 	@Override
 	public void init_loop() {
-		telemetryM.debug("This will print your robot's position to telemetry while "
+		Tuning.telemetryM.debug("This will print your robot's position to telemetry while "
 				+ "allowing robot control through a basic mecanum drive on gamepad 1.");
-		telemetryM.update(telemetry);
-		follower.update();
+		Tuning.telemetryM.update(telemetry);
+		Tuning.follower.update();
 		Tuning.drawOnlyCurrent();
 	}
 
 	@Override
 	public void start() {
-		follower.startTeleopDrive();
-		follower.update();
+		Tuning.follower.startTeleopDrive();
+		Tuning.follower.update();
 	}
 
 	@Override
@@ -1023,7 +1026,7 @@ class Drawing {
 
 		panelsField.setStyle(style);
 		panelsField.moveCursor(pose.getX(), pose.getY());
-		panelsField.circle(ROROBOT_RADIUS_FIX: ROBOT_RADIUS);
+		panelsField.circle(ROBOT_RADIUS);
 
 		Vector v = pose.getHeadingAsUnitVector();
 		v.setMagnitude(v.getMagnitude() * ROBOT_RADIUS);
