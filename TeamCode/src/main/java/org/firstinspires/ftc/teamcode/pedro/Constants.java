@@ -56,7 +56,7 @@ public class Constants {
     // numbers can make a tall, fast robot overshoot or slam into a wall.
     // Change it to true ONLY AFTER you pasted this robot's AutoTune numbers into foresightConfig.
     // Each robot (practice bot, 11940, 22091) needs its own tune.
-    public static final boolean FORESIGHT_TUNED = false;
+    public static final boolean FORESIGHT_TUNED = true;
 
     // ------------------------------------------------------------------
     // 1. Drive motors
@@ -124,27 +124,27 @@ public class Constants {
     //   timeoutConstraint 100 ms. If a path takes too long to finish, those are the numbers to look at.
     public static ForesightConfig foresightConfig = new ForesightConfig(
             c -> {
-                Controller primaryTranslationalForward = Controller.proportional(0.3);
-                Controller secondaryTranslationalForward = Controller.proportional(0.1);
-                Controller primaryTranslationalLateral = Controller.proportional(0.3);
-                Controller secondaryTranslationalLateral = Controller.proportional(0.1);
+                Controller primaryTranslationalForward = Controller.proportional(0.4849242897015788);
+                Controller secondaryTranslationalForward = Controller.proportional(0.1791665676290724);
+                Controller primaryTranslationalLateral = Controller.proportional(0.7265575948588436);
+                Controller secondaryTranslationalLateral = Controller.proportional(0.2684436173238558);
 
                 c.forwardTranslational.set(Controller.piecewise(secondaryTranslationalForward).put(2.5, primaryTranslationalForward));
                 c.strafeTranslational.set(Controller.piecewise(secondaryTranslationalLateral).put(2.5, primaryTranslationalLateral));
 
-                c.coast.set(Controller.proportionalFeedforward(0.010978350889324107));
-                c.brake.set(Controller.proportionalFeedforward(0.008731598255925491));
+                c.coast.set(Controller.proportionalFeedforward(0.013191370233250536));
+                c.brake.set(Controller.proportionalFeedforward(0.011212664698262955));
 
-                c.headingFeedback.set(Controller.proportional(5.258721785960744));
-                c.headingBrakeCoefficients.set(Vector2D.cartesian(0.05642143125655298, 0.0063829525363003695));
+                c.headingFeedback.set(Controller.proportional(6.655942174975622));
+                c.headingBrakeCoefficients.set(Vector2D.cartesian(0.05915577598878214, 0.004810380607054822));
 
-                c.linearBrakeCoefficients.set(Matrix.diag(0.10605894992901523, 0.08719146175596092));
-                c.quadraticBrakeCoefficients.set(Matrix.diag(0.0014663966976606565, 0.0013837064502458813));
+                c.linearBrakeCoefficients.set(Matrix.diag(0.1220490276671816, 0.05949594344827877));
+                c.quadraticBrakeCoefficients.set(Matrix.diag(0.0013260726576900673, 0.002075721968223331));
 
-                c.maxAchievableForwardVelocity.set(72.72923108818539);
-                c.maxAchievableStrafeVelocity.set(52.34323936525474);
-                c.naturalForwardDeceleration.set(85.01144677379789);
-                c.naturalStrafeDeceleration.set(104.49787535782846);
+                c.maxAchievableForwardVelocity.set(50.8029739239443);
+                c.maxAchievableStrafeVelocity.set(41.05183031151939);
+                c.naturalForwardDeceleration.set(30.873531683987757);
+                c.naturalStrafeDeceleration.set(70.2155234998037);
             }
     );
 
