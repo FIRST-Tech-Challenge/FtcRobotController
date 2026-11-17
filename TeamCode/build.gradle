@@ -19,6 +19,7 @@ apply from: '../build.dependencies.gradle'
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
 
+    // Robot controllers and FTC adapters live in this module's standard src/main/java.
     packagingOptions {
         jniLibs.useLegacyPackaging true
     }

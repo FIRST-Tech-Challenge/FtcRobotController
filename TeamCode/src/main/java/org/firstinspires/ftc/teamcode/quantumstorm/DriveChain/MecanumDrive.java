@@ -85,6 +85,29 @@ public class MecanumDrive {
         setPowers(fl, fr, bl, br);
     }
 
+    /**
+     * Field-centric mecanum drive: the stick moves the robot relative to the
+     * driver, whichever way the robot is facing.
+     *
+     * @param y          away from the driver (+) / toward the driver (-)
+     * @param x          driver's right (+) / left (-)
+     * @param rx         turn clockwise (+) / counter-clockwise (-)
+     * @param headingRad robot heading from the IMU, counter-clockwise positive,
+     *                   0 = facing away from the driver
+     */
+    public void driveFieldCentric(double y, double x, double rx, double headingRad) {
+
+        // Rotate the stick vector by -heading to turn it into robot directions
+        double cos = Math.cos(-headingRad);
+        double sin = Math.sin(-headingRad);
+
+        double robotX = x * cos - y * sin;
+        double robotY = x * sin + y * cos;
+
+        // Correct the chassis' forward direction in robot directions, after rotating
+        drive(robotY * Constants.FIELD_CENTRIC_FORWARD_SIGN, robotX, rx);
+    }
+
     /** Set each wheel directly. Used by drive() and by MecanumDriveTest. */
     public void setPowers(double fl, double fr, double bl, double br) {
 

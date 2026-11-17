@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.quantumstorm.DriveChain;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.quantumstorm.Constants;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.quantumstorm.Constants;
  * Hold a button to spin ONE wheel forward, to verify wiring, port names and
  * motor directions. With no button held, the sticks drive the robot normally.
  */
+@Disabled
 @TeleOp(name = "Test: Mecanum Drive", group = "Quantum Storm Test")
 public class MecanumDriveTest extends LinearOpMode {
 
