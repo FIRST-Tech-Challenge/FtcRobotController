@@ -40,7 +40,7 @@ public final class MirroredHiveTags {
             if(id>=0)mapped.add(new Target(id,t.tx,t.ty,t.heightInches,t.areaPercent,t.color));
         }
         // Preserve real timestamp, measured heights and image angles. Opposite family is ignored.
-        return new Vision(v.valid&&!mapped.isEmpty(),0,v.capturedAt,mapped.toArray(new Target[0]),v.tx);
+        return new Vision(v.valid&&!mapped.isEmpty(),0,v.capturedAt,mapped.toArray(new Target[0]));
     }
     private int alias(int id){
         for(int i=0;i<field.nearTags[family].length;i++)if(id==field.nearTags[family][i])return field.nearTags[0][i];

@@ -44,20 +44,9 @@ public interface RobotIO {
         public final boolean valid;
         public final int pipeline;
         public final double capturedAt;
-        public final double tx;
         public final Target[] targets;
         public Vision(boolean valid,int pipeline,double capturedAt,Target[] targets) {
-            this(valid,pipeline,capturedAt,targets,closestAngle(targets));
-        }
-        public Vision(boolean valid,int pipeline,double capturedAt,Target[] targets,double tx) {
             this.valid=valid; this.pipeline=pipeline; this.capturedAt=capturedAt; this.targets=targets.clone();
-            this.tx=tx;
-        }
-        private static double closestAngle(Target[] targets) {
-            double angle=Double.NaN;
-            for(Target target:targets)if(Double.isFinite(target.tx)
-                    &&(!Double.isFinite(angle)||Math.abs(target.tx)<Math.abs(angle)))angle=target.tx;
-            return angle;
         }
         public boolean fresh(double now,int expectedPipeline) {
             // A Limelight frame can reach the Driver Hub late while the camera

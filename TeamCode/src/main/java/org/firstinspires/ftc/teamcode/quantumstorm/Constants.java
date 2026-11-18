@@ -123,20 +123,12 @@ public class Constants {
     // Tilt servo positions (0..1). TODO: find with "Servo Position Helper"
     public final static double LIMELIGHT_TILT_UP = 0.3;     // look at the hive AprilTag
     public final static double LIMELIGHT_TILT_DOWN = 0.7;   // look at balls on the floor
-    public final static double LIMELIGHT_SERVO_TRAVEL_DEGREES = 300.0;
-    public final static double LIMELIGHT_SERVO_NEUTRAL_POSITION = 0.5;
-    public final static double LIMELIGHT_SERVO_MAX_OFFSET_DEGREES = 120.0;
-    public final static double LIMELIGHT_COLOR_PIPELINE_DWELL_SEC = 3.0;
 
     // Pipeline numbers as set up in the Limelight web UI
     // The configured Limelight profile uses slot 1 for Hive AprilTags and
     // slot 0 for the yellow-pollen color pipeline.
     public final static int LIMELIGHT_APRILTAG_PIPELINE = 1;
     public final static int LIMELIGHT_COLOR_PIPELINE = 0;
-    public final static int LIMELIGHT_YELLOW_PIPELINE = LIMELIGHT_COLOR_PIPELINE;
-    // Additional color slots must match the Limelight web UI configuration.
-    public final static int LIMELIGHT_BLUE_PIPELINE = 2;
-    public final static int LIMELIGHT_RED_PIPELINE = 3;
     // Keep the old name available for existing ball-search code.
     public final static int LIMELIGHT_BALL_PIPELINE = LIMELIGHT_COLOR_PIPELINE;
 

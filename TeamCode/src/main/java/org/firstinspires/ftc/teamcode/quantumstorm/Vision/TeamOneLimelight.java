@@ -12,26 +12,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.biobuzz.RobotIO.*;
 import org.firstinspires.ftc.teamcode.quantumstorm.Constants;
-import org.firstinspires.ftc.teamcode.quantumstorm.Auto.LimeServo;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.biobuzz.ShootingAim;
-import org.firstinspires.ftc.teamcode.biobuzz.AutoDebugSnapshot;
 
 /** Actual SDK observations; never invents detections, tilt state or inventory. */
 public final class TeamOneLimelight implements AutoCloseable {
     private final Limelight3A camera;
     private final Servo tilt;
-    private final LimeServo servo;
     private final DoubleSupplier clock;
     private final boolean teamTwo;
     private final String hardwareName;
     private boolean lastConnected;
     private int pipeline=-1;
-    private boolean idleScan;
     private double changedAt,frameTimestamp=Double.NaN,capturedAt;
     private String problem="";
-    private LLResult lastResult;
-    private Vision lastVision=Vision.empty(0,0);
     public TeamOneLimelight(HardwareMap map,DoubleSupplier clock){this(map,clock,false);}
     /** Team Two shares camera transport but has separate height calibration and shot gating. */
     public TeamOneLimelight(HardwareMap map,DoubleSupplier clock,boolean teamTwo){
@@ -42,32 +34,22 @@ public final class TeamOneLimelight implements AutoCloseable {
         if(found==null){found=map.tryGet(Limelight3A.class,"limelight 3A");name="limelight 3A";}
         hardwareName=found==null?"Not found (tried "+Constants.LIMELIGHT+", limelight 3A)":name;
         camera=found;tilt=map.tryGet(Servo.class,Constants.LIMELIGHT_TILT_SERVO);
-        servo=new LimeServo(camera,tilt,clock);
         if(camera!=null){try{camera.start();reset();}catch(RuntimeException e){problem=e.getMessage();}}
     }
-    public void reset(){pipeline=-1;idleScan=false;select(0);}
+    public void reset(){pipeline=-1;select(0);}
     public void select(int mode){
-        select(mode,false);
-    }
-    public void select(int mode,boolean scanWhileIdle){
         if(Thread.currentThread().isInterrupted())throw new java.util.concurrent.CancellationException("STOP");
-        if(scanWhileIdle){
-            idleScan=true;pipeline=mode;
-            int previous=servo.getPipelineIndex();
-            servo.update(false);
-            if(previous!=servo.getPipelineIndex()){changedAt=clock.getAsDouble();frameTimestamp=Double.NaN;}
-            return;
-        }
-        if(mode==pipeline&&!idleScan)return;
-        idleScan=false;
+        if(mode==pipeline)return;
         pipeline=mode;changedAt=clock.getAsDouble();frameTimestamp=Double.NaN;
+        if(camera==null)return;
         try{
-            servo.selectPipeline(mode==0?LimeServo.Pipeline.APRIL_TAG:LimeServo.Pipeline.YELLOW);
+            if(tilt!=null)tilt.setPosition(mode==0?Constants.LIMELIGHT_TILT_UP:Constants.LIMELIGHT_TILT_DOWN);
+            camera.pipelineSwitch(mode==0?Constants.LIMELIGHT_APRILTAG_PIPELINE:Constants.LIMELIGHT_COLOR_PIPELINE);
         }catch(RuntimeException e){problem=e.getMessage();}
     }
     public boolean mapped(){return camera!=null;}
     public String hardwareName(){return hardwareName;}
-    public int selectedPipeline(){return servo.getPipelineIndex();}
+    public int selectedPipeline(){return pipeline==0?Constants.LIMELIGHT_APRILTAG_PIPELINE:Constants.LIMELIGHT_COLOR_PIPELINE;}
     public boolean connected(){try{lastConnected=camera!=null&&camera.isConnected();}catch(RuntimeException e){problem=e.getMessage();lastConnected=false;}return lastConnected;}
     public String cachedStatus(){return status(lastConnected);}
     public String status(){
@@ -81,13 +63,11 @@ public final class TeamOneLimelight implements AutoCloseable {
     }
     public Vision read(double now){
         Vision empty=Vision.empty(pipeline,now);
-        lastResult=null;lastVision=empty;
-        if(!connected())return empty;
+        if(!connected()||now-changedAt<.20)return empty;
         try{
-            LLResult result=servo.getLatestResult();
-            lastResult=result;
-            int expected=selectedPipeline();
-            if(now-changedAt<.20||!servo.isFreshResult(result)||result.getPipelineIndex()!=expected)return empty;
+            LLResult result=camera.getLatestResult();
+            int expected=pipeline==0?Constants.LIMELIGHT_APRILTAG_PIPELINE:Constants.LIMELIGHT_COLOR_PIPELINE;
+            if(result==null||!result.isValid()||result.getPipelineIndex()!=expected)return empty;
             double age=(result.getStaleness()+result.getCaptureLatency()+result.getTargetingLatency())/1000;
             double stamp=result.getTimestamp();
             // Match RobotIO.Vision freshness: this accepts a live frame that
@@ -96,61 +76,18 @@ public final class TeamOneLimelight implements AutoCloseable {
             if(!Double.isNaN(frameTimestamp)&&stamp<frameTimestamp)return empty;
             if(stamp!=frameTimestamp){frameTimestamp=stamp;capturedAt=now-age;}
             List<Target> targets=new ArrayList<Target>();
-            if(pipeline==0&&!idleScan){
+            if(pipeline==0){
                 List<LLResultTypes.FiducialResult> tags=result.getFiducialResults();
                 if(tags!=null)for(LLResultTypes.FiducialResult tag:tags)targets.add(new Target(tag.getFiducialId(),tag.getTargetXDegrees(),tag.getTargetYDegrees(),height(tag)));
             }else{
-                // SDK blobs have no label: the configured pipeline defines the color.
+                // ColorResult has no color label: this pipeline MUST detect yellow pollen only.
                 LLResultTypes.ColorResult target=largestColorTarget(result);
-                String color=idleScan?(servo.getActivePipeline()==LimeServo.Pipeline.RED?"red":"blue"):"yellow";
-                if(target!=null)targets.add(new Target(-1,target.getTargetXDegrees(),target.getTargetYDegrees(),Double.NaN,target.getTargetArea(),color));
+                if(target!=null)targets.add(new Target(-1,target.getTargetXDegrees(),target.getTargetYDegrees(),Double.NaN,target.getTargetArea(),"yellow"));
             }
             problem="";
-            lastVision=new Vision(!targets.isEmpty(),idleScan?2:pipeline,capturedAt,targets.toArray(new Target[0]),result.getTx());
-            return lastVision;
+            return new Vision(!targets.isEmpty(),pipeline,capturedAt,targets.toArray(new Target[0]));
         }catch(java.util.concurrent.CancellationException e){throw e;}
         catch(RuntimeException e){problem="Camera read failed: "+e.getMessage();return empty;}
-    }
-
-    /** Report the already sampled frame; telemetry must not resample camera hardware. */
-    public void addTelemetry(Telemetry telemetry,double now){
-        telemetry.addData("Limelight mode",idleScan?"Idle red/blue scan":pipeline==0?"AprilTags / neutral":"Yellow pickup / clockwise tilt");
-        telemetry.addData("Limelight selected pipeline","%d (%s)",selectedPipeline(),servo.getActivePipeline());
-        double angle=servo.getCommandedTiltDegrees();
-        telemetry.addData("Limelight commanded tilt",Double.isFinite(angle)
-                ?String.format(java.util.Locale.US,"%.1f deg CW from neutral; position %.3f",angle,servo.getCommandedTiltPosition())
-                :"Tilt servo NOT CONFIGURED");
-        double next=servo.getSecondsUntilScanSwitch();
-        telemetry.addData("Limelight scan switch",Double.isFinite(next)?String.format(java.util.Locale.US,"in %.1f s",next):"Not scanning");
-        boolean targetValid=lastConnected&&lastResult!=null
-                &&lastResult.getPipelineIndex()==selectedPipeline()
-                &&lastVision.fresh(now,lastVision.pipeline)&&now-lastVision.capturedAt<=.25;
-        boolean turnAuthorized=targetValid&&Double.isFinite(lastVision.tx);
-        telemetry.addData("Limelight raw tv",lastResult==null?"N/A":lastResult.isValid()?"1":"0");
-        telemetry.addData("tv authorizes turn suggestion",turnAuthorized?"YES":"NO - missing, stale, switching, wrong-pipeline or invalid tx");
-        telemetry.addData("Turn suggestion",ShootingAim.turnSuggestion(targetValid,lastVision.tx));
-        telemetry.addData("Limelight target frame age",lastVision.valid?AutoDebugSnapshot.age(lastVision,now):"N/A - no accepted target frame");
-        telemetry.addData("Limelight target measurements",AutoDebugSnapshot.details(lastVision,now));
-        Target colorTarget=lastVision.pipeline!=0&&lastVision.targets.length>0?lastVision.targets[0]:null;
-        telemetry.addData("Limelight color target",colorTarget==null?"None"
-                :String.format(java.util.Locale.US,"%s: tx %.2f, ty %.2f deg; area %.2f%%",colorTarget.color,colorTarget.tx,colorTarget.ty,colorTarget.areaPercent));
-        if(lastResult==null){
-            telemetry.addData("Limelight reported pipeline","N/A");
-            telemetry.addData("Limelight tx / ty (degrees)","N/A");
-            telemetry.addData("Limelight target area (%)","N/A");
-            telemetry.addData("Limelight capture / targeting latency (ms)","N/A");
-            telemetry.addData("Limelight result staleness (ms)","N/A");
-            telemetry.addData("Limelight detected targets","N/A");
-        }else{
-            telemetry.addData("Limelight reported pipeline",lastResult.getPipelineIndex());
-            telemetry.addData("Limelight tx / ty (degrees)","%.2f / %.2f",lastResult.getTx(),lastResult.getTy());
-            telemetry.addData("Limelight target area (%)","%.2f",lastResult.getTa());
-            telemetry.addData("Limelight capture / targeting latency (ms)","%.1f / %.1f",lastResult.getCaptureLatency(),lastResult.getTargetingLatency());
-            telemetry.addData("Limelight result staleness (ms)",lastResult.getStaleness());
-            List<LLResultTypes.FiducialResult> tags=lastResult.getFiducialResults();
-            List<LLResultTypes.ColorResult> colors=lastResult.getColorResults();
-            telemetry.addData("Limelight detected targets","%d tags / %d color blobs",tags==null?0:tags.size(),colors==null?0:colors.size());
-        }
     }
     /** Biggest color blob in view, or null when none. */
     private static LLResultTypes.ColorResult largestColorTarget(LLResult result){
