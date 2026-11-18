@@ -1,5 +1,6 @@
-    package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode;
 
+import org.firstinspires.ftc.vision.VisionPortal;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -61,6 +63,7 @@ public class RobotHardwareMap {
     private CRServo PollenServo;
     private CRServo NectarServo;
     private CRServo FlowerServo;
+    public Servo servo;
 
 //    public RobotHardwareMap(HardwareMap baseHardwareMap, LinearOpMode operationMode) {
 //        this.linearOpMode = operationMode;
@@ -101,10 +104,10 @@ public class RobotHardwareMap {
         launcherNectar = baseHardwareMap.get(DcMotorEx.class, "launcher_nectar");
 
         //Drive Motors
-//        backLeftMotor = baseHardwareMap.get(DcMotorEx.class, "RL");
-//        backRightMotor = baseHardwareMap.get(DcMotorEx.class, "RR");
-//        frontLeftMotor = baseHardwareMap.get(DcMotorEx.class, "FL");
-//        frontRightMotor = baseHardwareMap.get(DcMotorEx.class, "FR");
+        backLeftMotor = baseHardwareMap.get(DcMotorEx.class, "RL");
+        backRightMotor = baseHardwareMap.get(DcMotorEx.class, "RR");
+        frontLeftMotor = baseHardwareMap.get(DcMotorEx.class, "FL");
+        frontRightMotor = baseHardwareMap.get(DcMotorEx.class, "FR");
 
 //        intakeMotorFront = baseHardwareMap.tryGet(DcMotorEx.class, "IF");
 //        outtakeMotorBack1 = baseHardwareMap.tryGet(DcMotorEx.class, "BRO");
@@ -124,7 +127,7 @@ public class RobotHardwareMap {
         PollenServo = baseHardwareMap.tryGet(CRServo.class, "pollen_servo");
         NectarServo = baseHardwareMap.tryGet(CRServo.class, "nectar_servo");
         FlowerServo = baseHardwareMap.tryGet(CRServo.class, "flower_servo");
-
+        servo = baseHardwareMap.tryGet(Servo.class,"servo");
         chImu = baseHardwareMap.get(IMU.class, "imu");
 
         IMU.Parameters myIMUParameters = new IMU.Parameters(
@@ -139,13 +142,10 @@ public class RobotHardwareMap {
         opMode.telemetry.update();
     }
 
-    import org.firstinspires.ftc.vision.VisionPortal;
-
-    public class RobotHardwareMap {
 
         //    private LinearOpMode linearOpMode = null;
-        private OpMode opMode = null;
-        public HardwareMap baseHMap;
+//        private OpMode opMode = null;
+//        public HardwareMap baseHMap;
 
     public boolean hasTransfer() {
         return LeftTransferServo != null && RightTransferServo != null && CenterTransferServo != null;
