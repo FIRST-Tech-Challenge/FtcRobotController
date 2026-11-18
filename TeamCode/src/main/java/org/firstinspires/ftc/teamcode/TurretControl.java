@@ -153,8 +153,10 @@ public final class TurretControl {
         }
         if (competitionWasAutomatic && Double.isFinite(measuredYawDeg)) {
             // A stick already held on auto release must also start from the measured heading.
+            // Keep the learned encoder offset: the servo already sits at measured + offset, so zeroing it
+            // here moved the turret by the offset and the correction moved it back 0.25 s later (a twitch).
             targetYawDeg = TurretSubsystem.clampYawAngle(measuredYawDeg);
-            correctionDeg = 0; correctionApplied = correctionActive = false; errorSince = Double.NaN;
+            lastTargetDeg = targetYawDeg; errorSince = Double.NaN;
         }
         competitionWasAutomatic = false;
         if (!moving) {
@@ -162,8 +164,9 @@ public final class TurretControl {
             if (competitionMotionActive && Double.isFinite(measuredYawDeg)) {
                 competitionMotionActive = false;
                 // Discard queued travel once. Subsequent encoder noise cannot move the hold target.
+                // The learned offset is kept for the same reason as on auto-aim release.
                 double hold = TurretSubsystem.clampYawAngle(measuredYawDeg);
-                correctionDeg = 0; correctionApplied = correctionActive = false; errorSince = Double.NaN;
+                errorSince = Double.NaN;
                 lastTargetDeg = hold;
                 return hold;
             }

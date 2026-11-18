@@ -339,4 +339,40 @@ public class TurretControllerTest {
         c.updateYawCommand(8.02, result[2], result[2], 0, false);
         assertEquals(0, c.getEncoderCorrectionDegrees(), 0);
     }
+
+    @Test public void targetMemoryStopsDeadZoneFlappingFromTheFrontHalfAndMidUnwind() {
+        double max = TurretSubsystem.ROTATION_MAX_ANGLE_DEG, hyst = TurretSubsystem.ROTATION_WRAP_HYSTERESIS_DEG;
+        // Bearing straight behind, jittering across +/-180, with the turret starting at home.
+        double target = 0;
+        target = TurretSubsystem.reachableYawDegrees(179.6, target);
+        for (int i = 0; i < 200; i++) {
+            target = TurretSubsystem.reachableYawDegrees(i % 2 == 0 ? -179.6 : 179.6, target);
+            assertEquals(max, target, 0);
+        }
+        // Holding +175, the bearing moves past the edge on the other side: commit to the unwind once,
+        // then edge noise around (max - hysteresis) must not reverse it.
+        target = TurretSubsystem.reachableYawDegrees(-(max - hyst - .5), target);
+        assertEquals(-(max - hyst - .5), target, 0);
+        for (int i = 0; i < 200; i++) {
+            double desired = -(max - hyst) + (i % 2 == 0 ? .6 : -.6);
+            target = TurretSubsystem.reachableYawDegrees(desired, target);
+            assertTrue(target < 0);
+        }
+    }
+    @Test public void releaseKeepsTheLearnedEncoderOffsetSoTheTurretDoesNotTwitch() {
+        TurretControl c = new TurretControl(); c.setEncoderCorrectionEnabled(true);
+        // The servo lands 5 deg short of what the encoder reads as the target (gear lash / home estimate).
+        double target = 40, command = 0, t = 0;
+        for (int i = 0; i < 100; i++, t += .02) {
+            command = c.updateYawCommand(t, target, command - 5, 0, true);
+        }
+        assertEquals(5, c.getEncoderCorrectionDegrees(), 1e-6);
+        double measured = command - 5;
+        c.competitionManualYawTarget(target, measured, 0, .02, true);   // auto-aim held
+        double hold = c.competitionManualYawTarget(target, measured, 0, .02, false); // released
+        assertEquals(measured, hold, 0);
+        double after = c.updateYawCommand(t, hold, measured, 0, true);
+        assertEquals(command, after, 1e-6); // Same servo position: no release twitch.
+        for (int i = 0; i < 100; i++, t += .02) assertEquals(command, c.updateYawCommand(t, hold, measured, 0, true), 1e-6);
+    }
 }

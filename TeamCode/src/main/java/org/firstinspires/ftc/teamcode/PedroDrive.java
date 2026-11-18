@@ -61,6 +61,8 @@ public final class PedroDrive {
     public MotionSample sample() { return odometry.getSample(); }
     public Follower follower() { return follower; }
     public Path atSpeed(Path path, double fraction) { return path.with(config.setPathSpeed(fraction)); }
+    /** Foresight settings, for per-path modifiers such as {@code config().maxAccelerationConstraint.at(a)}. */
+    public ForesightConfig config() { return config; }
     public void stop() { follower.stop(); drivetrain.stop(); }
     public void addTelemetry(Telemetry telemetry) {
         motors.addConfigurationTelemetry(telemetry);

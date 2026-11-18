@@ -143,15 +143,15 @@ public final class ShotCoordinator {
         }
         if (automatic && solution.aimable) {
             // Servo gets the led bearing; readiness below still compares against the bearing now.
-            if (controlYaw && !fieldRehome.pending()) turret.setTargetYawDegrees(TurretSubsystem.reachableYawDegrees(
-                    Math.toDegrees(solution.commandYaw), turret.getEncoderAngleDegrees()));
+            if (controlYaw && !fieldRehome.pending()) turret.setTargetYawDegrees(turret.reachableYawTarget(
+                    Math.toDegrees(solution.commandYaw)));
             if (controlHood) turret.setPitchAngleDegrees(solution.hoodDeg);
             if (controlRpm && !flywheelStop) turret.setShooterRpm(solution.rpm);
         } else if (fieldOdometryOnly && automatic && !fieldRehome.pending() && turret.isHomed() && pose != null
                 && controlYaw && pose.fieldReferenced && pose.fresh(now, ShotPlanner.MAX_SAMPLE_AGE_SECONDS)) {
             // Keep odometry yaw tracking available while RPM/hood calibration is pending.
             double degrees = Math.toDegrees(TeleOpFieldReference.yawRadians(pose.led(planner.leadSeconds()), target, mount)) + yawOffsetDeg;
-            turret.setTargetYawDegrees(TurretSubsystem.reachableYawDegrees(degrees, turret.getEncoderAngleDegrees()));
+            turret.setTargetYawDegrees(turret.reachableYawTarget(degrees));
         } else if (!fieldOdometryOnly && automatic && controlYaw && turret.isHomed() && turret.getVisionTag() != null
                 && turret.getVisionResult().getTimestamp() > lastTrackingFrame) {
             // Acquire the selected hive before shot calibration is available; this does not enable firing.
@@ -160,8 +160,7 @@ public final class ShotCoordinator {
                     : history.delayedYaw(now,trackingCapture,Math.toRadians(turret.getVisionTag().getTargetXDegrees()),
                             Math.toRadians(turret.getVisionTag().getTargetYDegrees()),mount,planner.leadSeconds());
             if (Double.isFinite(compensated)) {
-                turret.setTargetYawDegrees(TurretSubsystem.reachableYawDegrees(
-                        Math.toDegrees(compensated), turret.getEncoderAngleDegrees()));
+                turret.setTargetYawDegrees(turret.reachableYawTarget(Math.toDegrees(compensated)));
             }
             lastTrackingFrame = turret.getVisionResult().getTimestamp();
         }
@@ -171,7 +170,7 @@ public final class ShotCoordinator {
                 && pose.fresh(now, ShotPlanner.MAX_SAMPLE_AGE_SECONDS) && (solution.aimable || (fieldOdometryOnly && pose.fieldReferenced))) {
             double bearingNow = solution.aimable ? Math.toDegrees(solution.yaw)
                     : Math.toDegrees(TeleOpFieldReference.yawRadians(pose, target, mount)) + yawOffsetDeg;
-            lag.update(now, TurretSubsystem.reachableYawDegrees(bearingNow, turret.getEncoderAngleDegrees()),
+            lag.update(now, turret.reachableYawTarget(bearingNow),
                     turret.getEncoderAngleDegrees(), turret.getEncoderVelocityDegPerSec(), Math.toDegrees(pose.omega));
         }
         double yawError = solution.valid ? Math.abs(Math.toDegrees(solution.yaw) - turret.getEncoderAngleDegrees()) : Double.POSITIVE_INFINITY;
@@ -290,7 +289,7 @@ public final class ShotCoordinator {
                 GoalTarget landmark = TeleOpFieldReference.target(target.alliance,
                         TeleOpFieldReference.nearestSide(current.y,target.side));
                 double yaw = Math.toDegrees(TeleOpFieldReference.yawRadians(current.led(planner.leadSeconds()),landmark,mount));
-                turret.setTargetYawDegrees(TurretSubsystem.reachableYawDegrees(yaw, turret.getEncoderAngleDegrees()));
+                turret.setTargetYawDegrees(turret.reachableYawTarget(yaw));
             }
             if (Double.isFinite(observation.frame)) lastFrame = observation.frame;
             visionDecision = fieldRehome.status();

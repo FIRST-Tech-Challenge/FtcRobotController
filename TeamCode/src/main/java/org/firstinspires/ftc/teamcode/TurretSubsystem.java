@@ -38,7 +38,7 @@ import java.util.List;
  *         Expansion Hub Motor Port 0 & Quadrature Port 0 (28 ticks/rev, 6000 RPM, FLOAT).
  *         Config name: {@code "turret_motor"}.</li>
  *     <li><b>Limelight 3A Vision Sensor</b>:
- *         Control Hub USB 3.0 port (via powered USB hub), mounted at {@code 30.0 deg} above horizontal.
+ *         Control Hub USB 3.0 port (via powered USB hub), pitched {@link ShootingConfiguration#CAMERA_PITCH_UP_DEG} above horizontal.
  *         Config name: {@code "limelight"}.</li>
  * </ul>
  */
@@ -147,7 +147,8 @@ public class TurretSubsystem {
     // =========================================================================
     // LIMELIGHT 3A MOUNTING & BIOBUZZ HIVE / APRILTAG FIELD CONSTANTS
     // =========================================================================
-    public static final double LIMELIGHT_MOUNT_ANGLE_DEG = 30.0;     // Angled 30 deg above horizontal toward goal
+    // Single source: the shooter mount model's camera pitch (the old 30 deg value here was stale).
+    public static final double LIMELIGHT_MOUNT_ANGLE_DEG = ShootingConfiguration.CAMERA_PITCH_UP_DEG;
     public static final double LIMELIGHT_LENS_HEIGHT_MM = ShootingConfiguration.CAMERA_HEIGHT_MM;
     public static final double LIMELIGHT_LENS_HEIGHT_INCHES = LIMELIGHT_LENS_HEIGHT_MM / 25.4;
     public static final int LIMELIGHT_DEFAULT_PIPELINE = 0;
@@ -505,6 +506,11 @@ public class TurretSubsystem {
      * turret ends closest to the goal and does not reverse an unwind. Once the bearing leaves the zone on
      * the other side by the hysteresis margin, the target moves there and the turret unwinds the long way
      * through home instead of crossing the dead zone.
+     *
+     * <p>Pass the previous yaw TARGET as {@code currentDeg} (see {@link #reachableYawTarget}), not the measured
+     * yaw. The target is the rule's memory: with the measured yaw, a bearing jittering across the back
+     * flipped the target between +175 and -175 every loop while the turret was still in its front half,
+     * and noise at the hysteresis edge reversed an unwind mid-travel, so the turret jerked back and forth.
      */
     public static double reachableYawDegrees(double desiredDeg, double currentDeg) {
         if (!Double.isFinite(desiredDeg)) return Double.NaN;
@@ -517,6 +523,8 @@ public class TurretSubsystem {
             return side * ROTATION_MAX_ANGLE_DEG;
         return desired;
     }
+    /** {@link #reachableYawDegrees} using this turret's current target as the dead-zone side memory. */
+    public double reachableYawTarget(double desiredDeg) { return reachableYawDegrees(desiredDeg, targetYawDeg); }
     public static double clampYawAngle(double deg) { return Range.clip(deg, ROTATION_MIN_ANGLE_DEG, ROTATION_MAX_ANGLE_DEG); }
     public static double angleDegreesToRotationServoPos(double deg) {
         return Range.clip(.5 + deg * ROTATION_GEAR_RATIO * ROTATION_SERVO_DIRECTION_SIGN / AXON_MAX_TRAVEL_DEG, 0, 1);

@@ -22,6 +22,11 @@ public final class PedroConfiguration {
     public static final double STRAFE_LINEAR_BRAKE_SECONDS = .01;
     public static final double FORWARD_QUADRATIC_BRAKE_SEC_SQUARED_PER_IN = .0125;
     public static final double STRAFE_QUADRATIC_BRAKE_SEC_SQUARED_PER_IN = 1.0 / 70;
+    // Path acceleration / deceleration caps (in/s^2). NONE = no limit, Pedro's default; the path planner's
+    // Pedro 3 output can also set them per path. Measure before lowering: a cap below the natural
+    // deceleration lengthens every stop.
+    public static final double MAX_ACCELERATION_IN_PER_SEC_SQUARED = ForesightConfig.Constraint.NONE;
+    public static final double MAX_DECELERATION_IN_PER_SEC_SQUARED = ForesightConfig.Constraint.NONE;
     public static final double DEFAULT_PATH_SPEED_FRACTION = .35;
     public static final double MAX_WHEEL_POWER = .35;
     public static final double MAX_AUTONOMOUS_SECONDS = 29;
@@ -39,6 +44,8 @@ public final class PedroConfiguration {
             c.quadraticBrakeCoefficients.set(Matrix.diag(FORWARD_QUADRATIC_BRAKE_SEC_SQUARED_PER_IN,
                     STRAFE_QUADRATIC_BRAKE_SEC_SQUARED_PER_IN));
             c.headingBrakeCoefficients.set(Vector2D.zero()); // Measure rotational braking too.
+            c.maxAccelerationConstraint.set(MAX_ACCELERATION_IN_PER_SEC_SQUARED);
+            c.maxDecelerationConstraint.set(MAX_DECELERATION_IN_PER_SEC_SQUARED);
             c.headingConstraint.set(END_HEADING_TOLERANCE_RAD);
             c.translationalConstraint.set(END_TRANSLATIONAL_TOLERANCE_IN);
             c.velocityConstraint.set(END_VELOCITY_TOLERANCE_IN_PER_SEC);
