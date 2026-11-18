@@ -14,9 +14,4 @@ public class Tuning {
     public static Procedure mecanumTuner() {
         return new MecanumTuner();
     }
-
-    @Tuner
-    public static Procedure pinpointTuner() {
-        return new PinpointTuner();
-    }
 }

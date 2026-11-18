@@ -7,6 +7,7 @@ import android.util.Size;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.pinpoint.GoBildaPinpointDriver;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
@@ -112,6 +114,15 @@ public final class Constants {
 
     }
 
+    public static final class pinpoint {
+        public static String pinpointName = "odo";
+        public static GoBildaPinpointDriver pinpointDriver;
+        public static double xOffset = 77.539;
+        public static double yOffset = 32.729;
+        public static DistanceUnit offsetDistanceUnit = DistanceUnit.MM;
+        public static GoBildaPinpointDriver.GoBildaOdometryPods OdoPodLayout = GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD;
+    }
+
     public static final class intakes{
         public static String intakePollenName = "intakePollen";
         public static String intakeNectarName = "intakeNectar";
@@ -159,6 +170,7 @@ public final class Constants {
         public static boolean initializeWebcam = false;
         public static boolean initializeColorBlobLocator = false;
         public static boolean initializeAprilTags = false;
+        public static boolean initializePinpoint = false;
         public static void resetHardwareMaps(Telemetry telemetry) {
             initializeDrive = false;
             initializeIMU = false;
@@ -170,6 +182,7 @@ public final class Constants {
             initializeWebcam = false;
             initializeColorBlobLocator = false;
             initializeAprilTags = false;
+            initializePinpoint = false;
 
             telemetry.addLine("Hardware Maps reset.");
             telemetry.update();
@@ -184,6 +197,9 @@ public final class Constants {
                     drive.frontRightMotor = hardwareMap.get(DcMotor.class, drive.frontRightMotorName);
                     drive.backLeftMotor = hardwareMap.get(DcMotor.class, drive.backLeftMotorName);
                     drive.backRightMotor = hardwareMap.get(DcMotor.class, drive.backRightMotorName);
+
+                    drive.frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
                     telemetry.addLine("Drive hardware maps initialized.");
                 } catch (Exception e) {
                     telemetry.addLine("Not all drive hardware maps configured.");
@@ -344,9 +360,29 @@ public final class Constants {
                 } catch (Exception e) {
                     telemetry.addLine("Ramp hardware map not configured.");
                     telemetry.addLine("Ramp not initialized.");
+                    return false;
                 }
             } else {
                 telemetry.addLine("Ramp not initialized.");
+            }
+
+            if (initializePinpoint) {
+                try {
+                    pinpoint.pinpointDriver = hardwareMap.get(GoBildaPinpointDriver.class, pinpoint.pinpointName);
+                    pinpoint.pinpointDriver.setOffsets(pinpoint.xOffset, pinpoint.yOffset, pinpoint.offsetDistanceUnit);
+                    pinpoint.pinpointDriver.setEncoderResolution(pinpoint.OdoPodLayout);
+                    pinpoint.pinpointDriver.setEncoderDirections(
+                            GoBildaPinpointDriver.EncoderDirection.FORWARD,
+                            GoBildaPinpointDriver.EncoderDirection.REVERSED);
+                    pinpoint.pinpointDriver.resetPosAndIMU();
+                    telemetry.addLine("Pinpoint initialized.");
+                } catch (Exception e) {
+                    telemetry.addLine("Pinpoint hardware map not configured.");
+                    telemetry.addLine("Pinpoint not initialized.");
+                    return false;
+                }
+            } else {
+                telemetry.addLine("Pinpoint not initialized.");
             }
 
 
