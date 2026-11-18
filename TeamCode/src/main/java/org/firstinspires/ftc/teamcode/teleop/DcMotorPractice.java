@@ -23,10 +23,11 @@ public class DcMotorPractice extends OpMode {
         bench = new TestBench(robotHardwareMap);
         bench.init(hardwareMap);
         this.motor = hardwareMap.get(DcMotorEx.class,"launcher_pollen");
-        this.motor.setDirection(DcMotorSimple.Direction.REVERSE);
-        bench.getLauncherNectar().setDirection(DcMotorSimple.Direction.REVERSE);
-        bench.getIntake().setDirection(DcMotorSimple.Direction.REVERSE);
-        bench.getTransfer().setDirection(DcMotorSimple.Direction.REVERSE);
+
+//        this.motor.setDirection(DcMotorSimple.Direction.REVERSE);
+//        bench.getLauncherNectar().setDirection(DcMotorSimple.Direction.REVERSE);
+//        bench.getIntake().setDirection(DcMotorSimple.Direction.REVERSE);
+//        bench.getTransfer().setDirection(DcMotorSimple.Direction.REVERSE);
 //
     }
     double speedIncrement = 0;
@@ -48,10 +49,10 @@ public class DcMotorPractice extends OpMode {
         telemetry.addData("rpm1:1 6000",motor.getVelocity()*60/28);
 //        updateTelemetry("rpm",motor.);
         if (gamepad1.bWasPressed()){
-            speedIncrement += .1;
+            speedIncrement += .05;
         }
         if (gamepad1.yWasPressed()){
-            speedIncrement -= .1;
+            speedIncrement -= .05;
         }
         if (gamepad1.a) {
            bench.setMotorSpeed(0);
@@ -65,6 +66,11 @@ public class DcMotorPractice extends OpMode {
             bench.getTransfer().setPower(speedIncrement);
 
 
+        }
+        if (gamepad1.right_trigger > 0){
+            bench.getServo().setPower(.7);
+        } else {
+            bench.getServo().setPower(0);
         }
     }
 }

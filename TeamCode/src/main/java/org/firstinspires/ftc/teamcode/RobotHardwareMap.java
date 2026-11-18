@@ -15,9 +15,9 @@ import org.firstinspires.ftc.vision.VisionPortal;
 
 public class RobotHardwareMap {
 
-    //    private LinearOpMode linearOpMode = null;
+//    private LinearOpMode linearOpMode = null;
     private OpMode opMode = null;
-    public HardwareMap baseHMap;
+    public HardwareMap baseHardwareMap;
 
     public VoltageSensor controlHubBatteryVoltage;
     public VoltageSensor expansionHubBatteryVoltage;
@@ -58,16 +58,19 @@ public class RobotHardwareMap {
 
     boolean controlHubBatteryVoltageEnabled = true;
     boolean expansionHubBatteryVoltageEnabled = true;
+    private CRServo PollenServo;
+    private CRServo NectarServo;
+    private CRServo FlowerServo;
 
 //    public RobotHardwareMap(HardwareMap baseHardwareMap, LinearOpMode operationMode) {
 //        this.linearOpMode = operationMode;
 //        this.baseHardwareMap = baseHardwareMap;
-    ////        this.initialize();
+////        this.initialize();
 //    }
 
-    public RobotHardwareMap(HardwareMap baseHMap, OpMode operationMode) {
+    public RobotHardwareMap(HardwareMap baseHardwareMap,OpMode operationMode) {
         this.opMode = operationMode;
-        this.baseHMap = baseHMap;
+        this.baseHardwareMap = baseHardwareMap;
 //        this.initialize();
     }
 
@@ -80,10 +83,10 @@ public class RobotHardwareMap {
 
         opMode.telemetry.addData("Status", "detecting...");
 
-        controlHubBatteryVoltage = baseHMap.get(VoltageSensor.class, "Control Hub");
-        controlHub = baseHMap.get(LynxModule.class, "Control Hub");
-        expansionHubBatteryVoltage = baseHMap.tryGet(VoltageSensor.class, "Expansion Hub 2");
-        expansionHub = baseHMap.tryGet(LynxModule.class, "Expansion Hub 2");
+        controlHubBatteryVoltage = baseHardwareMap.get(VoltageSensor.class, "Control Hub");
+        controlHub = baseHardwareMap.get(LynxModule.class, "Control Hub");
+        expansionHubBatteryVoltage = baseHardwareMap.tryGet(VoltageSensor.class, "Expansion Hub 2");
+        expansionHub = baseHardwareMap.tryGet(LynxModule.class, "Expansion Hub 2");
 
 
 //        testMotor3 = baseHardwareMap.get(DcMotorEx.class, "testMotor3");
@@ -92,10 +95,10 @@ public class RobotHardwareMap {
 
         //Shooter Motors
 
-        transfer = baseHMap.get(DcMotorEx.class, "transfer_motor");
-        intake = baseHMap.get(DcMotorEx.class, "intake_motor");
-        launcherPollen = baseHMap.get(DcMotorEx.class, "launcher_pollen");
-        launcherNectar = baseHMap.get(DcMotorEx.class, "launcher_nectar");
+        transfer = baseHardwareMap.get(DcMotorEx.class, "transfer_motor");
+        intake = baseHardwareMap.get(DcMotorEx.class, "intake_motor");
+        launcherPollen = baseHardwareMap.get(DcMotorEx.class, "launcher_pollen");
+        launcherNectar = baseHardwareMap.get(DcMotorEx.class, "launcher_nectar");
 
         //Drive Motors
 //        backLeftMotor = baseHardwareMap.get(DcMotorEx.class, "RL");
@@ -114,11 +117,15 @@ public class RobotHardwareMap {
 //        LED2Green = baseHardwareMap.tryGet(DigitalChannel.class, "LED2Green");
 //        LED2Red = baseHardwareMap.tryGet(DigitalChannel.class, "LED2Red");
 
-        LeftTransferServo = baseHMap.tryGet(CRServo.class, "LTS");
-        RightTransferServo = baseHMap.tryGet(CRServo.class, "RTS");
-        CenterTransferServo = baseHMap.tryGet(CRServo.class, "CTS");
+//        LeftTransferServo = baseHardwareMap.tryGet(CRServo.class, "LTS");
+//        RightTransferServo = baseHardwareMap.tryGet(CRServo.class, "RTS");
+//        CenterTransferServo = baseHardwareMap.tryGet(CRServo.class, "CTS");
 
-        chImu = baseHMap.get(IMU.class, "imu");
+        PollenServo = baseHardwareMap.tryGet(CRServo.class, "pollen_servo");
+        NectarServo = baseHardwareMap.tryGet(CRServo.class, "nectar_servo");
+        FlowerServo = baseHardwareMap.tryGet(CRServo.class, "flower_servo");
+
+        chImu = baseHardwareMap.get(IMU.class, "imu");
 
         IMU.Parameters myIMUParameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
@@ -143,8 +150,42 @@ public class RobotHardwareMap {
     public boolean hasTransfer() {
         return LeftTransferServo != null && RightTransferServo != null && CenterTransferServo != null;
     }
-
+    public boolean hasDrive(){
+        return backLeftMotor != null && backRightMotor != null && frontLeftMotor != null && frontRightMotor != null;
+    }
     public boolean hasArm() {
         return armMotor != null && clawRotator != null;
+    }
+
+    public CRServo getFlowerServo() {
+        return FlowerServo;
+    }
+    public boolean hasNectarServo(){
+        return NectarServo != null;
+    }
+    public boolean hasPollenServo(){
+        return PollenServo != null;
+    }
+    public boolean hasFlowerServo(){
+        return FlowerServo != null;
+    }
+    public void setFlowerServo(CRServo flowerServo) {
+        FlowerServo = flowerServo;
+    }
+
+    public CRServo getNectarServo() {
+        return NectarServo;
+    }
+
+    public void setNectarServo(CRServo nectarServo) {
+        NectarServo = nectarServo;
+    }
+
+    public CRServo getPollenServo() {
+        return PollenServo;
+    }
+
+    public void setPollenServo(CRServo pollenServo) {
+        PollenServo = pollenServo;
     }
 }

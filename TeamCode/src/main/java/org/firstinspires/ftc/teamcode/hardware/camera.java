@@ -4,35 +4,32 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.RobotHardwareMap;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import java.util.HashSet;
-import java.util.Set;
+
 import java.util.HashMap;
-import java.util.Map;
-
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
+@SuppressWarnings("unused")
 public class camera {
-    RobotHardwareMap robotHardwareMap;
-
-
-    LinearOpMode opMode;
-
-    private Limelight3A limelight;
-    private int goalColor;// 0 is 20 blue , 1 is 24 red
-    private LLResult llResult ;
+    private final RobotHardwareMap robotHardwareMap;
+    private final LinearOpMode opMode;
+    private final Limelight3A limelight;
+    private int goalColor; // 0 is 20 blue , 1 is 24 red
+    private LLResult llResult;
 
     // finish the init method
 
     public camera(RobotHardwareMap robotHardwareMap, LinearOpMode opMode) {
         this.opMode = opMode;
         this.robotHardwareMap = robotHardwareMap;
-        limelight = robotHardwareMap.baseHMap.get(Limelight3A.class, "limelight");
+        limelight = robotHardwareMap.baseHardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0); // 0 is 20, 1 is 24
         goalColor = 0;
     }
@@ -49,10 +46,10 @@ public class camera {
 
         if ((llResult != null) && llResult.isValid()){
             Pose3D botpos = llResult.getBotpose_MT2();
-            opMode.telemetry.addLine(String.format("XYA %6.1f %6.1f  %6.3f ", llResult.getTx(),  llResult.getTy(), llResult.getTa()));
+            opMode.telemetry.addLine(String.format(Locale.US, "XYA %6.1f %6.1f  %6.3f ", llResult.getTx(),  llResult.getTy(), llResult.getTa()));
             opMode.telemetry.addData("BotPos", botpos.toString());
             opMode.telemetry.addData("Yaw", botpos.getOrientation().getYaw());
-            opMode.telemetry.addData("AprilTag Distance (area proxy)", String.format("%.2f%%", llResult.getTa()));
+            opMode.telemetry.addData("AprilTag Distance (area proxy)", String.format(Locale.US, "%.2f%%", llResult.getTa()));
             List<LLResultTypes.FiducialResult> tags = llResult.getFiducialResults();
             for (LLResultTypes.FiducialResult tag : tags) {
                 opMode.telemetry.addLine("Tag ID: " + tag.getFiducialId());
@@ -80,11 +77,7 @@ public class camera {
                 for (LLResultTypes.FiducialResult tag : result.getFiducialResults()) {
                     int id = tag.getFiducialId();
                     if (inGroup(selection, id)) {
-                        double[] d = data.get(id);
-                        if (d == null) {
-                            d = new double[3];
-                            data.put(id, d);
-                        }
+                        double[] d = data.computeIfAbsent(id, k -> new double[3]);
                         d[0] += offsetDeg + tag.getTargetXDegrees();
                         d[1] += tag.getTargetArea();
                         d[2] += 1;
@@ -123,7 +116,7 @@ public class camera {
         }
         double center = total / kept;
 
-        opMode.telemetry.addData("Aim center", String.format("%.2f deg, %d seen, %d kept", center, data.size(), kept));
+        opMode.telemetry.addData("Aim center", String.format(Locale.US, "%.2f deg, %d seen, %d kept", center, data.size(), kept));
         return center;
     }
 
@@ -202,8 +195,5 @@ public class camera {
     public void goalcolor (int goalColorIn) {
         goalColor = goalColorIn;
         limelight.pipelineSwitch(goalColor); // 0 is 20 blue, 1 is 24 red
-
-
     }
-
 }

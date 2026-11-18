@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.RobotHardwareMap;
+import org.firstinspires.ftc.teamcode.helper;
 
 public class Shooter {
     private final RobotHardwareMap robotHardwareMap;
@@ -14,6 +16,8 @@ public class Shooter {
     //    RobotHardwareMap robotHardwareMap;
     DcMotorEx intake;
     private DcMotorEx launcherPollen;
+    private double target;
+    private static final double ratio = 1;
 
     public DcMotorEx getMotor() {
         return motor;
@@ -25,6 +29,14 @@ public class Shooter {
 
     private DcMotorEx motor;
 //    private double speed;
+    private CRServo servo;
+    private double rpm = 0;
+
+
+    public boolean isAtSpeed() {
+        rpm = helper.getRPM(this.motor.getVelocity(),1);
+        return rpm >= target;
+    }
 
 
     public enum Power {
@@ -38,7 +50,10 @@ public class Shooter {
     public Shooter(RobotHardwareMap robotHardwareMap, OpMode opMode) {
         this.robotHardwareMap = robotHardwareMap;
         this.opMode = opMode;
+        // Once we talk about making init private
+//        this.init();
     }
+
 
     public void init(){
 //        launcherPollen = robotHardwareMap.launcherPollen;
@@ -47,6 +62,9 @@ public class Shooter {
         this.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.servo = robotHardwareMap.getPollenServo();
+        rpm = this.motor.getVelocity()*60/19.2/ratio;
+        target = 4700;
     }
     public void setMotorSpeed(double speed){
         this.motor.setPower(speed);
@@ -71,15 +89,25 @@ public class Shooter {
 //        }
     }
     public void toggleShooter(double motorSpeed) {
-////        if (launcherPollen.getPower() > 0){
-////            running = true;
-////        }
-//        running= !running;
-//        if (running){
-//            setMotorSpeed(motorSpeed);
-//        } else {
-//            setMotorSpeed(0);
-//        }
+        if (launcherPollen.getPower() > 0){
+            running = true;
+        }
+        running= !running;
+        if (running){
+            setMotorSpeed(motorSpeed);
+        } else {
+            setMotorSpeed(0);
+        }
+    }
+    public void shoot(){
+        if (robotHardwareMap.hasPollenServo()) {
+            servo.setPower(1);
+        }
+        try {
+            wait(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean isRunning() {
