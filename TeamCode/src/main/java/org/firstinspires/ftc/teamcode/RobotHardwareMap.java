@@ -110,13 +110,6 @@
     //        intakeMotorFront = baseHardwareMap.tryGet(DcMotorEx.class, "IF");
     //        outtakeMotorBack1 = baseHardwareMap.tryGet(DcMotorEx.class, "BRO");
     //        outtakeMotorBack2 = baseHardwareMap.tryGet(DcMotorEx.class, "BLO");
-    //        clawRotator = baseHardwareMap.tryGet(DcMotorEx.class, "clawRotator");
-    //        armMotor = baseHardwareMap.tryGet(DcMotorEx.class, "armMotor")
-
-    //        LED1Green = baseHardwareMap.tryGet(DigitalChannel.class, "LED1Green");
-    //        LED1Red = baseHardwareMap.tryGet(DigitalChannel.class, "LED1Red");
-    //        LED2Green = baseHardwareMap.tryGet(DigitalChannel.class, "LED2Green");
-    //        LED2Red = baseHardwareMap.tryGet(DigitalChannel.class, "LED2Red");
 
             //LeftTransferServo = baseHMap.tryGet(CRServo.class, "LTS");
             //RightTransferServo = baseHMap.tryGet(CRServo.class, "RTS");
