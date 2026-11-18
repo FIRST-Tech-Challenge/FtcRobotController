@@ -45,6 +45,7 @@ public final class TeamOnePollenAuto implements RobotController {
     public boolean allowAnyFreshAprilTag=false;
     /** Team 1 begins at a fixed, taped preload-shot pose; vision is not required to feed. */
     public boolean requireAprilTagForPreload=false;
+    public boolean aimForShooting=false;
     /** Backup mode: after two Garden passes, use Team Two's taped wall shot and fire only on a live tag. */
     public boolean useTeamTwoFollowUpShot=false;
     public int gardenPassLimit=0;
@@ -319,6 +320,9 @@ public final class TeamOnePollenAuto implements RobotController {
                         Pose start=field.hive[alliance];destination=new Pose(start.x,start.y-18*Math.sin(start.heading),Pose.angle(start.heading+observationHeadingOffsetRadians));
                         enter(State.OBSERVE_TILT);message="Preload feed attempt complete; move to tag-observation clearance";
                     }else{
+                        if(aimForShooting&&!ShootingAim.align(s,now,out)){
+                            spinAt=Double.NaN;message="Shooting blocked: fresh tv and tx within 2 degrees required";break;
+                        }
                         Pose shot=field.hive[alliance];
                         boolean atShot=current.distance(shot)<=1&&Math.abs(Pose.angle(current.heading-shot.heading))<=Math.toRadians(2);
                         boolean practiceTagReady=s.cameraConnected&&s.vision.fresh(now,0)&&s.vision.targets.length>0;
@@ -414,6 +418,9 @@ public final class TeamOnePollenAuto implements RobotController {
                     if(out==null){enter(State.WAIT_FOR_TEAM_TWO_TAG);message="At Team Two wall shot; waiting for a fresh AprilTag before follow-up feed";}
                     break;
                 case WAIT_FOR_TEAM_TWO_TAG:
+                    if(aimForShooting&&!ShootingAim.align(s,now,out)){
+                        message="Aligning follow-up shot: fresh tv and tx within 2 degrees required";break;
+                    }
                     if(correctTeamTwoTag(s,now)){
                         enter(State.FOLLOW_UP_SHOOTING);
                         message="Correct Hive AprilTag detected; begin paced follow-up feed";
@@ -421,6 +428,9 @@ public final class TeamOnePollenAuto implements RobotController {
                     break;
                 case FOLLOW_UP_SHOOTING:
                     if(feedElapsed>=feedSeconds){park();break;}
+                    if(aimForShooting&&!ShootingAim.align(s,now,out)){
+                        spinAt=Double.NaN;message="Follow-up feed paused: target lost or not aligned";break;
+                    }
                     if(Double.isNaN(spinAt))spinAt=now;
                     out.shooterPower=power;
                     if(now-spinAt>=spinUpSeconds)out.feederPower=1;
