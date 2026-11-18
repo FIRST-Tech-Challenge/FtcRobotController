@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.quantumstorm.Constants;
 import org.firstinspires.ftc.teamcode.quantumstorm.Auto.LimeServo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.biobuzz.ShootingAim;
-import org.firstinspires.ftc.teamcode.biobuzz.AutoDebugSnapshot;
 
 /** Actual SDK observations; never invents detections, tilt state or inventory. */
 public final class TeamOneLimelight implements AutoCloseable {
@@ -113,44 +112,21 @@ public final class TeamOneLimelight implements AutoCloseable {
     }
 
     /** Report the already sampled frame; telemetry must not resample camera hardware. */
-    public void addTelemetry(Telemetry telemetry,double now){
-        telemetry.addData("Limelight mode",idleScan?"Idle red/blue scan":pipeline==0?"AprilTags / neutral":"Yellow pickup / clockwise tilt");
-        telemetry.addData("Limelight selected pipeline","%d (%s)",selectedPipeline(),servo.getActivePipeline());
-        double angle=servo.getCommandedTiltDegrees();
-        telemetry.addData("Limelight commanded tilt",Double.isFinite(angle)
-                ?String.format(java.util.Locale.US,"%.1f deg CW from neutral; position %.3f",angle,servo.getCommandedTiltPosition())
-                :"Tilt servo NOT CONFIGURED");
-        double next=servo.getSecondsUntilScanSwitch();
-        telemetry.addData("Limelight scan switch",Double.isFinite(next)?String.format(java.util.Locale.US,"in %.1f s",next):"Not scanning");
+    public void addTelemetry(Telemetry telemetry,double now,boolean shootingAuthorized){
         boolean targetValid=lastConnected&&lastResult!=null
                 &&lastResult.getPipelineIndex()==selectedPipeline()
                 &&lastVision.fresh(now,lastVision.pipeline)&&now-lastVision.capturedAt<=.25;
-        boolean turnAuthorized=targetValid&&Double.isFinite(lastVision.tx);
-        telemetry.addData("Limelight raw tv",lastResult==null?"N/A":lastResult.isValid()?"1":"0");
-        telemetry.addData("tv authorizes turn suggestion",turnAuthorized?"YES":"NO - missing, stale, switching, wrong-pipeline or invalid tx");
+        telemetry.addData("tv",lastResult!=null&&lastResult.isValid()?"1":"0");
+        telemetry.addData("tx",lastResult==null?"N/A":String.format(java.util.Locale.US,"%.2f deg",lastResult.getTx()));
+        telemetry.addData("ty",lastResult==null?"N/A":String.format(java.util.Locale.US,"%.2f deg",lastResult.getTy()));
+        telemetry.addData("Shooting authorized",shootingAuthorized?"YES":"NO");
+        List<LLResultTypes.FiducialResult> tags=lastResult==null?null:lastResult.getFiducialResults();
+        List<LLResultTypes.ColorResult> colors=lastResult==null?null:lastResult.getColorResults();
+        telemetry.addData("AprilTags seen",tags==null?0:tags.size());
+        telemetry.addData("Colors seen",colors==null?0:colors.size());
         telemetry.addData("Turn suggestion",ShootingAim.turnSuggestion(targetValid,lastVision.tx));
-        telemetry.addData("Limelight target frame age",lastVision.valid?AutoDebugSnapshot.age(lastVision,now):"N/A - no accepted target frame");
-        telemetry.addData("Limelight target measurements",AutoDebugSnapshot.details(lastVision,now));
-        Target colorTarget=lastVision.pipeline!=0&&lastVision.targets.length>0?lastVision.targets[0]:null;
-        telemetry.addData("Limelight color target",colorTarget==null?"None"
-                :String.format(java.util.Locale.US,"%s: tx %.2f, ty %.2f deg; area %.2f%%",colorTarget.color,colorTarget.tx,colorTarget.ty,colorTarget.areaPercent));
-        if(lastResult==null){
-            telemetry.addData("Limelight reported pipeline","N/A");
-            telemetry.addData("Limelight tx / ty (degrees)","N/A");
-            telemetry.addData("Limelight target area (%)","N/A");
-            telemetry.addData("Limelight capture / targeting latency (ms)","N/A");
-            telemetry.addData("Limelight result staleness (ms)","N/A");
-            telemetry.addData("Limelight detected targets","N/A");
-        }else{
-            telemetry.addData("Limelight reported pipeline",lastResult.getPipelineIndex());
-            telemetry.addData("Limelight tx / ty (degrees)","%.2f / %.2f",lastResult.getTx(),lastResult.getTy());
-            telemetry.addData("Limelight target area (%)","%.2f",lastResult.getTa());
-            telemetry.addData("Limelight capture / targeting latency (ms)","%.1f / %.1f",lastResult.getCaptureLatency(),lastResult.getTargetingLatency());
-            telemetry.addData("Limelight result staleness (ms)",lastResult.getStaleness());
-            List<LLResultTypes.FiducialResult> tags=lastResult.getFiducialResults();
-            List<LLResultTypes.ColorResult> colors=lastResult.getColorResults();
-            telemetry.addData("Limelight detected targets","%d tags / %d color blobs",tags==null?0:tags.size(),colors==null?0:colors.size());
-        }
+        double angle=servo.getCommandedTiltDegrees();
+        telemetry.addData("Camera servo",!Double.isFinite(angle)?"UNAVAILABLE":Math.abs(angle)<=1.0?"NEUTRAL":"NOT NEUTRAL");
     }
     /** Biggest color blob in view, or null when none. */
     private static LLResultTypes.ColorResult largestColorTarget(LLResult result){
