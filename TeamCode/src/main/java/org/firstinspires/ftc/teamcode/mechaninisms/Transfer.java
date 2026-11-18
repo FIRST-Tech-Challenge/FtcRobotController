@@ -23,7 +23,7 @@ public class Transfer {
 
 
     public void runTransfer_ToggleMode(boolean transferButton, boolean toggleReverseIntake) {
-        if (robotVars.isIntakeActive) {
+        if (robotVars.isIntakeActive || toggleReverseIntake) {
             transferMotor.setPower(robotVars.constants.transferMotorSpeed * (toggleReverseIntake ? -1 : 1));
         } else {
             transferMotor.setPower(0);
