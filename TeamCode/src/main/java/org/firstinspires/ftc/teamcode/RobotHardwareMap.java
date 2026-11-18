@@ -31,7 +31,7 @@ public class RobotHardwareMap {
     public DcMotorEx backRightMotor;
     public DcMotorEx frontLeftMotor;
     public DcMotorEx frontRightMotor;
-    public DcMotorEx intakeMotorFront;
+//    public DcMotorEx intakeMotorFront;
     public DcMotorEx outtakeMotorBack1;
     public DcMotorEx outtakeMotorBack2;
     public DcMotorEx clawRotator;
@@ -104,10 +104,10 @@ public class RobotHardwareMap {
         launcherNectar = baseHardwareMap.get(DcMotorEx.class, "launcher_nectar");
 
         //Drive Motors
-        backLeftMotor = baseHardwareMap.get(DcMotorEx.class, "RL");
+        backLeftMotor = baseHardwareMap.get(DcMotorEx.class, "LR");
         backRightMotor = baseHardwareMap.get(DcMotorEx.class, "RR");
-        frontLeftMotor = baseHardwareMap.get(DcMotorEx.class, "FL");
-        frontRightMotor = baseHardwareMap.get(DcMotorEx.class, "FR");
+        frontLeftMotor = baseHardwareMap.get(DcMotorEx.class, "LF");
+        frontRightMotor = baseHardwareMap.get(DcMotorEx.class, "RF");
 
 //        intakeMotorFront = baseHardwareMap.tryGet(DcMotorEx.class, "IF");
 //        outtakeMotorBack1 = baseHardwareMap.tryGet(DcMotorEx.class, "BRO");

@@ -20,7 +20,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 //import org.firstinspires.ftc.vision.VisionPortal;
 //import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.teamcode.hardware.Intake;
+import org.firstinspires.ftc.teamcode.hardware.NectarShooter;
 import org.firstinspires.ftc.teamcode.hardware.Outtake;
+import org.firstinspires.ftc.teamcode.hardware.Shooter;
 import org.firstinspires.ftc.teamcode.hardware.camera;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
@@ -65,8 +67,23 @@ public class AutonBase extends LinearOpMode {
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
 
+    public Shooter getPollenShooter() {
+        return pollenShooter;
+    }
+    private Shooter pollenShooter;
+
+    public NectarShooter getNectarShooter() {
+        return nectarShooter;
+    }
+
+    private NectarShooter nectarShooter;
+
 //    RobotCameraHandler robotCameraHandler;
 //    RobotControlLights lights;
+
+    public Intake getIntake() {
+        return intake;
+    }
 
     public void initialize() {
         theHardwareMap  = new RobotHardwareMap(hardwareMap, this);
@@ -98,12 +115,15 @@ public class AutonBase extends LinearOpMode {
         theHardwareMap.backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         theHardwareMap.backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //intake = new Intake(theHardwareMap, this);
-        //intake.initialize();
+        intake = new Intake(theHardwareMap, this);
+        intake.initialize();
 
         //outtake = new Outtake(theHardwareMap, this);
         //outtake.initialize();
-
+        pollenShooter = new Shooter(theHardwareMap,this);
+        pollenShooter.init();
+//        nectarShooter = new NectarShooter(theHardwareMap,this);
+//        nectarShooter.init();
         //Camera = new camera(theHardwareMap, this);
 
         resetHeading();
