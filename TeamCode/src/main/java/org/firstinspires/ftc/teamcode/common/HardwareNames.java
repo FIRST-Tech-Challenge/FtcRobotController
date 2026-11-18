@@ -16,5 +16,5 @@ public class HardwareNames {
     public static final String backspin = "backspin";
     public static final String turret = "turret";
     public static final String limelight = "limelight";
-    public static final String ball_camera = "ball_camera";
+    public static final String hive_camera = "hive_camera";
 }
