@@ -89,10 +89,11 @@ public class Position {
         return out.toString();
     }
 
-    public void round(int decimals) {
+    public Position round(int decimals) {
         xyr[0] = (float) (Math.round(xyr[0]*Math.pow(10,decimals))/Math.pow(10,decimals));
         xyr[1] = (float) (Math.round(xyr[1]*Math.pow(10,decimals))/Math.pow(10,decimals));
         xyr[2] = (float) (Math.round(xyr[2]*Math.pow(10,decimals))/Math.pow(10,decimals));
+        return this;
     }
 
     /**

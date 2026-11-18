@@ -157,7 +157,9 @@ public class Pathfinder {
         pos = new ArrayList<>();
         float time = 0;
         for(int i = 0; i < pathPoints.length-1; i++) {
-            pos.add(new Position(pathPoints[i][0],pathPoints[i][1],pointAngle[i]));
+            Position po0 = new Position(pathPoints[i][0],pathPoints[i][1],pointAngle[i]);
+            po0.setTimeStamp((long) (time*1000)); time += freq;
+            pos.add(po0);
             float distance = (float) Math.sqrt(((pathPoints[i][0]-pathPoints[i+1][0])*(pathPoints[i][0]-pathPoints[i+1][0]))+((pathPoints[i][1]-pathPoints[i+1][1])*(pathPoints[i][1]-pathPoints[i+1][1])));
             float angle = (float) (Math.atan2(pathPoints[i+1][0]-pathPoints[i][0],pathPoints[i+1][1]-pathPoints[i][1]));
             float sin = (float) Math.sin(angle); float cos = (float) Math.cos(angle);
