@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.auto;
+package org.firstinspires.ftc.teamcode.pedroPathing.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.mechaninisms.Outtake;
 import org.firstinspires.ftc.teamcode.mechaninisms.Stopper;
 import org.firstinspires.ftc.teamcode.mechaninisms.Transfer;
 
-@Autonomous(name = "Four Pollen Auto", group = "Linear OpMode")
-public class fourPollenAuto extends LinearOpMode {
+@Autonomous(name = "Four Pollen Auto Rowan", group = "Linear OpMode")
+public class fourPollenAutoRowan extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override

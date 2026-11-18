@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
-
 import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -50,7 +48,7 @@ public class RobotVars {
             endPose = constants.endPoseRed;
         }
 
-        follower.setStartingPose(startPose);
+//        follower.setStartingPose(startPose);
 
     }
 
