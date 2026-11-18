@@ -32,7 +32,7 @@ public class AutonBase extends LinearOpMode {
     protected RobotHardwareMap theHardwareMap;
     Intake intake;
 
-    Outtake outtake;
+    //Outtake outtake;
     camera Camera;
 
     private IMU imu         = null;
@@ -164,6 +164,55 @@ public class AutonBase extends LinearOpMode {
             theHardwareMap.frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             theHardwareMap.backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
+    }
+
+
+    static final double COUNTS_PER_DEGREE = 9.8;
+
+    // Fast, uncalibrated turn using only the wheel encoders (no IMU).
+// Positive degrees = turn right (same as imuTurn): left wheels forward, right wheels back.
+    public void encoderTurn(double speed, double degrees) {
+        if (!opModeIsActive()) return;
+
+        int counts = (int) (degrees * COUNTS_PER_DEGREE);
+
+        int frontLeftTarget  = theHardwareMap.frontLeftMotor.getCurrentPosition()  + counts;
+        int backLeftTarget   = theHardwareMap.backLeftMotor.getCurrentPosition()   + counts;
+        int frontRightTarget = theHardwareMap.frontRightMotor.getCurrentPosition() - counts;
+        int backRightTarget  = theHardwareMap.backRightMotor.getCurrentPosition()  - counts;
+
+        theHardwareMap.frontLeftMotor.setTargetPosition(frontLeftTarget);
+        theHardwareMap.backLeftMotor.setTargetPosition(backLeftTarget);
+        theHardwareMap.frontRightMotor.setTargetPosition(frontRightTarget);
+        theHardwareMap.backRightMotor.setTargetPosition(backRightTarget);
+
+        theHardwareMap.frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        theHardwareMap.backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        theHardwareMap.frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        theHardwareMap.backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        theHardwareMap.frontLeftMotor.setPower(Math.abs(speed));
+        theHardwareMap.backLeftMotor.setPower(Math.abs(speed));
+        theHardwareMap.frontRightMotor.setPower(Math.abs(speed));
+        theHardwareMap.backRightMotor.setPower(Math.abs(speed));
+
+        // wait until all four motors reach their targets
+        while (opModeIsActive() &&
+                (theHardwareMap.frontLeftMotor.isBusy() && theHardwareMap.backLeftMotor.isBusy()
+                        && theHardwareMap.frontRightMotor.isBusy() && theHardwareMap.backRightMotor.isBusy())) {
+            // just waiting
+        }
+
+        // stop and go back to normal encoder mode
+        theHardwareMap.frontLeftMotor.setPower(0);
+        theHardwareMap.backLeftMotor.setPower(0);
+        theHardwareMap.frontRightMotor.setPower(0);
+        theHardwareMap.backRightMotor.setPower(0);
+
+        theHardwareMap.frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        theHardwareMap.backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        theHardwareMap.frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        theHardwareMap.backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void imuDrive(double maxDriveSpeed,
@@ -426,9 +475,9 @@ public class AutonBase extends LinearOpMode {
     }
 
     public void transferAndLaunchArtifacts() {
-        aprilTagOutakeSpeedAdjustAndAlignment();
+        //aprilTagOutakeSpeedAdjustAndAlignment();
         //outtake.blockingShoot();
-        outtake.outtakeoff();
+        //outtake.outtakeoff();
     }
 
     private void moveRobot(double drive, double turn) {

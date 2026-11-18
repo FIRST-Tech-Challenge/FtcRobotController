@@ -66,6 +66,7 @@ public class AutonBlueAudienceDownHelp extends AutonBase {
             encoderStrafe(imuSpeed, -20 , 30);
             sleep(500);
             imuDrive(imuSpeed, 70, 0);
+            imuStrafe(imuSpeed, -7, 0, 30);
         }
     }
 }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+    package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -139,13 +139,13 @@ public class RobotHardwareMap {
         opMode.telemetry.update();
     }
 
-    public boolean hasIntake() {
-        return intakeMotorFront != null;
-    }
+    import org.firstinspires.ftc.vision.VisionPortal;
 
-    public boolean hasOuttake() {
-        return outtakeMotorBack1 != null && outtakeMotorBack2 != null;
-    }
+    public class RobotHardwareMap {
+
+        //    private LinearOpMode linearOpMode = null;
+        private OpMode opMode = null;
+        public HardwareMap baseHMap;
 
     public boolean hasTransfer() {
         return LeftTransferServo != null && RightTransferServo != null && CenterTransferServo != null;
