@@ -23,10 +23,10 @@ public class Intake {
 
     public void initialize() {
         robotHardwareMap.intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robotHardwareMap.intake.setDirection(DcMotor.Direction.REVERSE);
+//        robotHardwareMap.intake.setDirection(DcMotor.Direction.REVERSE);
         robotHardwareMap.intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robotHardwareMap.transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robotHardwareMap.transfer.setDirection(DcMotor.Direction.REVERSE);
+//        robotHardwareMap.transfer.setDirection(DcMotor.Direction.REVERSE);
         robotHardwareMap.transfer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
@@ -44,24 +44,31 @@ public class Intake {
             speed = 1;
         }
 
-        robotHardwareMap.intakeMotorFront.setPower(speed);
-        robotHardwareMap.intakeMotorFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robotHardwareMap.intake.setPower(speed);
+        robotHardwareMap.intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robotHardwareMap.transfer.setPower(speed);
         robotHardwareMap.transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void on() {
         speed = 1;
-        robotHardwareMap.intakeMotorFront.setPower(speed);
-        robotHardwareMap.intakeMotorFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robotHardwareMap.intake.setPower(speed);
+        robotHardwareMap.intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robotHardwareMap.transfer.setPower(speed);
+        robotHardwareMap.transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void reverse(){
+        speed = -1;
+        robotHardwareMap.intake.setPower(speed);
+        robotHardwareMap.intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robotHardwareMap.transfer.setPower(speed);
         robotHardwareMap.transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void off() {
         speed = 0;
-        robotHardwareMap.intakeMotorFront.setPower(speed);
-        robotHardwareMap.intakeMotorFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robotHardwareMap.intake.setPower(speed);
+        robotHardwareMap.intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robotHardwareMap.transfer.setPower(speed);
         robotHardwareMap.transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
