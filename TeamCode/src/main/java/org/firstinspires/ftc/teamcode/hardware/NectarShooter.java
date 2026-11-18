@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -22,14 +23,14 @@ public class NectarShooter {
     double previousSpeed = 0;
     private boolean running = true;
     private Power powerLevel = Power.LOW;
-    public NectarShooter(RobotHardwareMap robotHardwareMap) {
+    public NectarShooter(RobotHardwareMap robotHardwareMap, OpMode opMode) {
         this.robotHardwareMap = robotHardwareMap;
 
 
 
     }
 
-    public void init(HardwareMap haMap,String name){
+    public void init(){
 //        launcherPollen = robotHardwareMap.launcherPollen;
         this.shooter = robotHardwareMap.launcherNectar;
         this.shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -39,16 +40,16 @@ public class NectarShooter {
         this.shooter.setPower(speed);
     }
     public void setPowerLevel(Power power){
-//        if (power == Power.HIGH){
-//            this.setMotorSpeed(1);
-//        } else if (power == Power.MEDIUM){
-//            this.setMotorSpeed(.75);
-//
-//        } else if (power == Power.LOW) {
-//            this.setMotorSpeed(.5);
-//        } else {
-//            this.setMotorSpeed(0);
-//        }
+        if (power == Power.HIGH){
+            this.setMotorSpeed(1);
+        } else if (power == Power.MEDIUM){
+            this.setMotorSpeed(.75);
+
+        } else if (power == Power.LOW) {
+            this.setMotorSpeed(.5);
+        } else {
+            this.setMotorSpeed(0);
+        }
     }
     public void toggleShooter(double motorSpeed) {
 //        if (launcherPollen.getPower() > 0){

@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.hardware;
 
 
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -24,6 +26,7 @@ public class TestBench {
     private DcMotorEx launcherPollen;
     private DcMotorEx launcherNectar;
     public double ticksPerRev;
+    private CRServo servo;
 
 //    RobotHardwareMap robotHardwareMap;
 
@@ -36,18 +39,27 @@ public class TestBench {
 
 
     public void init(HardwareMap haMap){
-        motor0 = haMap.get(DcMotorEx.class, "motor0");
-        motor1 = haMap.get(DcMotorEx.class, "motor1");
-        motor2 = haMap.get(DcMotorEx.class, "motor2");
-        motor3 = haMap.get(DcMotorEx.class, "motor3");
+        motor0 = haMap.tryGet(DcMotorEx.class, "motor0");
+        motor1 = haMap.tryGet(DcMotorEx.class, "motor1");
+        motor2 = haMap.tryGet(DcMotorEx.class, "motor2");
+        motor3 = haMap.tryGet(DcMotorEx.class, "motor3");
+        servo = haMap.tryGet(CRServo.class,"pollen_servo");
+        servo.setDirection(DcMotorSimple.Direction.REVERSE);
         transfer = setMotorBrake( haMap.get(DcMotorEx.class, "transfer_motor"),true);
+//        transfer.setDirection(DcMotorSimple.Direction.REVERSE);
+
         intake = setMotorBrake( haMap.get(DcMotorEx.class, "intake_motor"),true);
+//        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+
         launcherPollen = setMotorBrake(haMap.get(DcMotorEx.class, "launcher_pollen"),true);
+//        launcherPollen.setDirection(DcMotorSimple.Direction.REVERSE);
+
         launcherNectar = setMotorBrake(haMap.get(DcMotorEx.class, "launcher_nectar"),true);
-        motor3 = setMotorBrake( motor3 , true);
+//        launcherPollen.setDirection(DcMotorSimple.Direction.REVERSE);
+//        motor3 = setMotorBrake( motor3 , true);
 //        motor3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        motor3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        ticksPerRev = motor3.getMotorType().getTicksPerRev();
+//        ticksPerRev = motor3.getMotorType().getTicksPerRev();
 
 
     }
@@ -130,5 +142,13 @@ public class TestBench {
 
     public void setLauncherNectar(DcMotorEx launcherNectar) {
         this.launcherNectar = launcherNectar;
+    }
+
+    public CRServo getServo() {
+        return servo;
+    }
+
+    public void setServo(CRServo servo) {
+        this.servo = servo;
     }
 }
