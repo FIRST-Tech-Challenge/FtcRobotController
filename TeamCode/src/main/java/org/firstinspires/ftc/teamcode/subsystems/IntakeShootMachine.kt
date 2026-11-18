@@ -71,7 +71,7 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
                     state = State.ON
                 } else if (gamepadState.lb1) {
                     state = State.OUTTAKE
-                } else if (gamepadState.b2) {
+                } else if (gamepadState.b2 || gamepadState.b1) {
                     state = State.PRE_SHOOT
                 }
             }

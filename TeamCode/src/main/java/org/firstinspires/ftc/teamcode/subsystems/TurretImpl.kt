@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems
 
+import android.util.Log
 import com.qualcomm.robotcore.robot.Robot
 import org.firstinspires.ftc.teamcode.GerthaHardwareMap
 import org.firstinspires.ftc.teamcode.hardware.RobotPose
@@ -38,6 +39,7 @@ class TurretImpl(private val hw: GerthaHardwareMap, private val poseSet: PoseSet
 
 
     fun update (robotState: RobotState) {
+        Log.i("turret", targetPose.toString())
         if (robotState.rightHive) {
             targetPose = poseSet.RIGHT_HIVE_AT
         }

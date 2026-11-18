@@ -44,7 +44,7 @@ class ShooterImpl (private val hw: GerthaHardwareMap) {
 
     fun tickShooter(){
         val targetMode = (target - hw.pollenShooter.velocity) <= pushThreshold
-        if (targetMode != mode) if (targetMode) hw.pollenShooter.velocity = target
+        if (targetMode != mode) if (targetMode) hw.setPollenVelocity(target)
         mode = targetMode
         if (!mode)
             hw.pollenShooter.power = 1.0
@@ -78,7 +78,7 @@ class ShooterImpl (private val hw: GerthaHardwareMap) {
 //            hw.pollenShooter.power = 1.0
 //        }
 
-        if (error > 300) {
+        if (error > 400) {
             hw.pollenShooter.power = 1.0
         }
         else {
