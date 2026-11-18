@@ -24,7 +24,6 @@ public final class TeamTwoHiveAuto implements RobotController {
     public double flowerIntakeSeconds=3.0,latestReturnShotSeconds=17.0;
     /** Practice only: a fresh AprilTag admits a timed first batch without official Hive or inventory gating. */
     public boolean allowAnyFreshAprilTag=false;
-    public boolean aimForShooting=false;
     private int measuredBalls=-1,measuredPollen=-1;
     public TeamTwoHiveAuto(RobotIO io,FieldLayout field){this.io=io;this.field=field;nav=new Navigator(field,io::stopRequested);}
     public void start(int alliance,double power){
@@ -220,9 +219,6 @@ public final class TeamTwoHiveAuto implements RobotController {
                     }
                     break;
                 case VERIFY_HIVE:
-                    if(aimForShooting&&!ShootingAim.align(s,now,out)){
-                        spinAt=Double.NaN;message="Aligning wall shot: fresh tv and tx within 2 degrees required";break;
-                    }
                     // At the taped wall shot, a current correct far-Hive ID is
                     // the firing permission. Do not make the preload shot
                     // depend on an optional inventory sensor reading.
@@ -240,9 +236,6 @@ public final class TeamTwoHiveAuto implements RobotController {
                     }
                     break;
                 case SHOOTING:
-                    if(aimForShooting&&!ShootingAim.align(s,now,out)){
-                        spinAt=Double.NaN;lastFeeding=false;message="Feed paused: target lost or not aligned";break;
-                    }
                     // Admit a complete batch once. Counts naturally drop after each real shot;
                     // do not demand four remaining balls after the first ball has fired.
                     if(!practiceTagLatched&&!batchFed&&!fullPollenLoad(s)){spinAt=Double.NaN;enter(State.VERIFY_HIVE);message="Full load changed before feed; reverify four pollen";break;}
