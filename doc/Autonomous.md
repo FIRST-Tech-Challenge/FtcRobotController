@@ -18,7 +18,7 @@ These are the versions documented and tested together by [Zenith](https://github
 
 ## Before robot motion
 
-**Pedro tuning has not been measured on this robot.** `PedroConfiguration.TUNING_VERIFIED` is false. All autonomous routines refuse to start until dynamics, braking and gains are measured and verified. The initial values in Java and robot.json are labeled examples, not robot measurements. Camera and shooting calibration gates also remain active.
+**Pedro tuning has not been measured on this robot.** `PedroConfiguration.TUNING_VERIFIED` is false. All Pedro/Zenith autonomous routines refuse to start until dynamics, braking and gains are measured and verified (the [fallback autonomous](#fallback-autonomous-no-pedro) does not use Pedro). The initial values in Java and robot.json are labeled examples, not robot measurements. Camera and shooting calibration gates also remain active.
 
 Use **Test: Pedro Drive**, which initializes only the drive subsystem (four motors and Pinpoint). Keep the chassis stationary through calibration. Sticks command at most 0.2 power, A requests 12 inches forward from the current pose, B requests a 90-degree CCW hold, and X cancels. Stick movement cancels a running test. A/B use Ivy commands, have a five-second timeout, and stop on completion. This diagnostic deliberately allows testing before TUNING_VERIFIED is set.
 
@@ -58,6 +58,31 @@ No competition route has been supplied. The legacy red/blue Route Required wrapp
 New routines get exactly one generated OpMode in the Generated group; authors need no Java edits. The generated robot uses the file's alliance. Team deployment retains pollen's sole hand-written Test entry. Use UI edit/save followed by `npm run zenith:deploy`, rather than treating the editor's native Deploy button as completing team deployment. `npm run zenith:check` rejects stale or duplicate outputs.
 
 Each path's speed fraction is applied through `ForesightConfig.setPathSpeed`, in addition to the independent wheel-power cap. Estimates remain provisional until Java and robot.json contain measured, matching values. Put timeouts/end conditions on path and command steps. Parking and fallback decisions belong in the authored routine; the old controller's automatic park fallback was removed with it. The runtime does not provide live obstacle avoidance. A global 29-second deadline, localization loss, routine completion, Driver Station STOP, and exceptions stop outputs and close the gate. Explicitly canceling the Ivy routine ensures running commands receive their end hooks before scheduler reset. Camera shutdown follows motor shutdown.
+
+## Fallback autonomous (no Pedro)
+
+**Auto: Red Fallback (Shoot + Leave)** and **Auto: Blue Fallback (Shoot + Leave)** (Competition group) score with none of the gates above: no Pedro tuning, no Zenith route, no field pose and no shot calibration. Use them until a tuned match route exists. Each one preselects the same-alliance competition TeleOp.
+
+Sequence (`FallbackAutoController`, hardware-free and unit-tested; `FallbackAutonomous` wires the hardware):
+
+1. **Start delay**: 0–15 s, chosen in INIT with GP1 D-pad Up/Down. If the preload shot is on, the flywheel spins up during the delay.
+2. **Preload shot** (optional; toggle it in INIT with GP1 X, and it defaults to off until `PRELOAD_SHOT_MEASURED`): the turret goes to a fixed heading, the hood and flywheel to fixed values, then the auto waits for READY. Feeding uses the same continuous gate + two-stage path as TeleOp's manual feed and is held for `FEED_SECONDS`. After `SPIN_UP_TIMEOUT_SECONDS` it feeds anyway if the turret is homed, and skips the shot if it is not. An unavailable turret only disables the shot.
+3. **Leave**: drives to a point given relative to the start pose (forward/left inches) while holding the start heading, capped at 0.35 power. It is proportional on Pinpoint distance, with a 0.08 minimum power and 1 in / 3 deg tolerance.
+4. **Stop** when done. It also stops on a 4 s leave timeout, at 29 s, or on a fault: a Pinpoint pose that stays stale or not READY for 0.25 s, or the robot getting 6 in *farther* from the target, which means a drive or odometry sign is wrong.
+
+Values to measure at each alliance's real start spot (all are marked STARTING VALUES):
+
+| Constant | Where | Default |
+| --- | --- | --- |
+| `PRELOAD_TURRET_HEADING_DEG` | `Red/BlueFallbackAutonomous` | 90 (turret home). Read it from the Driver Hub "Turret \| HOMED \| heading" line: front=0, right=90, back=180, left=270 |
+| `LEAVE_FORWARD_INCHES`, `LEAVE_LEFT_INCHES` | `Red/BlueFallbackAutonomous` | 24 forward, 0 left |
+| `PRELOAD_HOOD_DEG`, `PRELOAD_FLYWHEEL_RPM` | `FallbackAutonomous` | TeleOp's starting manual hood (home) and 3500 RPM |
+| `PRELOAD_SHOT_MEASURED` | `FallbackAutonomous` | false (the shot starts OFF in INIT) |
+| `FEED_SECONDS`, `SPIN_UP_TIMEOUT_SECONDS` | `FallbackAutoController` | 2.5 s, 3.0 s |
+
+Practice checklist: test leave-only first on blocks or with a hand ready on STOP, and confirm it drives forward and stops. Then aim the turret by hand in TeleOp at the start spot to read the heading, and find a hood/RPM that scores. Enter those values and try the full sequence with preloads.
+
+The fallback has no field pose, so it clears `AutoPoseHandoff` and saves nothing. TeleOp then localizes from the Limelight or the GP2 D-pad Left corner rehome as usual. SimLoop covers TeleOp only, and its OpMode inventory lists only `@TeleOp` classes, so this autonomous is covered by `FallbackAutoControllerTest` and needs on-robot checks.
 
 ## Pose handoff to TeleOp
 
