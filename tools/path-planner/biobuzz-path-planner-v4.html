@@ -406,8 +406,8 @@
         <div class="setGrid" style="margin-bottom:8px">
           <div class="frow setWide"><label>Code target</label>
             <select id="setTarget">
-              <option value="classic">Pedro 2 &middot; self-contained (pathBuilder)</option>
-              <option value="v3">Pedro 3 &middot; BioBuzz PedroDrive (Paths API)</option>
+              <option value="v3">Pedro 3 &middot; BioBuzz PedroDrive (Paths API) &mdash; this repo</option>
+              <option value="classic">Pedro 2.x &middot; pathBuilder (does NOT compile with Pedro 3)</option>
             </select>
           </div>
         </div>
@@ -515,7 +515,7 @@ const S = {
   dCompletion: 'SETTLED',      // driver default completion rule
   dTol: 4.0,                   // driver default LENIENT tolerance (inches)
   mirror: { x: null, y: null },// mirrorX / mirrorY lines (null = off)
-  codeTarget: 'classic',       // 'classic' (Pedro 2 pathBuilder, self-contained) | 'v3' (Pedro 3 Paths API + PedroDrive)
+  codeTarget: 'v3',            // 'classic' (Pedro 2 pathBuilder, self-contained) | 'v3' (Pedro 3 Paths API + PedroDrive)
   dAccel: null,                // default max path acceleration, in/s^2 (null = no limit)
   dDecel: null,                // default max path deceleration, in/s^2 (null = no limit)
 };
@@ -3706,12 +3706,12 @@ function highlightJava(src){
   return out;
 }
 const CODE_HINTS = {
-  classic: '<b>One file, one loop.</b> Robot subsystems, the Pedro path steps and your code all live in the generated OpMode. Each step is a <code>case</code> in <code>runStep()</code>; loop-code blocks run every cycle between two steps. Tuning numbers are in class <code>T</code> (edit them in the Tuning tab). The one outside dependency is the Pedro follower factory you set in Tuning. Uses the Pedro&nbsp;2 <code>pathBuilder()</code> API.',
+  classic: '<b>One file, one loop.</b> Robot subsystems, the Pedro path steps and your code all live in the generated OpMode. Each step is a <code>case</code> in <code>runStep()</code>; loop-code blocks run every cycle between two steps. Tuning numbers are in class <code>T</code> (edit them in the Tuning tab). The one outside dependency is the Pedro follower factory you set in Tuning. Uses the Pedro&nbsp;2.x <code>pathBuilder()</code> API (<code>BezierLine</code>, <code>getChainIndex</code>, <code>setStartingPose</code>), which <b>does not exist in Pedro&nbsp;3</b>: switch the target to Pedro&nbsp;3 for this repo.',
   v3: '<b>Pedro 3 (com.pedropathing:core 3.0.0).</b> Same one-loop OpMode, but paths are built with <code>Paths.line / curve</code>, followed with <code>follower.follow(...)</code>, and driven by the repo&rsquo;s <code>PedroDrive</code> (drive motors + Pinpoint, one I2C read per loop). Speed, max velocity and the acceleration / deceleration limits become per-path Foresight modifiers. Turns hold the new heading (the short way) until within <code>T.TURN_TOLERANCE_DEG</code>. Needs <code>PedroDrive.config()</code> (in the V1 branch).',
 };
 function renderCode(){
   RAW_JAVA = S.codeTarget === 'v3' ? buildJavaV3() : buildJava();
-  const hint = $('codeTargetHint'); if (hint) hint.innerHTML = CODE_HINTS[S.codeTarget] || CODE_HINTS.classic;
+  const hint = $('codeTargetHint'); if (hint) hint.innerHTML = CODE_HINTS[S.codeTarget] || CODE_HINTS.v3;
   $('codeOut').innerHTML = highlightJava(RAW_JAVA);
 }
 
@@ -3771,14 +3771,14 @@ function save(){
         dSpd: S.dSpd, dTurnSpd: S.dTurnSpd, dHeading: S.dHeading,
         dCompletion: S.dCompletion, dTol: S.dTol, mirror: S.mirror,
         podX: S.podX, podY: S.podY, tune: S.tune,
-        codeTarget: S.codeTarget, dAccel: S.dAccel, dDecel: S.dDecel,
+        pedroTarget: S.codeTarget, dAccel: S.dAccel, dDecel: S.dDecel,
       }));
     } catch (e) { /* storage unavailable - ignore */ }
   }, 200);
 }
 const posOrNull = v => (v != null && isFinite(+v) && +v > 0) ? +v : null;
 function loadLimits(d){
-  if (CODE_TARGETS.includes(d.codeTarget)) S.codeTarget = d.codeTarget;
+  if (CODE_TARGETS.includes(d.pedroTarget)) S.codeTarget = d.pedroTarget;
   S.dAccel = posOrNull(d.dAccel);
   S.dDecel = posOrNull(d.dDecel);
 }
@@ -3815,7 +3815,7 @@ $('btnExport').addEventListener('click', () => {
     dSpd: S.dSpd, dTurnSpd: S.dTurnSpd, dHeading: S.dHeading,
     dCompletion: S.dCompletion, dTol: S.dTol, mirror: S.mirror,
     podX: S.podX, podY: S.podY, tune: S.tune,
-    codeTarget: S.codeTarget, dAccel: S.dAccel, dDecel: S.dDecel,
+    pedroTarget: S.codeTarget, dAccel: S.dAccel, dDecel: S.dDecel,
   }, null, 2), 'application/json');
   toast('Plan exported');
 });
@@ -3897,7 +3897,7 @@ $('setPodY').addEventListener('input', e => { const v = parseFloat(e.target.valu
 $('setMirX').addEventListener('input', e => { const v = parseFloat(e.target.value); S.mirror.x = isNaN(v) ? null : v; markDirty(); save(); });
 $('setDAccel').addEventListener('change', e => { S.dAccel = posOrNull(e.target.value); e.target.value = S.dAccel ?? ''; markDirty(); save(); renderInspector(); });
 $('setDDecel').addEventListener('change', e => { S.dDecel = posOrNull(e.target.value); e.target.value = S.dDecel ?? ''; markDirty(); save(); renderInspector(); });
-$('setTarget').addEventListener('change', e => { S.codeTarget = CODE_TARGETS.includes(e.target.value) ? e.target.value : 'classic'; markDirty(); save(); });
+$('setTarget').addEventListener('change', e => { S.codeTarget = CODE_TARGETS.includes(e.target.value) ? e.target.value : 'v3'; markDirty(); save(); });
 $('setMirY').addEventListener('input', e => { const v = parseFloat(e.target.value); S.mirror.y = isNaN(v) ? null : v; markDirty(); save(); });
 
 function syncSettings(){
