@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.quantumstorm.DriveChain.MecanumDrive;
 import org.firstinspires.ftc.teamcode.quantumstorm.Mechanisms.FlowerIntake;
+import org.firstinspires.ftc.teamcode.quantumstorm.Mechanisms.SpindexerControls;
 
 @TeleOp(name = Constants.TELEOP_NAME, group = "Quantum Storm")
 public class QuantumStormTeleOp extends LinearOpMode {
@@ -22,6 +23,7 @@ public class QuantumStormTeleOp extends LinearOpMode {
 
     // CR servos
     private CRServo shooterServo;
+    private final SpindexerControls spindexerControls = new SpindexerControls();
     private final org.firstinspires.ftc.teamcode.biobuzz.FeedCadence feedCadence=new org.firstinspires.ftc.teamcode.biobuzz.FeedCadence(Constants.SPINDEXER_FEED_PULSE_SEC,Constants.SPINDEXER_SHOT_GAP_SEC);
 
     // Flower intake arm (position servo)
@@ -132,6 +134,7 @@ public class QuantumStormTeleOp extends LinearOpMode {
         telemetry.addLine("BACK + D-Pad DOWN = Flower Intake DROP (-135 deg)");
         telemetry.addLine("BACK + D-Pad UP = Flower Intake UP (0 deg)");
         telemetry.addLine("LB + D-Pad UP/DOWN = Flower Angle Nudge");
+        telemetry.addLine("After flower controls, release D-Pad before running spindexer");
 
         telemetry.update();
 
@@ -192,18 +195,18 @@ public class QuantumStormTeleOp extends LinearOpMode {
 
 
             // =====================================================
-            // GAMEPAD 1 - FLOWER INTAKE SERVO
+            // GAMEPAD 2 - FLOWER INTAKE SERVO
             // =====================================================
 
             // Gamepad 2: BACK + D-pad UP/DOWN = lift/drop, LB + D-pad = nudge
             flowerIntake.handleGamepad(gamepad2);
 
-            // The flower combos share gamepad 2's D-pad, so the spindexer
-            // ignores the D-pad while BACK or LB is held
-            boolean spindexerDpadUp =
-                    gamepad2.dpad_up && !gamepad2.back && !gamepad2.left_bumper;
-            boolean spindexerDpadDown =
-                    gamepad2.dpad_down && !gamepad2.back && !gamepad2.left_bumper;
+            // A flower-arm press stays reserved until the D-pad is released,
+            // even if BACK/LB is released first.
+            int spindexerDemand = spindexerControls.update(
+                    gamepad2.dpad_up, gamepad2.dpad_down, gamepad2.back, gamepad2.left_bumper);
+            boolean spindexerDpadUp = spindexerDemand > 0;
+            boolean spindexerDpadDown = spindexerDemand < 0;
 
 
             // =====================================================
