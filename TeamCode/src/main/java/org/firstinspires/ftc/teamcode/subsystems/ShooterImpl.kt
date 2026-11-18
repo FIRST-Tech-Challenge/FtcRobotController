@@ -42,16 +42,17 @@ class ShooterImpl (private val hw: GerthaHardwareMap) {
         hw.pollenShooter.mode = DcMotor.RunMode.RUN_USING_ENCODER
     }
 
-    fun tickShooterOld(){
+    fun tickShooter(){
         val targetMode = (target - hw.pollenShooter.velocity) <= pushThreshold
         if (targetMode != mode) if (targetMode) hw.pollenShooter.velocity = target
         mode = targetMode
         if (!mode)
             hw.pollenShooter.power = 1.0
+        Log.i("shooter", hw.pollenShooter.power.toString())
         return
     }
 
-    fun tickShooter() {
+    fun tickShooternew() {
         val currentVoltage = hw.voltageSensor.voltage
         val targetVoltage = KF * target
         val currentTime = System.nanoTime() / 1_000_000

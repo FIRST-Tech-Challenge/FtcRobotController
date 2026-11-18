@@ -22,11 +22,11 @@ abstract class TeleOperation(val isRed: Boolean): LinearOpMode() {
 
     override fun runOpMode() {
         hw = GerthaHardwareMap(hardwareMap)
-        val poseSet = PoseSet()
+        val poseSet = PoseSet(isRed)
         val driveMachine = DriveMachine(hw)
         val robotState = RobotState(hw, isRed)
         val gamepadState = GamepadState(gamepad1, gamepad2)
-        val aimingMachine = AimingMachine(hw)
+        val aimingMachine = AimingMachine(hw, poseSet)
         val intakeShootMachine = IntakeShootMachine(hw)
         val rampMachine = RampMachine(hw)
 
@@ -53,12 +53,13 @@ abstract class TeleOperation(val isRed: Boolean): LinearOpMode() {
                 hw.pinpoint.setHeading(0.0, AngleUnit.RADIANS);
             }
 
-            if (gamepadState.back2) {
-                intakeShootMachine.count = 0
-            }
-
             if (gamepadState.a2) {
                 robotState.rightHive = !robotState.rightHive
+            }
+
+            if (gamepadState.back2) {
+                hw.pinpoint.position = poseSet.CORNER_START.asPose2D
+                robotState.update()
             }
 
             telemetry.addData("aimingMode", aimingMachine.state)
@@ -66,7 +67,6 @@ abstract class TeleOperation(val isRed: Boolean): LinearOpMode() {
             telemetry.addLine("XYA: (%.2f %.2f)".format(robotState.ppX, robotState.ppY, robotState.ppThetaDeg))
             telemetry.addData("vel", hw.pollenShooter.velocity)
             telemetry.addData("power", hw.pollenShooter.power)
-            telemetry.addData("count", intakeShootMachine.count)
             telemetry.update()
         }
 

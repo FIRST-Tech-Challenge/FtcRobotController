@@ -59,7 +59,6 @@ class ShooterSteper : LinearOpMode() {
             shooterImpl.tickShooter()
 
 
-            telemetry.addData("count", intakeShootMachine.count)
             telemetry.addData("power", hw.pollenShooter.power)
             telemetry.addData("targetVel", targetVel)
             telemetry.addData("actualVel", hw.pollenShooter.velocity)

@@ -23,7 +23,6 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
     lateinit var state: State
     lateinit var prevState: State
 
-    var count = 0
     var continuous = false;
 
     var justTransitioned = true
@@ -54,12 +53,21 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
         }
         prevState = state
 
+        if (robotState.blue - robotState.green > 100 && robotState.blue - robotState.red > 100) {
+            Log.i("color", "blue")
+            state = State.OUTTAKE
+        }
+        else if (robotState.red - robotState.blue > 100 && robotState.red - robotState.green > 100) {
+            Log.i("color", "red")
+            state = State.OUTTAKE
+        }
+
         when (state) {
             State.OFF -> {
                 if (justTransitioned) {
                     hw.setIntakePower(0.0)
                 }
-                if (gamepadState.rb1 && count < 4){
+                if (gamepadState.rb1){
                     state = State.ON
                 } else if (gamepadState.lb1) {
                     state = State.OUTTAKE
@@ -95,7 +103,7 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
                 if (justTransitioned) {
                     hw.setIntakePower(OUTTAKE_POWER)
                 }
-                if (getElapsedSec(stateStartTimeNs) > 0.1){
+                if (getElapsedSec(stateStartTimeNs) > 0.25){
                     state = State.OFF
                 }
             }
@@ -104,7 +112,6 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
                     if (hw.pollenBallStop.position != POLLEN_GO) {
                         hw.pollenBallStop.position = POLLEN_GO
                     }
-                    count = 0
                 }
                 if (getElapsedSec(stateStartTimeNs) > 0.0)
                     state = State.SHOOT
@@ -113,12 +120,14 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
                 if (justTransitioned){
                     hw.setIntakePower(SHOOT_POWER)
                 }
-                if (getElapsedSec(stateStartTimeNs) > 0.2){
+                if (getElapsedSec(stateStartTimeNs) > 2.0){
                     state = State.OFF
                 }
             }
 
         }
+
+        Log.i("intake", state.toString())
     }
     private fun getElapsedSec(startTimeNs: Long): Double {
         return (System.nanoTime() - startTimeNs) / 1_000_000_000.0

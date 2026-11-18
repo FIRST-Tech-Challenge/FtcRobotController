@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.ShooterImpl
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.hardware.PoseSet
 import kotlin.math.tan
 
-class AimingMachine(private val hw: GerthaHardwareMap) {
+class AimingMachine(private val hw: GerthaHardwareMap, private val poseSet: PoseSet) {
 
     enum class State {
         FULL,
@@ -22,8 +22,7 @@ class AimingMachine(private val hw: GerthaHardwareMap) {
     var justTransitioned = true
 
     val shooterImpl = ShooterImpl(hw)
-    val turretImpl = TurretImpl(hw)
-    val poseSet = PoseSet()
+    val turretImpl = TurretImpl(hw, poseSet)
 
     var constantVel = 0.0
 
@@ -47,7 +46,8 @@ class AimingMachine(private val hw: GerthaHardwareMap) {
         val bottom = (2 * Math.cos(ANGLE_OF_SHOT) * Math.cos(ANGLE_OF_SHOT) * (DISTANCE_TO_TOP - (horizontalDistance * tan(ANGLE_OF_SHOT))))
         val velMps = Math.sqrt(top / bottom)
         // 126.25m 474.5b
-        val velShooter = (126.25 * velMps) + 474.5
+//        val velShooter = (126.25 * velMps) + 474.5
+        val velShooter = (92.3 * velMps) + 271.4
         Log.i("distance", horizontalDistance.toString())
         Log.i("top", top.toString())
         Log.i("bottom", bottom.toString())

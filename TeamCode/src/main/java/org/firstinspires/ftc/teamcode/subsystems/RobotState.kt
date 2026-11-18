@@ -40,8 +40,9 @@ class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true) {
     var isNotEmpty = true
     var onlySeesOtherColor = false
 
-
-
+    var red = 0
+    var blue = 0
+    var green = 0
 
     fun init(ppStartPose: RobotPose){
 //        hw.pinpoint.resetPosAndIMU()
@@ -73,6 +74,10 @@ class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true) {
         velInch = hypot(velXInch, velYInch)
 
         angVelRad = hw.pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS)
+
+        red = hw.color.red()
+        blue = hw.color.blue()
+        green = hw.color.green()
 
         val currentDetections: MutableList<AprilTagDetection> = aprilTag.getDetections()
 

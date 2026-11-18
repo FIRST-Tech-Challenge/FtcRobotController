@@ -16,8 +16,7 @@ public class PinpointOffsets extends LinearOpMode{
     @Override
     public void runOpMode(){
         hw = new GerthaHardwareMap(hardwareMap);
-        PoseSet poseSet = new PoseSet();
-        hw.pinpoint.setPosition(poseSet.getCORNER_START().asPose2D());
+
 //        hw.pinpoint.setPosition(new Pose2D(DistanceUnit.INCH,0,0, AngleUnit.DEGREES,0));
         waitForStart();
         while (opModeIsActive()) {

@@ -7,9 +7,7 @@ import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.hardware.Po
 import kotlin.math.PI
 import kotlin.math.atan2
 
-class TurretImpl(private val hw: GerthaHardwareMap) {
-
-    val poseSet = PoseSet()
+class TurretImpl(private val hw: GerthaHardwareMap, private val poseSet: PoseSet) {
 
 
     val max = 0.93

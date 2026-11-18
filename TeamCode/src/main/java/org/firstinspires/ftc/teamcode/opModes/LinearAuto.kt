@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.utils.Stati
 import kotlin.math.hypot
 
 @Autonomous
-class LinearAuto : LinearOpMode() {
+abstract class LinearAuto(private val isRed: Boolean) : LinearOpMode() {
 
     lateinit var hw: GerthaHardwareMap
 
@@ -79,7 +79,7 @@ class LinearAuto : LinearOpMode() {
 
         hw = GerthaHardwareMap(hardwareMap)
 
-        var poseSet = PoseSet()
+        var poseSet = PoseSet(isRed)
 
         robotState = RobotState(hw)
         robotState.init(poseSet.CORNER_START)
@@ -91,7 +91,7 @@ class LinearAuto : LinearOpMode() {
         val driveMachine = DriveMachine(hw)
         val intakeShootMachine = IntakeShootMachine(hw)
         val rampMachine = RampMachine(hw)
-        val aimingMachine = AimingMachine(hw)
+        val aimingMachine = AimingMachine(hw, poseSet)
         //aim
 
         //prep to bulk read

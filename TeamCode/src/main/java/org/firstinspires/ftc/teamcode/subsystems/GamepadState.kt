@@ -4,13 +4,11 @@ import com.qualcomm.robotcore.hardware.Gamepad
 
 class GamepadState(private val gp1: Gamepad, private val gp2: Gamepad) {
 
+    //--------------------driver 1-----------------------------------
     //for drive
     var jx1 = 0.0
     var jy1 = 0.0
     var rx1 = 0.0
-
-    var start2 = false
-    var wasStart2 = false
 
     //outtake
     var lb1 = false
@@ -20,29 +18,41 @@ class GamepadState(private val gp1: Gamepad, private val gp2: Gamepad) {
     var rb1 = false
     var wasrb1 = false
 
-    //cycle bar
+    //cycle pollen extractor
     var rt1 = false
     var wasrt1 = false
 
+    //reset pinpoint heading to 0
+    var start1 = false
+    var wasStart1 = false
+
+    //
     var lt1 = false
     var waslt1 = false
 
+    //
     var a1 = false
     var wasa1 = false
 
+    //
     var b1 = false
     var wasb1 = false
+
+    //-----------------driver 2-----------------------
 
     //shoot
     var b2 = false
     var wasb2 = false
 
-    var start1 = false
-    var wasStart1 = false
+    //cycle turret
+    var start2 = false
+    var wasStart2 = false
 
+    //corner reset pinpoint
     var back2 = false
     var wasBack2 = false
 
+    //switch hives
     var a2 = false
     var wasA2 = false
 
