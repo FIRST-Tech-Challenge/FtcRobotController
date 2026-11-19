@@ -27,6 +27,7 @@ public final class TeamOneLimelight implements AutoCloseable {
     private boolean lastConnected;
     private int pipeline=-1;
     private boolean idleScan;
+    private boolean pickupScan;
     private double changedAt,frameTimestamp=Double.NaN,capturedAt;
     private String problem="";
     private LLResult lastResult;
@@ -49,16 +50,26 @@ public final class TeamOneLimelight implements AutoCloseable {
         select(mode,false);
     }
     public void select(int mode,boolean scanWhileIdle){
+        select(mode,scanWhileIdle,false);
+    }
+    public void select(int mode,boolean scanWhileIdle,boolean scanWhilePickingUp){
         if(Thread.currentThread().isInterrupted())throw new java.util.concurrent.CancellationException("STOP");
+        if(scanWhilePickingUp){
+            idleScan=false;pickupScan=true;pipeline=1;
+            int previous=servo.getPipelineIndex();
+            servo.updatePickup();
+            if(previous!=servo.getPipelineIndex()){changedAt=clock.getAsDouble();frameTimestamp=Double.NaN;}
+            return;
+        }
         if(scanWhileIdle){
-            idleScan=true;pipeline=mode;
+            pickupScan=false;idleScan=true;pipeline=mode;
             int previous=servo.getPipelineIndex();
             servo.update(false);
             if(previous!=servo.getPipelineIndex()){changedAt=clock.getAsDouble();frameTimestamp=Double.NaN;}
             return;
         }
-        if(mode==pipeline&&!idleScan)return;
-        idleScan=false;
+        if(mode==pipeline&&!idleScan&&!pickupScan)return;
+        idleScan=false;pickupScan=false;
         pipeline=mode;changedAt=clock.getAsDouble();frameTimestamp=Double.NaN;
         try{
             servo.selectPipeline(mode==0?LimeServo.Pipeline.APRIL_TAG:LimeServo.Pipeline.YELLOW);
@@ -101,7 +112,8 @@ public final class TeamOneLimelight implements AutoCloseable {
             }else{
                 // SDK blobs have no label: the configured pipeline defines the color.
                 LLResultTypes.ColorResult target=largestColorTarget(result);
-                String color=idleScan?(servo.getActivePipeline()==LimeServo.Pipeline.RED?"red":"blue"):"yellow";
+                String color=servo.getActivePipeline()==LimeServo.Pipeline.RED?"red"
+                        :servo.getActivePipeline()==LimeServo.Pipeline.BLUE?"blue":"yellow";
                 if(target!=null)targets.add(new Target(-1,target.getTargetXDegrees(),target.getTargetYDegrees(),Double.NaN,target.getTargetArea(),color));
             }
             problem="";

@@ -35,12 +35,29 @@ public class LimeLightTest {
                 "shooting returns to neutral AprilTags");
         servo.selectPipeline(LimeServo.Pipeline.YELLOW);
         check(position[0] == .9, "yellow pickup keeps clockwise tilt");
+        servo.updatePickup();
+        check(position[0] == .9 && servo.getActivePipeline() == LimeServo.Pipeline.YELLOW,
+                "pickup begins yellow at the color angle");
+        now[0] = 9;
+        servo.updatePickup();
+        check(position[0] == .9 && servo.getActivePipeline() == LimeServo.Pipeline.BLUE,
+                "pickup checks blue without changing tilt");
+        now[0] = 12;
+        servo.updatePickup();
+        check(servo.getActivePipeline() == LimeServo.Pipeline.RED, "pickup checks red for avoidance");
+        now[0] = 15;
+        servo.updatePickup();
+        check(servo.getActivePipeline() == LimeServo.Pipeline.YELLOW, "pickup cycle returns to yellow");
+        servo.update(true);
+        check(position[0] == .5, "shooting interrupts pickup and restores the starting neutral");
+        servo.selectPipeline(LimeServo.Pipeline.YELLOW);
+        check(position[0] == .9, "parking color pose stays 120 degrees clockwise without scanning");
         now[0] = 20;
         servo.update(false);
         now[0] = 22.999;
         servo.update(false);
         check(servo.getActivePipeline() == LimeServo.Pipeline.RED, "scan restarts with a full dwell");
-        System.out.println("Neutral, tilt and red/blue scan timing passed");
+        System.out.println("Neutral, shooting, parking tilt and idle/pickup scan timing passed");
     }
 
     private static void check(boolean condition, String message) {

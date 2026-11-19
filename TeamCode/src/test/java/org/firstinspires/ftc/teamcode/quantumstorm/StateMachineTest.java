@@ -34,6 +34,9 @@ public class StateMachineTest {
         testHiveCenter();
         testAutonomous(false);
         testAutonomous(true);
+        testColorPickup();
+        testColorParking(false);
+        testColorParking(true);
         System.out.println("Shooting aim and both autonomous gates passed");
     }
 
@@ -165,6 +168,68 @@ public class StateMachineTest {
 
     private static void check(boolean condition, String message) {
         if (!condition) throw new AssertionError(message);
+    }
+
+    private static Sensors colorSample(String color,double tx,double capturedAt,boolean odometry) {
+        return new Sensors(new Pose(0,0,0),10,odometry,true,0,
+                new Vision(true,1,capturedAt,new Target[]{new Target(-1,tx,0,Double.NaN,4,color)}));
+    }
+
+    private static Outputs pickupOutput() {
+        Outputs out=new Outputs();out.forward=.18;out.intakePower=1;return out;
+    }
+
+    private static void testColorPickup() {
+        Outputs out=pickupOutput();
+        ColorPickup.steer(colorSample("yellow",10,10,true),10,out,true,false);
+        check(out.turnClockwise==.20&&out.forward==.18,"yellow steers toward positive tx");
+        out=pickupOutput();
+        ColorPickup.steer(colorSample("blue",-10,10,true),10,out,true,false);
+        check(out.turnClockwise==-.20,"blue=true steers toward blue");
+        out=pickupOutput();
+        ColorPickup.steer(colorSample("red",10,10,true),10,out,true,false);
+        check(out.turnClockwise<0&&out.forward==0&&out.intakePower==0,"red=false stops collection and turns away");
+        out=pickupOutput();
+        ColorPickup.steer(colorSample("red",0,10,true),10,out,true,false);
+        check(out.turnClockwise!=0&&out.forward==0,"centered red still has an escape turn");
+        out=pickupOutput();
+        ColorPickup.steer(colorSample("blue",10,9.749,true),10,out,true,false);
+        check(out.turnClockwise==0&&out.forward==.18,"stale color cannot alter drive requests");
+        ColorPickup.steer(colorSample("blue",10,10,false),10,out,true,false);
+        check(out.turnClockwise==0,"invalid odometry prevents color turning");
+        out=new Outputs();out.forward=.3;out.turnClockwise=.08;
+        ColorPickup.steer(colorSample("red",10,10,true),10,out,true,false);
+        check(out.forward==.3&&out.turnClockwise==.08,"intake off leaves parking drive untouched");
+    }
+
+    private static void testColorParking(boolean teamTwo) {
+        FieldLayout field=new FieldLayout();
+        final double[] now={0};
+        final Outputs[] applied={new Outputs()};
+        RobotIO io=new RobotIO(){
+            public double nowSeconds(){return now[0];}
+            public Sensors readSensors(){
+                return new Sensors(teamTwo?field.teamTwoWallHive[0]:field.hive[0],now[0],true,true,0,
+                        new Vision(true,1,now[0],new Target[]{new Target(-1,12,0,Double.NaN,4,"red")}));
+            }
+            public void apply(Outputs out){applied[0]=out.copy();}
+        };
+        RobotController controller;
+        if(teamTwo){
+            TeamTwoHiveAuto auto=new TeamTwoHiveAuto(io,field);auto.colorPickupEnabled=true;controller=auto;
+        }else{
+            TeamOnePollenAuto auto=new TeamOnePollenAuto(io,field);auto.colorPickupEnabled=true;controller=auto;
+        }
+        controller.start(0,.54);
+        now[0]=26;controller.tick();
+        check(controller.getState().toString().equals("PARK")&&applied[0].intakePower==0,
+                "26-second parking overrides red avoidance and collection");
+        check(teamTwo?!((TeamTwoHiveAuto)controller).colorPickupActive():!((TeamOnePollenAuto)controller).colorPickupActive(),
+                "color steering is disabled during parking");
+        now[0]=30;controller.tick();
+        for(double wheel:applied[0].wheelPowers())check(wheel==0,"30-second stop turns every wheel off");
+        check(applied[0].intakePower==0&&applied[0].shooterPower==0&&applied[0].feederPower==0,
+                "30-second stop keeps mechanisms off");
     }
 
     private static final class FakeIO implements RobotIO {

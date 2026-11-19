@@ -122,13 +122,13 @@ public final class AutoStateMachine implements AutoCloseable {
                 if(stopRequested()||o.forward==0&&o.strafeRight==0&&o.turnClockwise==0&&o.shooterPower==0&&o.feederPower==0&&o.intakePower==0){
                     if(!stopped){stopped=true;SafeShutdown.run(drive::stop,shooter::stop,intake::stop);}
                     // Stop actuators BEFORE any camera SDK call, including a pipeline transition.
-                    if(camera!=null&&!stopRequested())camera.select(o.pipeline,idleCameraScan());
+                    if(camera!=null&&!stopRequested())selectCamera(o);
                     return;
                 }
                 stopped=false;
                 drive.drive(o.forward*Constants.AUTO_FORWARD_POWER_SIGN,o.strafeRight,o.turnClockwise);
                 shooter.apply(o.shooterPower,o.feederPower);intake.setPower(o.intakePower*Constants.INTAKE_POWER);
-                if(camera!=null&&!stopRequested())camera.select(o.pipeline,idleCameraScan());
+                if(camera!=null&&!stopRequested())selectCamera(o);
             }
         };
         RobotIO io=robotIO;
@@ -145,6 +145,7 @@ public final class AutoStateMachine implements AutoCloseable {
             one.gardenIntakeHeadingRadians=Math.toRadians(Constants.TEAM_ONE_GARDEN_INTAKE_HEADING_DEG);
             one.allowAnyFreshAprilTag=Constants.PRACTICE_ALLOW_ANY_FRESH_APRILTAG;
             one.aimForShooting=true;
+            one.colorPickupEnabled=true;
             one.useTeamTwoFollowUpShot=teamOneBackup;
             one.gardenPassLimit=teamOneBackup?2:0;
             // The contingency route crosses to the opposite wall after Garden.
@@ -175,6 +176,7 @@ public final class AutoStateMachine implements AutoCloseable {
             two.spinUpSeconds=Constants.AUTO_SHOOTER_SPINUP_SEC;two.feedSeconds=Constants.AUTO_TEAM_TWO_FEED_TIME_SEC;
             two.allowAnyFreshAprilTag=Constants.PRACTICE_ALLOW_ANY_FRESH_APRILTAG;
             two.aimForShooting=true;
+            two.colorPickupEnabled=true;
             routine=two;
         }else{
             org.firstinspires.ftc.teamcode.biobuzz.AutoStateMachine two=new org.firstinspires.ftc.teamcode.biobuzz.AutoStateMachine(io,field,false,selectedRoutine,false,false);
@@ -281,7 +283,20 @@ public final class AutoStateMachine implements AutoCloseable {
             TeamTwoHiveAuto.State state=((TeamTwoHiveAuto)routine).getState();
             return state==TeamTwoHiveAuto.State.WAITING||state==TeamTwoHiveAuto.State.SETTLING||state==TeamTwoHiveAuto.State.RECOVERING;
         }
+
         return false;
+    }
+
+    private void selectCamera(Outputs outputs){
+        if(routine instanceof TeamOnePollenAuto){
+            TeamOnePollenAuto one=(TeamOnePollenAuto)routine;
+            if(one.getState()==TeamOnePollenAuto.State.PARK){camera.select(1);return;}
+            camera.select(outputs.pipeline,idleCameraScan(),one.colorPickupActive());
+        }else if(routine instanceof TeamTwoHiveAuto){
+            TeamTwoHiveAuto two=(TeamTwoHiveAuto)routine;
+            if(two.getState()==TeamTwoHiveAuto.State.PARK){camera.select(1);return;}
+            camera.select(outputs.pipeline,idleCameraScan(),two.colorPickupActive());
+        }else camera.select(outputs.pipeline,false);
     }
 
     public void run(){

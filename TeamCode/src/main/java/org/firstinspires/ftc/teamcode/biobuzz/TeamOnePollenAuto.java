@@ -47,6 +47,7 @@ public final class TeamOnePollenAuto implements RobotController {
     /** Team 1 begins at a fixed, taped preload-shot pose; vision is not required to feed. */
     public boolean requireAprilTagForPreload=false;
     public boolean aimForShooting=false;
+    public boolean colorPickupEnabled=false,collectBlue=true,collectRed=false;
     /** Backup mode: after two Garden passes, use Team Two's taped wall shot and fire only on a live tag. */
     public boolean useTeamTwoFollowUpShot=false;
     public int gardenPassLimit=0;
@@ -100,6 +101,8 @@ public final class TeamOnePollenAuto implements RobotController {
     public void stop(){running=false;state=State.STOPPED;io.apply(new Outputs());}
     public boolean isRunning(){return running;}
     public State getState(){return state;}
+    public boolean colorPickupActive(){return running&&colorPickupEnabled
+            &&(state==State.INTAKE_GARDEN||state==State.GARDEN_FORWARD_RETRY);}
     public String lastError(){return error;}
     public String status(){return state+String.format(java.util.Locale.ROOT," · %.1f / 30 s · ",io.nowSeconds()-startAt)+message
             +(recoverPollenAfterTilt?(tiltConfirmed?" · Hive tilt confirmed":" · Tilt not yet confirmed"):" · Garden collection mode")+" · park by 26 s; stop at 30 s";}
@@ -513,6 +516,7 @@ public final class TeamOnePollenAuto implements RobotController {
             if(state!=before||!running)out=new Outputs();
             boolean backupGardenStroke=useTeamTwoFollowUpShot&&(state==State.INTAKE_GARDEN||state==State.GARDEN_BACK_UP||state==State.GARDEN_RIGHT_SHIFT||state==State.GARDEN_RESTORE_HEADING||state==State.GARDEN_FORWARD_RETRY);
             out.intakePower=running&&state!=State.PARK&&(backupGardenStroke||(collecting&&s.ballCount<4))?1:0;
+            if(state==before&&colorPickupActive())ColorPickup.steer(s,now,out,collectBlue,collectRed);
             lastFeeding=out.feederPower>0;
             out.pipeline=pipeline();
             if(io.stopRequested()){stop();return;}

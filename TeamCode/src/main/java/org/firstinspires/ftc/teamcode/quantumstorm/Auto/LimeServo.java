@@ -37,6 +37,7 @@ public class LimeServo {
     private final DoubleSupplier clock;
     private Pipeline activePipeline = Pipeline.APRIL_TAG;
     private boolean scanning;
+    private boolean pickupScanning;
     private double switchedAt;
     private double commandedTiltDegrees;
 
@@ -73,6 +74,7 @@ public class LimeServo {
             throw new IllegalArgumentException("Pipeline is required");
         }
         scanning = false;
+        pickupScanning = false;
         boolean pipelineChanged = pipeline != activePipeline;
         activePipeline = pipeline;
         setTiltForActivePipeline();
@@ -95,6 +97,21 @@ public class LimeServo {
         } else if (clock.getAsDouble() - switchedAt >= Constants.LIMELIGHT_COLOR_PIPELINE_DWELL_SEC) {
             selectPipeline(activePipeline == Pipeline.RED ? Pipeline.BLUE : Pipeline.RED);
             scanning = true;
+        }
+
+    }
+
+    /** Pickup cycles all color slots without moving the camera away from +120 degrees. */
+    public void updatePickup() {
+        if (!pickupScanning) {
+            selectPipeline(Pipeline.YELLOW);
+            switchedAt = clock.getAsDouble();
+            pickupScanning = true;
+        } else if (clock.getAsDouble() - switchedAt >= Constants.LIMELIGHT_COLOR_PIPELINE_DWELL_SEC) {
+            Pipeline next = activePipeline == Pipeline.YELLOW ? Pipeline.BLUE
+                    : activePipeline == Pipeline.BLUE ? Pipeline.RED : Pipeline.YELLOW;
+            selectPipeline(next);
+            pickupScanning = true;
         }
     }
 
