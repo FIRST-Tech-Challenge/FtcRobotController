@@ -10,6 +10,7 @@ public final class TeamTwoHiveAuto implements RobotController {
     private final RobotIO io;
     private final FieldLayout field;
     private final Navigator nav;
+    private final ShootingAim.Alignment shootingAlignment=new ShootingAim.Alignment();
     private HiveVision hive,shotGate;
     private HiveShotGate centeredShotGate;
     private State state=State.STOPPED;
@@ -35,6 +36,7 @@ public final class TeamTwoHiveAuto implements RobotController {
                 ||!Double.isFinite(latestReturnShotSeconds)||latestReturnShotSeconds<8||latestReturnShotSeconds>=26)
             throw new IllegalArgumentException("Invalid Team Two configuration");
         this.alliance=alliance;this.power=power;startAt=lastNow=lastCommandAt=io.nowSeconds();running=true;
+        shootingAlignment.reset();
         batches=0;collecting=false;lastFeeding=batchFed=practiceTagLatched=flowerSequenceActive=false;feedTime=0;spinAt=Double.NaN;current=progressPose=parkVia=null;error=message="";
         hive=new HiveVision(field,alliance);shotGate=new HiveVision(field,alliance);centeredShotGate=new HiveShotGate(field,alliance,true);nav.useScriptedRoute(true,alliance);
         // Team Two is placed directly at this wall shooting pose after Team One's
@@ -220,8 +222,8 @@ public final class TeamTwoHiveAuto implements RobotController {
                     }
                     break;
                 case VERIFY_HIVE:
-                    if(aimForShooting&&!ShootingAim.align(s,now,out)){
-                        spinAt=Double.NaN;message="Aligning wall shot: fresh tv and tx within 2 degrees required";break;
+                    if(aimForShooting&&!shootingAlignment.align(s,now,out)){
+                        spinAt=Double.NaN;message="Aligning wall shot: need two Hive tags and stable tx within 2 degrees";break;
                     }
                     // At the taped wall shot, a current correct far-Hive ID is
                     // the firing permission. Do not make the preload shot
@@ -240,8 +242,8 @@ public final class TeamTwoHiveAuto implements RobotController {
                     }
                     break;
                 case SHOOTING:
-                    if(aimForShooting&&!ShootingAim.align(s,now,out)){
-                        spinAt=Double.NaN;lastFeeding=false;message="Feed paused: target lost or not aligned";break;
+                    if(aimForShooting&&!shootingAlignment.align(s,now,out)){
+                        spinAt=Double.NaN;lastFeeding=false;message="Feed paused: need two Hive tags and stable tx within 2 degrees";break;
                     }
                     // Admit a complete batch once. Counts naturally drop after each real shot;
                     // do not demand four remaining balls after the first ball has fired.

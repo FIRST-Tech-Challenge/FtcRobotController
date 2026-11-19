@@ -105,26 +105,26 @@ public final class TeamOneLimelight implements AutoCloseable {
                 if(target!=null)targets.add(new Target(-1,target.getTargetXDegrees(),target.getTargetYDegrees(),Double.NaN,target.getTargetArea(),color));
             }
             problem="";
-            lastVision=new Vision(!targets.isEmpty(),idleScan?2:pipeline,capturedAt,targets.toArray(new Target[0]),result.getTx());
+            lastVision=new Vision(result.isValid()&&!targets.isEmpty(),idleScan?2:pipeline,capturedAt,targets.toArray(new Target[0]),result.getTx());
             return lastVision;
         }catch(java.util.concurrent.CancellationException e){throw e;}
         catch(RuntimeException e){problem="Camera read failed: "+e.getMessage();return empty;}
     }
 
     /** Report the already sampled frame; telemetry must not resample camera hardware. */
-    public void addTelemetry(Telemetry telemetry,double now,boolean shootingAuthorized){
+    public void addTelemetry(Telemetry telemetry,double now,boolean shootingAuthorized,Vision aimingVision){
         boolean targetValid=lastConnected&&lastResult!=null
                 &&lastResult.getPipelineIndex()==selectedPipeline()
-                &&lastVision.fresh(now,lastVision.pipeline)&&now-lastVision.capturedAt<=.25;
+                &&aimingVision.fresh(now,aimingVision.pipeline)&&now-aimingVision.capturedAt<=.25;
         telemetry.addData("tv",lastResult!=null&&lastResult.isValid()?"1":"0");
-        telemetry.addData("tx",lastResult==null?"N/A":String.format(java.util.Locale.US,"%.2f deg",lastResult.getTx()));
+        telemetry.addData("tx",!Double.isFinite(aimingVision.tx)?"N/A":String.format(java.util.Locale.US,"%.2f deg",aimingVision.tx));
         telemetry.addData("ty",lastResult==null?"N/A":String.format(java.util.Locale.US,"%.2f deg",lastResult.getTy()));
         telemetry.addData("Shooting authorized",shootingAuthorized?"YES":"NO");
         List<LLResultTypes.FiducialResult> tags=lastResult==null?null:lastResult.getFiducialResults();
         List<LLResultTypes.ColorResult> colors=lastResult==null?null:lastResult.getColorResults();
         telemetry.addData("AprilTags seen",tags==null?0:tags.size());
         telemetry.addData("Colors seen",colors==null?0:colors.size());
-        telemetry.addData("Turn suggestion",ShootingAim.turnSuggestion(targetValid,lastVision.tx));
+        telemetry.addData("Turn suggestion",ShootingAim.turnSuggestion(targetValid,aimingVision.tx));
         double angle=servo.getCommandedTiltDegrees();
         telemetry.addData("Camera servo",Double.isFinite(angle)&&Math.abs(angle)<=1.0?"NEUTRAL":"NOT NEUTRAL");
     }

@@ -46,12 +46,17 @@ public interface RobotIO {
         public final double capturedAt;
         public final double tx;
         public final Target[] targets;
+        /** Distinct expected-Hive tags used to compute tx; -1 when not cluster-processed. */
+        public final int aimTagCount;
         public Vision(boolean valid,int pipeline,double capturedAt,Target[] targets) {
-            this(valid,pipeline,capturedAt,targets,closestAngle(targets));
+            this(valid,pipeline,capturedAt,targets,closestAngle(targets),-1);
         }
         public Vision(boolean valid,int pipeline,double capturedAt,Target[] targets,double tx) {
+            this(valid,pipeline,capturedAt,targets,tx,-1);
+        }
+        public Vision(boolean valid,int pipeline,double capturedAt,Target[] targets,double tx,int aimTagCount) {
             this.valid=valid; this.pipeline=pipeline; this.capturedAt=capturedAt; this.targets=targets.clone();
-            this.tx=tx;
+            this.tx=tx;this.aimTagCount=aimTagCount;
         }
         private static double closestAngle(Target[] targets) {
             double angle=Double.NaN;

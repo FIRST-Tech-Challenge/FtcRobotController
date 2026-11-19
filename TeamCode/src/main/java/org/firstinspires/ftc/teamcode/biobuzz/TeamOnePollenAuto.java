@@ -9,6 +9,7 @@ public final class TeamOnePollenAuto implements RobotController {
     private final RobotIO io;
     private final FieldLayout field;
     private final Navigator nav;
+    private final ShootingAim.Alignment shootingAlignment=new ShootingAim.Alignment();
     private HiveVision hive;
     private HiveShotGate shotGate;
     private boolean collecting,lastFeeding;
@@ -73,6 +74,7 @@ public final class TeamOnePollenAuto implements RobotController {
                 ||!Double.isFinite(gardenIntakeHeadingRadians)||gardenPassLimit<0||gardenPassLimit>8)
             throw new IllegalArgumentException("Invalid Team One configuration");
         this.alliance=alliance;this.power=power;startAt=lastNow=io.nowSeconds();spinAt=Double.NaN;
+        shootingAlignment.reset();
         running=true;tiltConfirmed=survey=false;avoidUntil=0;current=destination=gardenEntry=parkVia=teamTwoShotExit=teamTwoShotVia=teamTwoShotLane=gardenLegStart=null;gardenBackDistance=gardenRightDistance=0;gardenIntakeHeading=Double.NaN;message=error="";
         collecting=lastFeeding=false;feedElapsed=0;lastCommandAt=startAt;
         shotGate=new HiveShotGate(field,alliance,false);
@@ -320,8 +322,8 @@ public final class TeamOnePollenAuto implements RobotController {
                         Pose start=field.hive[alliance];destination=new Pose(start.x,start.y-18*Math.sin(start.heading),Pose.angle(start.heading+observationHeadingOffsetRadians));
                         enter(State.OBSERVE_TILT);message="Preload feed attempt complete; move to tag-observation clearance";
                     }else{
-                        if(aimForShooting&&!ShootingAim.align(s,now,out)){
-                            spinAt=Double.NaN;message="Shooting blocked: fresh tv and tx within 2 degrees required";break;
+                        if(aimForShooting&&!shootingAlignment.align(s,now,out)){
+                            spinAt=Double.NaN;message="Shooting blocked: need two Hive tags and stable tx within 2 degrees";break;
                         }
                         Pose shot=field.hive[alliance];
                         boolean atShot=current.distance(shot)<=1&&Math.abs(Pose.angle(current.heading-shot.heading))<=Math.toRadians(2);
@@ -418,8 +420,8 @@ public final class TeamOnePollenAuto implements RobotController {
                     if(out==null){enter(State.WAIT_FOR_TEAM_TWO_TAG);message="At Team Two wall shot; waiting for a fresh AprilTag before follow-up feed";}
                     break;
                 case WAIT_FOR_TEAM_TWO_TAG:
-                    if(aimForShooting&&!ShootingAim.align(s,now,out)){
-                        message="Aligning follow-up shot: fresh tv and tx within 2 degrees required";break;
+                    if(aimForShooting&&!shootingAlignment.align(s,now,out)){
+                        message="Aligning follow-up shot: need two Hive tags and stable tx within 2 degrees";break;
                     }
                     if(correctTeamTwoTag(s,now)){
                         enter(State.FOLLOW_UP_SHOOTING);
@@ -428,8 +430,8 @@ public final class TeamOnePollenAuto implements RobotController {
                     break;
                 case FOLLOW_UP_SHOOTING:
                     if(feedElapsed>=feedSeconds){park();break;}
-                    if(aimForShooting&&!ShootingAim.align(s,now,out)){
-                        spinAt=Double.NaN;message="Follow-up feed paused: target lost or not aligned";break;
+                    if(aimForShooting&&!shootingAlignment.align(s,now,out)){
+                        spinAt=Double.NaN;message="Follow-up feed paused: need two Hive tags and stable tx within 2 degrees";break;
                     }
                     if(Double.isNaN(spinAt))spinAt=now;
                     out.shooterPower=power;
