@@ -8,11 +8,7 @@ import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -24,22 +20,28 @@ import java.util.List;
  * Generated with the BioBuzz Path Planner (FTC 2026-27 "BIOBUZZ" presented by RTX) - Pedro Pathing 3 target.
  *
  * Built for com.pedropathing:core 3.0.0 (Paths API). The drivetrain, Pinpoint and Pedro follower come
- * from the repo's PedroDrive, so its PedroConfiguration tuning applies. The turret yaw, hood and flywheel
- * are the repo's TurretSubsystem (homing, rear dead zone, encoder-verified yaw, shooter PIDF), aimed with
- * the same pivot geometry and aim lead as competition auto aim, and the hood / RPM come from the
- * team-measured ShootingConfiguration.PROFILE. Intake, gate, kicker and transfer are the Robot class below.
+ * from the repo's PedroDrive, so its PedroConfiguration tuning applies. Every mechanism is a repo
+ * subsystem, driven like the competition and fallback autos: IntakeSubsystem (TeleOp's direction),
+ * TransferSubsystem (full sensor, stage 1 stall guard), GateSubsystem with the shared FiringCoordinator
+ * feed, and TurretSubsystem (homing, rear dead zone, encoder-verified yaw, shooter PIDF), aimed with the
+ * competition pivot geometry and aim lead; hood / RPM come from ShootingConfiguration.PROFILE.
  *
- * - Coordinates: Pedro field inches, bottom-left origin, +x right, +y up. Headings in degrees, CCW positive.
- * - Robot placed as a 23 x 12 in box, center (60.15, 7.58), heading -179.2 deg.
- * - Start pose (tracked point = box center + pod offsets X 0 fwd, Y 0 reversed): (60.154, 7.576).
+ * - Coordinates: the repo's field frame (PedroDrive, Zenith routes, TeleOpFieldReference): inches,
+ *   (0, 0) = field center, +x toward the blue wall, +y away from the audience. Headings in degrees, CCW positive.
+ * - Planned alliance RED.
+ * - Robot placed as a 23 x 12 in box, center (-11.85, -64.42), heading -179.2 deg.
+ * - Start pose (tracked point = box center + pod offsets X 0 fwd, Y 0 reversed): (-11.846, -64.424).
  * - Path limits: speed is a fraction of PedroConfiguration.MAX_FORWARD_VELOCITY_IN_PER_SEC; max velocity,
  *   acceleration and deceleration are Foresight constraints for that one path (0 = no limit).
  *
  * HOW IT RUNS: ONE while (opModeIsActive()) loop: loop.begin() (bulk cache), drive.readSensors() (the single
  * Pinpoint read), robot.readSensors(), the current step, loop-code blocks, robot.apply() (same-loop
- * turret/hood/flywheel writes), then drive.update(). Steps wait for a fresh, referenced Pinpoint pose.
- * Keep the robot still during INIT: Pinpoint IMU calibration and turret homing both run then.
- * In your own code use: follower, drive, robot, telemetry, stepTimer, P(x, y, deg), H(deg), progress().
+ * mechanism writes), then drive.update(). Steps wait for a fresh, referenced Pinpoint pose. Like the
+ * repo's autos it clears AutoPoseHandoff in INIT and saves the pose every loop for TeleOp, stops at
+ * PedroConfiguration.MAX_AUTONOMOUS_SECONDS, and stops if the pose stays stale for
+ * FallbackAutoController.POSE_LOSS_SECONDS. Keep the robot still during INIT (Pinpoint IMU calibration
+ * and turret homing). In your own code use: follower, drive, robot, telemetry, stepTimer, P(x, y, deg),
+ * H(deg), progress().
  */
 
 @Autonomous(name = "testdrive", group = "Auto")
@@ -49,46 +51,31 @@ public class testdrive extends LinearOpMode {
     //  TUNING - change here, or live from FTC Dashboard if @Config is enabled
     // =====================================================================================
     public static class T {
-        // ---- Hardware names (must match the robot config) ----
-        public static String INTAKE_NAME = "intake_motor";
-        public static String TRANSFER_NAME = "transfer_motor_1";
-        public static String KICKER_NAME = "transfer_motor_2";
-        public static String GATE_NAME = "gate_servo";
-        // ---- Motor directions ----
-        public static boolean INTAKE_REVERSE_FROM_TELEOP = true;
         // ---- Intake ----
         public static double INTAKE_POWER = 1;
         // ---- Shot readiness ----
-        public static double READY_TIMEOUT_S = 3;
+        public static double READY_TIMEOUT_S = FallbackAutoController.SPIN_UP_TIMEOUT_SECONDS;   // repo value
         // ---- Gate, kicker & transfer (shot timing) ----
-        public static double GATE_CLOSED = 0.5;
-        public static double GATE_OPEN = 0.7;
-        public static double GATE_OPEN_DELAY_S = 0.25;
-        public static double FEED_PER_BALL_S = 0.3;
-        public static double GATE_CLOSE_DELAY_S = 0.05;
-        public static double KICKER_POWER = 1;
-        public static double TRANSFER_POWER = 1;
-        // ---- Aim points (field inches, planned side) ----
-        public static double GOAL1_X = 60;
-        public static double GOAL1_Y = 52;
-        public static double GOAL2_X = 60;
-        public static double GOAL2_Y = 92;
-        public static double GOAL3_X = 84;
-        public static double GOAL3_Y = 52;
-        public static double GOAL4_X = 84;
-        public static double GOAL4_Y = 92;
-        public static double FALLBACK_DIST_IN = 70;
+        public static double FEED_SECONDS = FallbackAutoController.FEED_SECONDS;   // repo value
+        // ---- Aim points (field-center inches, planned side) ----
+        public static double GOAL1_X = TurretSubsystem.RED_HIVE_PIVOT_X_IN;   // repo value
+        public static double GOAL1_Y = -TurretSubsystem.HIVE_RAISED_MOUTH_CENTER_Y_OFFSET_IN;   // repo value
+        public static double GOAL2_X = TurretSubsystem.RED_HIVE_PIVOT_X_IN;   // repo value
+        public static double GOAL2_Y = TurretSubsystem.HIVE_RAISED_MOUTH_CENTER_Y_OFFSET_IN;   // repo value
+        public static double GOAL3_X = TurretSubsystem.BLUE_HIVE_PIVOT_X_IN;   // repo value
+        public static double GOAL3_Y = -TurretSubsystem.HIVE_RAISED_MOUTH_CENTER_Y_OFFSET_IN;   // repo value
+        public static double GOAL4_X = TurretSubsystem.BLUE_HIVE_PIVOT_X_IN;   // repo value
+        public static double GOAL4_Y = TurretSubsystem.HIVE_RAISED_MOUTH_CENTER_Y_OFFSET_IN;   // repo value
         // ---- Driving & generator ----
         public static double STEP_TIMEOUT_S = 0;
         // ---- Pedro 3 path limits (driver defaults; a step can override them) ----
         public static double MAX_ACCEL_IN_PER_S2 = 0;   // 0 = no limit
         public static double MAX_DECEL_IN_PER_S2 = 0;   // 0 = no limit
-        public static double TURN_TOLERANCE_DEG = 3.0;
+        public static double TURN_TOLERANCE_DEG = Math.toDegrees(PedroConfiguration.END_HEADING_TOLERANCE_RAD);   // repo value
     }
 
-    private static final double MIRROR_X = Double.NaN;   // NaN = off
-    private static final double MIRROR_Y = Double.NaN;
-    private static final boolean FLIP_TURNS = false;   // one mirror axis swaps turn directions
+    private static final boolean MIRROR = false;   // INIT alliance select (B = other alliance)
+    private static final TurretSubsystem.Alliance PLANNED_ALLIANCE = TurretSubsystem.Alliance.RED;
 
     private PedroDrive drive;
     private Follower follower;
@@ -97,23 +84,28 @@ public class testdrive extends LinearOpMode {
     private final ElapsedTime stepTimer = new ElapsedTime();
     private boolean mirrored = false;
     private int phase = 0;
+    private int pathSegs = 1;
     private Pose turnGoal = Pose.zero();
     private final boolean[] cbFired = new boolean[1];
 
     // ---- helpers (alliance mirroring is applied here, so planner coordinates stay as drawn) ----
+    /** Planner pose (field-center inches, deg) -> Pedro pose; the other alliance is the point mirror. */
     private Pose P(double x, double y, double deg) {
         double h = Math.toRadians(deg);
-        if (mirrored) {
-            if (!Double.isNaN(MIRROR_X)) { x = 2 * MIRROR_X - x; h = Math.PI - h; }
-            if (!Double.isNaN(MIRROR_Y)) { y = 2 * MIRROR_Y - y; h = -h; }
-        }
+        if (mirrored) { x = -x; y = -y; h += Math.PI; }   // same as BioBuzzRobot.mirror()
         return new Pose(x, y, wrap(h));
     }
     private double H(double deg) { return P(0, 0, deg).heading(); }
-    private boolean turnLeft(boolean left) { return (mirrored && FLIP_TURNS) ? !left : left; }
+    private TurretSubsystem.Alliance alliance() {
+        if (!mirrored) return PLANNED_ALLIANCE;
+        return PLANNED_ALLIANCE == TurretSubsystem.Alliance.RED ? TurretSubsystem.Alliance.BLUE : TurretSubsystem.Alliance.RED;
+    }
     private double distTo(Pose p) { Pose c = follower.pose(); return Math.hypot(c.x() - p.x(), c.y() - p.y()); }
-    /** 0..1 progress through the path that is currently being followed. */
-    private double progress() { return clamp(follower.curveCompletion(), 0, 1); }
+    /** 0..1 progress through the path being followed, spread evenly over its segments (1 once it ended). */
+    private double progress() {
+        if (!follower.following()) return 1.0;
+        return clamp((follower.pathIndex() + follower.curveCompletion()) / Math.max(1, pathSegs), 0, 1);
+    }
     /** Per-path Foresight limits. speed = fraction of max forward velocity; the rest are 0 = no limit. */
     private Path limits(Path path, double speed, double maxVelInPerS, double accelInPerS2, double decelInPerS2) {
         List<Modifier> m = new ArrayList<>();
@@ -128,75 +120,56 @@ public class testdrive extends LinearOpMode {
     static double wrap(double a) { return Math.atan2(Math.sin(a), Math.cos(a)); }
 
     // =====================================================================================
-    //  ROBOT SUBSYSTEMS - intake, gate, kicker + transfer here; turret yaw, hood and flywheel
-    //  through TurretSubsystem. Call readSensors() once per loop before the step and apply()
-    //  once per loop after it (the OpMode does both).
+    //  ROBOT - the repo's subsystems, driven the way the competition and fallback autos drive them:
+    //  IntakeSubsystem (TeleOp's direction), TransferSubsystem (full sensor, stage 1 stall guard),
+    //  GateSubsystem with the shared FiringCoordinator feed (CompetitionFeedController timing), and
+    //  TurretSubsystem for yaw, hood and flywheel. Call readSensors() once per loop before the step
+    //  and apply() once per loop after it (the OpMode does both).
     // =====================================================================================
     static class Robot {
-        static final double METERS_PER_INCH = .0254;
+        static final double METERS_PER_INCH = FieldGeometry.METERS_PER_INCH;
 
-        final DcMotorEx intake, transfer, kicker;
-        final Servo gate;
+        final IntakeSubsystem intake;
+        final TransferSubsystem transfer;
+        final GateSubsystem gate;
         final TurretSubsystem turret;
-        final ElapsedTime clock = new ElapsedTime();
+        final CompetitionFeedController feedControl = new CompetitionFeedController(); // continuous feed
+        final FiringCoordinator firing = CompetitionFeedController.firing();
 
-        int intakeMode = 0;                  // 1 in, -1 out, 0 off
+        double intakePower = 0;              // + in, - out, in IntakeSubsystem's (TeleOp's) direction
+        boolean gateHeldOpen = false;        // Gate step: hold the gate open outside a shot
+        double feedUntil = Double.NEGATIVE_INFINITY; // a shot's feed request runs until this time (s)
 
         boolean spinning = false;
         boolean rpmAuto = true;
         double rpmManual = 0;                // flywheel output RPM
         double rpmTarget = 0;
 
-        Pose aimTarget = null;               // point the turret tracks / distance is measured to (field in)
+        Pose aimTarget = null;               // point the turret tracks / range is measured to (field in)
         boolean tracking = false;
         double fixedHeadingDeg = Double.NaN; // fixed turret heading: front 0, right 90, back 180, left 270
         boolean poseFresh = false;
-        double dist = T.FALLBACK_DIST_IN;    // turret pivot to aim point, inches
+        double dist = Double.NaN;            // turret pivot to aim point, inches (NaN until an aim point is set)
 
         boolean hoodAuto = true;
         double hoodManualDeg = TurretSubsystem.PITCH_HOME_DEG; // hood travel down from home, 0..30 deg
         double hoodTargetDeg = TurretSubsystem.PITCH_HOME_DEG;
 
-        int shootState = 0;                  // 0 idle, 1 gate opening, 2 feeding, 3 closing
-        int shootBalls = 0;
-        double shootT = 0;
         String shotNote = "";
+        int homeRetries = 0;                 // turret homes restarted after a FAULT
 
         Robot(HardwareMap hw) {
-            intake = hw.get(DcMotorEx.class, T.INTAKE_NAME);
-            transfer = hw.get(DcMotorEx.class, T.TRANSFER_NAME);
-            kicker = hw.get(DcMotorEx.class, T.KICKER_NAME);
-            gate = hw.get(Servo.class, T.GATE_NAME);
-
-            // Directions come from the subsystems TeleOp uses. The intake can be flipped from TeleOp's
-            // direction with T.INTAKE_REVERSE_FROM_TELEOP (needed on the robot, 2026-11-18).
-            // intake_motor's encoder channel is the turret's through-bore encoder. Never reset it here.
-            setup(intake, T.INTAKE_REVERSE_FROM_TELEOP
-                    ? IntakeSubsystem.MOTOR_DIRECTION.inverted() : IntakeSubsystem.MOTOR_DIRECTION);
-            setup(transfer, TransferSubsystem.MOTOR_DIRECTION);
-            setup(kicker, TransferSubsystem.STAGE_2_MOTOR_DIRECTION);
-            gate.setPosition(T.GATE_CLOSED);
-
+            intake = new IntakeSubsystem(hw);        // never resets intake_motor's encoder (turret encoder channel)
+            transfer = new TransferSubsystem(hw);
+            gate = new GateSubsystem(hw, CompetitionFeedController.GATE_TO_FEED_DELAY_SECONDS);
             // Starts non-blocking turret homing and puts the hood at home; no camera in this auto.
             turret = new TurretSubsystem(hw, false);
             turret.setEncoderCorrectionEnabled(true);
         }
 
-        private static void setup(DcMotorEx m, DcMotorSimple.Direction direction) {
-            m.setDirection(direction);
-            m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            m.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
-
         // ---- commands (call these from code steps / loop code too) ----
-        /** Intake in (1) also runs transfer stage 1 to carry balls toward the turret; out (-1) / off (0) stop it. */
-        void setIntake(int mode) {
-            intakeMode = mode;
-            intake.setPower(mode * T.INTAKE_POWER);
-            if (shootState != 2) transfer.setPower(stage1IdlePower());
-        }
-        /** Stage 1 outside the feed window: runs only while intaking. */
-        private double stage1IdlePower() { return intakeMode == 1 ? T.TRANSFER_POWER : 0; }
+        /** Intake in (1), out (-1) or off (0) at T.INTAKE_POWER; forward collection stops once the transfer is full. */
+        void setIntake(int mode) { intakePower = mode * T.INTAKE_POWER; }
         void spin(boolean on) { spinning = on; }
         void setRpmAuto() { rpmAuto = true; }
         /** Flywheel output RPM, the same units as TeleOp and the shot table. */
@@ -211,15 +184,15 @@ public class testdrive extends LinearOpMode {
         void setTracking(boolean on) { tracking = on; if (on) fixedHeadingDeg = Double.NaN; }
         /** Fixed turret heading in the Driver Hub frame: front 0, right (home) 90, back 180, left 270 deg. */
         void setTurretHeading(double headingDeg) { tracking = false; fixedHeadingDeg = headingDeg; }
-        void gateOpen(boolean open) { gate.setPosition(open ? T.GATE_OPEN : T.GATE_CLOSED); }
+        /** Hold the gate open (true) or let the feed control it again (false). */
+        void gateOpen(boolean open) { gateHeldOpen = open; }
 
-        void startShoot(int balls) {
-            shootBalls = Math.max(1, balls);
-            shootState = 1;
-            shootT = clock.seconds();
-            shotNote = "";
-        }
-        boolean isShooting() { return shootState != 0; }
+        /**
+         * Shot: the fallback auto's continuous feed (gate, then both transfer stages) for T.FEED_SECONDS. A
+         * continuous feed cannot count launched balls (FiringCoordinator), so it feeds every loaded ball.
+         */
+        void startShoot() { feedUntil = now() + T.FEED_SECONDS; shotNote = ""; }
+        boolean isShooting() { return now() < feedUntil; }
         boolean turretHomed() { return turret.isHomed(); }
 
         /** Encoder-verified turret on its target (homed, fresh pose while tracking). */
@@ -236,25 +209,35 @@ public class testdrive extends LinearOpMode {
 
         /** Mid-auto stop: mechanisms off, the turret holds its last target and keeps its home. */
         void stopAll() {
-            shootState = 0;
-            setIntake(0);                    // also stops transfer stage 1
+            intakePower = 0;
             spinning = false;
             tracking = false;
             fixedHeadingDeg = Double.NaN;
-            kicker.setPower(0);
-            transfer.setPower(0);
-            turret.stopShooter();
-            gate.setPosition(T.GATE_CLOSED);
+            gateHeldOpen = false;
+            feedUntil = Double.NEGATIVE_INFINITY;
+            double t = now();
+            RobotShutdown.stopAll(() -> firing.stop(t), intake::stop, transfer::pause, gate::close, turret::stopShooter);
         }
 
-        /** End of OpMode: every output stops even if one device throws. */
-        void shutdown() { RobotShutdown.stopAll(this::stopAll, turret::stop); }
-
-        /** Once per loop, before the step: turret encoder, homing and flywheel velocity reads. */
-        void readSensors(double now) { turret.update(now); }
+        /** End of OpMode: every output stops even if one device throws (the fallback auto's set). */
+        void shutdown() { RobotShutdown.stopAll(this::stopAll, transfer::stop, gate::close, turret::stop); }
 
         /**
-         * Once per loop, after the step. pose: this loop's Pinpoint sample (meters, Pedro frame, CCW).
+         * Once per loop, before the step: transfer full sensor and stage 1 speed, turret encoder, homing and
+         * flywheel velocity. A home that faults (turret bumped or still moving in its settle window) restarts
+         * at once; otherwise the turret would stay unhomed and never aim for the rest of the auto.
+         */
+        void readSensors(double now) {
+            transfer.readSensors(now);
+            turret.update(now);
+            if (turret.hasHomingFault()) { homeRetries++; turret.homeTurretAndZeroEncoder(now); }
+        }
+
+        /** INIT loop: turret homing travel only; nothing aims, spins or feeds before START. */
+        void applyInit(double now) { turret.applyYawCommand(now); }
+
+        /**
+         * Once per loop, after the step. pose: this loop's Pinpoint sample (meters, field-center frame, CCW).
          * Aim uses the competition auto-aim rules: pivot offset from ShootingConfiguration.MOUNT, the
          * TurretControl aim lead, and TurretSubsystem's reachable-yaw rule for the rear dead zone.
          */
@@ -276,53 +259,44 @@ public class testdrive extends LinearOpMode {
             }
             turret.applyYawCommand(now); // Same-loop servo write; also drives homing travel.
 
-            // ---- hood + flywheel from the measured shot table (range from the turret pivot) ----
-            ShotProfile.Row row = ShootingConfiguration.PROFILE.sample(dist * METERS_PER_INCH);
-            hoodTargetDeg = hoodAuto && row != null ? row.hoodDeg : hoodManualDeg;
+            // ---- hood + flywheel: the measured shot table (range from the turret pivot). Before any aim
+            //      point, the fallback auto's preload settings (TeleOp's starting manual hood / RPM). ----
+            ShotProfile.Row row = Double.isFinite(dist) ? ShootingConfiguration.PROFILE.sample(dist * METERS_PER_INCH) : null;
+            hoodTargetDeg = !hoodAuto ? hoodManualDeg : row != null ? row.hoodDeg : FallbackAutonomous.PRELOAD_HOOD_DEG;
             turret.setPitchAngleDegrees(hoodTargetDeg);
-            rpmTarget = rpmAuto ? (row == null ? 0 : row.rpm) : ShooterSpeed.clampFlywheelRpm(rpmManual);
+            rpmTarget = !rpmAuto ? ShooterSpeed.clampFlywheelRpm(rpmManual)
+                    : row != null ? row.rpm : FallbackAutonomous.PRELOAD_FLYWHEEL_RPM;
             if (spinning && rpmTarget > 0) turret.setShooterRpm(rpmTarget);
             else turret.stopShooter();
 
-            // ---- shot sequence: open gate -> both transfer stages feed -> stop -> close gate ----
-            // Stage 1 also runs whenever the intake is in (setIntake); stage 2 (kicker) only feeds shots.
-            double t = clock.seconds();
-            switch (shootState) {
-                case 1:
-                    gate.setPosition(T.GATE_OPEN);
-                    if (t - shootT >= T.GATE_OPEN_DELAY_S) {   // gate is open: run both transfers
-                        kicker.setPower(T.KICKER_POWER);
-                        transfer.setPower(T.TRANSFER_POWER);
-                        shootState = 2;
-                        shootT = t;
-                    }
-                    break;
-                case 2:
-                    if (t - shootT >= T.FEED_PER_BALL_S * shootBalls) {
-                        kicker.setPower(0);
-                        transfer.setPower(stage1IdlePower()); // back to intake-only loading
-                        shootState = 3;
-                        shootT = t;
-                    }
-                    break;
-                case 3:
-                    if (t - shootT >= T.GATE_CLOSE_DELAY_S) {
-                        gate.setPosition(T.GATE_CLOSED);
-                        shootState = 0;
-                    }
-                    break;
-                default:
-                    break;
-            }
+            // ---- feed: the fallback auto's manual-feed path (TeleOp GP1 A): gate, then both stages ----
+            boolean feedRequested = now < feedUntil;
+            feedControl.updateSelection(now, false, firing);
+            firing.update(now, false, feedRequested, false, false, false, false, false, "Planner autonomous feed");
+            boolean feedStage1 = feedControl.feedStage1(now, firing);
+            gate.setOpen(firing.gateOpen() || gateHeldOpen);
+            boolean shootingBusy = feedRequested || firing.gateOpen()
+                    || firing.state() == FiringCoordinator.State.RECOVERY;
+            // Stage 1 loads (full sensor + run-on, stall guard) while intaking or spinning up for a shot.
+            boolean loading = intakePower > 0 || spinning;
+            transfer.updateCached(now, feedControl.feedTransfers(firing, gate.isOpenForFeeding()),
+                    shootingBusy || !loading, feedStage1, false);
+            // Forward collection stops on a confirmed full queue (competition auto rule); reverse still allowed.
+            intake.setIntakePower(transfer.isFull() && intakePower > 0
+                    ? IntakeQueueController.FULL_QUEUE_INTAKE_POWER : intakePower);
+            transfer.setIntakeRunning(intake.getCommandedPower() > 0); // Stage 1 stall guard only while intaking.
         }
 
         void addTelemetry(Telemetry t) {
             turret.addDriverTelemetry(t);
+            transfer.addDriverTelemetry(t);
+            if (homeRetries > 0) t.addData("Turret home retries", homeRetries);
             t.addData("Turret target heading (deg CW)", "%.1f | %s", turret.getTargetRobotHeadingDegrees(),
                     !turret.isHomed() ? "NOT HOMED" : turretReady() ? "ON TARGET" : tracking && !poseFresh ? "POSE STALE" : "MOVING");
-            t.addData("Aim range (in)", "%.1f%s", dist, aimTarget == null ? " (fallback)" : "");
+            t.addData("Aim range (in)", Double.isFinite(dist)
+                    ? String.format(java.util.Locale.US, "%.1f", dist) : "no aim point (preload settings)");
             t.addData("Hood travel (deg) / flywheel target (RPM)", "%.1f / %.0f", hoodTargetDeg, rpmTarget);
-            t.addData("Shot", "ready %s | state %d%s", ready(), shootState, shotNote.isEmpty() ? "" : " | " + shotNote);
+            t.addData("Shot", "ready %s | feed %s%s", ready(), firing.state(), shotNote.isEmpty() ? "" : " | " + shotNote);
         }
     }
 
@@ -332,20 +306,22 @@ public class testdrive extends LinearOpMode {
     // =====================================================================================
     @Override
     public void runOpMode() throws InterruptedException {
+        AutoPoseHandoff.clear();   // like every repo auto: an older run's pose must never reach the next TeleOp
         RobotLoop loop = new RobotLoop(hardwareMap);   // bulk-cached hub reads, cleared once per loop
         drive = new PedroDrive(hardwareMap);   // drive motors + Pinpoint + Pedro 3 follower
         follower = drive.follower();
         cfg = drive.config();
         try {
             robot = new Robot(hardwareMap);    // starts turret homing
-            drive.setStartPose(P(60.154, 7.576, -179.2));   // box center (60.15, 7.58) + pod offsets
+            drive.setStartPose(P(-11.846, -64.424, -179.2));   // box center (-11.85, -64.42) + pod offsets
             boolean lastMirrored = mirrored;
             while (opModeInInit()) {
                 loop.begin();
                 drive.readSensors();   // applies the start pose once Pinpoint reports READY
                 double t = now();   // after the Pinpoint read: pose freshness needs t >= sample time
                 robot.readSensors(t);
-                robot.apply(t, drive.sample());   // turret homing only; nothing aims or spins before START
+                robot.applyInit(t);   // turret homing only; nothing aims, spins or feeds before START
+                telemetry.addData("Alliance", alliance());
                 telemetry.addLine("BioBuzz auto ready - keep the robot still during INIT (Pinpoint + turret homing)");
                 telemetry.addData("Pose ready", drive.ready(now()));
                 drive.addTelemetry(telemetry);
@@ -355,17 +331,35 @@ public class testdrive extends LinearOpMode {
             if (isStopRequested()) return;
 
             final int STEPS = 6;
+            final double started = now();
             int stage = 0;               // steps started so far; running step index = stage - 1
             boolean running = false;
             boolean first = false;
             boolean poseSeen = false;
+            double poseLostSince = Double.NaN;
+            String endReason = "Auto complete";
 
             while (opModeIsActive() && (stage < STEPS || running)) {
                 loop.begin();
                 drive.readSensors();
                 double t = now();   // after the Pinpoint read: pose freshness needs t >= sample time
                 robot.readSensors(t);
-                if (!poseSeen) poseSeen = drive.ready(now());
+                if (t - started >= PedroConfiguration.MAX_AUTONOMOUS_SECONDS) {
+                    endReason = "Stopped at the autonomous deadline";
+                    break;
+                }
+                if (drive.ready(t)) {
+                    poseSeen = true;
+                    poseLostSince = Double.NaN;
+                    AutoPoseHandoff.save(alliance(), drive.sample());   // TeleOp can start from the last good pose
+                } else if (poseSeen) {
+                    if (Double.isNaN(poseLostSince)) poseLostSince = t;
+                    if (t - poseLostSince >= FallbackAutoController.POSE_LOSS_SECONDS) {
+                        AutoPoseHandoff.clear();   // a pose from before a localization fault is not trustworthy
+                        endReason = "FAULT: Pinpoint pose unavailable / stale; stopped";
+                        break;
+                    }
+                }
 
                 if (poseSeen && !running && stage < STEPS) {
                     stage++;
@@ -382,13 +376,15 @@ public class testdrive extends LinearOpMode {
 
                 robot.apply(t, drive.sample());
                 drive.update();
-                telemetry.addData("step", "%d / %d%s", Math.min(stage, STEPS), STEPS, poseSeen ? "" : " (waiting for Pinpoint pose)");
+                telemetry.addData("step", "%d / %d%s | %.1f s", Math.min(stage, STEPS), STEPS, poseSeen ? "" : " (waiting for Pinpoint pose)", t - started);
+                telemetry.addData("Alliance", alliance());
                 drive.addTelemetry(telemetry);
                 robot.addTelemetry(telemetry);
                 loop.addRateTelemetry(telemetry);
                 telemetry.update();
             }
-            telemetry.addLine("Auto complete");
+            RobotShutdown.stopAll(drive::stop, robot::stopAll);
+            telemetry.addLine(endReason);
             telemetry.update();
         } finally {
             RobotShutdown.stopAll(drive::stop, robot == null ? null : robot::shutdown);
@@ -399,7 +395,7 @@ public class testdrive extends LinearOpMode {
     private boolean runStep(int i, boolean first) {
         switch (i) {
 
-            // step 1 - ACTION VOLLEY (AIM + SPIN + SHOOT): 4 ball(s) at aim point 1
+            // step 1 - ACTION VOLLEY (AIM + SPIN + SHOOT): feed 2.5s at aim point 1 (red audience)
             case 0: {
                 if (first) {
                     robot.aimAt(P(T.GOAL1_X, T.GOAL1_Y, 0));
@@ -412,7 +408,7 @@ public class testdrive extends LinearOpMode {
                     boolean timedOut = stepTimer.seconds() > T.READY_TIMEOUT_S;
                     boolean ready = !first && robot.ready();   // first call: new targets apply after this step
                     if (ready || (timedOut && robot.turretHomed())) {
-                        robot.startShoot(4);
+                        robot.startShoot();   // continuous feed of every loaded ball for T.FEED_SECONDS
                         if (!ready) robot.shotNote = "fed before READY (timeout)";
                         phase = 1;
                     } else if (timedOut) {
@@ -433,12 +429,13 @@ public class testdrive extends LinearOpMode {
                 return true;
             }
 
-            // step 3 - DRIVE to (13.5, 8.1) @ -179.2 deg
+            // step 3 - DRIVE to (-58.5, -63.9) @ -179.2 deg
             case 2: {
                 if (first) {
+                    pathSegs = 1;
                     Arrays.fill(cbFired, false);
-                    follower.follow(limits(Paths.line(P(60.15, 7.58, 0), P(13.47, 8.11, 0)).constant(H(-179.2)),
-                            1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
+                    follower.follow(limits(Paths.line(P(-11.85, -64.42, 0), P(-58.53, -63.89, 0)).constant(H(-179.2)),
+                            PedroConfiguration.DEFAULT_PATH_SPEED_FRACTION, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
                 }
                 boolean done = !first && (!follower.following() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
                 return done;
@@ -451,18 +448,19 @@ public class testdrive extends LinearOpMode {
                 return done;
             }
 
-            // step 5 - DRIVE to (58.5, 21.7) @ -179.2 deg
+            // step 5 - DRIVE to (-13.5, -50.3) @ -179.2 deg
             case 4: {
                 if (first) {
+                    pathSegs = 1;
                     Arrays.fill(cbFired, false);
-                    follower.follow(limits(Paths.line(P(13.47, 8.11, 0), P(58.46, 21.71, 0)).constant(H(-179.2)),
-                            1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
+                    follower.follow(limits(Paths.line(P(-58.53, -63.89, 0), P(-13.54, -50.29, 0)).constant(H(-179.2)),
+                            PedroConfiguration.DEFAULT_PATH_SPEED_FRACTION, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
                 }
                 boolean done = !first && (!follower.following() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
                 return done;
             }
 
-            // step 6 - ACTION VOLLEY (AIM + SPIN + SHOOT): 4 ball(s) at aim point 1
+            // step 6 - ACTION VOLLEY (AIM + SPIN + SHOOT): feed 2.5s at aim point 1 (red audience)
             case 5: {
                 if (first) {
                     robot.aimAt(P(T.GOAL1_X, T.GOAL1_Y, 0));
@@ -475,7 +473,7 @@ public class testdrive extends LinearOpMode {
                     boolean timedOut = stepTimer.seconds() > T.READY_TIMEOUT_S;
                     boolean ready = !first && robot.ready();   // first call: new targets apply after this step
                     if (ready || (timedOut && robot.turretHomed())) {
-                        robot.startShoot(4);
+                        robot.startShoot();   // continuous feed of every loaded ball for T.FEED_SECONDS
                         if (!ready) robot.shotNote = "fed before READY (timeout)";
                         phase = 1;
                     } else if (timedOut) {
