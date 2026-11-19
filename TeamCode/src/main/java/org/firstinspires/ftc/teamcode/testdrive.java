@@ -46,14 +46,14 @@ public class testdrive extends LinearOpMode {
     // =====================================================================================
     public static class T {
         // ---- Hardware names (must match the robot config) ----
-        public static String INTAKE_NAME = "intake";
-        public static String TRANSFER_NAME = "transfer";
-        public static String KICKER_NAME = "kicker";
-        public static String SHOOTER_NAME = "shooter";
+        public static String INTAKE_NAME = "intake_motor";
+        public static String TRANSFER_NAME = "transfer_motor_1";
+        public static String KICKER_NAME = "transfer_motor_2";
+        public static String SHOOTER_NAME = "turret_motor";
         public static String TURRET1_NAME = "turret_servo_1";
         public static String TURRET2_NAME = "turret_servo_2";
-        public static String GATE_NAME = "gate";
-        public static String HOOD_NAME = "hood";
+        public static String GATE_NAME = "gate_servo";
+        public static String HOOD_NAME = "turret_pitch";
         // ---- Motor directions ----
         public static boolean INTAKE_REVERSED = false;
         public static boolean TRANSFER_REVERSED = true;
