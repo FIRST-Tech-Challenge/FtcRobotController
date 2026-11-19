@@ -287,7 +287,7 @@ public class AprilTagClusterTargeting {
      */
     public double servoPositionToPitchDeg(double servoPos) {
         if (distanceToHive == null) return 0; // call setDistanceToHive(...) first
-        double cameraAngle = (LimelightAngle.getAngle(distanceToHive.GetDistance()) * 300) - 150;
+        double cameraAngle = (servoPos * 300) - 150;
         return cameraAngle;
     }
 

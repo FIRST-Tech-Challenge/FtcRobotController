@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.Utils.MiscUtils;
 import org.firstinspires.ftc.teamcode.Utils.Movement.PosGetters.PositionGetter;
 import org.firstinspires.ftc.teamcode.Utils.Movement.TeleopMovementUtil;
 import org.firstinspires.ftc.teamcode.Utils.Positioning.DistanceToHive;
+import org.firstinspires.ftc.teamcode.Utils.Shooting.AprilTagClusterTargeting;
 import org.firstinspires.ftc.teamcode.Utils.Shooting.AprilTagsTurretTarget;
 import org.firstinspires.ftc.teamcode.Utils.Shooting.LimelightAngle;
 import org.firstinspires.ftc.teamcode.Utils.Shooting.TurretConfigurator;
@@ -20,6 +21,8 @@ public class BioBuzzTeleop extends LinearOpMode2026 {
 
     TeleopMovementUtil teleopMovementUtil;
     AprilTagsTurretTarget aprilTagsTurretTarget;
+
+    AprilTagClusterTargeting hiveTargeting;
 
     long startShot;
 
@@ -46,6 +49,14 @@ public class BioBuzzTeleop extends LinearOpMode2026 {
         ControlsTrigger intakeTrigger = new ControlsTrigger(new GamepadButton(gamepad1, GamepadButton.GButton.cross));
         ControlsTrigger inverseLiftTrigger = new ControlsTrigger(new GamepadButton(gamepad1, GamepadButton.GButton.left_bumper));
         ControlsTrigger resetPositon = new ControlsTrigger(new GamepadButton(gamepad1, GamepadButton.GButton.left_stick_button));
+
+// cluster code
+        hiveTargeting = new AprilTagClusterTargeting();      // picks pipeline 4 red / 3 blue
+        hiveTargeting.setTiltServo(lla);
+        hiveTargeting.setDistanceToHive(distanceToHive);
+        hiveTargeting.allowedHives.add(isCurrentAllienceRed
+                ? AprilTagClusterTargeting.RED_SCORING
+                : AprilTagClusterTargeting.BLUE_SCORING);
 
         startShot = -1;
 
@@ -124,6 +135,15 @@ public class BioBuzzTeleop extends LinearOpMode2026 {
 
         double tx = aprilTagsTurretTarget.UpdateTxValue(limelight);
 
+// cluster code (wrapped so a bug here can't stop the turret / shooter)
+        try {
+            if (hiveTargeting.update(limelight)) {
+//                tx = hiveTargeting.getTx();
+            }
+        } catch (Exception e) {
+            telemetry.addData("Cluster error", e.toString());
+        }
+
         aprilTagsTurretTarget.ChangeAngleSetPosition(tx, posGet.getVr());
 
         double positionChange = MiscUtils.getPositionFromDegrees(tx, 537.7);
@@ -132,5 +152,11 @@ public class BioBuzzTeleop extends LinearOpMode2026 {
         telemetry.addLine("Amount of Position changes: " + positionChange);
 
         aprilTagsTurretTarget.CheckPositionAndSetPower(telemetry);
+// cluster code
+        try {
+            hiveTargeting.addTelemetry(telemetry);
+        } catch (Exception e) {
+            telemetry.addData("Cluster telemetry error", e.toString());
+        }
     }
 }
