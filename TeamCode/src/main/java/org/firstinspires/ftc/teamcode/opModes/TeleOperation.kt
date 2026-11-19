@@ -53,7 +53,7 @@ abstract class TeleOperation(val isRed: Boolean): LinearOpMode() {
                 hw.pinpoint.setHeading(0.0, AngleUnit.RADIANS);
             }
 
-            if (gamepadState.a2) {
+            if (gamepadState.a2 || gamepadState.a1) {
                 robotState.rightHive = !robotState.rightHive
             }
 

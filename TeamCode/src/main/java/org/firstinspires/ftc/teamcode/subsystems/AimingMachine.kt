@@ -47,7 +47,7 @@ class AimingMachine(private val hw: GerthaHardwareMap, private val poseSet: Pose
         val velMps = Math.sqrt(top / bottom)
         // 126.25m 474.5b
 //        val velShooter = (126.25 * velMps) + 474.5
-        val velShooter = (92.3 * velMps) + 271.4
+        val velShooter = (82.3 * velMps) + 291.4
         Log.i("distance", horizontalDistance.toString())
         Log.i("top", top.toString())
         Log.i("bottom", bottom.toString())

@@ -83,7 +83,7 @@ class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true) {
 
         isNotEmpty = currentDetections.isNotEmpty()
 
-        if (isNotEmpty && abs(ppRobotPose.x) > 48){
+        if (isNotEmpty && abs(ppRobotPose.x) > 36){
             var count = 0
             for (detection in currentDetections) {
                 if (detection is AprilTagClusterDetection && detection.ftcPose != null) {

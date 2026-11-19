@@ -27,7 +27,8 @@ class PoseSet(val red: Boolean) {
         private val PARK_LEFT = RobotPose(49.3, 63.6, PI/2)
         private val PREGARDEN = RobotPose(-53.3, 65.5, PI)
         private val GARDEN = RobotPose(-62.0, 65.5, PI)
-        private val HIVE_WAYPOINT = RobotPose(0.0, 55.0, PI)
+        private val HIVE_WAYPOINT_LEFT = RobotPose(48.0, 45.0, PI / 6)
+        private val HIVE_WAYPOINT_RIGHT = RobotPose(-48.0, 45.0, 5 * PI / 6.0)
 
         private val RIGHT_HIVE_AT = RobotPose(-20.0, 12.0, 0.0)
         private val LEFT_HIVE_AT = RobotPose(20.0, 12.0, 0.0)
@@ -61,7 +62,9 @@ class PoseSet(val red: Boolean) {
     @JvmField
     val GARDEN = Companion.GARDEN.bind
     @JvmField
-    val HIVE_WAYPOINT = Companion.HIVE_WAYPOINT.bind
+    val HIVE_WAYPOINT_LEFT = Companion.HIVE_WAYPOINT_LEFT.bind
+    @JvmField
+    val HIVE_WAYPOINT_RIGHT = Companion.HIVE_WAYPOINT_RIGHT.bind
     @JvmField
     val RIGHT_HIVE_AT = Companion.RIGHT_HIVE_AT.bind
     @JvmField

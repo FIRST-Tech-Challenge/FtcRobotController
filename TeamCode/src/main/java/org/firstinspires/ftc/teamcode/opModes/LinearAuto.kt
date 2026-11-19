@@ -34,7 +34,8 @@ abstract class LinearAuto(private val isRed: Boolean) : LinearOpMode() {
         PICKUP_OTHER_FLOWER,
         DRIVE_TO_GARDEN,
         PICKUP_GARDEN,
-        HIVE_WAYPOINT,
+        HIVE_WAYPOINT_1,
+        HIVE_WAYPOINT_2,
         PARK_RIGHT,
         PARK_LEFT,
         DONE
@@ -81,7 +82,7 @@ abstract class LinearAuto(private val isRed: Boolean) : LinearOpMode() {
 
         var poseSet = PoseSet(isRed)
 
-        robotState = RobotState(hw)
+        robotState = RobotState(hw, isRed)
         robotState.init(poseSet.CORNER_START)
 
         val gamepadState = GamepadState(gamepad1, gamepad2)
@@ -142,7 +143,7 @@ abstract class LinearAuto(private val isRed: Boolean) : LinearOpMode() {
                     if (justTransitioned){
                         if (robotState.rightHive){
                             if (distance(poseSet.SCORE_RIGHT) > 80.0) {
-                                state = State.HIVE_WAYPOINT
+                                state = State.HIVE_WAYPOINT_1
                                 continue
                             }
                             Log.i("driveToScore", "driving to right side when hive " + robotState.rightHive.toString())
@@ -153,7 +154,7 @@ abstract class LinearAuto(private val isRed: Boolean) : LinearOpMode() {
                         }
                         else {
                             if(distance(poseSet.SCORE_LEFT) > 100) {
-                                state = State.HIVE_WAYPOINT
+                                state = State.HIVE_WAYPOINT_1
                                 continue
                             }
                             Log.i("driveToScore", "driving to left side when hive " + robotState.rightHive.toString())
@@ -207,7 +208,7 @@ abstract class LinearAuto(private val isRed: Boolean) : LinearOpMode() {
                 State.DRIVE_TO_OTHER_FLOWER -> {
                     if (justTransitioned){
                         if (distance(poseSet.OTHER_FLOWER_PRESCORE) > 80.0) {
-                            state = State.HIVE_WAYPOINT
+                            state = State.HIVE_WAYPOINT_1
                             continue
                         }
                         driveMachine.removerImpl.init(
@@ -257,16 +258,48 @@ abstract class LinearAuto(private val isRed: Boolean) : LinearOpMode() {
                         nextState()
                     }
                 }
-                State.HIVE_WAYPOINT -> {
+                State.HIVE_WAYPOINT_1 -> {
                     if (justTransitioned){
-                        driveMachine.removerImpl.init(
-                            robotState.ppRobotPose,
-                            RobotPose(poseSet.HIVE_WAYPOINT.x, poseSet.HIVE_WAYPOINT.y, robotState.ppThetaRad),
-                            stopCond = StopConditions.Waypoint
-                        )
+                        if (distance(poseSet.HIVE_WAYPOINT_RIGHT) < distance(poseSet.HIVE_WAYPOINT_LEFT)){
+                            driveMachine.removerImpl.init(
+                                robotState.ppRobotPose,
+                                RobotPose(poseSet.HIVE_WAYPOINT_RIGHT.x, poseSet.HIVE_WAYPOINT_RIGHT.y, robotState.ppThetaRad),
+                                stopCond = StopConditions.Waypoint
+                            )
+                        } else {
+                            driveMachine.removerImpl.init(
+                                robotState.ppRobotPose,
+                                RobotPose(poseSet.HIVE_WAYPOINT_LEFT.x, poseSet.HIVE_WAYPOINT_LEFT.y, robotState.ppThetaRad),
+                                stopCond = StopConditions.Waypoint
+                            )
+                        }
                     }
                     if (driveMachine.removerImpl.finished){
-                        state = autoSequence[currentIndex]
+                        state = State.HIVE_WAYPOINT_2
+                    }
+                }
+                State.HIVE_WAYPOINT_2 -> {
+                    if (justTransitioned) {
+                        if (distance(poseSet.HIVE_WAYPOINT_RIGHT) < distance(poseSet.HIVE_WAYPOINT_LEFT)){
+                            driveMachine.removerImpl.init(
+                                robotState.ppRobotPose,
+                                poseSet.HIVE_WAYPOINT_LEFT,
+                                stopCond = StopConditions.Waypoint
+                            )
+                        } else {
+                            driveMachine.removerImpl.init(
+                                robotState.ppRobotPose,
+                                poseSet.HIVE_WAYPOINT_RIGHT,
+                                stopCond = StopConditions.Waypoint
+                            )
+                        }
+                    }
+                    if (driveMachine.removerImpl.finished){
+                        if (autoSequence[currentIndex] == State.SCAN_HIVE){
+                            state = autoSequence[currentIndex + 1]
+                        } else {
+                            state = autoSequence[currentIndex]
+                        }
                     }
                 }
                 State.PARK_RIGHT -> {

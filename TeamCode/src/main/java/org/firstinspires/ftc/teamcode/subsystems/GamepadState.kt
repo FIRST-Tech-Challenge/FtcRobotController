@@ -30,7 +30,7 @@ class GamepadState(private val gp1: Gamepad, private val gp2: Gamepad) {
     var lt1 = false
     var waslt1 = false
 
-    //
+    //switch hives
     var a1 = false
     var wasa1 = false
 
