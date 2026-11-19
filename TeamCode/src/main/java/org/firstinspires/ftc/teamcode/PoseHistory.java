@@ -233,9 +233,13 @@ public final class PoseHistory {
             return "Chassis turning near camera capture; waiting for steady view";
         return null;
     }
-    /** Field yaw of a raised tag's +X edge: far-cell tags run along +X, audience-cell tags along -X. */
+    /**
+     * Field yaw of a raised tag's +X edge. The robot sees the underside stickers upright (tag +X
+     * camera-right, IDs increasing left to right; physical frame 2026-11-13 after the inverted-mount
+     * conversion): far-cell tags (robot looking -Y) run along -X, audience-cell tags along +X.
+     */
     static double tagEdgeFieldYaw(GoalTarget target) {
-        return target.side == TurretSubsystem.HiveSide.AUDIENCE ? Math.PI : 0;
+        return target.side == TurretSubsystem.HiveSide.AUDIENCE ? 0 : Math.PI;
     }
     /** Robot heading implied by one tag's horizontal +X edge at the capture-time turret angle. */
     static double tagHeading(TagObservation tag, GoalTarget target, Entry e, ShooterMount mount) {

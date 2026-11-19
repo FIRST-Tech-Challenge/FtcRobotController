@@ -26,20 +26,6 @@ class MechanismsSimTest {
         assertEquals(600, h.ledShooter.getPulseWidth(), 1);
         assertEquals(600, h.ledStatus.getPulseWidth(), 1);
     }
-    @Test void isolatedIntakeRecoversFromStallAndReleaseCancelsRecovery() throws Exception {
-        BioBuzzSimHardware h = new BioBuzzSimHardware().withIntake();
-        // Explicit disconnected/stalled encoder fault, independent of commanded motor power.
-        h.intake.setEncoderMeasuringAnotherMechanism(0, 0);
-        TeleOpScenario s = new TeleOpScenario("intake-stall", "IntakeTestOpMode", h, .02, 3, 60, (p,t,a,b) -> {
-            a.right_bumper = p == OpModePhase.ACTIVE && t < 30;
-        });
-        s.run();
-        assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 5).intakePower);
-        assertEquals(-1, s.trace.at(OpModePhase.ACTIVE, 12).intakePower);
-        assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 20).intakePower);
-        for (int tick : new int[]{30, 35, 55}) assertEquals(0, s.trace.at(OpModePhase.ACTIVE, tick).intakePower);
-        assertEquals(0, h.intake.getPower());
-    }
     @Test void intakePrioritiesAndStop() throws Exception {
         TeleOpScenario s = new TeleOpScenario("intake", "IntakeTestOpMode",
                 new BioBuzzSimHardware().withIntake(), .02, 5, 80, (p,t,a,b) -> {
@@ -53,6 +39,12 @@ class MechanismsSimTest {
         assertEquals(0, s.hardware.intake.getPower());
     }
 
+    // Stage 1 loading (like shot feeding) is open-loop full power; it never enters velocity control.
+    static void assertLoading(TeleOpTrace.Sample v, String diagnostic) {
+        assertFalse(v.transfer1VelocityMode, diagnostic);
+        assertEquals(1, v.transfer1Power, 0, diagnostic);
+    }
+
     @Test void transferFullDwellTimedFeedAndInhibit() throws Exception {
         BioBuzzSimHardware h = new BioBuzzSimHardware().withTransfer();
         TeleOpScenario s = new TeleOpScenario("transfer", "TransferTestOpMode", h, .02, 5, 230, (p,t,a,b) -> {
@@ -61,12 +53,11 @@ class MechanismsSimTest {
             a.left_bumper = p == OpModePhase.ACTIVE && t >= 210;
         });
         s.run();
-        assertTrue(s.trace.at(OpModePhase.ACTIVE, 5).transfer1Power > 0);
-        assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 5).transfer2Power);
-        // 0.2 s HIGH (about tick 10) confirms full; stage 1 runs on 0.5 s (to about tick 35), then stops.
-        assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 20).transfer1Power);
-        assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 30).transfer1Power);
-        assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 45).transfer1Power);
+        assertLoading(s.trace.at(OpModePhase.ACTIVE, 20), s.diagnostic());
+        assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 20).transfer2Power);
+        // 0.5 s HIGH (about tick 25) confirms full; stage 1 runs on 0.5 s (to about tick 50), then stops.
+        assertLoading(s.trace.at(OpModePhase.ACTIVE, 35), s.diagnostic());
+        assertLoading(s.trace.at(OpModePhase.ACTIVE, 45), s.diagnostic());
         assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 55).transfer1Power);
         assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 120).transfer1Power);
         assertTrue(s.trace.samples.stream().anyMatch(v -> v.transfer2Power > 0 && Math.abs(v.gatePosition - .2) < 1e-9));
@@ -137,8 +128,8 @@ class MechanismsSimTest {
         s.run();
         assertTrue(Math.abs(s.trace.at(OpModePhase.ACTIVE, 60).yaw) > 5, s.diagnostic());
         assertTrue(s.trace.at(OpModePhase.ACTIVE, 90).flywheelVelocity > 1000, s.diagnostic());
-        // Installed home is 8 hood degrees below the original reference; held D-pad adds one 0.5-degree step.
-        assertEquals(.5 + (8 + .5) * 2 / 355, s.trace.at(OpModePhase.ACTIVE, 40).hood, 1e-8);
+        // Installed home is 10.5 hood degrees below the original reference; held D-pad adds one 0.5-degree step.
+        assertEquals(.5 + (10.5 + .5) * 2 / 355, s.trace.at(OpModePhase.ACTIVE, 40).hood, 1e-8);
         assertEquals(s.hardware.yaw1.getPosition(), s.hardware.yaw2.getPosition());
         assertEquals(0, s.hardware.flywheel.getPower());
     }
@@ -150,9 +141,9 @@ class MechanismsSimTest {
         s.run();
         assertFalse(s.result.endedBeforeStop(), s.diagnostic());
         assertTrue(s.trace.samples.stream().anyMatch(v -> v.intakePower != 0));
-        assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 30).transfer1Power, s.diagnostic());
+        assertLoading(s.trace.at(OpModePhase.ACTIVE, 30), s.diagnostic());
         assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 30).transfer2Power, s.diagnostic());
-        assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 70).transfer1Power, s.diagnostic());
+        assertLoading(s.trace.at(OpModePhase.ACTIVE, 70), s.diagnostic());
         assertEquals(0, h.intake.getPower()); assertEquals(0, h.flywheel.getPower());
         assertEquals(0, h.transfer1.getPower()); assertEquals(.5, h.gate.getPosition());
     }
@@ -172,16 +163,16 @@ class MechanismsSimTest {
         assertFalse(s.result.endedBeforeStop(), s.diagnostic());
         assertTrue(s.result.warnings().isEmpty(), s.diagnostic());
         assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 30).intakePower, s.diagnostic());
-        assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 30).transfer1Power, s.diagnostic());
+        assertLoading(s.trace.at(OpModePhase.ACTIVE, 30), s.diagnostic());
         assertEquals(-1, s.trace.at(OpModePhase.ACTIVE, 90).intakePower, s.diagnostic());
         assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 90).transfer1Power, s.diagnostic());
         assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 120).intakePower, s.diagnostic());
         assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 120).transfer1Power, s.diagnostic());
-        // Confirmed full (HIGH since tick 140, confirmed about tick 150) stops the intake instead of
-        // reversing it, while stage 1 runs on until about tick 175 to seat the fourth ball.
-        assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 165).intakePower, s.diagnostic());
-        assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 165).transfer1Power, s.diagnostic());
-        assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 165).transfer2Power, s.diagnostic());
+        // Confirmed full (HIGH since tick 140, confirmed about tick 165) stops the intake instead of
+        // reversing it, while stage 1 runs on until about tick 190 to seat the fourth ball.
+        assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 175).intakePower, s.diagnostic());
+        assertLoading(s.trace.at(OpModePhase.ACTIVE, 175), s.diagnostic());
+        assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 175).transfer2Power, s.diagnostic());
         assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 200).transfer1Power, s.diagnostic());
         assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 220).intakePower, s.diagnostic()); // RB while HIGH/full.
         for (int tick : new int[]{200, 250}) {
@@ -189,7 +180,7 @@ class MechanismsSimTest {
             assertEquals(0, s.trace.at(OpModePhase.ACTIVE, tick).transfer1Power, s.diagnostic());
         }
         assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 275).intakePower, s.diagnostic());
-        assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 275).transfer1Power, s.diagnostic()); // LOW reloads without feed.
+        assertLoading(s.trace.at(OpModePhase.ACTIVE, 275), s.diagnostic()); // LOW reloads without feed.
         assertTrue(s.trace.samples.stream().anyMatch(v -> v.phase == OpModePhase.ACTIVE
                 && v.tick >= 420 && v.tick < 570 && v.transfer1Power == 1 && v.transfer2Power == 1), s.diagnostic());
         double openedAt = Double.NaN;
@@ -201,16 +192,15 @@ class MechanismsSimTest {
                 assertFalse(Double.isNaN(openedAt), s.diagnostic());
                 double elapsed = v.seconds - openedAt;
                 assertTrue(elapsed >= .10 - 1e-9, s.diagnostic());
-                // Stage 2 launches first; stage 1 starts at the midpoint of the 0.50 s open window.
-                if (elapsed < .25 - 1e-9) assertEquals(0, v.transfer1Power, s.diagnostic());
-                else if (elapsed > .25 + .02) assertEquals(1, v.transfer1Power, s.diagnostic());
+                // Stage 1 feeds together with stage 2 for the whole gate-open feed.
+                assertEquals(1, v.transfer1Power, s.diagnostic());
             }
             if (v.tick < 420 || v.tick >= 570) assertEquals(0, v.transfer2Power, s.diagnostic());
         }
-        assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 580).transfer1Power, s.diagnostic());
+        assertLoading(s.trace.at(OpModePhase.ACTIVE, 580), s.diagnostic());
         assertEquals(.5, s.trace.at(OpModePhase.ACTIVE, 580).gatePosition, s.diagnostic());
         assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 620).intakePower, s.diagnostic());
-        assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 620).transfer1Power, s.diagnostic());
+        assertLoading(s.trace.at(OpModePhase.ACTIVE, 620), s.diagnostic());
         assertEquals(0, h.intake.getPower()); assertEquals(0, h.flywheel.getPower());
         assertEquals(0, h.transfer1.getPower()); assertEquals(0, h.transfer2.getPower());
         assertEquals(.5, h.gate.getPosition());
@@ -234,13 +224,15 @@ class MechanismsSimTest {
             TeleOpTrace.Sample v = s.trace.at(OpModePhase.ACTIVE, tick);
             assertEquals(.2, v.gatePosition, 1e-9, s.diagnostic());
             assertEquals(1, v.transfer1Power, s.diagnostic());
+            assertFalse(v.transfer1VelocityMode, s.diagnostic()); // Shots feed at full open-loop power.
             assertEquals(1, v.transfer2Power, s.diagnostic());
         }
         for (int tick : new int[]{100, 105, 120, 125, 140, 145, 170}) {
             TeleOpTrace.Sample v = s.trace.at(OpModePhase.ACTIVE, tick);
             assertEquals(.5, v.gatePosition, 1e-9, s.diagnostic());
             // Releasing LT resumes automatic loading; B/unarmed or held LT still pauses it.
-            assertEquals(tick == 100 || tick == 105 ? 1 : 0, v.transfer1Power, s.diagnostic());
+            if (tick == 100 || tick == 105) assertLoading(v, s.diagnostic());
+            else assertEquals(0, v.transfer1Power, s.diagnostic());
             assertEquals(0, v.transfer2Power, s.diagnostic());
         }
         assertEquals(0, h.transfer1.getPower());

@@ -26,7 +26,6 @@ public final class ShotCoordinator {
     private long previousReferenceId = Long.MIN_VALUE;
     private double trackingCapture = Double.NaN;
     private final FiringCoordinator firing;
-    private final boolean timingMeasured;
     private GoalTarget target;
     private ShotPlanner.Solution solution = ShotPlanner.Solution.invalid("Not requested");
     private boolean previousAutomatic, previousHomed;
@@ -43,22 +42,20 @@ public final class ShotCoordinator {
     public ShotCoordinator(TurretSubsystem turret, GoalTarget target, AimMode mode) {
         this(turret, target, ShootingConfiguration.MOUNT, ShootingConfiguration.PROFILE,
                 mode == AimMode.TELEOP_ODOMETRY ? CompetitionFeedController.firing() : ShootingConfiguration.firing(),
-                ShootingConfiguration.RELEASE_TIMING_MEASURED
-                        && (mode != AimMode.DIAGNOSTIC || ShootingConfiguration.VISION_TIMING_MEASURED), mode);
+                mode);
     }
     public ShotCoordinator(TurretSubsystem turret, GoalTarget target, ShooterMount mount, ShotProfile profile,
-                           FiringCoordinator firing, boolean timingMeasured) {
-        this(turret, target, mount, profile, firing, timingMeasured, AimMode.DIAGNOSTIC);
+                           FiringCoordinator firing) {
+        this(turret, target, mount, profile, firing, AimMode.DIAGNOSTIC);
     }
     /** Explicit dependency configuration, including desktop-only synthetic measured profiles. */
     public ShotCoordinator(TurretSubsystem turret, GoalTarget target, ShooterMount mount, ShotProfile profile,
-                            FiringCoordinator firing, boolean timingMeasured,
-                            AimMode mode) {
+                            FiringCoordinator firing, AimMode mode) {
         this.mode = mode;
         this.fieldOdometryOnly = mode != AimMode.DIAGNOSTIC;
         this.turret = turret; this.target = target; this.mount = mount; this.profile = profile;
         goalState = new GoalStateObserver(mount,ShootingConfiguration.LOWERED_TAG_HEIGHT_METERS,ShootingConfiguration.LOWERED_TAG_PLANE_DEG); goalState.select(target.alliance,target.side);
-        planner = new ShotPlanner(mount); this.firing = firing; this.timingMeasured = timingMeasured;
+        planner = new ShotPlanner(mount); this.firing = firing;
         turret.setTargetHiveCell(target.alliance, target.side);
     }
     public void select(GoalTarget next) {
@@ -131,9 +128,7 @@ public final class ShotCoordinator {
         // Before trims, so an out-of-range trim can still be adjusted back.
         automaticHoodRpmAvailable = solution.aimable;
         solution = solution.withOffsets(yawOffsetDeg, hoodOffsetDeg, rpmOffset);
-        // Timing blocks feed only; keep current-pose hood/RPM/yaw updates available while tuning.
-        if (solution.valid && !timingMeasured) solution = solution.inhibit(fieldOdometryOnly
-                ? "Release timing UNMEASURED" : "Release / vision timing UNMEASURED");
+        // Release / vision timing never blocks feeding: the current ShootingConfiguration values are used as-is.
         if (fieldRehome.pending() && solution.valid) solution = solution.inhibit("Corner Limelight refinement in progress");
         // Camera freshness/state gates apply only to the legacy diagnostics.
         if (!fieldOdometryOnly) {
@@ -188,11 +183,11 @@ public final class ShotCoordinator {
                              boolean automaticFeed, boolean manualFeed, boolean inhibit) {
         updatePose(now, sample);
         automaticHoodRpmAvailable = false;
-        boolean valid = preset.measured && timingMeasured && turret.isHomed()
+        boolean valid = preset.measured && turret.isHomed()
                 && sample != null && sample.fieldReferenced && sample.fresh(now, ShotPlanner.MAX_SAMPLE_AGE_SECONDS);
         presetValid = valid;
         String reason = !preset.measured ? "Preset UNMEASURED: " + preset.name
-                : !timingMeasured ? "Release timing UNMEASURED" : !valid ? "Preset requires home and fresh field reference" : "Preset ready";
+                : !valid ? "Preset requires home and fresh field reference" : "Preset ready";
         solution = ShotPlanner.Solution.invalid(reason);
         boolean angle = ShotReadiness.angleReady(Math.abs(preset.yawDeg - turret.getEncoderAngleDegrees()));
         boolean tight = angle && turret.isHoodTracking() && turret.isShooterAtSpeed();

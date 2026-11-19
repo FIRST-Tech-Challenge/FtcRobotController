@@ -42,7 +42,6 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
         try {
             if (dashboard != null) dashboard.setTelemetryTransmissionInterval(DASHBOARD_INTERVAL_MS);
             gate = new GateSubsystem(hardwareMap, IntakeShooterTestController.GATE_TO_FEED_DELAY_SECONDS);
-            // Bench jam detection requires this motor's own encoder, separate from turret feedback.
             intake = new IntakeSubsystem(hardwareMap);
             transfer = new TransferSubsystem(hardwareMap);
             turret = new TurretSubsystem(hardwareMap, false);
@@ -101,7 +100,7 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
                             gamepad2.a && !previousIDown, 0);
                     if (gamepad2.x && !previousPidReset) {
                         feedSeconds = IntakeShooterTestController.FEED_WINDOW_SECONDS;
-                        pauseSeconds = ShootingConfiguration.RECOVERY_SECONDS;
+                        pauseSeconds = IntakeShooterTestController.RECOVERY_SECONDS;
                         readySeconds = ShootingConfiguration.READY_STABLE_SECONDS;
                     }
                 }
@@ -206,9 +205,12 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
                 if (feeding) minimumFeedRpm = !wasFeeding ? turret.getShooterCurrentRpm()
                         : Math.min(minimumFeedRpm, turret.getShooterCurrentRpm());
                 wasFeeding = feeding;
-                transfer.update(now, feeding, !controls.loadIndex() || firing.gateOpen(), controls.feedStage1());
-                double intakeVelocityTicksPerSecond = intake.getVelocityTicksPerSecond();
-                intake.setIntakePower(controls.updateIntakePower(now, transfer.isFull(), intakeVelocityTicksPerSecond));
+                boolean closedGateStage1 = controls.closedGateStage1();
+                transfer.update(now, feeding,
+                        !closedGateStage1 && (!controls.loadIndex() || firing.gateOpen()),
+                        controls.feedStage1(), closedGateStage1);
+                intake.setIntakePower(controls.intakePower(transfer.isFull()));
+                transfer.setIntakeRunning(intake.getCommandedPower() > 0); // Stage 1 stall guard only while intaking.
 
                 // Put the exact blocker first so it remains visible above the hardware diagnostics.
                 String feedStatus;
@@ -219,7 +221,7 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
                 else if (!spin) feedStatus = "Hold GP1 RT to spin the flywheel";
                 else if (selectedRpm <= 0) feedStatus = "Selected RPM is zero: tap Y to increase";
                 else if (firing.feeding()) feedStatus = (firing.continuous() ? "CONTINUOUS" : "STAGGERED")
-                        + (controls.feedStage1() ? " FEED: both stages forward" : " FEED: stage 2 launching; stage 1 waits for midpoint")
+                        + " FEED: both stages forward"
                         + "; release either trigger to stop";
                 else if (!turret.isHomed()) feedStatus = "Home required: " + turret.getHomingStatus();
                 else if (!atSpeed) feedStatus = "Flywheel outside RPM tolerance: check actual/target and encoder cable";
@@ -260,8 +262,6 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
                 telemetry.addData("Feed motors", feeding ? "RUNNING" : "STOPPED");
                 telemetry.addData("Flywheel regulation", turret.getShooterController());
                 addControlsTelemetry();
-                telemetry.addData("Intake velocity (ticks/s)", intakeVelocityTicksPerSecond);
-                telemetry.addData("Intake jam recovery", controls.isIntakeClearing() ? "OSCILLATING (0.5 s)" : "Monitoring");
                 intake.addTelemetry(telemetry);
                 transfer.addTelemetry(telemetry);
                 gate.addTelemetry(telemetry);
@@ -327,7 +327,7 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
     private void addControlsTelemetry() {
         telemetry.addLine("Dashboard: 192.168.43.1:8080/dash | Config: IntakeShooterTestOpMode");
         telemetry.addLine("Live P/I/D/F_SCALE/TARGET_RPM and FUSION_KS/KV/KP; applied gains shown below; GP2 X resets gains unless LB held");
-        telemetry.addLine("Automatic intake/index after arming: LOW forward, 0.2 s HIGH stop | RB forces forward / LB reverse / Both stop");
+        telemetry.addLine("Automatic intake/index after arming: LOW forward, 0.5 s HIGH stop | RB forces forward / LB reverse / Both stop");
         telemetry.addLine("Hold RT = Flywheel | RT + LT: Continuous = Immediate Full Feed; Staggered = Readiness + Timed Cycle");
         telemetry.addLine("GP2 RB = Continuous/Staggered (default); changes require GP1 controls released");
         telemetry.addLine("Hold GP2 LB: Dpad U/D = Recovery Pause, R/L = Feed Duration, Y/A = Ready Delay +/-0.05 s; X = Timing Reset");

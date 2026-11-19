@@ -51,7 +51,7 @@ public class IntakeShooterTestControllerTest {
         assertFalse(c.feedStage1());
     }
 
-    @Test public void benchDefaultsAdvanceStage2AtPointOneStage1AtMidpointAndCloseEarlier() {
+    @Test public void benchDefaultsStartBothStagesAtPointOneAndCloseAtPointThree() {
         IntakeShooterTestController c = armed();
         TransferController transfer = new TransferController();
         requestShot(c, 1, true);
@@ -60,24 +60,27 @@ public class IntakeShooterTestControllerTest {
         assertFalse(c.feedTransfer(true));
         requestShot(c, GATE_OPEN_AT + .101, true);
         transfer.update(2, false, c.feedTransfer(true), true, c.feedStage1());
-        assertEquals(0, transfer.stage1(), 0);
+        assertEquals(1, transfer.stage1(), 0); // Both stages start together after the gate delay.
         assertEquals(1, transfer.stage2(), 0);
-        requestShot(c, GATE_OPEN_AT + .249, true);
-        assertFalse(c.feedStage1());
-        requestShot(c, GATE_OPEN_AT + .251, true);
+        requestShot(c, GATE_OPEN_AT + .149, true);
+        assertTrue(c.feedStage1());
+        requestShot(c, GATE_OPEN_AT + .151, true);
         transfer.update(2.1, true, c.feedTransfer(true), true, c.feedStage1());
         assertEquals(1, transfer.stage1(), 0);
         assertEquals(1, transfer.stage2(), 0);
-        requestShot(c, GATE_OPEN_AT + .499, true);
+        requestShot(c, GATE_OPEN_AT + .299, true);
         assertTrue(c.firing().gateOpen());
-        requestShot(c, GATE_OPEN_AT + .502, true);
+        requestShot(c, GATE_OPEN_AT + .302, true);
         transfer.update(3, true, c.feedTransfer(true), true, c.feedStage1());
         assertFalse(c.firing().gateOpen());
+        assertEquals(.30, c.firing().gateTravelSeconds + c.firing().feedWindowSeconds, 1e-9);
+        assertEquals(0, c.firing().recoverySeconds, 0);
         assertEquals(0, transfer.stage1(), 0);
         assertEquals(0, transfer.stage2(), 0);
-        // Other callers retain their shared competition/calibration defaults.
-        assertEquals(.20, ShootingConfiguration.firing().gateTravelSeconds, 0);
-        assertEquals(.50, ShootingConfiguration.firing().feedWindowSeconds, 0);
+        // Competition, autonomous and calibration callers share the same robot-tuned defaults.
+        assertEquals(.10, ShootingConfiguration.firing().gateTravelSeconds, 0);
+        assertEquals(.20, ShootingConfiguration.firing().feedWindowSeconds, 0);
+        assertEquals(0, ShootingConfiguration.firing().recoverySeconds, 0);
     }
 
     @Test public void modeAndTimingChangeStopsActiveFeedAndHeldTriggersCannotRestartIt() {
@@ -106,9 +109,9 @@ public class IntakeShooterTestControllerTest {
         assertTrue(c.firing().gateOpen());
         requestShot(c, 1.37, true);
         requestShot(c, 1.659, true);
-        assertFalse(c.feedStage1());
+        assertTrue(c.feedStage1()); // Stage 1 runs for the whole custom feed, not from its midpoint.
         requestShot(c, 1.661, true);
-        assertTrue(c.feedStage1()); // Half of the custom 0.80 s open window.
+        assertTrue(c.feedStage1());
         requestShot(c, 2.06, true);
         assertTrue(c.feedTransfer(true));
         requestShot(c, 2.08, true);
@@ -142,128 +145,30 @@ public class IntakeShooterTestControllerTest {
     private static final double GATE_OPEN_AT = 1 + ShootingConfiguration.READY_STABLE_SECONDS + .01;
     private static final double FEED_AT = GATE_OPEN_AT + IntakeShooterTestController.GATE_TO_FEED_DELAY_SECONDS + .01;
 
-    @Test public void stalledIntakeOscillatesForHalfSecondThenResumesAndCanRetry() {
-        IntakeShooterTestController c = jammedIntake(false);
-        assertEquals(-1, c.updateIntakePower(.25, false, 0), 0);
-        assertEquals(1, c.updateIntakePower(.40, false, -100), 0);
-        assertEquals(-1, c.updateIntakePower(.53, false, 100), 0);
-        assertEquals(1, c.updateIntakePower(.65, false, -100), 0);
-        assertTrue(c.isIntakeClearing());
-        assertEquals(1, c.updateIntakePower(.75, false, 0), 0);
-        assertFalse(c.isIntakeClearing());
-        assertEquals(1, c.updateIntakePower(.94, false, 0), 0);
-        assertEquals(-1, c.updateIntakePower(.96, false, 0), 0);
-        assertTrue(c.isIntakeClearing());
-    }
-
-    @Test public void intakeRequiresContinuousLowSpeedAndAcceptsEitherEncoderSign() {
-        IntakeShooterTestController c = armed();
-        c.update(0, true, false, false, false, false, true, false);
-        assertEquals(1, c.updateIntakePower(0, false, 0), 0);
-        assertEquals(1, c.updateIntakePower(.19, false, 0), 0);
-        assertFalse(c.isIntakeClearing());
-        assertEquals(1, c.updateIntakePower(.20, false, -20), 0);
-        assertEquals(1, c.updateIntakePower(.5, false, 20), 0);
-        assertEquals(1, c.updateIntakePower(.6, false, 0), 0);
-        assertEquals(1, c.updateIntakePower(.79, false, 0), 0);
-        assertFalse(c.isIntakeClearing());
-        assertEquals(-1, c.updateIntakePower(.81, false, 0), 0);
-        assertTrue(c.isIntakeClearing());
-    }
-
-    @Test public void stopConflictingBumpersAndFeedCancelIntakeRecoveryImmediately() {
-        for (int input = 1; input < 4; input++) {
-            IntakeShooterTestController c = jammedIntake(false);
-            c.update(.3, input == 1 || input == 2, input == 2,
-                    input == 3, input == 3, input == 1, true, true);
-            assertEquals(0, c.updateIntakePower(.3, false, 0), 0);
-            assertFalse(c.isIntakeClearing());
-            // After releasing all controls, a new load starts forward with a fresh stall window.
-            c.update(.4, false, false, false, false, false, true, true);
-            c.update(.5, true, false, false, false, false, true, true);
-            assertEquals(1, c.updateIntakePower(.5, false, 0), 0);
-            assertFalse(c.isIntakeClearing());
-        }
-    }
-
-    @Test public void automaticLoadingRetainsJamRecoveryAfterForwardOverrideReleased() {
-        IntakeShooterTestController c = jammedIntake(false);
-        c.update(.3, false, false, false, false, false, true, false);
-        assertTrue(c.loadIndex());
-        assertEquals(-1, c.updateIntakePower(.3, false, 0), 0);
-        assertTrue(c.isIntakeClearing());
-        assertEquals(1, c.updateIntakePower(.4, false, 0), 0);
-        assertEquals(1, c.updateIntakePower(.75, false, 100), 0);
-        assertFalse(c.isIntakeClearing());
-    }
-
-    @Test public void recoveryHonorsReverseAndQueueFullAndCancelsOnDirectionChange() {
-        IntakeShooterTestController c = jammedIntake(true);
-        assertEquals(1, c.updateIntakePower(.25, false, 0), 0);
-        assertEquals(-1, c.updateIntakePower(.40, false, 0), 0);
-        assertEquals(1, c.updateIntakePower(.53, false, 0), 0);
-        assertEquals(-1, c.updateIntakePower(.65, false, 0), 0);
-        assertEquals(-1, c.updateIntakePower(.75, false, 0), 0);
-        assertFalse(c.isIntakeClearing());
-
-        c = jammedIntake(false);
-        // RB keeps requesting forward even when full; releasing it stops automatic collection.
-        assertEquals(1, c.intakePower(true), 0);
-        c.update(.3, false, false, false, false, false, true, false);
-        // A full queue stops the intake and cancels inward recovery immediately.
-        assertEquals(0, c.updateIntakePower(.3, true, 0), 0);
-        assertFalse(c.isIntakeClearing());
-        assertEquals(0, c.updateIntakePower(.51, true, 0), 0); // A stopped intake cannot start recovery.
-        assertFalse(c.isIntakeClearing());
-        c.update(.55, false, true, false, false, false, true, false);
-        assertEquals(-1, c.updateIntakePower(.55, true, 0), 0); // LB still reverses on request.
-        c.update(.6, true, false, false, false, false, true, false);
-        assertEquals(1, c.updateIntakePower(.6, false, 0), 0);
-        assertFalse(c.isIntakeClearing());
-    }
-
-    @Test public void inhibitedAndUnarmedControlsCannotStartJamRecovery() {
-        IntakeShooterTestController c = new IntakeShooterTestController();
-        c.update(0, true, false, false, false, false, true, false);
-        assertEquals(0, c.updateIntakePower(0, false, 0), 0);
-        assertEquals(0, c.updateIntakePower(5, false, 0), 0);
-        assertFalse(c.isIntakeClearing());
-        c = armed();
-        // A feed request without an intake override pauses automatic loading.
-        c.update(1, false, false, true, true, false, true, false);
-        assertEquals(0, c.updateIntakePower(1, false, 0), 0);
-        assertEquals(0, c.updateIntakePower(10, false, 0), 0);
-        assertFalse(c.isIntakeClearing());
-    }
-
-    private IntakeShooterTestController jammedIntake(boolean reverse) {
-        IntakeShooterTestController c = armed();
-        c.update(0, !reverse, reverse, false, false, false, true, false);
-        assertEquals(reverse ? -1 : 1, c.updateIntakePower(0, false, 0), 0);
-        assertEquals(reverse ? 1 : -1, c.updateIntakePower(.25, false, 0), 0);
-        assertTrue(c.isIntakeClearing());
-        return c;
-    }
-
-    @Test public void heldTriggersRepeatTimedFeedsWithRecoveryAndReadinessBetweenShots() {
+    @Test public void heldTriggersRepeatTimedFeedsWithNoRecoveryAndStage1RunningWhileGateClosed() {
         IntakeShooterTestController c = feeding();
         TransferController transfer = new TransferController();
         double feedEnds = FEED_AT + IntakeShooterTestController.FEED_WINDOW_SECONDS;
         requestShot(c, feedEnds - .01, true);
         assertTrue(c.feedTransfer(true));
-        double recoveryAt = feedEnds + .01;
-        requestShot(c, recoveryAt, true);
+        assertFalse(c.closedGateStage1());
+        double closedAt = feedEnds + .01;
+        requestShot(c, closedAt, true);
         assertFalse(c.firing().gateOpen());
         assertFalse(c.feedTransfer(true));
-        transfer.update(recoveryAt, true, c.feedTransfer(true), !c.loadIndex());
-        assertEquals(0, transfer.stage1(), 0);
+        // Gate closed: only stage 1 runs (even past full); stage 2 stays off.
+        assertTrue(c.closedGateStage1());
+        transfer.update(closedAt, true, c.feedTransfer(true),
+                !c.closedGateStage1() && !c.loadIndex(), c.feedStage1(), c.closedGateStage1());
+        assertEquals(1, transfer.stage1(), 0);
         assertEquals(0, transfer.stage2(), 0);
-        requestShot(c, recoveryAt + ShootingConfiguration.RECOVERY_SECONDS - .01, true);
-        assertEquals(FiringCoordinator.State.RECOVERY, c.firing().state());
-        double recoveredAt = recoveryAt + ShootingConfiguration.RECOVERY_SECONDS + .01;
+        double recoveredAt = closedAt + .01;
         requestShot(c, recoveredAt, true);
+        assertEquals(FiringCoordinator.State.PREPARING, c.firing().state());
+        assertTrue(c.closedGateStage1());
         requestShot(c, recoveredAt + .01, false);
         requestShot(c, recoveredAt + .2, false);
+        assertTrue(c.closedGateStage1()); // Readiness wait with the gate still closed.
         assertEquals(1, c.firing().feedAttempts());
         assertFalse(c.firing().gateOpen());
         double readyAt = recoveredAt + .3;
@@ -271,10 +176,27 @@ public class IntakeShooterTestControllerTest {
         double reopenedAt = readyAt + ShootingConfiguration.READY_STABLE_SECONDS + .01;
         requestShot(c, reopenedAt, true);
         assertTrue(c.firing().gateOpen());
+        assertFalse(c.closedGateStage1()); // Stage 1 waits again for the next stagger.
         assertFalse(c.feedTransfer(true));
         requestShot(c, reopenedAt + IntakeShooterTestController.GATE_TO_FEED_DELAY_SECONDS + .01, true);
         assertTrue(c.feedTransfer(true));
         assertEquals(2, c.firing().feedAttempts());
+    }
+
+    @Test public void closedGateStage1StopsForReadinessLossStopReverseAndRelease() {
+        IntakeShooterTestController c = feeding();
+        requestShot(c, FEED_AT + .05, false); // Readiness lost mid-feed is not a timed recovery.
+        assertEquals(FiringCoordinator.State.RECOVERY, c.firing().state());
+        assertFalse(c.closedGateStage1());
+        c = feeding();
+        requestShot(c, FEED_AT + IntakeShooterTestController.FEED_WINDOW_SECONDS + .01, true);
+        assertTrue(c.closedGateStage1());
+        c.update(FEED_AT + .3, false, true, true, true, false, true, true); // LB reverse inhibits.
+        assertFalse(c.closedGateStage1());
+        c = feeding();
+        requestShot(c, FEED_AT + IntakeShooterTestController.FEED_WINDOW_SECONDS + .01, true);
+        c.update(FEED_AT + .3, false, false, true, false, false, true, true); // Feed trigger released.
+        assertFalse(c.closedGateStage1());
     }
 
     @Test public void acceptedServoErrorCanFeedWithoutNeedingAnUnrequestedCorrection() {
@@ -408,7 +330,7 @@ public class IntakeShooterTestControllerTest {
         assertTrue(c.feedTransfer(true));
         TransferController transfer = new TransferController();
         transfer.update(settledAt + .01, true, c.feedTransfer(true), !c.loadIndex(), c.feedStage1());
-        assertEquals(0, transfer.stage1(), 0);
+        assertEquals(1, transfer.stage1(), 0); // Both stages start together after the gate delay.
         assertEquals(1, transfer.stage2(), 0);
         assertEquals(0, c.intakePower(false), 0);
     }

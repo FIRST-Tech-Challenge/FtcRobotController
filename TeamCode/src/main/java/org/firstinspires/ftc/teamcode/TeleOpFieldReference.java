@@ -62,7 +62,16 @@ public final class TeleOpFieldReference {
     }
     /** Bearing from the turret pivot; independent of shot-profile calibration and camera visibility. */
     public static double yawRadians(MotionSample pose, GoalTarget target, ShooterMount mount) {
+        return yawRadians(pose, target.x, target.y, mount);
+    }
+    /** Same pivot bearing to a bare point (meters, in the pose's frame), e.g. a path-planner aim point. */
+    public static double yawRadians(MotionSample pose, double targetX, double targetY, ShooterMount mount) {
         RobotMath.Vec pivot = new RobotMath.Vec(pose.x, pose.y).plus(mount.pivot.rotate(pose.heading));
-        return RobotMath.wrap(Math.atan2(target.y - pivot.y, target.x - pivot.x) - pose.heading - mount.zeroYaw);
+        return RobotMath.wrap(Math.atan2(targetY - pivot.y, targetX - pivot.x) - pose.heading - mount.zeroYaw);
+    }
+    /** Horizontal distance from the turret pivot to a point (meters); the shot profile's range input. */
+    public static double pivotRangeMeters(MotionSample pose, double targetX, double targetY, ShooterMount mount) {
+        RobotMath.Vec pivot = new RobotMath.Vec(pose.x, pose.y).plus(mount.pivot.rotate(pose.heading));
+        return Math.hypot(targetX - pivot.x, targetY - pivot.y);
     }
 }

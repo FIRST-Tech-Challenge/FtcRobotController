@@ -175,5 +175,8 @@ Read the [integration audit](doc/SimLoopIntegrationAudit.md), [implementation pl
 [verification matrix](doc/TeleOpVerificationMatrix.md), [model provenance](doc/SimLoopRobotModel.md)
 and [local usage](simloop/README.md). In particular, the physical Limelight (frame recorded 2026-11-05) and raw
 SimLoop both report tag +Z into the print; `LimelightObservation` converts it once to the robot's outward +Z.
+The Limelight is mounted upside down and its 3D poses stay in the inverted sensor frame (frame recorded
+2026-11-13); `LimelightObservation` also undoes that once (Rz(pi) about the optical axis), and the SimLoop
+adapter models the same sensor frame.
 Keep that single conversion point and the inverted-camera rejection regression; never silently change robot
 calibration or tag axes to get a green simulation result.

@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
  * Layer 3 Combined TeleOp: Coordinates {@link MecanumDrivetrain}, {@link PinpointOdometry},
  * {@link IntakeSubsystem}, {@link TransferSubsystem}, {@link GateSubsystem}, {@link DepollinatorSubsystem},
  * and {@link TurretSubsystem} (rotation servos on ports 1 & 2, 108:40 REV Through-Bore Encoder
- * on Expansion Hub quad port 2 via transfer_motor_1, 2:1 pitch servo on port 0 from 0-30 deg downward travel from the offset hood home (+15 to -15 deg launch elevation), 6000 RPM flywheel motor on port 0,
+ * on Expansion Hub quad port 1 via intake_motor, 2:1 pitch servo on port 0 from 0-30 deg downward travel from the offset hood home (+15 to -15 deg launch elevation), 6000 RPM flywheel motor on port 0,
  * and Limelight 3A pitched ShootingConfiguration.CAMERA_PITCH_UP_DEG toward the goal).
  *
  * <p>Controls (Gamepad 1 — Driver + Turret Assist, or Gamepad 2 — Dedicated Turret Operator):
@@ -33,9 +33,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
  *     <li><b>Gamepad 2 X (Press)</b>: Rehome turret only</li>
  *     <li><b>Gamepad 1/2 Right Bumper</b>: Force intake and stage-1 loading forward, overriding full</li>
  *     <li><b>Gamepad 1/2 Left Bumper</b>: Reverse intake only and pause stage-1 loading; both bumpers stop collection</li>
- *     <li><b>Flywheel</b>: Starts at 3500 output RPM after START; GP2 Y/A adjusts manual RPM, auto-aim overrides it</li>
- *     <li><b>Transfer</b>: Stage 1 loads until full; staggered shots start both stages after 0.10 s</li>
- *     <li><b>Full Queue</b>: After 0.2 seconds HIGH, intake stops; stage 1 runs on 0.5 seconds. LOW resumes loading automatically.</li>
+ *     <li><b>Flywheel</b>: Starts at 3500 output RPM after START; GP2 Y/A adjusts manual RPM, auto-aim overrides it.
+ *         Regulated by bang-bang + feedforward fusion ({@link #FLYWHEEL_CONTROLLER})</li>
+ *     <li><b>Transfer</b>: Stage 1 loads until full; staggered shots start both stages 0.10 s after the gate opens
+ *         and the gate closes at 0.30 s; stage 1 keeps running with the gate closed between held shots</li>
+ *     <li><b>Full Queue</b>: After 0.5 seconds HIGH, intake stops; stage 1 runs on 0.5 seconds. LOW resumes loading automatically.</li>
  *     <li><b>Intake</b>: Automatically runs forward with space; bumpers always override direction</li>
  *     <li><b>Gamepad 2 Right Stick X</b>: Proportional clockwise turret speed, full stick = rated 6 V speed;
  *         release holds measured heading. Front=0, right/home=90, back=180, left=270 deg (265..275 excluded).</li>
@@ -68,6 +70,9 @@ public abstract class MecanumTeleOp extends LinearOpMode {
     private static final double SHOOTER_RPM_STEP = 50.0;
     private static final double TRIGGER_DEADBAND = 0.1;
     public static final double STARTING_FLYWHEEL_RPM = 3500.0;
+    /** Both competition TeleOps regulate the flywheel with bang-bang + feedforward fusion (untuned gains). */
+    public static final TurretSubsystem.ShooterController FLYWHEEL_CONTROLLER =
+            TurretSubsystem.ShooterController.BANG_BANG_FUSION;
 
     private void rehomeField(PinpointOdometry odometry, ShotCoordinator shots, Pose2D cornerPose) {
         odometry.setPose(cornerPose);
@@ -98,6 +103,7 @@ public abstract class MecanumTeleOp extends LinearOpMode {
             String turretError = null;
             try {
                 turret = new TurretSubsystem(hardwareMap);
+                turret.setShooterController(FLYWHEEL_CONTROLLER);
                 turret.setEncoderCorrectionEnabled(true);
                 turret.setTargetHiveCell(getAlliance(), TurretSubsystem.HiveSide.AUDIENCE);
             } catch (Exception e) {
@@ -327,17 +333,21 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                     openGate = fallbackFiring.gateOpen();
                 }
                 boolean feedStage1 = feedControl.feedStage1(now, firing);
+                // Between held staggered shots the gate is closed; stage 1 keeps running, stage 2 stays off.
+                boolean closedGateStage1 = feedControl.closedGateStage1(firing)
+                        && !inhibitFeedHeld && !intakeReverseHeld;
                 gate.setOpen(openGate);
                 boolean shootingBusy = automaticFeedHeld || manualFeedHeld || openGate
                         || firing.state() == FiringCoordinator.State.RECOVERY;
                 transfer.update(now, feedControl.feedTransfers(firing, gate.isOpenForFeeding()),
-                        inhibitFeedHeld || shootingBusy || intakeReverseHeld,
-                        feedStage1, intakeForwardHeld && !intakeReverseHeld);
+                        !closedGateStage1 && (inhibitFeedHeld || shootingBusy || intakeReverseHeld),
+                        feedStage1, closedGateStage1 || (intakeForwardHeld && !intakeReverseHeld));
                 double intakePower = intakeControl.update(transfer.isFull(),
                         intakeForwardHeld, intakeReverseHeld, inhibitFeedHeld || shootingBusy);
-                intake.setIntakePowerWithJamRecovery(now, intakePower);
-                lights.showIntake(now, transfer.isFull(), intakeForwardHeld, intakeReverseHeld,
-                        intake.getCommandedPower(), intake.isClearingJam());
+                intake.setIntakePower(intakePower);
+                transfer.setIntakeRunning(intake.getCommandedPower() > 0); // Stage 1 stall guard only while intaking.
+                lights.showIntake(transfer.isFull(), intakeForwardHeld, intakeReverseHeld,
+                        intake.getCommandedPower());
                 lights.showShooter(now, firing.state(), manualFeedHeld, autoShotReady,
                         turret != null && turret.getTargetShooterRpm() > 0);
                 MotionSample aimingPose = shots == null ? null : shots.pose();
@@ -362,10 +372,10 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                 if (cornerRehome.needsAttention())
                     telemetry.addData("Corner rehome (GP2 D-pad Left)", cornerRehome.status());
                 transfer.addDriverTelemetry(telemetry);
-                telemetry.addData("Collection", "%s | intake %+.1f%s", intakeReverseHeld
+                telemetry.addData("Collection", "%s | intake %+.1f", intakeReverseHeld
                                 ? intakeForwardHeld ? "STOPPED" : "REVERSE"
                                 : intakeForwardHeld ? "FORCED FORWARD" : "AUTO",
-                        intake.getCommandedPower(), intake.isClearingJam() ? " | CLEARING JAM" : "");
+                        intake.getCommandedPower());
                 telemetry.addData("Feed mode (GP2 B)", feedControl.continuous() ? "CONTINUOUS" : "STAGGERED");
                 telemetry.addData("Depollinator", depollinator.isDeployedCommanded() ? "DEPLOYED" : "HOME");
                 if (slide != null) slide.addDriverTelemetry(telemetry);

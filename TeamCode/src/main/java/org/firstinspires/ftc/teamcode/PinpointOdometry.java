@@ -42,8 +42,12 @@ public class PinpointOdometry {
     public static final double PINPOINT_X_POD_OFFSET_MM = FORWARD_POD_LEFT_OF_CENTER_MM;   // +32.00 mm
     public static final double PINPOINT_Y_POD_OFFSET_MM = -STRAFE_POD_BEHIND_CENTER_MM;    // -74.00 mm
 
+    // Measured 2026-11-13 (Test: Pinpoint Odometry Only, pushed by hand): with X REVERSED a forward push read
+    // negative X and a left push positive Y, so X is FORWARD and Y stays REVERSED. A wrong pod mirrors that axis:
+    // auto aim turned the wrong way when driving across the hive and overshot during spins until the camera
+    // drift correction pulled it back. Re-check forward = +X, left = +Y, CCW = +heading after any pod rework.
     public static final GoBildaPinpointDriver.EncoderDirection X_POD_DIRECTION =
-            GoBildaPinpointDriver.EncoderDirection.REVERSED;
+            GoBildaPinpointDriver.EncoderDirection.FORWARD;
     public static final GoBildaPinpointDriver.EncoderDirection Y_POD_DIRECTION =
             GoBildaPinpointDriver.EncoderDirection.REVERSED;
 

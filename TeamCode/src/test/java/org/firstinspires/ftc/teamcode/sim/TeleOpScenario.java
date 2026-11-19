@@ -21,8 +21,8 @@ final class TeleOpScenario {
         trace = new TeleOpTrace(name, opMode, tickSeconds);
         java.nio.file.Files.write(trace.directory.resolve("camera-convention.txt"),
                 (hardware.cameraAdapter == null || !hardware.cameraAdapter.invertedNormal
-                        ? "Physical convention: target +Z into print, upside-down underside stickers (Rz(pi) on SimLoop)\n"
-                        : "TEST-ONLY inverted target normal (Rz(pi) then Rx(pi)); robot must reject\n").getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                        ? "Physical convention: inverted Limelight mount (camera-side Rz(pi) on SimLoop), target +Z into print, upright stickers\n"
+                        : "TEST-ONLY inverted target normal (camera-side Rz(pi), target-side Rx(pi)); robot must reject\n").getBytes(java.nio.charset.StandardCharsets.UTF_8));
         runner = OpModeRunner.forTeamClass("org.firstinspires.ftc.teamcode." + opMode, hardware.map)
                 .teamPackages("org.firstinspires.ftc.teamcode.", "com.seattlesolvers.solverslib.", "com.pedropathing.")
                 .tickSeconds(tickSeconds).initLoopTicks(initTicks).activeTicks(activeTicks)

@@ -1,4 +1,20 @@
+// Sloth hot reload (https://github.com/Dairy-Foundation/Sloth). Keep SLOTH_VERSION matched with
+// the Sloth runtime that com.pedropathing:tuning brings in (0.3.2 today).
+buildscript {
+    ext.SLOTH_VERSION = '0.3.2'
+    repositories {
+        mavenCentral()
+        google()
+        maven { url = 'https://repo.dairy.foundation/releases' }
+    }
+    dependencies {
+        classpath "dev.frozenmilk:Load:${SLOTH_VERSION}"
+    }
+}
+
 apply plugin: 'com.android.application'
+// Adds deploySloth / removeSlothRemote, and runs removeSlothRemote before every installDebug.
+apply plugin: 'dev.frozenmilk.sinister.sloth.load'
 
 //
 // build.gradle in TeamCode
@@ -33,7 +49,10 @@ repositories {
 
 dependencies {
     implementation project(':FtcRobotController')
-    implementation('com.acmerobotics.dashboard:dashboard:0.6.0') {
+    // Sloth runtime, pinned explicitly so it no longer depends on what Pedro's tuner happens to pull.
+    implementation "dev.frozenmilk.sinister:Sloth:${SLOTH_VERSION}"
+    // Slothboard is FTC Dashboard 0.6.0 patched so @Config values follow Sloth reloads.
+    implementation("com.acmerobotics.slothboard:dashboard:${SLOTH_VERSION}+0.6.0") {
         // The robot project owns the FTC SDK version (12.0.0).
         exclude group: 'org.firstinspires.ftc'
     }
@@ -52,3 +71,5 @@ dependencies {
 }
 
 apply from: "$rootDir/simloop/simloop.gradle"
+// robotSloth / robotInstall: deploys with automatic robot Wi-Fi switching (Android Studio .run/ configs).
+apply from: "$rootDir/tools/robot-deploy.gradle"

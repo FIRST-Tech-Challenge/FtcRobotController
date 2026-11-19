@@ -16,7 +16,7 @@ Scope: repair hardware-control logic, implement observed goal-state detection an
 - Keep the Limelight mount: 337 mm lens height (team-measured 2026-11-06; was 335), 55 degrees above horizontal (lens axis; front glass team-measured 55 degrees from vertical on 2026-11-05; originally documented as 30), and the previously confirmed rotating pivot/camera offsets.
 - Keep high-goal opening/tag-center heights of 1.50/1.25 m and opening-plane angle of 60 degrees. The opening angle is not the hood command.
 - Keep the confirmed 6 V servo injector and Control Hub I2C port 0 for Pinpoint.
-- Keep the fourth-ball sensor on stage 1. Loading runs stage 1 forward with stage 2 stopped; feeding opens/settles the gate and runs both stages at full power, stage 1 REVERSE and stage 2 FORWARD. Gate closure blocks passage to the flywheel. Opening alone does not release a ball.
+- Keep the fourth-ball sensor on stage 1. Loading runs stage 1 forward with stage 2 stopped; feeding opens/settles the gate and runs both stages at full power, stage 1 FORWARD and stage 2 REVERSE (flipped 2026-11-18: motors wired backwards). Gate closure blocks passage to the flywheel. Opening alone does not release a ball.
 - Depollinator clearance is confirmed. Do not add an invented collision exclusion for it.
 
 ## 1. Repair hardware selection, diagnostics and homing

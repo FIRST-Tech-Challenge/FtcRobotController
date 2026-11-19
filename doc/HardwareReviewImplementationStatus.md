@@ -54,7 +54,7 @@ These mechanism tests are complete based on the operator's robot testing. Numeri
 - Transfer test: gate is required. RB requests timed gate-open feeding of both stages; release closes the gate and stops stage 2. LB pauses loading and inhibits feeding. Stage 2 stays off during loading. No shooter is initialized; begin with an empty mechanism.
 - `Calibrate: DISCONNECTED Servo RAW`: select one servo with D-pad left/right. After START, both bumpers toggle arming, then RT plus A/X/Y deliberately requests .5/0/1. Disconnect all mechanical coupling first. Installed turret servos are exercised together in the bounded turret test.
 - `Test: Limelight Goal State 3D`: camera only; B/X selects red/blue and D-pad left/right selects audience/far in INIT and active operation. Shows every metric tag, selected-cell height/plane/age and rejection reason.
-- Shot calibration: BACK enters REVIEW; right-stick click explicitly saves to the app's external-files `shot-calibration/shot-session-*.properties`. Full path/success/failure appears in telemetry.
+- Shot calibration: BACK enters REVIEW. (Superseded: the file save was later removed; the OpMode now shows session averages on the Driver Hub only. See [ShotCalibration.md](ShotCalibration.md).)
 
 ## Calibration boundaries and automatic-mode status
 

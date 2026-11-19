@@ -49,7 +49,7 @@ The phases below describe how to build useful coverage progressively. Their acce
 - SDK dependencies are FTC 12.0.0. Team code targets Java 8, using Gradle 9.1.0 and Android Gradle Plugin 8.13.2. Confirm dependency resolution against this combination during implementation.
 - Existing tests use JUnit 4. They cover controllers, geometry, firing, calibration, and autonomous logic, but do not provide a complete simulated SDK hardware/lifecycle test of the two competition TeleOps.
 - `HardwareReviewImplementationStatus.md` records operator completion of intake, transfer, turret rotation, hood/shooting, and gate mechanism tests. Preserve that sign-off; it is not numerical calibration or proof that later changes are validated.
-- `ShootingConfiguration.PROFILE` is still an example and `RELEASE_TIMING_MEASURED` is false. Production automatic feeding must remain inhibited until the required real measurements exist.
+- `ShootingConfiguration.PROFILE` holds the team-measured 12-60 in table (2026-11-15); release timing no longer gates firing (the `RELEASE_TIMING_MEASURED` flag was removed 2026-11-15), so production automatic feeding uses the current timing values.
 - At planning time, local modifications exist in `MecanumTeleOp`, `PoseHistory`, `ShotCoordinator`, and `TeleOpFieldReference`, plus a new `TeleOpLocalizationTest`. Do not overwrite or revert these changes.
 - Those local changes introduce tag-based field acquisition from an arbitrary starting pose. Older `CompetitionTeleOp.md` text assumes a fixed blue-corner start. Reconcile documentation and intended behavior before freezing the regression baseline. Never restore the older assumption merely to make a test pass.
 - No `.github/workflows` directory exists at planning time.
@@ -120,7 +120,7 @@ Implement rows as major changes or reported inconsistencies make them useful. Fo
 | Depollinator / `DepollinatorTestOpMode` | Home/deploy endpoints, rising edges, both-button precedence, holding through START, and no unintended stop-time sweep. Confirm positional-servo STOP policy rather than inventing a return move. |
 | Turret / `TurretTestOpMode` | Homing, early START, retry, relative zero, encoder sign, paired servo agreement, travel limits/excluded sector, hood bounds, flywheel control, and motor shutdown. |
 | Camera / `LimelightTagTestOpMode`, `GoalStateTestOpMode` | ID filtering, parsing, capture age, duplicates, camera absence, geometrically valid/invalid observations, and diagnostic state transitions. Keep diagnostic goal-state gates separate from competition policy. |
-| Calibration / `ShotCalibrationOpMode` | Controls, single requested feed, timing, displayed averages, and session reset. Preserve current no-file-save behavior. Synthetic results do not create measured shot rows. |
+| Calibration / `ShotCalibrationOpMode` | Controls, X-held feed (gate open + transfers until X release), timing, displayed averages, and session reset. Preserve current no-file-save behavior. Synthetic results do not create measured shot rows. |
 | Raw calibration / `ServoZeroCalibrationOpMode` | No command during INIT, no unarmed command, selection changes disarm, only the selected servo changes, and no forced center move at STOP. |
 
 Acceptance: every covered mechanism has passing actual-OpMode tests and an explicit remaining hardware-validation list. A useful test must fail when its expected behavior is deliberately broken; confirm this on selected critical assertions during harness development.

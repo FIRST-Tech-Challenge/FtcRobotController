@@ -18,7 +18,7 @@ These are the versions documented and tested together by [Zenith](https://github
 
 ## Before robot motion
 
-**Pedro tuning has not been measured on this robot.** `PedroConfiguration.TUNING_VERIFIED` is false. All Pedro/Zenith autonomous routines refuse to start until dynamics, braking and gains are measured and verified (the [fallback autonomous](#fallback-autonomous-no-pedro) does not use Pedro). The initial values in Java and robot.json are labeled examples, not robot measurements. Camera and shooting calibration gates also remain active.
+**Pedro tuning has not been measured on this robot.** `PedroConfiguration.TUNING_VERIFIED` is false. All Pedro/Zenith autonomous routines refuse to start until dynamics, braking and gains are verified (the [fallback autonomous](#fallback-autonomous-no-pedro) does not use Pedro). Since 2026-11-18 the Foresight dynamics, braking and gains in Java and robot.json are copied from the master chassis's tuner run (`pedro/Constants.java` on `master`) so both robots share one tuning; they are labeled `PORTED` and still need checking on V1's drivetrain. Pinpoint pod offsets and directions stay V1's own measurements. Camera and shooting calibration gates also remain active.
 
 Use **Test: Pedro Drive**, which initializes only the drive subsystem (four motors and Pinpoint). Keep the chassis stationary through calibration. Sticks command at most 0.2 power, A requests 12 inches forward from the current pose, B requests a 90-degree CCW hold, and X cancels. Stick movement cancels a running test. A/B use Ivy commands, have a five-second timeout, and stop on completion. This diagnostic deliberately allows testing before TUNING_VERIFIED is set.
 
@@ -92,7 +92,7 @@ While a field-referenced routine runs, `BioBuzzRobot` saves the latest READY Pin
 
 The [authoring guide](ZenithAuthoringGuide.md) documents all 43 supported actions and 23 cached conditions. `autos/robot.json` provides editor controls, units/defaults/bounds and resource keys. Old command names/defaults remain compatible. Independent yaw/hood/RPM modes cannot be overwritten by later background aim updates; requested forward intake reverses on confirmed HIGH and resumes forward on LOW; explicit reverse is allowed. Transfer pause/end cleanup preserves queue knowledge.
 
-Automatic shooting still requires verified calibration, homing, field pose, hood/yaw/RPM readiness and release timing; no visible tag or new motion-speed cutoff is added. Explicit `feedManual` is a separately named readiness bypass with the gate delay and inhibit priority. Preset measurements remain unverified and cannot automatically feed. `stopAll` is resumable and retains home/positional posture; terminal cleanup closes cameras and invalidates terminal turret state.
+Automatic shooting still requires verified calibration, homing, field pose, hood/yaw/RPM readiness (release timing no longer gates firing; current values are used); no visible tag or new motion-speed cutoff is added. Explicit `feedManual` is a separately named readiness bypass with the gate delay and inhibit priority. Preset measurements remain unverified and cannot automatically feed. `stopAll` is resumable and retains home/positional posture; terminal cleanup closes cameras and invalidates terminal turret state.
 
 ## Architecture and verification
 

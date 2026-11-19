@@ -21,7 +21,7 @@ public class ShotCalibrationExportTest {
         assertEquals(4,d.samples.length); assertFalse(d.samples[2].hit); assertEquals(2,d.rows.length);
         assertEquals(24*.0254,d.rows[0].distance,1e-10); assertEquals(3100,d.rows[0].rpm,0); assertEquals(4,d.rows[0].hoodDeg,0);
         assertEquals(3400,d.samples[2].rpm,0);
-        assertEquals(4,n.samples().length); assertEquals(2,n.size()); assertFalse(ShootingConfiguration.PROFILE.calibrated);
+        assertEquals(4,n.samples().length); assertEquals(2,n.size()); assertFalse(ShotProfile.example().calibrated);
     }
     @Test public void explicitSaveProducesReadablePersistentFileAndNeverReplacesPreviousExport() throws Exception {
         File directory=temp.newFolder("exports"); ShotCalibration n=notebook();
@@ -45,7 +45,7 @@ public class ShotCalibrationExportTest {
         assertThrows(IOException.class,()->ShotCalibrationExport.read(new StringReader(text.replace("distance\\=m","distance\\=in"))));
         assertThrows(IOException.class,()->ShotCalibrationExport.read(new StringReader(text.replace("flywheel_rev/min","motor_rev/min"))));
         assertThrows(IOException.class,()->ShotCalibrationExport.read(new StringReader(text.replace("notebook-v4","notebook-v2"))));
-        assertThrows(IOException.class,()->ShotCalibrationExport.read(new StringReader(text.replace("hood_home_offset_deg=8.0","hood_home_offset_deg=2.0"))));
+        assertThrows(IOException.class,()->ShotCalibrationExport.read(new StringReader(text.replace("hood_home_offset_deg=10.5","hood_home_offset_deg=2.0"))));
         assertThrows(IOException.class,()->ShotCalibrationExport.read(new StringReader("format=unknown")));
         assertThrows(IOException.class,()->ShotCalibrationExport.read(new StringReader(text.replace("row_count=2","row_count=999999999"))));
     }

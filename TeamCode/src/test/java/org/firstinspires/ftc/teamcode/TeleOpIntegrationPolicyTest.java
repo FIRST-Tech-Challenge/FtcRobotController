@@ -54,7 +54,7 @@ public class TeleOpIntegrationPolicyTest {
     }
     private static ShotCoordinator teleOpShots(TurretSubsystem turret, ShotProfile profile) {
         return new ShotCoordinator(turret, TeleOpFieldReference.target(TurretSubsystem.Alliance.RED, TurretSubsystem.HiveSide.AUDIENCE),
-                ShootingConfiguration.MOUNT, profile, CompetitionFeedController.firing(), true, ShotCoordinator.AimMode.TELEOP_ODOMETRY);
+                ShootingConfiguration.MOUNT, profile, CompetitionFeedController.firing(), ShotCoordinator.AimMode.TELEOP_ODOMETRY);
     }
     private static ShotProfile constantHood(double hoodDeg) {
         return new ShotProfile(ShootingConfiguration.CALIBRATION_GEOMETRY_ID, true,
@@ -79,8 +79,8 @@ public class TeleOpIntegrationPolicyTest {
     @Test public void hoodAndRpmTrimsAreOnlyAvailableWithACalibratedSolutionAndStayAdjustableOutOfRange() {
         double[] clock = {0};
         TurretSubsystem turret = homedTurret(clock);
-        // Competition profile is uncalibrated: auto aim sets yaw only, so GP2 keeps the manual hood/RPM.
-        ShotCoordinator uncalibrated = teleOpShots(turret, ShootingConfiguration.PROFILE);
+        // An uncalibrated profile: auto aim sets yaw only, so GP2 keeps the manual hood/RPM.
+        ShotCoordinator uncalibrated = teleOpShots(turret, ShotProfile.example());
         for (int i = 0; i < 5; i++) aimLoop(clock, turret, uncalibrated, -1.5, -.5);
         assertFalse(uncalibrated.solution().aimable);
         assertFalse(uncalibrated.automaticHoodRpmAvailable());
@@ -103,8 +103,8 @@ public class TeleOpIntegrationPolicyTest {
         assertEquals(VIOLET, RobotStatusLights.shooterColor(.1, FiringCoordinator.State.FEEDING, true, false, true));
         assertEquals(OFF, RobotStatusLights.shooterColor(.3, FiringCoordinator.State.FEEDING, true, false, true));
         assertEquals(VIOLET, RobotStatusLights.shooterColor(.3, FiringCoordinator.State.FEEDING, false, true, true));
-        assertEquals(GREEN, RobotStatusLights.intakeColor(0, true, false, false, -1, false));
-        assertEquals(BLUE, RobotStatusLights.intakeColor(0, true, true, false, 1, false));
-        assertEquals(OFF, RobotStatusLights.intakeColor(0, true, true, true, 0, false));
+        assertEquals(GREEN, RobotStatusLights.intakeColor(true, false, false, -1));
+        assertEquals(BLUE, RobotStatusLights.intakeColor(true, true, false, 1));
+        assertEquals(OFF, RobotStatusLights.intakeColor(true, true, true, 0));
     }
 }

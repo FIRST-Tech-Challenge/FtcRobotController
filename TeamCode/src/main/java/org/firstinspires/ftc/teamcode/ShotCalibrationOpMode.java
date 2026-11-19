@@ -22,6 +22,7 @@ public class ShotCalibrationOpMode extends LinearOpMode {
         GateSubsystem gate = null;
         TransferSubsystem transfer = null;
         FiringCoordinator firing = ShootingConfiguration.firing();
+        StaggeredFeedTiming stage1Timing = new StaggeredFeedTiming();
         try {
             gate = new GateSubsystem(hardwareMap);
             transfer = new TransferSubsystem(hardwareMap);
@@ -68,7 +69,7 @@ public class ShotCalibrationOpMode extends LinearOpMode {
                     notebook.configure(inches, notebook.rpm(), notebook.hoodDeg());
                     if (a && turret.isHomed()) {
                         step = Step.TUNE;
-                        message = "Load ONE ball; aim with RS-X. Hold RB to spin; X requests one trial.";
+                        message = "Load ONE ball; aim with RS-X. Hold RB to spin; hold X to feed.";
                     }
                 } else if (step == Step.TUNE) {
                     notebook.configure(notebook.distanceInches(),
@@ -92,7 +93,7 @@ public class ShotCalibrationOpMode extends LinearOpMode {
                             firing.stop(now);
                             attemptsBefore = firing.feedAttempts();
                             step = Step.FIRING;
-                            message = "Hold RB through trial. LB aborts. Wait for result prompt.";
+                            message = "Hold RB + X: gate opens and transfers feed once at speed. Release X to stop. LB aborts.";
                         } else message = "Hold RB to spin and wait for turret home before requesting a trial.";
                     }
                 } else if (step == Step.RATE) {
@@ -134,11 +135,23 @@ public class ShotCalibrationOpMode extends LinearOpMode {
                         && (step == Step.TUNE || step == Step.FIRING);
                 if (spin) turret.setShooterRpm(notebook.rpm()); else turret.stopShooter();
                 turret.applyYawCommand();
-                if (step == Step.FIRING) {
-                    boolean tracking = turret.isShooterAtSpeed() && turret.isHoodTracking()
-                            && !turret.isRotationErrorHigh();
-                    firing.update(now, true, false, false, !spin, turret.isHomed(), tracking, tracking,
-                            "Turret not homed");
+                if (step == Step.FIRING && !current.x) {
+                    // Releasing X ends the trial: gate closes and both transfer stages stop.
+                    boolean fed = firing.feedAttempts() > attemptsBefore;
+                    stopOutputs(turret, gate, transfer, firing, now);
+                    step = fed ? Step.RATE : Step.TUNE;
+                    message = fed ? "Observe ball: A = HIT, B = MISS, X = discard (no ball / uncertain)."
+                            : "X released before feeding started. No trial recorded; retry X.";
+                } else if (step == Step.FIRING) {
+                    if (firing.feedAttempts() > attemptsBefore) {
+                        // Readiness was met once; keep the gate open and transfers running while X is held.
+                        firing.updateUnrestrictedFeed(now, true, false);
+                    } else {
+                        boolean tracking = turret.isShooterAtSpeed() && turret.isHoodTracking()
+                                && !turret.isRotationErrorHigh();
+                        firing.update(now, true, false, false, !spin, turret.isHomed(), tracking, tracking,
+                                "Turret not homed");
+                    }
                     if (firing.state() == FiringCoordinator.State.RECOVERY) {
                         if (firing.feedAttempts() > attemptsBefore) {
                             step = Step.RATE;
@@ -151,7 +164,10 @@ public class ShotCalibrationOpMode extends LinearOpMode {
                     }
                 } else firing.stop(now);
                 gate.setOpen(step == Step.FIRING && firing.gateOpen());
-                transfer.update(step == Step.FIRING && firing.feeding() && gate.isOpenForFeeding(), true);
+                // Trials use the same stage-1 start as competition shots (with stage 2).
+                boolean stage1 = stage1Timing.feedStage1(now, firing);
+                transfer.update(now, step == Step.FIRING && firing.feeding() && gate.isOpenForFeeding(),
+                        true, stage1, false);
 
                 transfer.addStatusTelemetry(telemetry);
                 telemetry.addData("STEP", step);
@@ -165,7 +181,7 @@ public class ShotCalibrationOpMode extends LinearOpMode {
                 if (average != null) telemetry.addData("Distance average", "%.1f RPM | %.2f deg travel | launch %+.2f deg",
                         average.rpm, average.hoodDeg, TurretSubsystem.hoodTravelToLaunchAngleDegrees(average.hoodDeg));
                 if (step == Step.PLACE) telemetry.addLine("ENTER DISTANCE HERE: Dpad L/R +/-1 in | A: confirm | LS click: rehome");
-                if (step == Step.TUNE) telemetry.addLine("Dpad L/R: RPM +/-50 | Up: lower launch, Down: raise launch 0.5 deg | RS-X: aim\nRB hold: spin | X: trial | Y: next distance | B: edit distance");
+                if (step == Step.TUNE) telemetry.addLine("Dpad L/R: RPM +/-50 | Up: lower launch, Down: raise launch 0.5 deg | RS-X: aim\nRB hold: spin | X hold: feed (release stops) | Y: next distance | B: edit distance");
                 if (step == Step.FIRING) telemetry.addData("Feed", firing.reason());
                 telemetry.addData("Timed shooting (s)", "gate %.2f | feed %.2f | recovery %.2f",
                         firing.gateTravelSeconds, firing.feedWindowSeconds, firing.recoverySeconds);

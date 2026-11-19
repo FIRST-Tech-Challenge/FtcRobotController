@@ -93,6 +93,9 @@ Camera convention update (2026-11-05): a physical full-3D frame of raised Red fa
 facing scores of -0.96 to -0.99, so the installed firmware reports +Z into the print like SimLoop.
 Production converts once in `LimelightObservation`; the former normalizing adapter is now the
 inverted-camera rejection fixture. Physical height/plane accuracy remains unvalidated.
+Inverted-mount update (2026-11-13): the upside-down Limelight reports 3D poses in its inverted sensor frame;
+`LimelightObservation` applies Rz(pi) about the optical axis once, and the SimLoop adapter reports the same
+sensor frame. Tag heights now agree with a field tape measurement within 3-4 cm (see the verification matrix).
 
 Keep existing hardware sign-offs. Obtain actual shot rows/release timing and model measurements where
 needed. Do not claim that a green synthetic automatic-shot test authorizes production automatic feed.

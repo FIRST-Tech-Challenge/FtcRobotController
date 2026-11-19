@@ -80,6 +80,14 @@ public class AutonomousIntegrationTest {
         assertTrue(robot.turret.getHomingStatus(),robot.turret.isHomed());
     }
     private double power(String name) { return map.get(com.qualcomm.robotcore.hardware.DcMotorEx.class,name).getPower(); }
+    // Stage 1 always runs open-loop full power, including loading and the fourth-ball run-on.
+    private com.qualcomm.robotcore.hardware.DcMotor.RunMode stage1Mode() {
+        return map.get(com.qualcomm.robotcore.hardware.DcMotorEx.class,"transfer_motor_1").getMode();
+    }
+    private void assertStage1Loading() {
+        assertEquals(com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER,stage1Mode());
+        assertEquals(1,power("transfer_motor_1"),0);
+    }
     @Test public void actualRegistryMatchesCatalogAndResourceKeys() throws Exception {
         JSONObject catalog=new JSONObject(new String(Files.readAllBytes(new File("../autos/robot.json").toPath()),"UTF-8"));
         JSONArray commands=catalog.getJSONArray("commands"), conditions=catalog.getJSONArray("conditions");
@@ -230,9 +238,13 @@ public class AutonomousIntegrationTest {
     @Test public void manualFeedWaitsForGateAndAlwaysStopsBothStages() {
         Command feed=command("feedManual","seconds",1); feed.start(); tick(0);
         assertTrue(robot.gate.isOpenCommanded()); assertFalse(robot.transfer.isFeeding());
-        tick(.199); assertFalse(robot.transfer.isFeeding()); assertEquals(0,power("transfer_motor_2"),0);
+        tick(.099); assertFalse(robot.transfer.isFeeding()); assertEquals(0,power("transfer_motor_2"),0);
         tick(.002); assertTrue(robot.transfer.isFeeding());
+        // Both stages start together once the gate delay has elapsed.
         assertEquals(1,power("transfer_motor_1"),0); assertEquals(1,power("transfer_motor_2"),0);
+        tick(.05);
+        assertEquals(1,power("transfer_motor_1"),0); assertEquals(1,power("transfer_motor_2"),0);
+        assertEquals(com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER,stage1Mode());
         feed.end(EndCondition.INTERRUPTED);
         assertFalse(robot.gate.isOpenCommanded()); assertEquals(0,power("transfer_motor_1"),0); assertEquals(0,power("transfer_motor_2"),0);
         assertTrue(robot.commandFailed());
@@ -248,13 +260,13 @@ public class AutonomousIntegrationTest {
     }
     @Test public void confirmedFullSurvivesPauseAndAllowsReverseUntilActualFeeding() {
         full.setSimulatedInputState(true); set("loadOn"); set("intakeOn");
-        tick(0); tick(.199); assertFalse(robot.transfer.isFull());
+        tick(0); tick(.499); assertFalse(robot.transfer.isFull());
         tick(.002); assertTrue(robot.transfer.isFull()); assertEquals(0,power("intake_motor"),0);
-        assertEquals(1,power("transfer_motor_1"),0); // Intake stops; stage 1 runs on to seat the ball.
-        tick(.498); assertEquals(1,power("transfer_motor_1"),0); assertEquals(0,power("intake_motor"),0);
+        assertStage1Loading(); // Intake stops; stage 1 runs on at full power to seat the ball.
+        tick(.498); assertStage1Loading(); assertEquals(0,power("intake_motor"),0);
         tick(.003); assertEquals(0,power("transfer_motor_1"),0); assertEquals(0,power("intake_motor"),0);
         set("transferStop"); full.setSimulatedInputState(false); set("loadOn"); tick(.02);
-        assertFalse(robot.transfer.isFull()); assertEquals(1,power("transfer_motor_1"),0);
+        assertFalse(robot.transfer.isFull()); assertStage1Loading();
         assertEquals(1,power("intake_motor"),0);
         set("intakeReverse"); tick(.02); assertEquals(-1,power("intake_motor"),0);
         Command feed=command("feedManual","seconds",1); feed.start(); tick(0); tick(.201);

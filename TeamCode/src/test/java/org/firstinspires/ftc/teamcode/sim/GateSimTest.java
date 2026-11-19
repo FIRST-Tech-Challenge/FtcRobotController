@@ -39,7 +39,8 @@ class GateSimTest {
 
     @Test void repeatedOpenDoesNotRestartDelayButCloseReopenDoes() throws Exception {
         for (double dt : new double[] {.02, .01}) {
-            int delayTicks = (int) Math.round(.2 / dt);
+            int delayTicks = (int) Math.round(
+                    org.firstinspires.ftc.teamcode.GateSubsystem.FEED_DELAY_AFTER_OPEN_COMMAND_SECONDS / dt);
             int closeTick = delayTicks + 3, reopenTick = closeTick + 1;
             TeleOpScenario s = gate("gate-delay", dt, reopenTick + delayTicks + 2, (p, t, g, g2) ->
                     g.left_trigger = t == closeTick ? 0 : 1);

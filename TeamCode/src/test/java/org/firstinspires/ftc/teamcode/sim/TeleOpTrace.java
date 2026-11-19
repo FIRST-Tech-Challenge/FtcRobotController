@@ -25,6 +25,8 @@ final class TeleOpTrace {
         double xIn, yIn, headingRad, gatePosition, gatePhysical, gatePulseUs;
         boolean feedAllowed;
         double intakePower, transfer1Power, transfer2Power, flywheelVelocity, yaw, yawCommand, hood, depollinator;
+        // Whether stage 1 was in hub velocity control (it never should be).
+        boolean transfer1VelocityMode;
         double slidePower, slideTravelDeg, claw;
         boolean distanceHigh;
 
@@ -33,7 +35,8 @@ final class TeleOpTrace {
                     + java.util.Arrays.toString(powers) + "\t" + java.util.Arrays.toString(shaftTicksPerSecond)
                     + "\t" + xIn + "\t" + yIn + "\t" + headingRad + "\t" + gatePosition
                     + "\t" + gatePhysical + "\t" + gatePulseUs + "\t" + feedAllowed
-                    + "\t" + intakePower + "\t" + transfer1Power + "\t" + transfer2Power
+                    + "\t" + intakePower + "\t" + transfer1Power + "\t" + transfer1VelocityMode
+                    + "\t" + transfer2Power
                     + "\t" + flywheelVelocity + "\t" + yaw + "\t" + yawCommand + "\t" + hood
                     + "\t" + depollinator + "\t" + slidePower + "\t" + slideTravelDeg + "\t" + claw
                     + "\t" + distanceHigh + "\t" + telemetry;
@@ -95,7 +98,11 @@ final class TeleOpTrace {
         }
         s.telemetry = String.join(" | ", telemetry.lastTransmission());
         if (hardware.intake != null) s.intakePower = hardware.intake.getPower();
-        if (hardware.transfer1 != null) s.transfer1Power = hardware.transfer1.getPower();
+        if (hardware.transfer1 != null) {
+            s.transfer1Power = hardware.transfer1.getPower();
+            s.transfer1VelocityMode = hardware.transfer1.getMode()
+                    == com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+        }
         if (hardware.transfer2 != null) s.transfer2Power = hardware.transfer2.getPower();
         if (hardware.flywheel != null) s.flywheelVelocity = hardware.flywheel.getPhysicalVelocityTicksPerSecond();
         if (hardware.yaw1 != null) { s.yawCommand = hardware.yaw1.getPosition(); s.yaw = model.yawDegrees; }
@@ -125,7 +132,7 @@ final class TeleOpTrace {
     void save(String outcome) throws IOException {
         List<String> rows = new ArrayList<>();
         rows.add("phase\ttick\tseconds\tinput\twheelPowers\tshaftTicksPerSecond\txIn\tyIn\theadingRad"
-                + "\tgateLogical\tgatePhysical\tgatePulseUs\tfeedAllowed\tintakePower\ttransfer1Power\ttransfer2Power"
+                + "\tgateLogical\tgatePhysical\tgatePulseUs\tfeedAllowed\tintakePower\ttransfer1Power\ttransfer1VelocityMode\ttransfer2Power"
                 + "\tflywheelTicksPerSecond\tyawDegrees\tyawServoCommand\thoodServo\tdepollinatorServo\tslidePower\tslideTravelDeg\tclawServo\tdistanceHigh\ttelemetry");
         rows.addAll(decoded());
         Files.write(directory.resolve("trace.tsv"), rows, StandardCharsets.UTF_8);

@@ -41,13 +41,10 @@ public final class RobotStatusLights {
         colors[index] = color;
         if (lights[index] != null) lights[index].setPosition(color.position);
     }
-    public void showIntake(double now, boolean full, boolean forward, boolean reverse,
-                           double power, boolean clearing) {
-        set(0, intakeColor(now, full, forward, reverse, power, clearing));
+    public void showIntake(boolean full, boolean forward, boolean reverse, double power) {
+        set(0, intakeColor(full, forward, reverse, power));
     }
-    public static Color intakeColor(double now, boolean full, boolean forward, boolean reverse,
-                                    double power, boolean clearing) {
-        if (clearing) return blink(now, Color.ORANGE);
+    public static Color intakeColor(boolean full, boolean forward, boolean reverse, double power) {
         if (forward && reverse) return Color.OFF;
         if (reverse) return Color.ORANGE;
         if (forward) return Color.BLUE;

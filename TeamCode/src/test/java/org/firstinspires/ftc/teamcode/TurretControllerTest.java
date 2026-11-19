@@ -244,9 +244,9 @@ public class TurretControllerTest {
         assertEquals(15, TurretSubsystem.hoodTravelToLaunchAngleDegrees(0), 0);
         assertEquals(0, TurretSubsystem.hoodTravelToLaunchAngleDegrees(15), 0);
         assertEquals(-15, TurretSubsystem.hoodTravelToLaunchAngleDegrees(30), 0);
-        assertEquals(.5 + 16.0 / 355, TurretSubsystem.pitchDegreesToServoPos(0), 1e-9);
-        assertEquals(.5 + 46.0 / 355, TurretSubsystem.pitchDegreesToServoPos(15), 1e-9);
-        assertEquals(.5 + 76.0 / 355, TurretSubsystem.pitchDegreesToServoPos(30), 1e-9);
+        assertEquals(.5 + 21.0 / 355, TurretSubsystem.pitchDegreesToServoPos(0), 1e-9);
+        assertEquals(.5 + 51.0 / 355, TurretSubsystem.pitchDegreesToServoPos(15), 1e-9);
+        assertEquals(.5 + 81.0 / 355, TurretSubsystem.pitchDegreesToServoPos(30), 1e-9);
         assertEquals(TurretSubsystem.pitchDegreesToServoPos(30), TurretSubsystem.pitchDegreesToServoPos(50), 0);
         assertEquals(TurretSubsystem.PITCH_HOME_SERVO_POS, TurretSubsystem.pitchDegreesToServoPos(-10), 1e-9);
         double home = TurretSubsystem.pitchDegreesToServoPos(0);

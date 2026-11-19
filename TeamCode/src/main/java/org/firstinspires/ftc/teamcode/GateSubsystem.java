@@ -27,9 +27,9 @@ public class GateSubsystem {
     public static final double SECONDS_PER_60_DEG_AT_6V = 0.043;
     public static final double RATED_OPEN_TRAVEL_SECONDS = GATE_OPEN_TRAVEL_DEG
             / 60.0 * SECONDS_PER_60_DEG_AT_6V;
-    // The gate receives its target immediately; start transfers 0.20 s after that command.
+    // The gate receives its target immediately; start stage 2 0.10 s after that command.
     // This is the operator-requested feed delay, not an additional servo settling allowance.
-    public static final double FEED_DELAY_AFTER_OPEN_COMMAND_SECONDS = 0.20;
+    public static final double FEED_DELAY_AFTER_OPEN_COMMAND_SECONDS = 0.10;
 
     private final Servo servo;
     private boolean open = false;

@@ -16,8 +16,10 @@ achievable speed. Do not widen readiness tolerance to hide that. Re-measure shot
 rows and loaded PIDF response after this mechanical change; production profiles
 remain uncalibrated.
 
-All turret-based OpModes default to hub velocity PIDF in
-`RUN_USING_ENCODER`. Starting gains are P=40, I=0, D=0. P was doubled from 20 for
+Both competition TeleOps (`MecanumTeleOp.FLYWHEEL_CONTROLLER`, November 15, 2026)
+regulate the flywheel with the bang-bang + feedforward fusion controller described
+below. Every other turret-based OpMode, including autonomous, defaults to hub
+velocity PIDF in `RUN_USING_ENCODER`. Starting gains are P=40, I=0, D=0. P was doubled from 20 for
 stronger response to shot-induced speed error. Integral remains off initially to
 avoid windup near maximum speed, but can be tuned during the bench test. Feedforward at 12 V is
 `32767 / (5400 / 60 * 28) * (14 / 12)`, approximately 15.170 at 12 V
@@ -107,8 +109,8 @@ not run on a Control Hub.
 ## Controller comparison and loaded trials
 
 The bang-bang + feedforward fusion controller (added November 11, 2026, replacing
-the plain bang-bang option) is available only through the combined bench test's
-controller toggle. It switches the motor to RUN_WITHOUT_ENCODER and uses each main
+the plain bang-bang option) is used by both competition TeleOps and is available
+through the combined bench test's controller toggle. It switches the motor to RUN_WITHOUT_ENCODER and uses each main
 loop's cached encoder sample; the hub PIDF loop is not active in that mode.
 
 - Speed error above 80 motor ticks/s (`FUSION_BANG_BANG_ERROR_TICKS_PER_SECOND`,
@@ -135,8 +137,8 @@ band; fix kV/kS first. Watch `Fusion power`, `Fusion bang-bang (0/1)` and
 reached at the wheel's natural coast-down rate.
 
 GP2 gain adjustments (D-pad, Y/A) are retained for switching back to PIDF but do
-not affect fusion; fusion gains are edited in Dashboard. Other OpModes still start
-in PIDF and cannot select fusion. Switching resets minimum-feed-RPM and return-time
+not affect fusion; fusion gains are edited in Dashboard. The competition TeleOps
+always use fusion (no toggle); other OpModes start in PIDF and cannot select fusion. Switching resets minimum-feed-RPM and return-time
 measurements. Compare both modes with identical target, battery and loading; last
 return-to-tolerance time includes spin-up and is not a measured ball-to-ball
 recovery time. These settings cannot be called optimized until loaded trials
@@ -165,12 +167,12 @@ Unchanged gains are not rewritten on every battery sample; F is updated when its
 computed value changes by at least 0.02 or the operator explicitly adjusts gains.
 If the voltage-adjusted speed estimate is near 100%, lowering the target or
 reducing the ball feed rate may be necessary; PID gains cannot supply additional
-motor power. RT + LT now repeats the competition 0.50-s feed / 0.35-s recovery cycle, with bench readiness required between attempts.
+motor power. RT + LT now repeats the shared 0.20-s feed / 0.00-s recovery staggered cycle, with bench readiness required between attempts.
 
-Hood home is shifted 8 hood degrees down from the original servo position 0.5,
-to approximately 0.545070 (2:1 linkage, 355-degree servo travel). This is the previous
-+9-degree command position (6 degrees below the previous home), now designated the team's +15-degree home reference.
-The full 30-degree downward range ends near 0.714085. D-pad Up still increases
+Hood home is shifted 10.5 hood degrees down from the original servo position 0.5,
+to approximately 0.559155 (2:1 linkage, 355-degree servo travel). This is the previous
++12.5-degree command position (2.5 degrees below the previous 8-degree-offset home), now designated the team's +15-degree home reference.
+The full 30-degree downward range ends near 0.728169. D-pad Up still increases
 downward travel; Down returns toward home. This is a commanded angle reference,
 not an independent measurement of projectile launch angle. Calibration displays averages without saving files. The unused historical export parser retains version checks for earlier references.
 

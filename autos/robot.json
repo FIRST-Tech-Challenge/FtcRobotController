@@ -31,20 +31,20 @@
   },
   "kinematics": {
     "maxForwardVelInPerS": {
-      "value": 40,
-      "provenance": "UNMEASURED EXAMPLE: measure loaded speed on goBILDA 5000 bare motors, 20:80 gears + coaxial 30:91 belt (12.133333 motor rev/wheel rev), 104-mm goBILDA 30A mecanums; see doc/Drivetrain.md. Not derived from no-load wheel RPM."
+      "value": 75.791216731181,
+      "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
     },
     "maxStrafeVelInPerS": {
-      "value": 35,
-      "provenance": "UNMEASURED EXAMPLE: measure loaded strafe speed on the 20:80 gear + 30:91 belt drivetrain with 104-mm goBILDA 30A mecanums; see doc/Drivetrain.md."
+      "value": 60.54276069289256,
+      "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
     },
     "forwardDecelInPerS2": {
-      "value": 40,
-      "provenance": "UNMEASURED EXAMPLE: replace after Pedro tuning on BioBuzz 10100"
+      "value": 44.33338627123392,
+      "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
     },
     "strafeDecelInPerS2": {
-      "value": 35,
-      "provenance": "UNMEASURED EXAMPLE: replace after Pedro tuning on BioBuzz 10100"
+      "value": 79.85589496541019,
+      "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
     },
     "accelInPerS2": {
       "value": 40,
@@ -62,29 +62,53 @@
       "library": "pedro",
       "version": "3.0.0-20260828.185437-17",
       "holdEnd": true,
-      "brakeLinearForwardS": {
-        "value": 0.01,
-        "provenance": "UNMEASURED EXAMPLE: replace after Pedro tuning on BioBuzz 10100"
+      "forwardTranslationalPowerPerIn": {
+        "value": 0.11454330295701048,
+        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1; near-path gain (below 2.5 in): Zenith models one translational gain"
       },
-      "brakeLinearStrafeS": {
-        "value": 0.01,
-        "provenance": "UNMEASURED EXAMPLE: replace after Pedro tuning on BioBuzz 10100"
+      "strafeTranslationalPowerPerIn": {
+        "value": 0.17940757972252447,
+        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1; near-path gain (below 2.5 in): Zenith models one translational gain"
+      },
+      "headingPowerPerRad": {
+        "value": 5.363935529565826,
+        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
+      },
+      "coastPowerPerInPerS": {
+        "value": 0,
+        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1; coast is feedforward-only"
+      },
+      "coastFeedforwardPowerPerInPerS": {
+        "value": 0.012715273265700046,
+        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
+      },
+      "brakeFeedforwardPowerPerInPerS": {
+        "value": 0.010807982275845038,
+        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
+      },
+      "brakeLinearForwardS": {
+        "value": 0.10190028205033407,
+        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
       },
       "brakeQuadraticForwardS2PerIn": {
-        "value": 0.0125,
-        "provenance": "UNMEASURED EXAMPLE: replace after Pedro tuning on BioBuzz 10100"
+        "value": 0.0015098880451388642,
+        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
+      },
+      "brakeLinearStrafeS": {
+        "value": 0.04863765333157554,
+        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
       },
       "brakeQuadraticStrafeS2PerIn": {
-        "value": 0.014285714285714285,
-        "provenance": "UNMEASURED EXAMPLE: replace after Pedro tuning on BioBuzz 10100"
+        "value": 0.002147552414866776,
+        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
       },
       "headingBrakeLinearS": {
-        "value": 0,
-        "provenance": "UNMEASURED EXAMPLE: replace after Pedro tuning on BioBuzz 10100"
+        "value": 0.050404207300238334,
+        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
       },
       "headingBrakeQuadraticS2PerRad": {
-        "value": 0,
-        "provenance": "UNMEASURED EXAMPLE: replace after Pedro tuning on BioBuzz 10100"
+        "value": 0.00662826876091725,
+        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
       },
       "endHeadingToleranceRad": {
         "value": 0.05235987755982988,
@@ -213,7 +237,7 @@
     },
     {
       "name": "loadUntilFull",
-      "summary": "Intake and stage-1 loading until confirmed full (0.2 seconds HIGH) or timeout; stop afterward.",
+      "summary": "Intake and stage-1 loading until confirmed full (0.5 seconds HIGH) or timeout; stop afterward.",
       "params": {
         "seconds": {
           "type": "number",
@@ -867,7 +891,7 @@
   "conditions": [
     {
       "name": "queueFull",
-      "summary": "HIGH continuously for 0.2 seconds; LOW immediately clears full."
+      "summary": "HIGH continuously for 0.5 seconds; LOW immediately clears full."
     },
     {
       "name": "queueSensorHigh",

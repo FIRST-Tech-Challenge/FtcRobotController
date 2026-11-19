@@ -1,6 +1,6 @@
 # Competition TeleOp decisions - October 27, 2026
 
-November 4 software integration: [final TeleOp audit](TeleOpConsistencyChecklist.md) records shared intake jam recovery, collection while aiming, GP2 auto offsets, independent status lights and the retained current controls. Bench tuning/interlocks remain explicitly documented diagnostic policies.
+November 4 software integration: [final TeleOp audit](TeleOpConsistencyChecklist.md) records collection while aiming, GP2 auto offsets, independent status lights and the retained current controls. Bench tuning/interlocks remain explicitly documented diagnostic policies.
 
 These settings apply to both Red and Blue competition TeleOps. Standalone diagnostics and primitive autonomous examples retain their own procedures unless explicitly listed here.
 
@@ -103,6 +103,13 @@ After the first field reference, odometry owns the pose and the Limelight only c
 consistent multi-tag frames (2026-11-10); the driver view then shows **Camera pose check**. See
 [Limelight diagnostics](LimelightGoalStateDiagnostics.md).
 
+**Odometry pod directions (2026-11-13).** Auto aim trusts Pinpoint translation, so a pod counting the wrong way
+mirrors that robot axis. On the robot this showed as the turret turning the *opposite* way while driving across the
+hive (losing the goal for good once the camera looked away) and overshooting during fast in-place spins until the
+camera drift correction pulled it back. A hand-push check found the X (forward) pod reversed; `X_POD_DIRECTION` is
+now FORWARD (Y stays REVERSED). After any pod rework run **Test: Pinpoint Odometry Only**: GP1 A zeroes, then a
+forward push must read +X, a left push +Y, and a CCW spin +heading with X/Y staying within a few cm.
+
 Keep the chassis stationary until **Field rehome refinement** reports
 **VISION REFINED** or **CORNER ONLY**. Chassis speed above 0.05 m/s or rotation
 above 5 deg/s, manual GP2 turret steering, or GP2 X cancels refinement. Automatic
@@ -116,7 +123,7 @@ convention, field map and mount must be physically validated to establish accura
 GP2 X still homes only the turret. Startup still supports tag acquisition anywhere;
 no corner pose is assumed until the operator presses the button.
 
-November 5 gate update: Both final Red/Blue TeleOps start CONTINUOUS: once a feed is authorized, the gate-open command and both full-power transfer commands occur together, without a gate delay. Automatic readiness and GP2 LT inhibit still apply; manual feed bypasses readiness. STAGGERED opens the gate, starts both stages together at 0.10 s, and closes the gate after a 0.30 s stage-2 feed (0.40 s total open window). Both transfers keep running while the gate is closed through the 0.10 s recovery and any subsequent readiness wait. At the next opening both transfers stop, then repeat the shared 0.10 s delay. Release, inhibit, invalid automatic solution, tracking loss or STOP cancels transfer feeding; tracking-loss recovery does not continue closed-gate feed. Mode changes reset the sequence. Autonomous and diagnostic defaults are unchanged.
+November 5 gate update: Both final Red/Blue TeleOps start CONTINUOUS: once a feed is authorized, the gate-open command and both full-power transfer commands occur together, without a gate delay. Automatic readiness and GP2 LT inhibit still apply; manual feed bypasses readiness. STAGGERED opens the gate, starts both stages together at 0.10 s (stage 1 used to wait for the 0.15 s gate-open midpoint; changed 2026-11-18), and closes the gate after a 0.20 s feed (0.30 s total open window). Recovery is 0.00 s. With the gate closed after a completed timed feed, stage 1 keeps running (past full) through the readiness wait while stage 2 is off; at the next opening stage 1 stops until both stages start the next feed together. Release, inhibit, invalid automatic solution, tracking loss or STOP cancels transfer feeding; tracking-loss recovery does not continue closed-gate feed. Mode changes reset the sequence. Updated 2026-11-15 with the on-robot tuned timing (0.10 s gate delay / 0.20 s feed / 0.00 s recovery), now shared by competition, autonomous, the bench test, transfer-only and shot-calibration OpModes through `ShootingConfiguration`; stage 1 timing and the closed-gate run use `StaggeredFeedTiming`.
 
 The gate servo is wired directly to Expansion Hub servo port 3, bypassing the 6 V power injector. It receives immediate full-position targets without software ramping for maximum available speed. The 0.043 s/60-degree rating at 6 V is catalog reference only; actual direct-hub loaded speed is unmeasured.
 
@@ -135,16 +142,16 @@ Desktop verification on October 26 passed all 153 tests (zero failures, errors o
 | Item | Competition behavior | Intake + index + shooter test |
 | --- | --- | --- |
 | Flywheel | Starts at 3500 output RPM; Y/A steps 50 RPM | RT hold, initially 2800 RPM; Y/A steps 100 RPM; B stops motors |
-| Full queue | After 0.2 s HIGH, intake stops (no reversal); stage 1 runs on 0.5 s, then holds until LOW | Same full-queue policy |
+| Full queue | After 0.5 s HIGH, intake stops (no reversal); stage 1 runs on 0.5 s, then holds until LOW | Same full-queue policy |
 | Collection override | RB: intake + stage 1 forward past full; LB: intake reverse only, pause loading; both: stop collection | Existing bench controls and interlocks |
 | Transfer loading | Stage 1 loads; stage 2 stays off until gate-open feeding | Same stage-2 rule |
 | Feeding mode | GP2 B toggles continuous/staggered; starts continuous | GP2 RB selects bench continuous/staggered |
 | Manual feeding | GP1 A or GP2 RT bypasses readiness; follows selected mode; continuous feeds immediately; GP2 LT inhibits | RT + LT uses selected bench mode |
-| Staggered feeding | Automatic readiness, 0.10 s delay for both stages, 0.30 s feed, then 0.10 s closed-gate recovery with both transfers running | Bench 0.10 s delay, stage 1 at 0.25 s, 0.40 s feed; bench yaw checks |
+| Staggered feeding | Automatic readiness, 0.10 s gate delay, both stages at 0.10 s, 0.20 s feed, 0.00 s recovery, stage 1 running while the gate is closed | Same shared timing; bench yaw checks |
 | Turret release | Capture measured yaw once on stick/auto-aim release, discarding queued travel | Preserve diagnostic commanded-target hold |
 | External yaw correction | Enabled: start above 3 degrees after 250 ms at <=3 deg/s; stop adjusting below 1.5 degrees; kept while tracking, reset by a >10-degree target jump | Disabled by default |
 
-The staggered gate-open window is 0.40 s. Continuous commands both transfers immediately.
+The staggered gate-open window is 0.30 s. Continuous commands both transfers immediately.
 See [shared transfer sequence and diagnostic controls](TransferAndShooting.md).
 
 GP1 RT prepares odometry-based yaw aiming and calibrated hood/RPM selection. Hold RT+LT to request automatic shooting; RT alone keeps the gate closed and transfer feeding off. Releasing either trigger cancels automatic shooting. GP1 LT alone does not feed; hold GP1 A for the manual readiness override. The nearest cell of the selected alliance is chosen continuously: the far cell once field Y exceeds +5 cm, the audience cell once Y is below -5 cm, and the previous selection within that midline band. Switching cells resets automatic feed readiness. D-pad left/right no longer selects a competition target. The robot does not classify hive state in this mode; drivers decide whether the selected cell is raised and when to request shooting. Manual yaw remains available when RT is released.
@@ -161,11 +168,11 @@ After acquisition or explicit corner rehome, Pinpoint tracks relative movement a
 
 Before tag acquisition or explicit corner rehome, telemetry reports WAITING and automatic field aiming/feed remain inhibited; robot-centric driving, manual turret control and manual feeding remain available. Point the camera at a raised hive using the chassis or GP2 yaw control if no suitable tag is visible. Once localized, loss of camera visibility leaves odometry tracking active. The team requests a no-drift assumption: no elapsed-time uncertainty growth, camera-loss penalty or uncertainty cutoff blocks feeding. Uncertainty remains telemetry. Stale/invalid odometry still rejects automatic aiming/feed. No cross-OpMode saved pose is assumed.
 
-Yaw tracking works from odometry even before the shot table is entered. Distance-based hood/RPM needs the empirical profile; automatic feeding also needs release timing validation. Send distance, average flywheel-output RPM and average launch angle (or clearly labeled hood travel). Linear interpolation is already implemented between rows; out-of-range requests are rejected. Projectile lead, flight-time data and dedicated route firing flags have been removed. Range, yaw, hood and RPM still update from the current pose while moving. Calibration only displays session averages on the Driver Station; stopping discards the in-memory session and no files are saved.
+Yaw tracking works from odometry even before the shot table is entered. Distance-based hood/RPM needs the empirical profile; release timing does not gate automatic feeding (current values are used as-is). Send distance, average flywheel-output RPM and average launch angle (or clearly labeled hood travel). Linear interpolation is already implemented between rows; out-of-range requests are rejected. Projectile lead, flight-time data and dedicated route firing flags have been removed. Range, yaw, hood and RPM still update from the current pose while moving. Calibration only displays session averages on the Driver Station; stopping discards the in-memory session and no files are saved.
 
 The Axon MAX+ positional controllers perform normal motion. Full manual stick requests the rated 6 V shaft speed, 60/0.115 = 521.74 deg/s at 1:1; steady speed is linear outside the 0.08 deadband. Two short 10-ms velocity filters ease command acceleration changes; a 5-ms position-command filter softens destination changes and stops. Release captures the encoder once, not continuously. External correction applies bounded positional adjustments, allowing a 250-ms settled interval between them, until error drops below 1.5 degrees. The successful offset is retained to hold position and is capped at 25 degrees. It does not run a continuous PID. Target changes above 10 degrees in one update reset qualification; smaller odometry changes do not constantly restart it. Actual loaded acceleration, jerk, speed and stopping distance depend on the servos' internal controllers and mechanics. Competition feed readiness accepts yaw error <=3 degrees and the existing hood/RPM checks. There is no chassis-speed, turret-speed, acceleration or stationary qualification gate. The 150-ms angle/RPM readiness window, timed recovery and physical gate travel remain. Drivers decide when to take the risk of firing while moving.
 
-Gate direction, depollinator direction and hood home retain the installed implementation: gate 0.5 closed to 0.2 open with REVERSE direction (90 degrees CW); depollinator 30 to 165 degrees (135 degrees CW); hood home approximately 0.545070 with 30 degrees downward travel to approximately 0.714085. The turret-only test is unchanged. Pollen collection and general autonomous work remain deferred primitive examples. The match-autonomous adapter now uses odometry for both navigation and shooting, retains the route-selected target, and performs no camera correction or direct visual aiming during the route. It continuously updates aim/RPM while navigating, and requests feed only in scoring/preload states without an extra motion gate. No end-of-route relocalization has been added without an approved route and verified landmark map.
+Gate direction, depollinator direction and hood home retain the installed implementation: gate 0.5 closed to 0.2 open with REVERSE direction (90 degrees CW); depollinator 30 to 165 degrees (135 degrees CW); hood home approximately 0.559155 with 30 degrees downward travel to approximately 0.728169. The turret-only test is unchanged. Pollen collection and general autonomous work remain deferred primitive examples. The match-autonomous adapter now uses odometry for both navigation and shooting, retains the route-selected target, and performs no camera correction or direct visual aiming during the route. It continuously updates aim/RPM while navigating, and requests feed only in scoring/preload states without an extra motion gate. No end-of-route relocalization has been added without an approved route and verified landmark map.
 
 
 ## Remaining calibration and intentional differences
@@ -173,7 +180,7 @@ Gate direction, depollinator direction and hood home retain the installed implem
 The known competition behavior mismatches in this review are resolved, including the former time-based uncertainty cutoff. This is desktop verification, not a claim that the installed robot has no defects. Final staggered feeding timings/tuning are pending from the team.
 
 - Supply at least two measured distances covering the intended range, with average flywheel-output RPM and labeled launch elevation or hood travel. The competition profile is still an uncalibrated example, so automatic calibrated feeding remains inhibited.
-- Confirm loaded gate/feed/recovery timing. Current competition staggered settings are 0.10 s after the gate command, 0.12 s feed-to-exit estimate, 0.30 s feed (0.40 s total open) and 0.10 s closed-gate recovery with both transfers running. Continuous starts transfers immediately. `RELEASE_TIMING_MEASURED` remains false until physical validation; no value was declared measured from a field drawing.
+- Confirm loaded gate/feed/recovery timing. Current staggered settings (shared by every OpMode, tuned on the robot 2026-11-15) are 0.10 s after the gate command, 0.12 s feed-to-exit estimate, 0.20 s feed with both stages (0.30 s total open), 0.00 s recovery and stage 1 running while the gate is closed. Continuous starts transfers immediately. These are still starting values, but they no longer block automatic firing (the `RELEASE_TIMING_MEASURED` gate was removed 2026-11-15).
 - Check that Limelight pipeline 0 uses 36h11, 3.25-in. individual tags and returns valid metric tag poses. Java uses the documented 337-mm-high, 55-degree-upward camera mount (lens axis; front glass team-measured 55 degrees from vertical on 2026-11-05); camera settings were not remotely changed. On the field, INIT each competition TeleOp at several known positions/headings, with the robot level and stationary during Pinpoint calibration. Confirm LOCALIZED and the reported aiming field pose, including heading; repeat with each visible hive and several turret angles. Cover the camera and move/turn the chassis, then uncover it and check that tracking and bounded corrections continue. Verify waiting behavior with no tag, and that lowered/moving cells cannot establish the nominal raised reference. The field map, tag orientation convention and capture timing still need this physical validation.
 - Opening/tag Y coordinates remain drawing-model approximations until the pivot-to-surface CAD transform or an installed-field reference is available. Relative tag spacing and the source drawing dimensions are already entered; no need to remeasure sixteen unrelated tags.
 
@@ -197,7 +204,7 @@ Both competition TeleOps show a short driver view by default, most important fir
 | Line | Meaning |
 |------|---------|
 | Shot | OFF, AIMING (hold LT to fire), WAITING FOR AIM / HOOD / RPM, READY, MANUAL FEED or BLOCKED (GP2 LT), plus the firing state; a FAULT or INHIBITED state also shows its reason |
-| Flywheel (RPM) | Measured / target output RPM and OFF, SPINNING UP or READY. With RT released the target is the manual RPM |
+| Flywheel (RPM) | Measured / target output RPM and OFF, SPINNING UP or READY. With RT released the target is the manual RPM. Regulated by bang-bang + feedforward fusion with untuned initial gains (see ShooterVelocityTuning.md) |
 | Launch elevation (deg) | Commanded launch angle above horizontal |
 | Turret | HOMED with measured heading, or the homing state and reason |
 | Battery (V) | Shooter-hub battery voltage |
@@ -208,7 +215,7 @@ Both competition TeleOps show a short driver view by default, most important fir
 | Field rehome refinement | Shown after a GP2 D-pad Left corner rehome: VISION REFINED or CORNER ONLY with the reason |
 | Auto trims | Yaw / hood / RPM offsets, shown while aiming or while any trim is non-zero |
 | Pose (in, deg) | Pinpoint X / Y / heading and EXPLICIT FIELD or LOCAL; a Pinpoint warning appears only when it is not READY |
-| Transfer, Collection | Transfer state (LOADING, FULL, FEEDING SHOT, ...) and intake override, power and jam recovery |
+| Transfer, Collection | Transfer state (LOADING, FULL, FEEDING SHOT, ...) and intake override and power |
 | Feed mode, Depollinator | CONTINUOUS/STAGGERED (GP2 B) and DEPLOYED/HOME |
 | Slide (GP2 LS) | DOWN, MOVING_UP, UP or MOVING_DOWN with position / target (deg), or FAULT with the reason and the direction the next press moves; UNAVAILABLE if not configured |
 | Claw (GP1 B) | OPEN or CLOSED; UNAVAILABLE if not configured |

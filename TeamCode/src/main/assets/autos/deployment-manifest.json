@@ -9,7 +9,7 @@
     "autos/field/pollen-test.field.json": "2188bed547e7ec0a639906a84bfca563ebbafffb0fe5ee0bddb3a1f4cf72685e",
     "autos/integration-example.auto.json": "d7661ad94d936d6b9665e9a87652a37edc6228e64f62e4d44c12f3739c036a80",
     "autos/pollen-navigation-test.auto.json": "79a57890d1066dddb9cd59d5ddb3875b9e6785b1031e40f090f8fb4cd5b1282c",
-    "autos/robot.json": "5c9da52a64ef2d156e59e29ebfe397825d591b81262b31c2f97f843d1a7a5137",
+    "autos/robot.json": "f3070d5000a19c2b6e4d6b8501e311d8ff12bc6c1966804cd9c2eca05412de98",
     "autos/routines.json": "ec8bd1fbca1f70ff3d38662bd0dad6e0aac5886b7f173f04aec853708f40b3f6",
     "autos/waypoints.json": "5569a34bddbce7ea6f077936552a4358f9f22597c4d3f15c79ca3fbda16c3c04",
     "package-lock.json": "fbd7eb3347fd03c52dcfc74a29b35860e830699bbe6b9db0ecdacadef7216ea0",
@@ -20,7 +20,7 @@
     "TeamCode/src/main/assets/autos/integration-example.auto.json": "d7661ad94d936d6b9665e9a87652a37edc6228e64f62e4d44c12f3739c036a80",
     "TeamCode/src/main/assets/autos/pollen-navigation-test.auto.json": "79a57890d1066dddb9cd59d5ddb3875b9e6785b1031e40f090f8fb4cd5b1282c",
     "TeamCode/src/main/assets/autos/pollen-test.field.json": "2188bed547e7ec0a639906a84bfca563ebbafffb0fe5ee0bddb3a1f4cf72685e",
-    "TeamCode/src/main/assets/autos/robot.json": "5c9da52a64ef2d156e59e29ebfe397825d591b81262b31c2f97f843d1a7a5137",
+    "TeamCode/src/main/assets/autos/robot.json": "f3070d5000a19c2b6e4d6b8501e311d8ff12bc6c1966804cd9c2eca05412de98",
     "TeamCode/src/main/assets/autos/routines.json": "ec8bd1fbca1f70ff3d38662bd0dad6e0aac5886b7f173f04aec853708f40b3f6",
     "TeamCode/src/main/assets/autos/waypoints.json": "5569a34bddbce7ea6f077936552a4358f9f22597c4d3f15c79ca3fbda16c3c04",
     "TeamCode/src/main/java/org/firstinspires/ftc/teamcode/zenith/generated/IntegrationExampleAuto.java": "10e9c86bf5262fd57a732840951b2304dd69f2dc4796eeb5494712592247ef7f"

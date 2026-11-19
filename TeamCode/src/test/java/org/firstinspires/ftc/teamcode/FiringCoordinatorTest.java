@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import static org.firstinspires.ftc.teamcode.ControllerFixtures.*;
 
 public class FiringCoordinatorTest {
-    @Test public void configuredCycleWaitsPointTwoSecondsAfterGateCommandAndExtendsBothStageFeed() {
+    @Test public void configuredCycleWaitsPointOneSecondsAfterGateCommandAndFeedsTwoTenths() {
         FiringCoordinator f = ShootingConfiguration.firing();
         TransferController transfer = new TransferController();
         transfer.update(0, false, false, false);
@@ -16,23 +16,23 @@ public class FiringCoordinatorTest {
         double opened = 1 + f.stableSeconds + .01;
         update(f, opened, true, true, true);
         assertTrue(f.gateOpen());
-        // Both stages wait until 0.20 seconds after the open command.
-        update(f, opened + .199, true, true, true);
-        transfer.update(opened + .199, false, f.feeding(), true);
+        // Both stages wait until 0.10 seconds after the open command.
+        update(f, opened + .099, true, true, true);
+        transfer.update(opened + .099, false, f.feeding(), true);
         assertTrue(f.gateOpen());
         assertFalse(f.feeding());
         assertEquals(0, transfer.stage1(), 0);
         assertEquals(0, transfer.stage2(), 0);
 
-        double feeding = opened + .201;
+        double feeding = opened + .101;
         update(f, feeding, true, true, true);
         transfer.update(feeding, true, f.feeding(), true);
         assertTrue(f.feeding());
         assertEquals(1, transfer.stage1(), 0);
         assertEquals(1, transfer.stage2(), 0);
-        // Past the old 0.18-second pulse, the gate and both stages stay active.
-        update(f, feeding + .30, true, true, true);
-        transfer.update(feeding + .30, true, f.feeding(), true);
+        // The gate and both stages stay active through the 0.20-second feed window.
+        update(f, feeding + .15, true, true, true);
+        transfer.update(feeding + .15, true, f.feeding(), true);
         assertTrue(f.gateOpen());
         assertTrue(f.feeding());
         assertEquals(1, transfer.stage1(), 0);
@@ -45,14 +45,18 @@ public class FiringCoordinatorTest {
         transfer.update(recovery, false, f.feeding(), true);
         assertEquals(FiringCoordinator.State.RECOVERY, f.state());
         assertFalse(f.gateOpen());
+        assertTrue(f.closedGateStage1());
         assertEquals(0, transfer.stage1(), 0);
         assertEquals(0, transfer.stage2(), 0);
-        update(f, recovery + f.recoverySeconds - .01, true, true, true);
-        assertEquals(FiringCoordinator.State.RECOVERY, f.state());
+        // No recovery pause: the next update goes straight to the readiness wait, gate still closed.
+        update(f, recovery + .001, true, true, true);
+        assertEquals(FiringCoordinator.State.PREPARING, f.state());
+        assertTrue(f.closedGateStage1());
 
         // Releasing the shot request restores stage 1 loading, with stage 2 off.
-        f.update(recovery + f.recoverySeconds, false, false, false, false, true, true, true, "");
-        transfer.update(recovery + f.recoverySeconds, false, f.feeding(), false);
+        f.update(recovery + .002, false, false, false, false, true, true, true, "");
+        assertFalse(f.closedGateStage1());
+        transfer.update(recovery + .002, false, f.feeding(), false);
         assertEquals(1, transfer.stage1(), 0);
         assertEquals(0, transfer.stage2(), 0);
     }
@@ -100,8 +104,8 @@ public class FiringCoordinatorTest {
     @Test public void manualFeedStaysContinuousAndAutoMustRequalifyAfterOverride() {
         FiringCoordinator f=ShootingConfiguration.firing(); f.update(0,true,true,false,false,true,true,true,"");
         assertTrue(f.gateOpen());
-        f.update(.199,true,true,false,false,true,true,true,""); assertFalse(f.feeding());
-        f.update(.20,true,true,false,false,true,true,true,""); assertTrue(f.feeding());
+        f.update(.099,true,true,false,false,true,true,true,""); assertFalse(f.feeding());
+        f.update(.101,true,true,false,false,true,true,true,""); assertTrue(f.feeding());
         f.update(1,true,true,false,false,true,true,true,""); assertTrue(f.feeding());
         f.update(1.01,true,false,false,false,true,true,true,""); assertFalse(f.feeding()); assertFalse(f.gateOpen());
         f.update(1.01+f.stableSeconds+.01,true,false,false,false,true,true,true,""); assertTrue(f.gateOpen());

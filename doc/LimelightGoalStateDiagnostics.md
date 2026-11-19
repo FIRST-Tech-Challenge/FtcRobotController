@@ -59,6 +59,8 @@ Geometry check: with tags near image center, the wall distance alone required at
 tag heights of 1.245-1.275 m and tags about 0.63 m ahead of the lens, matching the map.
 Single-tag plane angles read about 36-46 deg against 30 +/- 10, so plane acceptance is
 marginal per tag and still needs a fresh on-robot frame; tolerances were not relaxed.
+(These figures predate the 2026-11-13 inverted-mount correction below; with it the same frame reads
+1.243-1.245 m and planes 23.5-29.8 deg for tags 30, 31, 33, with tag 32 a 47-deg single-tag outlier.)
 
 Consequence: from the corner-rehome pose the raised tags sit about 28 deg below the lens axis,
 beyond the ~20.5-deg half image height, so corner refinement now falls back to CORNER ONLY.
@@ -113,13 +115,27 @@ capture position, at most 8 deg error accepted) as well as position; frames are 
 turned faster than 20 deg/s around capture. `Vision decision` shows "Turret moving near camera capture" or
 "Chassis turning near camera capture" while it waits.
 
-## Limelight orientation setting
+## Limelight orientation setting and inverted mount (corrected 2026-11-13)
 
-The camera is mounted upside down and the Limelight web UI orientation is set to upside-down, so the
-reported image and camera-space axes are upright. Every convention above (tag +Z into the print, upside-down
-underside stickers with tag +X camera-left, tag order, heights) was measured with that setting on. Tag heights
-matching the field map confirm up/down is correct, and tags decoding at all confirms the image is not mirrored.
-If the orientation setting changes, re-run Test: Limelight Goal State 3D and the photographed checks before driving.
+The camera is mounted upside down. The Limelight web UI "Stream Orientation: Upside-Down" rotates only the
+video stream; the AprilTag ID labels in that stream are drawn upside down, and the per-tag 3D camera-space
+poses (`t6t_cs`) stay in the inverted sensor frame. The earlier note here (axes upright with the setting on)
+was wrong. `LimelightObservation.LIMELIGHT_MOUNTED_INVERTED` applies Rz(pi) about the optical axis once at the
+SDK boundary: right and down are negated and the SDK yaw gets + pi, on top of the existing tag +Z conversion.
+
+Evidence, 2026-11-13 at Red audience (1280x960, stationary, tags 34-36 and 38-39 at about 1.2 m):
+- The upright stream showed the tags about 7 deg below center; the raw pose put them 7.3 deg above.
+- Raw, the blue tags were camera-left of red, but the blue hive is at +X (camera-right looking +Y). After the
+  flip the tags read left to right 34, 35, 36, 38, 39 with 3.75 / 5.5 / 16.25 in spacing, matching the map to 1 cm.
+- Raw poses computed 1.41-1.44 m tag height and 23-46 deg plane. Field measurement: tag centers 47.5-48 in
+  (1.21 m), underside 29.9 deg from horizontal; Limelight face 34.7 deg from horizontal (lens axis 55.3 deg up,
+  confirming `CAMERA_PITCH_UP_DEG` 55). After the flip all five tags read 1.229-1.250 m; 34, 36, 38, 39 read
+  24-33 deg and pass; tag 35 reads 58 deg (raw pitch -18 deg, a single-tag outlier) and is rejected per tag.
+- The 2026-11-05 Red far frame was nearly centered vertically, which hid the error; it now reads 1.243-1.245 m.
+
+The underside stickers are seen upright (tag +X camera-right), not upside down as recorded on 2026-11-05;
+`PoseHistory.tagEdgeFieldYaw` and the tag map follow. If the orientation setting or the mount changes, re-run
+Test: Limelight Goal State 3D and compare tag heights and left-to-right order before driving.
 
 ## Drift-only camera corrections (2026-11-06)
 
@@ -142,6 +158,8 @@ the result; the SDK polls every 10 ms by default, so this should stay under abou
 **processing** are the Limelight's own reported `cl` and `tl`, and **new frames/s** counts distinct camera
 frames actually reaching the robot (repeat polls of one frame are not counted).
 Observed 2026-11-05 at 960x720 / 40 FPS with Full 3D: capture age 0.105-0.190 s, not yet broken down.
+Observed 2026-11-13 at 1280x960: hub 4 + capture 38 + processing 126 ms, 8 new frames/s, capture age 0.167 s
+(over the goal-state test's 0.15 s limit). The team is returning the pipeline to 960x720.
 
 What to change, by the dominant term (Limelight web UI, pipeline 0; re-check tag heights afterward):
 - **processing large** (3D AprilTag work): lower resolution to 640x480, raise the AprilTag detector

@@ -35,9 +35,10 @@ public class HiveTagGeometryTest {
     }
     @Test public void allSixteenTagsHaveCorrectAllianceRowAndLeftRightOrdering() {
         double[][] expectedX = {
-                // Physical red far frame 2026-11-05: tag 30 is camera-right, so far IDs increase with X.
-                {-.48895,-.3937,-.254,-.15875}, {-.15875,-.254,-.3937,-.48895},
-                {.48895,.3937,.254,.15875}, {.15875,.254,.3937,.48895}};
+                // Upright stickers (inverted-mount conversion, physical frame 2026-11-13): IDs increase
+                // left to right, so far IDs decrease with X and audience IDs increase with X.
+                {-.15875,-.254,-.3937,-.48895}, {-.48895,-.3937,-.254,-.15875},
+                {.15875,.254,.3937,.48895}, {.48895,.3937,.254,.15875}};
         for (int row = 0; row < 4; row++) {
             TurretSubsystem.Alliance alliance = row < 2 ? TurretSubsystem.Alliance.RED : TurretSubsystem.Alliance.BLUE;
             TurretSubsystem.HiveSide side = row == 0 || row == 3 ? TurretSubsystem.HiveSide.FAR : TurretSubsystem.HiveSide.AUDIENCE;

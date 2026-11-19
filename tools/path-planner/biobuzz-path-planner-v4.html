@@ -502,8 +502,8 @@ const S = {
   origin: 'corner',            // 'corner' (Pedro default) | 'center'
   flipped: false,              // cosmetic 180 deg view rotation
   start: { x: 11.5, y: 107.5, h: 0 },   // robot BOX CENTER (not the tracked pose) - red loading zone, back edge on the wall, facing +x
-  podX: 1.846,                 // X (forward) pod offset, in  - mirror of Constants; + = tracked point is forward of box center
-  podY: 1.3,                   // Y (strafe) pod offset, in   - REVERSED: + = tracked point is to the RIGHT of box center
+  podX: 0,                     // X (forward) pod offset, in  - mirror of Constants; + = tracked point is forward of box center
+  podY: 0,                     // Y (strafe) pod offset, in   - REVERSED: + = tracked point is to the RIGHT of box center
   steps: [],                   // move/route/turn/stop/wait objects
   sel: -1,                     // index into steps, -1 = none, 'start' = start pose
   opmodeName: 'BioBuzzAuto',
@@ -524,54 +524,63 @@ const F = () => S.fieldSize;
 
 // ---------- tuning panel: every number the generated OpMode uses ----------
 // k = Java field name in the generated `T` class (UPPER_CASE) or a generator-only setting (lower case).
-const TD = (g, rows) => rows.map(r => ({ g, k: r[0], l: r[1], t: r[2], d: r[3], s: r[4] || 0.01 }));
+// r[5] = 'classic' marks a setting only the self-contained Pedro 2 export uses. The Pedro 3 export drives the
+// turret, hood and flywheel through the repo's TurretSubsystem and ShootingConfiguration instead.
+const CLASSIC = 'classic';
+const TD = (g, rows) => rows.map(r => ({ g, k: r[0], l: r[1], t: r[2], d: r[3], s: r[4] || 0.01, only: r[5] || null }));
+const tuneVisible = q => !q.only || q.only === S.codeTarget;
 const TUNE_DEFS = [].concat(
   TD('Hardware names (must match the robot config)', [
-    ['INTAKE_NAME', 'Intake motor', 'text', 'intake'],
-    ['TRANSFER_NAME', 'Transfer motor', 'text', 'transfer'],
-    ['KICKER_NAME', 'Kicker motor', 'text', 'kicker'],
-    ['SHOOTER_NAME', 'Shooter motor', 'text', 'shooter'],
-    ['TURRET1_NAME', 'Turret servo 1', 'text', 'turret_servo_1'],
-    ['TURRET2_NAME', 'Turret servo 2', 'text', 'turret_servo_2'],
-    ['GATE_NAME', 'Gate servo', 'text', 'gate'],
-    ['HOOD_NAME', 'Hood servo', 'text', 'hood'],
+    ['INTAKE_NAME', 'Intake motor', 'text', 'intake_motor'],
+    ['TRANSFER_NAME', 'Transfer motor', 'text', 'transfer_motor_1'],
+    ['KICKER_NAME', 'Kicker motor', 'text', 'transfer_motor_2'],
+    ['SHOOTER_NAME', 'Shooter motor', 'text', 'turret_motor', 0, CLASSIC],
+    ['TURRET1_NAME', 'Turret servo 1', 'text', 'turret_servo_1', 0, CLASSIC],
+    ['TURRET2_NAME', 'Turret servo 2', 'text', 'turret_servo_2', 0, CLASSIC],
+    ['GATE_NAME', 'Gate servo', 'text', 'gate_servo'],
+    ['HOOD_NAME', 'Hood servo', 'text', 'turret_pitch', 0, CLASSIC],
   ]),
   TD('Motor directions', [
-    ['INTAKE_REVERSED', 'Intake reversed', 'bool', false],
-    ['TRANSFER_REVERSED', 'Transfer reversed', 'bool', true],
-    ['KICKER_REVERSED', 'Kicker reversed', 'bool', false],
-    ['SHOOTER_REVERSED', 'Shooter reversed', 'bool', false],
+    // Pedro 3 uses IntakeSubsystem / TransferSubsystem directions. On the robot the auto intake had to run
+    // opposite to IntakeSubsystem (testdrive, 2026-11-18), so that flip is a Pedro 3 setting, on by default.
+    ['INTAKE_REVERSE_FROM_TELEOP', 'Intake opposite to TeleOp', 'bool', true, 0, 'v3'],
+    ['INTAKE_REVERSED', 'Intake reversed', 'bool', false, 0, CLASSIC],
+    ['TRANSFER_REVERSED', 'Transfer reversed', 'bool', false, 0, CLASSIC],
+    ['KICKER_REVERSED', 'Kicker reversed', 'bool', true, 0, CLASSIC],
+    ['SHOOTER_REVERSED', 'Shooter reversed', 'bool', false, 0, CLASSIC],
   ]),
   TD('Intake', [
     ['INTAKE_POWER', 'Intake power', 'num', 1.0, 0.05],
   ]),
   TD('Flywheel (velocity PIDF + distance model)', [
-    ['TICKS_PER_REV', 'Ticks / rev', 'num', 28, 1],
-    ['SHOOTER_KP', 'kP', 'num', 16, 0.5],
-    ['SHOOTER_KI', 'kI', 'num', 2, 0.1],
-    ['SHOOTER_KD', 'kD', 'num', 0, 0.1],
-    ['SHOOTER_KF', 'kF', 'num', 12, 0.5],
-    ['RPM_SLOPE', 'RPM per inch', 'num', 6.22, 0.01],
-    ['RPM_INTERCEPT', 'RPM at 0 in', 'num', 2516, 10],
-    ['RPM_MIN', 'RPM min', 'num', 0, 100],
-    ['RPM_MAX', 'RPM max', 'num', 6000, 100],
-    ['RPM_TOLERANCE', 'Ready tolerance (rpm)', 'num', 50, 5],
+    ['TICKS_PER_REV', 'Ticks / rev', 'num', 28, 1, CLASSIC],
+    ['SHOOTER_KP', 'kP', 'num', 16, 0.5, CLASSIC],
+    ['SHOOTER_KI', 'kI', 'num', 2, 0.1, CLASSIC],
+    ['SHOOTER_KD', 'kD', 'num', 0, 0.1, CLASSIC],
+    ['SHOOTER_KF', 'kF', 'num', 12, 0.5, CLASSIC],
+    ['RPM_SLOPE', 'RPM per inch', 'num', 6.22, 0.01, CLASSIC],
+    ['RPM_INTERCEPT', 'RPM at 0 in', 'num', 2516, 10, CLASSIC],
+    ['RPM_MIN', 'RPM min', 'num', 0, 100, CLASSIC],
+    ['RPM_MAX', 'RPM max', 'num', 6000, 100, CLASSIC],
+    ['RPM_TOLERANCE', 'Ready tolerance (rpm)', 'num', 50, 5, CLASSIC],
+  ]),
+  TD('Shot readiness', [
     ['READY_TIMEOUT_S', 'Ready timeout (s)', 'num', 3.0, 0.1],
   ]),
   TD('Hood (distance model)', [
-    ['HOOD_SLOPE', 'Hood per inch', 'num', -0.00309, 0.0001],
-    ['HOOD_INTERCEPT', 'Hood at 0 in', 'num', 0.652, 0.005],
-    ['HOOD_MIN', 'Hood min', 'num', 0.5, 0.01],
-    ['HOOD_MAX', 'Hood max', 'num', 1.0, 0.01],
+    ['HOOD_SLOPE', 'Hood per inch', 'num', -0.00309, 0.0001, CLASSIC],
+    ['HOOD_INTERCEPT', 'Hood at 0 in', 'num', 0.652, 0.005, CLASSIC],
+    ['HOOD_MIN', 'Hood min', 'num', 0.5, 0.01, CLASSIC],
+    ['HOOD_MAX', 'Hood max', 'num', 1.0, 0.01, CLASSIC],
   ]),
   TD('Turret', [
-    ['TURRET_INIT_POS', 'Init servo pos', 'num', 0.5, 0.01],
-    ['TURRET_ZERO_POS', 'Servo pos facing forward', 'num', 0.25, 0.005],
-    ['TURRET_RANGE_DEG', 'Servo 0..1 = degrees', 'num', 360, 5],
-    ['TURRET_MIN', 'Servo pos min', 'num', 0, 0.01],
-    ['TURRET_MAX', 'Servo pos max', 'num', 1, 0.01],
-    ['TURRET_SEC_PER_FULL_TRAVEL', 'Sec for 0\u21921 travel', 'num', 0.9, 0.05],
-    ['TURRET_SETTLE_PAD_S', 'Settle padding (s)', 'num', 0.1, 0.02],
+    ['TURRET_INIT_POS', 'Init servo pos', 'num', 0.5, 0.01, CLASSIC],
+    ['TURRET_ZERO_POS', 'Servo pos facing forward', 'num', 0.25, 0.005, CLASSIC],
+    ['TURRET_RANGE_DEG', 'Servo 0..1 = degrees', 'num', 360, 5, CLASSIC],
+    ['TURRET_MIN', 'Servo pos min', 'num', 0, 0.01, CLASSIC],
+    ['TURRET_MAX', 'Servo pos max', 'num', 1, 0.01, CLASSIC],
+    ['TURRET_SEC_PER_FULL_TRAVEL', 'Sec for 0\u21921 travel', 'num', 0.9, 0.05, CLASSIC],
+    ['TURRET_SETTLE_PAD_S', 'Settle padding (s)', 'num', 0.1, 0.02, CLASSIC],
   ]),
   TD('Gate, kicker & transfer (shot timing)', [
     ['GATE_CLOSED', 'Gate closed pos', 'num', 0.5, 0.01],
@@ -614,12 +623,53 @@ function normTune(o){
   return t;
 }
 
-// distance -> flywheel rpm / hood position, same formulas the generated robot code uses
+// ---- Pedro 3 export: copies of the V1 TeamCode values its preview uses (keep in sync with the repo) ----
+// ShootingConfiguration.MEASURED_SHOT_TABLE_IN_RPM_HOOD_DEG: range from the turret pivot (in), flywheel
+// output RPM, hood travel down from home (deg). repoShot() follows ShotProfile.sample() (extrapolated ends).
+const REPO_SHOT_TABLE = [[12, 2950, 7], [24, 3050, 5], [36, 3100, 2], [48, 3200, 0], [60, 3400, 0]];
+const REPO_MIN_AUTO_RPM = 2133.3333333333335;     // TurretSubsystem.SHOOTER_MIN_AUTO_RPM
+const REPO_MAX_RPM = 6000;                        // ShooterSpeed.FLYWHEEL_MAX_TARGET_RPM
+const REPO_HOOD_MAX_DEG = 30;                     // TurretSubsystem.PITCH_MAX_DEG
+const REPO_PIVOT_FWD_IN = 50.68184865 / 25.4;     // ShootingConfiguration.TURRET_PIVOT_FORWARD_MM
+const REPO_MAX_YAW_DEG = 175;                     // TurretSubsystem.ROTATION_MAX_ANGLE_DEG (rear +/-5 deg dead zone)
+const REPO_HOME_HEADING_DEG = 90;                 // TurretSubsystem.ROTATION_HOME_ROBOT_HEADING_DEG
+const isV3 = () => S.codeTarget === 'v3';
+function repoShot(d){
+  const R = REPO_SHOT_TABLE, n = R.length;
+  if (!(d >= 0)) return null;
+  const lerp = (a, b, t) => ({ rpm: a[1] + t * (b[1] - a[1]), hood: a[2] + t * (b[2] - a[2]) });
+  if (d < R[0][0] || d > R[n - 1][0]){
+    const lo = d < R[0][0], a = lo ? R[0] : R[n - 2], b = lo ? R[1] : R[n - 1], end = lo ? R[0] : R[n - 1];
+    const v = lerp(a, b, (d - a[0]) / (b[0] - a[0]));
+    return { rpm: Math.min(REPO_MAX_RPM, Math.max(Math.min(REPO_MIN_AUTO_RPM, end[1]), v.rpm)),
+             hood: Math.min(REPO_HOOD_MAX_DEG, Math.max(0, v.hood)) };
+  }
+  for (let i = 1; i < n; i++) if (d <= R[i][0]) return lerp(R[i - 1], R[i], (d - R[i - 1][0]) / (R[i][0] - R[i - 1][0]));
+  return null;
+}
+// distance -> flywheel rpm / hood, same model the generated robot code uses for the current target
 function shotInfo(dist){
+  if (isV3()){
+    const r = repoShot(dist) || { rpm: 0, hood: 0 };
+    return { rpm: r.rpm, hood: r.hood, txt: `${fmtN(r.rpm, 0)} rpm \u00b7 hood ${fmtN(r.hood, 1)}\u00b0 travel` };
+  }
   const T = S.tune;
   const rpm = Math.min(T.RPM_MAX, Math.max(T.RPM_MIN, T.RPM_SLOPE * dist + T.RPM_INTERCEPT));
   const hood = Math.min(T.HOOD_MAX, Math.max(T.HOOD_SLOPE * dist + T.HOOD_INTERCEPT, T.HOOD_MIN));
-  return { rpm, hood };
+  return { rpm, hood, txt: `${fmtN(rpm, 0)} rpm \u00b7 hood ${fmtN(hood, 3)}` };
+}
+// aim range: Pedro 3 measures from the turret pivot (ShootingConfiguration.MOUNT), Pedro 2 from the pose
+function aimRange(p, gx, gy){
+  const o = isV3() ? REPO_PIVOT_FWD_IN : 0;
+  return Math.hypot(gx - (p.x + o * Math.cos(p.h)), gy - (p.y + o * Math.sin(p.h)));
+}
+// turret preview text: Pedro 3 = Driver Hub heading (front 0, right/home 90, back 180, left 270)
+function turretTxt(p, gx, gy){
+  if (!isV3()) return `turret ${fmtN(turretFor(p, gx, gy), 3)}`;
+  const px = p.x + REPO_PIVOT_FWD_IN * Math.cos(p.h), py = p.y + REPO_PIVOT_FWD_IN * Math.sin(p.h);
+  const yaw = norm180((Math.atan2(gy - py, gx - px) - p.h) * DEG + REPO_HOME_HEADING_DEG);
+  const head = ((REPO_HOME_HEADING_DEG - yaw) % 360 + 360) % 360;
+  return `turret ${fmtN(head, 0)}\u00b0` + (Math.abs(yaw) > REPO_MAX_YAW_DEG ? ' (rear dead zone: holds the nearest limit)' : '');
 }
 // turret servo position needed to aim at (gx, gy) from robot pose p (same math as generated code)
 function turretFor(p, gx, gy){
@@ -643,14 +693,17 @@ function renderTuning(){
   const out = document.createElement('div'); out.className = 'hint'; out.style.margin = '0 0 8px';
   const upd = () => {
     const s = shotInfo(tuneCalcDist);
-    out.innerHTML = `At <b>${fmtN(tuneCalcDist, 0)}&Prime;</b> \u2192 <code style="font-family:var(--mono);color:var(--lime)">${fmtN(s.rpm, 0)} rpm \u00b7 hood ${fmtN(s.hood, 3)}</code>`;
+    out.innerHTML = `At <b>${fmtN(tuneCalcDist, 0)}&Prime;</b> \u2192 <code style="font-family:var(--mono);color:var(--lime)">${s.txt}</code>`;
   };
   const ci = document.createElement('input'); ci.type = 'number'; ci.step = 5; ci.value = tuneCalcDist;
   ci.addEventListener('input', () => { const n = parseFloat(ci.value); if (!isNaN(n)){ tuneCalcDist = n; upd(); } });
   calc.appendChild(frow('Distance (in)', ci));
   calc.appendChild(out); upd();
   const info = document.createElement('div'); info.className = 'hint';
-  info.innerHTML = 'Every value here is written into the <code>T</code> class at the top of the generated file (<code>T.RPM_SLOPE</code>, <code>T.GATE_OPEN</code> &hellip;). Change them here and re-copy, or turn on <b>FTC Dashboard</b> below to tune them live on the robot. Aim points use the <b>planned side</b>; they mirror automatically with alliance select.';
+  info.innerHTML = (isV3()
+    ? 'Pedro 3: the turret, hood and flywheel run through the repo&rsquo;s <code>TurretSubsystem</code> (homing, rear dead zone, encoder-checked yaw, shooter PIDF), and hood / RPM come from the team-measured shot table in <code>ShootingConfiguration</code>, so they have no settings here. The calculator shows that table (range from the turret pivot). The other values are written into the <code>T</code> class of the generated file. '
+    : 'Every value here is written into the <code>T</code> class at the top of the generated file (<code>T.RPM_SLOPE</code>, <code>T.GATE_OPEN</code> &hellip;). ')
+    + 'Change them here and re-copy, or turn on <b>FTC Dashboard</b> below to tune them live on the robot. Aim points use the <b>planned side</b>; they mirror automatically with alliance select.';
   calc.appendChild(info);
   const rst = document.createElement('button'); rst.className = 'ghostDanger'; rst.textContent = 'Reset all tuning to defaults';
   rst.style.marginTop = '8px'; rst.style.width = '100%';
@@ -659,7 +712,7 @@ function renderTuning(){
   host.appendChild(calc);
 
   let lastG = null, box = null;
-  TUNE_DEFS.forEach(q => {
+  TUNE_DEFS.filter(tuneVisible).forEach(q => {
     if (q.g !== lastG){
       lastG = q.g;
       box = document.createElement('div'); box.className = 'sect';
@@ -748,7 +801,9 @@ function actDefaults(act){
     goal: '1', gx: 72, gy: 72,      // aim point: '1'..'4' from the tuning panel, or 'custom'
     balls: 3,
     rpm: null,                      // null = from distance model
-    pos: 0.5,                       // manual servo position (turret / hood)
+    pos: 0.5,                       // Pedro 2: manual servo position (turret / hood)
+    head: 90,                       // Pedro 3: manual turret heading, deg (front 0, right/home 90, back 180, left 270)
+    hoodDeg: 0,                     // Pedro 3: manual hood travel down from home, deg (0..30)
     secs: 0,                        // intake: run for N seconds before the next step
     offAfter: false,                // intake: turn off after secs
     wait: act === 'shoot' || act === 'volley' || act === 'spin' || act === 'aim' ? true : false,
@@ -774,8 +829,10 @@ function actSummary(st){
   switch (st.act){
     case 'intake': return (st.mode === 'rev' ? 'reverse' : st.mode === 'off' ? 'off' : 'in') + (st.secs > 0 ? ` · ${fmtN(st.secs, 1)}s${st.offAfter ? ' then off' : ''}` : '');
     case 'spin':   return st.mode === 'off' ? 'flywheel off' : `spin ${st.rpm == null ? 'auto rpm' : fmtN(st.rpm, 0) + ' rpm'}${st.wait ? ' · wait ready' : ''}`;
-    case 'aim':    return st.mode === 'track' ? `track ${actGoalTxt(st)}${st.wait ? ' · wait settle' : ''}` : st.mode === 'manual' ? `servo ${fmtN(st.pos, 3)}` : 'tracking off';
-    case 'hood':   return st.mode === 'manual' ? `hood ${fmtN(st.pos, 3)}` : 'hood auto (distance)';
+    case 'aim':    return st.mode === 'track' ? `track ${actGoalTxt(st)}${st.wait ? ' · wait settle' : ''}`
+                        : st.mode === 'manual' ? (isV3() ? `heading ${fmtN(st.head, 0)} deg` : `servo ${fmtN(st.pos, 3)}`) : 'tracking off';
+    case 'hood':   return st.mode === 'manual' ? (isV3() ? `hood ${fmtN(st.hoodDeg, 1)} deg travel` : `hood ${fmtN(st.pos, 3)}`)
+                        : isV3() ? 'hood auto (shot table)' : 'hood auto (distance)';
     case 'gate':   return st.mode === 'close' ? 'gate closed' : 'gate open';
     case 'shoot':  return `${st.balls} ball(s)${st.wait ? ' · wait ready' : ''}${st.after === 'off' ? ' · spin down' : ''}`;
     case 'volley': return `${st.balls} ball(s) at ${actGoalTxt(st)}${st.after === 'off' ? ' · spin down' : ''}`;
@@ -833,11 +890,18 @@ function renderActInspector(st){
     case 'aim':
       modeSeg('Mode', [['track', 'TRACK POINT'], ['manual', 'MANUAL'], ['off', 'OFF']]);
       if (st.mode === 'track'){ A.appendChild(goalPicker(st)); chk('Wait for turret to settle', 'wait'); }
-      if (st.mode === 'manual') A.appendChild(frow('Servo pos', numInput(st.pos, 0.01, v => { st.pos = v; softRefresh(); })));
+      if (st.mode === 'manual' && isV3()){
+        A.appendChild(frow('Heading (deg)', numInput(st.head, 5, v => { st.head = ((v % 360) + 360) % 360; softRefresh(); })));
+        const h = document.createElement('div'); h.className = 'hint';
+        h.innerHTML = 'Driver Hub turret heading: front 0, right 90 (home), back 180, left 270. Within 5&deg; of 270 is the rear dead zone; the turret stops at the nearest limit.';
+        A.appendChild(h);
+      } else if (st.mode === 'manual') A.appendChild(frow('Servo pos', numInput(st.pos, 0.01, v => { st.pos = v; softRefresh(); })));
       break;
     case 'hood':
-      modeSeg('Mode', [['auto', 'AUTO (distance)'], ['manual', 'MANUAL']]);
-      if (st.mode === 'manual') A.appendChild(frow('Servo pos', numInput(st.pos, 0.01, v => { st.pos = v; softRefresh(); })));
+      modeSeg('Mode', [['auto', isV3() ? 'AUTO (shot table)' : 'AUTO (distance)'], ['manual', 'MANUAL']]);
+      if (st.mode === 'manual' && isV3())
+        A.appendChild(frow('Travel (deg)', numInput(st.hoodDeg, 0.5, v => { st.hoodDeg = Math.max(0, Math.min(REPO_HOOD_MAX_DEG, v)); softRefresh(); })));
+      else if (st.mode === 'manual') A.appendChild(frow('Servo pos', numInput(st.pos, 0.01, v => { st.pos = v; softRefresh(); })));
       break;
     case 'gate':
       modeSeg('Gate', [['open', 'OPEN'], ['close', 'CLOSED']]);
@@ -857,11 +921,10 @@ function renderActInspector(st){
     const poses = chainPoses();
     const p = poses[Math.min(S.sel, poses.length - 1)];
     const g = goalXY(st);
-    const d = Math.hypot(g.x - p.x, g.y - p.y);
+    const d = aimRange(p, g.x, g.y);
     const s = shotInfo(d);
-    const tp = turretFor(p, g.x, g.y);
     const h = document.createElement('div'); h.className = 'hint';
-    h.innerHTML = `From where the robot is at this step: <b>${fmtN(d, 1)}&Prime;</b> to the point → <code style="font-family:var(--mono);color:var(--lime)">${fmtN(s.rpm, 0)} rpm · hood ${fmtN(s.hood, 3)} · turret ${fmtN(tp, 3)}</code><br>Numbers come from the Tuning tab. The robot keeps tracking the point while it drives until another Aim step changes it.`;
+    h.innerHTML = `From where the robot is at this step: <b>${fmtN(d, 1)}&Prime;</b> to the point → <code style="font-family:var(--mono);color:var(--lime)">${s.txt} · ${turretTxt(p, g.x, g.y)}</code><br>${isV3() ? 'RPM and hood come from the measured shot table in ShootingConfiguration.' : 'Numbers come from the Tuning tab.'} The robot keeps tracking the point while it drives until another Aim step changes it.`;
     A.appendChild(h);
   } else if (st.act === 'shoot' || st.act === 'spin'){
     const h = document.createElement('div'); h.className = 'hint';
@@ -897,7 +960,7 @@ function drawAimOverlay(poses){
       ctx.beginPath(); ctx.arc(bx, by, 6, 0, TAU); ctx.stroke();
     }
     if (sel){
-      const d = Math.hypot(g.x - p.x, g.y - p.y), s = shotInfo(d);
+      const d = aimRange(p, g.x, g.y), s = shotInfo(d);
       ctx.globalAlpha = 1; ctx.fillStyle = C.amber; ctx.font = '10px ui-monospace, monospace'; ctx.textAlign = 'center';
       ctx.fillText(`${fmtN(d, 0)}″ · ${fmtN(s.rpm, 0)}rpm`, (ax + bx) / 2, (ay + by) / 2 - 6);
     }
@@ -2848,6 +2911,12 @@ function stepCase(st, i){
     else add(`return stepTimer.seconds() >= ${fmtN(st.secs, 1)};`);
   }
   else if (st.t === 'act'){
+    // Pedro 3: robot.readSensors() runs before the step and robot.apply() after it in the same loop, so a
+    // step never calls a mid-step update. Pedro 2 keeps its self-contained robot.update(pose).
+    const V3 = S.codeTarget === 'v3';
+    const sync = () => { if (!V3) add('    robot.update(follower.pose());'); };
+    // Pedro 3 applies new targets after the step returns, so a first-call check would see the old target.
+    const settled = expr => V3 ? `!first && (${expr})` : expr;
     switch (st.act){
       case 'intake': {
         const m = st.mode === 'rev' ? -1 : st.mode === 'off' ? 0 : 1;
@@ -2864,25 +2933,30 @@ function stepCase(st, i){
         add('if (first) {');
         add('    robot.spin(true);');
         add(st.rpm == null ? '    robot.setRpmAuto();' : `    robot.setRpmManual(${fmtN(st.rpm, 0)});`);
-        add('    robot.update(follower.pose());');
+        sync();
         add('}');
-        add(st.wait ? 'return robot.ready() || stepTimer.seconds() > T.READY_TIMEOUT_S;' : 'return true;');
+        add(st.wait ? `return ${settled('robot.ready() || stepTimer.seconds() > T.READY_TIMEOUT_S')};` : 'return true;');
         break;
       case 'aim':
         if (st.mode === 'track'){
           add('if (first) {');
           add(`    robot.aimAt(${goalJ()});`);
           add('    robot.setTracking(true);');
-          add('    robot.update(follower.pose());');
+          sync();
           add('}');
-          add(st.wait ? 'return robot.turretReady() || stepTimer.seconds() > T.READY_TIMEOUT_S;' : 'return true;');
+          add(st.wait ? `return ${settled('robot.turretReady() || stepTimer.seconds() > T.READY_TIMEOUT_S')};` : 'return true;');
+        } else if (st.mode === 'manual' && V3){
+          add(`if (first) robot.setTurretHeading(${fmtN(st.head, 1)});   // front 0, right 90, back 180, left 270`);
+          add(`return ${settled('robot.turretReady() || stepTimer.seconds() > T.READY_TIMEOUT_S')};`);
         } else if (st.mode === 'manual'){
           add(`if (first) robot.setTurretManual(${fmtN(st.pos, 3)});`);
           add('return robot.turretReady();');
         } else { add('robot.setTracking(false);'); add('return true;'); }
         break;
       case 'hood':
-        add(st.mode === 'manual' ? `robot.setHoodManual(${fmtN(st.pos, 3)});` : 'robot.setHoodAuto();');
+        add(st.mode !== 'manual' ? 'robot.setHoodAuto();'
+          : V3 ? `robot.setHoodManual(${fmtN(st.hoodDeg, 1)});   // deg of travel down from home`
+          : `robot.setHoodManual(${fmtN(st.pos, 3)});`);
         add('return true;');
         break;
       case 'gate':
@@ -2898,15 +2972,32 @@ function stepCase(st, i){
           add('    robot.spin(true);');
           add('    robot.setRpmAuto();');
           add('    robot.setHoodAuto();');
-          add('    robot.update(follower.pose());');
+          sync();
           add('}');
         }
         const wait = st.act === 'volley' ? true : st.wait;
+        const balls = Math.max(1, Math.round(st.balls));
         add('if (phase == 0) {');
-        add(wait ? '    if (robot.ready() || stepTimer.seconds() > T.READY_TIMEOUT_S) {' : '    {');
-        add(`        robot.startShoot(${Math.max(1, Math.round(st.balls))});`);
-        add('        phase = 1;');
-        add('    }');
+        if (V3 && wait){
+          // Same rule as FallbackAutoController: feed on READY, or on timeout once the turret is homed;
+          // an unhomed turret skips the shot.
+          add('    boolean timedOut = stepTimer.seconds() > T.READY_TIMEOUT_S;');
+          add('    boolean ready = !first && robot.ready();   // first call: new targets apply after this step');
+          add('    if (ready || (timedOut && robot.turretHomed())) {');
+          add(`        robot.startShoot(${balls});`);
+          add('        if (!ready) robot.shotNote = "fed before READY (timeout)";');
+          add('        phase = 1;');
+          add('    } else if (timedOut) {');
+          add('        robot.shotNote = "SKIPPED: turret not homed";');
+          if (st.after === 'off') add('        robot.spin(false);');
+          add('        return true;');
+          add('    }');
+        } else {
+          add(wait ? '    if (robot.ready() || stepTimer.seconds() > T.READY_TIMEOUT_S) {' : '    {');
+          add(`        robot.startShoot(${balls});`);
+          add('        phase = 1;');
+          add('    }');
+        }
         add('    return false;');
         add('}');
         add('if (!robot.isShooting()) {');
@@ -2937,7 +3028,7 @@ function tuneJava(){
   const L = [];
   let last = null;
   TUNE_DEFS.forEach(q => {
-    if (!/^[A-Z0-9_]+$/.test(q.k)) return;
+    if (!/^[A-Z0-9_]+$/.test(q.k) || !tuneVisible(q)) return;
     if (q.g !== last){ L.push(`        // ---- ${q.g} ----`); last = q.g; }
     const v = S.tune[q.k];
     if (q.t === 'bool') L.push(`        public static boolean ${q.k} = ${v ? 'true' : 'false'};`);
@@ -3120,6 +3211,218 @@ const ROBOT_JAVA = `
             t.addData("aim dist", "%.1f in", dist);
             t.addData("turret pos", "%.3f", turretPos);
             t.addData("shot state", shootState);
+        }
+    }
+`;
+
+// Pedro 3 mechanisms: turret yaw, hood and flywheel through the repo's TurretSubsystem.
+const ROBOT_JAVA_V3 = `
+    // =====================================================================================
+    //  ROBOT SUBSYSTEMS - intake, gate, kicker + transfer here; turret yaw, hood and flywheel
+    //  through TurretSubsystem. Call readSensors() once per loop before the step and apply()
+    //  once per loop after it (the OpMode does both).
+    // =====================================================================================
+    static class Robot {
+        static final double METERS_PER_INCH = .0254;
+
+        final DcMotorEx intake, transfer, kicker;
+        final Servo gate;
+        final TurretSubsystem turret;
+        final ElapsedTime clock = new ElapsedTime();
+
+        int intakeMode = 0;                  // 1 in, -1 out, 0 off
+
+        boolean spinning = false;
+        boolean rpmAuto = true;
+        double rpmManual = 0;                // flywheel output RPM
+        double rpmTarget = 0;
+
+        Pose aimTarget = null;               // point the turret tracks / distance is measured to (field in)
+        boolean tracking = false;
+        double fixedHeadingDeg = Double.NaN; // fixed turret heading: front 0, right 90, back 180, left 270
+        boolean poseFresh = false;
+        double dist = T.FALLBACK_DIST_IN;    // turret pivot to aim point, inches
+
+        boolean hoodAuto = true;
+        double hoodManualDeg = TurretSubsystem.PITCH_HOME_DEG; // hood travel down from home, 0..30 deg
+        double hoodTargetDeg = TurretSubsystem.PITCH_HOME_DEG;
+
+        int shootState = 0;                  // 0 idle, 1 gate opening, 2 feeding, 3 closing
+        int shootBalls = 0;
+        double shootT = 0;
+        String shotNote = "";
+
+        Robot(HardwareMap hw) {
+            intake = hw.get(DcMotorEx.class, T.INTAKE_NAME);
+            transfer = hw.get(DcMotorEx.class, T.TRANSFER_NAME);
+            kicker = hw.get(DcMotorEx.class, T.KICKER_NAME);
+            gate = hw.get(Servo.class, T.GATE_NAME);
+
+            // Directions come from the subsystems TeleOp uses. The intake can be flipped from TeleOp's
+            // direction with T.INTAKE_REVERSE_FROM_TELEOP (needed on the robot, 2026-11-18).
+            // intake_motor's encoder channel is the turret's through-bore encoder. Never reset it here.
+            setup(intake, T.INTAKE_REVERSE_FROM_TELEOP
+                    ? IntakeSubsystem.MOTOR_DIRECTION.inverted() : IntakeSubsystem.MOTOR_DIRECTION);
+            setup(transfer, TransferSubsystem.MOTOR_DIRECTION);
+            setup(kicker, TransferSubsystem.STAGE_2_MOTOR_DIRECTION);
+            gate.setPosition(T.GATE_CLOSED);
+
+            // Starts non-blocking turret homing and puts the hood at home; no camera in this auto.
+            turret = new TurretSubsystem(hw, false);
+            turret.setEncoderCorrectionEnabled(true);
+        }
+
+        private static void setup(DcMotorEx m, DcMotorSimple.Direction direction) {
+            m.setDirection(direction);
+            m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            m.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        // ---- commands (call these from code steps / loop code too) ----
+        /** Intake in (1) also runs transfer stage 1 to carry balls toward the turret; out (-1) / off (0) stop it. */
+        void setIntake(int mode) {
+            intakeMode = mode;
+            intake.setPower(mode * T.INTAKE_POWER);
+            if (shootState != 2) transfer.setPower(stage1IdlePower());
+        }
+        /** Stage 1 outside the feed window: runs only while intaking. */
+        private double stage1IdlePower() { return intakeMode == 1 ? T.TRANSFER_POWER : 0; }
+        void spin(boolean on) { spinning = on; }
+        void setRpmAuto() { rpmAuto = true; }
+        /** Flywheel output RPM, the same units as TeleOp and the shot table. */
+        void setRpmManual(double rpm) { rpmAuto = false; rpmManual = rpm; }
+        void setHoodAuto() { hoodAuto = true; }
+        /** Hood travel down from home in degrees (0 = home / highest launch, 30 = lowest). */
+        void setHoodManual(double travelDeg) {
+            hoodAuto = false;
+            hoodManualDeg = clamp(travelDeg, TurretSubsystem.PITCH_MIN_DEG, TurretSubsystem.PITCH_MAX_DEG);
+        }
+        void aimAt(Pose target) { aimTarget = target; }
+        void setTracking(boolean on) { tracking = on; if (on) fixedHeadingDeg = Double.NaN; }
+        /** Fixed turret heading in the Driver Hub frame: front 0, right (home) 90, back 180, left 270 deg. */
+        void setTurretHeading(double headingDeg) { tracking = false; fixedHeadingDeg = headingDeg; }
+        void gateOpen(boolean open) { gate.setPosition(open ? T.GATE_OPEN : T.GATE_CLOSED); }
+
+        void startShoot(int balls) {
+            shootBalls = Math.max(1, balls);
+            shootState = 1;
+            shootT = clock.seconds();
+            shotNote = "";
+        }
+        boolean isShooting() { return shootState != 0; }
+        boolean turretHomed() { return turret.isHomed(); }
+
+        /** Encoder-verified turret on its target (homed, fresh pose while tracking). */
+        boolean turretReady() {
+            return turret.isHomed() && (!tracking || poseFresh)
+                    && Math.abs(turret.getTargetYawDegrees() - turret.getEncoderAngleDegrees())
+                    <= TurretSubsystem.SHOT_READY_YAW_TOLERANCE_DEG;
+        }
+
+        /** Same readiness as the fallback auto: flywheel at speed, hood settled and turret on target. */
+        boolean ready() {
+            return spinning && rpmTarget > 0 && turret.isShooterAtSpeed() && turret.isHoodTracking() && turretReady();
+        }
+
+        /** Mid-auto stop: mechanisms off, the turret holds its last target and keeps its home. */
+        void stopAll() {
+            shootState = 0;
+            setIntake(0);                    // also stops transfer stage 1
+            spinning = false;
+            tracking = false;
+            fixedHeadingDeg = Double.NaN;
+            kicker.setPower(0);
+            transfer.setPower(0);
+            turret.stopShooter();
+            gate.setPosition(T.GATE_CLOSED);
+        }
+
+        /** End of OpMode: every output stops even if one device throws. */
+        void shutdown() { RobotShutdown.stopAll(this::stopAll, turret::stop); }
+
+        int homeRetries = 0;                 // estimated turret homes restarted after a FAULT
+
+        /**
+         * Once per loop, before the step: turret encoder, homing and flywheel velocity reads. A home that
+         * faults (turret bumped or still moving in its settle window) restarts at once; otherwise the
+         * turret would stay unhomed and never aim for the rest of the auto.
+         */
+        void readSensors(double now) {
+            turret.update(now);
+            if (turret.hasHomingFault()) { homeRetries++; turret.homeTurretAndZeroEncoder(now); }
+        }
+
+        /**
+         * Once per loop, after the step. pose: this loop's Pinpoint sample (meters, Pedro frame, CCW).
+         * Aim uses the competition auto-aim rules: pivot offset from ShootingConfiguration.MOUNT, the
+         * TurretControl aim lead, and TurretSubsystem's reachable-yaw rule for the rear dead zone.
+         */
+        void apply(double now, MotionSample pose) {
+            poseFresh = pose != null && pose.fresh(now, ShotPlanner.MAX_SAMPLE_AGE_SECONDS);
+            ShooterMount mount = ShootingConfiguration.MOUNT;
+            if (aimTarget != null && poseFresh) {
+                double gx = aimTarget.x() * METERS_PER_INCH, gy = aimTarget.y() * METERS_PER_INCH;
+                dist = TeleOpFieldReference.pivotRangeMeters(pose, gx, gy, mount) / METERS_PER_INCH;
+                if (tracking && turret.isHomed()) {
+                    double yawDeg = Math.toDegrees(TeleOpFieldReference.yawRadians(
+                            pose.led(TurretControl.AIM_LEAD_SECONDS), gx, gy, mount));
+                    turret.setTargetYawDegrees(turret.reachableYawTarget(yawDeg));
+                }
+            }
+            if (!tracking && Double.isFinite(fixedHeadingDeg) && turret.isHomed()) {
+                turret.setTargetYawDegrees(turret.reachableYawTarget(
+                        TurretControl.robotHeadingToYawDegrees(fixedHeadingDeg)));
+            }
+            turret.applyYawCommand(now); // Same-loop servo write; also drives homing travel.
+
+            // ---- hood + flywheel from the measured shot table (range from the turret pivot) ----
+            ShotProfile.Row row = ShootingConfiguration.PROFILE.sample(dist * METERS_PER_INCH);
+            hoodTargetDeg = hoodAuto && row != null ? row.hoodDeg : hoodManualDeg;
+            turret.setPitchAngleDegrees(hoodTargetDeg);
+            rpmTarget = rpmAuto ? (row == null ? 0 : row.rpm) : ShooterSpeed.clampFlywheelRpm(rpmManual);
+            if (spinning && rpmTarget > 0) turret.setShooterRpm(rpmTarget);
+            else turret.stopShooter();
+
+            // ---- shot sequence: open gate -> both transfer stages feed -> stop -> close gate ----
+            // Stage 1 also runs whenever the intake is in (setIntake); stage 2 (kicker) only feeds shots.
+            double t = clock.seconds();
+            switch (shootState) {
+                case 1:
+                    gate.setPosition(T.GATE_OPEN);
+                    if (t - shootT >= T.GATE_OPEN_DELAY_S) {   // gate is open: run both transfers
+                        kicker.setPower(T.KICKER_POWER);
+                        transfer.setPower(T.TRANSFER_POWER);
+                        shootState = 2;
+                        shootT = t;
+                    }
+                    break;
+                case 2:
+                    if (t - shootT >= T.FEED_PER_BALL_S * shootBalls) {
+                        kicker.setPower(0);
+                        transfer.setPower(stage1IdlePower()); // back to intake-only loading
+                        shootState = 3;
+                        shootT = t;
+                    }
+                    break;
+                case 3:
+                    if (t - shootT >= T.GATE_CLOSE_DELAY_S) {
+                        gate.setPosition(T.GATE_CLOSED);
+                        shootState = 0;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        void addTelemetry(Telemetry t) {
+            turret.addDriverTelemetry(t);
+            if (homeRetries > 0) t.addData("Turret home retries", homeRetries);
+            t.addData("Turret target heading (deg CW)", "%.1f | %s", turret.getTargetRobotHeadingDegrees(),
+                    !turret.isHomed() ? "NOT HOMED" : turretReady() ? "ON TARGET" : tracking && !poseFresh ? "POSE STALE" : "MOVING");
+            t.addData("Aim range (in)", "%.1f%s", dist, aimTarget == null ? " (fallback)" : "");
+            t.addData("Hood travel (deg) / flywheel target (RPM)", "%.1f / %.0f", hoodTargetDeg, rpmTarget);
+            t.addData("Shot", "ready %s | state %d%s", ready(), shootState, shotNote.isEmpty() ? "" : " | " + shotNote);
         }
     }
 `;
@@ -3490,7 +3793,11 @@ function buildJavaV3(){
   L.push('import com.qualcomm.robotcore.util.ElapsedTime;');
   L.push('import org.firstinspires.ftc.robotcore.external.Telemetry;');
   if (T.useDashboard) L.push('import com.acmerobotics.dashboard.config.Config;');
-  if (pkg !== 'org.firstinspires.ftc.teamcode') L.push('import org.firstinspires.ftc.teamcode.PedroDrive;');
+  if (pkg !== 'org.firstinspires.ftc.teamcode'){
+    ['PedroDrive', 'MotionSample', 'RobotLoop', 'RobotShutdown', 'ShooterMount', 'ShooterSpeed', 'ShootingConfiguration',
+     'ShotPlanner', 'ShotProfile', 'TeleOpFieldReference', 'TurretControl', 'TurretSubsystem']
+      .forEach(c => L.push(`import org.firstinspires.ftc.teamcode.${c};`));
+  }
   L.push('');
   L.push('import java.util.ArrayList;');
   L.push('import java.util.Arrays;');
@@ -3500,8 +3807,10 @@ function buildJavaV3(){
   L.push(' * Generated with the BioBuzz Path Planner (FTC 2026-27 "BIOBUZZ" presented by RTX) - Pedro Pathing 3 target.');
   L.push(' *');
   L.push(' * Built for com.pedropathing:core 3.0.0 (Paths API). The drivetrain, Pinpoint and Pedro follower come');
-  L.push(' * from the repo\'s PedroDrive, so its PedroConfiguration tuning applies; the mechanisms (intake, flywheel,');
-  L.push(' * hood, turret, gate, kicker, transfer) are the self-contained Robot class below, configured in class T.');
+  L.push(' * from the repo\'s PedroDrive, so its PedroConfiguration tuning applies. The turret yaw, hood and flywheel');
+  L.push(' * are the repo\'s TurretSubsystem (homing, rear dead zone, encoder-verified yaw, shooter PIDF), aimed with');
+  L.push(' * the same pivot geometry and aim lead as competition auto aim, and the hood / RPM come from the');
+  L.push(' * team-measured ShootingConfiguration.PROFILE. Intake, gate, kicker and transfer are the Robot class below.');
   L.push(' *');
   L.push(' * - Coordinates: Pedro field inches, bottom-left origin, +x right, +y up. Headings in degrees, CCW positive.');
   L.push(` * - Robot placed as a ${ROBOT_L} x ${ROBOT_W} in box, center (${fmtN(S.start.x, 2)}, ${fmtN(S.start.y, 2)}), heading ${fmtN(startH, 1)} deg.`);
@@ -3509,8 +3818,10 @@ function buildJavaV3(){
   L.push(' * - Path limits: speed is a fraction of PedroConfiguration.MAX_FORWARD_VELOCITY_IN_PER_SEC; max velocity,');
   L.push(' *   acceleration and deceleration are Foresight constraints for that one path (0 = no limit).');
   L.push(' *');
-  L.push(' * HOW IT RUNS: ONE while (opModeIsActive()) loop: drive.readSensors() (the single Pinpoint read), the');
-  L.push(' * current step, loop-code blocks, then drive.update(). Steps wait for a fresh, referenced Pinpoint pose.');
+  L.push(' * HOW IT RUNS: ONE while (opModeIsActive()) loop: loop.begin() (bulk cache), drive.readSensors() (the single');
+  L.push(' * Pinpoint read), robot.readSensors(), the current step, loop-code blocks, robot.apply() (same-loop');
+  L.push(' * turret/hood/flywheel writes), then drive.update(). Steps wait for a fresh, referenced Pinpoint pose.');
+  L.push(' * Keep the robot still during INIT: Pinpoint IMU calibration and turret homing both run then.');
   L.push(' * In your own code use: follower, drive, robot, telemetry, stepTimer, P(x, y, deg), H(deg), progress().');
   if (bigTurn) L.push(' * NOTE: a turn step is larger than 180 deg; hold() turns the short way, so split it into two turns.');
   L.push(' */');
@@ -3570,22 +3881,27 @@ function buildJavaV3(){
   L.push('    private static double now() { return System.nanoTime() * 1e-9; }');
   L.push('    static double clamp(double v, double lo, double hi) { return Math.max(lo, Math.min(hi, v)); }');
   L.push('    static double wrap(double a) { return Math.atan2(Math.sin(a), Math.cos(a)); }');
-  ROBOT_JAVA.split('\n').forEach(l => L.push(l));
+  ROBOT_JAVA_V3.split('\n').forEach(l => L.push(l));
   L.push('');
   L.push('    // =====================================================================================');
   L.push('    //  OPMODE');
   L.push('    // =====================================================================================');
   L.push('    @Override');
   L.push('    public void runOpMode() throws InterruptedException {');
+  L.push('        RobotLoop loop = new RobotLoop(hardwareMap);   // bulk-cached hub reads, cleared once per loop');
   L.push('        drive = new PedroDrive(hardwareMap);   // drive motors + Pinpoint + Pedro 3 follower');
   L.push('        follower = drive.follower();');
   L.push('        cfg = drive.config();');
-  L.push('        robot = new Robot(hardwareMap);');
   L.push('        try {');
+  L.push('            robot = new Robot(hardwareMap);    // starts turret homing');
   L.push(`            drive.setStartPose(P(${fmtN(sp0.x, 3)}, ${fmtN(sp0.y, 3)}, ${fmtN(startH, 1)}));   // box center (${fmtN(S.start.x, 2)}, ${fmtN(S.start.y, 2)}) + pod offsets`);
   L.push('            boolean lastMirrored = mirrored;');
   L.push('            while (opModeInInit()) {');
+  L.push('                loop.begin();');
   L.push('                drive.readSensors();   // applies the start pose once Pinpoint reports READY');
+  L.push('                double t = now();   // after the Pinpoint read: pose freshness needs t >= sample time');
+  L.push('                robot.readSensors(t);');
+  L.push('                robot.apply(t, drive.sample());   // turret homing only; nothing aims or spins before START');
   if (mirrorOn){
     L.push('                if (gamepad1.x) mirrored = false;');
     L.push('                if (gamepad1.b) mirrored = true;');
@@ -3595,10 +3911,11 @@ function buildJavaV3(){
     L.push('                }');
     L.push('                telemetry.addData("Side", mirrored ? "MIRRORED  (X = planned side)" : "PLANNED side  (B = mirrored)");');
   } else {
-    L.push('                telemetry.addLine("BioBuzz auto ready - keep the robot still during INIT");');
+    L.push('                telemetry.addLine("BioBuzz auto ready - keep the robot still during INIT (Pinpoint + turret homing)");');
   }
   L.push('                telemetry.addData("Pose ready", drive.ready(now()));');
   L.push('                drive.addTelemetry(telemetry);');
+  L.push('                robot.addTelemetry(telemetry);');
   L.push('                telemetry.update();');
   L.push('            }');
   L.push('            if (isStopRequested()) return;');
@@ -3606,8 +3923,7 @@ function buildJavaV3(){
   if (!N){
     L.push('            // Path is empty - draw a path in the planner.');
     L.push('        } finally {');
-    L.push('            drive.stop();');
-    L.push('            robot.stopAll();');
+    L.push('            RobotShutdown.stopAll(drive::stop, robot == null ? null : robot::shutdown);');
     L.push('        }');
     L.push('    }');
     L.push('}');
@@ -3620,8 +3936,10 @@ function buildJavaV3(){
   L.push('            boolean poseSeen = false;');
   L.push('');
   L.push('            while (opModeIsActive() && (stage < STEPS || running)) {');
+  L.push('                loop.begin();');
   L.push('                drive.readSensors();');
-  L.push('                robot.update(follower.pose());');
+  L.push('                double t = now();   // after the Pinpoint read: pose freshness needs t >= sample time');
+  L.push('                robot.readSensors(t);');
   L.push('                if (!poseSeen) poseSeen = drive.ready(now());');
   L.push('');
   L.push('                if (poseSeen && !running && stage < STEPS) {');
@@ -3652,17 +3970,18 @@ function buildJavaV3(){
     });
     L.push('');
   }
+  L.push('                robot.apply(t, drive.sample());');
   L.push('                drive.update();');
   L.push('                telemetry.addData("step", "%d / %d%s", Math.min(stage, STEPS), STEPS, poseSeen ? "" : " (waiting for Pinpoint pose)");');
   L.push('                drive.addTelemetry(telemetry);');
   L.push('                robot.addTelemetry(telemetry);');
+  L.push('                loop.addRateTelemetry(telemetry);');
   L.push('                telemetry.update();');
   L.push('            }');
   L.push('            telemetry.addLine("Auto complete");');
   L.push('            telemetry.update();');
   L.push('        } finally {');
-  L.push('            drive.stop();');
-  L.push('            robot.stopAll();');
+  L.push('            RobotShutdown.stopAll(drive::stop, robot == null ? null : robot::shutdown);');
   L.push('        }');
   L.push('    }');
   L.push('');
@@ -3707,7 +4026,7 @@ function highlightJava(src){
 }
 const CODE_HINTS = {
   classic: '<b>One file, one loop.</b> Robot subsystems, the Pedro path steps and your code all live in the generated OpMode. Each step is a <code>case</code> in <code>runStep()</code>; loop-code blocks run every cycle between two steps. Tuning numbers are in class <code>T</code> (edit them in the Tuning tab). The one outside dependency is the Pedro follower factory you set in Tuning. Uses the Pedro&nbsp;2.x <code>pathBuilder()</code> API (<code>BezierLine</code>, <code>getChainIndex</code>, <code>setStartingPose</code>), which <b>does not exist in Pedro&nbsp;3</b>: switch the target to Pedro&nbsp;3 for this repo.',
-  v3: '<b>Pedro 3 (com.pedropathing:core 3.0.0).</b> Same one-loop OpMode, but paths are built with <code>Paths.line / curve</code>, followed with <code>follower.follow(...)</code>, and driven by the repo&rsquo;s <code>PedroDrive</code> (drive motors + Pinpoint, one I2C read per loop). Speed, max velocity and the acceleration / deceleration limits become per-path Foresight modifiers. Turns hold the new heading (the short way) until within <code>T.TURN_TOLERANCE_DEG</code>. Needs <code>PedroDrive.config()</code> (in the V1 branch).',
+  v3: '<b>Pedro 3 (com.pedropathing:core 3.0.0).</b> Same one-loop OpMode, but paths are built with <code>Paths.line / curve</code>, followed with <code>follower.follow(...)</code>, and driven by the repo&rsquo;s <code>PedroDrive</code> (drive motors + Pinpoint, one I2C read per loop). Speed, max velocity and the acceleration / deceleration limits become per-path Foresight modifiers. Turns hold the new heading (the short way) until within <code>T.TURN_TOLERANCE_DEG</code>. The turret, hood and flywheel use the repo&rsquo;s <code>TurretSubsystem</code> and measured shot table, aimed like competition auto aim (homing in INIT, rear dead zone, encoder-checked yaw). Needs <code>PedroDrive.config()</code> and those V1 classes.',
 };
 function renderCode(){
   RAW_JAVA = S.codeTarget === 'v3' ? buildJavaV3() : buildJava();
@@ -3897,7 +4216,10 @@ $('setPodY').addEventListener('input', e => { const v = parseFloat(e.target.valu
 $('setMirX').addEventListener('input', e => { const v = parseFloat(e.target.value); S.mirror.x = isNaN(v) ? null : v; markDirty(); save(); });
 $('setDAccel').addEventListener('change', e => { S.dAccel = posOrNull(e.target.value); e.target.value = S.dAccel ?? ''; markDirty(); save(); renderInspector(); });
 $('setDDecel').addEventListener('change', e => { S.dDecel = posOrNull(e.target.value); e.target.value = S.dDecel ?? ''; markDirty(); save(); renderInspector(); });
-$('setTarget').addEventListener('change', e => { S.codeTarget = CODE_TARGETS.includes(e.target.value) ? e.target.value : 'v3'; markDirty(); save(); });
+$('setTarget').addEventListener('change', e => {
+  S.codeTarget = CODE_TARGETS.includes(e.target.value) ? e.target.value : 'v3';
+  renderTuning(); renderInspector(); markDirty(); save();   // tuning rows and mechanism units depend on the target
+});
 $('setMirY').addEventListener('input', e => { const v = parseFloat(e.target.value); S.mirror.y = isNaN(v) ? null : v; markDirty(); save(); });
 
 function syncSettings(){

@@ -63,8 +63,8 @@ Absolute named hold/reseed poses are authored coordinates and receive the contex
 | `intakeOn`, `intakeOff`, `intakeReverse`, `intakeSet(power)` | Latched power. Confirmed HIGH stops positive loading; LOW restores forward; deliberate reverse remains allowed. |
 | `intakeRun(power, seconds)` | Bounded run; stop on end/cancel. An old cleanup cannot override a replacement request. |
 | `loadOn`, `loadOff`, `transferStop` | Stage 1 loads only with room; stage 2 stays off. Pause/stop retains confirmed-full knowledge. |
-| `loadUntilFull(seconds)` | Own intake/transfer until confirmed full or timeout, then stop both. HIGH must remain present for 0.2 seconds to confirm. The sensor cannot count pieces. |
-| `feedManual(seconds)` | Explicit readiness BYPASS, never an automatic fallback. Open gate, wait 0.20 seconds, feed both stages; close/stop on end. Feed inhibit wins, even over this override. |
+| `loadUntilFull(seconds)` | Own intake/transfer until confirmed full or timeout, then stop both. HIGH must remain present for 0.5 seconds to confirm. The sensor cannot count pieces. |
+| `feedManual(seconds)` | Explicit readiness BYPASS, never an automatic fallback. Open gate, wait 0.10 seconds, feed both stages together; close/stop on end. Feed inhibit wins, even over this override. |
 | `gateOpen(seconds)`, `gateClose` | Bounded gate-only opening keeps transfer stopped; close/end clears feed requests. No feed authorization is implied. |
 | `feedStop`, `feedInhibit`, `feedResume` | Stop clears requests and preserves aim/pre-spin. Inhibit latches; resume clears it without starting feed. |
 | `depollinatorDeploy`, `depollinatorHome` | Command posture; 30-degree home and 135-degree CW deployment. One-second settle is an UNMEASURED estimate, not position feedback. STOP retains posture. |
@@ -91,7 +91,7 @@ Conditions are: `queueFull`, `queueSensorHigh`, `loadingActive`, `feedingActive`
 
 | Condition group | How to use it |
 | --- | --- |
-| Queue/loading | `queueSensorHigh` is raw digital status; `queueFull` requires continuous HIGH for 0.2 seconds and clears immediately on LOW. `loadingActive` and `feedingActive` describe actual commanded stage activity. Neither counts balls. |
+| Queue/loading | `queueSensorHigh` is raw digital status; `queueFull` requires continuous HIGH for 0.5 seconds and clears immediately on LOW. `loadingActive` and `feedingActive` describe actual commanded stage activity. Neither counts balls. |
 | Gate/inhibit | `gateFeedDelayElapsed` says open-command delay has elapsed; it does not authorize shooting. `feedInhibited` reports the latched override. |
 | Drive/localization | `localizationReady` includes READY/fresh/reference checks. `driveIdle` means Pedro IDLE; holding a reached endpoint is HOLD, so this is not a path-arrival predicate. |
 | Shooting | `turretHomed`, `turretAtTarget`, `hoodTrackingEstimated`, `flywheelAtSpeed` expose individual readiness. `aimReady` only means the current solution is aimable. `shotReady` also needs valid feeding calibration and yaw/hood/RPM readiness; the firing controller still applies its stability/recovery policy. |
@@ -124,7 +124,7 @@ For a bounded native readiness wait, select a named condition and set `timeoutS`
 
 ## Verification boundaries and handoff
 
-Pedro tuning remains unverified and blocks autonomous START. Pollen intrinsics/color/pickup eligibility, shot profiles and release timing retain their existing gates. Footprint and height are unmeasured placeholders; the expanded 18-inch box is not a verified deployed envelope. Measure the maximum mechanism envelope and use that conservatively before approving clearance. No metadata or example sets a measured flag to bypass these requirements.
+Pedro tuning remains unverified and blocks autonomous START. Pollen intrinsics/color/pickup eligibility, shot profiles retain their existing gates; release timing no longer gates firing (2026-11-15). Footprint and height are unmeasured placeholders; the expanded 18-inch box is not a verified deployed envelope. Measure the maximum mechanism envelope and use that conservatively before approving clearance. No metadata or example sets a measured flag to bypass these requirements.
 
 Standalone Drivetrain, Pinpoint, Pedro, Intake, Transfer, Gate, Depollinator, Turret, Limelight, camera/shot calibration and disconnected-servo programmer OpModes remain the maintenance path. Raw motor/PIDF/pod/encoder/servo programming is intentionally outside routine actions; adding hardware/control laws/calibration still requires Java/configuration changes.
 

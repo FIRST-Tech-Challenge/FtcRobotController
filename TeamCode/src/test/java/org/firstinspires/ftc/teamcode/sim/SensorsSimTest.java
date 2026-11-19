@@ -265,4 +265,65 @@ class SensorsSimTest {
             CompetitionSimTest.assertStopped(h);
         }
     }
+
+    /**
+     * Odometry-only auto aim while the chassis drives forward, back, right and left across the goal bearing (chassis
+     * 45 deg from the line of sight, so both pods carry lateral motion). No camera: Pinpoint alone must keep the turret
+     * on the plant's true bearing and turn it the same way the bearing turns. A pod direction that disagrees with the
+     * physical pod mirrors that axis and turns the turret the wrong way (robot, 2026-11-13: X pod).
+     */
+    @Test void bothAlliancesTrackTheGoalWhileDrivingAndStrafingAcrossIt() throws Exception {
+        String[] phases = {"forward", "back", "right", "left"};
+        final int start = 40, ticks = 40;
+        for (String alliance : new String[]{"Red", "Blue"}) {
+            boolean red = alliance.equals("Red");
+            double sign = red ? 1 : -1;
+            double x = sign * CrossingHandoffRedTeleOp.X_METERS, y = sign * CrossingHandoffRedTeleOp.Y_METERS;
+            double heading = CrossingHandoffRedTeleOp.HEADING_RAD + (red ? 0 : Math.PI);
+            BioBuzzSimHardware h = BioBuzzSimHardware.fullRobot(); // No camera: odometry alone keeps the aim.
+            TeleOpScenario s = new TeleOpScenario(alliance + "-aim-crossing", "sim.CrossingHandoff" + alliance + "TeleOp",
+                    h, .02, 160, start + 4 * ticks + 40, (p,t,a,b) -> {
+                a.right_trigger = p == OpModePhase.ACTIVE ? 1 : 0;
+                int phase = p == OpModePhase.ACTIVE && t >= start ? (t - start) / ticks : -1;
+                a.left_stick_y = phase == 0 ? -.4f : phase == 1 ? .4f : 0;
+                a.left_stick_x = phase == 2 ? .4f : phase == 3 ? -.4f : 0;
+            });
+            s.model.drive.setPose(x / .0254, y / .0254, heading);
+            h.pinpoint.attachChassisAt(x * 1000, y * 1000, heading);
+            s.run();
+            assertTrue(s.trace.at(OpModePhase.ACTIVE, start - 10).telemetry.contains("Field localization : LOCALIZED"), s.diagnostic());
+            TurretSubsystem.Alliance goalAlliance = red ? TurretSubsystem.Alliance.RED : TurretSubsystem.Alliance.BLUE;
+            double[] bearing = new double[start + 4 * ticks + 40], yaw = new double[bearing.length];
+            double maxError = 0;
+            int worstTick = -1;
+            for (TeleOpTrace.Sample v : s.trace.samples) if (v.phase == OpModePhase.ACTIVE && v.tick < bearing.length) {
+                MotionSample truth = new MotionSample(0, v.xIn*.0254, v.yIn*.0254, v.headingRad, 0,0,0,0,.02,true,true,"plant");
+                GoalTarget goal = TeleOpFieldReference.target(goalAlliance, TeleOpFieldReference.nearestSide(truth.y,
+                        red ? TurretSubsystem.HiveSide.AUDIENCE : TurretSubsystem.HiveSide.FAR));
+                bearing[v.tick] = TurretSubsystem.reachableYawDegrees(
+                        Math.toDegrees(TeleOpFieldReference.yawRadians(truth, goal, ShootingConfiguration.MOUNT)), v.yaw);
+                yaw[v.tick] = v.yaw;
+                double error = Math.abs(TurretSubsystem.normalizeAngleDegrees(bearing[v.tick] - v.yaw));
+                if (v.tick >= start - 10 && error > maxError) { maxError = error; worstTick = v.tick; }
+            }
+            StringBuilder stats = new StringBuilder(alliance + ": max error " + String.format(java.util.Locale.US, "%.2f deg at %d", maxError, worstTick));
+            for (int i = 0; i < phases.length; i++) {
+                int a = start + i * ticks, b = a + ticks;
+                double turned = yaw[b] - yaw[a], needed = bearing[b] - bearing[a];
+                stats.append(String.format(java.util.Locale.US, " | %s bearing %+.1f turret %+.1f", phases[i], needed, turned));
+            }
+            System.out.println("Crossing tracking " + stats);
+            for (int i = 0; i < phases.length; i++) {
+                int a = start + i * ticks, b = a + ticks;
+                double turned = yaw[b] - yaw[a], needed = bearing[b] - bearing[a];
+                assertTrue(Math.abs(needed) >= 5, phases[i] + " must move across the bearing: " + stats + s.diagnostic());
+                assertEquals(Math.signum(needed), Math.signum(turned), phases[i] + " turret turned the wrong way: " + stats + s.diagnostic());
+                assertEquals(needed, turned, 2.0, phases[i] + " " + stats + s.diagnostic());
+            }
+            assertTrue(maxError <= org.firstinspires.ftc.teamcode.ShotReadiness.YAW_TOLERANCE_DEG, stats + s.diagnostic());
+            assertTrue(Math.abs(TurretSubsystem.normalizeAngleDegrees(bearing[bearing.length - 1] - yaw[yaw.length - 1])) <= 1.0,
+                    stats + s.diagnostic());
+            CompetitionSimTest.assertStopped(h);
+        }
+    }
 }

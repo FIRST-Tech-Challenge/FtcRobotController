@@ -12,6 +12,6 @@ public class SyntheticRedTeleOp extends RedMecanumTeleOp {
         ShotProfile synthetic = new ShotProfile(target.geometryId, true,
                 new ShotProfile.Row(.2, 5, 2800), new ShotProfile.Row(5, 5, 2800));
         return new ShotCoordinator(turret, target, ShootingConfiguration.MOUNT, synthetic,
-                CompetitionFeedController.firing(), true, ShotCoordinator.AimMode.TELEOP_ODOMETRY);
+                CompetitionFeedController.firing(), ShotCoordinator.AimMode.TELEOP_ODOMETRY);
     }
 }

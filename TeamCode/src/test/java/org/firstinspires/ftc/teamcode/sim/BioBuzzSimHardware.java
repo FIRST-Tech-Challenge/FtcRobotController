@@ -42,14 +42,16 @@ final class BioBuzzSimHardware {
         return servo;
     }
 
-    BioBuzzSimHardware withIntake() { intake = motor("intake_motor"); return this; }
+    BioBuzzSimHardware withIntake() { if (intake == null) intake = motor("intake_motor"); return this; }
     BioBuzzSimHardware withLights() {
         ledIntake = servo("led_intake"); ledShooter = servo("led_shooter"); ledStatus = servo("led_status");
         return this;
     }
     BioBuzzSimHardware withTransfer() {
         if (gate == null) gate = servo("gate_servo");
-        transfer1 = motor("transfer_motor_1"); transfer2 = motor("transfer_motor_2");
+        // Stage 1 is a 6000 RPM Yellow Jacket with its own motor encoder (synthetic fixture top speed).
+        if (transfer1 == null) transfer1 = motor("transfer_motor_1");
+        transfer2 = motor("transfer_motor_2");
         distance = new FakeDigitalChannel(); map.register("distance_sensor", distance);
         distance.setSimulatedInputState(false);
         return this;
@@ -73,22 +75,23 @@ final class BioBuzzSimHardware {
         // Response rate remains synthetic; no calibrated shot/load dynamics.
         flywheel = new FakeMotor(5400.0 / 60 * 28, 10, 28);
         map.register("turret_motor", flywheel);
-        // Real through-bore quadrature is plugged into transfer motor 1's encoder port.
-        // Register only the installed name, exercising the production fallback lookup.
-        if (transfer1 == null) transfer1 = motor("transfer_motor_1");
-        encoder = transfer1;
+        // Real through-bore quadrature is plugged into the intake motor's encoder port (the intake has
+        // no encoder). Register only the installed name, exercising the production fallback lookup.
+        if (intake == null) intake = motor("intake_motor");
+        encoder = intake;
         map.register("Control Hub", new FakeVoltageSensor(14.0));
         return this;
     }
     BioBuzzSimHardware withPinpoint() {
         pinpoint = new FakeGoBildaPinpoint();
-        pinpoint.setPhysicalPodMount(32, -74, EncoderDirection.REVERSED,
+        // Physical pod directions measured 2026-11-13 (forward/left hand-push test): X FORWARD, Y REVERSED.
+        pinpoint.setPhysicalPodMount(32, -74, EncoderDirection.FORWARD,
                 EncoderDirection.REVERSED, 2000 / (32 * Math.PI));
         pinpoint.attachChassisAt(0, 0, 0);
         map.register("pinpoint", pinpoint);
         return this;
     }
-    /** Physical-convention camera: tag +Z into the print and upside-down underside stickers (see adapter). */
+    /** Physical-convention camera: inverted mount (sensor-frame poses) and tag +Z into the print (see adapter). */
     BioBuzzSimHardware withCamera(AprilTagLayout layout) {
         return withCamera(layout, true);
     }
@@ -124,8 +127,8 @@ final class BioBuzzSimHardware {
         // TU06 nominal map: one raised cell per alliance; never both states of the same hive.
         double[] offsets = {-6.5, -2.75, 2.75, 6.5};
         for (int side = 0; side < 2; side++) for (int i = 0; i < 4; i++) {
-            // Audience IDs decrease with X (upside-down underside stickers; physical frame 2026-11-05).
-            layout.addTiltedTag(34 + 4 * side + i, (side == 0 ? -12.75 : 12.75) - offsets[i],
+            // Audience IDs increase with X (upright stickers, IDs left to right; physical frame 2026-11-13).
+            layout.addTiltedTag(34 + 4 * side + i, (side == 0 ? -12.75 : 12.75) + offsets[i],
                     -org.firstinspires.ftc.teamcode.HiveTagGeometry.RAISED_TAG_ROW_Y_METERS / .0254,
                     org.firstinspires.ftc.teamcode.HiveTagGeometry.DRAWING_TAG_HEIGHT_METERS / .0254,
                     -Math.PI / 2, RAISED_TAG_TILT_UP_RAD, 3.25);
@@ -140,9 +143,9 @@ final class BioBuzzSimHardware {
         for (int i = 0; i < 4; i++) {
             double y = org.firstinspires.ftc.teamcode.HiveTagGeometry.RAISED_TAG_ROW_Y_METERS / .0254;
             double z = org.firstinspires.ftc.teamcode.HiveTagGeometry.DRAWING_TAG_HEIGHT_METERS / .0254;
-            // Red far IDs increase with X (tag 30 camera-right); blue audience IDs decrease with X.
-            layout.addTiltedTag(30+i,-12.75+offsets[i],y,z,Math.PI/2,RAISED_TAG_TILT_UP_RAD,3.25);
-            layout.addTiltedTag(38+i,12.75-offsets[i],-y,z,-Math.PI/2,RAISED_TAG_TILT_UP_RAD,3.25);
+            // Red far IDs decrease with X (tag 30 camera-left); blue audience IDs increase with X.
+            layout.addTiltedTag(30+i,-12.75-offsets[i],y,z,Math.PI/2,RAISED_TAG_TILT_UP_RAD,3.25);
+            layout.addTiltedTag(38+i,12.75+offsets[i],-y,z,-Math.PI/2,RAISED_TAG_TILT_UP_RAD,3.25);
         }
         return layout.build();
     }

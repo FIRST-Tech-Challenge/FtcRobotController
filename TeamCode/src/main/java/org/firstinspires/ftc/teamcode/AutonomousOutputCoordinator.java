@@ -10,6 +10,7 @@ public final class AutonomousOutputCoordinator {
     private Mode yaw = Mode.MANUAL, hood = Mode.MANUAL, flywheel = Mode.OFF;
     private boolean loading, automaticFeed, manualFeed, gateOnly, inhibited;
     private double intakePower, rpm;
+    private final StaggeredFeedTiming stage1Timing = new StaggeredFeedTiming();
     private AutonomousShotPresets.Preset preset;
 
     /** A timed command may clean up only channels it still owns. */
@@ -75,7 +76,14 @@ public final class AutonomousOutputCoordinator {
         if (turret != null) turret.applyYawCommand(now);
         gate.setOpen(!inhibited && (gateOnlyRequested() || firing.gateOpen()));
         boolean feeding = firing.feeding() && gate.isOpenForFeeding() && !inhibited;
-        transfer.updateCached(now, feeding, !loading || feedRequested() || gateOnlyRequested());
-        intake.setIntakePowerWithJamRecovery(now, intakePower(transfer.isFull()));
+        // Same stage-1 policy as TeleOp: stage 1 starts with stage 2 on every feed, and
+        // stage 1 alone keeps running with the gate closed between timed feeds.
+        boolean feedStage1 = stage1Timing.feedStage1(now, firing);
+        boolean closedGateStage1 = !inhibited && firing.closedGateStage1();
+        transfer.updateCached(now, feeding,
+                !closedGateStage1 && (!loading || feedRequested() || gateOnlyRequested()),
+                feedStage1, closedGateStage1);
+        intake.setIntakePower(intakePower(transfer.isFull()));
+        transfer.setIntakeRunning(intake.getCommandedPower() > 0); // Stage 1 stall guard only while intaking.
     }
 }

@@ -45,7 +45,7 @@ public abstract class FallbackAutonomous extends LinearOpMode {
         try {
             PinpointOdometry odometry = new PinpointOdometry(hardwareMap);
             gate = new GateSubsystem(hardwareMap, CompetitionFeedController.GATE_TO_FEED_DELAY_SECONDS);
-            // Transfer before turret: it owns the shared transfer_motor_1 port the turret encoder reads.
+            // Turret encoder reads intake_motor quad port 1; TurretSubsystem never reconfigures that channel.
             transfer = new TransferSubsystem(hardwareMap);
             String turretError = null;
             try {

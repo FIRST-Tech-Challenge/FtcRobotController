@@ -9,14 +9,17 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-/** Encoder-port routing and SDK direction regressions; no physical yaw calibration claim. */
+/**
+ * Encoder-port routing and SDK direction regressions; no physical yaw calibration claim.
+ * Wiring: the turret Through-Bore encoder is on intake_motor's encoder input (Expansion Hub port 1;
+ * the intake has no encoder) and transfer_motor_1 has its own motor encoder on port 2.
+ */
 public class TurretEncoderWiringTest {
     private final FakeHardwareMap map = new FakeHardwareMap();
-    private final FakeMotor transfer = new FakeMotor(2590, 10, 28);
+    private final FakeMotor intake = new FakeMotor(2590, 10, 28);
+    private final FakeMotor transfer = new FakeMotor(2800, 10, 28);
 
     private void configureHardware() {
-        FakeMotor intake = new FakeMotor(2590, 10, 28);
-        intake.setEncoderMeasuringAnotherMechanism(123, 456);
         map.register("intake_motor", intake);
         map.register("transfer_motor_1", transfer);
         map.register("transfer_motor_2", new FakeMotor(2590, 10, 28));
@@ -24,40 +27,58 @@ public class TurretEncoderWiringTest {
         map.register("distance_sensor", new FakeDigitalChannel());
         for (String name : new String[]{"gate_servo", "turret_servo_1", "turret_servo_2", "turret_pitch"})
             map.register(name, new FakeServo());
-        transfer.setEncoderMeasuringAnotherMechanism(6144, 3072);
+        intake.setEncoderMeasuringAnotherMechanism(6144, 3072);
     }
 
-    @Test public void turretUsesTransferEncoderAndPreservesReverseMotorConfiguration() {
+    @Test public void turretUsesIntakeChannelAndPreservesIntakeMotorConfiguration() {
         configureHardware();
-        // A legacy alias must not redirect feedback to the intake's newly connected encoder.
-        map.register("turret_encoder", map.get(FakeMotor.class, "intake_motor"));
-        new TransferSubsystem(map);
-        transfer.setPower(.6);
+        // A legacy alias must not redirect feedback to transfer stage 1's own motor encoder.
+        map.register("turret_encoder", transfer);
+        new IntakeSubsystem(map).setIntakePower(.6);
         TurretSubsystem turret = new TurretSubsystem(map, false, () -> 0);
         turret.update(0);
         assertYawFeedback(turret);
-        assertEquals(DcMotor.Direction.REVERSE, transfer.getDirection());
-        assertEquals(DcMotor.RunMode.RUN_WITHOUT_ENCODER, transfer.getMode());
-        assertEquals(.6, transfer.getPower(), 0);
-        assertEquals(-6144, transfer.getCurrentPosition());
+        assertEquals(DcMotor.Direction.FORWARD, intake.getDirection());
+        assertEquals(DcMotor.RunMode.RUN_WITHOUT_ENCODER, intake.getMode());
+        assertEquals(.6, intake.getPower(), 0);
     }
 
-    @Test public void laterTransferInitializationCannotFlipYawOrResetItsZero() {
+    @Test public void reversedSharedChannelDirectionCannotFlipYaw() {
+        configureHardware();
+        intake.setDirection(DcMotor.Direction.REVERSE);
+        TurretSubsystem turret = new TurretSubsystem(map, false, () -> 0);
+        turret.update(0);
+        assertEquals(-6144, intake.getCurrentPosition());
+        assertYawFeedback(turret);
+    }
+
+    @Test public void laterIntakeInitializationCannotFlipYawOrResetItsZero() {
         configureHardware();
         TurretSubsystem turret = new TurretSubsystem(map, false, () -> 0);
         turret.update(0);
         assertYawFeedback(turret);
         turret.zeroEncoderAtCurrentPosition();
-        new TransferSubsystem(map);
-        transfer.setEncoderMeasuringAnotherMechanism(12288, 3072);
+        new IntakeSubsystem(map);
+        intake.setEncoderMeasuringAnotherMechanism(12288, 3072);
         turret.update(.02);
         assertYawFeedback(turret);
     }
 
-    @Test public void standaloneTurretEncoderAliasStillWorksWithoutTransferHardware() {
+    @Test public void transferLoadingNeverTouchesTurretFeedback() {
         configureHardware();
-        map.remove(null, "transfer_motor_1", transfer);
-        map.register("turret_encoder", transfer);
+        TurretSubsystem turret = new TurretSubsystem(map, false, () -> 0);
+        TransferSubsystem stage = new TransferSubsystem(map);
+        stage.update(0, false, false);
+        assertEquals(1, transfer.getPower(), 0);
+        assertEquals(DcMotor.RunMode.RUN_WITHOUT_ENCODER, intake.getMode());
+        turret.update(0);
+        assertYawFeedback(turret);
+    }
+
+    @Test public void standaloneTurretEncoderAliasStillWorksWithoutIntakeHardware() {
+        configureHardware();
+        map.remove(null, "intake_motor", intake);
+        map.register("turret_encoder", intake);
         TurretSubsystem turret = new TurretSubsystem(map, false, () -> 0);
         turret.update(0);
         assertYawFeedback(turret);

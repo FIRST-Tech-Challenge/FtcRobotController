@@ -1,0 +1,67 @@
+// Robot deploy tasks with automatic Wi-Fi switching, for Android Studio run configurations (.run/)
+// and tools/deploy.ps1. Applied from TeamCode/build.gradle after the Sloth Load plugin.
+//
+//   robotSloth    build the Sloth bundle -> join robot Wi-Fi -> removeSlothRemote + deploySloth -> rejoin home
+//   robotInstall  build the APK -> join robot Wi-Fi -> installDebug -> start the RC app -> rejoin home
+//   robotWifiReturn  go back to the saved home network after a deploy run with -Probot.stay
+//
+// Properties: -Probot.stay (stay on the robot Wi-Fi), -Probot.noWifi (never touch Wi-Fi).
+// The build runs before the Wi-Fi hop, so dependency downloads still have internet.
+// The robot Wi-Fi profile defaults to 10100-RC; set the BIOBUZZ_ROBOT_WIFI environment variable to change it.
+
+def wifiScript = rootProject.file('tools/robot-wifi.ps1').absolutePath
+def robotFlag = { String name ->
+    project.hasProperty("robot.${name}") && project.property("robot.${name}").toString() != 'false'
+}
+// Process-scoped policy for this repository script only; no machine or user setting is changed.
+def wifiCommand = { String mode, List<String> extra ->
+    ['powershell.exe', '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', wifiScript, mode] + extra
+}
+
+def robotWifiLeave = tasks.register('robotWifiLeave', Exec) {
+    group = 'robot'
+    description = 'Disconnects adb and rejoins the network used before robotWifiJoin (unless -Probot.stay).'
+    commandLine wifiCommand('-Leave', robotFlag('stay') ? ['-Stay'] : [])
+}
+
+def robotWifiJoin = tasks.register('robotWifiJoin', Exec) {
+    group = 'robot'
+    description = 'Makes the robot reachable over adb: USB if attached, else joins the robot Wi-Fi.'
+    commandLine wifiCommand('-Join', robotFlag('noWifi') ? ['-NoWifiSwitch'] : [])
+    // Runs even when the deploy after it fails, so the laptop is never stranded on the robot network.
+    finalizedBy robotWifiLeave
+}
+
+tasks.register('robotWifiReturn', Exec) {
+    group = 'robot'
+    description = 'Rejoins the saved home network after a deploy that stayed on the robot Wi-Fi.'
+    commandLine wifiCommand('-Leave', [])
+}
+
+def robotLaunchApp = tasks.register('robotLaunchApp', Exec) {
+    group = 'robot'
+    description = 'Starts the Robot Controller app after an install (installDebug does not).'
+    commandLine android.adbExecutable.absolutePath, 'shell', 'monkey', '-p', 'com.qualcomm.ftcrobotcontroller',
+            '-c', 'android.intent.category.LAUNCHER', '1'
+}
+
+tasks.register('robotSloth') {
+    group = 'robot'
+    description = 'Sloth hot reload of TeamCode with automatic Wi-Fi switching.'
+    dependsOn robotWifiJoin, 'removeSlothRemote', 'deploySloth'
+}
+
+tasks.register('robotInstall') {
+    group = 'robot'
+    description = 'Full APK install with automatic Wi-Fi switching (clears Sloth reloads first).'
+    dependsOn robotWifiJoin, 'installDebug', robotLaunchApp
+}
+
+afterEvaluate {
+    robotWifiJoin.configure { mustRunAfter 'assembleSloth', 'packageDebug' }
+    tasks.named('removeSlothRemote') { mustRunAfter robotWifiJoin }
+    tasks.named('deploySloth') { mustRunAfter 'removeSlothRemote' }
+    tasks.named('installDebug') { mustRunAfter robotWifiJoin }
+    robotLaunchApp.configure { mustRunAfter 'installDebug' }
+    robotWifiLeave.configure { mustRunAfter 'deploySloth', 'installDebug', robotLaunchApp }
+}

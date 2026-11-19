@@ -39,15 +39,35 @@ public final class ShootingConfiguration {
     public static final boolean GOAL_OBSERVATION_VALIDATED = false; // Camera settings / pose quality / tolerances await validation.
     public static final boolean FIELD_RELOCALIZATION_ENABLED = true; // Team-authorized TU06 nominal map + documented camera mount.
     public static final boolean LEVEL_CHASSIS_ASSUMED = true; // No chassis pitch/roll sensor is supplied.
-    public static final ShotProfile PROFILE = ShotProfile.example();
-    public static final boolean RELEASE_TIMING_MEASURED = false;
-    public static final boolean VISION_TIMING_MEASURED = false; // Legacy diagnostic firing only; TeleOp uses SDK capture timing.
+    // Team-measured shot table (2026-11-15). Horizontal muzzle-to-opening range in inches,
+    // flywheel output RPM, and hood command as downward travel from home in degrees.
+    // ShotProfile.sample() interpolates RPM and hood linearly between rows. Outside 12-60 in it
+    // continues the nearest end segment's line (48-60 in above, 12-24 in below), with hood clamped
+    // to its 0-30 deg travel and RPM to the flywheel target ceiling. Extrapolated ranges are unmeasured.
+    public static final double[][] MEASURED_SHOT_TABLE_IN_RPM_HOOD_DEG = {
+            {12, 2950, 7},
+            {24, 3050, 5},
+            {36, 3100, 2},
+            {48, 3200, 0},
+            {60, 3400, 0},
+    };
+    public static final ShotProfile PROFILE = measuredProfile();
+    private static ShotProfile measuredProfile() {
+        ShotProfile.Row[] rows = new ShotProfile.Row[MEASURED_SHOT_TABLE_IN_RPM_HOOD_DEG.length];
+        for (int i = 0; i < rows.length; i++) {
+            double[] r = MEASURED_SHOT_TABLE_IN_RPM_HOOD_DEG[i];
+            rows[i] = new ShotProfile.Row(r[0] * ShotCalibration.METERS_PER_INCH, r[2], r[1]);
+        }
+        return new ShotProfile(CALIBRATION_GEOMETRY_ID, true, true, rows);
+    }
+    // Release / vision timing is not a firing gate (2026-11-15): the values below are used as-is.
     public static final double ADDITIONAL_VISION_TRANSPORT_SECONDS = 0;
     public static final double GATE_TO_FEED_DELAY_SECONDS = GateSubsystem.FEED_DELAY_AFTER_OPEN_COMMAND_SECONDS;
     public static final double FEED_TO_EXIT_SECONDS = .12;
-    // Gate stays open throughout the command-to-feed delay and this two-stage feed window.
-    // Starting values for loaded testing, not measured release calibration.
-    public static final double FEED_WINDOW_SECONDS = .50, RECOVERY_SECONDS = .35, READY_STABLE_SECONDS = .15;
+    // Staggered shot timing tuned on the robot (2026-11-15): gate delay 0.10 s, stage-2 feed 0.20 s
+    // (0.30 s gate-open window, stage 1 from 0.15 s) and no recovery pause. Shared by competition TeleOp,
+    // autonomous, the bench test and diagnostics; loaded timing is not a measured release calibration.
+    public static final double FEED_WINDOW_SECONDS = .20, RECOVERY_SECONDS = 0.0, READY_STABLE_SECONDS = .15;
     public static final boolean STARTING_FIELD_POSE_CONFIGURED = false;
     public static final double START_X_METERS = 0, START_Y_METERS = 0, START_HEADING_RAD = 0;
     public static GoalTarget target(TurretSubsystem.Alliance alliance, TurretSubsystem.HiveSide side) {

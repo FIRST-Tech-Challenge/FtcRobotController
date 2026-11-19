@@ -4,7 +4,7 @@ import org.firstinspires.ftc.teamcode.RobotMath.Vec;
 
 /**
  * Builds a physically consistent metric tag pose for unit tests: the sticker lies in the measured
- * 30-deg underside plane, its +X edge runs horizontally along the cell (far +X, audience -X), and its
+ * 30-deg underside plane, its +X edge runs horizontally along the cell (far -X, audience +X), and its
  * outward +Z normal faces down toward the robot side. Orientation is expressed in the robot's
  * intrinsic Z-Y-X tag basis (after LimelightObservation's conversion), so heading can be read from
  * the edge exactly as on the robot.
@@ -17,7 +17,8 @@ final class TagFixtures {
         double cameraYaw = robot.heading + mount.zeroYaw + turretYaw + mount.cameraYaw;
         Vec ray = new Vec(known.x, known.y).minus(mount.cameraPosition(robot, turretYaw));
         double[] position = toCamera(ray.x, ray.y, known.height - mount.cameraHeight, cameraYaw, mount.cameraPitch);
-        double edgeYaw = PoseHistory.tagEdgeFieldYaw(target), normalYaw = edgeYaw + Math.PI / 2;
+        // Upright sticker seen from the robot: +X camera-right, outward normal toward the robot side.
+        double edgeYaw = PoseHistory.tagEdgeFieldYaw(target), normalYaw = edgeYaw - Math.PI / 2;
         double plane = Math.toRadians(HiveTagGeometry.RAISED_TAG_PLANE_DEG);
         double[] x = toCamera(Math.cos(edgeYaw), Math.sin(edgeYaw), 0, cameraYaw, mount.cameraPitch);
         double[] z = toCamera(Math.cos(normalYaw) * Math.sin(plane), Math.sin(normalYaw) * Math.sin(plane),

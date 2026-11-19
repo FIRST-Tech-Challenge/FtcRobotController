@@ -28,11 +28,12 @@ public final class HiveTagGeometry {
                 ? (side == TurretSubsystem.HiveSide.FAR ? 30 : 34)
                 : (side == TurretSubsystem.HiveSide.AUDIENCE ? 38 : 42);
         double centerX = TurretSubsystem.getHiveOpeningCenterXInches(alliance) * .0254;
-        // Stickers sit on the cell underside with their bottom edge toward field center, so a robot
-        // below the cell sees each sticker upside down: IDs increase right-to-left in the camera.
-        // Far side (robot looks -Y): IDs increase with field X. Audience side: IDs decrease with X.
-        // Physical frame 2026-11-05 (red far): tag 30 camera-right of 31, 32, 33.
-        double direction = side == TurretSubsystem.HiveSide.AUDIENCE ? -1 : 1;
+        // A robot below the cell sees the underside stickers upright: IDs increase left to right in the
+        // upright camera frame (tag +X camera-right). Far side (robot looks -Y, camera-right is -X): IDs
+        // decrease with field X. Audience side (camera-right is +X): IDs increase with X.
+        // Physical frame 2026-11-13 (Red audience, inverted-mount conversion): tags 34, 35, 36, 38, 39
+        // left to right with 3.75 / 5.5 / 16.25 in spacing, matching this map to 1 cm.
+        double direction = side == TurretSubsystem.HiveSide.AUDIENCE ? 1 : -1;
         double rowSign = side == TurretSubsystem.HiveSide.AUDIENCE ? 1 : -1;
         GoalTarget.Tag[] tags = new GoalTarget.Tag[4];
         for (int i = 0; i < tags.length; i++) tags[i] = new GoalTarget.Tag(first + i,

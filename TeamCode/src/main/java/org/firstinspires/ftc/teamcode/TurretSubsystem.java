@@ -26,9 +26,9 @@ import java.util.List;
  *         Expansion Hub Servo Ports 1 & 2 (powered via goBILDA 6V Servo Power Injector 3125-0001-0001).
  *         Config names: {@code "turret_servo_1"} and {@code "turret_servo_2"}.</li>
  *     <li><b>Turret Rotation Encoder (REV Through-Bore Encoder V1, REV-11-1271)</b>:
- *         Expansion Hub Quadrature Port 2 (8192 CPR, geared 108T Turret : 40T Encoder = 2.7x faster).
- *         Read via transfer motor 1's {@code DcMotorEx} encoder channel.
- *         Config name: {@code "transfer_motor_1"}; standalone alias {@code "turret_encoder"}.</li>
+ *         Expansion Hub Quadrature Port 1 (8192 CPR, geared 108T Turret : 40T Encoder = 2.7x faster).
+ *         Read via the intake motor's {@code DcMotorEx} encoder channel (the intake has no encoder).
+ *         Config name: {@code "intake_motor"}; standalone alias {@code "turret_encoder"}.</li>
  *     <li><b>Turret Pitch / Hood Servo (1x Axon MAX+, Servo Mode, 2:1 linkage with hood angle)</b>:
  *         Expansion Hub Servo Port 0 (powered via goBILDA 6V Servo Power Injector 3125-0001-0001).
  *         Home is {@code PITCH_HOME_SERVO_POS}, the team's +15 deg launch reference.
@@ -54,7 +54,7 @@ public class TurretSubsystem {
     public static final int ROTATION_SERVO_2_PORT = 2;
     public static final int PITCH_SERVO_PORT = 0;
     public static final String HW_TURRET_MOTOR     = "turret_motor";   // Exp Hub Motor & Quad Port 0
-    public static final String HW_TURRET_ENCODER   = "turret_encoder"; // Standalone alias for Exp Hub Quad Port 2
+    public static final String HW_TURRET_ENCODER   = "turret_encoder"; // Standalone alias for Exp Hub Quad Port 1
     public static final String HW_LIMELIGHT        = "limelight";      // Control Hub USB 3.0
 
     // =========================================================================
@@ -86,13 +86,16 @@ public class TurretSubsystem {
     // Set to -1.0 if positive angle commands move the turret in the opposite direction of encoder ticks
     public static final double ROTATION_SERVO_DIRECTION_SIGN = -1.0;
 
-    // Both rotation servos mesh with the turret ring in the same orientation by default;
-    // flip ROTATION_SERVO_2_DIRECTION if they are mounted inverted relative to each other.
-    public static final Servo.Direction ROTATION_SERVO_1_DIRECTION = Servo.Direction.FORWARD;
-    public static final Servo.Direction ROTATION_SERVO_2_DIRECTION = Servo.Direction.FORWARD;
+    // Both rotation servos mesh with the turret ring in the same orientation, so they share ONE direction
+    // (and one PWM range and one position command) through PairedServos. There is intentionally no
+    // per-servo direction: opposite directions on a shared gear strip teeth. To reverse the turret,
+    // change ROTATION_SERVO_DIRECTION_SIGN or this one constant, never one servo alone.
+    public static final Servo.Direction ROTATION_SERVO_DIRECTION = Servo.Direction.FORWARD;
+    static final String[] ROTATION_SERVO_1_NAMES = {HW_ROTATION_SERVO_1, "turretServo1", "turret_left", "turret1"};
+    static final String[] ROTATION_SERVO_2_NAMES = {HW_ROTATION_SERVO_2, "turretServo2", "turret_right", "turret2"};
 
     // =========================================================================
-    // REV THROUGH-BORE ENCODER V1 (QUAD PORT 2, 108T TURRET : 40T ENCODER)
+    // REV THROUGH-BORE ENCODER V1 (QUAD PORT 1 VIA intake_motor, 108T TURRET : 40T ENCODER)
     // =========================================================================
     // REV-11-1271 quadrature resolution = 8192 counts per revolution (2048 CPR * 4x).
     // Geared 108T on turret/servos : 40T on encoder => encoder spins 2.7x faster than turret.
@@ -108,7 +111,7 @@ public class TurretSubsystem {
     // =========================================================================
     // HOOD TRAVEL FROM HOME (PORT 0, 2:1 LINKAGE): 0..30 DEG => LAUNCH +15..-15 DEG
     // =========================================================================
-    // Home includes a 8-degree downward offset from the original 0.5 mechanical reference.
+    // Home includes a 10.5-degree downward offset from the original 0.5 mechanical reference.
     // Linked 2:1 with turret angle: 1 deg of turret pitch requires 2 deg of Axon MAX+ servo rotation
     // (or set PITCH_SERVO_TO_TURRET_RATIO = 1.0 if measuring servo shaft degrees directly).
     // Increasing PWM moves down. Never command above the new home toward the upper stop.
@@ -117,8 +120,8 @@ public class TurretSubsystem {
     public static final double LAUNCH_HOME_ANGLE_DEG = 15.0;
     public static final double PITCH_HOME_DEG = 0.0;
     public static final double PITCH_SERVO_TO_TURRET_RATIO = 2.0; // 60 deg servo travel = 30 deg hood travel
-    // Previous +9-degree position (6 degrees below previous home) is the new +15 reference.
-    public static final double PITCH_HOME_OFFSET_DEG = 8.0;
+    // Previous +12.5-degree position (2.5 degrees below the 8-degree-offset home) is the new +15 reference.
+    public static final double PITCH_HOME_OFFSET_DEG = 10.5;
     public static final double PITCH_HOME_SERVO_POS = 0.5
             + PITCH_HOME_OFFSET_DEG * PITCH_SERVO_TO_TURRET_RATIO / AXON_MAX_TRAVEL_DEG;
     public static final double PITCH_SERVO_POS_AT_0_DEG = PITCH_HOME_SERVO_POS;
@@ -213,8 +216,7 @@ public class TurretSubsystem {
     // =========================================================================
     // HARDWARE DEVICES
     // =========================================================================
-    private final Servo rotationServo1;
-    private final Servo rotationServo2;
+    private final PairedServos rotationServos;
     private final Servo pitchServo;
     private final DcMotorEx shooterMotor;
     private final DcMotorEx throughBoreEncoderPort;
@@ -222,7 +224,7 @@ public class TurretSubsystem {
     private final boolean visionEnabled;
     private final java.util.List<VoltageSensor> voltageSensors = new java.util.ArrayList<>();
     private double batteryVolts = Double.NaN, shooterCurrentAmps = Double.NaN;
-    /** PIDF is the default everywhere; the fusion law is selected only by the combined bench test. */
+    /** PIDF is the subsystem default; competition TeleOps and the combined bench test can select fusion. */
     public enum ShooterController { PIDF, BANG_BANG_FUSION }
     private ShooterController shooterController = ShooterController.PIDF;
     private double fusionPower, shooterTicksPerSecond;
@@ -263,16 +265,17 @@ public class TurretSubsystem {
         this.clock = clock;
         visionEnabled = enableVision;
         for (VoltageSensor sensor : hardwareMap.voltageSensor) voltageSensors.add(sensor);
-        rotationServo1 = getTurretServo(hardwareMap, ROTATION_SERVO_1_PORT,
-                HW_ROTATION_SERVO_1, "turretServo1", "turret_left", "turret1");
-        rotationServo2 = getTurretServo(hardwareMap, ROTATION_SERVO_2_PORT,
-                HW_ROTATION_SERVO_2, "turretServo2", "turret_right", "turret2");
+        // Configured (one direction, one PWM range) and verified matched before any position is written.
+        rotationServos = new PairedServos("Turret rotation servos",
+                getTurretServo(hardwareMap, ROTATION_SERVO_1_PORT, ROTATION_SERVO_1_NAMES),
+                getTurretServo(hardwareMap, ROTATION_SERVO_2_PORT, ROTATION_SERVO_2_NAMES),
+                ROTATION_SERVO_DIRECTION, AXON_MIN_PULSE_US, AXON_MAX_PULSE_US);
         pitchServo = getTurretServo(hardwareMap, PITCH_SERVO_PORT,
                 HW_PITCH_SERVO, "turretPitch", "hood_servo", "pitch_servo");
-        shooterMotor = getDevice(hardwareMap, DcMotorEx.class,
+        shooterMotor = NamedHardware.requireMotor(hardwareMap,
                 HW_TURRET_MOTOR, "turretMotor", "shooter_motor", "shooter", "flywheel");
-        throughBoreEncoderPort = getDevice(hardwareMap, DcMotorEx.class,
-                TransferSubsystem.HW_TRANSFER_MOTOR,
+        throughBoreEncoderPort = NamedHardware.requireMotor(hardwareMap,
+                IntakeSubsystem.HW_INTAKE_MOTOR,
                 HW_TURRET_ENCODER, "turretEncoder", "through_bore", "turret_enc");
         limelight = enableVision ? tryGetDevice(hardwareMap, Limelight3A.class,
                 HW_LIMELIGHT, "limelight3a") : null;
@@ -280,7 +283,7 @@ public class TurretSubsystem {
         try {
             configureServos();
             configureShooterMotor();
-            // Transfer owns the shared channel's mode/direction; do not configure/reset it here.
+            // Intake owns the shared channel's mode/direction; do not configure/reset it here.
             configureLimelight();
 
             // Begin travel now; update during INIT and after an early START.
@@ -297,8 +300,7 @@ public class TurretSubsystem {
     // =========================================================================
 
     private void configureServos() {
-        configureAxonServo(rotationServo1, ROTATION_SERVO_1_DIRECTION);
-        configureAxonServo(rotationServo2, ROTATION_SERVO_2_DIRECTION);
+        // The rotation pair was configured and verified by PairedServos.
         configureAxonServo(pitchServo, PITCH_SERVO_DIRECTION);
     }
 
@@ -402,7 +404,7 @@ public class TurretSubsystem {
     }
     public void update(double now) {
         updateShooterPidf(now, false);
-        // Undo the SDK motor-direction sign: transfer stage 1 is REVERSE, but yaw calibration is unchanged.
+        // Undo the SDK motor-direction sign of the shared intake channel so yaw uses raw quadrature counts.
         int encoderPortSign = throughBoreEncoderPort.getDirection() == DcMotor.Direction.REVERSE ? -1 : 1;
         rawTicks = throughBoreEncoderPort.getCurrentPosition() * encoderPortSign;
         encoderVelocity = throughBoreEncoderPort.getVelocity() * encoderPortSign
@@ -491,7 +493,7 @@ public class TurretSubsystem {
     public void setRawRotationServoPosition(double pos) {
         if (!Double.isFinite(pos)) return;
         lastCommandedRotationServoPos = clampRotationServoPosition(pos);
-        rotationServo1.setPosition(lastCommandedRotationServoPos); rotationServo2.setPosition(lastCommandedRotationServoPos);
+        rotationServos.setPosition(lastCommandedRotationServoPos); // Always both servos, same position.
     }
     public double getLastCommandedRotationServoPos() { return lastCommandedRotationServoPos; }
     public static double clampRotationServoPosition(double pos) {
@@ -702,14 +704,6 @@ public class TurretSubsystem {
             }
             return configured.toString();
         }, candidateNames);
-    }
-
-    private <T> T getDevice(HardwareMap hwMap, Class<T> clazz, String... candidateNames) {
-        T device = tryGetDevice(hwMap, clazz, candidateNames);
-        if (device != null) {
-            return device;
-        }
-        return hwMap.get(clazz, candidateNames[0]);
     }
 
     private <T> T tryGetDevice(HardwareMap hwMap, Class<T> clazz, String... candidateNames) {

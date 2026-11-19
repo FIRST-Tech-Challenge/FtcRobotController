@@ -12,7 +12,7 @@ public class IntakeTestOpMode extends LinearOpMode {
         RobotLoop loop = new RobotLoop(hardwareMap);
         IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
 
-        telemetry.addLine("Intake: Expansion Hub motor/encoder port 1, intake_motor (own shaft encoder)");
+        telemetry.addLine("Intake: Expansion Hub motor port 1, intake_motor (no intake encoder; port 1 encoder = turret)");
         telemetry.addLine("GP1 RB = Forward (Motor CCW) | LB = Reverse | Release/Both = Stop");
         loop.addTelemetry(telemetry); telemetry.update();
 
@@ -23,7 +23,6 @@ public class IntakeTestOpMode extends LinearOpMode {
                 loop.begin();
                 intake.setBumperInputs(gamepad1.right_bumper, gamepad1.left_bumper);
                 intake.addTelemetry(telemetry);
-                telemetry.addData("Intake jam recovery", intake.isClearingJam() ? "CLEARING" : "MONITORING");
                 loop.addTelemetry(telemetry); telemetry.update();
             }
         } finally {

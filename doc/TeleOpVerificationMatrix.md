@@ -17,14 +17,14 @@ which depend on real geometry, physics or timing.
 | 5 | Status lights | COMPLETE / VERIFIED |
 | 6 | Depollinator integration | COMPLETE / VERIFIED |
 | 7 | Limelight and field geometry | COMPLETE / VERIFIED - 35 ms button-to-detection |
-| 8 | Both-alliance localization and auto aim | FIXES APPLIED / PHYSICAL RETEST PENDING - tag +Z convention, 55 deg camera pitch, 30 deg tag plane, multi-tag fusion and drift-only corrections (see [diagnostics](LimelightGoalStateDiagnostics.md)) |
-| 9 | Shot calibration and measured release timing | PENDING / NOT TESTED - production profile is `UNMEASURED`; `RELEASE_TIMING_MEASURED = false` |
+| 8 | Both-alliance localization and auto aim | COMPLETE / VERIFIED by functional check (2026-11-14) - operator reports Test: Auto Aim localizing and tracking the goal, chassis pushed by hand; see [the 2026-11-14 record](#auto-aim-physical-acceptance-2026-11-14) |
+| 9 | Shot calibration and measured release timing | IN PROGRESS (started 2026-11-14) - procedure in [ShotCalibration.md](ShotCalibration.md#task-9-acceptance-procedure-2026-11-14); shot table supplied 2026-11-15 (12-60 in, now the production profile); range cross-check, midpoint validation and release timing remain; `RELEASE_TIMING_MEASURED = false` |
 | 10 | Both-alliance combined competition controls and automatic firing | PENDING / NOT TESTED - automatic firing stays blocked until task 9 |
 | 11 | Autonomous routes, Pedro path tuning, pollen vision | COMPLETE / NOT REQUIRED - autonomous not in use |
 | 12 | Full loaded TeleOp match rehearsal (both alliances, partly drained battery) | PENDING / NOT TESTED - autonomous-to-TeleOp transition not required |
 
 Also COMPLETE / VERIFIED by functional check: build/configuration, drivetrain,
-intake, intake jam recovery, queue sensor, gate, transfer-only test, servo zero
+intake, queue sensor, gate, transfer-only test, servo zero
 calibration, Goal State diagnostic and the camera-only tests. Completed status
 records operator confirmation, not logged measurements.
 
@@ -259,29 +259,30 @@ manual-feed mapping. Full unit/simulation suites, lint and physical testing were
 omitted for this localized control change.
 
 Conflict-resolution verification (November 2, 2026): retained Dashboard live gains,
-bench jam recovery, automatic intake/loading, selectable shooting modes and timing,
+automatic intake/loading, selectable shooting modes and timing,
 and turret feedback on transfer motor 1. Simulation was selected to check their
 combined behavior: 202 ordinary tests, debug APK packaging and lint passed; after
 reconciling the isolated turret scenario with the already-configured 8-degree hood
 home offset, all 13 Mechanisms/Competition/runtime simulations and manifest entries
-passed. Jam-recovery tests now distinguish automatic loading from stopped/inhibited
-requests and verify that releasing RB preserves recovery when direction is unchanged.
-No production calibration or simulation assertions were relaxed. Full simulation and
+passed. No production calibration or simulation assertions were relaxed. Full simulation and
 physical robot testing were not run; ball contact and loaded clearance remain unmodeled.
 
-Full-queue intake stop and 0.2 s confirmation (November 12, 2026): this supersedes the
-intake reversal and 0.5 s confirmation described below. Continuous HIGH for 0.2 s
-(was 0.5 s) now confirms full and stops automatic intake (no reversal) in both
-competition wrappers, the bench test and autonomous forward collection. The 0.5 s
-stage-1 run-on that seats the fourth ball is kept, so stage 1 stops about 0.7 s after
-HIGH begins. LOW immediately clears full and resumes forward intake and loading.
-RB/LB overrides and deliberate autonomous reverse are unchanged. Simulation was
-selected for this shared behavior change: `simTeleOpTest` with `SimRuntimeTest`,
-`MechanismsSimTest` and `CompetitionSimTest` passed (28 scenarios, both alliances),
-the full `testDebugUnitTest` suite passed (268 tests) and `assembleDebug` succeeded.
-Scenario assertions were retimed to the 0.2 s confirmation and expect 0 intake power
-during the run-on; no scenario or OpMode was added. These are command/timing checks,
-not physical ball seating, sensor-placement or loaded-jam validation.
+Full-queue intake stop (November 12, 2026): this supersedes the intake reversal
+described below. Continuous HIGH for 0.5 s still confirms full; automatic intake now
+stops (no reversal) in both competition wrappers, the bench test and autonomous
+forward collection. The 0.5 s stage-1 run-on that seats the fourth ball is kept, so
+stage 1 stops about 1.0 s after HIGH begins. LOW immediately clears full and resumes
+forward intake and loading. RB/LB overrides and deliberate autonomous reverse are
+unchanged. (A 0.2 s confirmation was tried the same day and reverted to 0.5 s.)
+`bothAlliancesManualDriveQueueFeedAndInhibit` now also runs with the three status
+lights and asserts the intake light's PWM through loading (blue), confirmed full
+(green), LB reverse (orange), both bumpers (off), GP2 RB override (blue) and full
+again (green), plus the shooter light red during GP2 LT inhibit, on both wrappers.
+Simulation was selected for this shared behavior change: `simTeleOpTest` with
+`SimRuntimeTest`, `MechanismsSimTest` and `CompetitionSimTest` passed (28 scenarios),
+the full `testDebugUnitTest` suite passed (271 tests) and `assembleDebug` succeeded.
+No scenario or OpMode was added. These are command/timing and PWM-output checks, not
+physical ball seating, sensor placement, light wiring or light color validation.
 
 Sensor recovery and bumper overrides (November 1, 2026): this supersedes the earlier
 full-latch/intake-stop policy below. Continuous HIGH for 0.5 s reverses automatic
@@ -325,8 +326,8 @@ initialization/loop/STOP under its stated fixture; it does not certify every con
 | --- | --- | --- |
 | Drivetrain | DrivetrainTestOpMode, both competition wrappers, Pedro manual diagnostic | Two-stage motor-feedback-to-distance conversion with reported 104-mm wheels; forward/reverse/strafe/yaw, normalization, wheel selection, neutral/STOP, alias/missing hardware, 10/20ms, repeat decoded traces; chassis geometry/dynamics synthetic, loaded compression/slip unmeasured |
 | Gate | GateTestOpMode, TransferTestOpMode, both wrappers | Logical/physical direction, PWM, delayed feed, held/reopened gate, trigger priority, shutdown, missing/PWM-incapable device |
-| Intake | IntakeTestOpMode, bench, both wrappers | Forward/reverse/both/neutral, confirmed-HIGH stop (no reversal), LOW recovery, bumper overrides, independent shaft encoder, shutdown; shared 0.5-second jam recovery has controller and stalled-encoder tests; no ball-contact simulation |
-| Transfer | TransferTestOpMode, bench, both wrappers | 0.2-second HIGH dwell, 0.5-second stage-1 run-on, LOW resume, stage1-only loading, timed gate/both-stage feed, inhibit priority, STOP |
+| Intake | IntakeTestOpMode, bench, both wrappers | Forward/reverse/both/neutral, confirmed-HIGH stop (no reversal), LOW recovery, bumper overrides, independent shaft encoder, shutdown; no ball-contact simulation |
+| Transfer | TransferTestOpMode, bench, both wrappers | 0.5-second HIGH dwell, 0.5-second stage-1 run-on, LOW resume, stage1-only loading, timed gate/both-stage feed, inhibit priority, STOP |
 | Depollinator | DepollinatorTestOpMode, both wrappers | Deploy/home edges, home priority, PWM range/endpoints; holds commanded position at STOP |
 | Linear slide / claw | LinearSlideTestOpMode, both wrappers | GP2 LS-click toggle raises across the analog 360/0 wrap and lowers to zero, no power in INIT, jam -> FAULT with zero power, GP1 B claw toggle, zero power at STOP. Scenarios: `linearSlideTogglesAcrossAnalogWrapAndClawToggles`, `jammedLinearSlideFaultsWithZeroPower`, `bothAlliancesToggleSlideOnGp2AndClawOnGp1`. SYNTHETIC unloaded slide (rated Axon speed, no gravity/lag); travel and claw positions are placeholders until measured |
 | Turret / hood / flywheel | TurretTestOpMode, bench, both wrappers | Independent finite-rate yaw on transfer motor 1's encoder input, SDK REVERSE sign normalization, paired servo commands, hood held-button edge, shaft response, startup and STOP; loaded response unmeasured |
@@ -347,8 +348,7 @@ initialization/loop/STOP under its stated fixture; it does not certify every con
 November 2 encoder-wiring verification: `verify-teleop.ps1 -Sim -Scenario
 Mechanisms,Sensors,Competition` passed 195 ordinary tests and 15 existing simulations,
 debug APK packaging and lint. Fixtures now put turret feedback on transfer motor 1
-and intake feedback on its own shaft. At that review jam recovery remained bench-only (shared as of November 4); its timing
-and cancellation have controller tests, with physical jam clearing unverified.
+and intake feedback on its own shaft.
 
 The [hardware-review record](HardwareReviewImplementationStatus.md) records intake/transfer completion
 October 26, turret rotation/hood/shooting checks October 24/26 and gate mechanism good October 26. This audit
@@ -536,17 +536,17 @@ cutoff. The completed run took 64 seconds and did not hit the cutoff.
 | Evidence run | Result / limits |
 | --- | --- |
 | TeleOpIntegrationPolicyTest, IntakeShooterTestControllerTest, CompetitionFeedControllerTest, FiringCoordinatorTest, TransferControllerTest | 43 tests, zero failures/errors/skips |
-| Both actual Red/Blue wrappers: aim-only collection, pause for requested fire, independent lights, simulated intake encoder stall, STOP | Passed; uncalibrated production profile remains blocked |
+| Both actual Red/Blue wrappers: aim-only collection, pause for requested fire, independent lights, STOP | Passed; uncalibrated production profile remains blocked |
 | Both explicit synthetic-profile subclasses: GP2 auto offsets, held-button edges, clear and manual RPM fallback | Passed; profile and normalized camera basis are test-only |
 | Both actual wrappers: preserved manual feed/inhibit/bumper priorities and continuous/staggered selection | Passed for both manual inputs |
-| Isolated intake and LightsTestOpMode | Stall timing/release cancellation, independent channel selection, 1500/1100/1700-us colors and 600-us STOP commands passed |
+| Isolated intake and LightsTestOpMode | Independent channel selection, 1500/1100/1700-us colors and 600-us STOP commands passed |
 | Sensors diagnostic lifecycle scenario | Passed; includes AutoAimTestOpMode but does not certify its localization/aim performance |
 
 The seven selected simulation methods passed with zero failures/errors/skips;
 methods parameterize both alliances and, where relevant, both manual inputs.
 Production source compilation and test compilation succeeded. No calibration flags
 or feedback models were relaxed. No ball contact, loaded feeder clearance,
-actual launch, optical color, or physical jam clearing is claimed.
+actual launch or optical color is claimed.
 
 Logs: `build/teleop-audit-focused.log`, `build/teleop-audit-focused-errors.log`.
 JUnit XML: `TeamCode/build/test-results/testDebugUnitTest` and
@@ -633,6 +633,8 @@ Simulation decision: run all simulations because localization feeds aiming in bo
 TeleOps, Auto Aim and both Limelight tests. SimLoop tag layouts were flipped to the same physical
 order. New unit regression: `PhysicalLimelightFrameTest#redFarTagOrderAndClusterCenterMatchThePhysicalFrame`.
 Limits: simulation shares the map, so it checks consistency; aim accuracy needs a robot test.
+Superseded 2026-11-13: these camera-right values were raw inverted-sensor-frame readings; see
+"Inverted Limelight mount" below. The map order is back to IDs increasing left to right in the upright camera.
 
 ## Multi-tag field fusion and settle gating (2026-11-05)
 
@@ -647,6 +649,7 @@ Simulation decision: run all simulations because localization and aiming are sha
 wrappers, Auto Aim and both Limelight tests. Probing showed SimLoop draws stickers upright (tag +X
 camera-right) while the physical frame has them upside down (tag +X camera-left), so the sim camera adapter
 now applies Rz(pi) in target coordinates for every camera; the inverted-normal case adds Rx(pi).
+(Superseded 2026-11-13: the camera, not the sticker, is inverted; the adapter now applies camera-side Rz(pi).)
 `physicalTagConventionAcquiresAndSurvivesCameraLoss` now also asserts the localized pose within 3 cm and
 1.5 deg of the plant and turret yaw steady within 0.5 deg while stationary with RT held. New unit cases:
 `turretSwingAtCaptureDefersFieldCorrectionWithoutMovingThePose`,
@@ -842,3 +845,128 @@ Result: 268 unit tests, 36 scenarios (Competition 15, Sensors 8, Mechanisms 12, 
 `assembleDebug` and `lintDebug` (0 errors, 14 existing warnings), all pass; corner applied at INIT_LOOP tick 37 for both alliances.
 Limits: whether the physical Pinpoint discards a pose written during calibration is unmeasured; the 0.5-s settle is the
 existing handoff starting value. A refused ACTIVE press must be repeated by the operator.
+
+## Inverted Limelight mount: sensor-frame 3D poses (2026-11-13)
+
+Symptom: in Test: Auto Aim at the Red audience cell, RT stayed REQUESTED and the turret never aimed. Every tag
+failed the raised-tag check: about 1.42 m tag height (map 1.268 +/- 0.10) and plane angles around 41.6 deg (30 +/- 10).
+Cause: the Limelight is mounted upside down. The web UI "Stream Orientation: Upside-Down" rotates only the stream
+(its ID labels are drawn upside down); per-tag 3D poses stay in the inverted sensor frame. Evidence: the upright
+stream showed the tags about 7 deg below center while the raw pose put them 7.3 deg above; raw blue audience tags
+were camera-left of red although the blue hive is at +X; the field tape read 1.21 m tag centers and a 29.9-deg
+underside, with the Limelight face at 34.7 deg from horizontal (lens axis 55 deg confirmed). The 2026-11-05 tag-order
+"correction" had matched the map to these raw sensor-frame readings, so the map and the tag-edge yaw were mirrored too.
+Change: `LimelightObservation.LIMELIGHT_MOUNTED_INVERTED` applies Rz(pi) about the optical axis once at the SDK
+boundary (right/down negated, SDK yaw + pi) via `LimelightObservation.robotTag`, alongside the existing tag +Z
+conversion. `HiveTagGeometry.nominalRaisedTags` again has far IDs decreasing and audience IDs increasing with X
+(stickers seen upright, IDs left to right), and `PoseHistory.tagEdgeFieldYaw` is far pi / audience 0. Thresholds,
+tolerances, camera pitch/height and calibration flags are unchanged. Shared by Auto Aim, both competition TeleOps,
+corner refinement and both Limelight tests.
+Physical regression (`PhysicalLimelightFrameTest`, new frame): after the conversion all five 2026-11-13 tags read
+1.229-1.250 m; tags 34, 36, 38, 39 pass at 24-33 deg; tag 35 (raw pitch -18 deg) is rejected per tag as a plane outlier;
+converted left-to-right spacing 34-35-36-38-39 matches the map within 1.5 cm (36 to 38: 0.413 m vs 0.413 m); the four
+accepted tags acquire a field pose with the camera looking +Y about 0.83 m in front of the audience tag row. The
+2026-11-05 Red far frame now reads 1.243-1.245 m.
+Simulation decision: run Sensors and Competition because the change alters shared localization input for both
+competition wrappers, Auto Aim and both Limelight tests. `TargetNormalCameraAdapter` now models the physical sensor
+frame (camera-side Rz(pi); SimLoop's upright stickers kept), the inverted-normal rejection fixture is kept
+(target-side Rx(pi)), and SimLoop tag layouts follow the corrected order. No scenario assertion or tolerance changed.
+Results: 268 unit tests, `assembleDebug`, `lintDebug` (0 errors; 18 warnings, none in changed files), Sensors +
+Competition simulation (24 tests including runtime) all pass. Mechanisms, Gate and Drivetrain were not rerun
+(no camera use).
+Limits: the simulation shares the map and the conversion, so it checks consistency only. Single-tag plane angles are
+noisy (one outlier per frame in both physical frames), so the goal-state diagnostic can report conflicting tag
+planes; competition aim fuses accepted tags and rejects outliers per tag. 2D tx/ty are left unconverted (no OpMode
+aims from them). On-robot confirmation: done 2026-11-14, see the record at the end of this file.
+
+## Pinpoint X pod direction: auto aim across the goal and during spins (2026-11-13)
+
+Symptom (robot, both after the 2026-11-06 aim changes): driving across the hive turned the turret the opposite way,
+so the Limelight lost the goal and never corrected it; fast in-place spins overshot, then the turret drifted back.
+Cause: `PinpointOdometry.X_POD_DIRECTION` was REVERSED since the first commit and never measured; the SimLoop fixture
+shared that assumption, so no scenario could see it. Hand-push check in Test: Pinpoint Odometry Only (operator,
+2026-11-13): forward push read -X, left push +Y. A reversed pod mirrors that axis, and its rotation compensation
+turns an in-place spin into apparent sliding that the camera drift correction later removes.
+Diagnosis (temporary SimLoop experiment, not kept): Red TeleOp, auto aim held, fixture pods vs code. Matching:
+strafe, drive and a fast CCW spin all within 1.2 deg. Y fixture mismatched: strafing toward the hive turned the
+turret the wrong way every tick (129 deg off), spin overshot 11 deg and recovered in about 1 s. X mismatched: driving
+with the hive on the side turned it the wrong way (128 deg off), spin overshot 7 deg and recovered in about 1 s.
+Change: `X_POD_DIRECTION` FORWARD (Y stays REVERSED); the SimLoop fixture's physical pod mount now records the
+measured directions. Shared by both competition TeleOps, Test: Auto Aim, autonomous/Pedro and every Pinpoint test.
+Aim math, lead, turn cap, camera corrections and all tolerances are unchanged.
+Simulation decision: shared localization, so ran all scenario classes. New scenario
+`bothAlliancesTrackTheGoalWhileDrivingAndStrafingAcrossIt`: real Red/Blue TeleOps via test-only
+`CrossingHandoffRed/BlueTeleOp` (chassis 45 deg from the line of sight, no camera) hold RT and drive forward, back,
+right, left (0.4 stick, 0.8 s each). Asserts each phase moves the true bearing at least 5 deg, the turret turns the
+same way within 2 deg, error <= 3 deg throughout and <= 1 deg at the end. Baseline (code X REVERSED, measured
+fixture): failed, forward needed -84.5 deg but the turret turned +28.4 deg, max error 113.7 deg. After: Red and Blue
+max 1.78 deg; forward -84.5 / -85.7, back +84.4 / +85.7, right +87.6 / +88.3, left -86.5 / -88.2 deg (bearing / turret).
+Results: 275 unit tests, 48 simulations (every baseline name ran), `assembleDebug`, `lintDebug` (0 errors, 18
+warnings), all pass. Gradle was run directly: `verify-teleop.ps1` stops under Windows PowerShell 5.1 here (the
+`-FullSim` inventory check reads the JSON array as one entry, and the JDK 25 "restricted method" stderr warning
+becomes a script error), so the OpMode inventory check did not run; no OpMode was added.
+Limits: the fixture now encodes the measurement, so simulation checks consistency, not the physical pods. Pod offsets
+(+32 / -74 mm) remain unmeasured; the Pinpoint Tuner's 180-deg spin measures them. Servo lag and `AIM_LEAD_SECONDS`
+are unchanged; if a small spin overshoot remains on the robot, use Test: Auto Aim's suggested lead.
+
+## Auto aim physical acceptance (2026-11-14)
+
+Operator functional check in Test: Auto Aim, chassis pushed by hand: the turret localizes from the raised hive tags
+and tracks the goal with no issues observed. This covers the 2026-11-13 Limelight inverted-mount conversion, the
+corrected tag order and tag-edge yaw, and the Pinpoint X pod direction. Task 8 is COMPLETE / VERIFIED by functional
+check; it records operator confirmation, not logged tracking-error measurements.
+No migration was needed: Test: Auto Aim and both competition TeleOps (`MecanumTeleOp` via the Red/Blue wrappers)
+build the same `ShotCoordinator` in `TELEOP_ODOMETRY` mode with turret encoder correction, call
+`turret.applyYawCommand()` after the aim update, and share `PinpointOdometry`, `LimelightObservation`,
+`HiveTagGeometry` and `PoseHistory`. The TeleOps add only the driven chassis and the GP1 turn cap while RT aims.
+Not separately confirmed by this check: per-alliance results were not logged, the GP1 turn cap and aim lead
+(`AIM_LEAD_SECONDS`, 25 ms) under driven spins, and pod offsets (+32 / -74 mm, still unmeasured). The driven checks
+fall under task 10 / 12. Calibration flags, tolerances and constants are unchanged.
+Simulation decision: omitted; documentation-only status change.
+
+## Competition TeleOp flywheel uses bang-bang + feedforward fusion (2026-11-15)
+
+Change: both competition TeleOps (`MecanumTeleOp` via the Red/Blue wrappers) select
+`TurretSubsystem.ShooterController.BANG_BANG_FUSION` at INIT (`MecanumTeleOp.FLYWHEEL_CONTROLLER`) instead of hub
+velocity PIDF. The law, gains (initial kS 0.05, kV ~0.000443, kP 0.001, all untuned) and 80 ticks/s bang-bang band are
+the existing bench controller; the subsystem default stays PIDF, so autonomous and the other test OpModes are
+unchanged. Every TeleOp loop already commands RPM after `turret.update()` (manual, auto-aim solution or manual fallback),
+which the fusion law needs. Readiness tolerance (+/-100 RPM) is unchanged.
+Simulation decision: run. New `CompetitionSimTest#bothAlliancesRegulateTheFlywheelWithBangBangFusion` drives the
+actual Red and Blue TeleOps: the flywheel stays in `RUN_WITHOUT_ENCODER` for every ACTIVE loop, starts at full power
+from rest, never commands negative power, holds 3500 RPM within +/-100 RPM after 3 s and stops at STOP. It fails on the
+PIDF baseline (`RUN_USING_ENCODER`). The existing 15 Competition scenarios pass unchanged under fusion.
+Limits: the flywheel fixture has synthetic response with no friction or ball load, so this verifies wiring and
+interlocks only; spin-up time, loaded recovery and the gains themselves need on-robot trials.
+
+## Release timing gate removed (2026-11-15)
+
+Change (team decision): release / vision timing no longer blocks firing. `ShootingConfiguration.RELEASE_TIMING_MEASURED`
+and `VISION_TIMING_MEASURED` and the `timingMeasured` constructor argument of `ShotCoordinator` were removed, so the
+"Release timing UNMEASURED" / "Release / vision timing UNMEASURED" inhibits no longer exist in competition TeleOp
+(Red/Blue), Test: Auto Aim, autonomous (`AUTONOMOUS_ODOMETRY` and fixed presets) or diagnostic aim. The current timing
+values are used unchanged: gate-to-feed `GateSubsystem.FEED_DELAY_AFTER_OPEN_COMMAND_SECONDS`, `FEED_TO_EXIT_SECONDS`
+0.12 s, feed window 0.50 s, recovery 0.35 s and ready-stable 0.15 s (competition staggered feed timing in
+`CompetitionFeedController` is also unchanged). All other gates remain: homing, measured shot profile/preset, fresh
+field reference, yaw/hood/RPM readiness, inhibit and, for diagnostic aim, goal-observation validation.
+Simulation decision: run. Full unit suite (273) and every simulation (49, including the 16 Competition scenarios) pass;
+the synthetic measured-profile feed scenarios already exercised the ungated path. No new scenario was added.
+Limits: the timing values themselves remain unmeasured starting values; loaded ball clearance and recovery need robot trials.
+
+
+Shared staggered shot timing (2026-11-15): the 0.10 s gate delay / 0.20 s stage-2 feed / 0.00 s recovery values tuned
+on the robot with the bench test now live once in `ShootingConfiguration` (with `GateSubsystem.FEED_DELAY_AFTER_OPEN_COMMAND_SECONDS`
+0.10 s) and are used by competition Red/Blue TeleOp (`CompetitionFeedController`), autonomous (`AutonomousOutputCoordinator`),
+the bench test, `Test: Transfer Only` and `Shot Calibration`. Baseline: competition 0.10/0.30/0.10 s with both stages
+together and both running through recovery; autonomous/calibration/transfer 0.20/0.50/0.35 s with both stages together;
+bench 0.10/0.40/0.35 s. New policy: stage 2 at 0.10 s, stage 1 at the gate-open midpoint (0.15 s), gate closed at 0.30 s,
+and stage 1 alone runs (past full) with the gate closed after a completed timed feed (`StaggeredFeedTiming`,
+`FiringCoordinator.closedGateStage1()`); it never runs after tracking-loss recovery, inhibit, reverse, release or STOP.
+Continuous mode is unchanged. `FiringCoordinator` now accepts a 0 s recovery. Simulation decision: run. The full unit suite
+(275) and all 49 simulations pass after updating assertions that hard-coded the old timings: `CompetitionSimTest`
+(`bothAlliancesToggleContinuousAndStaggeredFeedsOnEitherManualControl` now checks stage 2 at 0.10 s, stage 1 at 0.15 s
+and the stage-1-only closed-gate run against both real competition wrappers), `MechanismsSimTest` (real bench OpMode),
+`GateSimTest`, and unit tests for the controller, firing coordinator, competition feed and autonomous manual feed.
+No new scenario or OpMode was added, so `tools/teleop-test-baseline.json` and `simloop/opmode-coverage.json` are unchanged.
+Limits: loaded ball clearance, gate clearance at 0.30 s and flywheel recovery with zero pause are unmeasured; autonomous
+shoot durations were authored for the old slower cycle and now fit more cycles in the same time.

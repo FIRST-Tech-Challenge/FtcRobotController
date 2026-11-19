@@ -93,7 +93,8 @@ Profiles:
   Limelight frame recorded 2026-11-05, which `LimelightObservation` converts to the robot's outward +Z.
   It exercises geometric localization; it is **not proof of physical pose accuracy**.
 - `raised-audience-inverted`: TEST-ONLY inverted target normal; the robot must reject it with a facing diagnostic.
-Both profiles rotate SimLoop's upright stickers 180 degrees in-plane to match the field's upside-down underside stickers.
+Both profiles report poses in the inverted sensor frame of the upside-down Limelight (Rz(pi) about the optical
+axis), as the physical camera does; SimLoop's upright stickers already match how the robot sees the field's.
 
 Raised profiles start at alliance X = +/-12.75 in, Y = -40 in (`RAISED_TAG_VIEW_Y_INCHES`; the 55-degree camera loses the tags beyond about 52 in), heading = pi, with audience cells raised.
 They require a camera-equipped fixture. The robot is not handed this field pose: it must acquire a
@@ -150,4 +151,4 @@ Jupiter/Vintage 5.11.3, Platform launcher 1.11.3 and real JSON 20250517 preserve
 parsing. `returnDefaultValues=true` supports SDK matrix construction; it does not simulate Android services,
 USB, VisionPortal, storage or Lynx scheduling. Fixed simulated ticks do not benchmark Control Hub timing.
 
-November 4 integration: selected competition scenarios cover aim-only collection, firing pauses, auto offsets and three independent PWM light commands; Mechanisms covers intake encoder stall/release and LightsTestOpMode channel/pulse/STOP behavior. See doc/TeleOpVerificationMatrix.md for the bounded verification results and model limits.
+November 4 integration: selected competition scenarios cover aim-only collection, firing pauses, auto offsets and three independent PWM light commands; Mechanisms covers intake priorities/STOP and LightsTestOpMode channel/pulse/STOP behavior. See doc/TeleOpVerificationMatrix.md for the bounded verification results and model limits.

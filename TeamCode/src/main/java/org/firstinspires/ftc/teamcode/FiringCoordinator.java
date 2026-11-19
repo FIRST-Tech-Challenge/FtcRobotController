@@ -16,7 +16,7 @@ public final class FiringCoordinator {
                              double recoverySeconds, double stableSeconds) {
         if (!RobotMath.finite(gateTravelSeconds, feedToExitSeconds, feedWindowSeconds, recoverySeconds, stableSeconds)
                 || gateTravelSeconds <= 0 || feedToExitSeconds <= 0 || feedWindowSeconds <= 0
-                || recoverySeconds <= 0 || stableSeconds <= 0) throw new IllegalArgumentException("Invalid firing timing");
+                || recoverySeconds < 0 || stableSeconds <= 0) throw new IllegalArgumentException("Invalid firing timing");
         this.gateTravelSeconds = gateTravelSeconds; this.feedToExitSeconds = feedToExitSeconds;
         this.feedWindowSeconds = feedWindowSeconds; this.recoverySeconds = recoverySeconds; this.stableSeconds = stableSeconds;
     }
@@ -98,6 +98,8 @@ public final class FiringCoordinator {
     public boolean recoveringBetweenTimedFeeds() {
         return timedRecovery && (state == State.RECOVERY || state == State.PREPARING);
     }
+    /** After a completed timed feed, with the gate closed, only stage 1 keeps advancing the queue. */
+    public boolean closedGateStage1() { return !gateOpen && recoveringBetweenTimedFeeds(); }
     private void enter(State next, double now, String reason) {
         if (next != State.RECOVERY && next != State.PREPARING) timedRecovery = false;
         if (state != next) { state = next; entered = now; stableSince = Double.NaN; }

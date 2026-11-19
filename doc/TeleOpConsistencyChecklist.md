@@ -8,11 +8,13 @@ and depollinator integration. Previously reported build/configuration, drivetrai
 intake, queue sensor and gate checks also remain complete.
 
 Task 7 (Limelight/field geometry) subsequently passed per the operator, including
-a 35 ms button-to-detection result (not calibrated camera latency). Task 8 is
-IN PROGRESS / ISSUE OPEN: RT produces no turret tracking near the Red far goal;
-accepted field localization and the active OpMode still need confirmation.
-Tasks 9-12 remain PENDING / NOT TESTED: shot calibration/release timing, combined
-competition controls, intended autonomous routes and full match rehearsal.
+a 35 ms button-to-detection result (not calibrated camera latency). Task 8
+(localization and auto aim) is COMPLETE / VERIFIED by functional check on
+2026-11-14: the operator reports Test: Auto Aim localizing and tracking the goal
+after the Limelight inverted-mount and Pinpoint X pod fixes.
+Tasks 9, 10 and 12 remain PENDING / NOT TESTED: shot calibration/release timing,
+combined competition controls and full match rehearsal; task 11 (autonomous) is
+not required.
 This replaces the earlier incorrect
 all-stages sign-off. See [the verification matrix](TeleOpVerificationMatrix.md)
 for the numbered status table. Production calibration data and flags are unchanged.
@@ -29,7 +31,7 @@ The user's latest decision to keep the newer working-tree controls is authoritat
 | GP1 sticks | Robot-centric translation and rotation |
 | GP1 RT | Automatic yaw, hood and distance RPM preparation; ordinary collection continues |
 | GP1 RT + LT | Readiness-checked automatic fire request; ordinary collection pauses |
-| GP1 A or GP2 RT | Explicit manual readiness bypass; selected mode applies: immediate continuous, 0.10 s staggered gate delay |
+| GP1 A or GP2 RT | Explicit manual readiness bypass; selected mode applies: immediate continuous, 0.10 s staggered gate delay, then both stages together |
 | GP2 LT | Close gate, stop transfer and pause automatic intake; explicit intake bumper overrides remain available |
 | GP2 B | Continuous/staggered toggle; starts continuous |
 | Flywheel | Starts at 3500 output RPM; returns to the manual setting when RT is released |
@@ -53,14 +55,10 @@ GP2 B remains the feeding-mode selector.
 Shooting requests, gate travel, recovery and inhibit pause ordinary intake/loading;
 RT alone does not. Explicit intake direction overrides remain available. Actual
 feeding takes priority over stage-1 collection controls. Full confirmation is
-0.2 s HIGH, which stops the intake and starts a 0.5 s stage-1 run-on; LOW resumes ordinary loading.
+0.5 s HIGH, which stops the intake and starts a 0.5 s stage-1 run-on; LOW resumes ordinary loading.
 
 ## Gaps fixed
 
-- Promoted the assembly test's intake stall recovery into shared IntakeJamRecovery:
-  below 20 ticks/s for 0.20 s starts 0.50 s alternating direction, changing every
-  0.125 s. Stop/direction changes reset recovery. Competition, intake-only, assembly
-  test and autonomous output now use the same algorithm with the intake's own encoder.
 - Corrected competition collection arbitration: aim-only keeps loading; shooting
   pauses ordinary intake as well as stage 1. Existing bumper priorities remain.
 - Added bounded GP2 yaw/hood/RPM adjustments during automatic aiming, reset controls,
@@ -80,10 +78,10 @@ feeding takes priority over stage-1 collection controls. Full confirmation is
 | Source / function | Competition disposition |
 | --- | --- |
 | DrivetrainTestOpMode | Same MecanumDrivetrain motor setup, gearing, robot-centric commands; single-wheel debug remains isolated |
-| IntakeTestOpMode | Shared motor setup and jam recovery; competition adds sensor-based automatic direction and shooting coordination |
+| IntakeTestOpMode | Shared motor setup; competition adds sensor-based automatic direction and shooting coordination |
 | TransferTestOpMode | Shared full debounce, 0.5 s stage-1 run-on, stage-2-off loading and inhibit; competition adds selected feed sequence |
 | GateTestOpMode | Shared positions/PWM; direct diagnostic gate commands stay isolated |
-| IntakeShooterTestOpMode | Intake recovery, queue logic, motor/servo setup shared; bench arming, stop button, live tuning and unrestricted continuous feed remain diagnostic |
+| IntakeShooterTestOpMode | Queue logic, motor/servo setup shared; bench arming, stop button, live tuning and unrestricted continuous feed remain diagnostic |
 | TurretTestOpMode | Shared homing, hood, flywheel and bounded yaw; competition deliberately uses measured-angle release hold and encoder correction |
 | AutoAimTestOpMode | Now exercises the competition localization/nearest-cell path; no intake, gate, transfer or drivetrain ownership |
 | PinpointTestOpMode | Same odometry implementation; raw calibration/reset controls remain isolated, competition uses explicit corner rehome |
@@ -104,7 +102,7 @@ names, not hardcoded port numbers.
 
 | Connection | Name | Meaning |
 | --- | --- | --- |
-| Control Hub servo 3 | led_intake | Blue loading/forward override; green confirmed full; orange reverse; blinking orange jam recovery; off paused/stopped |
+| Control Hub servo 3 | led_intake | Blue loading/forward override; green confirmed full; orange reverse; off paused/stopped |
 | Control Hub servo 4 | led_shooter | Yellow standby/preparation/recovery; green automatic tracking checks pass; violet gate opening/feeding; blinking violet manual bypass; red inhibit/fault |
 | Control Hub servo 5 | led_status | Green homed with fresh field pose; orange field reference unavailable/stale; yellow homing; red turret unavailable/home fault |
 
@@ -121,11 +119,13 @@ white is above 1900. This avoids relying on the Hub's selected servo type/range.
 ## Remaining external inputs, not software migration blockers
 
 - Final flywheel PIDF/controller selection and loaded gate/transfer timing.
-  Bench staggered values deliberately remain 0.10 s gate / 0.40 s feed / stage 1
-  at 0.25 s; competition now uses 0.10 s gate delay for both stages / 0.30 s feed (0.40 s total open). Both transfers continue through closed-gate recovery; continuous starts immediately. Loaded timing is unmeasured.
+  Staggered timing is now one shared, robot-tuned set (2026-11-15) for competition, autonomous, bench,
+  transfer-only and calibration: 0.10 s gate delay / 0.20 s feed / 0.00 s recovery, both stages start together
+  (0.30 s total open). Stage 1 alone keeps running with the gate closed between held timed shots;
+  continuous starts both stages immediately. Loaded timing is unmeasured.
   Bench unrestricted continuous feed must not be mistaken for automatic readiness.
-- Measured distance-to-hood/RPM shot rows and release timing. ShotProfile.example()
-  and RELEASE_TIMING_MEASURED=false continue to block automatic firing.
+- Release timing. The measured 12-60 in shot table (2026-11-15) drives auto-aim hood/RPM; release
+  timing no longer blocks automatic firing (gate removed 2026-11-15) and the current values are unmeasured.
 - Physical verification of Pinpoint scale/heading, camera convention and nominal
   tag geometry; those measurements cannot be obtained through this code audit.
 - Actual light wiring/configuration and mounting orientation.
@@ -146,7 +146,7 @@ physical testing are intentionally omitted for this pass per the revised testing
 Simulation decision: use selected actual Red/Blue wrapper scenarios for collection,
 manual controls, offsets and lights, plus isolated intake/light scenarios. Synthetic
 shot profiles and normalized camera convention are explicitly test-only. Motor/servo
-commands and timing are observable; physical jam clearing, loaded RPM, actual balls,
+commands and timing are observable; loaded RPM, actual balls,
 servo load and optical color are not modeled.
 
 
