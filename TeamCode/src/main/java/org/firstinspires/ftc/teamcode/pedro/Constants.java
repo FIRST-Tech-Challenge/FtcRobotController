@@ -6,6 +6,7 @@ import com.pedropathing.controllers.Controller;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Matrix;
 import com.pedropathing.math.Vector2D;
+import com.pedropathing.revhub.drivetrains.CoaxialPodConfig;
 import com.pedropathing.revhub.drivetrains.Mecanum;
 import com.pedropathing.revhub.drivetrains.MecanumConfig;
 import com.pedropathing.revhub.localizers.PinpointConfig;
@@ -18,10 +19,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Constants {
     public static MecanumConfig drivetrainConfig = new MecanumConfig(
             c -> {
-                c.frontLeftName.set("Motor FL");
-                c.backLeftName.set("Motor RL");
-                c.frontRightName.set("Motor FR");
-                c.backRightName.set("Motor RR");
+                c.frontLeftName.set("motor_fl");
+                c.backLeftName.set("motor_br");
+                c.frontRightName.set("motor_fr");
+                c.backRightName.set("motor_br");
                 c.frontLeftDirection.set(DcMotorSimple.Direction.FORWARD);
                 c.backLeftDirection.set(DcMotorSimple.Direction.REVERSE);
                 c.frontRightDirection.set(DcMotorSimple.Direction.REVERSE);
@@ -32,13 +33,13 @@ public class Constants {
     public static PinpointConfig localizerConfig = new PinpointConfig(
             c -> {
                 c.name.set("pinpoint");
-              //  c.xPodOffset.set(2.187);  // Change these vales based on robot X offset from center.
-                //c.yPodOffset.set(-2.572);  // Change these vales based on robot Y offset from center.
-                c.xPodOffset.set(0.6854949410506121);  // Change these vales based on robot X offset from center.
-                c.yPodOffset.set(1.202851543276329);
+                c.xPodOffset.set(2.187);  // Change these vales based on robot X offset from center.
+                c.yPodOffset.set(-2.572);  // Change these vales based on robot Y offset from center.
+//                c.xPodOffset.set(0.6854949410506121);  // Change these vales based on robot X offset from center.
+//                c.yPodOffset.set(1.202851543276329);
 
                 c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
-                c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.REVERSED);// changed value to REVERSED based on pinpoint tunner
+                c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.REVERSED);// changed value to REVERSED based on pinpoint tuner
             }
     );
     public static ForesightConfig foresightConfig = new ForesightConfig(
@@ -68,4 +69,65 @@ public class Constants {
                 new Foresight(foresightConfig)
         );
     }
+
+   /* public static SwerveConfig driveConfig = new SwerveConfig(
+            c -> {
+                c.zeroPowerBehavior.set(SwerveConfig.ZeroPowerBehavior.IGNORE_ANGLE_CHANGES);
+                c.manualBrakeMode.set(true);
+                c.voltageCompensation.set(false);
+            }
+    ); */
+
+    public static CoaxialPodConfig rightBack = new CoaxialPodConfig(
+            c -> {
+                c.name.set("rightBack");
+                c.motorName.set("rb");
+                c.servoName.set("rbTurn");
+                c.servoEncoderName.set("rbTurnEncoder");
+                c.turnController.set(Controller.pid(0.3, 0, 0.005)
+                        .plus(Controller.proportionalFeedforward(0)));
+                c.driveDirection.set(DcMotorSimple.Direction.FORWARD);
+                c.servoDirection.set(DcMotorSimple.Direction.FORWARD);
+            }
+    );
+
+    public static CoaxialPodConfig leftFront = new CoaxialPodConfig(
+            c -> {
+                c.name.set("leftFront");
+                c.motorName.set("lf");
+                c.servoName.set("lfTurn");
+                c.servoEncoderName.set("lfTurnEncoder");
+                c.turnController.set(Controller.pid(0.3, 0, 0.005)
+                        .plus(Controller.proportionalFeedforward(0)));
+                c.driveDirection.set(DcMotorSimple.Direction.FORWARD);
+                c.servoDirection.set(DcMotorSimple.Direction.FORWARD);
+            }
+    );
+
+    public static CoaxialPodConfig rightFront = new CoaxialPodConfig(
+            c -> {
+                c.name.set("rightFront");
+                c.motorName.set("rf");
+                c.servoName.set("rfTurn");
+                c.servoEncoderName.set("rfTurnEncoder");
+                c.turnController.set(Controller.pid(0.3, 0, 0.005)
+                        .plus(Controller.proportionalFeedforward(0)));
+                c.driveDirection.set(DcMotorSimple.Direction.FORWARD);
+                c.servoDirection.set(DcMotorSimple.Direction.FORWARD);
+            }
+    );
+
+    public static CoaxialPodConfig leftBack = new CoaxialPodConfig(
+            c -> {
+                c.name.set("leftBack");
+                c.motorName.set("lb");
+                c.servoName.set("lbTurn");
+                c.servoEncoderName.set("lbTurnEncoder");
+                c.turnController.set(Controller.pid(0.3, 0, 0.0086)
+                        .plus(Controller.proportionalFeedforward(0)));
+                c.driveDirection.set(DcMotorSimple.Direction.FORWARD);
+                c.servoDirection.set(DcMotorSimple.Direction.FORWARD);
+            }
+    );
+
 }

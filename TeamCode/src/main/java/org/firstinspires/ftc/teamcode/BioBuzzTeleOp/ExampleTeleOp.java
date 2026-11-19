@@ -16,16 +16,21 @@ public class ExampleTeleOp extends OpMode {
     private Follower follower;
 
     @Override
-    public void init() {
+    public void init()
+    {
         follower = Constants.create(hardwareMap);
     }
+
     @Override
-    public void start(){
+    public void start()
+    {
         follower.setPose(OpModeStorage.autonomousEndPose);
         follower.update();
     }
+
     @Override
-    public void loop() {
+    public void loop()
+    {
 
         DrivePowers powers = ManualDrive.fieldCentric(
                 -gamepad1.left_stick_y,
