@@ -123,6 +123,7 @@ public class TurretConfigurator {
 
         //Tuning Math
         boolean changed = false;
+        op.telemetry.addLine("Press Circle to switch what is being tuned");
         if (selectedTune == 0) { //Flywheel
             if (dpadUp) {
                 velocity = Math.min(velocity + velocityIncrements[selectedIncrement], MAX_RPM);
