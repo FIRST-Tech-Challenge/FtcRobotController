@@ -5,7 +5,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /** Sole owner of target/pose selection and automatic aiming; shared by TeleOp and autonomous. */
 public final class ShotCoordinator {
-    public enum AimMode { DIAGNOSTIC, TELEOP_ODOMETRY, AUTONOMOUS_ODOMETRY }
+    /**
+     * AUTONOMOUS_RELOCALIZING: autonomous with TeleOp's tag pipeline (start-pose refinement toward a chosen
+     * landmark, then periodic validated corrections of the aiming pose). AUTONOMOUS_ODOMETRY: no camera use.
+     */
+    public enum AimMode { DIAGNOSTIC, TELEOP_ODOMETRY, AUTONOMOUS_ODOMETRY, AUTONOMOUS_RELOCALIZING }
     public static final double MAX_OPENING_DISAGREEMENT_METERS = .08, MAX_OPENING_HEIGHT_ERROR_METERS = .1;
     public static final double FIELD_RELOCALIZATION_INTERVAL_SECONDS = .5;
     private final boolean fieldOdometryOnly;
@@ -19,6 +23,7 @@ public final class ShotCoordinator {
     private final ShotPlanner planner;
     private final PoseHistory history = new PoseHistory();
     private final FieldRehomeRefinement fieldRehome = new FieldRehomeRefinement();
+    private GoalTarget rehomeLandmark; // null: nearest cell of the selected alliance (TeleOp corner rehome)
     private final TurretLagEstimator lag = new TurretLagEstimator();
     private final GoalStateObserver goalState;
     private GoalTarget relativeTarget;
@@ -61,7 +66,7 @@ public final class ShotCoordinator {
     public void select(GoalTarget next) {
         target = next; history.invalidateObservation(false); lastFrame = Double.NEGATIVE_INFINITY; solution = ShotPlanner.Solution.invalid("Target changed");
         relativeTarget = null; lastPoseSample = null;
-        if (mode != AimMode.TELEOP_ODOMETRY) lastFieldCorrection = Double.NEGATIVE_INFINITY;
+        if (!fieldLocalizing()) lastFieldCorrection = Double.NEGATIVE_INFINITY;
         goalState.select(next.alliance,next.side);
         turret.setTargetHiveCell(next.alliance, next.side); turret.resetTrackingTrim();
         visionDecision = "Shot target changed; awaiting camera observation";
@@ -74,9 +79,16 @@ public final class ShotCoordinator {
         visionDecision = "Odometry reference changed; awaiting camera observation";
         firing.stop(now);
     }
-    public void requestFieldRehomeRefinement(double now) {
-        if (mode == AimMode.TELEOP_ODOMETRY) fieldRehome.request(now);
+    /** Camera frames correct the pose: TeleOp and relocalizing autonomous. */
+    private boolean fieldLocalizing() { return mode == AimMode.TELEOP_ODOMETRY || mode == AimMode.AUTONOMOUS_RELOCALIZING; }
+    public void requestFieldRehomeRefinement(double now) { requestFieldRehomeRefinement(now, null); }
+    /** Refine an explicitly placed pose, pointing the turret at {@code landmark} (null: nearest selected cell). */
+    public void requestFieldRehomeRefinement(double now, GoalTarget landmark) {
+        if (!fieldLocalizing()) return;
+        rehomeLandmark = landmark;
+        fieldRehome.request(now);
     }
+    public String fieldRehomeStatus() { return fieldRehome.status(); }
     public boolean fieldRehomePending() { return fieldRehome.pending(); }
     public void cancelFieldRehomeRefinement(String reason) {
         if (fieldRehome.pending()) fieldRehome.cancel(reason);
@@ -228,7 +240,7 @@ public final class ShotCoordinator {
         LLResult result = turret.getVisionResult();
         LimelightObservation observation = turret.getVisionObservation();
         if (observation == null) observation = new LimelightObservation(now,System.currentTimeMillis(),result);
-        if (mode == AimMode.TELEOP_ODOMETRY) {
+        if (fieldLocalizing()) {
             updateFieldLocalization(now,observation);
             pose = history.current(now);
             return;
@@ -281,7 +293,7 @@ public final class ShotCoordinator {
             if (fieldRehome.update(now,observation.frame,observation.captureTime,observation.tags,history,mount))
                 lastFieldCorrection = now;
             if (fieldRehome.pending()) {
-                GoalTarget landmark = TeleOpFieldReference.target(target.alliance,
+                GoalTarget landmark = rehomeLandmark != null ? rehomeLandmark : TeleOpFieldReference.target(target.alliance,
                         TeleOpFieldReference.nearestSide(current.y,target.side));
                 double yaw = Math.toDegrees(TeleOpFieldReference.yawRadians(current.led(planner.leadSeconds()),landmark,mount));
                 turret.setTargetYawDegrees(turret.reachableYawTarget(yaw));
@@ -365,7 +377,7 @@ public final class ShotCoordinator {
     public String visionDecision() { return visionDecision; }
     /** Shown only around a large camera/odometry disagreement or a re-localization (TeleOp odometry aiming). */
     private void addPoseCheckTelemetry(Telemetry telemetry, double now) {
-        String check = mode == AimMode.TELEOP_ODOMETRY ? history.largeCorrectionStatus(now) : null;
+        String check = fieldLocalizing() ? history.largeCorrectionStatus(now) : null;
         if (check != null) telemetry.addData("Camera pose check", check);
     }
     private String localizationStatus(double now) {
@@ -381,7 +393,7 @@ public final class ShotCoordinator {
     public void addDriverTelemetry(Telemetry telemetry, double now, boolean aiming) {
         if (fieldOdometryOnly) telemetry.addData("Field localization", localizationStatus(now));
         addPoseCheckTelemetry(telemetry, now);
-        if (mode == AimMode.TELEOP_ODOMETRY && !FieldRehomeRefinement.NOT_REQUESTED.equals(fieldRehome.status()))
+        if (fieldLocalizing() && !FieldRehomeRefinement.NOT_REQUESTED.equals(fieldRehome.status()))
             telemetry.addData("Field rehome refinement", fieldRehome.status());
         if (aiming || yawOffsetDeg != 0 || hoodOffsetDeg != 0 || rpmOffset != 0)
             telemetry.addData("Auto trims (yaw deg / hood deg / RPM)", "%.1f / %.1f / %.0f", yawOffsetDeg, hoodOffsetDeg, rpmOffset);
@@ -389,6 +401,7 @@ public final class ShotCoordinator {
 
     public void addTelemetry(Telemetry telemetry, double now) {
         telemetry.addData("Aim reference", mode == AimMode.AUTONOMOUS_ODOMETRY ? "FIELD ODOMETRY | fixed route target"
+                : mode == AimMode.AUTONOMOUS_RELOCALIZING ? "FIELD ODOMETRY | fixed route target | periodic validated vision corrections"
                 : fieldOdometryOnly ? "FIELD ODOMETRY | periodic validated vision corrections" : "Field / target-relative diagnostics");
         telemetry.addData("Shot target", relativeTarget != null ? relativeTarget.identity() : target.identity());
         if (fieldOdometryOnly) {
@@ -398,7 +411,7 @@ public final class ShotCoordinator {
                     ? "Enabled | nominal TU06 map | " + history.reason() : "Disabled by configuration");
             telemetry.addData("Field localization", localizationStatus(now));
             addPoseCheckTelemetry(telemetry, now);
-            if (mode == AimMode.TELEOP_ODOMETRY) telemetry.addData("Field rehome refinement", fieldRehome.status());
+            if (fieldLocalizing()) telemetry.addData("Field rehome refinement", fieldRehome.status());
             if (pose != null && pose.fieldReferenced) {
                 telemetry.addData("Aiming field pose (m, deg)", "%.3f, %.3f | %.1f", pose.x, pose.y, Math.toDegrees(pose.heading));
                 org.firstinspires.ftc.teamcode.RobotMath.Vec pivot = new org.firstinspires.ftc.teamcode.RobotMath.Vec(pose.x, pose.y).plus(mount.pivot.rotate(pose.heading));

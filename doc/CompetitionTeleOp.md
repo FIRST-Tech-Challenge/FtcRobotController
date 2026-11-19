@@ -221,6 +221,19 @@ Both competition TeleOps show a short driver view by default, most important fir
 | Claw (GP1 B) | OPEN or CLOSED; UNAVAILABLE if not configured |
 | Loop (Hz) | Control loop rate |
 
+### Controller rumble (November 18)
+
+Both competition TeleOps share `DriverRumble` cues, which fire once per event and never every loop:
+
+| Cue | Gamepads | When |
+| --- | --- | --- |
+| Two short blips | GP1 and GP2 | 20 s left in the 2:00 TeleOp period |
+| One 1 s rumble | GP1 and GP2 | 5 s left |
+| One 150 ms buzz | GP1 | Automatic shooting turns READY (at most once per second) |
+| One 400 ms rumble | GP1 | The transfer confirms a full queue: stop collecting, go shoot (at most once per second) |
+
+The clock starts at TeleOp START, like the Driver Station timer. A START after both marks gives only the 5 s rumble. The READY buzz stays silent until shot calibration and release timing enable automatic READY (`ShotProfile` calibrated, `RELEASE_TIMING_MEASURED`). Warning times are starting values in `DriverRumble`. Rumble calls are wrapped so a failed call can never stop the OpMode. Autonomous does not rumble.
+
 ### Linear slide and claw (November 7)
 
 Both competition TeleOps share the slide controls. **GP2 left-stick click** toggles the side

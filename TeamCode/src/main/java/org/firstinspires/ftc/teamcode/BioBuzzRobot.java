@@ -42,6 +42,12 @@ public final class BioBuzzRobot implements ZenithRobot {
     private boolean terminalOutcome;
     private final Map<String, String> conditionWaits = new HashMap<>();
     public static final double MATCH_TIME_LOW_SECONDS = 5;
+    /**
+     * Seed the authored start pose, refine it from hive tags during INIT and correct the aiming pose from
+     * tags during the route (doc/MatchAutonomousPlanCycle.md). False restores odometry-only autonomous.
+     */
+    public static final boolean TAG_RELOCALIZATION_ENABLED = true;
+    final AutoStartRelocalization relocalization = new AutoStartRelocalization();
 
     public BioBuzzRobot() { this(null, AutonomousProfile.FULL_ROBOT); }
     public BioBuzzRobot(TurretSubsystem.Alliance alliance) { this(alliance, AutonomousProfile.FULL_ROBOT); }
@@ -67,7 +73,8 @@ public final class BioBuzzRobot implements ZenithRobot {
                 depollinator = new DepollinatorSubsystem(opMode.hardwareMap, this::now);
                 turret = new TurretSubsystem(opMode.hardwareMap, true, this::now);
                 shots = new ShotCoordinator(turret, TeleOpFieldReference.target(alliance, TurretSubsystem.HiveSide.AUDIENCE),
-                        ShotCoordinator.AimMode.AUTONOMOUS_ODOMETRY);
+                        TAG_RELOCALIZATION_ENABLED ? ShotCoordinator.AimMode.AUTONOMOUS_RELOCALIZING
+                                : ShotCoordinator.AimMode.AUTONOMOUS_ODOMETRY);
             }
             firing = shots == null ? ShootingConfiguration.firing() : shots.firing();
             // Camera is optional for planned paths; camera-dependent factories fail during INIT.
@@ -138,15 +145,53 @@ public final class BioBuzzRobot implements ZenithRobot {
     }
     @Override public void initLoop(AutoFromFile opMode) {
         readSensors();
-        if (turret != null) turret.applyYawCommand(now());
+        relocalizeStart();
+        if (turret != null) turret.applyYawCommand(now()); // Same-loop write of the refinement's look yaw.
         opMode.telemetry.addLine("Keep robot stationary during Pinpoint calibration.");
+        if (shots != null && TAG_RELOCALIZATION_ENABLED) {
+            opMode.telemetry.addData("Start relocalization", relocalization.status());
+            if (relocalization.checkPlacement()) opMode.telemetry.addData("CHECK PLACEMENT",
+                    "hive tags disagree with the authored start pose by more than %.0f in",
+                    FieldRehomeRefinement.MAX_CORRECTION_METERS * PedroConfiguration.INCHES_PER_METER);
+        }
         opMode.telemetry.addData("Autonomous hardware profile", profile);
         drive.addTelemetry(opMode.telemetry);
         if (turret != null) turret.addTelemetry(opMode.telemetry);
         if (vision != null) vision.addTelemetry(opMode.telemetry);
         loop.addTelemetry(opMode.telemetry);
     }
+    /**
+     * INIT only, robot stationary: the authored start pose is already seeded (Ivy calls setStartPose once in
+     * INIT). Look at the cell raised at the start on this half and refine; on success write the refined pose
+     * into Pinpoint once so paths and aim agree. Otherwise keep the start pose and retry until START.
+     */
+    void relocalizeStart() {
+        if (shots == null || !TAG_RELOCALIZATION_ENABLED) return;
+        double t = now();
+        boolean poseReady = drive.ready(t);
+        MotionSample seeded = poseReady ? drive.sample() : null;
+        shots.updatePose(t, seeded);
+        switch (relocalization.update(turret.isHomed(), poseReady, shots.fieldRehomePending(), shots.fieldRehomeStatus())) {
+            case REQUEST_REFINEMENT:
+                shots.requestFieldRehomeRefinement(t, AutoStartRelocalization.landmarkFor(seeded.y));
+                break;
+            case APPLY_REFINED_POSE:
+                MotionSample refined = shots.pose();
+                drive.setFieldPose(pedroPose(refined));
+                relocalization.applied(Math.hypot(refined.x - seeded.x, refined.y - seeded.y) * PedroConfiguration.INCHES_PER_METER);
+                break;
+            default:
+                break;
+        }
+    }
+    /** Field-frame sample (m, rad) to Pedro's field pose (in, rad); same axes, no alliance transform. */
+    static Pose pedroPose(MotionSample sample) {
+        double scale = PedroConfiguration.INCHES_PER_METER;
+        return new Pose(sample.x * scale, sample.y * scale, sample.heading);
+    }
     @Override public void onStart(AutoFromFile opMode) {
+        // A refinement still collecting frames would inhibit shooting; START ends it (the start pose stays).
+        if (shots != null) shots.cancelFieldRehomeRefinement("START before the refinement finished");
         if (!PedroConfiguration.TUNING_VERIFIED) throw new IllegalStateException("Measure and verify PedroConfiguration before running autonomous; use Test: Pedro Drive");
         if (!drive.ready(now())) throw new IllegalStateException("Pinpoint has no READY, fresh autonomous start pose");
         started = nanoTime(); hasStarted = running = true;

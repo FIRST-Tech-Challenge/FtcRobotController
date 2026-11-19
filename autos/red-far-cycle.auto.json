@@ -1,0 +1,413 @@
+{
+  "$schema": "https://libraries.horizon36596.org/zenith/schema/v1/auto.json",
+  "formatVersion": 4,
+  "name": "red-far-cycle",
+  "title": "DRAFT Auto: Red Far Cycle (5 s, far 4+4, audience 4+4, unmeasured)",
+  "description": "DRAFT, plan of 2026-11-18 (doc/MatchAutonomousPlanCycle.md). Separate from red-far. Start on the far wall facing +X, left side on the wall. Wait 5 s, preload at the far cell, far-wall flower into the far cell, red-wall flower into the audience cell, red garden into the audience cell. Written as requested: solo only volley 3 scores; the other three land once a partner tips the hive first. Every coordinate is a placeholder. Blue Audience runs it point-mirrored.",
+  "robot": "autos/robot.json",
+  "field": "autos/field/biobuzz.field.json",
+  "alliance": "RED",
+  "start": {
+    "pose": {
+      "xIn": -10,
+      "yIn": 63,
+      "headingRad": 0
+    },
+    "holds": {
+      "pollen": 4
+    }
+  },
+  "steps": [
+    {
+      "id": "safeStart",
+      "kind": "command",
+      "name": "stopAll"
+    },
+    {
+      "id": "depollinatorStow",
+      "kind": "command",
+      "name": "depollinatorHome"
+    },
+    {
+      "id": "aimFar",
+      "kind": "command",
+      "name": "aim",
+      "args": {
+        "side": "FAR",
+        "frame": "AUTHORED",
+        "spin": true
+      }
+    },
+    {
+      "id": "startDelay",
+      "kind": "wait",
+      "seconds": 4.5,
+      "notes": "First feed about 5 s after START. The turret homes and relocalizes during INIT (BioBuzzRobot), so no homing step runs here."
+    },
+    {
+      "id": "waitReady1",
+      "kind": "wait",
+      "until": "shotReady",
+      "timeoutS": 0.5
+    },
+    {
+      "id": "volley1Preload",
+      "kind": "command",
+      "name": "shoot",
+      "args": {
+        "seconds": 2.5
+      },
+      "timeoutS": 2.6,
+      "notes": "4 preload at the far cell. Solo the far cell is down at the start; scores once a partner has tipped the hive. No ledger expect on purpose (it would be a LEGAL_APPROACH error that blocks deploy)."
+    },
+    {
+      "id": "depollinatorOut1",
+      "kind": "command",
+      "name": "depollinatorDeploy"
+    },
+    {
+      "id": "farFlowerCollect",
+      "kind": "parallel",
+      "mode": "deadline",
+      "deadline": "farFlowerLoad",
+      "steps": [
+        {
+          "id": "farFlowerLoad",
+          "kind": "command",
+          "name": "loadUntilFull",
+          "args": {
+            "seconds": 2.0
+          },
+          "timeoutS": 2.1
+        },
+        {
+          "id": "farFlowerPath",
+          "kind": "path",
+          "timeoutS": 2.0,
+          "speedFraction": 0.25,
+          "segments": [
+            {
+              "kind": "bezier",
+              "from": "current",
+              "control": [
+                {
+                  "xIn": -10,
+                  "yIn": 48
+                },
+                {
+                  "xIn": -24,
+                  "yIn": 46
+                }
+              ],
+              "to": {
+                "xIn": -24,
+                "yIn": 57
+              }
+            }
+          ],
+          "heading": {
+            "mode": "piecewise",
+            "ranges": [
+              {
+                "startT": 0,
+                "endT": 0.3,
+                "heading": {
+                  "mode": "constant",
+                  "headingRad": 0
+                }
+              },
+              {
+                "startT": 0.3,
+                "endT": 1,
+                "heading": {
+                  "mode": "linear",
+                  "fromRad": 0,
+                  "toRad": 1.5707963267948966
+                }
+              }
+            ]
+          },
+          "endCondition": {
+            "condition": "queueFull"
+          },
+          "expect": {
+            "collectFrom": "flower1",
+            "count": 4
+          },
+          "notes": "Pull straight off the wall, then turn the front intake toward flower1 behind the start and approach head-on."
+        }
+      ]
+    },
+    {
+      "id": "depollinatorStow1",
+      "kind": "command",
+      "name": "depollinatorHome"
+    },
+    {
+      "id": "backOffFarFlower",
+      "kind": "path",
+      "timeoutS": 1.5,
+      "speedFraction": 0.25,
+      "segments": [
+        {
+          "kind": "line",
+          "from": "current",
+          "to": {
+            "xIn": -24,
+            "yIn": 51
+          }
+        }
+      ],
+      "heading": {
+        "mode": "constant",
+        "headingRad": 1.5707963267948966
+      }
+    },
+    {
+      "id": "waitReady2",
+      "kind": "wait",
+      "until": "shotReady",
+      "timeoutS": 1.0
+    },
+    {
+      "id": "volley2FarFlower",
+      "kind": "command",
+      "name": "shoot",
+      "args": {
+        "seconds": 2.5
+      },
+      "timeoutS": 2.6,
+      "notes": "4 far-flower pollen into the far cell: with volley 1 that makes 8 and tips the hive when the far cell is up (partner tipped first). Solo it is down. No ledger expect for the same reason as volley 1."
+    },
+    {
+      "id": "preAimAudience",
+      "kind": "command",
+      "name": "aim",
+      "args": {
+        "side": "AUDIENCE",
+        "frame": "AUTHORED",
+        "spin": true
+      }
+    },
+    {
+      "id": "toAudienceFlower",
+      "kind": "path",
+      "timeoutS": 6,
+      "speedFraction": 0.35,
+      "segments": [
+        {
+          "kind": "bezier",
+          "from": "current",
+          "control": [
+            {
+              "xIn": -44,
+              "yIn": 30
+            },
+            {
+              "xIn": -44,
+              "yIn": -10
+            }
+          ],
+          "to": {
+            "xIn": -50,
+            "yIn": -24
+          }
+        }
+      ],
+      "heading": {
+        "mode": "linear",
+        "fromRad": 1.5707963267948966,
+        "toRad": 3.141592653589793
+      },
+      "markers": [
+        {
+          "at": {
+            "t": 0.8
+          },
+          "command": {
+            "name": "depollinatorDeploy"
+          }
+        }
+      ],
+      "notes": "Down the red side past the hive (robot edge x <= -35), stopping 7 in short of the red-wall flower. Depollinator deploys late (marker at 80%) to keep the drive narrow."
+    },
+    {
+      "id": "audienceFlowerCollect",
+      "kind": "parallel",
+      "mode": "deadline",
+      "deadline": "audienceFlowerLoad",
+      "steps": [
+        {
+          "id": "audienceFlowerLoad",
+          "kind": "command",
+          "name": "loadUntilFull",
+          "args": {
+            "seconds": 2.0
+          },
+          "timeoutS": 2.1
+        },
+        {
+          "id": "audienceFlowerPath",
+          "kind": "path",
+          "timeoutS": 2.0,
+          "speedFraction": 0.25,
+          "segments": [
+            {
+              "kind": "line",
+              "from": "current",
+              "to": {
+                "xIn": -57,
+                "yIn": -24
+              }
+            }
+          ],
+          "heading": {
+            "mode": "constant",
+            "headingRad": 3.141592653589793
+          },
+          "endCondition": {
+            "condition": "queueFull"
+          },
+          "expect": {
+            "collectFrom": "flower0",
+            "count": 4
+          },
+          "notes": "Head-on into the red-wall flower (flower0, y = -24). Front edge stops about 1 in short of the flower foot."
+        }
+      ]
+    },
+    {
+      "id": "depollinatorStow2",
+      "kind": "command",
+      "name": "depollinatorHome"
+    },
+    {
+      "id": "toAudienceShot",
+      "kind": "path",
+      "timeoutS": 2,
+      "speedFraction": 0.25,
+      "segments": [
+        {
+          "kind": "line",
+          "from": "current",
+          "to": {
+            "xIn": -50,
+            "yIn": -34
+          }
+        }
+      ],
+      "heading": {
+        "mode": "constant",
+        "headingRad": 3.141592653589793
+      },
+      "notes": "Back away from the flower to a legal audience-side shot spot (outboard of the cell face along y)."
+    },
+    {
+      "id": "waitReady3",
+      "kind": "wait",
+      "until": "shotReady",
+      "timeoutS": 1.0
+    },
+    {
+      "id": "volley3AudienceFlower",
+      "kind": "command",
+      "name": "shoot",
+      "args": {
+        "seconds": 2.5
+      },
+      "timeoutS": 2.6,
+      "expect": {
+        "launchesInto": "hiveRedUpCell",
+        "count": 4
+      },
+      "notes": "4 audience-flower pollen into the raised audience cell: tips the hive (far up) in a solo run."
+    },
+    {
+      "id": "toGarden",
+      "kind": "path",
+      "timeoutS": 2.5,
+      "speedFraction": 0.35,
+      "segments": [
+        {
+          "kind": "line",
+          "from": "current",
+          "to": {
+            "xIn": -48,
+            "yIn": -63
+          }
+        }
+      ],
+      "heading": {
+        "mode": "constant",
+        "headingRad": 3.141592653589793
+      },
+      "notes": "Line up on the audience wall behind the red garden, intake facing the red corner."
+    },
+    {
+      "id": "gardenSweep",
+      "kind": "parallel",
+      "mode": "deadline",
+      "deadline": "gardenLoad",
+      "steps": [
+        {
+          "id": "gardenLoad",
+          "kind": "command",
+          "name": "loadUntilFull",
+          "args": {
+            "seconds": 2.0
+          },
+          "timeoutS": 2.1
+        },
+        {
+          "id": "gardenPath",
+          "kind": "path",
+          "timeoutS": 2.0,
+          "speedFraction": 0.25,
+          "segments": [
+            {
+              "kind": "line",
+              "from": "current",
+              "to": {
+                "xIn": -62,
+                "yIn": -63
+              }
+            }
+          ],
+          "heading": {
+            "mode": "constant",
+            "headingRad": 3.141592653589793
+          },
+          "endCondition": {
+            "condition": "queueFull"
+          },
+          "expect": {
+            "collectFrom": "gardenRed",
+            "count": 4
+          },
+          "notes": "Red garden: 4 pollen along the audience wall from the red corner."
+        }
+      ]
+    },
+    {
+      "id": "waitReady4",
+      "kind": "wait",
+      "until": "shotReady",
+      "timeoutS": 1.0
+    },
+    {
+      "id": "volley4Garden",
+      "kind": "command",
+      "name": "shoot",
+      "args": {
+        "seconds": 2.5
+      },
+      "timeoutS": 2.6,
+      "notes": "4 garden pollen at the audience cell, shot from the sweep end (about 69 in). Tips the audience cell when it is up (partner sequence). Solo it is down after volley 3. No ledger expect (it would be a LEGAL_APPROACH error)."
+    },
+    {
+      "id": "park",
+      "kind": "command",
+      "name": "stopAll"
+    }
+  ]
+}

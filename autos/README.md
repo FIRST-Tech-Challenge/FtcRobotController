@@ -4,7 +4,7 @@ Open the repository folder containing `zenith.json` in Zenith. `autos/` is the a
 
 - `integration-example.auto.json`: cleared-area authoring example with a curve, markers, parallel actions, waits, a branch and mechanism commands. Coordinates and dynamics are unmeasured examples.
 - `pollen-navigation-test.auto.json`: separate camera-guided collection experiment. Team deployment retains its sole **Test: Pollen Navigation (Pedro + Ivy)** entry with the isolated `POLLEN_TEST` profile.
-- New routines: full robot profile, one generated Driver Station entry in **Generated**. The legacy red/blue Route Required wrappers are disabled. No match routes or competition coordinates have been supplied.
+- New routines: full robot profile, one generated Driver Station entry in **Generated**. The legacy red/blue Route Required wrappers are disabled. `red-audience` and `red-far` are DRAFT match routes with placeholder coordinates, not yet deployed; see [the match autonomous plan](../doc/MatchAutonomousPlan.md).
 
 Use **UI edit/save → team deployment → APK build/install**:
 

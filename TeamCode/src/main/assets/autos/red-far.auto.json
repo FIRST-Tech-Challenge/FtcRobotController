@@ -1,0 +1,214 @@
+{
+  "$schema": "https://libraries.horizon36596.org/zenith/schema/v1/auto.json",
+  "formatVersion": 4,
+  "name": "red-far",
+  "title": "DRAFT Auto: Red Far (5 s delay, 4+4, unmeasured)",
+  "description": "DRAFT, plan of 2026-11-18 (doc/MatchAutonomousPlan.md). Start on the far wall facing +X (toward blue), left side on the wall, the red far-wall flower behind. Wait 5 s, shoot the preload at the far cell, collect the flower behind with the depollinator, cross the field and shoot the audience cell. Solo, the far cell is lowered at the start, so volley 1 only scores once a partner tips the hive (kept as requested). Every coordinate is a placeholder to measure. Blue Audience runs this file point-mirrored.",
+  "robot": "autos/robot.json",
+  "field": "autos/field/biobuzz.field.json",
+  "alliance": "RED",
+  "start": {
+    "pose": {
+      "xIn": -10,
+      "yIn": 63,
+      "headingRad": 0
+    },
+    "holds": {
+      "pollen": 4
+    }
+  },
+  "steps": [
+    {
+      "id": "safeStart",
+      "kind": "command",
+      "name": "stopAll"
+    },
+    {
+      "id": "depollinatorStow",
+      "kind": "command",
+      "name": "depollinatorHome"
+    },
+    {
+      "id": "aimFar",
+      "kind": "command",
+      "name": "aim",
+      "args": {
+        "side": "FAR",
+        "frame": "AUTHORED",
+        "spin": true
+      }
+    },
+    {
+      "id": "startDelay",
+      "kind": "wait",
+      "seconds": 4.5,
+      "notes": "First feed about 5 s after START. The turret homes and relocalizes during INIT (BioBuzzRobot), so no homing step runs here."
+    },
+    {
+      "id": "waitReady1",
+      "kind": "wait",
+      "until": "shotReady",
+      "timeoutS": 0.5
+    },
+    {
+      "id": "volley1Preload",
+      "kind": "command",
+      "name": "shoot",
+      "args": {
+        "seconds": 2.5
+      },
+      "timeoutS": 2.6,
+      "notes": "4 preload at the far cell. Solo, the far cell is lowered at the start, so this volley scores only once a partner has tipped the hive (kept as requested 2026-11-18). It carries no ledger expect on purpose: with one, Zenith reports LEGAL_APPROACH because its hive model has the far cell down, and that error blocks team deploy."
+    },
+    {
+      "id": "preAimAudience",
+      "kind": "command",
+      "name": "aim",
+      "args": {
+        "side": "AUDIENCE",
+        "frame": "AUTHORED",
+        "spin": true
+      }
+    },
+    {
+      "id": "depollinatorOut",
+      "kind": "command",
+      "name": "depollinatorDeploy"
+    },
+    {
+      "id": "flowerCollect",
+      "kind": "parallel",
+      "mode": "deadline",
+      "steps": [
+        {
+          "id": "flowerLoad",
+          "kind": "command",
+          "name": "loadUntilFull",
+          "args": {
+            "seconds": 4.5
+          },
+          "timeoutS": 4.6
+        },
+        {
+          "id": "flowerPath",
+          "kind": "path",
+          "timeoutS": 4.5,
+          "speedFraction": 0.25,
+          "segments": [
+            {
+              "kind": "bezier",
+              "from": "current",
+              "control": [
+                {
+                  "xIn": -10,
+                  "yIn": 48
+                },
+                {
+                  "xIn": -24,
+                  "yIn": 46
+                }
+              ],
+              "to": {
+                "xIn": -24,
+                "yIn": 57
+              }
+            }
+          ],
+          "heading": {
+            "mode": "piecewise",
+            "ranges": [
+              {
+                "startT": 0,
+                "endT": 0.3,
+                "heading": {
+                  "mode": "constant",
+                  "headingRad": 0
+                }
+              },
+              {
+                "startT": 0.3,
+                "endT": 1,
+                "heading": {
+                  "mode": "linear",
+                  "fromRad": 0,
+                  "toRad": 1.5707963267948966
+                }
+              }
+            ]
+          },
+          "endCondition": {
+            "condition": "queueFull"
+          },
+          "notes": "Pull straight off the wall first (no turn for the first 30%, so the rear corner clears the flower foot), then turn the front intake toward the flower behind the start (flower1, x = -24) and approach head-on.",
+          "expect": {
+            "collectFrom": "flower1",
+            "count": 4
+          }
+        }
+      ],
+      "deadline": "flowerLoad"
+    },
+    {
+      "id": "depollinatorStowAgain",
+      "kind": "command",
+      "name": "depollinatorHome"
+    },
+    {
+      "id": "toAudienceShot",
+      "kind": "path",
+      "timeoutS": 7,
+      "speedFraction": 0.35,
+      "segments": [
+        {
+          "kind": "bezier",
+          "from": "current",
+          "control": [
+            {
+              "xIn": -44,
+              "yIn": 30
+            },
+            {
+              "xIn": -44,
+              "yIn": -20
+            }
+          ],
+          "to": {
+            "xIn": -36,
+            "yIn": -42
+          }
+        }
+      ],
+      "heading": {
+        "mode": "linear",
+        "fromRad": 1.5707963267948966,
+        "toRad": -1.5707963267948966
+      },
+      "notes": "Crosses at x <= -35 (robot edge) past the hive frame; stays clear of the red loading zone (x < -61)."
+    },
+    {
+      "id": "waitReady2",
+      "kind": "wait",
+      "until": "shotReady",
+      "timeoutS": 1.5
+    },
+    {
+      "id": "volley2Flower",
+      "kind": "command",
+      "name": "shoot",
+      "args": {
+        "seconds": 2.5
+      },
+      "timeoutS": 2.6,
+      "notes": "4 flower pollen into the raised audience cell; tips the hive in a solo run.",
+      "expect": {
+        "launchesInto": "hiveRedUpCell",
+        "count": 4
+      }
+    },
+    {
+      "id": "park",
+      "kind": "command",
+      "name": "stopAll"
+    }
+  ]
+}

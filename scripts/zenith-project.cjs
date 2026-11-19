@@ -81,7 +81,7 @@ function validateTeam(root) {
       || lock.packages['node_modules/@horizon36596/zenith-schema'].version !== '0.1.2')
     throw Error('Pinned CLI/Pedro/runtime contract changed');
   const files=fs.readdirSync(inside(root,'autos')).filter(f=>f.endsWith('.auto.json')).sort();
-  const names=[], titles=[], classes=[];
+  const names=[], titles=[], classes=[], alliances={};
   for (const file of files) {
     const auto=json(root,'autos/'+file), name=file.slice(0,-10);
     if (auto.name !== name || !/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(name)) throw Error(file+': name must equal its lowercase kebab-case file stem');
@@ -90,7 +90,7 @@ function validateTeam(root) {
       if (!auto.field.startsWith('autos/field/') || !auto.field.endsWith('.field.json')) throw Error(file+': field must be inside autos/field');
       read(root,auto.field);
     }
-    names.push(name); titles.push(auto.title || name);
+    names.push(name); titles.push(auto.title || name); alliances[name]=auto.alliance;
     classes.push(name.split('-').map(s=>s[0].toUpperCase()+s.slice(1)).join('')+'Auto');
     const meta=routines.reserved[name], profile=meta ? meta.profile : routines.defaultProfile;
     if (!profiles[profile]) throw Error(file+': unknown hardware profile '+profile);
@@ -134,6 +134,9 @@ function validateTeam(root) {
   // Legacy placeholders are retained for code compatibility, but must never duplicate generated match entries.
   for (const side of ['Red','Blue']) if (!read(root,JAVA+side+'CompetitionAutonomous.java').toString().includes('@Disabled'))
     throw Error('Legacy '+side+' placeholder must be disabled');
+  // A handwritten wrapper may run a routine only on the OTHER alliance (Ivy mirrors it once), at most once per
+  // routine; same-alliance wrappers would duplicate the generated Driver Station entry.
+  const mirrors=new Map();
   function checkWrappers(dir) {
     for (const entry of fs.readdirSync(inside(root,dir),{withFileTypes:true})) {
       const file=dir+entry.name;
@@ -142,8 +145,12 @@ function validateTeam(root) {
       const text=read(root,file).toString();
       if (!text.includes('@Autonomous') || /@Disabled\b/.test(text)) continue;
       const auto=text.match(/autoName\s*\(\s*\)\s*\{\s*return\s+"([^"]+)"/)?.[1];
-      if (names.includes(auto) && file !== reserved[auto]?.wrapper)
+      if (!names.includes(auto) || file === reserved[auto]?.wrapper) continue;
+      const running=text.match(/new\s+BioBuzzRobot\s*\(\s*TurretSubsystem\.Alliance\.(RED|BLUE)\s*\)/)?.[1];
+      if (!running || running === alliances[auto])
         throw Error('Duplicate selectable handwritten wrapper for '+auto+': '+file);
+      if (mirrors.has(auto)) throw Error('Duplicate mirrored wrapper for '+auto+': '+mirrors.get(auto)+' and '+file);
+      mirrors.set(auto,file);
     }
   }
   checkWrappers(JAVA);

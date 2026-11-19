@@ -85,6 +85,20 @@ test('edited reserved duplicate is preserved, and handwritten duplicate wrappers
     '@Autonomous(name="Duplicate") class Duplicate { String autoName() { return "pollen-navigation-test"; } }');
   assert.throws(()=>validateTeam(root),/Duplicate selectable handwritten wrapper/);
 });
+test('one other-alliance mirror wrapper per routine is allowed; same-alliance or second mirrors are refused',t=>{
+  const root=fixture(t);
+  routine(root,'mirror-route');
+  const wrapper=(cls,alliance)=>'@Autonomous(name="'+cls+'") class '+cls+' { String autoName() { return "mirror-route"; } '
+    +'Object createRobot() { return new BioBuzzRobot(TurretSubsystem.Alliance.'+alliance+'); } }';
+  const dir='TeamCode/src/main/java/org/firstinspires/ftc/teamcode/';
+  write(root,dir+'MirrorBlue.java',wrapper('MirrorBlue','BLUE'));
+  validateTeam(root);
+  write(root,dir+'MirrorBlueAgain.java',wrapper('MirrorBlueAgain','BLUE'));
+  assert.throws(()=>validateTeam(root),/Duplicate mirrored wrapper for mirror-route/);
+  fs.unlinkSync(inside(root,dir+'MirrorBlueAgain.java'));
+  write(root,dir+'SameRed.java',wrapper('SameRed','RED'));
+  assert.throws(()=>validateTeam(root),/Duplicate selectable handwritten wrapper for mirror-route/);
+});
 test('unknown profiles, unbounded waits and ignored group timeouts fail before deployment',t=>{
   let root=fixture(t), metadata=read(root,'autos/routines.json');
   metadata.reserved['pollen-navigation-test'].profile='UNKNOWN'; write(root,'autos/routines.json',metadata);

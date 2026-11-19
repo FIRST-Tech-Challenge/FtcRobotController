@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
 /**
@@ -50,6 +51,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
  *         ({@link LinearSlideSubsystem}; slide must be down at INIT)</li>
  *     <li><b>Gamepad 1 B (Press)</b>: Toggle slide claw open / closed ({@link SlideClawSubsystem};
  *         no effect with the shot-blocker end effector)</li>
+ *     <li><b>Rumble</b> ({@link DriverRumble}): both gamepads blip twice at 20 s left and rumble 1 s at 5 s left
+ *         (clock from TeleOp START); Gamepad 1 buzzes briefly when automatic shooting becomes READY
+ *         and rumbles 0.4 s when the transfer confirms a full queue</li>
  * </ul>
  */
 public abstract class MecanumTeleOp extends LinearOpMode {
@@ -223,6 +227,8 @@ public abstract class MecanumTeleOp extends LinearOpMode {
             boolean previousClawToggle = gamepad1.b;
 
             double previousLoopTime = System.nanoTime() * 1e-9;
+            DriverRumble rumbleCues = new DriverRumble();
+            rumbleCues.start(previousLoopTime);
             while (opModeIsActive()) {
                 loop.begin();
                 double now = System.nanoTime() * 1e-9;
@@ -353,6 +359,17 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                 MotionSample aimingPose = shots == null ? null : shots.pose();
                 lights.showReference(turret != null && !turret.hasHomingFault(), turret != null && turret.isHomed(),
                         aimingPose != null && aimingPose.fieldReferenced && aimingPose.fresh(now, ShotPlanner.MAX_SAMPLE_AGE_SECONDS));
+                rumbleCues.update(now, autoShotReady, transfer.isFull());
+                if (rumbleCues.endgameWarning()) {
+                    rumbleBlips(gamepad1, DriverRumble.ENDGAME_WARNING_BLIPS);
+                    rumbleBlips(gamepad2, DriverRumble.ENDGAME_WARNING_BLIPS);
+                }
+                if (rumbleCues.finalWarning()) {
+                    rumble(gamepad1, DriverRumble.FINAL_WARNING_RUMBLE_MS);
+                    rumble(gamepad2, DriverRumble.FINAL_WARNING_RUMBLE_MS);
+                }
+                if (rumbleCues.shotReady()) rumble(gamepad1, DriverRumble.SHOT_READY_RUMBLE_MS);
+                else if (rumbleCues.transferFull()) rumble(gamepad1, DriverRumble.TRANSFER_FULL_RUMBLE_MS);
                 // 4. Driver view (most important first), optional diagnostics below, one flush per loop.
                 FiringCoordinator.State firingState = firing.state();
                 String shotStatus = inhibitFeedHeld ? "BLOCKED (GP2 LT)" : manualFeedHeld ? "MANUAL FEED"
@@ -410,6 +427,15 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                     turret == null ? null : turret::stop, lights == null ? null : lights::stop,
                     slide == null ? null : slide::stop);
         }
+    }
+
+    /** Rumble is only a driver cue: a failed call must never stop the match OpMode. */
+    private static void rumble(Gamepad gamepad, int milliseconds) {
+        try { gamepad.rumble(milliseconds); } catch (RuntimeException ignored) { }
+    }
+
+    private static void rumbleBlips(Gamepad gamepad, int count) {
+        try { gamepad.rumbleBlips(count); } catch (RuntimeException ignored) { }
     }
 
 }
