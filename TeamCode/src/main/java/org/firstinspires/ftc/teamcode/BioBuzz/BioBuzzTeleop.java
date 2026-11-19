@@ -111,7 +111,17 @@ public class BioBuzzTeleop extends LinearOpMode2026 {
 
             telemetry.addData("Distance From Goal: ", distanceToHive.GetDistance());
 
+
+            if (gamepad2.right_trigger > 0.1){
+                aprilTagsTurretTarget.ChangeAngleSetPosition(gamepad2.right_trigger, 0);
+            }
+
+            if (gamepad2.left_trigger > 0.1){
+                aprilTagsTurretTarget.ChangeAngleSetPosition(-gamepad2.left_trigger, 0);
+            }
+
             telemetry.update();
+            lla.setPosition(LimelightAngle.getAngle(distanceToHive.GetDistance()));
         }
     }
 
