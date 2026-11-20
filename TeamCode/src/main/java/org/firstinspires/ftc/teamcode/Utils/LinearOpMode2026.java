@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Utils;
 
+import com.pedropathing.follower.Follower;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.Utils.Movement.Pathfinder;
 import org.firstinspires.ftc.teamcode.Utils.Movement.PosGetters.PinpointPosGet;
 import org.firstinspires.ftc.teamcode.Utils.Movement.PosGetters.PositionGetter;
 import org.firstinspires.ftc.teamcode.Utils.Threads.SensingThread;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.io.File;
 import java.util.Random;
@@ -42,6 +44,7 @@ public abstract class LinearOpMode2026 extends LinearOpMode {
     public static boolean isCurrentAllienceRed = true;
     public static boolean isCompetition = true;
     public LimelightBallDetection ballDetection;
+    public Follower follower;
 
     // public IMU imu;
 
@@ -64,6 +67,7 @@ public abstract class LinearOpMode2026 extends LinearOpMode {
                                 "Where do you live?",
                                 "THIS IS NO EASTER EGG, THIS IS A BUG!",
                                 "Are you a true Hammerhead?",
+                                "Why did the hospital send the horse home? .......... Because they had a stable condition!"
         };
 
         NNFileReader.telemetry = telemetry;
@@ -110,6 +114,11 @@ public abstract class LinearOpMode2026 extends LinearOpMode {
             ballDetection = new LimelightBallDetection(limelight);
         } catch (Exception e) {
             telemetry.addData("Config error","Limelight not found: " + e);
+        }
+        try {
+            follower = Constants.create(hardwareMap);
+        } catch (Exception e) {
+            telemetry.addData("Config error","Follower threw: " + e);
         }
 
         try {
