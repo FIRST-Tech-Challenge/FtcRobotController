@@ -28,6 +28,7 @@ public class AprilTagsTurretTarget {
     DcMotorEx dcMotorEx;
 
     int limelightPipeline;
+    private long lastPipelineSwitchMs = 0;
 
     public double maxPosition = MiscUtils.getPositionFromDegrees(185, 537.7); //185
     public double minPosition = MiscUtils.getPositionFromDegrees(-185,537.7);
@@ -60,10 +61,17 @@ public class AprilTagsTurretTarget {
     }
 
     public double UpdateTxValue(Limelight3A limelight3A){
-        if (limelight3A.getStatus().getPipelineIndex() != limelightPipeline){
+        LLResult limelightResult = limelight3A.getLatestResult();
+
+        // getStatus() is a blocking HTTP request and pipelineSwitch() a blocking POST (15 s timeout),
+        // so read the pipeline from the latest result instead, and only switch when connected, max once a second.
+        long now = System.currentTimeMillis();
+        if (limelight3A.isConnected() && limelightResult != null
+                && limelightResult.getPipelineIndex() != limelightPipeline
+                && now - lastPipelineSwitchMs > 1000){
+            lastPipelineSwitchMs = now;
             limelight3A.pipelineSwitch(limelightPipeline);
         }
-        LLResult limelightResult = limelight3A.getLatestResult();
 
         if (limelightResult != null && limelightResult.isValid()){
             double tx = limelightResult.getTx(); // Horizontal  0 is middle

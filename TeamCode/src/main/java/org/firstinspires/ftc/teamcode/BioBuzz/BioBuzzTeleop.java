@@ -35,6 +35,8 @@ public class BioBuzzTeleop extends LinearOpMode2026 {
     TurretConfigurator turretConfigurator;
     GoBildaPinpointDriver odo;
 
+    ControlsTrigger toggleClusterTelem; // created in runOpMode, gamepad1 is still null here
+    boolean showClusterTelem = false;
 
     @Override
     public void runOpMode(){
@@ -49,6 +51,8 @@ public class BioBuzzTeleop extends LinearOpMode2026 {
         ControlsTrigger intakeTrigger = new ControlsTrigger(new GamepadButton(gamepad1, GamepadButton.GButton.cross));
         ControlsTrigger inverseLiftTrigger = new ControlsTrigger(new GamepadButton(gamepad1, GamepadButton.GButton.left_bumper));
         ControlsTrigger resetPositon = new ControlsTrigger(new GamepadButton(gamepad1, GamepadButton.GButton.left_stick_button));
+        toggleClusterTelem = new ControlsTrigger(new GamepadButton(gamepad1, GamepadButton.GButton.triangle));
+
 
 // cluster code
         hiveTargeting = new AprilTagClusterTargeting();      // picks pipeline 4 red / 3 blue
@@ -77,7 +81,7 @@ public class BioBuzzTeleop extends LinearOpMode2026 {
                 if (inverseLiftTrigger.IsButtonPressed()){
                     lift.setPower(-0.2);
                 } else if (!shooting) {
-                    lift.setPower(0);
+                    lift.setPower(-0.1);
                 }
                 DoShoot();
 
@@ -93,9 +97,9 @@ public class BioBuzzTeleop extends LinearOpMode2026 {
 
                 if (resetPositon.IsTriggered()){
                     odo.resetPosAndIMU();
-                    lla.setPosition(.277);
+                    il.setPosition(.277);
                     wait(500);
-                    lla.setPosition(.611);
+                    il.setPosition(.611);
                 }
 
                 lla.setPosition(LimelightAngle.getAngle(distanceToHive.GetDistance()));
@@ -148,7 +152,7 @@ public class BioBuzzTeleop extends LinearOpMode2026 {
 // cluster code (wrapped so a bug here can't stop the turret / shooter)
         try {
             if (hiveTargeting.update(limelight)) {
-//                tx = hiveTargeting.getTx();
+                tx = hiveTargeting.getTx();
             }
         } catch (Exception e) {
             telemetry.addData("Cluster error", e.toString());
@@ -164,7 +168,12 @@ public class BioBuzzTeleop extends LinearOpMode2026 {
         aprilTagsTurretTarget.CheckPositionAndSetPower(telemetry);
 // cluster code
         try {
-            hiveTargeting.addTelemetry(telemetry);
+            if (toggleClusterTelem.IsTriggered()) {
+                showClusterTelem = !showClusterTelem; // triangle turns cluster telemetry on/off
+            }
+            if (showClusterTelem) {
+                hiveTargeting.addTelemetry(telemetry);
+            }
         } catch (Exception e) {
             telemetry.addData("Cluster telemetry error", e.toString());
         }

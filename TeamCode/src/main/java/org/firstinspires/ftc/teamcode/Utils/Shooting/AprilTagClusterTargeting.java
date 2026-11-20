@@ -98,17 +98,31 @@ public class AprilTagClusterTargeting {
     public boolean useSingleTagYaw = true;
     public double singleTagYawSign = 1;
 
-    /** 0..1, how much of the new reading to use each loop. 1 = no smoothing. */
-    public double smoothing = 0.6;
+    /**
+     * 0..1, how much of the new reading to use each loop. 1 = no smoothing.
+     * Keep at 1 when feeding the turret: smoothing adds lag to a loop that already runs at 0.7+ power,
+     * which makes it overshoot and oscillate.
+     */
+    public double smoothing = 1.0;
 
-    /** How long (ms) to keep reporting the last result after the tags disappear. */
-    public long holdTimeMs = 150;
+    /**
+     * How long (ms) to keep reporting the last result after the tags disappear. Keep at 0 for the turret:
+     * the turret aims at (current position - tx), so a held tx keeps pushing the target while it moves.
+     */
+    public long holdTimeMs = 0;
+
+    /** Safety limits on tx (see safeTx). The opening can be at most this far from the tags' own tx. */
+    public double maxCorrectionDeg = 10;
+    /** Absolute limit on tx, about the edge of the Limelight's view. */
+    public double maxTxDeg = 30;
 
     /** If not empty, only these hive names are aimed at (e.g. {@link #RED_SCORING}). Empty = any hive. */
     public final Set<String> allowedHives = new HashSet<>();
 
     /** Pipeline to force the Limelight onto. Set to -1 to leave it alone. */
     public int limelightPipeline;
+    private static final long PIPELINE_SWITCH_COOLDOWN_MS = 1000;
+    private long lastPipelineSwitchMs = 0;
 
     // ------------------------------------------------------------------------------------------
     // Hive layouts
@@ -222,6 +236,7 @@ public class AprilTagClusterTargeting {
         double txDeg, tyDeg, area, weight;
         boolean has3d;
         double x, f, u;
+        double camTxDeg;   // horizontal angle to this tag from its 3D position, camera frame
         double yawDeg;
         HiveLayout hive;
         double[] layoutPos;
@@ -237,11 +252,20 @@ public class AprilTagClusterTargeting {
 
         if (limelight == null) return finishNoTags();
 
-        if (limelightPipeline >= 0 && limelight.getStatus().getPipelineIndex() != limelightPipeline) {
+        LLResult result = limelight.getLatestResult();
+
+        // Pipeline check WITHOUT a network call: getStatus() is a blocking HTTP request (up to 200 ms)
+        // and pipelineSwitch() is a blocking HTTP POST (up to 15 s read timeout). The result already
+        // carries the pipeline index, so use that, only when connected, and at most once per second.
+        long now = System.currentTimeMillis();
+        if (limelightPipeline >= 0 && limelight.isConnected() && result != null
+                && result.getPipelineIndex() != limelightPipeline
+                && now - lastPipelineSwitchMs > PIPELINE_SWITCH_COOLDOWN_MS) {
+            lastPipelineSwitchMs = now;
             limelight.pipelineSwitch(limelightPipeline);
         }
 
-        return update(limelight.getLatestResult());
+        return update(result);
     }
 
     /** Same as {@link #update(Limelight3A)} but with a result you already grabbed. */
@@ -264,7 +288,7 @@ public class AprilTagClusterTargeting {
         if (aim == null) return finishNoTags();
 
         applyResult(aim, best);
-        return true;
+        return hasTarget; // false if safeTx rejected the reading
     }
 
     // ------------------------------------------------------------------------------------------
@@ -300,8 +324,11 @@ public class AprilTagClusterTargeting {
 
     /** Use this instead of setTiltServo if you'd rather pass the servo position in yourself each loop. */
     public void setCameraPitchFromServoPosition(double servoPos) {
+        // A servo that hasn't been commanded yet can report NaN; keep the last good pitch instead
+        if (Double.isNaN(servoPos) || Double.isInfinite(servoPos)) return;
         noteTiltCommand(servoPos);
-        cameraPitchDeg = servoPositionToPitchDeg(servoPos);
+        double pitch = servoPositionToPitchDeg(servoPos);
+        if (!Double.isNaN(pitch) && !Double.isInfinite(pitch)) cameraPitchDeg = pitch;
     }
 
     private void updateTiltFromServo() {
@@ -342,8 +369,11 @@ public class AprilTagClusterTargeting {
         if (pose != null && pose.getPosition() != null) {
             Position p = pose.getPosition().toUnit(DistanceUnit.INCH);
             // Limelight camera space: +x right, +y down, +z forward
-            if (Math.abs(p.x) + Math.abs(p.y) + Math.abs(p.z) > 1e-6) {
+            // Only trust 3D data that is real numbers and in front of the camera
+            boolean finite = !Double.isNaN(p.x + p.y + p.z) && !Double.isInfinite(p.x + p.y + p.z);
+            if (finite && p.z > 1.0 && Math.abs(p.x) + Math.abs(p.y) + Math.abs(p.z) > 1e-6) {
                 t.has3d = true;
+                t.camTxDeg = Math.toDegrees(Math.atan2(p.x, p.z));
                 double pitch = Math.toRadians(cameraPitchDeg);
                 double camY = p.y, camZ = p.z;
                 t.x = p.x + cameraOffsetRightIn;
@@ -536,11 +566,51 @@ public class AprilTagClusterTargeting {
 
     /** Point in leveled turret frame (x right, f forward, u up, inches) -> {tx, ty, dist, height, method}. */
     private double[] pointToAim(double x, double f, double u, Method m) {
-        if (f <= 0.5) return null; // behind / on top of the camera, bad solve
+        if (!(f > 0.5)) return null; // behind / on top of the camera, or NaN: bad solve
+        if (Double.isNaN(x) || Double.isNaN(u) || Double.isInfinite(x) || Double.isInfinite(u)) return null;
         double dist = Math.hypot(x, f);
-        double txDeg = Math.toDegrees(Math.atan2(x, f));
         double tyDeg = Math.toDegrees(Math.atan2(u, dist));
+
+        // tx is computed in the CAMERA frame (like Limelight tx, which the turret loop is tuned for),
+        // so it does not depend on the camera pitch. Undo the leveling + offsets to get back there.
+        double pitch = Math.toRadians(cameraPitchDeg);
+        double xc = x - cameraOffsetRightIn;
+        double fc = f - cameraOffsetForwardIn;
+        double camZ = fc * Math.cos(pitch) + u * Math.sin(pitch);
+        if (!(camZ > 0.5)) return null;
+        double txDeg = Math.toDegrees(Math.atan2(xc, camZ));
+
         return new double[]{txDeg, tyDeg, dist, u, m.ordinal()};
+    }
+
+    /**
+     * SAFETY: the turret uses tx in a feedback loop at 0.7+ power. A bad 3D solve can give a huge tx,
+     * which slams the turret back and forth / spins it around, and the current spikes can brown out
+     * the Control Hub (robot "silently" dies and the Driver Station disconnects).
+     * So the final tx is anchored to the tags' plain 2D Limelight tx (what the old code used),
+     * plus a LIMITED correction toward the opening, and then clamped.
+     */
+    private double safeTx(double solvedTx, List<Tag> cluster) {
+        double sw = 0, tag2d = 0, tag3d = 0;
+        boolean all3d = true;
+        for (Tag t : cluster) {
+            sw += t.weight;
+            tag2d += t.weight * t.txDeg;
+            if (t.has3d) tag3d += t.weight * t.camTxDeg; else all3d = false;
+        }
+        tag2d /= sw;
+        if (Double.isNaN(tag2d) || Double.isInfinite(tag2d)) return Double.NaN;
+        if (Double.isNaN(solvedTx) || Double.isInfinite(solvedTx)) return clamp(tag2d, -maxTxDeg, maxTxDeg);
+
+        double correction;
+        if (all3d) {
+            tag3d /= sw;
+            correction = solvedTx - tag3d;   // how far the opening is from the tags' center (3D)
+        } else {
+            correction = solvedTx - tag2d;   // solve was already 2D
+        }
+        correction = clamp(correction, -maxCorrectionDeg, maxCorrectionDeg);
+        return clamp(tag2d + correction, -maxTxDeg, maxTxDeg);
     }
 
     // ------------------------------------------------------------------------------------------
@@ -548,8 +618,11 @@ public class AprilTagClusterTargeting {
     // ------------------------------------------------------------------------------------------
 
     private void applyResult(double[] aim, List<Tag> cluster) {
+        double newTx = safeTx(aim[0], cluster);
+        if (Double.isNaN(newTx)) { finishNoTags(); return; }
+
         double a = hadValue ? clamp(smoothing, 0, 1) : 1;
-        tx = tx + (aim[0] - tx) * a;
+        tx = clamp(tx + (newTx - tx) * a, -maxTxDeg, maxTxDeg);
         ty = ty + (aim[1] - ty) * a;
         if (aim[2] < 0) {
             distanceIn = -1;
