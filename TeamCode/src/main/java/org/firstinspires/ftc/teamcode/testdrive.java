@@ -22,15 +22,15 @@ import java.util.List;
  * Built for com.pedropathing:core 3.0.0 (Paths API). The drivetrain, Pinpoint and Pedro follower come
  * from the repo's PedroDrive, so its PedroConfiguration tuning applies. Every mechanism is a repo
  * subsystem, driven like the competition and fallback autos: IntakeSubsystem (TeleOp's direction),
- * TransferSubsystem (full sensor, stage 1 stall guard), GateSubsystem with the shared FiringCoordinator
+ * TransferSubsystem (full sensor, no stall limit), GateSubsystem with the shared FiringCoordinator
  * feed, and TurretSubsystem (homing, rear dead zone, encoder-verified yaw, shooter PIDF), aimed with the
  * competition pivot geometry and aim lead; hood / RPM come from ShootingConfiguration.PROFILE.
  *
  * - Coordinates: the repo's field frame (PedroDrive, Zenith routes, TeleOpFieldReference): inches,
  *   (0, 0) = field center, +x toward the blue wall, +y away from the audience. Headings in degrees, CCW positive.
  * - Planned alliance RED.
- * - Robot placed as a 23 x 12 in box, center (-11.85, -64.42), heading -179.2 deg.
- * - Start pose (tracked point = box center + pod offsets X 0 fwd, Y 0 reversed): (-11.846, -64.424).
+ * - Robot placed as a 23 x 12 in box, center (-12.42, -65.39), heading 179.8 deg.
+ * - Start pose (tracked point = box center + pod offsets X 0 fwd, Y 0 reversed): (-12.415, -65.386).
  * - Path limits: speed is a fraction of PedroConfiguration.MAX_FORWARD_VELOCITY_IN_PER_SEC; max velocity,
  *   acceleration and deceleration are Foresight constraints for that one path (0 = no limit).
  *
@@ -55,7 +55,7 @@ public class testdrive extends LinearOpMode {
         public static double INTAKE_POWER = 1;
         // ---- Shot readiness ----
         public static double READY_TIMEOUT_S = FallbackAutoController.SPIN_UP_TIMEOUT_SECONDS;   // repo value
-        // ---- Gate, kicker & transfer (shot timing) ----
+        // ---- Gate & transfer (shot timing) ----
         public static double FEED_SECONDS = FallbackAutoController.FEED_SECONDS;   // repo value
         // ---- Aim points (field-center inches, planned side) ----
         public static double GOAL1_X = TurretSubsystem.RED_HIVE_PIVOT_X_IN;   // repo value
@@ -68,6 +68,8 @@ public class testdrive extends LinearOpMode {
         public static double GOAL4_Y = TurretSubsystem.HIVE_RAISED_MOUTH_CENTER_Y_OFFSET_IN;   // repo value
         // ---- Driving & generator ----
         public static double STEP_TIMEOUT_S = 0;
+        public static boolean BRAKE_WHILE_SHOOTING = true;
+        public static double MAX_WHEEL_POWER = PedroConfiguration.MAX_WHEEL_POWER;   // repo value
         // ---- Pedro 3 path limits (driver defaults; a step can override them) ----
         public static double MAX_ACCEL_IN_PER_S2 = 0;   // 0 = no limit
         public static double MAX_DECEL_IN_PER_S2 = 0;   // 0 = no limit
@@ -109,7 +111,9 @@ public class testdrive extends LinearOpMode {
     /** Per-path Foresight limits. speed = fraction of max forward velocity; the rest are 0 = no limit. */
     private Path limits(Path path, double speed, double maxVelInPerS, double accelInPerS2, double decelInPerS2) {
         List<Modifier> m = new ArrayList<>();
-        m.add(cfg.setPathSpeed(speed));
+        // Never plan faster than the capped wheels can drive: at speed 1.0 with a 0.35 wheel cap, Foresight plans
+        // a ~70 in/s profile the robot cannot follow, and it overshot sideways without settling (2026-11-19).
+        m.add(cfg.setPathSpeed(Math.min(speed, T.MAX_WHEEL_POWER)));
         if (maxVelInPerS > 0) m.add(cfg.maxVelocityConstraint.at(maxVelInPerS));
         if (accelInPerS2 > 0) m.add(cfg.maxAccelerationConstraint.at(accelInPerS2));
         if (decelInPerS2 > 0) m.add(cfg.maxDecelerationConstraint.at(decelInPerS2));
@@ -121,7 +125,7 @@ public class testdrive extends LinearOpMode {
 
     // =====================================================================================
     //  ROBOT - the repo's subsystems, driven the way the competition and fallback autos drive them:
-    //  IntakeSubsystem (TeleOp's direction), TransferSubsystem (full sensor, stage 1 stall guard),
+    //  IntakeSubsystem (TeleOp's direction), TransferSubsystem (full sensor, no stall limit),
     //  GateSubsystem with the shared FiringCoordinator feed (CompetitionFeedController timing), and
     //  TurretSubsystem for yaw, hood and flywheel. Call readSensors() once per loop before the step
     //  and apply() once per loop after it (the OpMode does both).
@@ -188,7 +192,7 @@ public class testdrive extends LinearOpMode {
         void gateOpen(boolean open) { gateHeldOpen = open; }
 
         /**
-         * Shot: the fallback auto's continuous feed (gate, then both transfer stages) for T.FEED_SECONDS. A
+         * Shot: the fallback auto's continuous feed (gate, then the transfer's two linked motors) for T.FEED_SECONDS. A
          * continuous feed cannot count launched balls (FiringCoordinator), so it feeds every loaded ball.
          */
         void startShoot() { feedUntil = now() + T.FEED_SECONDS; shotNote = ""; }
@@ -269,22 +273,21 @@ public class testdrive extends LinearOpMode {
             if (spinning && rpmTarget > 0) turret.setShooterRpm(rpmTarget);
             else turret.stopShooter();
 
-            // ---- feed: the fallback auto's manual-feed path (TeleOp GP1 A): gate, then both stages ----
+            // ---- feed: the fallback auto's manual-feed path (TeleOp GP1 A): gate, then the transfer ----
             boolean feedRequested = now < feedUntil;
-            feedControl.updateSelection(now, false, firing);
+            feedControl.updateSelection(now, firing);   // continuous feed only (CompetitionFeedController)
             firing.update(now, false, feedRequested, false, false, false, false, false, "Planner autonomous feed");
             boolean feedStage1 = feedControl.feedStage1(now, firing);
             gate.setOpen(firing.gateOpen() || gateHeldOpen);
             boolean shootingBusy = feedRequested || firing.gateOpen()
                     || firing.state() == FiringCoordinator.State.RECOVERY;
-            // Stage 1 loads (full sensor + run-on, stall guard) while intaking or spinning up for a shot.
+            // Stage 1 loads (full sensor + run-on) while intaking or spinning up for a shot.
             boolean loading = intakePower > 0 || spinning;
             transfer.updateCached(now, feedControl.feedTransfers(firing, gate.isOpenForFeeding()),
                     shootingBusy || !loading, feedStage1, false);
             // Forward collection stops on a confirmed full queue (competition auto rule); reverse still allowed.
             intake.setIntakePower(transfer.isFull() && intakePower > 0
                     ? IntakeQueueController.FULL_QUEUE_INTAKE_POWER : intakePower);
-            transfer.setIntakeRunning(intake.getCommandedPower() > 0); // Stage 1 stall guard only while intaking.
         }
 
         void addTelemetry(Telemetry t) {
@@ -308,12 +311,14 @@ public class testdrive extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         AutoPoseHandoff.clear();   // like every repo auto: an older run's pose must never reach the next TeleOp
         RobotLoop loop = new RobotLoop(hardwareMap);   // bulk-cached hub reads, cleared once per loop
-        drive = new PedroDrive(hardwareMap);   // drive motors + Pinpoint + Pedro 3 follower
+        // Drive motors + Pinpoint + Pedro 3 follower with the PedroConfiguration Foresight tuning (the
+        // V1 tuner run, 2026-11-19), capped at T.MAX_WHEEL_POWER (0.35 until V1's paths are verified).
+        drive = new PedroDrive(hardwareMap, true, T.MAX_WHEEL_POWER);
         follower = drive.follower();
         cfg = drive.config();
         try {
             robot = new Robot(hardwareMap);    // starts turret homing
-            drive.setStartPose(P(-11.846, -64.424, -179.2));   // box center (-11.85, -64.42) + pod offsets
+            drive.setStartPose(P(-12.415, -65.386, 179.8));   // box center (-12.42, -65.39) + pod offsets
             boolean lastMirrored = mirrored;
             while (opModeInInit()) {
                 loop.begin();
@@ -330,7 +335,7 @@ public class testdrive extends LinearOpMode {
             }
             if (isStopRequested()) return;
 
-            final int STEPS = 6;
+            final int STEPS = 8;
             final double started = now();
             int stage = 0;               // steps started so far; running step index = stage - 1
             boolean running = false;
@@ -398,6 +403,7 @@ public class testdrive extends LinearOpMode {
             // step 1 - ACTION VOLLEY (AIM + SPIN + SHOOT): feed 2.5s at aim point 1 (red audience)
             case 0: {
                 if (first) {
+                    if (T.BRAKE_WHILE_SHOOTING) drive.stop();   // zero drive power + BRAKE while shooting (no Pedro hold)
                     robot.aimAt(P(T.GOAL1_X, T.GOAL1_Y, 0));
                     robot.setTracking(true);
                     robot.spin(true);
@@ -423,46 +429,77 @@ public class testdrive extends LinearOpMode {
                 return false;
             }
 
-            // step 2 - ACTION STOP ALL: intake, flywheel, feed off
+            // step 2 - ACTION INTAKE: in · 5s
             case 1: {
-                robot.stopAll();
-                return true;
+                if (first) robot.setIntake(1);
+                boolean done = stepTimer.seconds() >= 5;
+                return done;
             }
 
-            // step 3 - DRIVE to (-58.5, -63.9) @ -179.2 deg
+            // step 3 - DRIVE to (-59.1, -65.5) @ 179.8 deg
             case 2: {
                 if (first) {
                     pathSegs = 1;
                     Arrays.fill(cbFired, false);
-                    follower.follow(limits(Paths.line(P(-11.85, -64.42, 0), P(-58.53, -63.89, 0)).constant(H(-179.2)),
-                            PedroConfiguration.DEFAULT_PATH_SPEED_FRACTION, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
+                    follower.follow(limits(Paths.line(P(-12.42, -65.39, 0), P(-59.08, -65.52, 0)).constant(H(179.8)),
+                            1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
                 }
                 boolean done = !first && (!follower.following() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
                 return done;
             }
 
-            // step 4 - ACTION INTAKE: in · 2s
+            // step 4 - DRIVE to (-47.7, -42) @ 100 deg
             case 3: {
-                if (first) robot.setIntake(1);
-                boolean done = stepTimer.seconds() >= 2;
+                if (first) {
+                    pathSegs = 1;
+                    Arrays.fill(cbFired, false);
+                    follower.follow(limits(Paths.line(P(-59.08, -65.52, 0), P(-47.74, -42.01, 0)).constant(H(100)),
+                            1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
+                }
+                boolean done = !first && (!follower.following() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
                 return done;
             }
 
-            // step 5 - DRIVE to (-13.5, -50.3) @ -179.2 deg
+            // step 5 - DRIVE to (-58.4, -25.2) @ 175 deg
             case 4: {
                 if (first) {
                     pathSegs = 1;
                     Arrays.fill(cbFired, false);
-                    follower.follow(limits(Paths.line(P(-58.53, -63.89, 0), P(-13.54, -50.29, 0)).constant(H(-179.2)),
-                            PedroConfiguration.DEFAULT_PATH_SPEED_FRACTION, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
+                    follower.follow(limits(Paths.line(P(-47.74, -42.01, 0), P(-58.38, -25.15, 0)).constant(H(175)),
+                            1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
                 }
                 boolean done = !first && (!follower.following() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
                 return done;
             }
 
-            // step 6 - ACTION VOLLEY (AIM + SPIN + SHOOT): feed 2.5s at aim point 1 (red audience)
+            // step 6 - DRIVE to (-39.8, 39.6) @ 74 deg
             case 5: {
                 if (first) {
+                    pathSegs = 1;
+                    Arrays.fill(cbFired, false);
+                    follower.follow(limits(Paths.line(P(-58.38, -25.15, 0), P(-39.75, 39.59, 0)).constant(H(74)),
+                            1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
+                }
+                boolean done = !first && (!follower.following() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
+                return done;
+            }
+
+            // step 7 - DRIVE to (-14.2, 42.3) @ 5.9 deg
+            case 6: {
+                if (first) {
+                    pathSegs = 1;
+                    Arrays.fill(cbFired, false);
+                    follower.follow(limits(Paths.line(P(-39.75, 39.59, 0), P(-14.21, 42.25, 0)).constant(H(5.9)),
+                            1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
+                }
+                boolean done = !first && (!follower.following() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
+                return done;
+            }
+
+            // step 8 - ACTION VOLLEY (AIM + SPIN + SHOOT): feed 2.5s at aim point 1 (red audience)
+            case 7: {
+                if (first) {
+                    if (T.BRAKE_WHILE_SHOOTING) drive.stop();   // zero drive power + BRAKE while shooting (no Pedro hold)
                     robot.aimAt(P(T.GOAL1_X, T.GOAL1_Y, 0));
                     robot.setTracking(true);
                     robot.spin(true);

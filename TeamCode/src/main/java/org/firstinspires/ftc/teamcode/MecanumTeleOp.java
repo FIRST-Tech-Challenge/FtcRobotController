@@ -19,10 +19,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
  *     <li><b>Gamepad 1 Right / Left Stick Click</b>: Deploy depollinator 135 deg CW / return to 30 deg home</li>
  *     <li><b>Gamepad 1 Right Trigger (Hold)</b>: Prepare auto-aim, hood angle and flywheel RPM</li>
  *     <li><b>Gamepad 1 Right + Left Triggers (Hold)</b>: Start automatic shooting when ready</li>
- *     <li><b>Gamepad 1 A (Hold)</b>: Manually feed immediately in continuous; delayed in staggered</li>
- *     <li><b>Gamepad 2 Right Trigger (Hold)</b>: Manually feed immediately in continuous; delayed in staggered</li>
- *     <li><b>Gamepad 2 Left Trigger (Hold)</b>: Force gate closed and stop both transfer stages; overrides firing</li>
- *     <li><b>Gamepad 2 B (Press)</b>: Toggle continuous/staggered feeding; starts continuous</li>
+ *     <li><b>Gamepad 1 A (Hold)</b>: Manually feed immediately (continuous feed, readiness bypassed)</li>
+ *     <li><b>Gamepad 2 Right Trigger (Hold)</b>: Manually feed immediately (continuous feed, readiness bypassed)</li>
+ *     <li><b>Gamepad 2 Left Trigger (Hold)</b>: Force gate closed and stop the transfer (both motors); overrides firing</li>
+ *     <li><b>Feed mode</b>: Always CONTINUOUS (staggered mode and its GP2 B toggle removed 2026-11-19)</li>
  *     <li><b>Gamepad 2 D-Pad Right (Press)</b>: Clear auto yaw/hood/RPM offsets</li>
  *     <li><b>Gamepad 2 D-Pad Left (Press)</b>: Set field pose at the alliance corner opposite its pollen depot
  *         (also replaces a not-yet-applied autonomous pose). Written only to a settled READY Pinpoint: an early
@@ -34,10 +34,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
  *     <li><b>Gamepad 2 X (Press)</b>: Rehome turret only</li>
  *     <li><b>Gamepad 1/2 Right Bumper</b>: Force intake and stage-1 loading forward, overriding full</li>
  *     <li><b>Gamepad 1/2 Left Bumper</b>: Reverse intake only and pause stage-1 loading; both bumpers stop collection</li>
- *     <li><b>Flywheel</b>: Starts at 3500 output RPM after START; GP2 Y/A adjusts manual RPM, auto-aim overrides it.
+ *     <li><b>Flywheel</b>: Idles at {@link #FLYWHEEL_IDLE_RPM} (3000) output RPM from START; GP2 Y/A adjusts this
+ *         manual RPM, auto-aim overrides it while RT is held.
  *         Regulated by bang-bang + feedforward fusion ({@link #FLYWHEEL_CONTROLLER})</li>
- *     <li><b>Transfer</b>: Stage 1 loads until full; staggered shots start both stages 0.10 s after the gate opens
- *         and the gate closes at 0.30 s; stage 1 keeps running with the gate closed between held shots</li>
+ *     <li><b>Transfer</b>: Stage 1 (both linked motors) loads until full; a shot opens the gate and feeds stage 1
+ *         together, with no gate delay, for as long as the feed is held</li>
  *     <li><b>Full Queue</b>: After 0.5 seconds HIGH, intake stops; stage 1 runs on 0.5 seconds. LOW resumes loading automatically.</li>
  *     <li><b>Intake</b>: Automatically runs forward with space; bumpers always override direction</li>
  *     <li><b>Gamepad 2 Right Stick X</b>: Proportional clockwise turret speed, full stick = rated 6 V speed;
@@ -49,11 +50,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
  *     <li><b>Gamepad 2 Back (Press)</b>: Show / hide full diagnostics telemetry below the short driver view</li>
  *     <li><b>Gamepad 2 Left Stick Click (Press)</b>: Toggle linear slide fully down / fully up
  *         ({@link LinearSlideSubsystem}; slide must be down at INIT)</li>
+<<<<<<< Updated upstream
  *     <li><b>Gamepad 1 B (Press)</b>: Toggle slide claw open / closed ({@link SlideClawSubsystem};
  *         no effect with the shot-blocker end effector)</li>
  *     <li><b>Rumble</b> ({@link DriverRumble}): both gamepads blip twice at 20 s left and rumble 1 s at 5 s left
  *         (clock from TeleOp START); Gamepad 1 buzzes briefly when automatic shooting becomes READY
  *         and rumbles 0.4 s when the transfer confirms a full queue</li>
+=======
+ *     <li><b>GP1 rumble</b> ({@link DriverRumble}): two pulses when the transfer queue becomes full; a steady
+ *         rumble while RT is held until the shot is ready</li>
+ *     <li><b>Fault lights</b>: a new turret homing, slide, Pinpoint or firing fault blinks all three status
+ *         lights red for {@link RobotStatusLights#FAULT_ALERT_SECONDS} s</li>
+>>>>>>> Stashed changes
  * </ul>
  */
 public abstract class MecanumTeleOp extends LinearOpMode {
@@ -73,7 +81,8 @@ public abstract class MecanumTeleOp extends LinearOpMode {
     private static final double PITCH_STEP_DEG = 0.5;
     private static final double SHOOTER_RPM_STEP = 50.0;
     private static final double TRIGGER_DEADBAND = 0.1;
-    public static final double STARTING_FLYWHEEL_RPM = 3500.0;
+    /** Manual/idle flywheel speed from START (3000 since 2026-11-19, was 3500); GP2 Y/A adjusts it. */
+    public static final double FLYWHEEL_IDLE_RPM = 3000.0;
     /** Both competition TeleOps regulate the flywheel with bang-bang + feedforward fusion (untuned gains). */
     public static final TurretSubsystem.ShooterController FLYWHEEL_CONTROLLER =
             TurretSubsystem.ShooterController.BANG_BANG_FUSION;
@@ -81,6 +90,17 @@ public abstract class MecanumTeleOp extends LinearOpMode {
     private void rehomeField(PinpointOdometry odometry, ShotCoordinator shots, Pose2D cornerPose) {
         odometry.setPose(cornerPose);
         if (shots != null) shots.requestFieldRehomeRefinement(System.nanoTime() * 1e-9);
+    }
+
+    /** Any new fault blinks all lights red; call before the other light updates (firing is null in INIT). */
+    private static void showFaultAlert(RobotStatusLights lights, double now, TurretSubsystem turret,
+                                       LinearSlideSubsystem slide, PinpointOdometry odometry,
+                                       FiringCoordinator firing) {
+        lights.showFaultAlert(now,
+                turret != null && turret.hasHomingFault(),
+                slide != null && slide.getState() == LinearSlideController.State.FAULT,
+                odometry.hasDeviceFault(),
+                firing != null && firing.state() == FiringCoordinator.State.FAULT);
     }
 
     @Override
@@ -96,7 +116,6 @@ public abstract class MecanumTeleOp extends LinearOpMode {
         TurretSubsystem turret = null;
         RobotStatusLights lights = null;
         LinearSlideSubsystem slide = null;
-        SlideClawSubsystem claw = null;
         try {
             odometry = new PinpointOdometry(hardwareMap);
             intake = new IntakeSubsystem(hardwareMap);
@@ -113,18 +132,12 @@ public abstract class MecanumTeleOp extends LinearOpMode {
             } catch (Exception e) {
                 turretError = e.getMessage();
             }
-            // Optional like the turret: an unwired slide or claw must not stop the match OpMode.
+            // Optional like the turret: an unwired slide must not stop the match OpMode.
             String slideError = null;
             try {
                 slide = new LinearSlideSubsystem(hardwareMap);
             } catch (Exception e) {
                 slideError = e.getMessage();
-            }
-            String clawError = null;
-            try {
-                claw = new SlideClawSubsystem(hardwareMap);
-            } catch (Exception e) {
-                clawError = e.getMessage();
             }
 
             ShotCoordinator shots = turret == null ? null : createShotCoordinator(turret);
@@ -170,6 +183,7 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                     turret.applyYawCommand(); // Corner refinement may have set this loop's yaw.
                 }
                 MotionSample initPose = shots == null ? null : shots.pose();
+                showFaultAlert(lights, now, turret, slide, odometry, null);
                 lights.showReference(turret != null && !turret.hasHomingFault(), turret != null && turret.isHomed(),
                         initPose != null && initPose.fieldReferenced && initPose.fresh(now, ShotPlanner.MAX_SAMPLE_AGE_SECONDS));
 
@@ -182,8 +196,7 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                 if (!CornerRehomeRequest.NOT_REQUESTED.equals(cornerRehome.status()))
                     telemetry.addData("Corner rehome (GP2 D-pad Left)", cornerRehome.status());
                 if (slide != null) slide.addDriverTelemetry(telemetry);
-                else telemetry.addData("Slide (GP2 LS)", "UNAVAILABLE: %s", slideError);
-                if (claw == null) telemetry.addData("Claw (GP1 B)", "UNAVAILABLE: %s", clawError);
+                else telemetry.addData("Slide (GP2 RS/LS)", "UNAVAILABLE: %s", slideError);
                 lights.addWarningTelemetry(telemetry);
                 telemetry.addLine("GP2: X = home turret | D-Pad Left = corner rehome | Back = diagnostics");
                 telemetry.addLine("Slide must be fully down now (INIT = slide zero).");
@@ -196,7 +209,6 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                     if (turret != null) turret.addTelemetry(telemetry);
                     transfer.addTelemetry(telemetry);
                     if (slide != null) slide.addTelemetry(telemetry);
-                    if (claw != null) claw.addTelemetry(telemetry);
                     lights.addTelemetry(telemetry);
                     loop.addTelemetry(telemetry);
                 }
@@ -207,6 +219,7 @@ public abstract class MecanumTeleOp extends LinearOpMode {
             // The robot may move from here on, so a pose not yet applied is no longer known to be valid.
             autoPose.cancel("Not applied: Pinpoint did not settle before START");
             cornerRehome.cancel("Not applied: Pinpoint did not settle before START; press again");
+            DriverRumble rumble = new DriverRumble(); // GP1: queue full; RT held until the shot is ready.
 
             FiringCoordinator fallbackFiring = CompetitionFeedController.firing();
             FiringCoordinator firing = shots == null ? fallbackFiring : shots.firing();
@@ -217,14 +230,13 @@ public abstract class MecanumTeleOp extends LinearOpMode {
             boolean previousRpmDown = false;
             boolean previousTrimReset = gamepad2.dpad_right;
             AutoAimAdjustments aimAdjustments = new AutoAimAdjustments();
-            double manualShooterRpm = STARTING_FLYWHEEL_RPM;
+            double manualShooterRpm = FLYWHEEL_IDLE_RPM;
             IntakeQueueController intakeControl = new IntakeQueueController();
-            AutoAimSpinLimiter spinLimiter = new AutoAimSpinLimiter();
             boolean previousDepollinatorDeploy = false;
             boolean previousDepollinatorHome = false;
             // Held through START must not toggle on the first loop.
-            boolean previousSlideToggle = gamepad2.left_stick_button;
-            boolean previousClawToggle = gamepad1.b;
+            boolean previousSlideExtend = gamepad2.right_stick_button;
+            boolean previousSlideHome = gamepad2.left_stick_button;
 
             double previousLoopTime = System.nanoTime() * 1e-9;
             DriverRumble rumbleCues = new DriverRumble();
@@ -246,12 +258,8 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                 // 2. Robot-centric Mecanum Drive on Controller 1
                 double axial = -gamepad1.left_stick_y;
                 double lateral = gamepad1.left_stick_x;
-                // While auto aim is held, cap chassis turning so the turret can keep up (no turret, no cap).
                 boolean autoAimHeld = gamepad1.right_trigger > TRIGGER_DEADBAND;
-                MotionSample driveSample = odometry.getSample();
-                double yaw = spinLimiter.limit(now, gamepad1.right_stick_x,
-                        driveSample != null && driveSample.ready ? driveSample.omega : Double.NaN,
-                        autoAimHeld && turret != null);
+                double yaw = gamepad1.right_stick_x; // Full rotation speed, also while auto aiming.
 
                 drivetrain.driveRobotCentric(axial, lateral, yaw);
                 boolean deployDepollinator = gamepad1.right_stick_button;
@@ -263,16 +271,16 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                 }
                 previousDepollinatorDeploy = deployDepollinator;
                 previousDepollinatorHome = homeDepollinator;
-                // Linear slide on GP2, claw end effector on GP1.
-                boolean slideToggle = gamepad2.left_stick_button;
+                // Linear slide (shot blocker permanently attached) on GP2.
+                boolean slideExtend = gamepad2.right_stick_button;
+                boolean slideHome = gamepad2.left_stick_button;
                 if (slide != null) {
-                    if (slideToggle && !previousSlideToggle) slide.toggle();
+                    if (slideHome && !previousSlideHome) slide.lower();
+                    else if (slideExtend && !previousSlideExtend && !slideHome) slide.raise();
                     slide.update();
                 }
-                previousSlideToggle = slideToggle;
-                boolean clawToggle = gamepad1.b;
-                if (claw != null && clawToggle && !previousClawToggle) claw.toggle();
-                previousClawToggle = clawToggle;
+                previousSlideExtend = slideExtend;
+                previousSlideHome = slideHome;
                 boolean automaticFeedHeld = autoAimHeld && gamepad1.left_trigger > TRIGGER_DEADBAND;
                 boolean manualFeedHeld = gamepad1.a
                         || gamepad2.right_trigger > TRIGGER_DEADBAND;
@@ -280,7 +288,7 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                 boolean intakeForwardHeld = gamepad1.right_bumper || gamepad2.right_bumper;
                 boolean intakeReverseHeld = gamepad1.left_bumper || gamepad2.left_bumper;
                 boolean autoShotReady = false;
-                feedControl.updateSelection(now, gamepad2.b, firing);
+                feedControl.updateSelection(now, firing);
 
                 // 3. Turret & Limelight 3A Control (supports both Gamepad 1 and Gamepad 2)
                 if (turret != null) {
@@ -339,7 +347,7 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                     openGate = fallbackFiring.gateOpen();
                 }
                 boolean feedStage1 = feedControl.feedStage1(now, firing);
-                // Between held staggered shots the gate is closed; stage 1 keeps running, stage 2 stays off.
+                // Never true in continuous mode; kept so the transfer logic matches the shared coordinator.
                 boolean closedGateStage1 = feedControl.closedGateStage1(firing)
                         && !inhibitFeedHeld && !intakeReverseHeld;
                 gate.setOpen(openGate);
@@ -351,7 +359,7 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                 double intakePower = intakeControl.update(transfer.isFull(),
                         intakeForwardHeld, intakeReverseHeld, inhibitFeedHeld || shootingBusy);
                 intake.setIntakePower(intakePower);
-                transfer.setIntakeRunning(intake.getCommandedPower() > 0); // Stage 1 stall guard only while intaking.
+                showFaultAlert(lights, now, turret, slide, odometry, firing);
                 lights.showIntake(transfer.isFull(), intakeForwardHeld, intakeReverseHeld,
                         intake.getCommandedPower());
                 lights.showShooter(now, firing.state(), manualFeedHeld, autoShotReady,
@@ -359,6 +367,7 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                 MotionSample aimingPose = shots == null ? null : shots.pose();
                 lights.showReference(turret != null && !turret.hasHomingFault(), turret != null && turret.isHomed(),
                         aimingPose != null && aimingPose.fieldReferenced && aimingPose.fresh(now, ShotPlanner.MAX_SAMPLE_AGE_SECONDS));
+<<<<<<< Updated upstream
                 rumbleCues.update(now, autoShotReady, transfer.isFull());
                 if (rumbleCues.endgameWarning()) {
                     rumbleBlips(gamepad1, DriverRumble.ENDGAME_WARNING_BLIPS);
@@ -370,6 +379,9 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                 }
                 if (rumbleCues.shotReady()) rumble(gamepad1, DriverRumble.SHOT_READY_RUMBLE_MS);
                 else if (rumbleCues.transferFull()) rumble(gamepad1, DriverRumble.TRANSFER_FULL_RUMBLE_MS);
+=======
+                rumble.update(now, transfer.isFull(), autoAimHeld, autoShotReady, gamepad1);
+>>>>>>> Stashed changes
                 // 4. Driver view (most important first), optional diagnostics below, one flush per loop.
                 FiringCoordinator.State firingState = firing.state();
                 String shotStatus = inhibitFeedHeld ? "BLOCKED (GP2 LT)" : manualFeedHeld ? "MANUAL FEED"
@@ -379,8 +391,6 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                 if (firingState == FiringCoordinator.State.INHIBITED || firingState == FiringCoordinator.State.FAULT)
                     telemetry.addData("Shot", "%s | %s: %s", shotStatus, firingState, firing.reason());
                 else telemetry.addData("Shot", "%s | %s", shotStatus, firingState);
-                if (spinLimiter.limiting()) telemetry.addData("Turn speed", "LIMITED to %.0f deg/s for auto aim",
-                        AutoAimSpinLimiter.MAX_CHASSIS_RATE_DEG_PER_SECOND);
                 if (turret != null) turret.addDriverTelemetry(telemetry);
                 else telemetry.addData("Turret", "UNAVAILABLE: %s", turretError);
                 if (shots != null) shots.addDriverTelemetry(telemetry, now, autoAimHeld);
@@ -393,12 +403,9 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                                 ? intakeForwardHeld ? "STOPPED" : "REVERSE"
                                 : intakeForwardHeld ? "FORCED FORWARD" : "AUTO",
                         intake.getCommandedPower());
-                telemetry.addData("Feed mode (GP2 B)", feedControl.continuous() ? "CONTINUOUS" : "STAGGERED");
                 telemetry.addData("Depollinator", depollinator.isDeployedCommanded() ? "DEPLOYED" : "HOME");
                 if (slide != null) slide.addDriverTelemetry(telemetry);
-                else telemetry.addData("Slide (GP2 LS)", "UNAVAILABLE: %s", slideError);
-                if (claw != null) claw.addDriverTelemetry(telemetry);
-                else telemetry.addData("Claw (GP1 B)", "UNAVAILABLE: %s", clawError);
+                else telemetry.addData("Slide (GP2 RS/LS)", "UNAVAILABLE: %s", slideError);
                 lights.addWarningTelemetry(telemetry);
                 loop.addRateTelemetry(telemetry);
                 if (showDiagnostics) {
@@ -408,14 +415,13 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                     odometry.addTelemetry(telemetry);
                     telemetry.addData("Auto pose handoff", autoPose.status());
                     drivetrain.addTelemetry(telemetry);
-                    spinLimiter.addTelemetry(telemetry);
                     intake.addTelemetry(telemetry);
                     gate.addTelemetry(telemetry);
                     transfer.addTelemetry(telemetry);
                     depollinator.addTelemetry(telemetry);
                     if (slide != null) slide.addTelemetry(telemetry);
-                    if (claw != null) claw.addTelemetry(telemetry);
                     lights.addTelemetry(telemetry);
+                    rumble.addTelemetry(telemetry);
                     if (turret != null) turret.addTelemetry(telemetry);
                     loop.addTelemetry(telemetry);
                 }
@@ -425,7 +431,7 @@ public abstract class MecanumTeleOp extends LinearOpMode {
             RobotShutdown.stopAll(drivetrain::stop, intake == null ? null : intake::stop,
                     transfer == null ? null : transfer::stop, gate == null ? null : gate::close,
                     turret == null ? null : turret::stop, lights == null ? null : lights::stop,
-                    slide == null ? null : slide::stop);
+                    slide == null ? null : slide::stop, () -> DriverRumble.stop(gamepad1));
         }
     }
 

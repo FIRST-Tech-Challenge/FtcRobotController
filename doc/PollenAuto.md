@@ -14,7 +14,7 @@ Current scope is pollen detection and navigation. Match paths and scoring/parkin
 | Limelight 3A | Remains the turret's AprilTag camera. The pollen routine uses the C270 and does not initialize the turret or Limelight. |
 | Drivetrain | Existing `MecanumDrivetrain` hardware names and motor configuration. |
 | Pinpoint | Control Hub **I2C port 0**, configured as `pinpoint`; leave the robot stationary during INIT calibration. |
-| Intake / transfer / gate | Existing `intake_motor`, `transfer_motor_1`, `transfer_motor_2`, `distance_sensor`, and `gate_servo` names. |
+| Intake / transfer / gate | Existing `intake_motor`, `transfer_motor_1`, `transfer_motor_2` (linked to stage 1), `distance_sensor`, and `gate_servo` names. |
 
 `PollenVision.HW_WEBCAM` controls the camera name. Color detection currently assumes **yellow pollen**, using configured HSV thresholds. Tune `PollenConfiguration` hue/saturation/value thresholds and the area, density, aspect-ratio, and circularity filters under actual field lighting.
 
@@ -41,7 +41,7 @@ Distance is estimated by intersecting a ray through the blob's lowest contour po
 | --- | --- |
 | Waiting for hardware | Motors remain stopped until fresh camera frames and READY Pinpoint data are available. Fault after 4 seconds. |
 | Searching | Pedro holds the search position with a heading target 90 degrees clockwise from entry. Stop after 90 degrees or 4 seconds. Select the largest valid blob initially. Subsequent frames prefer the blob closest to its previous image position, within a 65 px gate; the lock expires after 0.4 seconds without a match. |
-| Approaching | Pedro turns in place until within 12 degrees of alignment, then follows a line toward the pickup stand-off point. Path velocity fraction and wheel power are initially capped at 0.35. Stop on missing detections; wait 0.35 seconds before searching again. Approach timeout is 7 seconds. |
+| Approaching | Pedro turns in place until within 12 degrees of alignment, then follows a line toward the pickup stand-off point. Path velocity fraction and wheel power are 1 (no cap; `PedroConfiguration`). Stop on missing detections; wait 0.35 seconds before searching again. Approach timeout is 7 seconds. |
 | Collecting | Enter after at least 3 distinct close, aligned frames spanning 0.12 seconds. The uncalibrated example entry is within 650 mm forward of robot center and 4 degrees bearing error. Pedro follows one fixed forward pickup path for up to 450 mm or 0.9 seconds, allowing pollen to leave camera view. |
 | Settling | Stop driving and keep intaking for 0.4 seconds, then search again. Telemetry counts **pickup attempts**, since no individual pickup sensor is present. |
 | Finished / fault | Stop drivetrain, intake, and both transfer motors; keep the gate closed. |
@@ -50,7 +50,7 @@ Distance is estimated by intersecting a ray through the blob's lowest contour po
 
 With the current approximate 60-degree horizontal FOV and square-pixel model at 320x240, an unclipped bottom contact at pixel y=237 projects to about **500 mm from robot center** (498.6 mm in the model). The team updated the downward pitch from 10 to **15 degrees on November 5, 2026**, bringing this boundary closer than the earlier 550-mm estimate. The old 350-mm transition remains invisible. The explicitly **uncalibrated 650-mm transition / 450-mm blind-travel example** remains visible with the new mount, but still requires measured pickup calibration. `PollenCameraModel` computes the near/far visible floor boundary using the active intrinsics, optional distortion and contour clipping margin. An enabled pickup outside that region is rejected (including a 20-mm margin); SDK intrinsics are checked when the camera starts. Configuration, color and pickup calibration remain ineligible by default.
 
-Stage 1 of the transfer loads during active collection. Stage 2 stays off while stage 1 loads, and the gate stays closed. The existing full sensor must stay HIGH for 0.5 seconds to confirm a full queue. This routine collects pollen; it does not perform a shooting sequence. All movement is additionally bounded by **28 seconds** and **2400 mm of accumulated translation**. Use a cleared collection area: field routes and obstacle avoidance require a separate autonomous strategy.
+Stage 1 of the transfer (both linked transfer motors) loads during active collection, and the gate stays closed. The existing full sensor must stay HIGH for 0.5 seconds to confirm a full queue. This routine collects pollen; it does not perform a shooting sequence. All movement is additionally bounded by **28 seconds** and **2400 mm of accumulated translation**. Use a cleared collection area: field routes and obstacle avoidance require a separate autonomous strategy.
 
 Motor shutdown runs before camera shutdown, including on Driver Station STOP or exceptions.
 

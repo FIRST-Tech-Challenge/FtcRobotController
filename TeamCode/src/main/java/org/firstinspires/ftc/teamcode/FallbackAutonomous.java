@@ -26,10 +26,11 @@ public abstract class FallbackAutonomous extends LinearOpMode {
     /** Leave target relative to the start pose: + left, inches. */
     protected abstract double leaveLeftInches();
 
-    // Preload shot from the start spot. STARTING VALUES, UNMEASURED: these match TeleOp's starting manual
-    // hood (home) and flywheel RPM. Measure a hitting hood / RPM at the start spot, then set MEASURED true.
+    // Preload shot from the start spot. STARTING VALUES, UNMEASURED: TeleOp's starting manual hood (home) and
+    // its former 3500 starting RPM (kept here when TeleOp's idle dropped to 3000 on 2026-11-19).
+    // Measure a hitting hood / RPM at the start spot, then set MEASURED true.
     public static final double PRELOAD_HOOD_DEG = TurretSubsystem.PITCH_HOME_DEG;
-    public static final double PRELOAD_FLYWHEEL_RPM = MecanumTeleOp.STARTING_FLYWHEEL_RPM;
+    public static final double PRELOAD_FLYWHEEL_RPM = 3500.0;
     /** Default for the INIT shot toggle. Until measured, the shot starts OFF and GP1 X can enable it. */
     public static final boolean PRELOAD_SHOT_MEASURED = false;
 
@@ -121,8 +122,8 @@ public abstract class FallbackAutonomous extends LinearOpMode {
                     turret.applyYawCommand(now);
                 }
 
-                // Same manual-feed path as TeleOp's GP1 A: gate, then both transfer stages.
-                feedControl.updateSelection(now, false, firing);
+                // Same manual-feed path as TeleOp's GP1 A: gate, then the transfer (both motors).
+                feedControl.updateSelection(now, firing);
                 firing.update(now, false, auto.feedRequested(), false, false, false, false, false,
                         "Fallback autonomous preload feed");
                 boolean feedStage1 = feedControl.feedStage1(now, firing);

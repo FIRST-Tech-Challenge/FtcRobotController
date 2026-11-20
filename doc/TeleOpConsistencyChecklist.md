@@ -12,9 +12,10 @@ a 35 ms button-to-detection result (not calibrated camera latency). Task 8
 (localization and auto aim) is COMPLETE / VERIFIED by functional check on
 2026-11-14: the operator reports Test: Auto Aim localizing and tracking the goal
 after the Limelight inverted-mount and Pinpoint X pod fixes.
-Tasks 9, 10 and 12 remain PENDING / NOT TESTED: shot calibration/release timing,
-combined competition controls and full match rehearsal; task 11 (autonomous) is
-not required.
+Tasks 10 and 12 remain PENDING / NOT TESTED: combined competition controls and
+full match rehearsal. Task 9 (shot calibration/release timing) is not required
+(team decision 2026-11-19: current values work and feeding is continuous only);
+task 11 (autonomous) is not required.
 This replaces the earlier incorrect
 all-stages sign-off. See [the verification matrix](TeleOpVerificationMatrix.md)
 for the numbered status table. Production calibration data and flags are unchanged.
@@ -31,10 +32,9 @@ The user's latest decision to keep the newer working-tree controls is authoritat
 | GP1 sticks | Robot-centric translation and rotation |
 | GP1 RT | Automatic yaw, hood and distance RPM preparation; ordinary collection continues |
 | GP1 RT + LT | Readiness-checked automatic fire request; ordinary collection pauses |
-| GP1 A or GP2 RT | Explicit manual readiness bypass; selected mode applies: immediate continuous, 0.10 s staggered gate delay, then both stages together |
+| GP1 A or GP2 RT | Explicit manual readiness bypass; immediate continuous feed (gate and both linked stage-1 motors together) |
 | GP2 LT | Close gate, stop transfer and pause automatic intake; explicit intake bumper overrides remain available |
-| GP2 B | Continuous/staggered toggle; starts continuous |
-| Flywheel | Starts at 3500 output RPM; returns to the manual setting when RT is released |
+| Flywheel | Idles at 3000 output RPM from START (was 3500 until 2026-11-19); returns to the manual setting when RT is released |
 | GP2 RS-X | Manual yaw with RT released; clockwise-positive fine yaw offset while RT is held |
 | GP2 Dpad Up/Down | Hood travel +/-0.5 degrees; trims the automatic hood only while RT is held with a calibrated solution |
 | GP2 Y/A | RPM +/-50; trims the automatic RPM only while RT is held with a calibrated solution |
@@ -44,13 +44,15 @@ The user's latest decision to keep the newer working-tree controls is authoritat
 | GP2 Back | Show/hide full diagnostics telemetry; the short driver view is always on top |
 | GP1 RS click / LS click | Deploy / home depollinator; home priority |
 | Either controller RB / LB | Force intake + stage 1 forward / reverse intake and pause stage 1; opposing bumpers stop collection |
+| GP1 rumble (2026-11-19) | `DriverRumble`: two pulses when the queue becomes full; steady rumble while RT is held until the shot is ready. GP2 does not rumble |
+| Fault lights (2026-11-19) | A new turret homing, slide, Pinpoint or firing fault blinks all three lights red for 2 s. See [CompetitionTeleOp.md](CompetitionTeleOp.md#gp1-rumble-and-fault-lights-november-19) |
 
 Offsets persist across RT release during this OpMode session. Bounds are yaw +/-10
 degrees at 15 deg/s full stick, hood +/-5 degrees, RPM +/-500. Positive hood travel
 lowers launch elevation. Offset changes restart feed qualification. A resulting
 setpoint outside mechanism limits blocks automatic firing; offsets cannot turn an
 uncalibrated profile into a valid one. Release GP1 RT for the existing manual fallback.
-GP2 B remains the feeding-mode selector.
+Feeding is continuous only; GP2 B has no competition function (2026-11-19).
 
 Shooting requests, gate travel, recovery and inhibit pause ordinary intake/loading;
 RT alone does not. Explicit intake direction overrides remain available. Actual
@@ -79,9 +81,9 @@ feeding takes priority over stage-1 collection controls. Full confirmation is
 | --- | --- |
 | DrivetrainTestOpMode | Same MecanumDrivetrain motor setup, gearing, robot-centric commands; single-wheel debug remains isolated |
 | IntakeTestOpMode | Shared motor setup; competition adds sensor-based automatic direction and shooting coordination |
-| TransferTestOpMode | Shared full debounce, 0.5 s stage-1 run-on, stage-2-off loading and inhibit; competition adds selected feed sequence |
+| TransferTestOpMode | Shared full debounce, 0.5 s stage-1 run-on, stage-1 loading on both linked motors and inhibit; competition adds selected feed sequence |
 | GateTestOpMode | Shared positions/PWM; direct diagnostic gate commands stay isolated |
-| IntakeShooterTestOpMode | Queue logic, motor/servo setup shared; bench arming, stop button, live tuning and unrestricted continuous feed remain diagnostic |
+| IntakeShooterTestOpMode | Shooting policy shared with competition since 2026-11-19 (`CompetitionFeedController` continuous feed, GP2 RT manual feed (plus bench-only GP1 B), GP2 LT inhibit, collection paused while shooting, fusion flywheel, rumble/lights); bench arming, GP1 Back stop, RT for selected RPM, bench yaw readiness and live tuning remain diagnostic. Bench-only: no flywheel idle (the 3000 RPM idle is competition-only) and stage 1 starts 0.10 s after the gate-open command |
 | TurretTestOpMode | Shared homing, hood, flywheel and bounded yaw; competition deliberately uses measured-angle release hold and encoder correction |
 | AutoAimTestOpMode | Now exercises the competition localization/nearest-cell path; no intake, gate, transfer or drivetrain ownership |
 | PinpointTestOpMode | Same odometry implementation; raw calibration/reset controls remain isolated, competition uses explicit corner rehome |
@@ -96,7 +98,7 @@ feeding takes priority over stage-1 collection controls. Full confirmation is
 
 ## Three independent lights
 
-Control Hub servo 0 is the slide claw (`claw_servo`); the lights use servo ports 3-5.
+Control Hub servo 2 is the linear slide (`slide_servo`, CR Servo entry); the lights use servo ports 3-5. The claw was removed 2026-11-19.
 Configure standard positional Servo entries with these exact names; software finds
 names, not hardcoded port numbers.
 
@@ -105,6 +107,9 @@ names, not hardcoded port numbers.
 | Control Hub servo 3 | led_intake | Blue loading/forward override; green confirmed full; orange reverse; off paused/stopped |
 | Control Hub servo 4 | led_shooter | Yellow standby/preparation/recovery; green automatic tracking checks pass; violet gate opening/feeding; blinking violet manual bypass; red inhibit/fault |
 | Control Hub servo 5 | led_status | Green homed with fresh field pose; orange field reference unavailable/stale; yellow homing; red turret unavailable/home fault |
+
+Fault alert (2026-11-19): when a turret homing, slide, Pinpoint or firing fault starts, all three
+lights blink red for 2 s, then return to the colors above.
 
 Full/empty and successful launches cannot be inferred from motor commands. A full
 light reports the queue sensor's confirmed state; green reference reports available
@@ -120,9 +125,9 @@ white is above 1900. This avoids relying on the Hub's selected servo type/range.
 
 - Final flywheel PIDF/controller selection and loaded gate/transfer timing.
   Staggered timing is now one shared, robot-tuned set (2026-11-15) for competition, autonomous, bench,
-  transfer-only and calibration: 0.10 s gate delay / 0.20 s feed / 0.00 s recovery, both stages start together
-  (0.30 s total open). Stage 1 alone keeps running with the gate closed between held timed shots;
-  continuous starts both stages immediately. Loaded timing is unmeasured.
+  transfer-only and calibration: 0.10 s gate delay / 0.20 s feed / 0.00 s recovery, stage 1 (both linked motors) feeds
+  (0.30 s total open). Stage 1 keeps running with the gate closed between held timed shots;
+  continuous starts the transfer immediately. There is no separate stage 2 since 2026-11-18. Loaded timing is unmeasured.
   Bench unrestricted continuous feed must not be mistaken for automatic readiness.
 - Release timing. The measured 12-60 in shot table (2026-11-15) drives auto-aim hood/RPM; release
   timing no longer blocks automatic firing (gate removed 2026-11-15) and the current values are unmeasured.
@@ -152,4 +157,4 @@ servo load and optical color are not modeled.
 
 November 5 gate wiring and policy: The gate servo is wired directly to Expansion Hub servo port 3, bypassing the 6 V power injector. It receives immediate full-position targets without software ramping for maximum available speed. The 0.043 s/60-degree rating at 6 V is catalog reference only; actual direct-hub loaded speed is unmeasured.
 
-Both final Red/Blue TeleOps start CONTINUOUS: once a feed is authorized, the gate-open command and both full-power transfer commands occur together, without a gate delay. Automatic readiness and GP2 LT inhibit still apply; manual feed bypasses readiness. STAGGERED opens the gate, starts both stages together at 0.10 s, and closes the gate after a 0.30 s stage-2 feed (0.40 s total open window). Both transfers keep running while the gate is closed through the 0.10 s recovery and any subsequent readiness wait. At the next opening both transfers stop, then repeat the shared 0.10 s delay. Release, inhibit, invalid automatic solution, tracking loss or STOP cancels transfer feeding; tracking-loss recovery does not continue closed-gate feed. Mode changes reset the sequence. Autonomous and diagnostic defaults are unchanged.
+Both final Red/Blue TeleOps start CONTINUOUS: once a feed is authorized, the gate-open command and the full-power transfer command (both linked transfer motors) occur together, without a gate delay. Automatic readiness and GP2 LT inhibit still apply; manual feed bypasses readiness. STAGGERED opens the gate, starts stage 1 at 0.10 s, and closes the gate after the shared 0.20 s feed (0.30 s total open window). Stage 1 keeps running while the gate is closed through the recovery and any subsequent readiness wait. At the next opening the transfer stops, then repeats the shared 0.10 s delay. Release, inhibit, invalid automatic solution, tracking loss or STOP cancels transfer feeding; tracking-loss recovery does not continue closed-gate feed. Mode changes reset the sequence. Autonomous and diagnostic defaults are unchanged.

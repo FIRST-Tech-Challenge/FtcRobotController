@@ -33,7 +33,7 @@ public class ShotCalibrationOpMode extends LinearOpMode {
                 previousInitHome = gamepad1.left_stick_button;
                 turret.update();
                 turret.applyYawCommand();
-                telemetry.addLine("Stationary calibration: turret + gate + both transfer stages + full sensor.");
+                telemetry.addLine("Stationary calibration: turret + gate + transfer (both motors) + full sensor.");
                 telemetry.addLine("No drivetrain, intake, odometry or camera. Load ONE ball per trial.");
                 telemetry.addLine("Keep the same hive opening/height and muzzle reference for this session.");
                 turret.addTelemetry(telemetry);
@@ -136,7 +136,7 @@ public class ShotCalibrationOpMode extends LinearOpMode {
                 if (spin) turret.setShooterRpm(notebook.rpm()); else turret.stopShooter();
                 turret.applyYawCommand();
                 if (step == Step.FIRING && !current.x) {
-                    // Releasing X ends the trial: gate closes and both transfer stages stop.
+                    // Releasing X ends the trial: gate closes and both transfer motors stop.
                     boolean fed = firing.feedAttempts() > attemptsBefore;
                     stopOutputs(turret, gate, transfer, firing, now);
                     step = fed ? Step.RATE : Step.TUNE;
@@ -164,7 +164,7 @@ public class ShotCalibrationOpMode extends LinearOpMode {
                     }
                 } else firing.stop(now);
                 gate.setOpen(step == Step.FIRING && firing.gateOpen());
-                // Trials use the same stage-1 start as competition shots (with stage 2).
+                // Trials use the same stage-1 feed start as competition shots.
                 boolean stage1 = stage1Timing.feedStage1(now, firing);
                 transfer.update(now, step == Step.FIRING && firing.feeding() && gate.isOpenForFeeding(),
                         true, stage1, false);

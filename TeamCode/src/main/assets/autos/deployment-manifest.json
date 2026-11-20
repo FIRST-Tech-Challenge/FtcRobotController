@@ -4,6 +4,7 @@
   "runtimeVersion": "v0.1.2",
   "pedroVersion": "3.0.0-20260828.185437-17",
   "sources": {
+<<<<<<< Updated upstream
     "TeamCode/src/main/java/org/firstinspires/ftc/teamcode/PollenAuto.java": "1f47933cc1efa6aa36e312b416ce497b98d633e3a68b2979d94958b8cb105301",
     "autos/field/biobuzz.field.json": "9eed158444a5a82da6c4d42594b00a6ecae8c978dc92de9ce9a83f8b8c01e0d3",
     "autos/field/pollen-test.field.json": "783cd04d9686e90fe8574c294bf5f47673179874c25b0623fea66df01dd68b74",
@@ -33,5 +34,27 @@
     "TeamCode/src/main/java/org/firstinspires/ftc/teamcode/zenith/generated/RedAudienceAuto.java": "962cc6274de4d95c813a53697fe864bf160bd1abf1dc3204fd95335fa0af7758",
     "TeamCode/src/main/java/org/firstinspires/ftc/teamcode/zenith/generated/RedFarAuto.java": "5bd25cc3f2f72e51a97bee6a72f1bfca6c7730aa69c82324ba329d4682540ffe",
     "TeamCode/src/main/java/org/firstinspires/ftc/teamcode/zenith/generated/RedFarCycleAuto.java": "44a5331ae4573b6ed5e39ec3aa530c2960f4dc3e81be8fa947f447e04363b39d"
+=======
+    "TeamCode/src/main/java/org/firstinspires/ftc/teamcode/PollenAuto.java": "bdb1155d608583fcaf17a07f9a89309ff355999bf66c9e601b1b4715c846dbe9",
+    "autos/field/biobuzz.field.json": "682289f4c5bd6e3b6fd1f11dd15be413f0b3bb86f5456d6b0cd1655067795f50",
+    "autos/field/pollen-test.field.json": "2188bed547e7ec0a639906a84bfca563ebbafffb0fe5ee0bddb3a1f4cf72685e",
+    "autos/integration-example.auto.json": "d7661ad94d936d6b9665e9a87652a37edc6228e64f62e4d44c12f3739c036a80",
+    "autos/pollen-navigation-test.auto.json": "79a57890d1066dddb9cd59d5ddb3875b9e6785b1031e40f090f8fb4cd5b1282c",
+    "autos/robot.json": "d0975305b27031b1bcb4d5f60f6368878e2446eba6cf970f87665b053a187288",
+    "autos/routines.json": "ec8bd1fbca1f70ff3d38662bd0dad6e0aac5886b7f173f04aec853708f40b3f6",
+    "autos/waypoints.json": "5569a34bddbce7ea6f077936552a4358f9f22597c4d3f15c79ca3fbda16c3c04",
+    "package-lock.json": "fbd7eb3347fd03c52dcfc74a29b35860e830699bbe6b9db0ecdacadef7216ea0",
+    "zenith.json": "85fe96355acd51f6b83e5398dcc1729701b2b8757354cc672f12f1b5e86d8880"
+  },
+  "outputs": {
+    "TeamCode/src/main/assets/autos/biobuzz.field.json": "682289f4c5bd6e3b6fd1f11dd15be413f0b3bb86f5456d6b0cd1655067795f50",
+    "TeamCode/src/main/assets/autos/integration-example.auto.json": "d7661ad94d936d6b9665e9a87652a37edc6228e64f62e4d44c12f3739c036a80",
+    "TeamCode/src/main/assets/autos/pollen-navigation-test.auto.json": "79a57890d1066dddb9cd59d5ddb3875b9e6785b1031e40f090f8fb4cd5b1282c",
+    "TeamCode/src/main/assets/autos/pollen-test.field.json": "2188bed547e7ec0a639906a84bfca563ebbafffb0fe5ee0bddb3a1f4cf72685e",
+    "TeamCode/src/main/assets/autos/robot.json": "d0975305b27031b1bcb4d5f60f6368878e2446eba6cf970f87665b053a187288",
+    "TeamCode/src/main/assets/autos/routines.json": "ec8bd1fbca1f70ff3d38662bd0dad6e0aac5886b7f173f04aec853708f40b3f6",
+    "TeamCode/src/main/assets/autos/waypoints.json": "5569a34bddbce7ea6f077936552a4358f9f22597c4d3f15c79ca3fbda16c3c04",
+    "TeamCode/src/main/java/org/firstinspires/ftc/teamcode/zenith/generated/IntegrationExampleAuto.java": "10e9c86bf5262fd57a732840951b2304dd69f2dc4796eeb5494712592247ef7f"
+>>>>>>> Stashed changes
   }
 }

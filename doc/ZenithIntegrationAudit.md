@@ -1,5 +1,7 @@
 # Zenith implementation audit
 
+> **2026-11-18 transfer change:** `transfer_motor_2` is now mechanically linked to stage 1 (both motors FORWARD, one shared command; the back rollers it used to drive were removed), so there is no separate stage 2. Stage-2 descriptions below are historical; see [TransferAndShooting.md](TransferAndShooting.md) for current behavior.
+
 Audit dates: 2026-10-30–31. The audited working tree already contained the expanded integration; its fresh baseline passed 178 ordinary tests. This audit checked the production entry points, command factories, output coordinator, subsystem changes, profile/argument contracts, deployment tooling, native-runtime tests and autonomous documentation against [the implementation plan](ZenithAutonomousImplementationPlan.md). Existing and concurrently developed SimLoop work was preserved.
 
 **Result:** the supported robot action catalog, managed source/deployment and core local editor workflow are implemented and verified in software/UI. Physical match readiness remains open, along with the additional checks explicitly listed in [the UI record](ZenithUiAcceptance.md). There are 43 named actions and 23 cached conditions. [The authoring guide](ZenithAuthoringGuide.md) explains every action; [the coverage ledger](ZenithFunctionCoverage.md) maps operational, sensor and maintenance functions.

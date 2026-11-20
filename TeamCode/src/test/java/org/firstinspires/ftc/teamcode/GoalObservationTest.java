@@ -135,8 +135,8 @@ public class GoalObservationTest {
             if(i<110) initialFeed|=firing.feeding();
             if(i>=195&&i<300) recoveredFeed|=firing.feeding();
             manualFeed|=manual&&firing.feeding();
-            if(i>=110&&i<115 || i>=190&&i<207 || inhibit) { assertFalse(firing.gateOpen()); assertEquals(0,transfer.stage1(),0); assertEquals(0,transfer.stage2(),0); }
-            if(firing.feeding()) { assertTrue(firing.gateOpen()); assertEquals(1,transfer.stage1(),0); assertEquals(1,transfer.stage2(),0); }
+            if(i>=110&&i<115 || i>=190&&i<207 || inhibit) { assertFalse(firing.gateOpen()); assertEquals(0,transfer.stage1(),0); }
+            if(firing.feeding()) { assertTrue(firing.gateOpen()); assertEquals(1,transfer.stage1(),0); }
         }
         assertTrue("Initial qualified feed", initialFeed);
         assertTrue("Feed after visibility/readiness requalification", recoveredFeed);

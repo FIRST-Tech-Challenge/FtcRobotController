@@ -238,9 +238,10 @@ public class AutonomousIntegrationTest {
     @Test public void manualFeedWaitsForGateAndAlwaysStopsBothStages() {
         Command feed=command("feedManual","seconds",1); feed.start(); tick(0);
         assertTrue(robot.gate.isOpenCommanded()); assertFalse(robot.transfer.isFeeding());
-        tick(.099); assertFalse(robot.transfer.isFeeding()); assertEquals(0,power("transfer_motor_2"),0);
+        tick(.099); assertFalse(robot.transfer.isFeeding());
+        assertEquals(0,power("transfer_motor_1"),0); assertEquals(0,power("transfer_motor_2"),0);
         tick(.002); assertTrue(robot.transfer.isFeeding());
-        // Both stages start together once the gate delay has elapsed.
+        // Both linked transfer motors start together once the gate delay has elapsed.
         assertEquals(1,power("transfer_motor_1"),0); assertEquals(1,power("transfer_motor_2"),0);
         tick(.05);
         assertEquals(1,power("transfer_motor_1"),0); assertEquals(1,power("transfer_motor_2"),0);

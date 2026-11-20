@@ -42,7 +42,7 @@ class SensorsSimTest {
                 assertFalse(text.contains("Field localization : LOCALIZED"),s.diagnostic());
                 if (opMode.endsWith("MecanumTeleOp"))
                     assertEquals(.5,s.trace.at(OpModePhase.ACTIVE,60).gatePosition,s.diagnostic());
-                assertEquals(0,s.trace.at(OpModePhase.ACTIVE,60).transfer2Power,s.diagnostic());
+                assertFalse(s.trace.at(OpModePhase.ACTIVE,60).feedingThroughOpenGate(),s.diagnostic());
             }
         }
     }
@@ -102,10 +102,10 @@ class SensorsSimTest {
             assertTrue(complete > 25+140,s.diagnostic());
             for (TeleOpTrace.Sample v : s.trace.samples) if (v.phase == OpModePhase.ACTIVE && v.tick < complete) {
                 assertEquals(.5,v.gatePosition,s.diagnostic());
-                assertEquals(0,v.transfer2Power,s.diagnostic());
+                assertFalse(v.feedingThroughOpenGate(),s.diagnostic());
             }
             assertTrue(s.trace.samples.stream().anyMatch(v -> v.phase == OpModePhase.ACTIVE
-                    && v.tick > complete && v.transfer2Power > 0 && Math.abs(v.gatePosition-.2) < 1e-9),s.diagnostic());
+                    && v.tick > complete && v.feedingThroughOpenGate()),s.diagnostic());
             CompetitionSimTest.assertStopped(h);
         }
     }

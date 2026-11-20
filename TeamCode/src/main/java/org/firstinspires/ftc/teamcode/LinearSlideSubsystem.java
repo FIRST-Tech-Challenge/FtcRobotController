@@ -10,9 +10,9 @@ import java.util.function.DoubleSupplier;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
- * Side linear slide: one Axon MAX+ in continuous mode on Expansion Hub servo port 5 (6 V injector),
- * with its analog feedback on Expansion Hub analog port 0. Toggles between fully down and fully up.
- * The end effector (claw or shot blocker) is separate; see {@link SlideClawSubsystem}.
+ * Side linear slide: a single Axon MAX+ in continuous mode on Control Hub servo port 2, with its
+ * analog feedback on Control Hub analog port 0. Toggles between fully down and fully up.
+ * The shot blocker is permanently attached to the slide and has no servo (the claw was removed).
  *
  * <p>The analog angle only covers one turn, so turns are counted from INIT. The slide must be
  * fully down when the OpMode is initialized.
@@ -97,11 +97,11 @@ public class LinearSlideSubsystem {
     public void addDriverTelemetry(Telemetry telemetry) {
         LinearSlideController.State state = controller.getState();
         if (state == LinearSlideController.State.FAULT) {
-            // The button toggles, so the next press reverses the faulted move rather than repeating it.
-            telemetry.addData("Slide (GP2 LS)", "FAULT: %s | next press moves %s", controller.getFaultReason(),
-                    controller.isUpCommanded() ? "DOWN" : "UP");
+            // Separate extend / home buttons: pressing either retries, so name the one that repeats the move.
+            telemetry.addData("Slide (GP2 RS/LS)", "FAULT: %s | RS extends, LS homes (was moving %s)",
+                    controller.getFaultReason(), controller.isUpCommanded() ? "UP" : "DOWN");
         } else {
-            telemetry.addData("Slide (GP2 LS)", "%s | %.0f / %.0f deg%s", state,
+            telemetry.addData("Slide (GP2 RS/LS)", "%s | %.0f / %.0f deg%s", state,
                     controller.getPositionDeg(), controller.targetDeg(),
                     LinearSlideController.TRAVEL_MEASURED ? "" : " | TRAVEL NOT MEASURED");
         }

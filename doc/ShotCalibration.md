@@ -1,7 +1,7 @@
 # Guided hive shot calibration
 
 Select **Calibrate: Hive Shot Table** in the Driver Station's **Test** group.
-It initializes only the turret assembly (including its encoder), gate, both transfer
+It initializes only the turret assembly (including its encoder), gate, both (linked) transfer
 motors and transfer full sensor. It does not drive the intake, drivetrain, Pinpoint or
 Limelight, but the turret encoder is read through the `intake_motor` port, so that
 configuration entry must exist. All controls use gamepad 1.
@@ -28,9 +28,9 @@ flywheel shaft speed. A changed drive ratio requires recalibration.
    command by 0.5 degrees. Hold RB to spin; hold X to feed (changed 2026-11-18).
 3. Keep RB and X held through the attempt. Feeding waits for stable RPM, hood settling
    and yaw tracking, then opens the gate (shared `ShootingConfiguration.firing()` gate delay)
-   before running both transfer stages. Once feeding starts, the gate stays open and both
-   stages keep running until X is released; RPM dips do not interrupt it. Releasing X
-   before feeding starts records no trial. Stage 2 stays off outside feeding.
+   before running the transfer (both linked motors). Once feeding starts, the gate stays open and
+   the transfer keeps running until X is released; RPM dips do not interrupt it. Releasing X
+   before feeding starts records no trial.
 4. After X is released, flywheel and transfer stop and the gate closes. Observe the
    result, then press A for HIT or B for MISS. X discards an uncertain/no-ball trial.
    A confirmed HIT updates the running distance average shown on the Driver Hub.
@@ -51,7 +51,7 @@ flywheel shaft speed. A changed drive ratio requires recalibration.
    active loop, including while tuning and rating shots. Record the displayed
    rows before pressing STOP; STOP exits without saving.
 
-LB aborts, closes the gate and stops both transfer stages and flywheel. Releasing
+LB aborts, closes the gate and stops the transfer (both motors) and flywheel. Releasing
 RB during a trial also aborts; no hit/miss is recorded. A ball already fed can still
 exit. LS click in PLACE/TUNE rehomes. Hardware outputs stop in `finally` on exit.
 
@@ -103,7 +103,11 @@ Task 9 in the [verification matrix](TeleOpVerificationMatrix.md) needs two physi
 and the release timing. The shot table is now supplied (2026-11-15: 12/24/36/48/60 in in `ShootingConfiguration.MEASURED_SHOT_TABLE_IN_RPM_HOOD_DEG`);
 release timing is no longer a firing gate (2026-11-15, team decision): the current `ShootingConfiguration` /
 `GateSubsystem` timing values are used as-is and the `RELEASE_TIMING_MEASURED` flag was removed. Measuring it
-(below) is still recommended for tuning those values.
+(below) is optional for tuning those values.
+
+**2026-11-19 team decision: task 9 is COMPLETE / NOT REQUIRED.** The current shot table and timing values
+work on the robot and competition feeding is continuous only, so the remaining range cross-check, midpoint
+validation and release-timing measurement are not planned. The steps below stay for optional re-tuning.
 
 ### A. Shot table
 
@@ -123,8 +127,8 @@ release timing is no longer a firing gate (2026-11-15, team decision): the curre
 6. Validate halfway between two rows: use REVIEW to read the interpolated settings, set them in TUNE at that
    distance and confirm hits. Add a row where it misses.
 
-Feed timing in this OpMode is the shared gate delay, then both stages together for as long as X is held;
-competition TeleOps default to continuous feed (gate and both stages together). With one ball per trial this does not change the
+Feed timing in this OpMode is the shared gate delay, then the transfer for as long as X is held;
+competition TeleOps default to continuous feed (gate and transfer together). With one ball per trial this does not change the
 trajectory. Multi-ball RPM sag and recovery belong to task 10.
 
 ### B. Release timing
@@ -133,7 +137,7 @@ trajectory. Multi-ball RPM sag and recovery belong to task 10.
 It keeps a started shot "committed" so a ball already fed is still expected to exit.
 
 1. Run `Test: Intake + Index + Shooter` and tap GP2 RB for CONTINUOUS mode (default is STAGGERED), where
-   the gate and both stages start together as in competition. Load one ball, hold RT to spin to a table
+   the gate and transfer start together as in competition. Load one ball, hold RT to spin to a table
    RPM, then add LT to feed.
 2. Film from the side with phone slow motion (240 fps or faster), framing the gate and the flywheel exit.
 3. Count frames from the first visible gate motion to the ball fully leaving the flywheel; seconds =

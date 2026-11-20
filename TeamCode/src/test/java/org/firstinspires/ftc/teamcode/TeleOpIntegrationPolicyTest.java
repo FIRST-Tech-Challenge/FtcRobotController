@@ -107,4 +107,18 @@ public class TeleOpIntegrationPolicyTest {
         assertEquals(BLUE, RobotStatusLights.intakeColor(true, true, false, 1));
         assertEquals(OFF, RobotStatusLights.intakeColor(true, true, true, 0));
     }
+    @Test public void anyNewFaultAlertsForTwoSecondsAndEachNewFaultRestartsIt() {
+        RobotStatusLights.FaultAlert alert = new RobotStatusLights.FaultAlert();
+        assertFalse(alert.update(0, false, false));
+        assertTrue(alert.update(1, true, false));   // Fault present (also at the first reading).
+        assertTrue(alert.update(2.9, true, false));
+        assertFalse(alert.update(3.0, true, false)); // 2 s later, although the fault persists.
+        assertTrue(alert.update(3.5, true, true));   // A second fault restarts the alert.
+        assertEquals(0, alert.elapsed(3.5), 1e-9);
+        assertFalse(alert.update(5.5, true, true));
+        assertFalse(alert.update(6, false, true));   // A fault clearing never alerts.
+        assertTrue(alert.update(7, true, true));     // The same fault returning does.
+        RobotStatusLights.FaultAlert initial = new RobotStatusLights.FaultAlert();
+        assertTrue(initial.update(0, true));         // Already faulted at the first reading.
+    }
 }

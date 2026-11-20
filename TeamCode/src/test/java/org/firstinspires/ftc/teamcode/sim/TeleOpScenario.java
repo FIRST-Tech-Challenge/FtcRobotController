@@ -42,6 +42,8 @@ final class TeleOpScenario {
         System.out.println(diagnostic());
         try {
             result = runner.run();
+            String linked = trace.linkedTransferViolation();
+            if (linked != null) throw new AssertionError(linked + "; " + diagnostic());
             trace.save("Completed; ticks=" + result.ticks() + "; endedEarly=" + result.endedBeforeStop()
                     + "; warnings=" + result.warnings());
         } catch (RuntimeException | Error failure) {

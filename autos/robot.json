@@ -31,20 +31,20 @@
   },
   "kinematics": {
     "maxForwardVelInPerS": {
-      "value": 75.791216731181,
-      "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
+      "value": 75.17999283790405,
+      "provenance": "MEASURED: V1 Pedro Foresight tuner, 2026-11-19 (second run); full wheel power"
     },
     "maxStrafeVelInPerS": {
-      "value": 60.54276069289256,
-      "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
+      "value": 58.25492114789578,
+      "provenance": "MEASURED: V1 Pedro Foresight tuner, 2026-11-19 (second run); full wheel power"
     },
     "forwardDecelInPerS2": {
-      "value": 44.33338627123392,
-      "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
+      "value": 75.93165497310508,
+      "provenance": "MEASURED: V1 Pedro Foresight tuner, 2026-11-19 (second run); full wheel power"
     },
     "strafeDecelInPerS2": {
-      "value": 79.85589496541019,
-      "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
+      "value": 112.0086771146408,
+      "provenance": "MEASURED: V1 Pedro Foresight tuner, 2026-11-19 (second run); full wheel power"
     },
     "accelInPerS2": {
       "value": 40,
@@ -55,60 +55,60 @@
       "provenance": "UNMEASURED EXAMPLE: replace after Pedro tuning on BioBuzz 10100"
     },
     "defaultPathSpeedFraction": {
-      "value": 0.35,
-      "provenance": "SET BY HAND: conservative initial path velocity fraction; additional 0.35 wheel-power cap"
+      "value": 1,
+      "provenance": "SET BY HAND: full tuned speed, no wheel-power cap (2026-11-19); Foresight plans each stop from the measured braking"
     },
     "follower": {
       "library": "pedro",
       "version": "3.0.0-20260828.185437-17",
       "holdEnd": true,
       "forwardTranslationalPowerPerIn": {
-        "value": 0.11454330295701048,
-        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1; near-path gain (below 2.5 in): Zenith models one translational gain"
+        "value": 0.14431535947450513,
+        "provenance": "MEASURED: V1 Pedro Foresight tuner, 2026-11-19 (second run); full wheel power; near-path gain (below 2.5 in): Zenith models one translational gain"
       },
       "strafeTranslationalPowerPerIn": {
-        "value": 0.17940757972252447,
-        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1; near-path gain (below 2.5 in): Zenith models one translational gain"
+        "value": 0.2164966560007166,
+        "provenance": "MEASURED: V1 Pedro Foresight tuner, 2026-11-19 (second run); full wheel power; near-path gain (below 2.5 in): Zenith models one translational gain"
       },
       "headingPowerPerRad": {
-        "value": 5.363935529565826,
-        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
+        "value": 6.081142866638771,
+        "provenance": "MEASURED: V1 Pedro Foresight tuner, 2026-11-19 (second run); full wheel power"
       },
       "coastPowerPerInPerS": {
         "value": 0,
-        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1; coast is feedforward-only"
+        "provenance": "MEASURED: V1 Pedro Foresight tuner, 2026-11-19 (second run); full wheel power; coast is feedforward-only"
       },
       "coastFeedforwardPowerPerInPerS": {
-        "value": 0.012715273265700046,
-        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
+        "value": 0.01281054611286171,
+        "provenance": "MEASURED: V1 Pedro Foresight tuner, 2026-11-19 (second run); full wheel power"
       },
       "brakeFeedforwardPowerPerInPerS": {
-        "value": 0.010807982275845038,
-        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
+        "value": 0.010888964195932454,
+        "provenance": "MEASURED: V1 Pedro Foresight tuner, 2026-11-19 (second run); full wheel power"
       },
       "brakeLinearForwardS": {
-        "value": 0.10190028205033407,
-        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
+        "value": 0.11286007376738562,
+        "provenance": "MEASURED: V1 Pedro Foresight tuner, 2026-11-19 (second run); full wheel power"
       },
       "brakeQuadraticForwardS2PerIn": {
-        "value": 0.0015098880451388642,
-        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
+        "value": 0.0014572595302026097,
+        "provenance": "MEASURED: V1 Pedro Foresight tuner, 2026-11-19 (second run); full wheel power"
       },
       "brakeLinearStrafeS": {
-        "value": 0.04863765333157554,
-        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
+        "value": 0.052467068492092955,
+        "provenance": "MEASURED: V1 Pedro Foresight tuner, 2026-11-19 (second run); full wheel power"
       },
       "brakeQuadraticStrafeS2PerIn": {
-        "value": 0.002147552414866776,
-        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
+        "value": 0.0022294994835423856,
+        "provenance": "MEASURED: V1 Pedro Foresight tuner, 2026-11-19 (second run); full wheel power"
       },
       "headingBrakeLinearS": {
-        "value": 0.050404207300238334,
-        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
+        "value": 0.058605172033453154,
+        "provenance": "MEASURED: V1 Pedro Foresight tuner, 2026-11-19 (second run); full wheel power"
       },
       "headingBrakeQuadraticS2PerRad": {
-        "value": 0.00662826876091725,
-        "provenance": "PORTED: master chassis Foresight tuner (pedro/Constants.java), copied to V1 2026-11-18 by request; re-verify on V1"
+        "value": 0.005840706753898623,
+        "provenance": "MEASURED: V1 Pedro Foresight tuner, 2026-11-19 (second run); full wheel power"
       },
       "endHeadingToleranceRad": {
         "value": 0.05235987755982988,
@@ -206,7 +206,7 @@
     },
     {
       "name": "loadOn",
-      "summary": "Enable automatic stage-1 loading; stage 2 stays off; LOW clears full.",
+      "summary": "Enable automatic stage-1 loading (both linked transfer motors); LOW clears full.",
       "estimateS": "0",
       "requires": [
         "transfer"
@@ -226,7 +226,7 @@
     },
     {
       "name": "transferStop",
-      "summary": "Stop both transfer stages and feed requests; preserve queue knowledge.",
+      "summary": "Stop both transfer motors and feed requests; preserve queue knowledge.",
       "estimateS": "0",
       "requires": [
         "transfer",
@@ -256,7 +256,7 @@
     },
     {
       "name": "feedManual",
-      "summary": "Explicit readiness BYPASS; timed two-stage feed after gate delay. Inhibit wins; close/stop on end.",
+      "summary": "Explicit readiness BYPASS; timed stage-1 feed after gate delay. Inhibit wins; close/stop on end.",
       "params": {
         "seconds": {
           "type": "number",
@@ -286,7 +286,7 @@
     },
     {
       "name": "gateOpen",
-      "summary": "Gate-only bounded opening; both transfer stages stopped; inhibit wins; close at end.",
+      "summary": "Gate-only bounded opening; transfer stopped; inhibit wins; close at end.",
       "params": {
         "seconds": {
           "type": "number",
@@ -899,11 +899,11 @@
     },
     {
       "name": "loadingActive",
-      "summary": "Cached stage-1 loading output, stage 2 off."
+      "summary": "Cached stage-1 loading output (both motors)."
     },
     {
       "name": "feedingActive",
-      "summary": "Both stages feeding after gate delay; no piece count."
+      "summary": "Stage 1 feeding after gate delay; no piece count."
     },
     {
       "name": "gateFeedDelayElapsed",

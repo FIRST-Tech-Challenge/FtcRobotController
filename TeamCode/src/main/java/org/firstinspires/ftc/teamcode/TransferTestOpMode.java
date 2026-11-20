@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-/** Tests stage-1-only loading and timed gate-open feeding of both stages together, without a flywheel. */
+/** Tests stage-1 loading and timed gate-open feeding (both linked transfer motors), without a flywheel. */
 @TeleOp(name = "Test: Transfer Only", group = "Test")
 public class TransferTestOpMode extends LinearOpMode {
 
@@ -13,11 +13,10 @@ public class TransferTestOpMode extends LinearOpMode {
         GateSubsystem gate = new GateSubsystem(hardwareMap);
         TransferSubsystem transfer = new TransferSubsystem(hardwareMap);
         telemetry.addLine("transfer_motor_1: Expansion Hub motor/encoder port 2, FORWARD, full power");
-        telemetry.addLine("transfer_motor_2: Expansion Hub motor port 3, REVERSE, no encoder | off during loading");
-        telemetry.addLine("No intake here: the stage 1 stall guard is inactive (it only runs while intaking).");
+        telemetry.addLine("transfer_motor_2: Expansion Hub motor port 3, FORWARD, no encoder | linked to stage 1, same power");
         telemetry.addLine("distance_sensor: Expansion Hub digital port 0, Digital Device input");
-        telemetry.addLine("After START: stage 1 loads, stage 2 off | 0.5 s HIGH = full, then 0.5 s stage-1 run-on | LOW resumes");
-        telemetry.addLine("Hold RB = Timed Gate: both stages feed together, stage 1 runs while gate closed | LB = Pause / Close Gate (priority)");
+        telemetry.addLine("After START: stage 1 (both motors) loads | 0.5 s HIGH = full, then 0.5 s stage-1 run-on | LOW resumes");
+        telemetry.addLine("Hold RB = Timed Gate: stage 1 feeds, and runs while gate closed between shots | LB = Pause / Close Gate (priority)");
         telemetry.addLine("Transfer-only feed test: flywheel is NOT initialized or powered; start empty.");
         transfer.addTelemetry(telemetry);
         loop.addTelemetry(telemetry); telemetry.update();

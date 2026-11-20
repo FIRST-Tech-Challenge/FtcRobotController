@@ -10,33 +10,29 @@ public class FiringCoordinatorTest {
         TransferController transfer = new TransferController();
         transfer.update(0, false, false, false);
         assertEquals(1, transfer.stage1(), 0);
-        assertEquals(0, transfer.stage2(), 0);
 
         update(f, 1, true, true, true);
         double opened = 1 + f.stableSeconds + .01;
         update(f, opened, true, true, true);
         assertTrue(f.gateOpen());
-        // Both stages wait until 0.10 seconds after the open command.
+        // The transfer waits until 0.10 seconds after the open command.
         update(f, opened + .099, true, true, true);
         transfer.update(opened + .099, false, f.feeding(), true);
         assertTrue(f.gateOpen());
         assertFalse(f.feeding());
         assertEquals(0, transfer.stage1(), 0);
-        assertEquals(0, transfer.stage2(), 0);
 
         double feeding = opened + .101;
         update(f, feeding, true, true, true);
         transfer.update(feeding, true, f.feeding(), true);
         assertTrue(f.feeding());
         assertEquals(1, transfer.stage1(), 0);
-        assertEquals(1, transfer.stage2(), 0);
-        // The gate and both stages stay active through the 0.20-second feed window.
+        // The gate and the transfer stay active through the 0.20-second feed window.
         update(f, feeding + .15, true, true, true);
         transfer.update(feeding + .15, true, f.feeding(), true);
         assertTrue(f.gateOpen());
         assertTrue(f.feeding());
         assertEquals(1, transfer.stage1(), 0);
-        assertEquals(1, transfer.stage2(), 0);
         update(f, feeding + f.feedWindowSeconds - .01, true, true, true);
         assertTrue(f.feeding());
 
@@ -47,18 +43,16 @@ public class FiringCoordinatorTest {
         assertFalse(f.gateOpen());
         assertTrue(f.closedGateStage1());
         assertEquals(0, transfer.stage1(), 0);
-        assertEquals(0, transfer.stage2(), 0);
         // No recovery pause: the next update goes straight to the readiness wait, gate still closed.
         update(f, recovery + .001, true, true, true);
         assertEquals(FiringCoordinator.State.PREPARING, f.state());
         assertTrue(f.closedGateStage1());
 
-        // Releasing the shot request restores stage 1 loading, with stage 2 off.
+        // Releasing the shot request restores stage 1 loading.
         f.update(recovery + .002, false, false, false, false, true, true, true, "");
         assertFalse(f.closedGateStage1());
         transfer.update(recovery + .002, false, f.feeding(), false);
         assertEquals(1, transfer.stage1(), 0);
-        assertEquals(0, transfer.stage2(), 0);
     }
 
     private FiringCoordinator f() { return new FiringCoordinator(.2,.1,.15,.3,.1); }

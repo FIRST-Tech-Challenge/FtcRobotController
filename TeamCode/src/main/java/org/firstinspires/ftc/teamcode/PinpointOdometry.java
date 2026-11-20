@@ -194,6 +194,15 @@ public class PinpointOdometry {
         return cachedStatus;
     }
 
+    /**
+     * A Pinpoint fault (pod not detected or IMU runaway) from the last read. A single FAULT_BAD_READ is a discarded
+     * I2C read that recovers on the next one, so it is not reported as a fault.
+     */
+    public boolean hasDeviceFault() {
+        return cachedStatus != null && cachedStatus != GoBildaPinpointDriver.DeviceStatus.FAULT_BAD_READ
+                && cachedStatus.name().startsWith("FAULT");
+    }
+
     public GoBildaPinpointDriver getDriver() {
         return pinpoint;
     }

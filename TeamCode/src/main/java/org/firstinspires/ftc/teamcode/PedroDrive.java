@@ -24,10 +24,24 @@ public final class PedroDrive {
         this(map, true);
     }
     public PedroDrive(HardwareMap map, boolean absoluteStartReference) {
+        this(map, absoluteStartReference, PedroConfiguration.MAX_WHEEL_POWER, false);
+    }
+    /**
+     * Path-planner autos. maxWheelPower: per-wheel power cap (0..1]. Paths are also limited to the speed that cap
+     * allows (maxWheelPower x the tuned top speed): with speed 1.0 under a 0.35 cap, Foresight planned a ~70 in/s
+     * profile the capped wheels could not follow, and the robot overshot sideways without settling (2026-11-19).
+     */
+    public PedroDrive(HardwareMap map, boolean absoluteStartReference, double maxWheelPower) {
+        this(map, absoluteStartReference, maxWheelPower, true);
+    }
+    private PedroDrive(HardwareMap map, boolean absoluteStartReference, double maxWheelPower, boolean limitSpeedToCap) {
+        if (!(maxWheelPower > 0 && maxWheelPower <= 1)) throw new IllegalArgumentException("Wheel power cap must be in (0, 1]");
+        if (limitSpeedToCap && maxWheelPower < 1)
+            config.maxVelocityConstraint.set(maxWheelPower * PedroConfiguration.MAX_FORWARD_VELOCITY_IN_PER_SEC);
         localReference = !absoluteStartReference;
         motors = new MecanumDrivetrain(map);
         motors.useOpenLoopPower();
-        drivetrain = new PedroMecanumAdapter(motors);
+        drivetrain = new PedroMecanumAdapter(motors, maxWheelPower);
         odometry = new PinpointOdometry(map);
         follower = new Follower(new PedroPinpointAdapter(odometry::getSample, p -> {
             if (localReference) odometry.setLocalPoseInches(p.x(), p.y(), Math.toDegrees(p.heading()));

@@ -84,14 +84,14 @@ public class HardwareReviewRegressionTest {
     }
     @Test public void transferTimingComesFromConfigurationAndFullWaitsForFeed() {
         TransferController c=new TransferController(.6,.4);
-        c.update(1,true,false,false); assertEquals(.6,c.stage1(),0); assertEquals(0,c.stage2(),0);
+        c.update(1,true,false,false); assertEquals(.6,c.stage1(),0);
         c.update(1.39,true,false,false); assertFalse(c.full());
         c.update(1.41,true,false,false); assertTrue(c.full()); assertEquals(.6,c.stage1(),0);
-        c.update(1.42,true,false,false); assertTrue(c.full()); assertEquals(.6,c.stage1(),0); assertEquals(0,c.stage2(),0);
+        c.update(1.42,true,false,false); assertTrue(c.full()); assertEquals(.6,c.stage1(),0);
         c.update(1.43,true,false,true); assertEquals(0,c.stage1(),0);
         c.update(1.44,true,false,false); assertEquals(0,c.stage1(),0); // Pause cancels run-on.
-        c.update(1.5,true,true,true); assertEquals(.6,c.stage1(),0); assertEquals(.6,c.stage2(),0);
-        c.stop(); assertEquals(0,c.stage1(),0); assertEquals(0,c.stage2(),0); assertFalse(c.full());
+        c.update(1.5,true,true,true); assertEquals(.6,c.stage1(),0);
+        c.stop(); assertEquals(0,c.stage1(),0); assertFalse(c.full());
     }
     @Test public void traceNeverFeedsUntilGateDelayAndLossManualInhibitAndShutdownRemainDistinct() {
         FiringCoordinator f=ShootingConfiguration.firing(); TransferController c=new TransferController(1,2);
@@ -105,15 +105,15 @@ public class HardwareReviewRegressionTest {
             if(!f.gateOpen()) opened=Double.NaN;
             boolean actualFeed=f.feeding() && !Double.isNaN(opened) && t-opened>=GateSubsystem.FEED_DELAY_AFTER_OPEN_COMMAND_SECONDS;
             c.update(t,i%3!=0,actualFeed,true);
-            if(actualFeed) { sawFeed=true; assertTrue(f.gateOpen()); assertTrue(t-opened>=GateSubsystem.FEED_DELAY_AFTER_OPEN_COMMAND_SECONDS); assertEquals(1,c.stage1(),0); assertEquals(1,c.stage2(),0); }
-            else assertEquals(0,c.stage2(),0);
-            if(t>=.9 && t<1.1 || inhibit) { assertFalse(f.gateOpen()); assertEquals(0,c.stage1(),0); assertEquals(0,c.stage2(),0); }
+            if(actualFeed) { sawFeed=true; assertTrue(f.gateOpen()); assertTrue(t-opened>=GateSubsystem.FEED_DELAY_AFTER_OPEN_COMMAND_SECONDS); assertEquals(1,c.stage1(),0); }
+            else assertEquals(0,c.stage1(),0); // Paused outside the feed.
+            if(t>=.9 && t<1.1 || inhibit) { assertFalse(f.gateOpen()); assertEquals(0,c.stage1(),0); }
         }
         assertTrue(sawFeed);
         try { throw new IllegalStateException("simulated loop exception"); }
         catch(IllegalStateException expected) { /* adapter finally cleanup */ }
         finally { f.stop(2.1); c.stop(); }
-        assertFalse(f.gateOpen()); assertFalse(f.feeding()); assertEquals(0,c.stage1(),0); assertEquals(0,c.stage2(),0);
+        assertFalse(f.gateOpen()); assertFalse(f.feeding()); assertEquals(0,c.stage1(),0);
     }
     @Test public void referenceResetInvalidatesCorrectionsHistory() {
         PoseHistory history=new PoseHistory();

@@ -20,7 +20,7 @@ public final class FallbackAutoController {
     // ---- Preload shot. STARTING VALUES, UNMEASURED: confirm on the practice field. ----
     // Feed anyway after this long if the turret is homed but RPM / hood / yaw never report ready.
     public static final double SPIN_UP_TIMEOUT_SECONDS = 3.0;
-    // Continuous feed time for every preload to leave (both transfer stages, gate open).
+    // Continuous feed time for every preload to leave (transfer feeding, gate open).
     public static final double FEED_SECONDS = 2.5;
 
     // ---- Leave drive. STARTING VALUES: deliberately slow, same 0.35 cap as Pedro autonomous. ----

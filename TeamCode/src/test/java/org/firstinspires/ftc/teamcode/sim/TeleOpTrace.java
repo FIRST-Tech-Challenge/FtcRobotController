@@ -27,8 +27,13 @@ final class TeleOpTrace {
         double intakePower, transfer1Power, transfer2Power, flywheelVelocity, yaw, yawCommand, hood, depollinator;
         // Whether stage 1 was in hub velocity control (it never should be).
         boolean transfer1VelocityMode;
-        double slidePower, slideTravelDeg, claw;
+        double slidePower, slideTravelDeg;
         boolean distanceHigh;
+
+        /** Gate logically open (0.2). */
+        boolean gateOpen() { return Math.abs(gatePosition - .2) < 1e-9; }
+        /** Shot feed evidence: the transfer (both linked motors) runs forward through the open gate. */
+        boolean feedingThroughOpenGate() { return transfer1Power > 0 && gateOpen(); }
 
         String decoded() {
             return phase + "\t" + tick + "\t" + seconds + "\t" + input + "\t"
@@ -38,7 +43,7 @@ final class TeleOpTrace {
                     + "\t" + intakePower + "\t" + transfer1Power + "\t" + transfer1VelocityMode
                     + "\t" + transfer2Power
                     + "\t" + flywheelVelocity + "\t" + yaw + "\t" + yawCommand + "\t" + hood
-                    + "\t" + depollinator + "\t" + slidePower + "\t" + slideTravelDeg + "\t" + claw
+                    + "\t" + depollinator + "\t" + slidePower + "\t" + slideTravelDeg
                     + "\t" + distanceHigh + "\t" + telemetry;
         }
     }
@@ -112,10 +117,20 @@ final class TeleOpTrace {
             s.slidePower = hardware.slideServo.getPower();
             s.slideTravelDeg = model.slideShaftDeg - BioBuzzSimHardware.SLIDE_START_SHAFT_DEG;
         }
-        if (hardware.claw != null) s.claw = hardware.claw.getPosition();
         if (hardware.distance != null) s.distanceHigh = hardware.distance.getState();
         s.feedAllowed = telemetry.lastTransmission().contains("Gate Feed Allowed : true");
         samples.add(s);
+    }
+
+    /**
+     * transfer_motor_2 is mechanically linked to stage 1 (2026-11-18), so both transfer motors must share one
+     * command in every sample. Returns the first divergence, or null.
+     */
+    String linkedTransferViolation() {
+        for (Sample s : samples) if (s.transfer1Power != s.transfer2Power)
+            return "Linked transfer motors diverged at " + s.phase + " tick " + s.tick
+                    + ": motor 1 " + s.transfer1Power + ", motor 2 " + s.transfer2Power;
+        return null;
     }
 
     Sample at(OpModePhase phase, int tick) {
@@ -133,7 +148,7 @@ final class TeleOpTrace {
         List<String> rows = new ArrayList<>();
         rows.add("phase\ttick\tseconds\tinput\twheelPowers\tshaftTicksPerSecond\txIn\tyIn\theadingRad"
                 + "\tgateLogical\tgatePhysical\tgatePulseUs\tfeedAllowed\tintakePower\ttransfer1Power\ttransfer1VelocityMode\ttransfer2Power"
-                + "\tflywheelTicksPerSecond\tyawDegrees\tyawServoCommand\thoodServo\tdepollinatorServo\tslidePower\tslideTravelDeg\tclawServo\tdistanceHigh\ttelemetry");
+                + "\tflywheelTicksPerSecond\tyawDegrees\tyawServoCommand\thoodServo\tdepollinatorServo\tslidePower\tslideTravelDeg\tdistanceHigh\ttelemetry");
         rows.addAll(decoded());
         Files.write(directory.resolve("trace.tsv"), rows, StandardCharsets.UTF_8);
         track.close();

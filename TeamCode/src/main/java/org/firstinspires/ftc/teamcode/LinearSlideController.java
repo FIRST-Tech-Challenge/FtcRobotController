@@ -10,7 +10,7 @@ public final class LinearSlideController {
     public enum State { DOWN, MOVING_UP, UP, MOVING_DOWN, MANUAL, FAULT }
 
     // Servo-output degrees from fully down (INIT) to fully up. PLACEHOLDER: deliberately short
-    // (half a turn) so the first power-up cannot over-travel. Measure with "Test: Linear Slide + Claw".
+    // (half a turn) so the first power-up cannot over-travel. Measure with "Test: Linear Slide".
     public static final double MAX_TRAVEL_DEG = 180.0;
     public static final boolean TRAVEL_MEASURED = false;
 

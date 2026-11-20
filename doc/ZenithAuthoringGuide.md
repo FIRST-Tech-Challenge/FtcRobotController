@@ -62,9 +62,9 @@ Absolute named hold/reseed poses are authored coordinates and receive the contex
 | --- | --- |
 | `intakeOn`, `intakeOff`, `intakeReverse`, `intakeSet(power)` | Latched power. Confirmed HIGH stops positive loading; LOW restores forward; deliberate reverse remains allowed. |
 | `intakeRun(power, seconds)` | Bounded run; stop on end/cancel. An old cleanup cannot override a replacement request. |
-| `loadOn`, `loadOff`, `transferStop` | Stage 1 loads only with room; stage 2 stays off. Pause/stop retains confirmed-full knowledge. |
+| `loadOn`, `loadOff`, `transferStop` | Stage 1 (both linked transfer motors) loads only with room. Pause/stop retains confirmed-full knowledge. |
 | `loadUntilFull(seconds)` | Own intake/transfer until confirmed full or timeout, then stop both. HIGH must remain present for 0.5 seconds to confirm. The sensor cannot count pieces. |
-| `feedManual(seconds)` | Explicit readiness BYPASS, never an automatic fallback. Open gate, wait 0.10 seconds, feed both stages together; close/stop on end. Feed inhibit wins, even over this override. |
+| `feedManual(seconds)` | Explicit readiness BYPASS, never an automatic fallback. Open gate, wait 0.10 seconds, feed the transfer (both motors); close/stop on end. Feed inhibit wins, even over this override. |
 | `gateOpen(seconds)`, `gateClose` | Bounded gate-only opening keeps transfer stopped; close/end clears feed requests. No feed authorization is implied. |
 | `feedStop`, `feedInhibit`, `feedResume` | Stop clears requests and preserves aim/pre-spin. Inhibit latches; resume clears it without starting feed. |
 | `depollinatorDeploy`, `depollinatorHome` | Command posture; 30-degree home and 135-degree CW deployment. One-second settle is an UNMEASURED estimate, not position feedback. STOP retains posture. |

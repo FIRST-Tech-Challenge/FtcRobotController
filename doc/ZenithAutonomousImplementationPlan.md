@@ -1,5 +1,7 @@
 # Complete Zenith autonomous integration — implementation plan
 
+> **2026-11-18 transfer change:** `transfer_motor_2` is now mechanically linked to stage 1 (both motors FORWARD, one shared command; the back rollers it used to drive were removed), so there is no separate stage 2. Stage-2 descriptions below are historical; see [TransferAndShooting.md](TransferAndShooting.md) for current behavior.
+
 Date: 2026-10-28. Implementation/audit update: 2026-10-31. Software commands, coordinator, canonical project, team deployment, examples and automated checks are implemented; see [the phase-by-phase audit](ZenithIntegrationAudit.md), [coverage/evidence](ZenithFunctionCoverage.md), [authoring](ZenithAuthoringGuide.md) and [verification](ZenithVerification.md). The final tree passes 185 ordinary tests, 12 deployment tests and all 24 current simulations, with APK/lint verification. The [core local UI round trip](ZenithUiAcceptance.md) is verified, with its remaining checks explicitly listed. Robot commissioning remains pending. This document retains the original requirements and historical baseline below; checked software/UI items do not establish hardware acceptance.
 
 ## Intended result

@@ -9,8 +9,8 @@ with 1:1 motor-to-flywheel drive. `ShooterSpeed` configures 6000 RPM at 12 V and
 the wheels. Shooter speed and encoder conversion use their own 1:1 configuration.
 
 Shooter commands, profiles and calibration allow up to 6000 flywheel RPM, with no
-software headroom reserve. The combined bench test keeps its 2800 flywheel RPM
-starting target; competition TeleOp keeps 3500 flywheel RPM. Readiness tolerances
+software headroom reserve. Competition TeleOp idles at 3000 flywheel RPM (2026-11-19); the combined bench test
+has no idle (flywheel off unless RT is held), and its RT target starts at 3000 with +/-100 coarse and +/-10 fine steps. Readiness tolerances
 remain expressed in output RPM. A low battery or continuous ball load can reduce
 achievable speed. Do not widen readiness tolerance to hide that. Re-measure shot
 rows and loaded PIDF response after this mechanical change; production profiles
@@ -35,7 +35,7 @@ Gamepad 2 can adjust gains while testing:
 
 | GP2 control | Change |
 | --- | --- |
-| B | Toggle PIDF / bang-bang + feedforward fusion in this bench test; stops motors and requires GP1 controls released to re-arm |
+| B | Toggle bang-bang + feedforward fusion (default since 2026-11-19, as in competition) / PIDF in this bench test; stops motors and requires GP1/GP2 motor controls released to re-arm |
 | D-pad Up / Down | P +1 / -1, bounded 0..100 |
 | D-pad Right / Left | Feedforward multiplier +0.05 / -0.05, bounded 0.5..1.5 |
 | Y / A | I +0.05 / -0.05, bounded 0..5 |
@@ -61,9 +61,10 @@ excluded so the project retains SDK 12.0.0. See the official
    Config view, expand **IntakeShooterTestOpMode**. Editable fields are `P`, `I`, `D`,
    `F_SCALE` and `TARGET_RPM` (flywheel output RPM, not motor RPM), plus the fusion
    controller's `FUSION_KS`, `FUSION_KV` and `FUSION_KP`.
-3. Start, then release the bumpers/triggers to arm. Hold GP1 RT to spin. GP1 Y/A
-   adjusts the same target as Dashboard. Hold RT + LT for the existing timed,
-   readiness-controlled feed/recovery cycle; GP1 B stops motors and closes the gate.
+3. Start, then release the bumpers/triggers to arm; the flywheel idles at 3000 RPM. Hold GP1 RT for the
+   selected RPM. GP1 Y/A (+/-100) and D-pad Right/Left (+/-10) adjust the same target as Dashboard. Hold
+   RT + LT for the competition continuous feed once ready; GP1 B or GP2 RT feeds manually; GP1 Back stops
+   motors and closes the gate.
 4. Apply one field change at a time in Config. Gains are read each active loop and
    sent to the hub only when changed. Gamepad gain edits modify those same fields;
    refresh Config to see gamepad edits. GP2 X resets gains, including D, but not RPM.
@@ -147,7 +148,8 @@ controller and gains into the competition TeleOps only after that comparison.
 
 Simulation decision for the fusion controller: added the Mechanisms scenario
 `benchFusionControllerSpinsUpHoldsAndFeedsThroughActualOpMode`, which runs the real
-bench OpMode through the GP2 B switch, spin-up, hold and a staggered feed. The
+bench OpMode through spin-up, hold and a feed (originally staggered; since 2026-11-19 fusion is the default
+and the feed is the competition continuous policy, with GP2 B checked switching to PIDF). The
 flywheel fixture responds far faster than the real wheel and has no friction, ball
 load or voltage sag, so it checks wiring and interlocks, not tuning. In that
 fixture each 20 ms loop moves the wheel by more than the width of the band, so
@@ -167,7 +169,8 @@ Unchanged gains are not rewritten on every battery sample; F is updated when its
 computed value changes by at least 0.02 or the operator explicitly adjusts gains.
 If the voltage-adjusted speed estimate is near 100%, lowering the target or
 reducing the ball feed rate may be necessary; PID gains cannot supply additional
-motor power. RT + LT now repeats the shared 0.20-s feed / 0.00-s recovery staggered cycle, with bench readiness required between attempts.
+motor power. RT + LT now follows the competition continuous feed (2026-11-19): after 0.15 s of bench readiness the gate and
+transfer run together until a trigger is released or the flywheel leaves the 133 RPM continuation band.
 
 Hood home is shifted 10.5 hood degrees down from the original servo position 0.5,
 to approximately 0.559155 (2:1 linkage, 355-degree servo travel). This is the previous

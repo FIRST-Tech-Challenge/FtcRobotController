@@ -18,7 +18,7 @@ These are the versions documented and tested together by [Zenith](https://github
 
 ## Before robot motion
 
-**Pedro tuning has not been measured on this robot.** `PedroConfiguration.TUNING_VERIFIED` is false. All Pedro/Zenith autonomous routines refuse to start until dynamics, braking and gains are verified (the [fallback autonomous](#fallback-autonomous-no-pedro) does not use Pedro). Since 2026-11-18 the Foresight dynamics, braking and gains in Java and robot.json are copied from the master chassis's tuner run (`pedro/Constants.java` on `master`) so both robots share one tuning; they are labeled `PORTED` and still need checking on V1's drivetrain. Pinpoint pod offsets and directions stay V1's own measurements. Camera and shooting calibration gates also remain active.
+**Pedro tuning was measured on this robot but is not verified yet.** `PedroConfiguration.TUNING_VERIFIED` is false. All Pedro/Zenith autonomous routines refuse to start until dynamics, braking and gains are verified (the [fallback autonomous](#fallback-autonomous-no-pedro) does not use Pedro). On 2026-11-19 the Foresight dynamics, braking and gains in Java and robot.json were replaced with V1's own Foresight tuner runs (labeled `MEASURED`; the second run is current); from 2026-11-18 they had been copied from the master chassis. Since the second run, autos have no speed or wheel-power cap (`DEFAULT_PATH_SPEED_FRACTION` and `MAX_WHEEL_POWER` are 1): the tuner measured braking at full power and Foresight plans every stop from it, and the earlier 0.35 cap also capped braking power, so the robot overshot path ends and drove back. The second run reported only the near-path translational gains; the far-path gains keep the fixed 2.7066 ratio every earlier run produced. Pinpoint pod offsets and directions stay V1's own measurements. Camera and shooting calibration gates also remain active.
 
 Use **Test: Pedro Drive**, which initializes only the drive subsystem (four motors and Pinpoint). Keep the chassis stationary through calibration. Sticks command at most 0.2 power, A requests 12 inches forward from the current pose, B requests a 90-degree CCW hold, and X cancels. Stick movement cancels a running test. A/B use Ivy commands, have a five-second timeout, and stop on completion. This diagnostic deliberately allows testing before TUNING_VERIFIED is set.
 
@@ -37,9 +37,9 @@ V1 includes [Pedro's AutoTune procedures](https://pedropathing.com/docs/pathing/
 
 All procedures use V1's own hardware through `PedroTuningHardware`, not Pedro's revhub classes. The tuning library itself has no Pedro core dependency, so the strictly pinned core above is unchanged. What this means for V1:
 
-- The Foresight tuner drives V1's open-loop `MecanumDrivetrain` at full power and reads V1's `PinpointOdometry` (measured pod offsets/directions) through the same adapters as `PedroDrive`. Pedro's model wants full-power velocities; `PedroDrive` applies the 0.35 wheel cap separately.
+- The Foresight tuner drives V1's open-loop `MecanumDrivetrain` at full power and reads V1's `PinpointOdometry` (measured pod offsets/directions) through the same adapters as `PedroDrive`. Pedro's model wants full-power velocities; `PedroDrive` runs the same full power (`MAX_WHEEL_POWER` = 1).
 - V1 keeps BRAKE at zero power, while Pedro's stock mecanum floats while following. The tuner's coasting stop is therefore V1's braking stop, so natural deceleration is measured the way V1 autonomous actually slows.
-- Tests run the installed `PedroConfiguration` follower at the 0.35 autonomous cap, matching match routines.
+- Tests run the installed `PedroConfiguration` follower at `MAX_WHEEL_POWER` (1, no cap), matching match routines.
 - The Foresight tuner prints Java for `PedroConfiguration` and a JSON fragment for robot.json. Its two-step translational gain uses the lower gain below 2.5 inches of error and the higher one above. Zenith's sim models one gain, so robot.json takes the lower one. `PedroAdapterTest` checks that Java and robot.json agree.
 
 The pinned Pedro snapshot normalizes a zero displacement inside ForesightV3's hold calculation. `PedroForesight` guards only that numerical case using a 0.0001-inch offset, below Pedro's translation deadband, and delegates the control calculations to Pedro. Regression tests exercise exact-position holds and in-place turns.
@@ -66,7 +66,7 @@ Each path's speed fraction is applied through `ForesightConfig.setPathSpeed`, in
 Sequence (`FallbackAutoController`, hardware-free and unit-tested; `FallbackAutonomous` wires the hardware):
 
 1. **Start delay**: 0–15 s, chosen in INIT with GP1 D-pad Up/Down. If the preload shot is on, the flywheel spins up during the delay.
-2. **Preload shot** (optional; toggle it in INIT with GP1 X, and it defaults to off until `PRELOAD_SHOT_MEASURED`): the turret goes to a fixed heading, the hood and flywheel to fixed values, then the auto waits for READY. Feeding uses the same continuous gate + two-stage path as TeleOp's manual feed and is held for `FEED_SECONDS`. After `SPIN_UP_TIMEOUT_SECONDS` it feeds anyway if the turret is homed, and skips the shot if it is not. An unavailable turret only disables the shot.
+2. **Preload shot** (optional; toggle it in INIT with GP1 X, and it defaults to off until `PRELOAD_SHOT_MEASURED`): the turret goes to a fixed heading, the hood and flywheel to fixed values, then the auto waits for READY. Feeding uses the same continuous gate + transfer path as TeleOp's manual feed and is held for `FEED_SECONDS`. After `SPIN_UP_TIMEOUT_SECONDS` it feeds anyway if the turret is homed, and skips the shot if it is not. An unavailable turret only disables the shot.
 3. **Leave**: drives to a point given relative to the start pose (forward/left inches) while holding the start heading, capped at 0.35 power. It is proportional on Pinpoint distance, with a 0.08 minimum power and 1 in / 3 deg tolerance.
 4. **Stop** when done. It also stops on a 4 s leave timeout, at 29 s, or on a fault: a Pinpoint pose that stays stale or not READY for 0.25 s, or the robot getting 6 in *farther* from the target, which means a drive or odometry sign is wrong.
 
@@ -76,7 +76,7 @@ Values to measure at each alliance's real start spot (all are marked STARTING VA
 | --- | --- | --- |
 | `PRELOAD_TURRET_HEADING_DEG` | `Red/BlueFallbackAutonomous` | 90 (turret home). Read it from the Driver Hub "Turret \| HOMED \| heading" line: front=0, right=90, back=180, left=270 |
 | `LEAVE_FORWARD_INCHES`, `LEAVE_LEFT_INCHES` | `Red/BlueFallbackAutonomous` | 24 forward, 0 left |
-| `PRELOAD_HOOD_DEG`, `PRELOAD_FLYWHEEL_RPM` | `FallbackAutonomous` | TeleOp's starting manual hood (home) and 3500 RPM |
+| `PRELOAD_HOOD_DEG`, `PRELOAD_FLYWHEEL_RPM` | `FallbackAutonomous` | TeleOp's starting manual hood (home) and 3500 RPM (TeleOp's former start; TeleOp now idles at 3000) |
 | `PRELOAD_SHOT_MEASURED` | `FallbackAutonomous` | false (the shot starts OFF in INIT) |
 | `FEED_SECONDS`, `SPIN_UP_TIMEOUT_SECONDS` | `FallbackAutoController` | 2.5 s, 3.0 s |
 

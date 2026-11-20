@@ -1,5 +1,7 @@
 # Hardware-review implementation status
 
+> **2026-11-18 transfer change:** `transfer_motor_2` is now mechanically linked to stage 1 (both motors FORWARD, one shared command; the back rollers it used to drive were removed), so there is no separate stage 2. Stage-2 descriptions below are historical; see [TransferAndShooting.md](TransferAndShooting.md) for current behavior.
+
 > Historical review/plan: October 26 decisions supersede the moving-shot solver, flight-time data, motion-based firing gates, hive-state gating in competition TeleOp, calibration-file saving, the earlier 1.50/1.25-m height estimates and time-based uncertainty cutoffs described below. These features have been removed from the competition workflow. See [current competition behavior](CompetitionTeleOp.md), [configuration](SoftwareConfiguration.md) and [tag map](FieldReference.md) for the implemented behavior.
 
 

@@ -23,7 +23,6 @@ final class BioBuzzSimHardware {
     FakeServo ledIntake, ledShooter, ledStatus;
     FakeCRServo slideServo;
     FakeAnalogInput slideEncoder;
-    FakeServo claw;
     FakeDigitalChannel distance;
     FakeGoBildaPinpoint pinpoint;
     FakeLimelight3A camera;
@@ -51,6 +50,7 @@ final class BioBuzzSimHardware {
         if (gate == null) gate = servo("gate_servo");
         // Stage 1 is a 6000 RPM Yellow Jacket with its own motor encoder (synthetic fixture top speed).
         if (transfer1 == null) transfer1 = motor("transfer_motor_1");
+        // Mechanically linked to stage 1 since 2026-11-18 (no encoder); it always gets motor 1's command.
         transfer2 = motor("transfer_motor_2");
         distance = new FakeDigitalChannel(); map.register("distance_sensor", distance);
         distance.setSimulatedInputState(false);
@@ -59,14 +59,13 @@ final class BioBuzzSimHardware {
     BioBuzzSimHardware withDepollinator() {
         depollinator = servo("depollinator"); return this;
     }
-    /** Slide CR servo, its analog feedback and the claw. The model starts the servo shaft at
+    /** Slide CR servo (Control Hub servo 2) and its analog feedback; no claw. The model starts the servo shaft at
      * 300 deg so the first raise crosses the analog 360/0 wrap. */
     static final double SLIDE_START_SHAFT_DEG = 300;
     BioBuzzSimHardware withSlide() {
         slideServo = new FakeCRServo(); map.register("slide_servo", slideServo);
         slideEncoder = new FakeAnalogInput(); map.register("slide_encoder", slideEncoder);
         slideEncoder.setVoltage(SLIDE_START_SHAFT_DEG / 360 * slideEncoder.getMaxVoltage());
-        claw = servo("claw_servo");
         return this;
     }
     BioBuzzSimHardware withTurret() {

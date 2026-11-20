@@ -8,18 +8,21 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-/** Stage 1 runs open-loop full power for loading, run-on, override and shots; its encoder is telemetry only. */
+/**
+ * Stage 1 (both linked motors) runs open-loop full power for loading, run-on, override and shots; motor 1's
+ * encoder is telemetry only.
+ */
 public class TransferStage1SpeedTest {
     private final FakeHardwareMap map = new FakeHardwareMap();
     // Fake top speed 2800 ticks/s = 6000 RPM at 28 ticks/rev (goBILDA 5203 Yellow Jacket, 1:1).
     private final FakeMotor stage1 = new FakeMotor(2800, 10, 28);
-    private final FakeMotor stage2 = new FakeMotor(2800, 10, 28);
+    private final FakeMotor motor2 = new FakeMotor(2800, 10, 28); // Linked to stage 1 (2026-11-18).
     private final FakeDigitalChannel full = new FakeDigitalChannel();
     private final TransferSubsystem transfer;
 
     public TransferStage1SpeedTest() {
         map.register("transfer_motor_1", stage1);
-        map.register("transfer_motor_2", stage2);
+        map.register("transfer_motor_2", motor2);
         map.register("distance_sensor", full);
         full.setSimulatedInputState(false);
         transfer = new TransferSubsystem(map);
@@ -27,12 +30,10 @@ public class TransferStage1SpeedTest {
 
     @Test public void stage1AlwaysRunsFullPowerOpenLoop() {
         transfer.update(0, false, false);
-        assertFullPower(); // Automatic loading.
-        assertEquals(0, stage2.getPower(), 0);
+        assertFullPower(); // Automatic loading uses both linked motors.
 
         transfer.update(.02, true, false); // Shot feed.
         assertFullPower();
-        assertEquals(1, stage2.getPower(), 0);
 
         full.setSimulatedInputState(true);
         transfer.update(.04, false, false);
@@ -42,6 +43,7 @@ public class TransferStage1SpeedTest {
         double afterRunOn = .05 + TransferSubsystem.FULL_CONFIRM_TIME_SECONDS + TransferSubsystem.STAGE_1_FULL_RUN_ON_SECONDS;
         transfer.update(afterRunOn, false, false);
         assertEquals(0, stage1.getPower(), 0); // Full: stopped until LOW or a shot.
+        assertEquals(0, motor2.getPower(), 0);
         transfer.update(afterRunOn + .02, false, false, true, true);
         assertFullPower(); // Intake-forward override past full.
     }
@@ -55,5 +57,7 @@ public class TransferStage1SpeedTest {
     private void assertFullPower() {
         assertEquals(DcMotor.RunMode.RUN_WITHOUT_ENCODER, stage1.getMode());
         assertEquals(1, stage1.getPower(), 0);
+        assertEquals(DcMotor.RunMode.RUN_WITHOUT_ENCODER, motor2.getMode());
+        assertEquals(1, motor2.getPower(), 0);
     }
 }

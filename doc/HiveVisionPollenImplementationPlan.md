@@ -1,5 +1,7 @@
 # Hive Vision migration plan for pollen navigation
 
+> **2026-11-18 transfer change:** `transfer_motor_2` is now mechanically linked to stage 1 (both motors FORWARD, one shared command; the back rollers it used to drive were removed), so there is no separate stage 2. Stage-2 descriptions below are historical; see [TransferAndShooting.md](TransferAndShooting.md) for current behavior.
+
 Created November 5, 2026. Status: **planned; implementation and robot validation have not started**.
 
 Migrate the C270 pollen detector to Hive Vision's webcam HSV implementation while retaining the existing Pedro/Ivy navigation and collection architecture. The team selected the C270 path in this chat. Hive's neural detector is a separate Limelight path; this plan uses the Control Hub webcam processor described in the [upstream webcam installation guide](https://hivevisionftc.github.io/HiveVisionDocs/installation/webcam/).

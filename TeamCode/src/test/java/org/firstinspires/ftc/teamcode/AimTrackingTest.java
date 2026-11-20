@@ -77,40 +77,4 @@ public class AimTrackingTest {
         assertEquals(samples, lag.samples());
         assertTrue(Double.isNaN(new TurretLagEstimator().residualLagSeconds()));
     }
-
-    /** First-order synthetic chassis: rate = gain * clockwise stick, 0.1 s response. */
-    private static double[] spin(AutoAimSpinLimiter limiter, double fullStickDegPerSecond, double stick,
-                                 boolean aiming, double seconds) {
-        double rate = 0, peak = 0;
-        for (double t = 0; t < seconds; t += .02) {
-            double command = limiter.limit(t, stick, Math.toRadians(rate), aiming);
-            rate += (-command * fullStickDegPerSecond - rate) * -Math.expm1(-.02 / .1);
-            peak = Math.max(peak, Math.abs(rate));
-        }
-        return new double[] {Math.abs(rate), peak};
-    }
-
-    @Test public void spinCapHoldsTheTurretTrackableRateOnlyWhileAiming() {
-        double cap = AutoAimSpinLimiter.MAX_CHASSIS_RATE_DEG_PER_SECOND;
-        for (double stick : new double[] {1, -1}) {
-            double[] aiming = spin(new AutoAimSpinLimiter(), 650, stick, true, 3);
-            assertEquals(cap, aiming[0], cap * .03);
-            assertTrue("overshoot " + aiming[1], aiming[1] <= cap * 1.1);
-        }
-        AutoAimSpinLimiter free = new AutoAimSpinLimiter();
-        assertEquals(650, spin(free, 650, 1, false, 3)[0], 5);
-        assertFalse(free.limiting());
-        assertEquals(.3, new AutoAimSpinLimiter().limit(0, .3, Double.NaN, true), 0); // Below the limit: unchanged.
-    }
-
-    @Test public void slowerRobotLearnsItNeedsNoCapAndMissingOdometryKeepsTheEstimate() {
-        AutoAimSpinLimiter slow = new AutoAimSpinLimiter();
-        assertEquals(250, spin(slow, 250, 1, true, 4)[0], 5);
-        assertEquals(1, slow.stickLimit(), 0);
-        AutoAimSpinLimiter blind = new AutoAimSpinLimiter();
-        double expected = AutoAimSpinLimiter.MAX_CHASSIS_RATE_DEG_PER_SECOND / AutoAimSpinLimiter.INITIAL_FULL_STICK_RATE_DEG_PER_SECOND;
-        assertEquals(expected, blind.limit(0, 1, Double.NaN, true), 1e-12);
-        assertEquals(-expected, blind.limit(.02, -1, Double.NaN, true), 1e-12);
-        assertTrue(blind.limiting());
-    }
 }

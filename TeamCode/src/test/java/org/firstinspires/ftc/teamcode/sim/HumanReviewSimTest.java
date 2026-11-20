@@ -95,8 +95,8 @@ class HumanReviewSimTest {
                 if (window != null && stoppedAt[0] < 0) {
                     pacer.afterTick(s.trace.samples.size(), s.trace.samples.size() * DT);
                     if (v.tick % 5 == 0) window.showStatus(String.format(java.util.Locale.ROOT,
-                            "%s %d | XY %.1f,%.1f in | yaw %.1f deg | flywheel %.0f ticks/s | gate %.2f | intake %.1f | feed %.1f",
-                            v.phase, v.tick, v.xIn, v.yIn, v.yaw, v.flywheelVelocity, v.gatePosition, v.intakePower, v.transfer2Power));
+                            "%s %d | XY %.1f,%.1f in | yaw %.1f deg | flywheel %.0f ticks/s | gate %.2f | intake %.1f | transfer %.1f",
+                            v.phase, v.tick, v.xIn, v.yIn, v.yaw, v.flywheelVelocity, v.gatePosition, v.intakePower, v.transfer1Power));
                 }
             };
             try { s.run(); } finally {

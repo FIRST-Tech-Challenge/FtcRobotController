@@ -1,11 +1,13 @@
 # TeleOp verification matrix
 
+> **2026-11-18 transfer change:** `transfer_motor_2` is now mechanically linked to stage 1 (both motors FORWARD, one shared command; the back rollers it used to drive were removed), so there is no separate stage 2. Stage-2 descriptions below are historical; see [TransferAndShooting.md](TransferAndShooting.md) for current behavior.
+
 ## November 6, 2026 physical verification status - scope decision
 
 On November 6 the team decided that simple, low-precision features which have been
 run on the robot and seen working are complete and verified by functional check;
 they need no logged measurements. Autonomous is not in use and is out of scope.
-Physical testing remains only for the precision features (tasks 8, 9, 10 and 12),
+Physical testing remains only for the precision features (tasks 8, 10 and 12; task 9 dropped 2026-11-19),
 which depend on real geometry, physics or timing.
 
 | Task | Verification scope | Physical acceptance status |
@@ -18,8 +20,8 @@ which depend on real geometry, physics or timing.
 | 6 | Depollinator integration | COMPLETE / VERIFIED |
 | 7 | Limelight and field geometry | COMPLETE / VERIFIED - 35 ms button-to-detection |
 | 8 | Both-alliance localization and auto aim | COMPLETE / VERIFIED by functional check (2026-11-14) - operator reports Test: Auto Aim localizing and tracking the goal, chassis pushed by hand; see [the 2026-11-14 record](#auto-aim-physical-acceptance-2026-11-14) |
-| 9 | Shot calibration and measured release timing | IN PROGRESS (started 2026-11-14) - procedure in [ShotCalibration.md](ShotCalibration.md#task-9-acceptance-procedure-2026-11-14); shot table supplied 2026-11-15 (12-60 in, now the production profile); range cross-check, midpoint validation and release timing remain; `RELEASE_TIMING_MEASURED = false` |
-| 10 | Both-alliance combined competition controls and automatic firing | PENDING / NOT TESTED - automatic firing stays blocked until task 9 |
+| 9 | Shot calibration and measured release timing | COMPLETE / NOT REQUIRED (team decision 2026-11-19) - the supplied 12-60 in shot table (2026-11-15, the production profile) and current timing values work on the robot, and competition feeding is continuous only; the range cross-check, midpoint validation and release-timing measurement are not planned. Procedure kept in [ShotCalibration.md](ShotCalibration.md#task-9-acceptance-procedure-2026-11-14) for optional re-tuning |
+| 10 | Both-alliance combined competition controls and automatic firing | PENDING / NOT TESTED - task 9 no longer blocks it (not required 2026-11-19) |
 | 11 | Autonomous routes, Pedro path tuning, pollen vision | COMPLETE / NOT REQUIRED - autonomous not in use |
 | 12 | Full loaded TeleOp match rehearsal (both alliances, partly drained battery) | PENDING / NOT TESTED - autonomous-to-TeleOp transition not required |
 
@@ -327,16 +329,16 @@ initialization/loop/STOP under its stated fixture; it does not certify every con
 | Drivetrain | DrivetrainTestOpMode, both competition wrappers, Pedro manual diagnostic | Two-stage motor-feedback-to-distance conversion with reported 104-mm wheels; forward/reverse/strafe/yaw, normalization, wheel selection, neutral/STOP, alias/missing hardware, 10/20ms, repeat decoded traces; chassis geometry/dynamics synthetic, loaded compression/slip unmeasured |
 | Gate | GateTestOpMode, TransferTestOpMode, both wrappers | Logical/physical direction, PWM, delayed feed, held/reopened gate, trigger priority, shutdown, missing/PWM-incapable device |
 | Intake | IntakeTestOpMode, bench, both wrappers | Forward/reverse/both/neutral, confirmed-HIGH stop (no reversal), LOW recovery, bumper overrides, independent shaft encoder, shutdown; no ball-contact simulation |
-| Transfer | TransferTestOpMode, bench, both wrappers | 0.5-second HIGH dwell, 0.5-second stage-1 run-on, LOW resume, stage1-only loading, timed gate/both-stage feed, inhibit priority, STOP |
+| Transfer | TransferTestOpMode, bench, both wrappers | 0.5-second HIGH dwell, 0.5-second stage-1 run-on, LOW resume, stage-1 loading, timed gate/stage-1 feed, inhibit priority, STOP; every scenario asserts both linked transfer motors share one command (2026-11-18) |
 | Depollinator | DepollinatorTestOpMode, both wrappers | Deploy/home edges, home priority, PWM range/endpoints; holds commanded position at STOP |
-| Linear slide / claw | LinearSlideTestOpMode, both wrappers | GP2 LS-click toggle raises across the analog 360/0 wrap and lowers to zero, no power in INIT, jam -> FAULT with zero power, GP1 B claw toggle, zero power at STOP. Scenarios: `linearSlideTogglesAcrossAnalogWrapAndClawToggles`, `jammedLinearSlideFaultsWithZeroPower`, `bothAlliancesToggleSlideOnGp2AndClawOnGp1`. SYNTHETIC unloaded slide (rated Axon speed, no gravity/lag); travel and claw positions are placeholders until measured |
+| Linear slide | LinearSlideTestOpMode, both wrappers | GP2 LS-click toggle raises across the analog 360/0 wrap and lowers to zero, no power in INIT, jam -> FAULT with zero power, zero power at STOP. Scenarios: `linearSlideTogglesAcrossAnalogWrap`, `jammedLinearSlideFaultsWithZeroPower`, `bothAlliancesToggleSlideOnGp2`. SYNTHETIC unloaded slide (rated Axon speed, no gravity/lag); travel is a placeholder until measured. Claw removed 2026-11-19 |
 | Turret / hood / flywheel | TurretTestOpMode, bench, both wrappers | Independent finite-rate yaw on transfer motor 1's encoder input, SDK REVERSE sign normalization, paired servo commands, hood held-button edge, shaft response, startup and STOP; loaded response unmeasured |
 | Pinpoint | PinpointTestOpMode smoke, full competition fixture | SDK fake calibration/pod configuration and chassis coupling; NOT_READY fault blocks synthetic automatic shots; no physical pod calibration certified |
 | Limelight / goal state | LimelightTagTestOpMode, GoalStateTestOpMode smoke | Geometric camera; physical tag +Z-into-print convention resolved 2026-11-05 and converted once in `LimelightObservation`; inverted-camera rejection retained; physical height/plane accuracy unvalidated |
 | Localization | Both actual competition wrappers with raw (physical-convention) camera | Mapped-tag acquisition from unknown start and retention after camera loss; inverted convention rejection retained; production automatic feed remains blocked |
 | Automatic shot success | Test-only SyntheticRedTeleOp / SyntheticBlueTeleOp inheriting competition loop | Artificial calibrated rows exercise feed then Pinpoint-fault blocking; no production measured flags altered, no ball scoring |
 | Competition integration | RedMecanumTeleOp / BlueMecanumTeleOp | Manual drive before reference, queue/feed/inhibit, early START, STOP before START, partial-init cleanup, 180 simulated seconds each |
-| Bench | IntakeShooterTestOpMode | Actual intake/stage-1 loading, LB reverse and both-bumper stop, confirmed-HIGH intake stop with stage-1 run-on and immediate LOW recovery; staggered stage-2 feed after 0.10 s gate delay with stage 1 starting at the gate-open midpoint; GP2 continuous selection, immediate both-stage full-power feed, either-trigger release and B/re-arm; RB reload/STOP. Scenarios: `benchLoadsHoldsFullFeedsAndReloadsThroughActualMotorOutputs`, `benchContinuousFeedsImmediatelyUntilTriggerReleaseOrStop`, `benchFusionControllerSpinsUpHoldsAndFeedsThroughActualOpMode` (GP2 B fusion selection, full-power spin-up, feedforward hold inside readiness, staggered feed). Modeled feedback, no physical clearance, ball-spacing or flywheel-tuning claim |
+| Bench | IntakeShooterTestOpMode | Actual intake/stage-1 loading, LB reverse and both-bumper stop, confirmed-HIGH intake stop with stage-1 run-on and immediate LOW recovery; competition continuous feed (gate and both linked motors together, collection paused) after readiness; GP2 RT manual feed with the flywheel off, GP2 LT inhibit, B/re-arm; +/-10 RPM fine steps; RB reload/STOP. Scenarios: `benchLoadsHoldsFullFeedsAndReloadsThroughActualMotorOutputs`, `benchManualFeedAndInhibitFollowCompetitionThroughActualOpMode`, `benchFusionControllerSpinsUpHoldsAndFeedsThroughActualOpMode` (fusion default, full-power spin-up, feedforward hold inside readiness, feed, GP2 B switch to PIDF), `benchActualOpModeStartsAndStopsSafely`. Modeled feedback, no physical clearance, ball-spacing or flywheel-tuning claim |
 | Aiming / calibration diagnostics | AutoAimTestOpMode, ShotCalibrationOpMode | Real lifecycle smoke; detailed planner/calibration logic remains covered by ordinary tests; calibration does not create real measured rows in simulation |
 | Pedro diagnostic | PedroDriveTestOpMode | Manual forward drive with both transmission stages, independent shaft-feedback-to-distance assertion and STOP in Drivetrain; idle lifecycle smoke in Sensors. Pedro clock instrumented; no autonomous path-accuracy claim |
 | Raw disconnected-servo programmer | Not simulated | Upstream FakeServo has no ServoController metadata; use actual disconnected-servo procedure |
@@ -367,8 +369,10 @@ telemetry; runner-outcome.txt is not a behavioral verdict. Human recordings incl
 profile and STOP tick and can be replayed with exact decoded-output comparison. Record source revision
 and dirty changes alongside reviewer notes. The baseline manifest prevents silent test-discovery loss.
 
-Competition and bench policies intentionally differ: competition starts at 3500 flywheel output RPM,
-uses GP1 A / GP2 RT manual feed and GP2 LT inhibit; bench uses its dedicated readiness/release controls.
+Competition and bench share the shooting policy since 2026-11-19 (fusion, continuous feed,
+GP2 RT manual feed, GP2 LT inhibit). The bench keeps its release-to-arm, GP1 Back stop, RT selected RPM and
+bench yaw readiness, and uses GP1 B instead of GP1 A for manual feed (A lowers RPM there). Bench-only since
+later 2026-11-19: no 3000 RPM idle (competition-only) and stage 1 starts 0.10 s after the gate-open command.
 Keep those policies distinct when promoting a subsystem change. Production shot rows remain examples;
 synthetic success tests do not authorize automatic shots on the robot.
 
@@ -970,3 +974,119 @@ and the stage-1-only closed-gate run against both real competition wrappers), `M
 No new scenario or OpMode was added, so `tools/teleop-test-baseline.json` and `simloop/opmode-coverage.json` are unchanged.
 Limits: loaded ball clearance, gate clearance at 0.30 s and flywheel recovery with zero pause are unmeasured; autonomous
 shoot durations were authored for the old slower cycle and now fit more cycles in the same time.
+
+## Single-stage transfer: transfer_motor_2 linked to stage 1 (2026-11-18)
+
+Hardware change: `transfer_motor_2` no longer drives the transfer back rollers (removed); it is mechanically linked
+to `transfer_motor_1` on stage 1. Hardware configuration names and ports are unchanged. Policy: both motors are
+FORWARD (motor 2 was REVERSE) and `TransferSubsystem` gives both the single stage-1 command from
+`TransferController` (its separate `stage2()` output was removed), including stall-guard cuts. `TransferStallGuard`
+now uses the higher of the two motor currents with motor 1's encoder speed. Stage-1 method, constant and telemetry
+names were kept by request; telemetry now reports both motors under stage 1 and no stage-2 power line. The
+planner's legacy classic export drives `KICKER_NAME` (relabelled "Transfer motor 2 (linked)") with the transfer's
+direction and power; `KICKER_REVERSED` and `KICKER_POWER` were removed.
+
+Baseline: loading ran stage 1 only with stage 2 off, and feeds ran both stages. Simulation decision: run, because
+this changes shared transfer behavior in every OpMode with a transfer. `TeleOpScenario.run()` now fails any scenario
+whose trace shows the two transfer motor powers diverging. Assertions that used stage-2 power as a proxy for
+feeding now use `Sample.feedingThroughOpenGate()` (transfer forward with the gate logically open); loading,
+run-on, override and closed-gate checks now expect motor 2 at stage-1 power. Unit coverage adds motor-2-only
+stall current tripping the shared guard and cutting both motors. `TransferControllerTest#loadingKeepsStage2OffAndFeedingRunsBothForward`
+was renamed `loadingAndFeedingRunStage1Forward` in `tools/teleop-test-baseline.json`. No OpMode or scenario was added,
+so `simloop/opmode-coverage.json` is unchanged.
+Result: all 309 unit tests pass, debug packaging passes, lint 0 errors (18 warnings, none in changed files). 45 of 49
+simulations pass, including Gate/transfer-only, Sensors and both competition wrappers. The 4 bench
+`IntakeShooterTestOpMode` scenarios fail in INIT at `FtcDashboard.getInstance()` (UnsatisfiedLinkError: no RobotCore);
+the same 4 fail on the unmodified previous commit, so this is a pre-existing environment/dashboard failure and the
+bench OpMode is not simulation-covered for this change. `verify-teleop.ps1` was not used: its baseline already listed
+two unit tests renamed by earlier work (`FiringCoordinatorTest#configuredCycleWaitsPointTwoSecondsAfterGateCommandAndExtendsBothStageFeed`,
+`IntakeShooterTestControllerTest#heldTriggersRepeatTimedFeedsWithRecoveryAndReadinessBetweenShots`).
+Limits: SimLoop has no ball, linkage or load-sharing model, so it cannot show that the motors turn the linkage the
+same way or that the 6.0 A per-motor stall threshold still fits shared loading; check both on the robot.
+
+## Auto aim turn cap removed (2026-11-19)
+
+Change: `AutoAimSpinLimiter` (300 deg/s GP1 turn cap while RT auto-aims) was deleted; the shared
+`MecanumTeleOp` (Red and Blue wrappers) now passes GP1 RS-X straight to the drivetrain. Its unit tests were
+removed and `CompetitionSimTest#bothAlliancesCapChassisTurnRateOnlyWhileAutoAiming` became
+`bothAlliancesTurnAtFullRateWhileAutoAiming` (aiming turn rate must match the free rate). Earlier entries that
+mention the turn cap describe the previous behavior.
+
+## Transfer stall guard removed (2026-11-19)
+
+By request, `TransferStallGuard` and all transfer stall limits/safety stops were removed. Stage 1 (both linked
+motors) always gets `TransferController`'s command, including while stalled; the earlier entries above that mention
+stall-guard cuts or the 6.0 A threshold are historical. `TransferStallGuardTest` was deleted;
+`TransferShotFeedPowerTest#loadingIntoAStallIsNeverCut` now asserts full power on both motors at 0 RPM and stall
+current, and `DriverRumbleTest` uses the turret homing fault for the ERROR cue. Simulation decision: omitted. No sim
+scenario modeled transfer stalls or the guard, so removing it changes no simulated behavior; focused unit tests and
+debug packaging cover the change.
+
+## GP1 rumble and fault-light alert (2026-11-19)
+
+By request the November 18 rumble cue set (both controllers) was removed. Both competition TeleOps now rumble GP1
+only: two pulses when the transfer queue becomes full, and a steady rumble while RT is held until the shot is ready
+(`DriverRumble`). A new turret homing, slide, Pinpoint device or firing fault blinks all three status lights red for
+2 s (`RobotStatusLights.showFaultAlert`, INIT and ACTIVE). `DriverRumbleTest` (5) and
+`TeleOpIntegrationPolicyTest` (6, including the new fault-alert case) passed, and `:TeamCode:assembleDebug` passed.
+Simulation decision: ran Competition (both real Red/Blue wrappers, including the actual light pulse-width
+assertions) and Mechanisms. All 16 Competition tests passed. Mechanisms: 7 of 11 passed. The 4 bench tests for
+`IntakeShooterTestOpMode` fail in INIT because that OpMode now calls `FtcDashboard.getInstance()` (commit 8e5a775),
+whose native library does not load on the desktop JVM. That OpMode is not touched by this change. No sim scenario
+injects a fault or checks rumble, so the alert blink and the rumble feel are covered only by unit tests and are not
+physically verified.
+
+## Slide on Control Hub servo 2, claw removed (2026-11-19)
+
+The slide is now one continuous-mode Axon MAX+ on Control Hub servo port 2 (`slide_servo`, unchanged configuration
+name; Expansion Hub servo 5 is free). Its analog feedback (`slide_encoder`) is on Control Hub analog port 0 (formerly Expansion Hub analog port 0). The shot blocker is permanently attached, so `SlideClawSubsystem` and
+`claw_servo` were deleted: both competition TeleOps no longer bind GP1 B, and `LinearSlideTestOpMode` is now
+`Test: Linear Slide` with no claw controls. Slide control logic, constants and `slide_encoder` are unchanged.
+Sim scenarios were renamed (`linearSlideTogglesAcrossAnalogWrap`, `bothAlliancesToggleSlideOnGp2`) and lost only
+their claw assertions; the trace drops the `clawServo` column.
+Simulation decision: ran the three slide scenarios (both real Red/Blue wrappers plus the isolated test OpMode); all
+passed, along with `LinearSlideControllerTest` (9), `TeleOpIntegrationPolicyTest` (6) and `:TeamCode:assembleDebug`.
+The hub port is configuration only (software finds `slide_servo` by name), so the sim cannot check the wiring.
+
+## Bench test uses the competition shooting policy, fine RPM steps (2026-11-19)
+
+`Test: Intake + Index + Shooter` now shoots like both competition TeleOps: `IntakeShooterTestController` drives the
+shared `CompetitionFeedController` continuous feed (its staggered mode, GP2 RB toggle and GP2 LB timing controls are
+gone), RT + LT fires after the 0.15 s readiness delay with the gate and transfer together and keeps feeding inside
+the 133 RPM continuation band, GP2 RT is the manual feed, GP2 LT the inhibit, either gamepad's bumpers force or
+reverse collection, automatic collection pauses while shooting, fusion is the default flywheel controller (GP2 B
+still switches to PIDF) and the start target is 3500 RPM. GP1 rumble and the shooter/intake lights were added.
+Bench-only release-to-arm, B stop, hold-RT flywheel and the 4 deg bench yaw readiness are kept. GP1 D-pad Right/Left
+adds +/-10 RPM fine steps beside Y/A +/-100. The OpMode also no longer touches FTC Dashboard off Android: its static
+setup needs the robot's native library and had been failing every bench scenario in INIT.
+Simulation decision: ran `MechanismsSimTest` (11 passed, including the four rewritten bench scenarios) and the 19
+`IntakeShooterTestControllerTest` cases. Competition scenarios were not rerun: no shared competition class changed.
+Loaded feeding, ball spacing and flywheel recovery under load still need physical testing.
+
+## Flywheel idles at 3000 RPM; bench GP1 B manual feed (2026-11-19)
+
+Both competition TeleOps now start their manual/idle flywheel speed at 3000 output RPM instead of 3500
+(`MecanumTeleOp.FLYWHEEL_IDLE_RPM`, renamed from `STARTING_FLYWHEEL_RPM`); GP2 Y/A, auto aim and every other
+control are unchanged. `FallbackAutonomous.PRELOAD_FLYWHEEL_RPM` was derived from that constant, so it is now
+pinned at 3500 to leave the autonomous preload shot unchanged. In `Test: Intake + Index + Shooter` the armed
+flywheel now idles at the same 3000 RPM and RT runs the selected RPM (default 3000); GP1 B became a bench-only
+manual feed beside GP2 RT, and the bench stop moved from GP1 B to GP1 Back. Competition GP1 B stays unbound.
+Simulation decision: ran `CompetitionSimTest` (16 passed; the manual-RPM assertions now expect 3000 / 3050) and
+`MechanismsSimTest` (11 passed; the bench scenarios check the idle speed, the GP1 B feed, the Back stop and the
+return to idle after RT), plus `IntakeShooterTestControllerTest` (20), `TeleOpIntegrationPolicyTest` (6) and
+`FallbackAutoControllerTest` (15).
+
+## Bench test: no flywheel idle, 0.10 s gate-to-stage-1 delay (2026-11-19)
+
+By request, and in `Test: Intake + Index + Shooter` only: the 3000 RPM idle is competition-only, so the bench flywheel
+is now off unless RT is held (`IntakeShooterTestController.idleFlywheel()` was removed). Every bench feed, automatic or
+manual, now commands the gate open first and starts transfer stage 1 `GATE_OPEN_TO_TRANSFER_SECONDS` (0.10 s) later:
+the bench builds its own `FiringCoordinator` without immediate continuous feed, so it holds GATE_OPENING for 0.10 s.
+Both competition TeleOps keep `CompetitionFeedController.firing()` and still feed in the same loop as the gate.
+The RT selected RPM still starts at 3000.
+Simulation decision: ran `MechanismsSimTest` (11 passed). The bench transfer-cycle, manual-feed and fusion scenarios
+now assert both transfer motors stay off for the first 0.10 s of every gate opening and then feed (traces: 0.10-0.12 s
+at the 0.02 s tick), and that the flywheel is at rest with fusion OFF until RT and OFF after release. Also ran
+`IntakeShooterTestControllerTest` (21, two renamed in the baseline, one added), `CompetitionFeedControllerTest` (2)
+and `FiringCoordinatorTest` (6). `Competition` scenarios were not rerun: no shared competition class changed.
+Physical gate clearance at 0.10 s is not verified.

@@ -33,7 +33,7 @@
     "opMode": "LinearSlideTestOpMode",
     "coverage": "behavior",
     "scenario": "Mechanisms",
-    "reason": "Slide toggle across the analog 360/0 wrap, lower, jam fault and claw toggle against a SYNTHETIC unloaded slide model; manual jog/re-zero/claw nudge and real travel/gravity are not simulated.",
+    "reason": "Slide toggle across the analog 360/0 wrap, lower and jam fault against a SYNTHETIC unloaded slide model; manual jog/re-zero and real travel/gravity are not simulated.",
     "humanReview": true
   },
   {

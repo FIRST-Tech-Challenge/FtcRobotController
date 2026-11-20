@@ -30,7 +30,7 @@ class CompetitionSimTest {
                 assertEquals(1, s.trace.at(OpModePhase.ACTIVE, tick).intakePower, s.diagnostic());
                 // Loading while aiming runs stage 1 at full open-loop power.
                 MechanismsSimTest.assertLoading(s.trace.at(OpModePhase.ACTIVE, tick), s.diagnostic());
-                assertEquals(0, s.trace.at(OpModePhase.ACTIVE, tick).transfer2Power, s.diagnostic());
+                assertEquals(1, s.trace.at(OpModePhase.ACTIVE, tick).transfer2Power, s.diagnostic()); // Linked to stage 1.
                 assertEquals(.5, s.trace.at(OpModePhase.ACTIVE, tick).gatePosition, s.diagnostic());
             }
             for (int tick : new int[]{50, 85, 100, 110})
@@ -66,7 +66,7 @@ class CompetitionSimTest {
             assertTrue(trim.telemetry.contains("-1.5 / 0.5 / 50"), s.diagnostic());
             assertEquals(before.hood, s.trace.at(OpModePhase.ACTIVE, 145).hood, 1e-9);
             assertTrue(s.trace.at(OpModePhase.ACTIVE, 145).telemetry.contains("0.0 / 0.0 / 0"));
-            assertTrue(java.util.regex.Pattern.compile("Flywheel \\(RPM\\) : -?\\d+ / 3500 \\|")
+            assertTrue(java.util.regex.Pattern.compile("Flywheel \\(RPM\\) : -?\\d+ / 3000 \\|")
                     .matcher(s.trace.at(OpModePhase.ACTIVE, 185).telemetry).find(), s.diagnostic());
             for (TeleOpTrace.Sample v : s.trace.samples) assertEquals(.5, v.gatePosition, s.diagnostic());
             assertStopped(h);
@@ -89,7 +89,7 @@ class CompetitionSimTest {
             TeleOpTrace.Sample before = s.trace.at(OpModePhase.ACTIVE, 40), after = s.trace.at(OpModePhase.ACTIVE, 95);
             assertEquals(org.firstinspires.ftc.teamcode.TurretSubsystem.pitchDegreesToServoPos(0), before.hood, 1e-9, s.diagnostic());
             assertEquals(org.firstinspires.ftc.teamcode.TurretSubsystem.pitchDegreesToServoPos(.5), after.hood, 1e-9, s.diagnostic());
-            assertTrue(java.util.regex.Pattern.compile("Flywheel \\(RPM\\) : -?\\d+ / 3550 \\|")
+            assertTrue(java.util.regex.Pattern.compile("Flywheel \\(RPM\\) : -?\\d+ / 3050 \\|")
                     .matcher(after.telemetry).find(), s.diagnostic());
             assertTrue(after.telemetry.contains("Auto trims (yaw deg / hood deg / RPM) : 0.0 / 0.0 / 0"), s.diagnostic());
             assertStopped(h);
@@ -281,10 +281,10 @@ class CompetitionSimTest {
         }
     }
 
-    @Test void bothAlliancesToggleContinuousAndStaggeredFeedsOnEitherManualControl() throws Exception {
+    @Test void bothAlliancesFeedContinuouslyOnEitherManualControlAndIgnoreGp2B() throws Exception {
         for (String alliance : new String[]{"Red", "Blue"}) for (int feedPad : new int[]{1, 2}) {
             BioBuzzSimHardware h = BioBuzzSimHardware.fullRobot();
-            TeleOpScenario s = new TeleOpScenario(alliance + "-feed-toggle-gp" + feedPad,
+            TeleOpScenario s = new TeleOpScenario(alliance + "-continuous-feed-gp" + feedPad,
                     alliance + "MecanumTeleOp", h, .02, 160, 300, (p,t,a,b) -> {
                 boolean active = p == OpModePhase.ACTIVE;
                 boolean feed = active && t >= 10 && (t < 246 || t >= 260);
@@ -297,31 +297,23 @@ class CompetitionSimTest {
             });
             s.run();
             assertEquals(.5, s.trace.at(OpModePhase.ACTIVE, 5).gatePosition, s.diagnostic());
-            assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 5).transfer2Power, s.diagnostic());
-            assertTrue(s.trace.at(OpModePhase.ACTIVE, 55).telemetry.contains("CONTINUOUS"), s.diagnostic());
-            assertTrue(s.trace.at(OpModePhase.ACTIVE, 120).telemetry.contains("STAGGERED"), s.diagnostic());
-            assertTrue(s.trace.at(OpModePhase.ACTIVE, 205).telemetry.contains("CONTINUOUS"), s.diagnostic());
-            for (int tick : new int[]{10, 35, 55, 170, 220, 280}) {
-                assertEquals(1, s.trace.at(OpModePhase.ACTIVE, tick).transfer1Power, s.diagnostic());
-                assertEquals(1, s.trace.at(OpModePhase.ACTIVE, tick).transfer2Power, s.diagnostic());
+            assertFalse(s.trace.at(OpModePhase.ACTIVE, 5).feedingThroughOpenGate(), s.diagnostic());
+            // Continuous only: no staggered gate delay, timed window or recovery pause. The feed runs
+            // unbroken while held, including across GP2 B presses (GP2 B no longer selects a feed mode).
+            for (TeleOpTrace.Sample v : s.trace.samples) if (v.phase == OpModePhase.ACTIVE && v.tick >= 10 && v.tick < 230) {
+                assertEquals(1, v.transfer1Power, s.diagnostic());
+                assertEquals(1, v.transfer2Power, s.diagnostic());
+                assertTrue(v.feedingThroughOpenGate(), s.diagnostic());
+                assertFalse(v.telemetry.contains("STAGGERED"), s.diagnostic());
             }
-            // Fresh gate delay after changing modes (0.10 s), then both stages start together.
-            assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 62).transfer2Power, s.diagnostic());
-            assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 62).transfer1Power, s.diagnostic());
-            assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 66).transfer2Power, s.diagnostic());
-            assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 66).transfer1Power, s.diagnostic());
-            assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 70).transfer1Power, s.diagnostic());
-            assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 70).transfer2Power, s.diagnostic());
-            // After a completed timed feed (0.30 s open window, no recovery pause) the gate is briefly closed
-            // and only stage 1 keeps running; inhibit stops both.
-            assertEquals(.5, s.trace.at(OpModePhase.ACTIVE, 76).gatePosition, s.diagnostic());
-            assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 76).transfer1Power, s.diagnostic());
-            assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 76).transfer2Power, s.diagnostic());
+            assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 280).transfer1Power, s.diagnostic());
+            assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 280).transfer2Power, s.diagnostic());
+            // Inhibit and release still stop the feed.
             assertEquals(.5, s.trace.at(OpModePhase.ACTIVE, 235).gatePosition, s.diagnostic());
             assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 235).transfer1Power, s.diagnostic());
             assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 235).transfer2Power, s.diagnostic());
             assertEquals(.5, s.trace.at(OpModePhase.ACTIVE, 250).gatePosition, s.diagnostic());
-            assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 250).transfer2Power, s.diagnostic());
+            assertFalse(s.trace.at(OpModePhase.ACTIVE, 250).feedingThroughOpenGate(), s.diagnostic());
             assertTrue(s.trace.at(OpModePhase.ACTIVE, 220).xIn
                     > s.trace.at(OpModePhase.ACTIVE, 60).xIn, s.diagnostic());
             assertStopped(h);
@@ -329,14 +321,13 @@ class CompetitionSimTest {
     }
 
     @Test void syntheticMeasuredProfileFeedsThenOdometryFaultBlocksFurtherShots() throws Exception {
-        for (String alliance : new String[]{"Red", "Blue"}) for (boolean staggered : new boolean[]{false, true}) {
+        for (String alliance : new String[]{"Red", "Blue"}) {
             BioBuzzSimHardware h = BioBuzzSimHardware.fullRobot().withCamera(BioBuzzSimHardware.raisedAudienceTags(), true);
-            TeleOpScenario s = new TeleOpScenario(alliance + "-SYNTHETIC-calibration-" + staggered, "sim.Synthetic" + alliance + "TeleOp",
+            TeleOpScenario s = new TeleOpScenario(alliance + "-SYNTHETIC-calibration", "sim.Synthetic" + alliance + "TeleOp",
                     h, .02, 160, 480, (p,t,a,b) -> {
                 boolean active = p == OpModePhase.ACTIVE;
                 a.right_trigger = active && (t < 230 || t >= 260) ? 1 : 0;
                 a.left_trigger = active && t >= 80 && (t < 140 || t >= 170) ? 1 : 0;
-                b.b = active && staggered && t == 0;
                 if (active && t == 320)
                     h.pinpoint.forceFault(com.qualcomm.hardware.gobilda.GoBildaPinpointDriver.DeviceStatus.NOT_READY);
             });
@@ -353,16 +344,16 @@ class CompetitionSimTest {
             // Releasing either trigger stops automatic feeding; RT alone continues preparation.
             for (TeleOpTrace.Sample v : s.trace.samples) if (v.phase == OpModePhase.ACTIVE
                     && (v.tick < 80 || (v.tick >= 140 && v.tick < 170) || (v.tick >= 230 && v.tick < 260))) {
-                assertEquals(0, v.transfer2Power, s.diagnostic());
+                assertFalse(v.feedingThroughOpenGate(), s.diagnostic());
                 assertEquals(.5, v.gatePosition, s.diagnostic());
             }
             for (int start : new int[]{80, 170, 260}) {
                 assertTrue(s.trace.samples.stream().anyMatch(v -> v.phase == OpModePhase.ACTIVE
                         && v.tick >= start && v.tick < start + 60
-                        && v.transfer2Power > 0 && Math.abs(v.gatePosition - .2) < 1e-9), s.diagnostic());
+                        && v.feedingThroughOpenGate()), s.diagnostic());
             }
             for (TeleOpTrace.Sample v : s.trace.samples) if (v.phase == OpModePhase.ACTIVE && v.tick > 420) {
-                assertEquals(0, v.transfer2Power, s.diagnostic()); assertEquals(.5, v.gatePosition, s.diagnostic());
+                assertFalse(v.feedingThroughOpenGate(), s.diagnostic()); assertEquals(.5, v.gatePosition, s.diagnostic());
             }
             assertStopped(h);
         }
@@ -415,7 +406,7 @@ class CompetitionSimTest {
             // 0.5 s HIGH (about tick 25) confirms full: the intake stops (no reversal) while stage 1
             // runs on 0.5 s to seat the fourth ball (GP1 LB at tick 40 pauses loading and ends it).
             MechanismsSimTest.assertLoading(s.trace.at(OpModePhase.ACTIVE, 35), s.diagnostic());
-            assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 35).transfer2Power, s.diagnostic());
+            assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 35).transfer2Power, s.diagnostic()); // Run-on on both motors.
             assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 35).intakePower, s.diagnostic());
             // Intake light follows collection: blue loading, green full, orange LB reverse, off for
             // both bumpers, blue for the GP2 RB override, green again once released while full.
@@ -432,10 +423,10 @@ class CompetitionSimTest {
             assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 65).intakePower, s.diagnostic());
             assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 130).intakePower, s.diagnostic());
             assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 130).transfer1Power, s.diagnostic());
-            // RB overrides confirmed full on GP2 as well as GP1, without running stage 2 or opening the gate.
+            // RB overrides confirmed full on GP2 as well as GP1 (both linked transfer motors), without opening the gate.
             assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 95).intakePower, s.diagnostic());
             MechanismsSimTest.assertLoading(s.trace.at(OpModePhase.ACTIVE, 95), s.diagnostic());
-            assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 95).transfer2Power, s.diagnostic());
+            assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 95).transfer2Power, s.diagnostic());
             assertEquals(.5, s.trace.at(OpModePhase.ACTIVE, 95).gatePosition, s.diagnostic());
             assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 102).transfer1Power, s.diagnostic());
             // Reverse only powers intake, even with space; conflicting controls across pads stop collection.
@@ -454,7 +445,7 @@ class CompetitionSimTest {
             assertEquals(-1, s.trace.at(OpModePhase.ACTIVE, 225).intakePower, s.diagnostic());
             assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 225).transfer1Power, s.diagnostic());
             assertEquals(1, s.trace.at(OpModePhase.ACTIVE, 225).transfer2Power, s.diagnostic());
-            assertTrue(s.trace.samples.stream().anyMatch(v -> v.transfer2Power > 0 && Math.abs(v.gatePosition - .2) < 1e-9), s.diagnostic());
+            assertTrue(s.trace.samples.stream().anyMatch(TeleOpTrace.Sample::feedingThroughOpenGate), s.diagnostic());
             assertEquals(.5, s.trace.at(OpModePhase.ACTIVE, 270).gatePosition, s.diagnostic());
             assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 270).transfer1Power, s.diagnostic());
             assertEquals(0, s.trace.at(OpModePhase.ACTIVE, 270).transfer2Power, s.diagnostic());
@@ -468,9 +459,6 @@ class CompetitionSimTest {
                     assertEquals(1, v.transfer1Power, s.diagnostic());
                     assertEquals(1, v.transfer2Power, s.diagnostic());
                 } else openedAt = Double.NaN;
-                if (v.transfer2Power > 0) {
-                    assertFalse(Double.isNaN(openedAt), s.diagnostic());
-                }
                 if (v.tick >= 160 && v.tick < 170) assertEquals(1, v.transfer1Power, s.diagnostic());
             }
             assertEquals(165.0/355, s.trace.at(OpModePhase.ACTIVE, 55).depollinator, 1e-9);
@@ -490,7 +478,7 @@ class CompetitionSimTest {
             assertTrue(s.trace.at(OpModePhase.ACTIVE, 100).xIn > 0);
             for (TeleOpTrace.Sample v : s.trace.samples) {
                 assertEquals(.5, v.gatePosition, s.diagnostic());
-                assertEquals(0, v.transfer2Power, s.diagnostic());
+                assertFalse(v.feedingThroughOpenGate(), s.diagnostic());
             }
             assertStopped(s.hardware);
         }
@@ -507,27 +495,25 @@ class CompetitionSimTest {
     }
 
     /**
-     * Full right stick spins freely without RT; while RT auto-aims, the measured chassis turn rate stays at the
-     * turret-trackable cap in both directions. Synthetic drive response only: not the robot's loaded spin rate.
+     * Auto aim no longer caps chassis turning: full right stick reaches the same measured turn rate with and
+     * without RT held, in both directions. Synthetic drive response only: not the robot's loaded spin rate.
      */
-    @Test void bothAlliancesCapChassisTurnRateOnlyWhileAutoAiming() throws Exception {
-        double cap = org.firstinspires.ftc.teamcode.AutoAimSpinLimiter.MAX_CHASSIS_RATE_DEG_PER_SECOND;
+    @Test void bothAlliancesTurnAtFullRateWhileAutoAiming() throws Exception {
         for (String alliance : new String[]{"Red", "Blue"}) {
             float turn = alliance.equals("Red") ? 1f : -1f;
-            TeleOpScenario s = new TeleOpScenario(alliance + "-aim-spin-cap", alliance + "MecanumTeleOp",
+            TeleOpScenario s = new TeleOpScenario(alliance + "-aim-spin-uncapped", alliance + "MecanumTeleOp",
                     BioBuzzSimHardware.fullRobot(), .02, 160, 300, (p,t,a,b) -> {
                 boolean active = p == OpModePhase.ACTIVE;
                 a.right_stick_x = active && (t >= 20 && t < 120 || t >= 160 && t < 280) ? turn : 0;
                 a.right_trigger = active && t >= 160 ? 1 : 0;
             });
             s.run();
-            double free = peakTurnRateDegPerSecond(s, 60, 120), capped = peakTurnRateDegPerSecond(s, 200, 280);
-            String stats = String.format(java.util.Locale.US, "%s: free %.0f | aiming %.0f | cap %.0f deg/s ",
-                    alliance, free, capped, cap);
-            System.out.println("Aim turn cap " + stats);
-            assertTrue(free > cap * 1.1, "synthetic full stick must exceed the cap " + stats + s.diagnostic());
-            assertTrue(capped <= cap * 1.1, stats + s.diagnostic());
-            assertTrue(capped >= cap * .7, "aiming must still turn usefully " + stats + s.diagnostic());
+            double free = peakTurnRateDegPerSecond(s, 60, 120), aiming = peakTurnRateDegPerSecond(s, 200, 280);
+            String stats = String.format(java.util.Locale.US, "%s: free %.0f | aiming %.0f deg/s ",
+                    alliance, free, aiming);
+            System.out.println("Aim turn rate " + stats);
+            assertTrue(free > 300, "synthetic full stick must spin fast " + stats + s.diagnostic());
+            assertTrue(aiming >= free * .95, "auto aim must not cap turning " + stats + s.diagnostic());
             assertStopped(s.hardware);
         }
     }
@@ -542,26 +528,22 @@ class CompetitionSimTest {
         return peak;
     }
 
-    @Test void bothAlliancesToggleSlideOnGp2AndClawOnGp1() throws Exception {
+    @Test void bothAlliancesToggleSlideOnGp2() throws Exception {
         for (String alliance : new String[]{"Red", "Blue"}) {
             BioBuzzSimHardware h = BioBuzzSimHardware.fullRobot();
-            TeleOpScenario s = new TeleOpScenario(alliance + "-slide-claw", alliance + "MecanumTeleOp", h,
+            TeleOpScenario s = new TeleOpScenario(alliance + "-slide", alliance + "MecanumTeleOp", h,
                     .02, 3, 200, (p,t,a,b) -> {
-                boolean press = p == OpModePhase.ACTIVE && ((t >= 10 && t < 13) || (t >= 100 && t < 103));
-                b.left_stick_button = press;
-                a.b = press;
+                b.right_stick_button = p == OpModePhase.ACTIVE && t >= 10 && t < 13;   // extend
+                b.left_stick_button = p == OpModePhase.ACTIVE && t >= 100 && t < 103;  // home
             });
             s.run();
             assertTrue(s.trace.samples.stream().filter(v -> v.phase == OpModePhase.INIT || v.phase == OpModePhase.INIT_LOOP).allMatch(v -> v.slidePower == 0), s.diagnostic());
-            assertEquals(.60, s.trace.at(OpModePhase.ACTIVE, 5).claw, 1e-9);
-            assertEquals(.40, s.trace.at(OpModePhase.ACTIVE, 20).claw, 1e-9);
             TeleOpTrace.Sample up = s.trace.at(OpModePhase.ACTIVE, 90);
             assertEquals(180, up.slideTravelDeg, 5, s.diagnostic());
             assertEquals(0, up.slidePower, 0, s.diagnostic());
-            assertTrue(up.telemetry.contains("Slide (GP2 LS) : UP"), up.telemetry);
+            assertTrue(up.telemetry.contains("Slide (GP2 RS/LS) : UP"), up.telemetry);
             TeleOpTrace.Sample down = s.trace.at(OpModePhase.ACTIVE, 190);
             assertEquals(0, down.slideTravelDeg, 5, s.diagnostic());
-            assertEquals(.60, down.claw, 1e-9);
             assertEquals(0, h.slideServo.getPower(), 0);
             assertStopped(h);
         }
@@ -587,7 +569,7 @@ class CompetitionSimTest {
             // From rest the error is far above 80 ticks/s: full power; overspeed only coasts.
             assertEquals(1, activePower.get(1), 1e-9, s.diagnostic());
             for (double power : activePower) assertTrue(power >= 0 && power <= 1, s.diagnostic());
-            double target = org.firstinspires.ftc.teamcode.MecanumTeleOp.STARTING_FLYWHEEL_RPM / 60 * 28;
+            double target = org.firstinspires.ftc.teamcode.MecanumTeleOp.FLYWHEEL_IDLE_RPM / 60 * 28;
             for (TeleOpTrace.Sample v : s.trace.samples) if (v.phase == OpModePhase.ACTIVE && v.tick >= 150)
                 assertEquals(target, v.flywheelVelocity, 100.0 / 60 * 28, s.diagnostic());
             assertStopped(h);

@@ -5,7 +5,7 @@ November 4 software integration: [final TeleOp audit](TeleOpConsistencyChecklist
 These settings apply to both Red and Blue competition TeleOps. Standalone diagnostics and primitive autonomous examples retain their own procedures unless explicitly listed here.
 
 November 3 consistency review: the team chose to retain the newer working-tree
-controls below (GP2 B feed-mode selection, continuous startup, 3500 RPM and explicit
+controls below (continuous feeding, 3500 RPM and explicit
 manual feed bypass). This supersedes the earlier proposed B manual-aim toggle,
 staggered startup and 3000-RPM standby. See the
 [software consistency audit](TeleOpConsistencyChecklist.md)
@@ -88,13 +88,13 @@ it moved the turret by the offset and the correction moved it back 0.25 s later.
 - *Aim lead.* The servo command uses the pose predicted `TurretControl.AIM_LEAD_SECONDS` ahead (Pinpoint
   heading rate and fixed-frame velocity). Readiness and telemetry still use the bearing now, because the ball
   leaves now. This is actuation-delay compensation only; projectile lead remains removed.
-- *Turn cap.* While RT is held, `AutoAimSpinLimiter` limits the GP1 turn command so the measured chassis rate
-  stays at `MAX_CHASSIS_RATE_DEG_PER_SECOND` (driver view shows **Turn speed LIMITED**). It learns the
-  stick-to-rate gain from Pinpoint, so battery level does not matter. Releasing RT restores full rotation.
+- *No turn cap.* GP1 rotation runs at full stick speed whether or not RT is held (the former
+  `AutoAimSpinLimiter` 300 deg/s cap was removed 2026-11-19). Turning faster than the turret can track will
+  make it lag the goal; the shot still waits for the readiness check.
 
-Both constants are UNMEASURED starting values (25 ms, 300 deg/s). To measure them on the robot:
-1. **Test: Turret**, hold full RS-X both ways: **Turret peak measured rate** is the loaded turret speed. Set the
-   cap below it with margin (for example 80%).
+`AIM_LEAD_SECONDS` is an UNMEASURED starting value (25 ms). To measure it on the robot:
+1. **Test: Turret**, hold full RS-X both ways: **Turret peak measured rate** is the loaded turret speed (compare it
+   with how fast drivers spin while aiming).
 2. **Test: Auto Aim**, localize, hold RT and turn the chassis by hand at a steady rate: **Turret lag (ms)**
    reports the residual lag and a **suggested lead**. Put that in `AIM_LEAD_SECONDS`; the residual should then
    read near 0 ms. The same lines appear on the GP2 Back diagnostics page in both competition TeleOps.
@@ -123,7 +123,7 @@ convention, field map and mount must be physically validated to establish accura
 GP2 X still homes only the turret. Startup still supports tag acquisition anywhere;
 no corner pose is assumed until the operator presses the button.
 
-November 5 gate update: Both final Red/Blue TeleOps start CONTINUOUS: once a feed is authorized, the gate-open command and both full-power transfer commands occur together, without a gate delay. Automatic readiness and GP2 LT inhibit still apply; manual feed bypasses readiness. STAGGERED opens the gate, starts both stages together at 0.10 s (stage 1 used to wait for the 0.15 s gate-open midpoint; changed 2026-11-18), and closes the gate after a 0.20 s feed (0.30 s total open window). Recovery is 0.00 s. With the gate closed after a completed timed feed, stage 1 keeps running (past full) through the readiness wait while stage 2 is off; at the next opening stage 1 stops until both stages start the next feed together. Release, inhibit, invalid automatic solution, tracking loss or STOP cancels transfer feeding; tracking-loss recovery does not continue closed-gate feed. Mode changes reset the sequence. Updated 2026-11-15 with the on-robot tuned timing (0.10 s gate delay / 0.20 s feed / 0.00 s recovery), now shared by competition, autonomous, the bench test, transfer-only and shot-calibration OpModes through `ShootingConfiguration`; stage 1 timing and the closed-gate run use `StaggeredFeedTiming`.
+November 5 gate update: Both final Red/Blue TeleOps start CONTINUOUS: once a feed is authorized, the gate-open command and the full-power transfer command (both linked transfer motors) occur together, without a gate delay. Automatic readiness and GP2 LT inhibit still apply; manual feed bypasses readiness. STAGGERED opens the gate, starts stage 1 at 0.10 s (it used to wait for the 0.15 s gate-open midpoint; changed 2026-11-18), and closes the gate after a 0.20 s feed (0.30 s total open window). Recovery is 0.00 s. With the gate closed after a completed timed feed, stage 1 keeps running (past full) through the readiness wait; at the next opening it stops until the next feed starts. Since 2026-11-18 the transfer has a single stage: `transfer_motor_2` is mechanically linked to stage 1 and always gets the same command. Release, inhibit, invalid automatic solution, tracking loss or STOP cancels transfer feeding; tracking-loss recovery does not continue closed-gate feed. Mode changes reset the sequence. Updated 2026-11-15 with the on-robot tuned timing (0.10 s gate delay / 0.20 s feed / 0.00 s recovery), now shared by competition, autonomous, the bench test, transfer-only and shot-calibration OpModes through `ShootingConfiguration`; stage 1 timing and the closed-gate run use `StaggeredFeedTiming`.
 
 The gate servo is wired directly to Expansion Hub servo port 3, bypassing the 6 V power injector. It receives immediate full-position targets without software ramping for maximum available speed. The 0.043 s/60-degree rating at 6 V is catalog reference only; actual direct-hub loaded speed is unmeasured.
 
@@ -131,27 +131,29 @@ November 2 collection overrides (both final alliance TeleOps): hold RB on either
 gamepad to force the intake and transfer stage 1 forward, bypassing the full sensor
 for loading. Hold LB to reverse only the intake and pause stage-1 loading; opposing
 bumpers, including across controllers, stop collection. Release bumpers to resume
-automatic sensor-based collection. Stage 2, gate commands, firing timing and shot
+automatic sensor-based collection. Gate commands, firing timing and shot
 readiness are unchanged. Shooting requests, gate travel, recovery feeding and GP2 LT
 retain priority over stage-1 loading overrides. No separate transfer controls were added.
 
 October 27 localization verification passed all 159 unit tests (zero failures, errors or skipped tests), `:TeamCode:assembleDebug` and `:TeamCode:lintDebug` (0 errors, 14 existing warnings). New coverage includes acquisition from all 16 mapped tags at arbitrary headings, capture-time motion compensation, field-axis velocity rotation, rejected/duplicate observations, field-reference resets and continued tracking without camera visibility. This is desktop validation; no deployment or robot measurement was performed.
 
-Desktop verification on October 26 passed all 153 tests (zero failures, errors or skipped tests), `:TeamCode:assembleDebug` and `:TeamCode:lintDebug` (0 errors, 14 existing warnings). Coverage includes correction hysteresis and persistent bounds, current-pose aiming during motion, 3-degree readiness, stage-2-off loading, 0.20 s gate-command delay and longer feed timing, all 16 tag coordinates and their fusion, and a 180-second no-camera run without an automatic-feeding timeout. This does not measure loaded servo stopping behavior or shooting accuracy. No deployment was performed.
+Desktop verification on October 26 passed all 153 tests (zero failures, errors or skipped tests), `:TeamCode:assembleDebug` and `:TeamCode:lintDebug` (0 errors, 14 existing warnings). Coverage includes correction hysteresis and persistent bounds, current-pose aiming during motion, 3-degree readiness, stage-2-off loading (stage 2 has since been removed, 2026-11-18), 0.20 s gate-command delay and longer feed timing, all 16 tag coordinates and their fusion, and a 180-second no-camera run without an automatic-feeding timeout. This does not measure loaded servo stopping behavior or shooting accuracy. No deployment was performed.
 
 | Item | Competition behavior | Intake + index + shooter test |
 | --- | --- | --- |
-| Flywheel | Starts at 3500 output RPM; Y/A steps 50 RPM | RT hold, initially 2800 RPM; Y/A steps 100 RPM; B stops motors |
+| Flywheel | Idles at 3000 output RPM from START (was 3500 until 2026-11-19); Y/A steps 50 RPM | Idles at 3000 RPM when armed; RT runs the selected RPM; Y/A steps 100, D-pad Right/Left 10; GP1 Back stops motors |
 | Full queue | After 0.5 s HIGH, intake stops (no reversal); stage 1 runs on 0.5 s, then holds until LOW | Same full-queue policy |
 | Collection override | RB: intake + stage 1 forward past full; LB: intake reverse only, pause loading; both: stop collection | Existing bench controls and interlocks |
-| Transfer loading | Stage 1 loads; stage 2 stays off until gate-open feeding | Same stage-2 rule |
-| Feeding mode | GP2 B toggles continuous/staggered; starts continuous | GP2 RB selects bench continuous/staggered |
-| Manual feeding | GP1 A or GP2 RT bypasses readiness; follows selected mode; continuous feeds immediately; GP2 LT inhibits | RT + LT uses selected bench mode |
-| Staggered feeding | Automatic readiness, 0.10 s gate delay, both stages at 0.10 s, 0.20 s feed, 0.00 s recovery, stage 1 running while the gate is closed | Same shared timing; bench yaw checks |
+| Transfer loading | Stage 1 (both linked motors) loads until full | Same rule |
+| Feeding mode | Always continuous (staggered removed 2026-11-19) | Same continuous policy (2026-11-19) |
+| Manual feeding | GP1 A or GP2 RT bypasses readiness and feeds immediately; GP2 LT inhibits | GP1 B or GP2 RT (GP1 A lowers RPM); GP2 LT inhibits |
+| Staggered feeding | Not available in competition (removed 2026-11-19) | Not available (removed 2026-11-19); bench yaw checks |
 | Turret release | Capture measured yaw once on stick/auto-aim release, discarding queued travel | Preserve diagnostic commanded-target hold |
 | External yaw correction | Enabled: start above 3 degrees after 250 ms at <=3 deg/s; stop adjusting below 1.5 degrees; kept while tracking, reset by a >10-degree target jump | Disabled by default |
 
-The staggered gate-open window is 0.30 s. Continuous commands both transfers immediately.
+Continuous commands the transfer (both motors) immediately with the gate.
+
+November 19 update: both final Red/Blue TeleOps are CONTINUOUS only. The staggered mode and its GP2 B toggle were removed from competition, so no staggered gate delay, timed feed window or recovery pause blocks a shot; manual feed bypasses readiness and automatic feed still waits for aim/hood/RPM readiness. The shared timing values in `ShootingConfiguration` are unchanged and final.
 See [shared transfer sequence and diagnostic controls](TransferAndShooting.md).
 
 GP1 RT prepares odometry-based yaw aiming and calibrated hood/RPM selection. Hold RT+LT to request automatic shooting; RT alone keeps the gate closed and transfer feeding off. Releasing either trigger cancels automatic shooting. GP1 LT alone does not feed; hold GP1 A for the manual readiness override. The nearest cell of the selected alliance is chosen continuously: the far cell once field Y exceeds +5 cm, the audience cell once Y is below -5 cm, and the previous selection within that midline band. Switching cells resets automatic feed readiness. D-pad left/right no longer selects a competition target. The robot does not classify hive state in this mode; drivers decide whether the selected cell is raised and when to request shooting. Manual yaw remains available when RT is released.
@@ -180,11 +182,11 @@ Gate direction, depollinator direction and hood home retain the installed implem
 The known competition behavior mismatches in this review are resolved, including the former time-based uncertainty cutoff. This is desktop verification, not a claim that the installed robot has no defects. Final staggered feeding timings/tuning are pending from the team.
 
 - Supply at least two measured distances covering the intended range, with average flywheel-output RPM and labeled launch elevation or hood travel. The competition profile is still an uncalibrated example, so automatic calibrated feeding remains inhibited.
-- Confirm loaded gate/feed/recovery timing. Current staggered settings (shared by every OpMode, tuned on the robot 2026-11-15) are 0.10 s after the gate command, 0.12 s feed-to-exit estimate, 0.20 s feed with both stages (0.30 s total open), 0.00 s recovery and stage 1 running while the gate is closed. Continuous starts transfers immediately. These are still starting values, but they no longer block automatic firing (the `RELEASE_TIMING_MEASURED` gate was removed 2026-11-15).
+- Confirm loaded gate/feed/recovery timing. Current staggered settings (shared by every OpMode, tuned on the robot 2026-11-15) are 0.10 s after the gate command, 0.12 s feed-to-exit estimate, 0.20 s stage-1 feed (0.30 s total open), 0.00 s recovery and stage 1 running while the gate is closed. Continuous starts transfers immediately. These are still starting values, but they no longer block automatic firing (the `RELEASE_TIMING_MEASURED` gate was removed 2026-11-15).
 - Check that Limelight pipeline 0 uses 36h11, 3.25-in. individual tags and returns valid metric tag poses. Java uses the documented 337-mm-high, 55-degree-upward camera mount (lens axis; front glass team-measured 55 degrees from vertical on 2026-11-05); camera settings were not remotely changed. On the field, INIT each competition TeleOp at several known positions/headings, with the robot level and stationary during Pinpoint calibration. Confirm LOCALIZED and the reported aiming field pose, including heading; repeat with each visible hive and several turret angles. Cover the camera and move/turn the chassis, then uncover it and check that tracking and bounded corrections continue. Verify waiting behavior with no tag, and that lowered/moving cells cannot establish the nominal raised reference. The field map, tag orientation convention and capture timing still need this physical validation.
 - Opening/tag Y coordinates remain drawing-model approximations until the pivot-to-surface CAD transform or an installed-field reference is available. Relative tag spacing and the source drawing dimensions are already entered; no need to remeasure sixteen unrelated tags.
 
-The combined intake/shooter bench test intentionally retains 2800-RPM startup, its own RPM adjustment steps, B-to-stop and 4-degree/3-degree-per-second yaw readiness. Competition retains 3500 RPM, no B stop and angle-only 3-degree feeding readiness. Both stop (never reverse) the intake on confirmed full. Turret-only diagnostics, pollen pickup tuning and match routes remain deferred as requested.
+The combined intake/shooter bench test shares the competition shooting policy (2026-11-19) but intentionally retains its own RPM adjustment steps, GP1 Back stop, GP1 B manual feed and 4-degree/3-degree-per-second yaw readiness; it also has no flywheel idle and starts stage 1 0.10 s after the gate-open command (bench-only). Competition idles at 3000 RPM, no B stop and angle-only 3-degree feeding readiness. Both stop (never reverse) the intake on confirmed full. Turret-only diagnostics, pollen pickup tuning and match routes remain deferred as requested.
 
 ## Desktop verification and human review
 
@@ -216,11 +218,11 @@ Both competition TeleOps show a short driver view by default, most important fir
 | Auto trims | Yaw / hood / RPM offsets, shown while aiming or while any trim is non-zero |
 | Pose (in, deg) | Pinpoint X / Y / heading and EXPLICIT FIELD or LOCAL; a Pinpoint warning appears only when it is not READY |
 | Transfer, Collection | Transfer state (LOADING, FULL, FEEDING SHOT, ...) and intake override and power |
-| Feed mode, Depollinator | CONTINUOUS/STAGGERED (GP2 B) and DEPLOYED/HOME |
-| Slide (GP2 LS) | DOWN, MOVING_UP, UP or MOVING_DOWN with position / target (deg), or FAULT with the reason and the direction the next press moves; UNAVAILABLE if not configured |
-| Claw (GP1 B) | OPEN or CLOSED; UNAVAILABLE if not configured |
+| Depollinator | DEPLOYED/HOME |
+| Slide (GP2 RS/LS) | DOWN, MOVING_UP, UP or MOVING_DOWN with position / target (deg), or FAULT with the reason and the direction the next press moves; UNAVAILABLE if not configured |
 | Loop (Hz) | Control loop rate |
 
+<<<<<<< Updated upstream
 ### Controller rumble (November 18)
 
 Both competition TeleOps share `DriverRumble` cues, which fire once per event and never every loop:
@@ -235,18 +237,42 @@ Both competition TeleOps share `DriverRumble` cues, which fire once per event an
 The clock starts at TeleOp START, like the Driver Station timer. A START after both marks gives only the 5 s rumble. The READY buzz stays silent until shot calibration and release timing enable automatic READY (`ShotProfile` calibrated, `RELEASE_TIMING_MEASURED`). Warning times are starting values in `DriverRumble`. Rumble calls are wrapped so a failed call can never stop the OpMode. Autonomous does not rumble.
 
 ### Linear slide and claw (November 7)
+=======
+### Linear slide (November 7; claw removed November 19)
+>>>>>>> Stashed changes
 
-Both competition TeleOps share the slide controls. **GP2 left-stick click** toggles the side
-linear slide between fully down and fully up. **GP1 B** toggles the claw open/closed (the claw
-starts closed). The claw toggle always commands `claw_servo`; with the shot-blocker end effector
-mounted it has no effect. The slide must be **fully down at INIT**: the Axon analog feedback only
+Both competition TeleOps share the slide controls. **GP2 right-stick click** extends the side
+linear slide fully up and **GP2 left-stick click** homes it fully down (no longer a toggle; pressing the
+button for the position it is already commanded to is harmless; both at once homes). The slide is driven by a single continuous-mode
+Axon MAX+ on Control Hub servo port 2 (`slide_servo`), and the shot blocker is permanently
+attached. There is no claw and GP1 B is unbound in competition. The slide must be **fully down at INIT**: the Axon analog feedback only
 covers one turn, so turns are counted from that position. The slide is not powered during INIT.
 A stall (under 5 degrees of progress in 0.5 s), wrong-direction movement or overall timeout cuts
-slide power and shows FAULT. The button toggles, so the next press reverses the faulted move (a fault while
-raising lowers on the next press); telemetry names the direction the next press will move. A missing slide or claw
+slide power and shows FAULT. Either button retries: RS click extends again, LS click homes; telemetry shows both. A missing slide
 shows UNAVAILABLE instead of stopping the OpMode. Autonomous does not use the slide.
-Travel (`LinearSlideController.MAX_TRAVEL_DEG`, 180-degree placeholder) and claw positions
-(`SlideClawSubsystem`, 0.40 open / 0.60 closed placeholders) must be measured with
-`Test: Linear Slide + Claw`.
+Travel (`LinearSlideController.MAX_TRAVEL_DEG`, 180-degree placeholder) must be measured with
+`Test: Linear Slide`.
+
+### GP1 rumble and fault lights (November 19)
+
+Both competition TeleOps rumble **GP1 only** (`DriverRumble`; the November 18 cue set,
+including all GP2 cues and the time warnings, was removed by request on November 19):
+
+| Feel | When |
+|------|------|
+| Two short strong pulses | The transfer queue just became full (also after a preload confirms shortly after START) |
+| Steady light rumble (40%) | GP1 RT is held and the shot is not ready yet (the same READY as the Shot line); stops the moment it is ready or RT is released. If readiness is lost for 0.25 s with RT still held, it resumes |
+
+The full-queue pulses play out, then the RT rumble resumes if it is still wanted. GP2 never
+rumbles. Logitech F310 controllers have no rumble motors; Xbox 360, PS4 and Etpark controllers
+rumble. The GP2 Back diagnostics page shows `Rumble GP1`. STOP cancels the rumble.
+
+**Fault lights.** In INIT and ACTIVE, when a fault appears, all three status lights blink red
+(0.25 s on / off) for 2 s (`RobotStatusLights.FAULT_ALERT_SECONDS`), then return to their normal
+colors. Faults: turret homing FAULT, linear slide FAULT, a Pinpoint device fault (pod not
+detected or IMU runaway; a single discarded bad read is not one) and a firing FAULT state. Each
+fault alerts when it starts, including one already present at INIT; a second fault restarts the
+2 s, and a fault that persists does not keep blinking. The diagnostics lights line shows
+`FAULT ALERT` while it blinks. Rumble strength and the light blink are not yet checked on the robot.
 
 Missing status lights are listed only when one is absent. INIT shows alliance, turret, localization, pose and the GP2 X / D-pad Left / Back reminders. Press GP2 Back (INIT or ACTIVE) to add the full subsystem diagnostics below the driver view; press again to hide them.

@@ -382,7 +382,7 @@
             </select>
           </div>
         </div>
-        <div class="hint">Default drive speed, turn speed (Pedro&nbsp;2 only), heading mode and completion rule for steps that do not override them. The default speed matches <code>PedroConfiguration.DEFAULT_PATH_SPEED_FRACTION</code> (0.35). <b>Alliance</b> is the side you draw; it is what the Pedro&nbsp;3 auto hands to TeleOp (<code>AutoPoseHandoff</code>). <b>Mirror</b> adds alliance select in init: <b>gamepad1 X</b> = planned alliance, <b>B</b> = the other one. BIOBUZZ is point-symmetric about the field center, like the Zenith field and <code>BioBuzzRobot.mirror()</code>: every point, heading and aim point becomes (&minus;x, &minus;y, heading + 180&deg;), so turn directions stay the same. <b>Max accel / decel</b> (in/s&sup2;, blank = no limit) cap how hard every path speeds up and brakes; a step can override them. They are generated for the <b>Pedro 3</b> code target only (Pedro&nbsp;2 has no per-path acceleration constraint).</div>
+        <div class="hint">Default drive speed, turn speed (Pedro&nbsp;2 only), heading mode and completion rule for steps that do not override them. Speed is a fraction of the tuned top speed (<code>PedroConfiguration.MAX_FORWARD_VELOCITY_IN_PER_SEC</code>, about 70&nbsp;in/s on V1). The Pedro&nbsp;3 auto uses the Foresight tuning in <code>PedroConfiguration</code> (V1's second tuner run, 2026-11-19). The default speed is 1.0 and the wheel power cap (<code>T.MAX_WHEEL_POWER</code> = <code>PedroConfiguration.MAX_WHEEL_POWER</code>, Tuning tab) is 1.0, i.e. no cap: the tuner measured braking at full power and Foresight plans every stop from it. A cap below 1 also caps braking, so the robot overshoots path ends and drives back. A path never runs faster than the wheel cap allows: the generated code limits each path speed to <code>T.MAX_WHEEL_POWER</code>. <b>Alliance</b> is the side you draw; it is what the Pedro&nbsp;3 auto hands to TeleOp (<code>AutoPoseHandoff</code>). <b>Mirror</b> adds alliance select in init: <b>gamepad1 X</b> = planned alliance, <b>B</b> = the other one. BIOBUZZ is point-symmetric about the field center, like the Zenith field and <code>BioBuzzRobot.mirror()</code>: every point, heading and aim point becomes (&minus;x, &minus;y, heading + 180&deg;), so turn directions stay the same. <b>Max accel / decel</b> (in/s&sup2;, blank = no limit) cap how hard every path speeds up and brakes; a step can override them. They are generated for the <b>Pedro 3</b> code target only (Pedro&nbsp;2 has no per-path acceleration constraint).</div>
       </div>
       <div class="sect">
         <h3>Robot box &amp; odometry pods</h3>
@@ -449,14 +449,14 @@
     <ul>
       <li><b>Volley</b> (<kbd>V</kbd>) = aim the turret at an aim point, spin the flywheel and set the hood from the team-measured shot table (<code>ShootingConfiguration</code>), wait until ready, then feed. One step.</li>
       <li><b>Intake</b> (<kbd>I</kbd>), <b>Shoot</b> (<kbd>F</kbd>), <b>Aim</b> (<kbd>A</kbd>), <b>Flywheel</b> (<kbd>P</kbd>), <b>Hood</b>, <b>Gate</b>, <b>Stop all</b> are the same pieces on their own. Aim keeps tracking the point while the robot drives.</li>
-      <li>Pedro&nbsp;3 drives every mechanism through the repo's subsystems, like the competition and fallback autos: <code>IntakeSubsystem</code> (TeleOp direction), <code>TransferSubsystem</code> (full sensor, stage 1 stall guard), <code>GateSubsystem</code>, the shared <code>FiringCoordinator</code> feed and <code>TurretSubsystem</code>. A shot is the fallback auto's continuous feed for <code>T.FEED_SECONDS</code>; the robot cannot count launched balls.</li>
+      <li>Pedro&nbsp;3 drives every mechanism through the repo's subsystems, like the competition and fallback autos: <code>IntakeSubsystem</code> (TeleOp direction), <code>TransferSubsystem</code> (full sensor, no stall limit), <code>GateSubsystem</code>, the shared <code>FiringCoordinator</code> feed and <code>TurretSubsystem</code>. A shot is the fallback auto's continuous feed for <code>T.FEED_SECONDS</code>; the robot cannot count launched balls.</li>
       <li>The four aim points default to the competition hive openings (<code>TurretSubsystem</code> / <code>FieldGeometry</code>). Before any aim point is set, a shot uses the fallback auto's preload settings (TeleOp's starting 3500 RPM, hood home).</li>
       <li>The <b>Tuning</b> tab writes the remaining numbers to class <code>T</code>; values still at their repo default are written as references to the repo constant. The <b>shot calculator</b> shows RPM and hood for a range.</li>
     </ul>
     <h4>5 · Generated OpMode — one file, one loop</h4>
     <ul>
       <li>All movement, actions, code and waits run from ONE <code>while (opModeIsActive())</code> loop. Each planner step is a <code>case</code> in <code>runStep()</code>; the next starts when it returns true. <code>stage</code> = steps started so far.</li>
-      <li>Pedro&nbsp;3 follows the repo's auto rules: <code>AutoPoseHandoff</code> is cleared in INIT and saved every loop, the auto stops at <code>PedroConfiguration.MAX_AUTONOMOUS_SECONDS</code>, and it stops if the Pinpoint pose stays stale for <code>FallbackAutoController.POSE_LOSS_SECONDS</code>.</li>
+      <li>Pedro&nbsp;3 follows the repo's auto rules: <code>AutoPoseHandoff</code> is cleared in INIT and saved every loop, the auto stops at <code>PedroConfiguration.MAX_AUTONOMOUS_SECONDS</code>, and it stops if the Pinpoint pose stays stale for <code>FallbackAutoController.POSE_LOSS_SECONDS</code>. Volley / Shoot steps stop the drive with the motors on brake while shooting (<code>T.BRAKE_WHILE_SHOOTING</code>), like the fallback auto; between other steps Pedro holds the last path's end point.</li>
       <li>Use <code>follower</code>, <code>robot</code> (e.g. <code>robot.setIntake(1)</code>, <code>robot.startShoot(3)</code>), <code>telemetry</code>, <code>stepTimer</code>, <code>P(x, y, deg)</code> and <code>progress()</code> in your own code.</li>
       <li>A route becomes one Pedro path (<code>Paths.path(...)</code> in Pedro&nbsp;3, a PathChain in Pedro&nbsp;2); <b>through</b> steps become a chain of cubic Beziers matching the preview.</li>
     </ul>
@@ -516,7 +516,7 @@ const S = {
   opmodeName: 'BioBuzzAuto',
   pkg: 'org.firstinspires.ftc.teamcode',
   spans: [],                    // loop-code blocks: { uid, from, to, code, pf, pt, color }
-  dSpd: 0.35,                  // driver default speed fraction = PedroConfiguration.DEFAULT_PATH_SPEED_FRACTION
+  dSpd: 1.0,                   // driver default speed fraction: full tuned speed (no cap since 2026-11-19)
   dTurnSpd: 1.0,               // driver default turn power (Pedro 2 follower.turn only)
   dHeading: 'constant',        // driver default heading: constant | linear | tangent
   dCompletion: 'SETTLED',      // driver default completion rule
@@ -560,7 +560,8 @@ const TUNE_DEFS = [].concat(
   TD('Hardware names (must match the robot config)', [
     ['INTAKE_NAME', 'Intake motor', 'text', 'intake_motor', 0, CLASSIC],
     ['TRANSFER_NAME', 'Transfer motor', 'text', 'transfer_motor_1', 0, CLASSIC],
-    ['KICKER_NAME', 'Kicker motor', 'text', 'transfer_motor_2', 0, CLASSIC],
+    // transfer_motor_2 is mechanically linked to transfer_motor_1 (2026-11-18): same direction and power.
+    ['KICKER_NAME', 'Transfer motor 2 (linked)', 'text', 'transfer_motor_2', 0, CLASSIC],
     ['SHOOTER_NAME', 'Shooter motor', 'text', 'turret_motor', 0, CLASSIC],
     ['TURRET1_NAME', 'Turret servo 1', 'text', 'turret_servo_1', 0, CLASSIC],
     ['TURRET2_NAME', 'Turret servo 2', 'text', 'turret_servo_2', 0, CLASSIC],
@@ -570,7 +571,6 @@ const TUNE_DEFS = [].concat(
   TD('Motor directions', [
     ['INTAKE_REVERSED', 'Intake reversed', 'bool', false, 0, CLASSIC],
     ['TRANSFER_REVERSED', 'Transfer reversed', 'bool', false, 0, CLASSIC],
-    ['KICKER_REVERSED', 'Kicker reversed', 'bool', true, 0, CLASSIC],
     ['SHOOTER_REVERSED', 'Shooter reversed', 'bool', false, 0, CLASSIC],
   ]),
   TD('Intake', [
@@ -607,13 +607,12 @@ const TUNE_DEFS = [].concat(
     ['TURRET_SEC_PER_FULL_TRAVEL', 'Sec for 0\u21921 travel', 'num', 0.9, 0.05, CLASSIC],
     ['TURRET_SETTLE_PAD_S', 'Settle padding (s)', 'num', 0.1, 0.02, CLASSIC],
   ]),
-  TD('Gate, kicker & transfer (shot timing)', [
+  TD('Gate & transfer (shot timing)', [
     ['GATE_CLOSED', 'Gate closed pos', 'num', 0.5, 0.01, CLASSIC],
     ['GATE_OPEN', 'Gate open pos', 'num', 0.7, 0.01, CLASSIC],
     ['GATE_OPEN_DELAY_S', 'Gate open \u2192 feed (s)', 'num', 0.25, 0.01, CLASSIC],
     ['FEED_PER_BALL_S', 'Feed time per ball (s)', 'num', 0.30, 0.01, CLASSIC],
     ['GATE_CLOSE_DELAY_S', 'Feed stop \u2192 gate close (s)', 'num', 0.05, 0.01, CLASSIC],
-    ['KICKER_POWER', 'Kicker power', 'num', 1.0, 0.05, CLASSIC],
     ['TRANSFER_POWER', 'Transfer power', 'num', 1.0, 0.05, CLASSIC],
     // Pedro 3: the fallback auto's continuous feed (GateSubsystem + CompetitionFeedController timing).
     ['FEED_SECONDS', 'Feed time per shot (s)', 'num', 2.5, 0.1, V3, 'FallbackAutoController.FEED_SECONDS'],
@@ -623,6 +622,14 @@ const TUNE_DEFS = [].concat(
   ])),
   TD('Driving & generator', [
     ['STEP_TIMEOUT_S', 'Default step timeout (0 = off)', 'num', 0, 0.5],
+    // Pedro 3: Volley / Shoot steps stop the follower (zero drive power, motors on BRAKE), like the fallback
+    // auto, instead of leaving Pedro's end-of-path hold running. That hold keeps driving on the Pinpoint
+    // pose, velocity and brake model (unverified on V1), so flywheel / feed vibration made the robot creep.
+    ['BRAKE_WHILE_SHOOTING', 'Brake drive while shooting', 'bool', true, 0, V3],
+    // Pedro 3: per-wheel power cap handed to PedroDrive. Default PedroConfiguration.MAX_WHEEL_POWER (1 = no cap since
+    // 2026-11-19). V1's tuner measured braking at full power and Foresight plans each stop from it; a cap below 1 also
+    // caps braking, so the robot overshoots path ends and drives back.
+    ['MAX_WHEEL_POWER', 'Max wheel power (0..1; 1 = no cap)', 'num', 1.0, 0.05, V3, 'PedroConfiguration.MAX_WHEEL_POWER'],
     ['followerInit', 'Follower init expression', 'text', 'Constants.createFollower(hardwareMap)', 0, CLASSIC],
     ['followerImport', 'Import for Constants', 'text', 'org.firstinspires.ftc.teamcode.pedroPathing.Constants', 0, CLASSIC],
     ['useDashboard', 'Tune live with FTC Dashboard (@Config)', 'bool', false],
@@ -656,7 +663,8 @@ const REPO_MAX_YAW_DEG = 175;                     // TurretSubsystem.ROTATION_MA
 const REPO_HOME_HEADING_DEG = 90;                 // TurretSubsystem.ROTATION_HOME_ROBOT_HEADING_DEG
 const REPO_PRELOAD_RPM = 3500;                    // FallbackAutonomous.PRELOAD_FLYWHEEL_RPM = MecanumTeleOp.STARTING_FLYWHEEL_RPM
 const REPO_PRELOAD_HOOD_DEG = 0;                  // FallbackAutonomous.PRELOAD_HOOD_DEG = TurretSubsystem.PITCH_HOME_DEG
-const REPO_DEFAULT_SPEED = 0.35;                  // PedroConfiguration.DEFAULT_PATH_SPEED_FRACTION
+const DEFAULT_SPEED = 1.0;                        // full tuned speed, no cap (= PedroConfiguration.DEFAULT_PATH_SPEED_FRACTION)
+const PLAN_VERSION = 4;                           // 2: speed 1.0 / full power (2026-11-19); 3: 0.35 / 0.35; 4: 1.0 / no cap (V1 second tuner run)
 const isV3 = () => S.codeTarget === 'v3';
 function repoShot(d){
   const R = REPO_SHOT_TABLE, n = R.length;
@@ -939,7 +947,7 @@ function renderActInspector(st){
       if (st.act === 'volley') A.appendChild(goalPicker(st));
       if (isV3()){
         const h = document.createElement('div'); h.className = 'hint';
-        h.innerHTML = `Pedro 3 feeds every loaded ball: the fallback auto's continuous feed (gate + both transfer stages) for <code>T.FEED_SECONDS</code> (${fmtN(S.tune.FEED_SECONDS, 1)} s, Tuning tab). The robot cannot count launched balls, so there is no ball count.`;
+        h.innerHTML = `Pedro 3 feeds every loaded ball: the fallback auto's continuous feed (gate + transfer) for <code>T.FEED_SECONDS</code> (${fmtN(S.tune.FEED_SECONDS, 1)} s, Tuning tab). The robot cannot count launched balls, so there is no ball count. While it shoots the drive is stopped with the motors on brake (<code>T.BRAKE_WHILE_SHOOTING</code>, like the fallback auto) instead of Pedro holding the last path's end point; the next drive step starts it again.`;
         A.appendChild(h);
       } else A.appendChild(frow('Balls', numInput(st.balls, 1, v => { st.balls = Math.max(1, Math.round(v)); softRefresh(); })));
       if (st.act === 'shoot') chk('Wait until flywheel ready', 'wait');
@@ -2353,6 +2361,25 @@ function numInput(v, step, cb){
   i.addEventListener('input', () => { const n = parseFloat(i.value); if (!isNaN(n)) cb(n); });
   return i;
 }
+// rotation slider + number box kept in sync. Dragging calls cb(deg) live (field and code update as you drag);
+// onDone runs when the drag is released (e.g. to re-render the inspector). Shift-free: 1 deg steps, 5 deg in the box.
+function angleRow(labelTxt, v, min, max, cb, onDone){
+  const d = document.createElement('div'); d.className = 'frow';
+  const l = document.createElement('label'); l.textContent = labelTxt;
+  const r = document.createElement('input');
+  r.type = 'range'; r.min = min; r.max = max; r.step = 1; r.value = Math.round(v);
+  const n = document.createElement('input');
+  n.type = 'number'; n.step = 5; n.min = min; n.max = max; n.value = fmtN(v, 1);
+  n.style.flex = '0 0 64px'; n.style.width = '64px';
+  let undoPushed = false;
+  r.addEventListener('pointerdown', () => { if (!undoPushed){ pushUndo(); undoPushed = true; } });
+  r.addEventListener('input', () => { const x = +r.value; n.value = x; cb(x); });
+  r.addEventListener('change', () => { undoPushed = false; save(); if (onDone) onDone(); });
+  n.addEventListener('input', () => { const x = parseFloat(n.value); if (!isNaN(x)){ r.value = Math.round(x); cb(x); } });
+  n.addEventListener('change', () => { save(); if (onDone) onDone(); });
+  d.append(l, r, n);
+  return d;
+}
 function spdRow2(st, defVal, defLabel){
   const wrap = document.createElement('div');
   const r = document.createElement('input');
@@ -2595,7 +2622,7 @@ function renderInspector(){
     };
     insp.appendChild(frow('Center X', numInput(S.start.x, 0.5, v => { S.start.x = v; updRo(); softRefresh(); })));
     insp.appendChild(frow('Center Y', numInput(S.start.y, 0.5, v => { S.start.y = v; updRo(); softRefresh(); })));
-    insp.appendChild(frow('Heading\u00b0', numInput(norm180(S.start.h * DEG), 5, v => { S.start.h = v * RAD; updRo(); softRefresh(); })));
+    insp.appendChild(angleRow('Heading\u00b0', norm180(S.start.h * DEG), -180, 180, v => { S.start.h = v * RAD; updRo(); softRefresh(); }));
     insp.appendChild(ro); updRo();
     return;
   }
@@ -2618,9 +2645,9 @@ function renderInspector(){
       if (val === 'custom') st.deg = +(st._hd ?? 0);
       renderInspector(); softRefresh();
     })));
-    if (st.rot === 'custom'){
-      insp.appendChild(frow('Custom\u00b0', numInput(st.deg, 5, v => { st.deg = v; softRefresh(); })));
-    }
+    // drag to set the end rotation; dragging switches End rot to Custom
+    insp.appendChild(angleRow('Rotation\u00b0', st.rot === 'custom' ? norm180(st.deg) : (st._hd ?? 0), -180, 180,
+      v => { st.rot = 'custom'; st.deg = v; softRefresh(); }, () => renderInspector()));
     if (st.kind !== 'line'){
       insp.appendChild(ptsEditor(st, () => st._from, st.kind === 'curve' ? 'control' : 'through'));
     }
@@ -2658,7 +2685,8 @@ function renderInspector(){
         if (val === 'custom') sg.deg = +(sg._hd ?? 0);
         renderInspector(); softRefresh();
       })));
-      if (sg.rot === 'custom') box.appendChild(frow('Custom\u00b0', numInput(sg.deg, 5, v => { sg.deg = v; softRefresh(); })));
+      box.appendChild(angleRow('Rotation\u00b0', sg.rot === 'custom' ? norm180(sg.deg) : (sg._hd ?? 0), -180, 180,
+        v => { sg.rot = 'custom'; sg.deg = v; softRefresh(); }, () => renderInspector()));
       if (sg.kind !== 'line') box.appendChild(ptsEditor(sg, () => (st._segs && st._segs[j]) ? st._segs[j].from : null, sg.kind === 'curve' ? 'control' : 'through'));
       box.appendChild(frow('Heading', headingPicker('inherit', 'Inherit (base / driver default)', () => sg.heading, v => { sg.heading = v; })));
       insp.appendChild(box);
@@ -2690,7 +2718,7 @@ function renderInspector(){
     renderActInspector(st);
   }
   else if (st.t === 'turn'){
-    insp.appendChild(frow('Degrees', numInput(st.deg, 5, v => { st.deg = Math.abs(v); softRefresh(); })));
+    insp.appendChild(angleRow('Degrees', st.deg, 0, 360, v => { st.deg = Math.abs(v); softRefresh(); }, () => renderInspector()));
     insp.appendChild(frow('Direction', seg([['LEFT','LEFT (CCW)'],['RIGHT','RIGHT (CW)']], st.dir, val => { st.dir = val; softRefresh(); })));
     if (!isV3()) insp.appendChild(spdRow2(st, S.dTurnSpd, `use driver default (${fmtSpd(S.dTurnSpd)}\u00d7)`));
     const h = document.createElement('div');
@@ -3028,14 +3056,22 @@ function stepCase(st, i){
         break;
       case 'shoot':
       case 'volley': {
+        // Pedro 3: stop the follower so the robot sits still on BRAKE for the shot (fallback auto rule)
+        // instead of Pedro's end-of-path hold driving on a vibrating pose. The next drive step resumes.
+        const brake = '    if (T.BRAKE_WHILE_SHOOTING) drive.stop();   // zero drive power + BRAKE while shooting (no Pedro hold)';
         if (st.act === 'volley'){
           add('if (first) {');
+          if (V3) add(brake);
           add(`    robot.aimAt(${goalJ()});`);
           add('    robot.setTracking(true);');
           add('    robot.spin(true);');
           add('    robot.setRpmAuto();');
           add('    robot.setHoodAuto();');
           sync();
+          add('}');
+        } else if (V3){
+          add('if (first) {');
+          add(brake);
           add('}');
         }
         const wait = st.act === 'volley' ? true : st.wait;
@@ -3104,11 +3140,11 @@ function tuneJava(){
 
 const ROBOT_JAVA = `
     // =====================================================================================
-    //  ROBOT SUBSYSTEMS - intake, flywheel, hood, turret, gate, kicker + transfer.
+    //  ROBOT SUBSYSTEMS - intake, flywheel, hood, turret, gate, transfer (2 linked motors).
     //  Everything is in this file. update() must be called every loop (the OpMode does it).
     // =====================================================================================
     static class Robot {
-        final DcMotorEx intake, transfer, kicker, shooter;
+        final DcMotorEx intake, transfer, transfer2, shooter;   // transfer2 is linked to transfer
         final Servo turret1, turret2, gate, hood;
         final ElapsedTime clock = new ElapsedTime();
 
@@ -3135,7 +3171,7 @@ const ROBOT_JAVA = `
         Robot(HardwareMap hw) {
             intake = hw.get(DcMotorEx.class, T.INTAKE_NAME);
             transfer = hw.get(DcMotorEx.class, T.TRANSFER_NAME);
-            kicker = hw.get(DcMotorEx.class, T.KICKER_NAME);
+            transfer2 = hw.get(DcMotorEx.class, T.KICKER_NAME);
             shooter = hw.get(DcMotorEx.class, T.SHOOTER_NAME);
             turret1 = hw.get(Servo.class, T.TURRET1_NAME);
             turret2 = hw.get(Servo.class, T.TURRET2_NAME);
@@ -3144,7 +3180,7 @@ const ROBOT_JAVA = `
 
             setup(intake, T.INTAKE_REVERSED);
             setup(transfer, T.TRANSFER_REVERSED);
-            setup(kicker, T.KICKER_REVERSED);
+            setup(transfer2, T.TRANSFER_REVERSED);   // same direction: both drive one linkage
             setup(shooter, T.SHOOTER_REVERSED);
             shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             applyPidf();
@@ -3197,7 +3233,7 @@ const ROBOT_JAVA = `
             spinning = false;
             tracking = false;
             shootState = 0;
-            kicker.setPower(0);
+            transfer2.setPower(0);
             transfer.setPower(0);
             shooter.setPower(0);
             gate.setPosition(T.GATE_CLOSED);
@@ -3239,12 +3275,12 @@ const ROBOT_JAVA = `
             double h = hoodAuto ? clamp(T.HOOD_SLOPE * dist + T.HOOD_INTERCEPT, T.HOOD_MIN, T.HOOD_MAX) : hoodManual;
             hood.setPosition(h);
 
-            // ---- shot sequence: open gate -> feed kicker + transfer -> stop -> close gate ----
+            // ---- shot sequence: open gate -> feed transfer (both motors) -> stop -> close gate ----
             switch (shootState) {
                 case 1:
                     gate.setPosition(T.GATE_OPEN);
                     if (now - shootT >= T.GATE_OPEN_DELAY_S) {
-                        kicker.setPower(T.KICKER_POWER);
+                        transfer2.setPower(T.TRANSFER_POWER);
                         transfer.setPower(T.TRANSFER_POWER);
                         shootState = 2;
                         shootT = now;
@@ -3252,7 +3288,7 @@ const ROBOT_JAVA = `
                     break;
                 case 2:
                     if (now - shootT >= T.FEED_PER_BALL_S * shootBalls) {
-                        kicker.setPower(0);
+                        transfer2.setPower(0);
                         transfer.setPower(0);
                         shootState = 3;
                         shootT = now;
@@ -3283,7 +3319,7 @@ const ROBOT_JAVA = `
 const ROBOT_JAVA_V3 = `
     // =====================================================================================
     //  ROBOT - the repo's subsystems, driven the way the competition and fallback autos drive them:
-    //  IntakeSubsystem (TeleOp's direction), TransferSubsystem (full sensor, stage 1 stall guard),
+    //  IntakeSubsystem (TeleOp's direction), TransferSubsystem (full sensor, no stall limit),
     //  GateSubsystem with the shared FiringCoordinator feed (CompetitionFeedController timing), and
     //  TurretSubsystem for yaw, hood and flywheel. Call readSensors() once per loop before the step
     //  and apply() once per loop after it (the OpMode does both).
@@ -3350,7 +3386,7 @@ const ROBOT_JAVA_V3 = `
         void gateOpen(boolean open) { gateHeldOpen = open; }
 
         /**
-         * Shot: the fallback auto's continuous feed (gate, then both transfer stages) for T.FEED_SECONDS. A
+         * Shot: the fallback auto's continuous feed (gate, then the transfer's two linked motors) for T.FEED_SECONDS. A
          * continuous feed cannot count launched balls (FiringCoordinator), so it feeds every loaded ball.
          */
         void startShoot() { feedUntil = now() + T.FEED_SECONDS; shotNote = ""; }
@@ -3431,22 +3467,21 @@ const ROBOT_JAVA_V3 = `
             if (spinning && rpmTarget > 0) turret.setShooterRpm(rpmTarget);
             else turret.stopShooter();
 
-            // ---- feed: the fallback auto's manual-feed path (TeleOp GP1 A): gate, then both stages ----
+            // ---- feed: the fallback auto's manual-feed path (TeleOp GP1 A): gate, then the transfer ----
             boolean feedRequested = now < feedUntil;
-            feedControl.updateSelection(now, false, firing);
+            feedControl.updateSelection(now, firing);   // continuous feed only (CompetitionFeedController)
             firing.update(now, false, feedRequested, false, false, false, false, false, "Planner autonomous feed");
             boolean feedStage1 = feedControl.feedStage1(now, firing);
             gate.setOpen(firing.gateOpen() || gateHeldOpen);
             boolean shootingBusy = feedRequested || firing.gateOpen()
                     || firing.state() == FiringCoordinator.State.RECOVERY;
-            // Stage 1 loads (full sensor + run-on, stall guard) while intaking or spinning up for a shot.
+            // Stage 1 loads (full sensor + run-on) while intaking or spinning up for a shot.
             boolean loading = intakePower > 0 || spinning;
             transfer.updateCached(now, feedControl.feedTransfers(firing, gate.isOpenForFeeding()),
                     shootingBusy || !loading, feedStage1, false);
             // Forward collection stops on a confirmed full queue (competition auto rule); reverse still allowed.
             intake.setIntakePower(transfer.isFull() && intakePower > 0
                     ? IntakeQueueController.FULL_QUEUE_INTAKE_POWER : intakePower);
-            transfer.setIntakeRunning(intake.getCommandedPower() > 0); // Stage 1 stall guard only while intaking.
         }
 
         void addTelemetry(Telemetry t) {
@@ -3510,7 +3545,7 @@ function buildJava(){
   L.push('/*');
   L.push(' * Generated with the BioBuzz Path Planner (FTC 2026-27 "BIOBUZZ" presented by RTX) - Pedro Pathing 2.x target.');
   L.push(' *');
-  L.push(' * SELF-CONTAINED: robot subsystems (intake, flywheel, hood, turret, gate, kicker, transfer) and');
+  L.push(' * SELF-CONTAINED: robot subsystems (intake, flywheel, hood, turret, gate, transfer) and');
   L.push(' * the step runner are all in this file. The only outside piece is the Pedro Follower factory');
   L.push(` * (${(T.followerInit || '').trim() || 'follower init'}), because that holds your drivetrain tuning.`);
   L.push(' * This target does not use the V1 TeamCode classes or values; use the Pedro 3 target for this repo.');
@@ -3725,8 +3760,7 @@ function chainJavaV3(st){
 }
 const jLim = v => (v != null && v > 0) ? jn(v) : '0';
 // speed fraction: the repo constant while the step uses the driver default and that still matches it
-const speedJ = st => (st.spd == null && S.dSpd === REPO_DEFAULT_SPEED)
-  ? 'PedroConfiguration.DEFAULT_PATH_SPEED_FRACTION' : fmtSpd(st.spd ?? S.dSpd);
+const speedJ = st => fmtSpd(st.spd ?? S.dSpd);
 
 function stepCaseV3(st, i){
   const I = '                ';
@@ -3846,7 +3880,7 @@ function buildJavaV3(){
   L.push(' * Built for com.pedropathing:core 3.0.0 (Paths API). The drivetrain, Pinpoint and Pedro follower come');
   L.push(' * from the repo\'s PedroDrive, so its PedroConfiguration tuning applies. Every mechanism is a repo');
   L.push(' * subsystem, driven like the competition and fallback autos: IntakeSubsystem (TeleOp\'s direction),');
-  L.push(' * TransferSubsystem (full sensor, stage 1 stall guard), GateSubsystem with the shared FiringCoordinator');
+  L.push(' * TransferSubsystem (full sensor, no stall limit), GateSubsystem with the shared FiringCoordinator');
   L.push(' * feed, and TurretSubsystem (homing, rear dead zone, encoder-verified yaw, shooter PIDF), aimed with the');
   L.push(' * competition pivot geometry and aim lead; hood / RPM come from ShootingConfiguration.PROFILE.');
   L.push(' *');
@@ -3919,7 +3953,9 @@ function buildJavaV3(){
   L.push('    /** Per-path Foresight limits. speed = fraction of max forward velocity; the rest are 0 = no limit. */');
   L.push('    private Path limits(Path path, double speed, double maxVelInPerS, double accelInPerS2, double decelInPerS2) {');
   L.push('        List<Modifier> m = new ArrayList<>();');
-  L.push('        m.add(cfg.setPathSpeed(speed));');
+  L.push('        // Never plan faster than the wheel cap allows (no cap at T.MAX_WHEEL_POWER = 1). A cap below 1 also caps braking,');
+  L.push('        // so Foresight\'s full-power stop plan overshoots and the robot drives back (seen at a 0.35 cap, 2026-11-19).');
+  L.push('        m.add(cfg.setPathSpeed(Math.min(speed, T.MAX_WHEEL_POWER)));');
   L.push('        if (maxVelInPerS > 0) m.add(cfg.maxVelocityConstraint.at(maxVelInPerS));');
   L.push('        if (accelInPerS2 > 0) m.add(cfg.maxAccelerationConstraint.at(accelInPerS2));');
   L.push('        if (decelInPerS2 > 0) m.add(cfg.maxDecelerationConstraint.at(decelInPerS2));');
@@ -3937,7 +3973,9 @@ function buildJavaV3(){
   L.push('    public void runOpMode() throws InterruptedException {');
   L.push('        AutoPoseHandoff.clear();   // like every repo auto: an older run\'s pose must never reach the next TeleOp');
   L.push('        RobotLoop loop = new RobotLoop(hardwareMap);   // bulk-cached hub reads, cleared once per loop');
-  L.push('        drive = new PedroDrive(hardwareMap);   // drive motors + Pinpoint + Pedro 3 follower');
+  L.push('        // Drive motors + Pinpoint + Pedro 3 follower with the PedroConfiguration Foresight tuning (the');
+  L.push('        // V1 tuner run, 2026-11-19) at T.MAX_WHEEL_POWER (1 = full power, the power the tuner measured braking at).');
+  L.push('        drive = new PedroDrive(hardwareMap, true, T.MAX_WHEEL_POWER);');
   L.push('        follower = drive.follower();');
   L.push('        cfg = drive.config();');
   L.push('        try {');
@@ -4148,7 +4186,7 @@ $('btnUndo').addEventListener('click', doUndo);
 
 // ---------- persistence / import / export ----------
 const planData = () => ({
-  frame: PLAN_FRAME, flipped: S.flipped,
+  frame: PLAN_FRAME, planVer: PLAN_VERSION, flipped: S.flipped,
   start: S.start, steps: S.steps, spans: S.spans,
   opmodeName: S.opmodeName, pkg: S.pkg,
   dSpd: S.dSpd, dTurnSpd: S.dTurnSpd, dHeading: S.dHeading,
@@ -4172,12 +4210,32 @@ function loadLimits(d){
   S.dDecel = posOrNull(d.dDecel);
 }
 
+// Saved / imported plans are brought up to date in place; returns notes for the user.
+// - No `frame` (before 2026-11-19): see migrateFrame.
+// - planVer below 4 (saved while the defaults were speed 0.35 and a 0.35 wheel cap): a default speed of 0.35
+//   becomes 1.0 and a 0.35 wheel power goes back to PedroConfiguration.MAX_WHEEL_POWER (1 = no cap). V1's second
+//   tuner run (2026-11-19) measured braking at full power; a 0.35 cap also capped braking, so paths overshot their
+//   ends and drove back. Per-step speed overrides are the author's choice and stay as saved.
+function migratePlan(d){
+  if (!d || typeof d !== 'object') return [];
+  const hadFrame = d.frame === PLAN_FRAME;
+  const notes = hadFrame ? [] : migrateFrame(d);
+  if (!(+d.planVer >= PLAN_VERSION)){
+    if (+d.dSpd === 0.35){ d.dSpd = DEFAULT_SPEED; notes.push(`default speed 0.35 → ${DEFAULT_SPEED} (no cap)`); }
+    if (d.tune && typeof d.tune === 'object' && +d.tune.MAX_WHEEL_POWER === 0.35){
+      delete d.tune.MAX_WHEEL_POWER;                            // -> PedroConfiguration.MAX_WHEEL_POWER (1)
+      notes.push('wheel power 0.35 → 1.0 (no cap)');
+    }
+    d.planVer = PLAN_VERSION;
+  }
+  return notes;
+}
+
 // Plans saved before the field-center switch have no `frame`: they hold Pedro bottom-left coordinates
 // (field-center ones when their old Origin setting was "center"), single-axis mirror lines, and the old
-// default aim points (60,52 / 60,92 / 84,52 / 84,92) and speed (1.0). Converts d in place; returns notes.
+// default aim points (60,52 / 60,92 / 84,52 / 84,92). Converts d in place; returns notes.
 const OLD_AIM = { 1: [60, 52], 2: [60, 92], 3: [84, 52], 4: [84, 92] };
-function migratePlan(d){
-  if (!d || typeof d !== 'object' || d.frame === PLAN_FRAME) return [];
+function migrateFrame(d){
   const notes = [];
   const off = d.origin === 'center' ? 0 : (+d.fieldSize || 144) / 2;
   const r3 = v => +(+v).toFixed(3);
@@ -4207,7 +4265,7 @@ function migratePlan(d){
     if (reset) notes.push('old default aim points replaced with the hive openings');
     if (d.tune.INTAKE_REVERSE_FROM_TELEOP) notes.push('the Pedro 3 intake now runs in TeleOp’s direction');
   }
-  if (+d.dSpd === 1){ d.dSpd = REPO_DEFAULT_SPEED; notes.push(`default speed 1.0 → ${REPO_DEFAULT_SPEED} (PedroConfiguration)`); }
+  if (+d.dSpd === 1){ d.dSpd = DEFAULT_SPEED; notes.push(`default speed 1.0 → ${DEFAULT_SPEED} until V1's paths are verified`); }
   if (d.mirror && typeof d.mirror === 'object'){
     const on = d.mirror.x != null || d.mirror.y != null;
     d.mirror = on;
@@ -4399,7 +4457,7 @@ if (!saved && !S.steps.length){
 }
 if (loadNotes.length){
   save();   // one-time migration; the old plan stays under 'biobuzz-path-planner-v1-before-field-center'
-  toast('Saved plan updated for the repo field frame: ' + loadNotes.join('; ') + '. The old plan is backed up in this browser.', 12000);
+  toast('Saved plan updated: ' + loadNotes.join('; ') + '. Your first saved plan is backed up in this browser.', 12000);
 }
 
 (function loop(now){ drawScene(now || 0); requestAnimationFrame(loop); })();

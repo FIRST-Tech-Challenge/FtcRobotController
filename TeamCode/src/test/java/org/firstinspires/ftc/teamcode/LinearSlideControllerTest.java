@@ -133,7 +133,5 @@ public class LinearSlideControllerTest {
         assertTrue(LinearSlideController.MAX_TRAVEL_DEG <= 360);
         assertTrue(LinearSlideController.MOVE_TIMEOUT_SECONDS
                 > LinearSlideController.MAX_TRAVEL_DEG / AxonMaxPlus.DEGREES_PER_SECOND_AT_6V);
-        assertFalse(SlideClawSubsystem.POSITIONS_MEASURED);
-        assertNotEquals(SlideClawSubsystem.OPEN_POSITION, SlideClawSubsystem.CLOSED_POSITION, 1e-6);
     }
 }

@@ -1,5 +1,7 @@
 # SimLoop implementation plan for competition TeleOp
 
+> **2026-11-18 transfer change:** `transfer_motor_2` is now mechanically linked to stage 1 (both motors FORWARD, one shared command; the back rollers it used to drive were removed), so there is no separate stage 2. Stage-2 descriptions below are historical; see [TransferAndShooting.md](TransferAndShooting.md) for current behavior.
+
 Created October 27, 2026. Updated October 31, 2026 after the implementation audit. The dependency and
 lifecycle foundation, installed-mechanism fixtures, actual red/blue scenarios and human keyboard
 record/replay are implemented. Calibration, physical sign-off and the camera target-normal convention
