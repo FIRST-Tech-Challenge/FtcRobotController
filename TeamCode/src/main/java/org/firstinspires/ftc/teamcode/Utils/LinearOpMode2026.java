@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.NueralNetworks.Classes.NNFileReader;
 import org.firstinspires.ftc.teamcode.Utils.Detection.CheckedDistanceSensor;
 import org.firstinspires.ftc.teamcode.Utils.Detection.DistSensorObstacleDetector;
+import org.firstinspires.ftc.teamcode.Utils.Detection.LimelightBallDetection;
 import org.firstinspires.ftc.teamcode.Utils.Movement.PPRPHybrid;
 import org.firstinspires.ftc.teamcode.Utils.Movement.Pathfinder;
 import org.firstinspires.ftc.teamcode.Utils.Movement.PosGetters.PinpointPosGet;
@@ -40,6 +41,7 @@ public abstract class LinearOpMode2026 extends LinearOpMode {
     public DcMotorEx turret;
     public static boolean isCurrentAllienceRed = true;
     public static boolean isCompetition = true;
+    public LimelightBallDetection ballDetection;
 
     // public IMU imu;
 
@@ -105,6 +107,7 @@ public abstract class LinearOpMode2026 extends LinearOpMode {
 
             limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
             limelight.start(); // DO THIS RIGHT HERE? Possibly Do this at start
+            ballDetection = new LimelightBallDetection(limelight);
         } catch (Exception e) {
             telemetry.addData("Config error","Limelight not found: " + e);
         }
