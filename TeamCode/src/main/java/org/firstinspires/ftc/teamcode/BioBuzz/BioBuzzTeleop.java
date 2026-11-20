@@ -2,13 +2,11 @@ package org.firstinspires.ftc.teamcode.BioBuzz;
 
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.Utils.Controls.ControlsTrigger;
 import org.firstinspires.ftc.teamcode.Utils.Controls.GamepadButton;
 import org.firstinspires.ftc.teamcode.Utils.LinearOpMode2026;
 import org.firstinspires.ftc.teamcode.Utils.MiscUtils;
-import org.firstinspires.ftc.teamcode.Utils.Movement.PosGetters.PositionGetter;
 import org.firstinspires.ftc.teamcode.Utils.Movement.TeleopMovementUtil;
 import org.firstinspires.ftc.teamcode.Utils.Positioning.DistanceToHive;
 import org.firstinspires.ftc.teamcode.Utils.Shooting.AprilTagClusterTargeting;
@@ -115,15 +113,6 @@ public class BioBuzzTeleop extends LinearOpMode2026 {
 
             telemetry.addData("Distance From Goal: ", distanceToHive.GetDistance());
 
-
-            if (gamepad2.right_trigger > 0.1){
-                aprilTagsTurretTarget.ChangeAngleSetPosition(gamepad2.right_trigger, 0);
-            }
-
-            if (gamepad2.left_trigger > 0.1){
-                aprilTagsTurretTarget.ChangeAngleSetPosition(-gamepad2.left_trigger, 0);
-            }
-
             telemetry.update();
             lla.setPosition(LimelightAngle.getAngle(distanceToHive.GetDistance()));
         }
@@ -158,7 +147,7 @@ public class BioBuzzTeleop extends LinearOpMode2026 {
             telemetry.addData("Cluster error", e.toString());
         }
 
-        aprilTagsTurretTarget.ChangeAngleSetPosition(tx, posGet.getVr());
+        aprilTagsTurretTarget.ChangeAngleSetPosition(tx + (gamepad2.right_trigger > 0.1 ? gamepad2.right_trigger : 0) - (gamepad2.left_trigger > 0.1 ? gamepad2.left_trigger : 0), posGet.getVr());
 
         double positionChange = MiscUtils.getPositionFromDegrees(tx, 537.7);
 
