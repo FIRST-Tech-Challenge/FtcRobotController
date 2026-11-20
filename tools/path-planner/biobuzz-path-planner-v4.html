@@ -358,8 +358,8 @@
           <div class="frow"><label>Def turn</label><input type="number" id="setDTurn" min="0.05" max="1" step="0.05"></div>
           <div class="frow"><label>Def heading</label>
             <select id="setDHead">
-              <option value="constant">constant — face target</option>
-              <option value="linear">linear — start&rarr;target</option>
+              <option value="linear">linear — turn start&rarr;target over the path</option>
+              <option value="constant">constant — snap to target heading at once</option>
               <option value="tangent">tangent — face travel</option>
             </select>
           </div>
@@ -522,7 +522,7 @@ const S = {
   spans: [],                    // loop-code blocks: { uid, from, to, code, pf, pt, color }
   dSpd: 1.0,                   // driver default speed fraction: full tuned speed (no cap since 2026-11-19)
   dTurnSpd: 1.0,               // driver default turn power (Pedro 2 follower.turn only)
-  dHeading: 'constant',        // driver default heading: constant | linear | tangent
+  dHeading: 'linear',          // driver default heading: linear (turn over the path) | constant | tangent
   dCompletion: 'SETTLED',      // driver default completion rule
   dTol: 4.0,                   // driver default LENIENT tolerance (inches)
   alliance: 'RED',             // planned alliance (Zenith canonical RED)
@@ -672,7 +672,7 @@ const REPO_HOME_HEADING_DEG = 90;                 // TurretSubsystem.ROTATION_HO
 const REPO_PRELOAD_RPM = 3500;                    // FallbackAutonomous.PRELOAD_FLYWHEEL_RPM = MecanumTeleOp.STARTING_FLYWHEEL_RPM
 const REPO_PRELOAD_HOOD_DEG = 0;                  // FallbackAutonomous.PRELOAD_HOOD_DEG = TurretSubsystem.PITCH_HOME_DEG
 const DEFAULT_SPEED = 1.0;                        // full tuned speed, no cap (= PedroConfiguration.DEFAULT_PATH_SPEED_FRACTION)
-const PLAN_VERSION = 4;                           // 2: speed 1.0 / full power (2026-11-19); 3: 0.35 / 0.35; 4: 1.0 / no cap (V1 second tuner run)
+const PLAN_VERSION = 5;                           // 2: speed 1.0 / full power (2026-11-19); 3: 0.35 / 0.35; 4: 1.0 / no cap (V1 second tuner run); 5: default heading linear
 const isV3 = () => S.codeTarget === 'v3';
 function repoShot(d){
   const R = REPO_SHOT_TABLE, n = R.length;
@@ -4142,13 +4142,18 @@ function migratePlan(d){
   const hadFrame = d.frame === PLAN_FRAME;
   const notes = hadFrame ? [] : migrateFrame(d);
   if (!(+d.planVer >= PLAN_VERSION)){
+    // 5: 'constant' asked for the end heading from the first instant, so a big heading change swung the robot
+    // hard at full power and it jerked back and forth (2026-11-19); 'linear' turns over the length of the path.
+    if (!d.dHeading || d.dHeading === 'constant'){ d.dHeading = 'linear'; notes.push('default heading constant → linear (smooth turns)'); }
+  }
+  if (!(+d.planVer >= 4)){
     if (+d.dSpd === 0.35){ d.dSpd = DEFAULT_SPEED; notes.push(`default speed 0.35 → ${DEFAULT_SPEED} (no cap)`); }
     if (d.tune && typeof d.tune === 'object' && +d.tune.MAX_WHEEL_POWER === 0.35){
       delete d.tune.MAX_WHEEL_POWER;                            // -> PedroConfiguration.MAX_WHEEL_POWER (1)
       notes.push('wheel power 0.35 → 1.0 (no cap)');
     }
-    d.planVer = PLAN_VERSION;
   }
+  d.planVer = PLAN_VERSION;
   return notes;
 }
 

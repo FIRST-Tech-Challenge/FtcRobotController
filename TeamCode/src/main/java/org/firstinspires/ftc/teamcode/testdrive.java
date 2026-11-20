@@ -113,8 +113,8 @@ public class testdrive extends LinearOpMode {
     /** Per-path Foresight limits. speed = fraction of max forward velocity; the rest are 0 = no limit. */
     private Path limits(Path path, double speed, double maxVelInPerS, double accelInPerS2, double decelInPerS2) {
         List<Modifier> m = new ArrayList<>();
-        // Never plan faster than the capped wheels can drive: at speed 1.0 with a 0.35 wheel cap, Foresight plans
-        // a ~70 in/s profile the robot cannot follow, and it overshot sideways without settling (2026-11-19).
+        // Never plan faster than the wheel cap allows (no cap at T.MAX_WHEEL_POWER = 1). A cap below 1 also caps braking,
+        // so Foresight's full-power stop plan overshoots and the robot drives back (seen at a 0.35 cap, 2026-11-19).
         m.add(cfg.setPathSpeed(Math.min(speed, T.MAX_WHEEL_POWER)));
         if (maxVelInPerS > 0) m.add(cfg.maxVelocityConstraint.at(maxVelInPerS));
         if (accelInPerS2 > 0) m.add(cfg.maxAccelerationConstraint.at(accelInPerS2));
@@ -133,7 +133,7 @@ public class testdrive extends LinearOpMode {
         AutoPoseHandoff.clear();   // like every repo auto: an older run's pose must never reach the next TeleOp
         RobotLoop loop = new RobotLoop(hardwareMap);   // bulk-cached hub reads, cleared once per loop
         // Drive motors + Pinpoint + Pedro 3 follower with the PedroConfiguration Foresight tuning (the
-        // V1 tuner run, 2026-11-19), capped at T.MAX_WHEEL_POWER (0.35 until V1's paths are verified).
+        // V1 tuner run, 2026-11-19) at T.MAX_WHEEL_POWER (1 = full power, the power the tuner measured braking at).
         drive = new PedroDrive(hardwareMap, true, T.MAX_WHEEL_POWER);
         follower = drive.follower();
         cfg = drive.config();
@@ -159,7 +159,7 @@ public class testdrive extends LinearOpMode {
             if (isStopRequested()) return;
             robot.onStart();   // ends a start-pose refinement still collecting frames
 
-            final int STEPS = 8;
+            final int STEPS = 7;
             final double started = now();
             int stage = 0;               // steps started so far; running step index = stage - 1
             boolean running = false;
@@ -253,75 +253,56 @@ public class testdrive extends LinearOpMode {
                 return false;
             }
 
-            // step 2 - ACTION INTAKE: in · 5s
+            // step 2 - DRIVE to (-47.7, -24.4) @ 179.8 deg
             case 1: {
-                if (first) robot.setIntake(1);
-                boolean done = stepTimer.seconds() >= 5;
-                return done;
-            }
-
-            // step 3 - DRIVE to (-59.1, -65.5) @ 179.8 deg
-            case 2: {
                 if (first) {
                     pathSegs = 1;
                     Arrays.fill(cbFired, false);
-                    follower.follow(limits(Paths.line(P(-12.42, -65.39, 0), P(-59.08, -65.52, 0)).constant(H(179.8)),
+                    follower.follow(limits(Paths.line(P(-12.42, -65.39, 0), P(-47.67, -24.42, 0)).linear(H(179.8), H(179.8)),
                             1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
                 }
                 boolean done = !first && (!follower.following() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
                 return done;
             }
 
-            // step 4 - DRIVE to (-47.7, -42) @ 100 deg
+            // step 3 - ACTION DEPOLLINATOR: deploy · wait settle
+            case 2: {
+                if (first) robot.deployDepollinator();
+                return !first && (robot.depollinatorSettled() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
+            }
+
+            // step 4 - DRIVE to (-52, -24.4) @ 179.8 deg
             case 3: {
                 if (first) {
                     pathSegs = 1;
                     Arrays.fill(cbFired, false);
-                    follower.follow(limits(Paths.line(P(-59.08, -65.52, 0), P(-47.74, -42.01, 0)).constant(H(100)),
+                    follower.follow(limits(Paths.line(P(-47.67, -24.42, 0), P(-52.04, -24.42, 0)).linear(H(179.8), H(179.8)),
                             1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
                 }
                 boolean done = !first && (!follower.following() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
                 return done;
             }
 
-            // step 5 - DRIVE to (-58.4, -25.2) @ 175 deg
+            // step 5 - ACTION INTAKE: in
             case 4: {
-                if (first) {
-                    pathSegs = 1;
-                    Arrays.fill(cbFired, false);
-                    follower.follow(limits(Paths.line(P(-47.74, -42.01, 0), P(-58.38, -25.15, 0)).constant(H(175)),
-                            1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
-                }
-                boolean done = !first && (!follower.following() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
-                return done;
+                if (first) robot.setIntake(1);
+                return true;
             }
 
-            // step 6 - DRIVE to (-39.8, 39.6) @ 74 deg
+            // step 6 - DRIVE to (-11.9, -58.9) @ 90 deg
             case 5: {
                 if (first) {
                     pathSegs = 1;
                     Arrays.fill(cbFired, false);
-                    follower.follow(limits(Paths.line(P(-58.38, -25.15, 0), P(-39.75, 39.59, 0)).constant(H(74)),
+                    follower.follow(limits(Paths.line(P(-52.04, -24.42, 0), P(-11.93, -58.93, 0)).linear(H(179.8), H(90)),
                             1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
                 }
                 boolean done = !first && (!follower.following() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
                 return done;
             }
 
-            // step 7 - DRIVE to (-14.2, 42.3) @ 5.9 deg
+            // step 7 - ACTION VOLLEY (AIM + SPIN + SHOOT): feed 2.5s at aim point 1 (red audience)
             case 6: {
-                if (first) {
-                    pathSegs = 1;
-                    Arrays.fill(cbFired, false);
-                    follower.follow(limits(Paths.line(P(-39.75, 39.59, 0), P(-14.21, 42.25, 0)).constant(H(5.9)),
-                            1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
-                }
-                boolean done = !first && (!follower.following() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
-                return done;
-            }
-
-            // step 8 - ACTION VOLLEY (AIM + SPIN + SHOOT): feed 2.5s at aim point 1 (red audience)
-            case 7: {
                 if (first) {
                     if (T.BRAKE_WHILE_SHOOTING) drive.stop();   // zero drive power + BRAKE while shooting (no Pedro hold)
                     robot.aimAt(P(T.GOAL1_X, T.GOAL1_Y, 0));
