@@ -14,7 +14,7 @@ public final class ShooterVelocityTuning {
     public static final double MIN_F_CHANGE = .02;
     public static final double SAMPLE_INTERVAL_SECONDS = .2;
     // Lynx velocity feedforward output is scaled to +/-32767.
-    // Initial installed-speed fit: 5400 RPM at 14 V. Normalize BASE_F to 12 V;
+    // Initial installed-speed fit: 6100 RPM at 14 V. Normalize BASE_F to 12 V;
     // this assumes linear voltage scaling and still requires loaded validation.
     public static final double FULL_SCALE_OUTPUT = 32767.0;
     public static final double BASE_F = FULL_SCALE_OUTPUT
@@ -29,7 +29,7 @@ public final class ShooterVelocityTuning {
     // kS: power that just overcomes static friction. Estimate, not a measurement.
     public static final double INITIAL_FUSION_KS = 0.05;
     // kV: power per motor tick/s. Solved so kS + kV * speed reproduces the installed-speed
-    // observation (full power = 5400 RPM at 14 V) after voltage compensation.
+    // observation (full power = 6100 RPM at 14 V) after voltage compensation.
     public static final double INITIAL_FUSION_KV = (ShooterSpeed.REPORTED_MEASUREMENT_VOLTAGE_VOLTS
             / BareMotorSpecifications.REFERENCE_VOLTAGE_VOLTS - INITIAL_FUSION_KS)
             / (ShooterSpeed.REPORTED_MAX_OBSERVED_RPM / 60 * ShooterSpeed.MOTOR_TICKS_PER_REV);

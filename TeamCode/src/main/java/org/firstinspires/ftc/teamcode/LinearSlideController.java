@@ -9,10 +9,11 @@ public final class LinearSlideController {
 
     public enum State { DOWN, MOVING_UP, UP, MOVING_DOWN, MANUAL, FAULT }
 
-    // Servo-output degrees from fully down (INIT) to fully up. PLACEHOLDER: deliberately short
-    // (half a turn) so the first power-up cannot over-travel. Measure with "Test: Linear Slide".
-    public static final double MAX_TRAVEL_DEG = 180.0;
-    public static final boolean TRAVEL_MEASURED = false;
+    // Servo-output degrees from fully down (the angle read at INIT) to fully up, counterclockwise viewed from the
+    // servo face, during which the analog angle falls. Set 2026-11-20: 1.75 turns (630 deg), then the team found the
+    // slide can move another 70 deg, so 700 deg (about 1.94 turns).
+    public static final double MAX_TRAVEL_DEG = 630.0 + 70.0;
+    public static final boolean TRAVEL_MEASURED = true;
 
     // Proportional power per degree of error; 100 deg of error requests full power.
     public static final double KP_POWER_PER_DEG = 0.01;

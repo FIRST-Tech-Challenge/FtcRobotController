@@ -22,8 +22,8 @@ below. Every other turret-based OpMode, including autonomous, defaults to hub
 velocity PIDF in `RUN_USING_ENCODER`. Starting gains are P=40, I=0, D=0. P was doubled from 20 for
 stronger response to shot-induced speed error. Integral remains off initially to
 avoid windup near maximum speed, but can be tuned during the bench test. Feedforward at 12 V is
-`32767 / (5400 / 60 * 28) * (14 / 12)`, approximately 15.170 at 12 V
-(13.003 at 14 V). This uses the reported installed speed; see the observation below. Every 0.2 seconds its F coefficient
+`32767 / (6100 / 60 * 28) * (14 / 12)`, approximately 13.429 at 12 V
+(11.511 at 14 V). This uses the reported installed speed; see the November 20 observation below. Every 0.2 seconds its F coefficient
 is multiplied by `12 / batteryVolts`, using the lowest valid hub voltage reading.
 Invalid or unavailable voltage uses the 12 V reference. These are initial gains,
 not gains validated on this flywheel. There is no second software velocity PID
@@ -126,8 +126,8 @@ loop's cached encoder sample; the hub PIDF loop is not active in that mode.
   STOP, controller switch) is zero power and a FLOAT coast.
 
 Initial values in `ShooterVelocityTuning`: `INITIAL_FUSION_KS` 0.05 (estimate),
-`INITIAL_FUSION_KV` `(14 / 12 - kS) / 2520`, about 0.000443 (so kS + kV reproduces
-full power at 5400 RPM and 14 V), and `INITIAL_FUSION_KP` 0.001 (estimate; 0.08
+`INITIAL_FUSION_KV` `(14 / 12 - kS) / 2846.67`, about 0.000392 (so kS + kV reproduces
+full power at 6100 RPM and 14 V), and `INITIAL_FUSION_KP` 0.001 (estimate; 0.08
 power at the 80 ticks/s edge). None is validated on this flywheel. Suggested order:
 set kP to 0 and adjust kV until an unloaded mid-range target holds steady, check a
 low and a high target and move kS if the bias differs between them, then restore
@@ -172,14 +172,28 @@ reducing the ball feed rate may be necessary; PID gains cannot supply additional
 motor power. RT + LT now follows the competition continuous feed (2026-11-19): after 0.15 s of bench readiness the gate and
 transfer run together until a trigger is released or the flywheel leaves the 133 RPM continuation band.
 
-Hood home is shifted 10.5 hood degrees down from the original servo position 0.5,
-to approximately 0.559155 (2:1 linkage, 355-degree servo travel). This is the previous
-+12.5-degree command position (2.5 degrees below the previous 8-degree-offset home), now designated the team's +15-degree home reference.
-The full 30-degree downward range ends near 0.728169. D-pad Up still increases
+Hood home is shifted 13 hood degrees down from the original servo position 0.5,
+to approximately 0.573239 (2:1 linkage, 355-degree servo travel). This is the previous
+measured physical +15-degree position (2.5 degrees below the previous 10.5-degree-offset home), now the team's +15-degree home reference.
+The full 30-degree downward range ends near 0.742254. D-pad Up still increases
 downward travel; Down returns toward home. This is a commanded angle reference,
 not an independent measurement of projectile launch angle. Calibration displays averages without saving files. The unused historical export parser retains version checks for earlier references.
 
-## November 1 robot observation and tuning follow-up
+## November 20 maximum-speed observation: 6100 RPM at 14 V
+
+The team measured the installed flywheel at 6100 RPM maximum at full power and 14 V,
+superseding the November 1 report of 5400 RPM below. `REPORTED_MAX_OBSERVED_RPM` is now
+6100, which lowers the PIDF feedforward to about 13.429 at 12 V and the initial fusion kV to
+about 0.000392. The old 5400 RPM value overstated the power needed for a target speed, which
+is consistent with the fusion controller holding about 150 RPM above operating targets
+(inside the 80 ticks/s band, so it never coasted). The 6000 RPM command ceiling and
+100 RPM readiness tolerance are unchanged. These are still starting values: kV, kS and kP
+need the unloaded and loaded tuning passes on the robot.
+
+Simulation decision: none run for this constant change. The sim flywheel fixture was moved to
+6100 RPM at 14 V to match the observation; focused unit tests cover the derived gains.
+
+## November 1 robot observation and tuning follow-up (superseded speed)
 
 The team corrected the maximum to 5400 RPM (superseding the earlier 4700 RPM report).
 The current observation is 5400 RPM maximum at a 6000 RPM command, 14 V, in both PIDF and

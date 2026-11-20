@@ -532,18 +532,18 @@ class CompetitionSimTest {
         for (String alliance : new String[]{"Red", "Blue"}) {
             BioBuzzSimHardware h = BioBuzzSimHardware.fullRobot();
             TeleOpScenario s = new TeleOpScenario(alliance + "-slide", alliance + "MecanumTeleOp", h,
-                    .02, 3, 200, (p,t,a,b) -> {
+                    .02, 3, 340, (p,t,a,b) -> {
                 b.right_stick_button = p == OpModePhase.ACTIVE && t >= 10 && t < 13;   // extend
-                b.left_stick_button = p == OpModePhase.ACTIVE && t >= 100 && t < 103;  // home
+                b.left_stick_button = p == OpModePhase.ACTIVE && t >= 160 && t < 163;  // home
             });
             s.run();
             assertTrue(s.trace.samples.stream().filter(v -> v.phase == OpModePhase.INIT || v.phase == OpModePhase.INIT_LOOP).allMatch(v -> v.slidePower == 0), s.diagnostic());
-            TeleOpTrace.Sample up = s.trace.at(OpModePhase.ACTIVE, 90);
-            assertEquals(180, up.slideTravelDeg, 5, s.diagnostic());
+            TeleOpTrace.Sample up = s.trace.at(OpModePhase.ACTIVE, 150);
+            assertEquals(700, up.slideTravelDeg, 3, s.diagnostic());
             assertEquals(0, up.slidePower, 0, s.diagnostic());
             assertTrue(up.telemetry.contains("Slide (GP2 RS/LS) : UP"), up.telemetry);
-            TeleOpTrace.Sample down = s.trace.at(OpModePhase.ACTIVE, 190);
-            assertEquals(0, down.slideTravelDeg, 5, s.diagnostic());
+            TeleOpTrace.Sample down = s.trace.at(OpModePhase.ACTIVE, 330);
+            assertEquals(0, down.slideTravelDeg, 3, s.diagnostic());
             assertEquals(0, h.slideServo.getPower(), 0);
             assertStopped(h);
         }

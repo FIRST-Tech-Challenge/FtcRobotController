@@ -82,6 +82,7 @@ up to one loop later.
 | Right stick X | Rotate turret; release holds its target |
 | X | Rehome yaw and hood when bumpers and triggers are released |
 | GP1 Back | Stop intake, transfer and flywheel and close gate; release Back, B, bumpers and triggers to resume |
+| Press GP1 left stick | Toggle **open-loop max**: RT then runs the flywheel at full power (full battery voltage, `RUN_WITHOUT_ENCODER`, no velocity loop); press again to return to the selected controller. Toggling stops the flywheel and closes the gate like a controller switch |
 
 Each button acts once per press. RPM changes apply on the next loop; a change of
 up to 133 RPM does not interrupt a feed already running (see below), but a new shot
@@ -146,6 +147,14 @@ Switching stops the motors and closes the gate; release GP1/GP2 B, bumpers and t
 to re-arm, then hold RT again. A held GP2 B toggles only once. The selected RPM and
 both controllers' tuning are retained, while comparison measurements reset.
 
+**Open-loop max (GP1 left-stick press)** bypasses both controllers: while RT is held,
+`TurretSubsystem.runShooterOpenLoop(1.0)` applies full power with the motor in
+`RUN_WITHOUT_ENCODER`, so speed depends on battery voltage and load. The encoder is still
+read for telemetry and readiness. RPM readiness becomes "measured at or above the selected
+RPM", so RT + LT auto shots still wait for spin-up; manual feed is unchanged. The next
+closed-loop command or stop restores the selected controller's run mode (PIDF goes back to
+`RUN_USING_ENCODER`).
+
 Fusion uses `RUN_WITHOUT_ENCODER` (encoder readings still work) and runs every main
 loop, including recovery, using one cached velocity sample per loop:
 
@@ -155,9 +164,9 @@ loop, including recovery, using one cached velocity sample per loop:
   `12 V / battery`. `kS` overcomes static friction, `kV` holds the target speed and
   `kP` is a small correction for the remaining error.
 
-Starting values are `kS` 0.05, `kV` about 0.000443 and `kP` 0.001 (motor power at
+Starting values are `kS` 0.05, `kV` about 0.000392 and `kP` 0.001 (motor power at
 12 V; `kV` and `kP` per motor tick/s). `kS` and `kP` are estimates and `kV` is
-solved from the 5400 RPM at 14 V observation; none is tuned on this flywheel. Edit
+solved from the 6100 RPM at 14 V observation (November 20, 2026); none is tuned on this flywheel. Edit
 `FUSION_KS`, `FUSION_KV` and `FUSION_KP` live in Dashboard. Releasing RT or stopping
 commands zero power and coasts in FLOAT. The command never opposes the spin
 direction, so lowering the target by 200 RPM or more simply coasts down to the

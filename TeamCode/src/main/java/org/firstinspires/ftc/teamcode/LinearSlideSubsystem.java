@@ -10,8 +10,8 @@ import java.util.function.DoubleSupplier;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
- * Side linear slide: a single Axon MAX+ in continuous mode on Control Hub servo port 2, with its
- * analog feedback on Control Hub analog port 0. Toggles between fully down and fully up.
+ * Side linear slide: a single Axon MAX+ in continuous mode on Expansion Hub servo port 5, with its
+ * analog feedback (white signal wire) on Control Hub analog port 1. Toggles between fully down and fully up.
  * The shot blocker is permanently attached to the slide and has no servo (the claw was removed).
  *
  * <p>The analog angle only covers one turn, so turns are counted from INIT. The slide must be
@@ -21,9 +21,12 @@ public class LinearSlideSubsystem {
 
     public static final String HW_SLIDE_SERVO = "slide_servo";
     public static final String HW_SLIDE_ENCODER = "slide_encoder";
-    // Set both so that positive power raises the slide and the reported angle increases going up.
+    // Set both so that positive power raises the slide and the counted position increases going up.
+    // The slide rises when the servo turns COUNTERCLOCKWISE viewed from its face, and the Axon's analog angle
+    // FALLS going up (2026-11-20), so the encoder is inverted. On the robot (2026-11-20), REVERSE drove the slide
+    // DOWN into its bottom stop (the angle rose, then it stalled), so this Axon raises the slide with FORWARD.
     public static final DcMotorSimple.Direction SERVO_DIRECTION = DcMotorSimple.Direction.FORWARD;
-    public static final boolean ENCODER_INVERTED = false;
+    public static final boolean ENCODER_INVERTED = true;
     // Full CR power maps to the Axon's programmed pulse limits.
     public static final int MIN_PULSE_US = AxonMaxPlus.MIN_PULSE_US;
     public static final int MAX_PULSE_US = AxonMaxPlus.MAX_PULSE_US;
@@ -64,10 +67,14 @@ public class LinearSlideSubsystem {
         servo.setPower(controller.update(clock.getAsDouble(), rawDeg));
     }
 
-    /** INIT loop: keep counting turns but leave the slide unpowered. */
+    /**
+     * INIT loop only: the slide is fully down by definition, so every INIT reading becomes the zero and the last
+     * one before START is the down position. The slide stays unpowered. (The robot's first read at construction
+     * returned 0 V, so the constructor's zero alone is not trustworthy.)
+     */
     public void trackWithoutDriving() {
         readEncoder();
-        controller.observe(rawDeg);
+        controller.zero(rawDeg);
         servo.setPower(0.0);
     }
 

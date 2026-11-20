@@ -30,8 +30,8 @@ import java.util.List;
  * - Coordinates: the repo's field frame (PedroDrive, Zenith routes, TeleOpFieldReference): inches,
  *   (0, 0) = field center, +x toward the blue wall, +y away from the audience. Headings in degrees, CCW positive.
  * - Planned alliance RED.
- * - Robot placed as a 23 x 12 in box, center (-12.41, -65.39), heading 179.8 deg.
- * - Start pose (tracked point = box center + pod offsets X 0 fwd, Y 0 reversed): (-12.415, -65.386).
+ * - Robot placed as a 23 x 12 in box, center (-12.36, -64.46), heading -179.9 deg.
+ * - Start pose (tracked point = box center + pod offsets X 0 fwd, Y 0 reversed): (-12.36, -64.457).
  * - Path limits: speed is a fraction of PedroConfiguration.MAX_FORWARD_VELOCITY_IN_PER_SEC; max velocity,
  *   acceleration and deceleration are Foresight constraints for that one path (0 = no limit).
  *
@@ -48,7 +48,7 @@ import java.util.List;
  * robot (PlannerRobot), telemetry, stepTimer, P(x, y, deg), H(deg), progress().
  */
 
-@Autonomous(name = "testdrive", group = "Auto")
+@Autonomous(name = "BioBuzzAuto", group = "Auto")
 public class testdrive extends LinearOpMode {
 
     // =====================================================================================
@@ -153,7 +153,7 @@ public class testdrive extends LinearOpMode {
             robot.intakePowerScale = T.INTAKE_POWER;
             robot.feedSeconds = T.FEED_SECONDS;
             robot.readyTimeoutSeconds = T.READY_TIMEOUT_S;
-            drive.setStartPose(P(-12.415, -65.386, 179.8));   // box center (-12.41, -65.39) + pod offsets
+            drive.setStartPose(P(-12.36, -64.457, -179.9));   // box center (-12.36, -64.46) + pod offsets
             boolean lastMirrored = mirrored;
             while (opModeInInit()) {
                 loop.begin();
@@ -173,7 +173,7 @@ public class testdrive extends LinearOpMode {
             if (isStopRequested()) return;
             robot.onStart();   // ends a start-pose refinement still collecting frames
 
-            final int STEPS = 7;
+            final int STEPS = 5;
             final double started = now();
             int stage = 0;               // steps started so far; running step index = stage - 1
             boolean running = false;
@@ -249,58 +249,44 @@ public class testdrive extends LinearOpMode {
                 return !first && robot.volleyDone();
             }
 
-            // step 2 - DRIVE to (-47.7, -24.4) @ 179.8 deg
+            // step 2 - DRIVE to (-62.8, -50.6) @ -90 deg
             case 1: {
                 if (first) {
                     pathSegs = 1;
                     Arrays.fill(cbFired, false);
-                    follower.follow(limits(Paths.line(start(P(-12.41, -65.39, 0)), P(-47.67, -24.42, 0)).linear(startH(H(179.8)), H(179.8)),
+                    follower.follow(limits(Paths.line(start(P(-12.36, -64.46, 0)), P(-62.76, -50.56, 0)).linear(startH(H(-179.9)), H(-90)),
                             1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
                 }
                 boolean done = !first && (drive.settled() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
                 return done;
             }
 
-            // step 3 - ACTION DEPOLLINATOR: deploy · wait settle
+            // step 3 - DRIVE to (-64.9, -58.7) @ -90 deg
             case 2: {
-                if (!T.MECHANISMS_ENABLED) return true;   // A/B drive test: robot-function steps off
-                if (first) robot.deployDepollinator();
-                return !first && (robot.depollinatorSettled() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
+                if (first) {
+                    pathSegs = 1;
+                    Arrays.fill(cbFired, false);
+                    follower.follow(limits(Paths.line(start(P(-62.76, -50.56, 0)), P(-64.88, -58.72, 0)).linear(startH(H(-90)), H(-90)),
+                            0.3, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
+                }
+                boolean done = !first && (drive.settled() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
+                return done;
             }
 
-            // step 4 - DRIVE to (-52, -24.4) @ 179.8 deg
+            // step 4 - DRIVE to (-12.4, -52.9) @ 180 deg
             case 3: {
                 if (first) {
                     pathSegs = 1;
                     Arrays.fill(cbFired, false);
-                    follower.follow(limits(Paths.line(start(P(-47.67, -24.42, 0)), P(-52.04, -24.42, 0)).linear(startH(H(179.8)), H(179.8)),
+                    follower.follow(limits(Paths.line(start(P(-64.88, -58.72, 0)), P(-12.44, -52.89, 0)).linear(startH(H(-90)), H(-180)),
                             1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
                 }
                 boolean done = !first && (drive.settled() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
                 return done;
             }
 
-            // step 5 - ACTION INTAKE: in
+            // step 5 - ACTION VOLLEY (AIM + SPIN + SHOOT): feed 2.5s at aim point 1 (red audience)
             case 4: {
-                if (!T.MECHANISMS_ENABLED) return true;   // A/B drive test: robot-function steps off
-                if (first) robot.setIntake(PlannerRobot.IntakeMode.IN, 0, false);   // off after (s, 0 = stays on), off once full
-                return true;
-            }
-
-            // step 6 - DRIVE to (-11.9, -58.9) @ 90 deg
-            case 5: {
-                if (first) {
-                    pathSegs = 1;
-                    Arrays.fill(cbFired, false);
-                    follower.follow(limits(Paths.line(start(P(-52.04, -24.42, 0)), P(-11.93, -58.93, 0)).linear(startH(H(179.8)), H(90)),
-                            1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
-                }
-                boolean done = !first && (drive.settled() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
-                return done;
-            }
-
-            // step 7 - ACTION VOLLEY (AIM + SPIN + SHOOT): feed 2.5s at aim point 1 (red audience)
-            case 6: {
                 if (!T.MECHANISMS_ENABLED) return true;   // A/B drive test: robot-function steps off
                 if (first) {
                     robot.setTrims(0, 0, 0);   // auto-aim trims: yaw deg (left +), hood deg, RPM

@@ -59,20 +59,26 @@ final class BioBuzzSimHardware {
     BioBuzzSimHardware withDepollinator() {
         depollinator = servo("depollinator"); return this;
     }
-    /** Slide CR servo (Control Hub servo 2) and its analog feedback; no claw. The model starts the servo shaft at
-     * 300 deg so the first raise crosses the analog 360/0 wrap. */
-    static final double SLIDE_START_SHAFT_DEG = 300;
+    /** Slide CR servo (Expansion Hub servo 5) and its analog feedback (Control Hub analog 1); no claw. Like the real slide
+     * (2026-11-20): positive physical power RAISES the slide, and the analog angle (45.6 deg fully down) FALLS
+     * going up, so the 700 deg raise crosses the 360/0 wrap twice. Also like the robot, the encoder reads 0 V
+     * until the first tick (the robot's first read at construction returned 0 V), so the zero must come from
+     * INIT readings, not the constructor. */
+    static final double SLIDE_START_SHAFT_DEG = 0;
+    static final double SLIDE_DOWN_RAW_DEG = 45.6;
+    /** Analog angle for a given upward shaft travel from fully down. */
+    static double slideRawDeg(double travelDeg) { return ((SLIDE_DOWN_RAW_DEG - travelDeg) % 360 + 360) % 360; }
     BioBuzzSimHardware withSlide() {
         slideServo = new FakeCRServo(); map.register("slide_servo", slideServo);
         slideEncoder = new FakeAnalogInput(); map.register("slide_encoder", slideEncoder);
-        slideEncoder.setVoltage(SLIDE_START_SHAFT_DEG / 360 * slideEncoder.getMaxVoltage());
+        slideEncoder.setVoltage(0); // the model writes the real angle from the first tick
         return this;
     }
     BioBuzzSimHardware withTurret() {
         yaw1 = servo("turret_servo_1"); yaw2 = servo("turret_servo_2"); hood = servo("turret_pitch");
-        // Independent team observation: 5400 RPM at 14 V, 28 ticks/rev, 1:1 drive.
+        // Independent team observation: 6100 RPM at 14 V, 28 ticks/rev, 1:1 drive.
         // Response rate remains synthetic; no calibrated shot/load dynamics.
-        flywheel = new FakeMotor(5400.0 / 60 * 28, 10, 28);
+        flywheel = new FakeMotor(6100.0 / 60 * 28, 10, 28);
         map.register("turret_motor", flywheel);
         // Real through-bore quadrature is plugged into the intake motor's encoder port (the intake has
         // no encoder). Register only the installed name, exercising the production fallback lookup.

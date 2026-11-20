@@ -87,6 +87,8 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
             boolean previousFUp = false, previousFDown = false, previousPidReset = false;
             boolean previousIUp = false, previousIDown = false;
             boolean previousControllerToggle = gamepad2.b;
+            boolean previousOpenLoopToggle = gamepad1.left_stick_button;
+            boolean openLoopMax = false; // GP1 LS press: RT runs the flywheel at full voltage, no encoder loop.
             boolean wasFeeding = false;
             double minimumFeedRpm = Double.NaN;
             double recoveryStarted = Double.NaN, lastRecoverySeconds = Double.NaN;
@@ -100,6 +102,15 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
                 FiringCoordinator firing = controls.firing();
                 boolean controllerChanged = gamepad2.b && !previousControllerToggle;
                 previousControllerToggle = gamepad2.b;
+                boolean openLoopChanged = gamepad1.left_stick_button && !previousOpenLoopToggle;
+                previousOpenLoopToggle = gamepad1.left_stick_button;
+                if (openLoopChanged) {
+                    openLoopMax = !openLoopMax;
+                    turret.stopShooter();
+                    minimumFeedRpm = Double.NaN;
+                    recoveryStarted = lastRecoverySeconds = Double.NaN;
+                    wasFeeding = false;
+                }
                 if (controllerChanged) {
                     turret.setShooterController(turret.getShooterController() == TurretSubsystem.ShooterController.PIDF
                             ? TurretSubsystem.ShooterController.BANG_BANG_FUSION : TurretSubsystem.ShooterController.PIDF);
@@ -151,7 +162,7 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
                         && !load && !reverse && !spin && !feed && !manualFeed;
                 previousHome = gamepad1.x;
                 // Close the gate and re-arm after a switch; a held trigger cannot resume feeding.
-                boolean stop = gamepad1.back || rehome || controllerChanged;
+                boolean stop = gamepad1.back || rehome || controllerChanged || openLoopChanged;
 
                 if (rehome) turret.setAllServosToZeroPosition();
                 boolean rpmChanged = false, hoodChanged = false;
@@ -181,7 +192,9 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
                 boolean yawInput = Math.abs(gamepad1.right_stick_x) > TurretControl.MANUAL_STICK_DEADBAND;
                 // Compare cached measured speed against this loop's selected target.
                 double measuredRpm = turret.getShooterCurrentRpm();
-                boolean atSpeed = selectedRpm > 0 && Math.abs(measuredRpm - selectedRpm)
+                // Open-loop max overshoots the selected RPM by design, so there it counts as "at least selected".
+                double readinessRpm = openLoopMax ? Math.min(measuredRpm, selectedRpm) : measuredRpm;
+                boolean atSpeed = selectedRpm > 0 && Math.abs(readinessRpm - selectedRpm)
                         <= TurretSubsystem.SHOOTER_READY_TOLERANCE_RPM;
                 if (stop || !spin || rpmChanged) recoveryStarted = Double.NaN;
                 else if (!atSpeed && Double.isNaN(recoveryStarted)) recoveryStarted = now;
@@ -196,10 +209,11 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
                 boolean ready = atSpeed && yawSettled
                         && hoodSettled && !yawInput && !rpmChanged && !hoodChanged;
                 boolean feedReady = IntakeShooterTestController.isLooseReady(yawErrorDeg, hoodSettled,
-                        selectedRpm, measuredRpm);
+                        selectedRpm, readinessRpm);
                 controls.update(now, load, reverse, spin, feed, manualFeed, inhibit, stop,
                         turret.isHomed(), ready, feedReady);
-                if (controls.spinFlywheel() && selectedRpm > 0) turret.setShooterRpm(selectedRpm);
+                if (controls.spinFlywheel() && openLoopMax) turret.runShooterOpenLoop(1.0);
+                else if (controls.spinFlywheel() && selectedRpm > 0) turret.setShooterRpm(selectedRpm);
                 else turret.stopShooter(); // No bench idle: off whenever RT is released.
 
                 gate.setOpen(firing.gateOpen());
@@ -226,7 +240,8 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
                     feedStatus = String.format("GATE OPENING: stage 1 starts %.2f s after the gate command",
                             IntakeShooterTestController.GATE_OPEN_TO_TRANSFER_SECONDS);
                 else if (manualFeed) feedStatus = firing.reason();
-                else if (!spin) feedStatus = "Flywheel off: hold RT for selected RPM; RT + LT = auto shot, B / GP2 RT = manual feed";
+                else if (!spin) feedStatus = (openLoopMax ? "Flywheel off: hold RT for OPEN-LOOP MAX (full voltage)"
+                        : "Flywheel off: hold RT for selected RPM") + "; RT + LT = auto shot, B / GP2 RT = manual feed";
                 else if (selectedRpm <= 0) feedStatus = "Selected RPM is zero: tap Y or D-pad Right to increase";
                 else if (!feed) feedStatus = "Spinning: hold LT with RT to shoot when ready";
                 else if (!turret.isHomed()) feedStatus = "Home required: " + turret.getHomingStatus();
@@ -264,7 +279,9 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
                 telemetry.addData("Feed motors", feeding ? "RUNNING" : "STOPPED");
                 telemetry.addData("Collection", "%s | intake %+.1f", controls.shootingBusy() ? "PAUSED (shooting)"
                         : inhibit ? "PAUSED (GP2 LT)" : "AUTO", intake.getCommandedPower());
-                telemetry.addData("Flywheel regulation", turret.getShooterController());
+                telemetry.addData("Flywheel regulation", openLoopMax
+                        ? "OPEN-LOOP MAX: full voltage, no encoder loop (GP1 LS press to exit; auto shot when >= selected RPM)"
+                        : turret.getShooterController().toString());
                 lights.addWarningTelemetry(telemetry);
                 addControlsTelemetry();
                 intake.addTelemetry(telemetry);
@@ -302,7 +319,8 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
                     packet.put("At speed (0/1)", atSpeed ? 1 : 0);
                     if (Double.isFinite(minimumFeedRpm)) packet.put("Minimum feed RPM", minimumFeedRpm);
                     if (Double.isFinite(lastRecoverySeconds)) packet.put("Last return to tolerance s", lastRecoverySeconds);
-                    packet.put("Controller", turret.getShooterController().name());
+                    packet.put("Controller", openLoopMax ? "OPEN_LOOP_MAX" : turret.getShooterController().name());
+                    packet.put("Open-loop max (0/1)", openLoopMax ? 1 : 0);
                     packet.put("Feed state", firing.state().name());
                     packet.put("Feed status", feedStatus);
                     dashboard.sendTelemetryPacket(packet);
@@ -351,6 +369,7 @@ public class IntakeShooterTestOpMode extends LinearOpMode {
         telemetry.addLine("GP1 B or GP2 RT = Manual Feed (readiness bypassed) | GP2 LT = Inhibit (gate closed, transfer stopped)");
         telemetry.addLine("GP2 PID tuning (PIDF only): Dpad U/D = P +/-1 | R/L = F scale +/-0.05 | Y/A = I +/-0.05 | X = Reset All Gains");
         telemetry.addLine("GP2 B = Toggle Fusion (default) / PIDF; release GP1/GP2 motor controls to re-arm");
+        telemetry.addLine("GP1 LS press = Toggle OPEN-LOOP MAX: RT runs the flywheel at full voltage (no encoder loop)");
         telemetry.addLine("Y/A = RPM +/-100 | Dpad R/L = RPM +/-10 | Dpad Up = Lower Hood, Down = Raise Hood (0.5 deg) | RS-X = Turret");
         telemetry.addLine("Back = Stop Motors + Close Gate (release controls to resume) | X = Rehome with motor controls released");
     }

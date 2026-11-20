@@ -21,11 +21,11 @@ final class BioBuzzSimModel implements DrivetrainSimConfig {
             + "wheel=goBILDA 30A mecanum,104 mm diameter; motor ticks/in=28*(80/20)*(91/30)/(pi*104/25.4); "
             + "SYNTHETIC: track=14 in,wheelbase=14 in,"
             + "strafe ratio=0.85,lag=0.1 s; mounting signs=+1,-1,+1,-1 (team reversal report 2026-11-05); "
-            + "flywheel=5203 Yellow Jacket,observed 5400 RPM at 14 V,28 ticks/rev,1:1 output; "
+            + "flywheel=5203 Yellow Jacket,observed 6100 RPM at 14 V,28 ticks/rev,1:1 output; "
             + "turret=355 deg/servo span,8192 CPR*108/40,synthetic slew=180 deg/s; "
             + "Pinpoint=32,-74 mm,reversed pods,2000/(32pi) ticks/mm; "
             + "camera=synthetic FOV54x41,30Hz,35ms latency; "
-            + "SYNTHETIC slide=CR power*521.74 deg/s shaft (rated Axon MAX+ 6 V),no load/lag,starts 300 deg; "
+            + "SYNTHETIC slide=CR power*521.74 deg/s shaft (rated Axon MAX+ 6 V),no load/lag,+power raises,45.6 deg raw down,angle falls going up,0 V before first tick; "
             + "no contact/ball/Lynx model";
     final MecanumDrivePlant drive;
     final BioBuzzSimHardware hardware;
@@ -50,9 +50,10 @@ final class BioBuzzSimModel implements DrivetrainSimConfig {
             hardware.encoder.setEncoderMeasuringAnotherMechanism(yawDegrees * 61.44, yawVelocity * 61.44);
         }
         if (hardware.slideServo != null) {
+            // On the robot, physical +power raises this slide: slideShaftDeg is upward travel.
             if (!jamSlide) slideShaftDeg += hardware.slideServo.getPhysicalPower() * (60.0 / .115) * seconds;
-            double wrapped = ((slideShaftDeg % 360) + 360) % 360;
-            hardware.slideEncoder.setVoltage(wrapped / 360 * hardware.slideEncoder.getMaxVoltage());
+            double raw = BioBuzzSimHardware.slideRawDeg(slideShaftDeg - BioBuzzSimHardware.SLIDE_START_SHAFT_DEG);
+            hardware.slideEncoder.setVoltage(raw / 360 * hardware.slideEncoder.getMaxVoltage());
         }
         double x = drive == null ? 0 : drive.getX();
         double y = drive == null ? 0 : drive.getY();

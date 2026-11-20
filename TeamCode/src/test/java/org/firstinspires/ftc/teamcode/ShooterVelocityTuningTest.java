@@ -61,8 +61,8 @@ public class ShooterVelocityTuningTest {
         }
     }
     @Test public void initialFusionGainsReproduceTheInstalledSpeedObservation() {
-        // Full power at 5400 RPM and 14 V: the only speed measurement available. kS/kP are estimates.
-        double observedTicksPerSecond = 5400.0 / 60 * 28;
+        // Full power at 6100 RPM and 14 V: the only speed measurement available. kS/kP are estimates.
+        double observedTicksPerSecond = 6100.0 / 60 * 28;
         assertEquals(1, (ShooterVelocityTuning.INITIAL_FUSION_KS
                 + ShooterVelocityTuning.INITIAL_FUSION_KV * observedTicksPerSecond) * 12 / 14, 1e-12);
         assertTrue(ShooterVelocityTuning.INITIAL_FUSION_KS <= ShooterVelocityTuning.MAX_FUSION_KS);
@@ -70,7 +70,7 @@ public class ShooterVelocityTuningTest {
         assertTrue(ShooterVelocityTuning.INITIAL_FUSION_KP <= ShooterVelocityTuning.MAX_FUSION_KP);
     }
     @Test public void feedforwardMatchesConfiguredMotorSpeedAndCompensatesBatterySag() {
-        double base = 32767.0 / (5400.0 / 60 * 28) * 14.0 / 12;
+        double base = 32767.0 / (6100.0 / 60 * 28) * 14.0 / 12;
         assertEquals(base, ShooterVelocityTuning.feedforward(12, 1), 1e-9);
         assertEquals(base * 12 / 10, ShooterVelocityTuning.feedforward(10, 1), 1e-9);
         assertEquals(base * 12 / 14, ShooterVelocityTuning.feedforward(14, 1), 1e-9);
@@ -85,8 +85,8 @@ public class ShooterVelocityTuningTest {
         assertEquals(base, ShooterVelocityTuning.feedforward(12, Double.NaN), 1e-9);
     }
     @Test public void fullSpeedTargetUsesTheConfiguredMaximumWithoutReserve() {
-        assertEquals(1, ShooterVelocityTuning.estimatedFreeSpeedUsage(5400, 14), 1e-9);
-        assertEquals(6000.0 / 5400, ShooterVelocityTuning.estimatedFreeSpeedUsage(6000, 14), 1e-9);
+        assertEquals(1, ShooterVelocityTuning.estimatedFreeSpeedUsage(6100, 14), 1e-9);
+        assertEquals(6000.0 / 6100, ShooterVelocityTuning.estimatedFreeSpeedUsage(6000, 14), 1e-9);
         assertEquals(6000, ShooterSpeed.FLYWHEEL_MAX_TARGET_RPM, 0);
         assertTrue(ShooterVelocityTuning.estimatedFreeSpeedUsage(ShooterSpeed.FLYWHEEL_MAX_TARGET_RPM, 10) > 1);
         assertEquals(0, ShooterVelocityTuning.estimatedFreeSpeedUsage(0, 12), 0);

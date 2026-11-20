@@ -174,7 +174,7 @@ Yaw tracking works from odometry even before the shot table is entered. Distance
 
 The Axon MAX+ positional controllers perform normal motion. Full manual stick requests the rated 6 V shaft speed, 60/0.115 = 521.74 deg/s at 1:1; steady speed is linear outside the 0.08 deadband. Two short 10-ms velocity filters ease command acceleration changes; a 5-ms position-command filter softens destination changes and stops. Release captures the encoder once, not continuously. External correction applies bounded positional adjustments, allowing a 250-ms settled interval between them, until error drops below 1.5 degrees. The successful offset is retained to hold position and is capped at 25 degrees. It does not run a continuous PID. Target changes above 10 degrees in one update reset qualification; smaller odometry changes do not constantly restart it. Actual loaded acceleration, jerk, speed and stopping distance depend on the servos' internal controllers and mechanics. Competition feed readiness accepts yaw error <=3 degrees and the existing hood/RPM checks. There is no chassis-speed, turret-speed, acceleration or stationary qualification gate. The 150-ms angle/RPM readiness window, timed recovery and physical gate travel remain. Drivers decide when to take the risk of firing while moving.
 
-Gate direction, depollinator direction and hood home retain the installed implementation: gate 0.5 closed to 0.2 open with REVERSE direction (90 degrees CW); depollinator 30 to 165 degrees (135 degrees CW); hood home approximately 0.559155 with 30 degrees downward travel to approximately 0.728169. The turret-only test is unchanged. Pollen collection and general autonomous work remain deferred primitive examples. The match-autonomous adapter now uses odometry for both navigation and shooting, retains the route-selected target, and performs no camera correction or direct visual aiming during the route. It continuously updates aim/RPM while navigating, and requests feed only in scoring/preload states without an extra motion gate. No end-of-route relocalization has been added without an approved route and verified landmark map.
+Gate direction, depollinator direction and hood home retain the installed implementation: gate 0.5 closed to 0.2 open with REVERSE direction (90 degrees CW); depollinator 30 to 165 degrees (135 degrees CW); hood home approximately 0.573239 with 30 degrees downward travel to approximately 0.742254. The turret-only test is unchanged. Pollen collection and general autonomous work remain deferred primitive examples. The match-autonomous adapter now uses odometry for both navigation and shooting, retains the route-selected target, and performs no camera correction or direct visual aiming during the route. It continuously updates aim/RPM while navigating, and requests feed only in scoring/preload states without an extra motion gate. No end-of-route relocalization has been added without an approved route and verified landmark map.
 
 
 ## Remaining calibration and intentional differences
@@ -247,14 +247,16 @@ The clock starts at TeleOp START, like the Driver Station timer. A START after b
 Both competition TeleOps share the slide controls. **GP2 right-stick click** extends the side
 linear slide fully up and **GP2 left-stick click** homes it fully down (no longer a toggle; pressing the
 button for the position it is already commanded to is harmless; both at once homes). The slide is driven by a single continuous-mode
-Axon MAX+ on Control Hub servo port 2 (`slide_servo`), and the shot blocker is permanently
+Axon MAX+ on Expansion Hub servo port 5 (`slide_servo`; feedback `slide_encoder` on Control Hub analog 1), and the shot blocker is permanently
 attached. There is no claw and GP1 B is unbound in competition. The slide must be **fully down at INIT**: the Axon analog feedback only
 covers one turn, so turns are counted from that position. The slide is not powered during INIT.
 A stall (under 5 degrees of progress in 0.5 s), wrong-direction movement or overall timeout cuts
 slide power and shows FAULT. Either button retries: RS click extends again, LS click homes; telemetry shows both. A missing slide
 shows UNAVAILABLE instead of stopping the OpMode. Autonomous does not use the slide.
-Travel (`LinearSlideController.MAX_TRAVEL_DEG`, 180-degree placeholder) must be measured with
-`Test: Linear Slide`.
+The angle read at INIT is fully down. Fully up is 700 degrees (about 1.94 turns, `LinearSlideController.MAX_TRAVEL_DEG`)
+counterclockwise viewed from the servo face, during which the analog angle falls (`SERVO_DIRECTION = FORWARD`,
+`ENCODER_INVERTED = true`; set 2026-11-20). Every INIT reading re-zeros the slide, so the down position is the
+last angle read before START.
 
 ### GP1 rumble and fault lights (November 19)
 

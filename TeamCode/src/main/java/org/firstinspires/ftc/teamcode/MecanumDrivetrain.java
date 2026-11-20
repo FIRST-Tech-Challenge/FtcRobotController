@@ -40,6 +40,9 @@ public class MecanumDrivetrain {
     // Correct the hardware boundary once for TeleOp, direct wheel tests and Pedro/autonomous.
     public static final DcMotor.Direction LEFT_MOTOR_DIRECTION = DcMotor.Direction.FORWARD;
     public static final DcMotor.Direction RIGHT_MOTOR_DIRECTION = DcMotor.Direction.REVERSE;
+    // TeleOp-only acceleration limit on wheel power (normalized power per second) so fast stick
+    // reversals no longer slip the 20T:80T gears. 10/s = 0 to full in 0.1 s, full reverse in 0.2 s.
+    public static final double TELEOP_MAX_WHEEL_POWER_CHANGE_PER_SEC = 10.0;
 
     private final DcMotorEx frontLeft;
     private final DcMotorEx frontRight;
@@ -71,6 +74,44 @@ public class MecanumDrivetrain {
      * @param yaw     Clockwise (+1.0) / Counter-Clockwise (-1.0) rotation
      */
     public void driveRobotCentric(double axial, double lateral, double yaw) {
+        double[] powers = robotCentricWheelPowers(axial, lateral, yaw);
+        setWheelPowers(powers[0], powers[1], powers[2], powers[3]);
+    }
+
+    /**
+     * TeleOp drive: same mixing as {@link #driveRobotCentric}, but each wheel power moves at most
+     * {@link #TELEOP_MAX_WHEEL_POWER_CHANGE_PER_SEC} x dt from last loop's command, so fast direction
+     * changes ramp briefly instead of reversing torque instantly.
+     *
+     * @param dtSeconds time since the previous drive command (seconds)
+     */
+    public void driveRobotCentricRateLimited(double axial, double lateral, double yaw, double dtSeconds) {
+        double[] target = robotCentricWheelPowers(axial, lateral, yaw);
+        double[] limited = rateLimitWheelPowers(
+                new double[] {lastFrontLeftPower, lastFrontRightPower, lastBackLeftPower, lastBackRightPower},
+                target, TELEOP_MAX_WHEEL_POWER_CHANGE_PER_SEC * Math.max(0.0, dtSeconds));
+        setWheelPowers(limited[0], limited[1], limited[2], limited[3]);
+    }
+
+    /**
+     * Moves {@code previous} toward {@code target} by at most {@code maxStep} on any wheel. All four
+     * changes share one scale factor so the chassis keeps heading toward the commanded motion.
+     */
+    static double[] rateLimitWheelPowers(double[] previous, double[] target, double maxStep) {
+        double largestChange = 0.0;
+        for (int i = 0; i < target.length; i++) {
+            largestChange = Math.max(largestChange, Math.abs(target[i] - previous[i]));
+        }
+        double scale = largestChange <= maxStep ? 1.0 : maxStep / largestChange;
+        double[] limited = new double[target.length];
+        for (int i = 0; i < target.length; i++) {
+            limited[i] = previous[i] + (target[i] - previous[i]) * scale;
+        }
+        return limited;
+    }
+
+    /** Mecanum mixing as {FL, FR, BL, BR}, normalized so no wheel exceeds 1.0. */
+    static double[] robotCentricWheelPowers(double axial, double lateral, double yaw) {
         double scaledLateral = lateral * LATERAL_STRAFE_MULTIPLIER;
 
         double flPower = axial + scaledLateral + yaw;
@@ -89,7 +130,7 @@ public class MecanumDrivetrain {
             brPower /= max;
         }
 
-        setWheelPowers(flPower, frPower, blPower, brPower);
+        return new double[] {flPower, frPower, blPower, brPower};
     }
 
     /**

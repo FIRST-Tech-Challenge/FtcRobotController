@@ -32,7 +32,7 @@ public class LinearSlideTestOpMode extends LinearOpMode {
                 loop.begin();
                 slide.trackWithoutDriving();
                 telemetry.addLine("Slide must be FULLY DOWN now (INIT = zero).");
-                telemetry.addLine("CH servo 2: slide_servo (CR) | CH analog 0: slide_encoder");
+                telemetry.addLine("Exp Hub servo 5: slide_servo (CR) | CH analog 1: slide_encoder");
                 slide.addTelemetry(telemetry);
                 loop.addTelemetry(telemetry); telemetry.update();
             }

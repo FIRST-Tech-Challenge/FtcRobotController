@@ -45,6 +45,20 @@ public class LinearSlideControllerTest {
         assertEquals(40, c.getPositionDeg(), 1e-9);
     }
 
+    @Test public void measuredReadingsGiveMeasuredTravelWithFallingAngle() {
+        // The real slide: whatever angle INIT reads is fully down (45.6 deg raw when measured), and the angle
+        // falls through the 360/0 wrap as the slide rises about 1.94 turns.
+        LinearSlideController c = new LinearSlideController(LinearSlideSubsystem.ENCODER_INVERTED);
+        c.zero(45.6);
+        double travelled = 0;
+        while (travelled + 10 < LinearSlideController.MAX_TRAVEL_DEG) {
+            travelled += 10;
+            c.observe(((45.6 - travelled) % 360 + 360) % 360);
+        }
+        c.observe(((45.6 - LinearSlideController.MAX_TRAVEL_DEG) % 360 + 360) % 360);
+        assertEquals(LinearSlideController.MAX_TRAVEL_DEG, c.getPositionDeg(), 1e-6);
+    }
+
     @Test public void toggleRaisesOverSeveralTurnsThenLowers() {
         LinearSlideController c = new LinearSlideController(false, 900, 10);
         Plant p = new Plant(); p.angleDeg = 200;
@@ -128,9 +142,13 @@ public class LinearSlideControllerTest {
         assertTrue(c.update(p.now, p.raw()) < 0);
     }
 
-    @Test public void placeholderTravelIsShortAndTimeoutCoversIt() {
-        assertFalse(LinearSlideController.TRAVEL_MEASURED);
-        assertTrue(LinearSlideController.MAX_TRAVEL_DEG <= 360);
+    @Test public void measuredTravelIsUnderOneTurnAndTimeoutCoversIt() {
+        assertTrue(LinearSlideController.TRAVEL_MEASURED);
+        // 2026-11-20: up is 1.75 turns + 70 deg CCW viewed from the servo face, with the analog angle falling.
+        assertEquals(700, LinearSlideController.MAX_TRAVEL_DEG, 1e-9);
+        assertTrue(LinearSlideSubsystem.ENCODER_INVERTED);
+        // Robot test 2026-11-20: REVERSE drove the slide down into its bottom stop.
+        assertEquals(com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD, LinearSlideSubsystem.SERVO_DIRECTION);
         assertTrue(LinearSlideController.MOVE_TIMEOUT_SECONDS
                 > LinearSlideController.MAX_TRAVEL_DEG / AxonMaxPlus.DEGREES_PER_SECOND_AT_6V);
     }

@@ -257,7 +257,7 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                 boolean autoAimHeld = gamepad1.right_trigger > TRIGGER_DEADBAND;
                 double yaw = gamepad1.right_stick_x; // Full rotation speed, also while auto aiming.
 
-                drivetrain.driveRobotCentric(axial, lateral, yaw);
+                drivetrain.driveRobotCentricRateLimited(axial, lateral, yaw, dt); // Ramps reversals: gear slip.
                 boolean deployDepollinator = gamepad1.right_stick_button;
                 boolean homeDepollinator = gamepad1.left_stick_button;
                 if (homeDepollinator && !previousDepollinatorHome) {

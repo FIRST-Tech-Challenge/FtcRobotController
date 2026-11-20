@@ -65,12 +65,11 @@ Both the Limelight (`limelight`) and USB webcam (`webcam_1`) connect to the **sa
 | 2 | `turret_servo_2` | Turret rotation 2 (locked pair with port 1) |
 | 3 | `gate_servo` | goBILDA Super Speed gate, 150 degrees closed / 60 degrees open (90 degrees CW with REVERSE direction) |
 | 4 | `depollinator` | Axon MAX+, 30 degrees home / 165 degrees deployed |
-| 5 | (unused) | Formerly `slide_servo`; the slide moved to Control Hub servo 2 on 2026-11-19 |
+| 5 | `slide_servo` (**CR Servo** entry) | The single Axon MAX+ in continuous mode driving the side linear slide; the shot blocker is permanently attached (no claw). Back on this port since 2026-11-20 |
 
 | Other port | Configuration name | Mechanism |
 | --- | --- | --- |
-| Control Hub servo 2 | `slide_servo` (**CR Servo** entry) | The single Axon MAX+ in continuous mode driving the side linear slide; the shot blocker is permanently attached (no claw) |
-| Control Hub analog 0 | `slide_encoder` (Analog Input) | Slide Axon MAX+ analog feedback; turns counted from INIT (slide must start fully down) |
+| Control Hub analog 1 | `slide_encoder` (Analog Input) | Slide Axon MAX+ analog feedback; its signal wire is the **white** (n+1) wire of the 0-1 connector, so configure port **1**, not 0. Turns counted from INIT (slide must start fully down) |
 
 
 ### Independent status-light connections
@@ -81,7 +80,7 @@ Both the Limelight (`limelight`) and USB webcam (`webcam_1`) connect to the **sa
 | 4 | `led_shooter` | Preparation/readiness/feeding/inhibit |
 | 5 | `led_status` | Turret home and field-reference availability |
 
-Control Hub servo 2 is the slide (CR Servo entry); servo 0 is unused since the claw was removed. Use positional Servo entries for the lights. Missing
+Control Hub servos 0-2 are unused (the slide moved to Expansion Hub servo 5 on 2026-11-20; the claw was removed). Use positional Servo entries for the lights. Missing
 lights are reported without preventing TeleOp. See the final TeleOp audit for
 colors and the isolated `Test: Status Lights` controls.
 
@@ -108,13 +107,13 @@ Tag assignments follow [FIRST's BIOBUZZ manual, AprilTags section](https://ftc-r
    - **[TurretSubsystem.java](TurretSubsystem.java)**: Plain Java subsystem for the Turret & Limelight 3A assembly:
      - **Rotation Servos (`"turret_servo_1"`, `"turret_servo_2"`)**: 2x Axon MAX+ in Servo Mode (`500–2500 us`), Expansion Hub Servo Ports 1 & 2 (via goBILDA 6V Servo Power Injector), `1:1` with turret rotation. Home (`0.5`) = robot heading `90°` (right). Headings increase clockwise: front `0°`, right `90°`, back `180°`, left `270°`; the left `265°..275°` zone is excluded. Internal servo-relative yaw is counterclockwise, `-175°..+175°` from home.
      - **Through-Bore Encoder**: REV Through-Bore Encoder V1 (`8192 CPR`) on Expansion Hub Quadrature Port 1, read through `intake_motor` (`turret_encoder` is a standalone configuration alias). The `108T Turret : 40T Encoder` gearing gives `2.7x` faster rotation, `22,118.4 ticks/turret rev` and `61.44 ticks/deg`. Homing captures a software zero without resetting the shared channel; feedback supplies measured angle/rate and bounded encoder correction.
-     - **Pitch Servo (`"turret_pitch"`)**: 1x Axon MAX+ in Servo Mode on Expansion Hub Servo Port 0, linked `2:1` with hood pitch. Home position `0.559155` (10.5 hood degrees below the original servo 0.5 reference; the previous +12.5° position) is the new +15° command reference. Increasing PWM lowers elevation to -15° over 30° of hood travel (60° shaft travel, servo position approximately `0.728169`).
+     - **Pitch Servo (`"turret_pitch"`)**: 1x Axon MAX+ in Servo Mode on Expansion Hub Servo Port 0, linked `2:1` with hood pitch. Home position `0.573239` (13 hood degrees below the original servo 0.5 reference; the measured physical +15° position) is the new +15° command reference. Increasing PWM lowers elevation to -15° over 30° of hood travel (60° shaft travel, servo position approximately `0.742254`).
      - **Shooter Motor (`"turret_motor"`)**: 6000 RPM goBILDA 5203 Yellow Jacket on Expansion Hub Motor & Quadrature Port 0 (`28.0 ticks/rev`, `6000.0 configured RPM`, `RUN_USING_ENCODER`, `FLOAT`, 1:1 motor-to-flywheel drive).
      - **Limelight 3A (`"limelight"`)**: Connected to Control Hub USB 3.0 via powered USB hub, lens axis angled `55°` up from horizontal toward the goal (front glass 35° from horizontal; lens axis is perpendicular to the glass), lens height `337 mm` (`13.268 in`), pipeline `0`.
 2. **Layer 2 — Standalone Mechanism Test OpModes**:
    - **[DepollinatorTestOpMode.java](DepollinatorTestOpMode.java)** (`Test: Depollinator Only`, group `Test`): Tests only `depollinator` with GP1 right-stick click to deploy and left-stick click to home.
-   - **[LinearSlideTestOpMode.java](LinearSlideTestOpMode.java)** (`Test: Linear Slide`, group `Test`): Tests only `slide_servo` and `slide_encoder`. Start with the slide fully down. Same controls as competition (GP2 right-stick click = extend, left-stick click = home), plus GP2 left-stick Y manual slide power (half scale, no limits) and GP2 Back re-zero. Use it to measure `LinearSlideController.MAX_TRAVEL_DEG`.
-   - **[LinearSlideSubsystem.java](LinearSlideSubsystem.java)** / **[LinearSlideController.java](LinearSlideController.java)**: Side linear slide, one Axon MAX+ (continuous) on Control Hub servo port 2, with the shot blocker permanently attached. Counts Axon analog turns from INIT and drives to fully down (0) or fully up with proportional power; stall, wrong-direction and timeout faults cut power (press again to retry). No power during INIT. Travel is a 180-degree placeholder until measured.
+   - **[LinearSlideTestOpMode.java](LinearSlideTestOpMode.java)** (`Test: Linear Slide`, group `Test`): Tests only `slide_servo` and `slide_encoder`. Start with the slide fully down. Same controls as competition (GP2 right-stick click = extend, left-stick click = home), plus GP2 left-stick Y manual slide power (half scale, no limits) and GP2 Back re-zero. Use it to re-measure `LinearSlideController.MAX_TRAVEL_DEG`.
+   - **[LinearSlideSubsystem.java](LinearSlideSubsystem.java)** / **[LinearSlideController.java](LinearSlideController.java)**: Side linear slide, one Axon MAX+ (continuous) on Expansion Hub servo port 5 with feedback on Control Hub analog 1, with the shot blocker permanently attached. Counts Axon analog turns from INIT and drives to fully down (0) or fully up with proportional power; stall, wrong-direction and timeout faults cut power (press again to retry). No power during INIT. The INIT angle is fully down; fully up is 700 degrees (about 1.94 turns) counterclockwise viewed from the servo face, with the analog angle falling (`SERVO_DIRECTION = FORWARD`, `ENCODER_INVERTED = true`). Every INIT reading re-zeros it, so the down position is the last angle read before START.
    - **[TransferTestOpMode.java](TransferTestOpMode.java)** (`Test: Transfer Only`, group `Test`): Tests stage 1 automatic loading (both linked transfer motors) and the digital full sensor; both transfer motors and gate must be configured. Hold RB to request the shared timed gate-open feed cycle; release closes the gate and returns to loading. LB pauses loading and inhibits feed with priority. The flywheel is not initialized; exercise feeding empty first. After START, stage 1 loads until continuous HIGH for 0.5 seconds confirms full. Stage 1 runs on for 0.5 seconds after full confirmation, then holds while HIGH remains confirmed; LOW immediately resumes loading. Reports raw digital state, confirmation time and commanded power; stops on shutdown.
    - **[IntakeTestOpMode.java](IntakeTestOpMode.java)** (`Test: Intake Only`, group `Test`): Tests only `intake_motor` using GP1 right/left bumpers, without requiring other mechanisms.
    - **[GateTestOpMode.java](GateTestOpMode.java)** (`Test: Gate Only`, group `Test`): Tests only `gate_servo`; hold GP1 left trigger to open to 60 degrees (`0.2`, 90 degrees CW with REVERSE direction from home), release to close to 150 degrees (`0.5`).

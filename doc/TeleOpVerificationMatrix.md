@@ -331,7 +331,7 @@ initialization/loop/STOP under its stated fixture; it does not certify every con
 | Intake | IntakeTestOpMode, bench, both wrappers | Forward/reverse/both/neutral, confirmed-HIGH stop (no reversal), LOW recovery, bumper overrides, independent shaft encoder, shutdown; no ball-contact simulation |
 | Transfer | TransferTestOpMode, bench, both wrappers | 0.5-second HIGH dwell, 0.5-second stage-1 run-on, LOW resume, stage-1 loading, timed gate/stage-1 feed, inhibit priority, STOP; every scenario asserts both linked transfer motors share one command (2026-11-18) |
 | Depollinator | DepollinatorTestOpMode, both wrappers | Deploy/home edges, home priority, PWM range/endpoints; holds commanded position at STOP |
-| Linear slide | LinearSlideTestOpMode, both wrappers | GP2 LS-click toggle raises across the analog 360/0 wrap and lowers to zero, no power in INIT, jam -> FAULT with zero power, zero power at STOP. Scenarios: `linearSlideTogglesAcrossAnalogWrap`, `jammedLinearSlideFaultsWithZeroPower`, `bothAlliancesToggleSlideOnGp2`. SYNTHETIC unloaded slide (rated Axon speed, no gravity/lag); travel is a placeholder until measured. Claw removed 2026-11-19 |
+| Linear slide | LinearSlideTestOpMode, both wrappers | GP2 LS-click toggle raises across the analog 360/0 wrap and lowers to zero, no power in INIT, jam -> FAULT with zero power, zero power at STOP. Scenarios: `linearSlideTogglesAcrossAnalogWrap`, `jammedLinearSlideFaultsWithZeroPower`, `bothAlliancesToggleSlideOnGp2`. SYNTHETIC unloaded slide (rated Axon speed, no gravity/lag) raised by +physical power, reading 0 V until the first tick, then 45.6 deg raw down with the angle falling going up, so the 700 deg raise crosses the wrap twice. Claw removed 2026-11-19 |
 | Turret / hood / flywheel | TurretTestOpMode, bench, both wrappers | Independent finite-rate yaw on transfer motor 1's encoder input, SDK REVERSE sign normalization, paired servo commands, hood held-button edge, shaft response, startup and STOP; loaded response unmeasured |
 | Pinpoint | PinpointTestOpMode smoke, full competition fixture | SDK fake calibration/pod configuration and chassis coupling; NOT_READY fault blocks synthetic automatic shots; no physical pod calibration certified |
 | Limelight / goal state | LimelightTagTestOpMode, GoalStateTestOpMode smoke | Geometric camera; physical tag +Z-into-print convention resolved 2026-11-05 and converted once in `LimelightObservation`; inverted-camera rejection retained; physical height/plane accuracy unvalidated |
@@ -801,7 +801,7 @@ description, and the team chose coasting the same day.
 The law is `ShooterVelocityTuning.fusionPower`; `TurretSubsystem.ShooterController.BANG_BANG_FUSION` replaces
 `BANG_BANG` and is selected by no other OpMode, so both competition TeleOps, autonomous and the other tests keep
 hub PIDF unchanged. Gains are live in Dashboard (`FUSION_KS`, `FUSION_KV`, `FUSION_KP`); initial kS 0.05 and kP 0.001
-are estimates and kV is solved from the 5400 RPM at 14 V observation. Readiness tolerance (+/-100 RPM), feed timing,
+are estimates and kV is solved from the 6100 RPM at 14 V observation (November 20). Readiness tolerance (+/-100 RPM), feed timing,
 arming and stop behavior are unchanged. A zero target still coasts in FLOAT, and FLOAT behavior is retained.
 
 Simulation decision: bench-only controller, so ran the Mechanisms class (all four actual-bench scenarios, including
@@ -932,7 +932,7 @@ Simulation decision: omitted; documentation-only status change.
 
 Change: both competition TeleOps (`MecanumTeleOp` via the Red/Blue wrappers) select
 `TurretSubsystem.ShooterController.BANG_BANG_FUSION` at INIT (`MecanumTeleOp.FLYWHEEL_CONTROLLER`) instead of hub
-velocity PIDF. The law, gains (initial kS 0.05, kV ~0.000443, kP 0.001, all untuned) and 80 ticks/s bang-bang band are
+velocity PIDF. The law, gains (initial kS 0.05, kV ~0.000392, kP 0.001, all untuned) and 80 ticks/s bang-bang band are
 the existing bench controller; the subsystem default stays PIDF, so autonomous and the other test OpModes are
 unchanged. Every TeleOp loop already commands RPM after `turret.update()` (manual, auto-aim solution or manual fallback),
 which the fusion law needs. Readiness tolerance (+/-100 RPM) is unchanged.
@@ -1047,6 +1047,31 @@ their claw assertions; the trace drops the `clawServo` column.
 Simulation decision: ran the three slide scenarios (both real Red/Blue wrappers plus the isolated test OpMode); all
 passed, along with `LinearSlideControllerTest` (9), `TeleOpIntegrationPolicyTest` (6) and `:TeamCode:assembleDebug`.
 The hub port is configuration only (software finds `slide_servo` by name), so the sim cannot check the wiring.
+
+## Slide back on Expansion Hub servo 5, feedback on Control Hub analog 1 (2026-11-20)
+
+The slide Axon MAX+ (`slide_servo`, CR Servo entry) is plugged into Expansion Hub servo port 5. Its analog feedback
+signal is the white wire of the Control Hub analog 0-1 connector, which REV documents as the n+1 channel, so
+`slide_encoder` must be configured on Control Hub analog port **1** (port 0 would read the unconnected blue channel and
+the slide would fault as stalled). Configuration names, slide logic and constants are unchanged; only comments, the
+`Test: Linear Slide` INIT wiring line and docs changed. The hub port is configuration only, so the sim cannot check
+wiring.
+
+Travel, same day: the team confirmed the analog angle falls as the slide rises and set fully up as 1.75 turns
+(`MAX_TRAVEL_TURNS`, 630 deg) counterclockwise viewed from the servo face, from the angle read at INIT (fully down;
+it read 45.6 deg raw / 0.418 V). `ENCODER_INVERTED` is true. Gains and fault thresholds are unchanged.
+
+First robot run of that setup: INIT showed position -91.4 at raw 91.4 deg, i.e. the zero came from a 0 V first read
+at construction, and with `SERVO_DIRECTION = REVERSE` the extend raised the raw angle (drove the slide DOWN) and
+stalled at the bottom stop. Fixes: `SERVO_DIRECTION` is FORWARD, and `trackWithoutDriving()` (called only in INIT by
+both TeleOps, the planner autos and the test OpMode) now re-zeros on every INIT reading, so the down position is the
+last angle read before START. The synthetic encoder now reads 0 V until the first tick like the robot; before the
+zero fix the isolated scenario reproduced it (raised to 672.8 deg instead of 630). The synthetic slide models the
+robot (+physical power raises it, 45.6 deg raw down, angle falling), so a raise crosses the wrap twice. The slide scenarios run 340 active ticks, sample UP at tick 150 and DOWN at tick 330, and
+expect the travel +/- 3 deg up and 0 +/- 3 deg down. A new unit test replays the measured readings through the controller.
+
+Later the same day the team found the slide can move another 70 deg past 1.75 turns, so `MAX_TRAVEL_DEG` is now
+700 (about 1.94 turns; `MAX_TRAVEL_TURNS` was removed) and the slide scenarios expect 700 +/- 3 deg up.
 
 ## Bench test uses the competition shooting policy, fine RPM steps (2026-11-19)
 

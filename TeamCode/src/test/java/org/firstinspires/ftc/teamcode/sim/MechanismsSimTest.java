@@ -81,21 +81,21 @@ class MechanismsSimTest {
 
     @Test void linearSlideTogglesAcrossAnalogWrap() throws Exception {
         BioBuzzSimHardware h = new BioBuzzSimHardware().withSlide();
-        TeleOpScenario s = new TeleOpScenario("linear-slide", "LinearSlideTestOpMode", h, .02, 5, 180, (p,t,a,b) -> {
+        TeleOpScenario s = new TeleOpScenario("linear-slide", "LinearSlideTestOpMode", h, .02, 5, 340, (p,t,a,b) -> {
             b.right_stick_button = p == OpModePhase.ACTIVE && t >= 10 && t < 13;   // extend
-            b.left_stick_button = p == OpModePhase.ACTIVE && t >= 90 && t < 93;    // home
+            b.left_stick_button = p == OpModePhase.ACTIVE && t >= 160 && t < 163;  // home
         });
         s.run();
         // INIT only tracks; no slide power before START.
         assertTrue(s.trace.samples.stream().filter(v -> v.phase == OpModePhase.INIT || v.phase == OpModePhase.INIT_LOOP).allMatch(v -> v.slidePower == 0), s.diagnostic());
         assertTrue(s.trace.at(OpModePhase.ACTIVE, 15).slidePower > 0, s.diagnostic());
-        // Start shaft 300 deg + 180 crosses the analog 360/0 wrap.
-        TeleOpTrace.Sample up = s.trace.at(OpModePhase.ACTIVE, 80);
-        assertEquals(180, up.slideTravelDeg, 5, s.diagnostic());
+        // 45.6 deg raw down, angle falling: the 700 deg raise crosses the analog 360/0 wrap twice.
+        TeleOpTrace.Sample up = s.trace.at(OpModePhase.ACTIVE, 150);
+        assertEquals(700, up.slideTravelDeg, 3, s.diagnostic());
         assertEquals(0, up.slidePower, 0, s.diagnostic());
         assertTrue(up.telemetry.contains("Slide (GP2 RS/LS) : UP"), up.telemetry);
-        TeleOpTrace.Sample down = s.trace.at(OpModePhase.ACTIVE, 170);
-        assertEquals(0, down.slideTravelDeg, 5, s.diagnostic());
+        TeleOpTrace.Sample down = s.trace.at(OpModePhase.ACTIVE, 330);
+        assertEquals(0, down.slideTravelDeg, 3, s.diagnostic());
         assertEquals(0, down.slidePower, 0, s.diagnostic());
         assertTrue(down.telemetry.contains("Slide (GP2 RS/LS) : DOWN"), down.telemetry);
         assertEquals(0, h.slideServo.getPower(), 0);
@@ -124,8 +124,8 @@ class MechanismsSimTest {
         s.run();
         assertTrue(Math.abs(s.trace.at(OpModePhase.ACTIVE, 60).yaw) > 5, s.diagnostic());
         assertTrue(s.trace.at(OpModePhase.ACTIVE, 90).flywheelVelocity > 1000, s.diagnostic());
-        // Installed home is 10.5 hood degrees below the original reference; held D-pad adds one 0.5-degree step.
-        assertEquals(.5 + (10.5 + .5) * 2 / 355, s.trace.at(OpModePhase.ACTIVE, 40).hood, 1e-8);
+        // Installed home is 13 hood degrees below the original reference; held D-pad adds one 0.5-degree step.
+        assertEquals(.5 + (13.0 + .5) * 2 / 355, s.trace.at(OpModePhase.ACTIVE, 40).hood, 1e-8);
         assertEquals(s.hardware.yaw1.getPosition(), s.hardware.yaw2.getPosition());
         assertEquals(0, s.hardware.flywheel.getPower());
     }

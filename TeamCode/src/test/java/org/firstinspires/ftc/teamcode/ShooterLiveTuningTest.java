@@ -32,10 +32,10 @@ public class ShooterLiveTuningTest {
         return new TurretSubsystem(map, false, () -> 0);
     }
 
-    /** Synthetic plant only: full power is 5400 RPM, with no friction, ball load or voltage sag. */
+    /** Synthetic plant only: full power is 6100 RPM, with no friction, ball load or voltage sag. */
     @Test public void fusionSpinsUpAtFullPowerThenHoldsInsideFeedforwardBandOnFakeFlywheel() {
-        FakeMotor motor = new FakeMotor(5400.0 / 60 * 28, 10, 28);
-        TurretSubsystem turret = turret(motor, 14); // 5400 RPM was observed at 14 V.
+        FakeMotor motor = new FakeMotor(6100.0 / 60 * 28, 10, 28);
+        TurretSubsystem turret = turret(motor, 14); // 6100 RPM was observed at 14 V.
         assertEquals(TurretSubsystem.ShooterController.PIDF, turret.getShooterController());
         turret.setShooterRpm(2800);
         turret.setShooterController(TurretSubsystem.ShooterController.BANG_BANG_FUSION);

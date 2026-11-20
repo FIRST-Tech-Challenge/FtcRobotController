@@ -111,7 +111,7 @@ public class TurretSubsystem {
     // =========================================================================
     // HOOD TRAVEL FROM HOME (PORT 0, 2:1 LINKAGE): 0..30 DEG => LAUNCH +15..-15 DEG
     // =========================================================================
-    // Home includes a 10.5-degree downward offset from the original 0.5 mechanical reference.
+    // Home includes a 13-degree downward offset from the original 0.5 mechanical reference.
     // Linked 2:1 with turret angle: 1 deg of turret pitch requires 2 deg of Axon MAX+ servo rotation
     // (or set PITCH_SERVO_TO_TURRET_RATIO = 1.0 if measuring servo shaft degrees directly).
     // Increasing PWM moves down. Never command above the new home toward the upper stop.
@@ -120,8 +120,9 @@ public class TurretSubsystem {
     public static final double LAUNCH_HOME_ANGLE_DEG = 15.0;
     public static final double PITCH_HOME_DEG = 0.0;
     public static final double PITCH_SERVO_TO_TURRET_RATIO = 2.0; // 60 deg servo travel = 30 deg hood travel
-    // Previous +12.5-degree position (2.5 degrees below the 8-degree-offset home) is the new +15 reference.
-    public static final double PITCH_HOME_OFFSET_DEG = 10.5;
+    // Measured physical +15-degree hood position (hood command 1.0 with a 12-degree offset; 2.5 deg below the
+    // 10.5-degree-offset home) is the +15 reference (2026-11-20).
+    public static final double PITCH_HOME_OFFSET_DEG = 13.0;
     public static final double PITCH_HOME_SERVO_POS = 0.5
             + PITCH_HOME_OFFSET_DEG * PITCH_SERVO_TO_TURRET_RATIO / AXON_MAX_TRAVEL_DEG;
     public static final double PITCH_SERVO_POS_AT_0_DEG = PITCH_HOME_SERVO_POS;
@@ -227,6 +228,7 @@ public class TurretSubsystem {
     /** PIDF is the subsystem default; competition TeleOps and the combined bench test can select fusion. */
     public enum ShooterController { PIDF, BANG_BANG_FUSION }
     private ShooterController shooterController = ShooterController.PIDF;
+    private boolean shooterOpenLoop;
     private double fusionPower, shooterTicksPerSecond;
     private boolean fusionBangBang;
     private double fusionKs = ShooterVelocityTuning.INITIAL_FUSION_KS;
@@ -590,6 +592,7 @@ public class TurretSubsystem {
         if (!Double.isFinite(rpm)) { stopShooter(); return; }
         targetShooterRpm = ShooterSpeed.clampFlywheelRpm(rpm);
         if (targetShooterRpm == 0) { stopShooter(); return; }
+        leaveShooterOpenLoop();
         if (shooterController == ShooterController.BANG_BANG_FUSION) {
             double targetTicksPerSecond = ShooterSpeed.motorTicksPerSecond(targetShooterRpm);
             fusionBangBang = ShooterVelocityTuning.fusionUsesBangBang(targetTicksPerSecond, shooterTicksPerSecond);
@@ -601,7 +604,33 @@ public class TurretSubsystem {
     public void setShooterPower(double power) {
         targetShooterRpm = Range.clip(power, -1, 1) * SHOOTER_MAX_RPM; shooterMotor.setPower(Range.clip(power, -1, 1));
     }
-    public void stopShooter() { targetShooterRpm = 0; fusionPower = 0; fusionBangBang = false; shooterMotor.setPower(0); }
+    /**
+     * Open-loop voltage command with no encoder velocity loop: the motor runs RUN_WITHOUT_ENCODER (the encoder is
+     * still read for telemetry) and 1.0 applies full battery voltage. Bench use; the next
+     * {@link #setShooterRpm(double)} or {@link #stopShooter()} restores the selected controller's run mode.
+     */
+    public void runShooterOpenLoop(double power) {
+        double clipped = Double.isFinite(power) ? Range.clip(power, 0, 1) : 0;
+        if (!shooterOpenLoop) {
+            if (shooterController == ShooterController.PIDF) shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            shooterOpenLoop = true;
+        }
+        targetShooterRpm = clipped * SHOOTER_MAX_RPM;
+        fusionPower = 0;
+        fusionBangBang = false;
+        shooterMotor.setPower(clipped);
+    }
+    /** True while {@link #runShooterOpenLoop(double)} owns the flywheel. */
+    public boolean isShooterOpenLoop() { return shooterOpenLoop; }
+    private void leaveShooterOpenLoop() {
+        if (!shooterOpenLoop) return;
+        shooterOpenLoop = false;
+        if (shooterController == ShooterController.PIDF) shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void stopShooter() {
+        targetShooterRpm = 0; fusionPower = 0; fusionBangBang = false; shooterMotor.setPower(0);
+        leaveShooterOpenLoop();
+    }
     public double getShooterCurrentRpm() { return currentRpm; }
     public double getTargetShooterRpm() { return targetShooterRpm; }
     public boolean isShooterAtSpeed() { return targetShooterRpm > 0 && Math.abs(currentRpm - targetShooterRpm) <= SHOOTER_READY_TOLERANCE_RPM; }

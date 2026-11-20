@@ -98,7 +98,7 @@ feeding takes priority over stage-1 collection controls. Full confirmation is
 
 ## Three independent lights
 
-Control Hub servo 2 is the linear slide (`slide_servo`, CR Servo entry); the lights use servo ports 3-5. The claw was removed 2026-11-19.
+Expansion Hub servo 5 is the linear slide (`slide_servo`, CR Servo entry) and Control Hub analog 1 is its feedback (`slide_encoder`); Control Hub servos 0-2 are unused and the lights use servo ports 3-5. The claw was removed 2026-11-19.
 Configure standard positional Servo entries with these exact names; software finds
 names, not hardcoded port numbers.
 
