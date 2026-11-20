@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Utils.Shooting.TurretConfigurator;
 public class BioBuzzTeleop extends LinearOpMode2026 {
 
     TeleopMovementUtil teleopMovementUtil;
-    Turret turret;
+    Turret turretAimer;
 
     AprilTagClusterTargeting hiveTargeting;
 
@@ -41,7 +41,7 @@ public class BioBuzzTeleop extends LinearOpMode2026 {
         config();
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "POC");
         teleopMovementUtil = new TeleopMovementUtil(gamepad1, mot);
-        turret = new Turret(turret, posGet, 0);
+        turretAimer = new Turret(turret, posGet, 0);
         distanceToHive = new DistanceToHive(posGet);
         turretConfigurator = new TurretConfigurator(this);
 
@@ -136,7 +136,7 @@ public class BioBuzzTeleop extends LinearOpMode2026 {
     public void DoTurret(){
         // This will turn the turret to the april tags (if it sees it)
 
-        double tx = turret.UpdateTxValue(limelight);
+        double tx = turretAimer.UpdateTxValue(limelight);
 
 // cluster code (wrapped so a bug here can't stop the turret / shooter)
         try {
@@ -147,14 +147,14 @@ public class BioBuzzTeleop extends LinearOpMode2026 {
             telemetry.addData("Cluster error", e.toString());
         }
 
-        turret.ChangeAngleSetPosition(tx + (gamepad2.right_trigger > 0.1 ? gamepad2.right_trigger : 0) - (gamepad2.left_trigger > 0.1 ? gamepad2.left_trigger : 0), posGet.getVr());
+        turretAimer.ChangeAngleSetPosition(tx + (gamepad2.right_trigger > 0.1 ? gamepad2.right_trigger : 0) - (gamepad2.left_trigger > 0.1 ? gamepad2.left_trigger : 0), posGet.getVr());
 
         double positionChange = MiscUtils.getMotorPositionFromDegrees(tx, 537.7);
 
         telemetry.addLine("tx: " + tx);
         telemetry.addLine("Amount of Position changes: " + positionChange);
 
-        turret.CheckPositionAndSetPower(telemetry);
+        turretAimer.CheckPositionAndSetPower(telemetry);
 // cluster code
         try {
             if (toggleClusterTelem.IsTriggered()) {
