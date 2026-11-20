@@ -26,6 +26,7 @@ public class AutoAuto {
     public AutoAuto(LinearOpMode2026 op, String network) {
         opMode = op;
         nn = NNFileReader.readC(network);
+        fT = new FollowerThread(op,op.follower);
     }
 
     public void init() {
@@ -43,8 +44,9 @@ public class AutoAuto {
             case SEARCHING: {
                 if(tick == 0) {
                     opMode.lla.setPosition(0.5);
+                    opMode.turret.setTargetPosition(0);
                 }
-
+                
                 break;
             }
             case COLLECTING: {
