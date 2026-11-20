@@ -240,6 +240,7 @@
     position:fixed; bottom:40px; left:50%; transform:translateX(-50%) translateY(20px);
     background:#132a3a; border:1px solid var(--cyan); color:var(--cyan); padding:9px 18px;
     border-radius:9px; font-size:12.5px; opacity:0; pointer-events:none; transition:all .25s; z-index:60;
+    max-width:min(720px, 90vw); text-align:center; line-height:1.4;
   }
   #toast.on{opacity:1; transform:translateX(-50%) translateY(0)}
   kbd{
@@ -368,10 +369,20 @@
           <div class="frow"><label>LENIENT tol</label><input type="number" id="setDTol" min="0.5" step="0.5"></div>
           <div class="frow"><label>Max accel</label><input type="number" id="setDAccel" min="1" step="5" placeholder="none"></div>
           <div class="frow"><label>Max decel</label><input type="number" id="setDDecel" min="1" step="5" placeholder="none"></div>
-          <div class="frow"><label>Mirror X</label><input type="number" id="setMirX" step="0.5" placeholder="off"></div>
-          <div class="frow"><label>Mirror Y</label><input type="number" id="setMirY" step="0.5" placeholder="off"></div>
+          <div class="frow"><label>Alliance</label>
+            <select id="setAlliance">
+              <option value="RED">RED (planned side)</option>
+              <option value="BLUE">BLUE (planned side)</option>
+            </select>
+          </div>
+          <div class="frow"><label>Mirror</label>
+            <select id="setMirror">
+              <option value="off">off</option>
+              <option value="point">other alliance (point)</option>
+            </select>
+          </div>
         </div>
-        <div class="hint">Default drive power, turn power, heading mode and completion rule for steps that do not override them. <b>Mirror X / Y</b> turns on alliance select: in init, <b>gamepad1 X</b> = planned side, <b>B</b> = mirrored (every point, heading and aim point is mirrored at runtime; one axis swaps turn directions). 72 = across the field center. <b>Max accel / decel</b> (in/s&sup2;, blank = no limit) cap how hard every path speeds up and brakes; a step can override them. They are generated for the <b>Pedro 3</b> code target only (Pedro&nbsp;2 has no per-path acceleration constraint).</div>
+        <div class="hint">Default drive speed, turn speed (Pedro&nbsp;2 only), heading mode and completion rule for steps that do not override them. The default speed matches <code>PedroConfiguration.DEFAULT_PATH_SPEED_FRACTION</code> (0.35). <b>Alliance</b> is the side you draw; it is what the Pedro&nbsp;3 auto hands to TeleOp (<code>AutoPoseHandoff</code>). <b>Mirror</b> adds alliance select in init: <b>gamepad1 X</b> = planned alliance, <b>B</b> = the other one. BIOBUZZ is point-symmetric about the field center, like the Zenith field and <code>BioBuzzRobot.mirror()</code>: every point, heading and aim point becomes (&minus;x, &minus;y, heading + 180&deg;), so turn directions stay the same. <b>Max accel / decel</b> (in/s&sup2;, blank = no limit) cap how hard every path speeds up and brakes; a step can override them. They are generated for the <b>Pedro 3</b> code target only (Pedro&nbsp;2 has no per-path acceleration constraint).</div>
       </div>
       <div class="sect">
         <h3>Robot box &amp; odometry pods</h3>
@@ -379,27 +390,15 @@
           <div class="frow"><label>X pod (fwd)</label><input type="number" id="setPodX" step="0.001"></div>
           <div class="frow"><label>Y pod (rev)</label><input type="number" id="setPodY" step="0.001"></div>
         </div>
-        <div class="hint">Mirror the values from your existing <b>Constants</b> (nothing is generated for them &mdash; no new Constants file). The robot is drawn as a <b>23&Prime; &times; 12&Prime;</b> box; the tracked pose (what paths and <code>setStartPose</code> use) is the box center shifted by these offsets: <b>X pod is forward</b>, <b>Y pod is reversed</b> (positive = right of center). Use a negative number to flip a direction. The generated start pose follows these values.</div>
+        <div class="hint">Leave both at <b>0</b> for V1: the Pinpoint already reports the robot center, and the +32 / &minus;74&nbsp;mm pod offsets in <code>PinpointOdometry</code> describe sensor placement, not a field offset (doc/FieldReference.md). Entering them here would count them twice. Use these only if the drawn box center is not the Pinpoint center: the tracked pose (what paths and the start pose use) is the box center shifted by these offsets, <b>X forward</b> and <b>Y reversed</b> (positive = right of center), in inches. The robot is drawn as a <b>23&Prime; &times; 12&Prime;</b> box (not measured in the repo).</div>
       </div>
       <div class="sect">
         <h3>OpMode settings</h3>
         <div class="setGrid">
           <div class="frow setWide"><label>Class / name</label><input type="text" id="setName" spellcheck="false"></div>
           <div class="frow setWide"><label>Package</label><input type="text" id="setPkg" spellcheck="false"></div>
-          <div class="frow"><label>Field size</label>
-            <select id="setSize">
-              <option value="144">144&Prime; (Competition Manual &sect;9 nominal)</option>
-              <option value="141">141&Prime; (Pedro docs nominal)</option>
-            </select>
-          </div>
-          <div class="frow"><label>Origin</label>
-            <select id="setOrigin">
-              <option value="corner">Bottom-left (Pedro)</option>
-              <option value="center">Center of field</option>
-            </select>
-          </div>
         </div>
-        <div class="hint">Pedro&nbsp;3 uses <b>bottom-left origin, +x right, +y up, 0&deg; = facing +x, CCW positive</b> (pedropathing.com &rarr; Coordinates). Match this to your localization setup.</div>
+        <div class="hint">Coordinates use the repo's field frame, the same as the Zenith routes, <code>TeleOpFieldReference</code> and <code>AutoPoseHandoff</code>: inches on the 144&Prime; field, <b>(0, 0) = field center</b>, +x toward the blue wall (audience right), +y away from the audience, 0&deg; = facing +x, CCW positive. The Pedro&nbsp;2 export converts to Pedro's bottom-left origin.</div>
       </div>
       <div class="sect" style="border-bottom:none">
         <h3>Generated OpMode</h3>
@@ -427,48 +426,51 @@
     <h2>BioBuzz Path Planner — how to use</h2>
     <h4>1 · Draw paths</h4>
     <ul>
-      <li><b>Drag on the field</b> to draw an arrow — it queues <code>driver.moveTo(x, y, rotation)</code> from the current end of the path. Every arrow starts where the last step ends (the pulsing ring).</li>
-      <li><b>Curve</b> steps generate <code>curveTo(...)</code>: a Bezier pulled toward its control points (square handles — drag them). It does <i>not</i> pass through them.</li>
-      <li><b>Through</b> steps generate <code>throughTo(...)</code>: the robot passes through each waypoint (open circles).</li>
-      <li>Hold <kbd>Shift</kbd> to snap to a 1&Prime; grid. Wheel = zoom, middle-drag = pan, <b>Fit view</b> resets. Drag the green <b>robot box</b> (23&Prime; &times; 12&Prime;) to place the start; drag its round handle to rotate. The yellow cross is the tracked pose &mdash; the box center shifted by the <b>pod offsets</b> (Java code tab) &mdash; and is what <code>setStartPose</code> and every path use.</li>
+      <li>Coordinates are the repo's field frame (Zenith routes, <code>TeleOpFieldReference</code>): inches, <b>(0, 0) = field center</b>, +x toward the blue wall, +y away from the audience, headings CCW from +x.</li>
+      <li><b>Drag on the field</b> to draw an arrow &mdash; a straight drive (<code>Paths.line</code> in Pedro&nbsp;3) from the current end of the path. Every arrow starts where the last step ends (the pulsing ring).</li>
+      <li><b>Curve</b> steps generate a Bezier (<code>Paths.curve</code>) pulled toward its control points (square handles &mdash; drag them). It does <i>not</i> pass through them.</li>
+      <li><b>Through</b> steps pass through each waypoint (open circles); they are exported as a chain of cubic Beziers matching the preview.</li>
+      <li>Hold <kbd>Shift</kbd> to snap to a 1&Prime; grid. Wheel = zoom, middle-drag = pan, <b>Fit view</b> resets. Drag the green <b>robot box</b> (23&Prime; &times; 12&Prime;) to place the start; drag its round handle to rotate. It turns red with a <b>G304</b> warning when it touches a loading zone (the field file's "no start here" rule). The yellow cross is the tracked pose &mdash; the box center shifted by the <b>pod offsets</b> (0 for V1) &mdash; and is the start pose every path uses.</li>
       <li>Toolbar buttons and keys (<kbd>M</kbd> <kbd>C</kbd> <kbd>G</kbd> <kbd>R</kbd> <kbd>T</kbd> <kbd>S</kbd> <kbd>W</kbd>) insert the new step <b>right after the selected step</b> (at the end when nothing is selected) &mdash; e.g. select drive 6, press <kbd>S</kbd>, and the code step lands between drive 6 and drive 7. The &#9650;&#9660; buttons on each list row reorder steps.</li>
     </ul>
     <h4>2 · Routes — several segments, ONE continuous path</h4>
     <ul>
       <li><b>Route</b> (<kbd>R</kbd>) chains line / curve / through segments that the follower drives as a <i>single continuous path</i> — no stop between segments, unlike separate moves.</li>
       <li>Add segments in the inspector, or <b>drag on the field while the route is the selected last step</b> to append straight segments.</li>
-      <li><b>Base heading</b> and <b>Override heading</b> emit <code>.heading(...)</code> / <code>.overrideHeading(...)</code>; per-segment headings emit <code>.heading(...)</code> right before their segment.</li>
+      <li>Each segment gets one heading interpolation: its own <b>Heading</b>, else the route's <b>Override</b>, else the <b>Base heading</b>, else the driver default.</li>
     </ul>
     <h4>3 · Run your code anywhere along the path</h4>
     <ul>
-      <li><b>Path callbacks</b> — select a drive step and use <b>Run code along the path</b>: <code>onStart</code>, <code>onProgress(fraction, …)</code> and <code>onComplete</code> lambdas fire once, mid-drive, via <code>Options</code> — the robot does <i>not</i> stop. Drag the amber <b>diamonds on the field</b> to position them.</li>
+      <li><b>Path callbacks</b> — select a drive step and use <b>Run code along the path</b>: onStart, a code block at a fraction of the path, and onComplete each run once, mid-drive &mdash; the robot does <i>not</i> stop. The fraction is spread evenly over the path's segments (<code>progress()</code>). Drag the amber <b>diamonds on the field</b> to position them.</li>
       <li><b>Code steps</b> (<kbd>S</kbd>) run the instant the robot reaches that point — run inline in the step runner, so statements only, no sleep()/blocking calls (use a Wait step for those).</li>
       <li><b>Loop code</b> (<kbd>L</kbd>) — code that runs <i>continuously</i> from one part of the path to another: pick a <b>from-step</b> and a <b>to-step</b>, write the block, and it executes EVERY loop cycle while the robot travels between them (intake sweeps, sensor checks, arm control…). Optionally gate it to a <b>% range of its anchor step</b>. Covered steps show its colored bar; hover a card to see the span on the field.</li>
     </ul>
     <h4>4 · Robot actions &amp; tuning</h4>
     <ul>
-      <li><b>Volley</b> (<kbd>V</kbd>) = aim the turret at an aim point, spin the flywheel to the distance-based rpm, set the hood, wait until ready, feed N balls. One step.</li>
+      <li><b>Volley</b> (<kbd>V</kbd>) = aim the turret at an aim point, spin the flywheel and set the hood from the team-measured shot table (<code>ShootingConfiguration</code>), wait until ready, then feed. One step.</li>
       <li><b>Intake</b> (<kbd>I</kbd>), <b>Shoot</b> (<kbd>F</kbd>), <b>Aim</b> (<kbd>A</kbd>), <b>Flywheel</b> (<kbd>P</kbd>), <b>Hood</b>, <b>Gate</b>, <b>Stop all</b> are the same pieces on their own. Aim keeps tracking the point while the robot drives.</li>
-      <li>Everything numeric (PIDF, rpm/hood distance models, turret mapping, gate positions, shot timing, power, aim points, hardware names) is in the <b>Tuning</b> tab and written to class <code>T</code>. The <b>shot calculator</b> shows rpm and hood for a distance.</li>
-      <li>Defaults come from your TeleOp (6.22 rpm/in + 2516, hood &minus;0.00309/in + 0.652, gate 0.5/0.7). The feed timing per ball is a starting guess &mdash; tune it.</li>
+      <li>Pedro&nbsp;3 drives every mechanism through the repo's subsystems, like the competition and fallback autos: <code>IntakeSubsystem</code> (TeleOp direction), <code>TransferSubsystem</code> (full sensor, stage 1 stall guard), <code>GateSubsystem</code>, the shared <code>FiringCoordinator</code> feed and <code>TurretSubsystem</code>. A shot is the fallback auto's continuous feed for <code>T.FEED_SECONDS</code>; the robot cannot count launched balls.</li>
+      <li>The four aim points default to the competition hive openings (<code>TurretSubsystem</code> / <code>FieldGeometry</code>). Before any aim point is set, a shot uses the fallback auto's preload settings (TeleOp's starting 3500 RPM, hood home).</li>
+      <li>The <b>Tuning</b> tab writes the remaining numbers to class <code>T</code>; values still at their repo default are written as references to the repo constant. The <b>shot calculator</b> shows RPM and hood for a range.</li>
     </ul>
     <h4>5 · Generated OpMode — one file, one loop</h4>
     <ul>
       <li>All movement, actions, code and waits run from ONE <code>while (opModeIsActive())</code> loop. Each planner step is a <code>case</code> in <code>runStep()</code>; the next starts when it returns true. <code>stage</code> = steps started so far.</li>
+      <li>Pedro&nbsp;3 follows the repo's auto rules: <code>AutoPoseHandoff</code> is cleared in INIT and saved every loop, the auto stops at <code>PedroConfiguration.MAX_AUTONOMOUS_SECONDS</code>, and it stops if the Pinpoint pose stays stale for <code>FallbackAutoController.POSE_LOSS_SECONDS</code>.</li>
       <li>Use <code>follower</code>, <code>robot</code> (e.g. <code>robot.setIntake(1)</code>, <code>robot.startShoot(3)</code>), <code>telemetry</code>, <code>stepTimer</code>, <code>P(x, y, deg)</code> and <code>progress()</code> in your own code.</li>
-      <li>Routes become one Pedro PathChain; <b>through</b> steps become a chain of cubic Beziers matching the preview.</li>
+      <li>A route becomes one Pedro path (<code>Paths.path(...)</code> in Pedro&nbsp;3, a PathChain in Pedro&nbsp;2); <b>through</b> steps become a chain of cubic Beziers matching the preview.</li>
     </ul>
     <h4>6 · Turns, waits, per-move options</h4>
     <ul>
-      <li>Turns use <code>follower.turn(...)</code>. Waits: timed or a Java condition (<code>colorSensor.alpha() &gt; 50</code>).</li>
-      <li>Each drive step can set speed, heading mode, completion (SETTLED / LENIENT + tolerance), a timeout, and path callbacks (onStart / onProgress / onComplete).</li>
+      <li>Pedro&nbsp;3 turns hold the new heading with <code>follower.hold(...)</code> (the short way, so split turns over 180&deg;); Pedro&nbsp;2 uses <code>follower.turn(...)</code> with the turn speed. Waits: timed or a Java condition (<code>colorSensor.alpha() &gt; 50</code>).</li>
+      <li>Each drive step can set speed, heading mode, completion (SETTLED / LENIENT + tolerance), a timeout, path limits and path callbacks (onStart / at a fraction / onComplete).</li>
     </ul>
     <h4>7 · Export</h4>
     <ul>
       <li><b>Copy Java</b> / <b>Download .java</b> gives the full OpMode. <b>Export</b> saves the plan + tuning as <code>.json</code> (also auto-saved in this browser).</li>
     </ul>
     <h4>Field graphic</h4>
-    <p>Official BIOBUZZ layout (Competition Manual &sect;9 ARENA): 144&Prime; field of 36 gray tiles, low <b>HIVE</b> frame dead center holding a red and a blue HIVE (2 tip-prism <b>Cells</b> each, AprilTag clusters on the cell bottoms), four <b>FLOWER</b> columns against the walls (drawn fully inside the field), red/blue <b>GARDEN</b> tape lines in opposite corners, <b>LOADING ZONES</b> against each alliance wall and <b>ALLIANCE AREAS</b> outside the perimeter. Starting stacks shown: 4 Pollen per garden and flower, 3 Nectar in each up-tilted cell, 5 Nectar per alliance area. Red wall is on the left from the audience (bottom of the default view).</p>
+    <p>BIOBUZZ layout from the repo's Zenith field file (<code>TeamCode/src/main/assets/autos/biobuzz.field.json</code>, Competition Manual &sect;9 ARENA): 144&Prime; field of 36 gray tiles, low <b>HIVE</b> frame at the center holding a red and a blue HIVE (pivots at x = &plusmn;12.75&Prime;, 2 tip-prism <b>Cells</b> each, AprilTag IDs 30&ndash;45 on the cell bottoms; red audience and blue far start raised), four <b>FLOWER</b> columns on the walls, red/blue <b>GARDEN</b> pollen in opposite corners, <b>LOADING ZONES</b> against each alliance wall (G304: no start there) and <b>ALLIANCE AREAS</b> outside the perimeter. Nectar stacks are illustrative. The audience is at the bottom of the default view; the red wall is on the left.</p>
     <div class="closeRow"><button class="hbtn primary" id="btnCloseHelp">Got it</button></div>
   </div>
 </div>
@@ -481,12 +483,15 @@
    Visual editor that generates Java for Pedro Pathing: the classic
    self-contained Pedro 2 OpMode, or Pedro 3 (Paths API + PedroDrive). Exports ONE while(opModeIsActive())
    loop: a staged switch (stage) drives the whole sequence, and
-   loop-code blocks run every cycle between any two steps. */
+   loop-code blocks run every cycle between any two steps.
+   Every stored coordinate is in the repo's field frame (Zenith biobuzz.field.json, TeleOpFieldReference):
+   inches, (0, 0) = field center, +x toward the blue wall, +y away from the audience, CCW headings. */
 
 // ---------- constants ----------
 const TAU = Math.PI * 2, RAD = Math.PI / 180, DEG = 180 / Math.PI;
 const TILES = 6;                 // 6×6 grid of 24" soft tiles (36 total, per Manual §9.2)
 const LS_KEY = 'biobuzz-path-planner-v1';
+const PLAN_FRAME = 'field-center';   // saved plans without this marker used Pedro bottom-left coordinates
 
 const C = { // palette
   cyan:'#35e0ff', amber:'#ffb84d', lime:'#b8f34d', pink:'#ff7ad9',
@@ -497,24 +502,27 @@ const C = { // palette
 };
 
 // ---------- state ----------
+// Default start: robot BOX CENTER (not the tracked pose) in the red far corner, back edge on the red wall,
+// side on the far wall, facing +x. Outside both loading zones (biobuzz.field.json G304: no start here).
+const DEFAULT_START = () => ({ x: -72 + 23 / 2, y: 72 - 12 / 2, h: 0 });
 const S = {
-  fieldSize: 144,
-  origin: 'corner',            // 'corner' (Pedro default) | 'center'
+  fieldSize: 144,              // FieldGeometry.FIELD_SIZE_INCHES
   flipped: false,              // cosmetic 180 deg view rotation
-  start: { x: 11.5, y: 107.5, h: 0 },   // robot BOX CENTER (not the tracked pose) - red loading zone, back edge on the wall, facing +x
-  podX: 0,                     // X (forward) pod offset, in  - mirror of Constants; + = tracked point is forward of box center
-  podY: 0,                     // Y (strafe) pod offset, in   - REVERSED: + = tracked point is to the RIGHT of box center
+  start: DEFAULT_START(),
+  podX: 0,                     // X (forward) pod offset, in; + = tracked point is forward of box center (0 for V1)
+  podY: 0,                     // Y (strafe) pod offset, in; REVERSED: + = tracked point is RIGHT of box center (0 for V1)
   steps: [],                   // move/route/turn/stop/wait objects
   sel: -1,                     // index into steps, -1 = none, 'start' = start pose
   opmodeName: 'BioBuzzAuto',
   pkg: 'org.firstinspires.ftc.teamcode',
   spans: [],                    // loop-code blocks: { uid, from, to, code, pf, pt, color }
-  dSpd: 1.0,                   // driver default speed  (setDefaultSpeed)
-  dTurnSpd: 1.0,               // driver default turn speed (setDefaultTurnSpeed)
+  dSpd: 0.35,                  // driver default speed fraction = PedroConfiguration.DEFAULT_PATH_SPEED_FRACTION
+  dTurnSpd: 1.0,               // driver default turn power (Pedro 2 follower.turn only)
   dHeading: 'constant',        // driver default heading: constant | linear | tangent
   dCompletion: 'SETTLED',      // driver default completion rule
   dTol: 4.0,                   // driver default LENIENT tolerance (inches)
-  mirror: { x: null, y: null },// mirrorX / mirrorY lines (null = off)
+  alliance: 'RED',             // planned alliance (Zenith canonical RED)
+  mirror: false,               // true = INIT alliance select; other alliance = point mirror about the field center
   codeTarget: 'v3',            // 'classic' (Pedro 2 pathBuilder, self-contained) | 'v3' (Pedro 3 Paths API + PedroDrive)
   dAccel: null,                // default max path acceleration, in/s^2 (null = no limit)
   dDecel: null,                // default max path deceleration, in/s^2 (null = no limit)
@@ -524,26 +532,42 @@ const F = () => S.fieldSize;
 
 // ---------- tuning panel: every number the generated OpMode uses ----------
 // k = Java field name in the generated `T` class (UPPER_CASE) or a generator-only setting (lower case).
-// r[5] = 'classic' marks a setting only the self-contained Pedro 2 export uses. The Pedro 3 export drives the
-// turret, hood and flywheel through the repo's TurretSubsystem and ShootingConfiguration instead.
-const CLASSIC = 'classic';
-const TD = (g, rows) => rows.map(r => ({ g, k: r[0], l: r[1], t: r[2], d: r[3], s: r[4] || 0.01, only: r[5] || null }));
+// r[5] = 'classic' / 'v3' marks a setting only that export uses. The Pedro 3 export drives every mechanism
+// through the repo's subsystems (IntakeSubsystem, TransferSubsystem, GateSubsystem, TurretSubsystem) and
+// shared feed (CompetitionFeedController / FiringCoordinator), so their hardware names, directions, gate
+// positions and feed timing come from TeamCode and have no settings here.
+// r[6] = the TeamCode expression a Pedro 3 T value is written as while it still equals its default.
+const CLASSIC = 'classic', V3 = 'v3';
+const TD = (g, rows) => rows.map(r => ({ g, k: r[0], l: r[1], t: r[2], d: r[3], s: r[4] || 0.01, only: r[5] || null, x: r[6] || null }));
 const tuneVisible = q => !q.only || q.only === S.codeTarget;
+// Competition hive openings (field-center inches): TurretSubsystem.RED/BLUE_HIVE_PIVOT_X_IN and
+// HIVE_RAISED_MOUTH_CENTER_Y_OFFSET_IN, i.e. FieldGeometry.HIVE_CENTER_SPACING_INCHES / 2 and
+// FieldGeometry.OPENING_Y_OFFSET_METERS (same formula; keep in sync with the repo).
+const REPO_HIVE_X_IN = 25.5 / 2;
+const REPO_OPENING_Y_IN = (() => {
+  const M = .0254, half = 42.91 * M / 2, aim = (53.5 + 65.6) * M / 2;
+  return (half * Math.cos(30 * RAD) - (aim - 53.5 * M) / Math.tan(60 * RAD)) / M;
+})();
+const GOAL_NAMES = { 1: 'red audience', 2: 'red far', 3: 'blue audience', 4: 'blue far' };
+const TS = 'TurretSubsystem.';
+const GOAL_ROWS = [[1, -1, -1], [2, -1, 1], [3, 1, -1], [4, 1, 1]].flatMap(([n, sx, sy]) => [
+  [`GOAL${n}_X`, `Aim ${n} (${GOAL_NAMES[n]}) X`, 'num', sx * REPO_HIVE_X_IN, 0.5, null,
+    TS + (sx < 0 ? 'RED_HIVE_PIVOT_X_IN' : 'BLUE_HIVE_PIVOT_X_IN')],
+  [`GOAL${n}_Y`, `Aim ${n} (${GOAL_NAMES[n]}) Y`, 'num', +(sy * REPO_OPENING_Y_IN).toFixed(3), 0.5, null,
+    (sy < 0 ? '-' : '') + TS + 'HIVE_RAISED_MOUTH_CENTER_Y_OFFSET_IN'],
+]);
 const TUNE_DEFS = [].concat(
   TD('Hardware names (must match the robot config)', [
-    ['INTAKE_NAME', 'Intake motor', 'text', 'intake_motor'],
-    ['TRANSFER_NAME', 'Transfer motor', 'text', 'transfer_motor_1'],
-    ['KICKER_NAME', 'Kicker motor', 'text', 'transfer_motor_2'],
+    ['INTAKE_NAME', 'Intake motor', 'text', 'intake_motor', 0, CLASSIC],
+    ['TRANSFER_NAME', 'Transfer motor', 'text', 'transfer_motor_1', 0, CLASSIC],
+    ['KICKER_NAME', 'Kicker motor', 'text', 'transfer_motor_2', 0, CLASSIC],
     ['SHOOTER_NAME', 'Shooter motor', 'text', 'turret_motor', 0, CLASSIC],
     ['TURRET1_NAME', 'Turret servo 1', 'text', 'turret_servo_1', 0, CLASSIC],
     ['TURRET2_NAME', 'Turret servo 2', 'text', 'turret_servo_2', 0, CLASSIC],
-    ['GATE_NAME', 'Gate servo', 'text', 'gate_servo'],
+    ['GATE_NAME', 'Gate servo', 'text', 'gate_servo', 0, CLASSIC],
     ['HOOD_NAME', 'Hood servo', 'text', 'turret_pitch', 0, CLASSIC],
   ]),
   TD('Motor directions', [
-    // Pedro 3 uses IntakeSubsystem / TransferSubsystem directions. On the robot the auto intake had to run
-    // opposite to IntakeSubsystem (testdrive, 2026-11-18), so that flip is a Pedro 3 setting, on by default.
-    ['INTAKE_REVERSE_FROM_TELEOP', 'Intake opposite to TeleOp', 'bool', true, 0, 'v3'],
     ['INTAKE_REVERSED', 'Intake reversed', 'bool', false, 0, CLASSIC],
     ['TRANSFER_REVERSED', 'Transfer reversed', 'bool', false, 0, CLASSIC],
     ['KICKER_REVERSED', 'Kicker reversed', 'bool', true, 0, CLASSIC],
@@ -565,7 +589,8 @@ const TUNE_DEFS = [].concat(
     ['RPM_TOLERANCE', 'Ready tolerance (rpm)', 'num', 50, 5, CLASSIC],
   ]),
   TD('Shot readiness', [
-    ['READY_TIMEOUT_S', 'Ready timeout (s)', 'num', 3.0, 0.1],
+    // Same rule as the fallback auto: feed on READY, or on this timeout once the turret is homed.
+    ['READY_TIMEOUT_S', 'Ready timeout (s)', 'num', 3.0, 0.1, null, 'FallbackAutoController.SPIN_UP_TIMEOUT_SECONDS'],
   ]),
   TD('Hood (distance model)', [
     ['HOOD_SLOPE', 'Hood per inch', 'num', -0.00309, 0.0001, CLASSIC],
@@ -583,32 +608,28 @@ const TUNE_DEFS = [].concat(
     ['TURRET_SETTLE_PAD_S', 'Settle padding (s)', 'num', 0.1, 0.02, CLASSIC],
   ]),
   TD('Gate, kicker & transfer (shot timing)', [
-    ['GATE_CLOSED', 'Gate closed pos', 'num', 0.5, 0.01],
-    ['GATE_OPEN', 'Gate open pos', 'num', 0.7, 0.01],
-    ['GATE_OPEN_DELAY_S', 'Gate open \u2192 feed (s)', 'num', 0.25, 0.01],
-    ['FEED_PER_BALL_S', 'Feed time per ball (s)', 'num', 0.30, 0.01],
-    ['GATE_CLOSE_DELAY_S', 'Feed stop \u2192 gate close (s)', 'num', 0.05, 0.01],
-    ['KICKER_POWER', 'Kicker power', 'num', 1.0, 0.05],
-    ['TRANSFER_POWER', 'Transfer power', 'num', 1.0, 0.05],
+    ['GATE_CLOSED', 'Gate closed pos', 'num', 0.5, 0.01, CLASSIC],
+    ['GATE_OPEN', 'Gate open pos', 'num', 0.7, 0.01, CLASSIC],
+    ['GATE_OPEN_DELAY_S', 'Gate open \u2192 feed (s)', 'num', 0.25, 0.01, CLASSIC],
+    ['FEED_PER_BALL_S', 'Feed time per ball (s)', 'num', 0.30, 0.01, CLASSIC],
+    ['GATE_CLOSE_DELAY_S', 'Feed stop \u2192 gate close (s)', 'num', 0.05, 0.01, CLASSIC],
+    ['KICKER_POWER', 'Kicker power', 'num', 1.0, 0.05, CLASSIC],
+    ['TRANSFER_POWER', 'Transfer power', 'num', 1.0, 0.05, CLASSIC],
+    // Pedro 3: the fallback auto's continuous feed (GateSubsystem + CompetitionFeedController timing).
+    ['FEED_SECONDS', 'Feed time per shot (s)', 'num', 2.5, 0.1, V3, 'FallbackAutoController.FEED_SECONDS'],
   ]),
-  TD('Aim points (field inches, planned side)', [
-    ['GOAL1_X', 'Aim point 1 X', 'num', 60, 0.5],
-    ['GOAL1_Y', 'Aim point 1 Y', 'num', 52, 0.5],
-    ['GOAL2_X', 'Aim point 2 X', 'num', 60, 0.5],
-    ['GOAL2_Y', 'Aim point 2 Y', 'num', 92, 0.5],
-    ['GOAL3_X', 'Aim point 3 X', 'num', 84, 0.5],
-    ['GOAL3_Y', 'Aim point 3 Y', 'num', 52, 0.5],
-    ['GOAL4_X', 'Aim point 4 X', 'num', 84, 0.5],
-    ['GOAL4_Y', 'Aim point 4 Y', 'num', 92, 0.5],
-    ['FALLBACK_DIST_IN', 'Distance before any aim (in)', 'num', 70, 1],
-  ]),
+  TD('Aim points (field-center inches, planned side)', GOAL_ROWS.concat([
+    ['FALLBACK_DIST_IN', 'Distance before any aim (in)', 'num', 70, 1, CLASSIC],
+  ])),
   TD('Driving & generator', [
     ['STEP_TIMEOUT_S', 'Default step timeout (0 = off)', 'num', 0, 0.5],
-    ['followerInit', 'Follower init expression', 'text', 'Constants.createFollower(hardwareMap)'],
-    ['followerImport', 'Import for Constants', 'text', 'org.firstinspires.ftc.teamcode.pedroPathing.Constants'],
+    ['followerInit', 'Follower init expression', 'text', 'Constants.createFollower(hardwareMap)', 0, CLASSIC],
+    ['followerImport', 'Import for Constants', 'text', 'org.firstinspires.ftc.teamcode.pedroPathing.Constants', 0, CLASSIC],
     ['useDashboard', 'Tune live with FTC Dashboard (@Config)', 'bool', false],
   ])
 );
+// aim point coordinates: stored field-center, exported in the target's frame (see expX / expY)
+const isCoordTune = k => /^GOAL\d_[XY]$/.test(k);
 const tuneDefaults = () => { const o = {}; TUNE_DEFS.forEach(q => { o[q.k] = q.d; }); return o; };
 S.tune = tuneDefaults();
 
@@ -633,6 +654,9 @@ const REPO_HOOD_MAX_DEG = 30;                     // TurretSubsystem.PITCH_MAX_D
 const REPO_PIVOT_FWD_IN = 50.68184865 / 25.4;     // ShootingConfiguration.TURRET_PIVOT_FORWARD_MM
 const REPO_MAX_YAW_DEG = 175;                     // TurretSubsystem.ROTATION_MAX_ANGLE_DEG (rear +/-5 deg dead zone)
 const REPO_HOME_HEADING_DEG = 90;                 // TurretSubsystem.ROTATION_HOME_ROBOT_HEADING_DEG
+const REPO_PRELOAD_RPM = 3500;                    // FallbackAutonomous.PRELOAD_FLYWHEEL_RPM = MecanumTeleOp.STARTING_FLYWHEEL_RPM
+const REPO_PRELOAD_HOOD_DEG = 0;                  // FallbackAutonomous.PRELOAD_HOOD_DEG = TurretSubsystem.PITCH_HOME_DEG
+const REPO_DEFAULT_SPEED = 0.35;                  // PedroConfiguration.DEFAULT_PATH_SPEED_FRACTION
 const isV3 = () => S.codeTarget === 'v3';
 function repoShot(d){
   const R = REPO_SHOT_TABLE, n = R.length;
@@ -647,11 +671,14 @@ function repoShot(d){
   for (let i = 1; i < n; i++) if (d <= R[i][0]) return lerp(R[i - 1], R[i], (d - R[i - 1][0]) / (R[i][0] - R[i - 1][0]));
   return null;
 }
-// distance -> flywheel rpm / hood, same model the generated robot code uses for the current target
+// distance -> flywheel rpm / hood, same model the generated robot code uses for the current target.
+// Pedro 3 with no aim point yet (dist not finite) uses the fallback auto's preload settings.
 function shotInfo(dist){
   if (isV3()){
-    const r = repoShot(dist) || { rpm: 0, hood: 0 };
-    return { rpm: r.rpm, hood: r.hood, txt: `${fmtN(r.rpm, 0)} rpm \u00b7 hood ${fmtN(r.hood, 1)}\u00b0 travel` };
+    const r = Number.isFinite(dist) ? repoShot(dist) : null;
+    const v = r || { rpm: REPO_PRELOAD_RPM, hood: REPO_PRELOAD_HOOD_DEG };
+    const out = dist > 60 || dist < 12 ? ' (outside the measured 12\u201360\u2033 rows)' : '';
+    return { rpm: v.rpm, hood: v.hood, txt: `${fmtN(v.rpm, 0)} rpm \u00b7 hood ${fmtN(v.hood, 1)}\u00b0 travel${r ? out : ' (preload settings)'}` };
   }
   const T = S.tune;
   const rpm = Math.min(T.RPM_MAX, Math.max(T.RPM_MIN, T.RPM_SLOPE * dist + T.RPM_INTERCEPT));
@@ -701,9 +728,9 @@ function renderTuning(){
   calc.appendChild(out); upd();
   const info = document.createElement('div'); info.className = 'hint';
   info.innerHTML = (isV3()
-    ? 'Pedro 3: the turret, hood and flywheel run through the repo&rsquo;s <code>TurretSubsystem</code> (homing, rear dead zone, encoder-checked yaw, shooter PIDF), and hood / RPM come from the team-measured shot table in <code>ShootingConfiguration</code>, so they have no settings here. The calculator shows that table (range from the turret pivot). The other values are written into the <code>T</code> class of the generated file. '
-    : 'Every value here is written into the <code>T</code> class at the top of the generated file (<code>T.RPM_SLOPE</code>, <code>T.GATE_OPEN</code> &hellip;). ')
-    + 'Change them here and re-copy, or turn on <b>FTC Dashboard</b> below to tune them live on the robot. Aim points use the <b>planned side</b>; they mirror automatically with alliance select.';
+    ? 'Pedro 3: every mechanism runs through the repo&rsquo;s subsystems (<code>IntakeSubsystem</code>, <code>TransferSubsystem</code>, <code>GateSubsystem</code>, <code>TurretSubsystem</code>) and the shared feed (<code>CompetitionFeedController</code>), and hood / RPM come from the team-measured shot table in <code>ShootingConfiguration</code>, so hardware names, directions, gate positions and feed timing have no settings here. The calculator shows that table (range from the turret pivot). The values below go into the <code>T</code> class; one still at its default is written as the repo constant it came from. '
+    : 'Pedro 2 (self-contained, not V1): every value here is written into the <code>T</code> class at the top of the generated file (<code>T.RPM_SLOPE</code>, <code>T.GATE_OPEN</code> &hellip;). ')
+    + 'Change them here and re-copy, or turn on <b>FTC Dashboard</b> below to tune them live on the robot. Aim points use field-center inches on the <b>planned side</b>; they mirror automatically with alliance select.';
   calc.appendChild(info);
   const rst = document.createElement('button'); rst.className = 'ghostDanger'; rst.textContent = 'Reset all tuning to defaults';
   rst.style.marginTop = '8px'; rst.style.width = '100%';
@@ -798,7 +825,7 @@ function actDefaults(act){
     act,
     mode: act === 'intake' ? 'on' : act === 'spin' ? 'on' : act === 'aim' ? 'track'
         : act === 'hood' ? 'auto' : act === 'gate' ? 'open' : '',
-    goal: '1', gx: 72, gy: 72,      // aim point: '1'..'4' from the tuning panel, or 'custom'
+    goal: '1', gx: 0, gy: 0,        // aim point: '1'..'4' from the tuning panel, or 'custom' (field-center in)
     balls: 3,
     rpm: null,                      // null = from distance model
     pos: 0.5,                       // Pedro 2: manual servo position (turret / hood)
@@ -819,12 +846,13 @@ function actChip(st){
     case 'aim':    return st.mode === 'track' ? 'AIM ' + (st.goal === 'custom' ? 'C' : st.goal) : st.mode === 'manual' ? 'TURRET' : 'AIM OFF';
     case 'hood':   return 'HOOD';
     case 'gate':   return st.mode === 'close' ? 'GATE ↓' : 'GATE ↑';
-    case 'shoot':  return 'SHOOT ×' + st.balls;
-    case 'volley': return 'VOLLEY ×' + st.balls;
+    case 'shoot':  return isV3() ? 'SHOOT' : 'SHOOT ×' + st.balls;
+    case 'volley': return isV3() ? 'VOLLEY' : 'VOLLEY ×' + st.balls;
     default:       return 'STOP ALL';
   }
 }
-function actGoalTxt(st){ return st.goal === 'custom' ? `(${fmtN(st.gx, 0)}, ${fmtN(st.gy, 0)})` : `aim point ${st.goal}`; }
+function actGoalTxt(st){ return st.goal === 'custom' ? `(${fmtN(st.gx, 0)}, ${fmtN(st.gy, 0)})` : `aim point ${st.goal} (${GOAL_NAMES[st.goal] || '?'})`; }
+const ballsTxt = st => isV3() ? `feed ${fmtN(S.tune.FEED_SECONDS, 1)}s` : `${st.balls} ball(s)`;
 function actSummary(st){
   switch (st.act){
     case 'intake': return (st.mode === 'rev' ? 'reverse' : st.mode === 'off' ? 'off' : 'in') + (st.secs > 0 ? ` · ${fmtN(st.secs, 1)}s${st.offAfter ? ' then off' : ''}` : '');
@@ -834,8 +862,8 @@ function actSummary(st){
     case 'hood':   return st.mode === 'manual' ? (isV3() ? `hood ${fmtN(st.hoodDeg, 1)} deg travel` : `hood ${fmtN(st.pos, 3)}`)
                         : isV3() ? 'hood auto (shot table)' : 'hood auto (distance)';
     case 'gate':   return st.mode === 'close' ? 'gate closed' : 'gate open';
-    case 'shoot':  return `${st.balls} ball(s)${st.wait ? ' · wait ready' : ''}${st.after === 'off' ? ' · spin down' : ''}`;
-    case 'volley': return `${st.balls} ball(s) at ${actGoalTxt(st)}${st.after === 'off' ? ' · spin down' : ''}`;
+    case 'shoot':  return `${ballsTxt(st)}${st.wait ? ' · wait ready' : ''}${st.after === 'off' ? ' · spin down' : ''}`;
+    case 'volley': return `${ballsTxt(st)} at ${actGoalTxt(st)}${st.after === 'off' ? ' · spin down' : ''}`;
     default:       return 'intake, flywheel, feed off';
   }
 }
@@ -850,7 +878,7 @@ function goalPicker(st){
   const sel = document.createElement('select');
   ['1', '2', '3', '4'].forEach(n => {
     const o = document.createElement('option'); o.value = n;
-    o.textContent = `Aim point ${n} (${fmtN(S.tune['GOAL' + n + '_X'], 0)}, ${fmtN(S.tune['GOAL' + n + '_Y'], 0)})`;
+    o.textContent = `Aim ${n} ${GOAL_NAMES[n]} (${fmtN(S.tune['GOAL' + n + '_X'], 1)}, ${fmtN(S.tune['GOAL' + n + '_Y'], 1)})`;
     if (st.goal === n) o.selected = true;
     sel.appendChild(o);
   });
@@ -909,7 +937,11 @@ function renderActInspector(st){
     case 'shoot':
     case 'volley':
       if (st.act === 'volley') A.appendChild(goalPicker(st));
-      A.appendChild(frow('Balls', numInput(st.balls, 1, v => { st.balls = Math.max(1, Math.round(v)); softRefresh(); })));
+      if (isV3()){
+        const h = document.createElement('div'); h.className = 'hint';
+        h.innerHTML = `Pedro 3 feeds every loaded ball: the fallback auto's continuous feed (gate + both transfer stages) for <code>T.FEED_SECONDS</code> (${fmtN(S.tune.FEED_SECONDS, 1)} s, Tuning tab). The robot cannot count launched balls, so there is no ball count.`;
+        A.appendChild(h);
+      } else A.appendChild(frow('Balls', numInput(st.balls, 1, v => { st.balls = Math.max(1, Math.round(v)); softRefresh(); })));
       if (st.act === 'shoot') chk('Wait until flywheel ready', 'wait');
       A.appendChild(frow('After', seg([['keep', 'KEEP SPINNING'], ['off', 'SPIN DOWN']], st.after, v => { st.after = v; softRefresh(); })));
       break;
@@ -928,7 +960,9 @@ function renderActInspector(st){
     A.appendChild(h);
   } else if (st.act === 'shoot' || st.act === 'spin'){
     const h = document.createElement('div'); h.className = 'hint';
-    h.innerHTML = 'Uses the point from the most recent Aim / Volley step (or the fallback distance in Tuning) for the rpm and hood.';
+    h.innerHTML = isV3()
+      ? `Uses the point from the most recent Aim / Volley step for the RPM and hood. Before any aim point, it uses the fallback auto's preload settings (<code>FallbackAutonomous.PRELOAD_FLYWHEEL_RPM</code> ${REPO_PRELOAD_RPM} RPM, hood home).`
+      : 'Uses the point from the most recent Aim / Volley step (or the fallback distance in Tuning) for the rpm and hood.';
     A.appendChild(h);
   }
   A.appendChild(delBtn());
@@ -945,7 +979,7 @@ function drawAimOverlay(poses){
     ctx.moveTo(sx - 10, sy); ctx.lineTo(sx + 10, sy); ctx.moveTo(sx, sy - 10); ctx.lineTo(sx, sy + 10);
     ctx.stroke();
     ctx.globalAlpha = 1; ctx.fillStyle = C.amber; ctx.font = '9px ui-monospace, monospace'; ctx.textAlign = 'center';
-    ctx.fillText('AIM ' + n, sx, sy - 13);
+    ctx.fillText(`AIM ${n} ${GOAL_NAMES[n].replace('audience', 'aud').toUpperCase()}`, sx, sy - 13);
   }
   S.steps.forEach((st, i) => {
     if (st.t !== 'act' || !(st.act === 'volley' || (st.act === 'aim' && st.mode === 'track'))) return;
@@ -1088,24 +1122,22 @@ function fitView(){
 }
 function applyK(){ view.k = view.k0 * view.zoom; }
 
+// field-center inches <-> canvas pixels (view.ox / view.oy locate the field's bottom-left corner)
 function w2s(x, y){
-  let fx = (S.origin === 'center') ? x + F()/2 : x;
-  let fy = (S.origin === 'center') ? y + F()/2 : y;
-  let sx = view.ox + fx * view.k;
-  let sy = view.oy - fy * view.k;
+  let sx = view.ox + (x + F()/2) * view.k;
+  let sy = view.oy - (y + F()/2) * view.k;
   if (S.flipped){ sx = cw - sx; sy = ch - sy; }
   return [sx, sy];
 }
 function s2w(sx, sy){
   if (S.flipped){ sx = cw - sx; sy = ch - sy; }
-  const fx = (sx - view.ox) / view.k, fy = (view.oy - sy) / view.k;
-  return (S.origin === 'center') ? [fx - F()/2, fy - F()/2] : [fx, fy];
+  return [(sx - view.ox) / view.k - F()/2, (view.oy - sy) / view.k - F()/2];
 }
 // field heading (rad, CCW+) -> canvas angle
 const angScr = h => S.flipped ? Math.PI - h : -h;
 
 function clampField(x, y){
-  const lim = (S.origin === 'center') ? F()/2 : F();
+  const lim = F()/2;
   return [Math.max(-lim, Math.min(lim, x)), Math.max(-lim, Math.min(lim, y))];
 }
 function norm180(deg){ let d = ((deg % 360) + 540) % 360 - 180; return Object.is(d, -180) ? 180 : d; }
@@ -1253,30 +1285,37 @@ function spdColor(s){
 }
 
 // ---------- BIOBUZZ field drawing ----------
-// Geometry per FTC Competition Manual §9 ARENA (v TU06) and §10.3.1 staging.
-// Field frame (Pedro default): origin = red-wall × audience-wall corner,
-// +x → blue wall (right from audience), +y → rear wall. Audience wall = y = 0.
+// Field frame = the repo's: TeamCode/src/main/assets/autos/biobuzz.field.json and TeleOpFieldReference.
+// Inches, (0, 0) = field center, +x toward the blue wall (audience right), +y away from the audience.
+// Positions marked "field file" come from biobuzz.field.json; the rest is illustrative staging.
 const FLDC = {
-  loadRed:   [0, 96, 11.5, 119],        // LOADING ZONE, red wall, rear half
-  loadBlue:  [132.5, 25, 144, 48],      // LOADING ZONE, blue wall, audience half
-  gardRed:   [0, 1, 24, 3.5],           // GARDEN tape line, audience wall, left corner
-  gardBlue:  [120, 140.5, 144, 143],    // GARDEN tape line, rear wall, right corner
-  alRed:     [-54, 24, 0, 120],         // ALLIANCE AREA (outside field wall)
-  alBlue:    [144, 24, 198, 120],
-  hive: { fw: 49.5, fd: 39, cellW: 20, cellD: 12, pitch: 13.5, redX: 58.5, blueX: 85.5 },
-  // FLOWER centers: against the perimeter walls but fully INSIDE the field (8" ring => 4" radius,
-  // so centers sit 4.5" in from the wall). 90° rotational symmetry about (72,72).
-  flowers: [[48, 139.5], [139.5, 96], [96, 4.5], [4.5, 48]],
+  loadRed:   [-72, 24, -61, 48],        // LOADING ZONE, red wall (field file, G304: no start here)
+  loadBlue:  [61, -48, 72, -24],        // LOADING ZONE, blue wall (field file, G304: no start here)
+  gardRed:   [-72, -71, -48, -68.5],    // GARDEN tape line, audience wall, red corner
+  gardBlue:  [48, 68.5, 72, 71],        // GARDEN tape line, rear wall, blue corner
+  pollenRed:  [[-70.6, -70.6], [-67.8, -70.6], [-65, -70.6], [-62.2, -70.6]],   // field file gardenRed0..3
+  pollenBlue: [[70.6, 70.6], [67.8, 70.6], [65, 70.6], [62.2, 70.6]],           // field file gardenBlue0..3
+  alRed:     [-126, -48, -72, 48],      // ALLIANCE AREA (outside the red wall)
+  alBlue:    [72, -48, 126, 48],
+  // HIVE (FieldGeometry, field file): pivots at x = +/-12.75 (25.5 in apart), 20 in openings; in plan each
+  // cell spans 8.16..18.58 in from the pivot (inner faces 18.84 in apart, 12.04 in deep, tilted 30 deg);
+  // underside tag rows at |y| = 12.36 in (HiveTagGeometry); frame base 49.46 x 38.95 in.
+  hive: { fw: 49.46, fd: 38.95, pivotX: 12.75, cellW: 20, inner: 8.16, outer: 18.58, tagY: 12.36 },
+  flowers: [[-69.46, -24], [-24, 69.46], [69.46, 24], [24, -69.46]],             // field file flower0..3
 };
 
 function drawField(){
-  const f = F(), k = view.k;
-  const [x0, y0] = w2s(0, 0), [x1, y1] = w2s(f, f);   // y0 = bottom on screen
+  const f = F(), k = view.k, h = f / 2;
+  const [x0, y0] = w2s(-h, -h), [x1, y1] = w2s(h, h);
   const L = Math.min(x0, x1), R = Math.max(x0, x1), T = Math.min(y0, y1), B = Math.max(y0, y1);
   const Ssz = R - L;
 
-  // field-inch rect -> screen rect [sx, sy, sw, sh] (works in every origin/flip mode)
-  const zr = (a, b, c, d) => [L + a / f * Ssz, T + (1 - d / f) * Ssz, (c - a) / f * Ssz, (d - b) / f * Ssz];
+  // field-inch rect -> screen rect [sx, sy, sw, sh], through w2s so it follows the flip
+  const zr = (a, b, c, d) => {
+    const [p0, q0] = w2s(a, b), [p1, q1] = w2s(c, d);
+    return [Math.min(p0, p1), Math.min(q0, q1), Math.abs(p1 - p0), Math.abs(q1 - q0)];
+  };
+  const P = (x, y) => w2s(x, y);
 
   // ---- apron + perimeter ----
   ctx.save();
@@ -1299,15 +1338,16 @@ function drawField(){
   }
   ctx.stroke(); ctx.globalAlpha = 1;
 
-  // ---- alliance wall accents (RED wall left / BLUE wall right from audience) ----
+  // ---- alliance wall accents (RED wall x = -72, BLUE wall x = +72) ----
   ctx.globalAlpha = .16;
-  ctx.fillStyle = C.tapeR; ctx.fillRect(L, T, 3 / f * Ssz, Ssz);
-  ctx.fillStyle = C.tapeB; ctx.fillRect(R - 3 / f * Ssz, T, 3 / f * Ssz, Ssz);
+  ctx.fillStyle = C.tapeR; ctx.fillRect(...zr(-h, -h, -h + 3, h));
+  ctx.fillStyle = C.tapeB; ctx.fillRect(...zr(h - 3, -h, h, h));
   ctx.globalAlpha = 1;
 
-  // ---- ALLIANCE AREAS (outside walls, 97" x 54", centered on the wall midline, §9.3) ----
+  // ---- ALLIANCE AREAS (outside walls, centered on the wall midline, §9.3) ----
   const al = [[FLDC.alRed, C.tapeR, 'RED ALLIANCE AREA', -1], [FLDC.alBlue, C.tapeB, 'BLUE ALLIANCE AREA', 1]];
-  for (const [z, col, name, side] of al){
+  for (const [z, col, name, side0] of al){
+    const side = S.flipped ? -side0 : side0;
     const [zx, zy, zw, zh] = zr(...z);
     ctx.fillStyle = col; ctx.globalAlpha = .07; ctx.fillRect(zx, zy, zw, zh);
     ctx.globalAlpha = .85; ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.setLineDash([10, 6]);
@@ -1322,34 +1362,23 @@ function drawField(){
     }
   }
 
-  // ---- LOADING ZONES (23" x 11", against the alliance wall, §9.3) ----
-  for (const [z, col, name] of [[FLDC.loadRed, C.tapeR, 'LOADING ZONE'], [FLDC.loadBlue, C.tapeB, 'LOADING ZONE']]){
+  // ---- LOADING ZONES (against the alliance wall; field file rule G304: no start here) ----
+  for (const [z, col] of [[FLDC.loadRed, C.tapeR], [FLDC.loadBlue, C.tapeB]]){
     const [zx, zy, zw, zh] = zr(...z);
     ctx.fillStyle = col; ctx.globalAlpha = .22; ctx.fillRect(zx, zy, zw, zh);
     ctx.globalAlpha = .9; ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.strokeRect(zx, zy, zw, zh);
     ctx.globalAlpha = 1;
     if (k > 2.6){
-      ctx.fillStyle = col; ctx.font = '600 9.5px Segoe UI, sans-serif'; ctx.textAlign = 'center';
-      // label just inside the screen-bottom edge of the zone (away from the start marker)
-      const ly = z[1] < 72 ? z[1] + 2.2 : z[1] - 3.2;
-      const [lx, lyy] = w2s(z[0] + z[2] / 2, ly);
-      ctx.fillText(name, lx, lyy);
+      ctx.save();
+      const [lx, ly] = w2s((z[0] + z[2]) / 2, (z[1] + z[3]) / 2);
+      ctx.translate(lx, ly); ctx.rotate(-Math.PI / 2);
+      ctx.fillStyle = col; ctx.font = '600 9px Segoe UI, sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('LOADING ZONE', 0, 3);
+      ctx.restore();
     }
   }
 
-  // ---- GARDENS (23" tape line hugging a wall in opposite corners, §9.3) ----
-  for (const [z, col, name, lx, ly] of [
-        [FLDC.gardRed, C.tapeR, 'GARDEN', 12, 8.5],
-        [FLDC.gardBlue, C.tapeB, 'GARDEN', 132, 135.5]]){
-    const [zx, zy, zw, zh] = zr(...z);
-    ctx.fillStyle = col; ctx.fillRect(zx, zy, zw, zh);
-    if (k > 2.6){
-      ctx.fillStyle = col; ctx.font = '600 9.5px Segoe UI, sans-serif'; ctx.textAlign = 'center';
-      const [tx, ty] = w2s(lx, ly); ctx.fillText(name, tx, ty);
-    }
-  }
-
-  // ---- staged POLLEN: 4 per GARDEN, lined against the wall (§10.3.1 A) ----
+  // ---- GARDENS (tape line hugging a wall in opposite corners, §9.3) + staged POLLEN (field file) ----
   const ball = (wx, wy, dIn, fill, stroke) => {
     const [sx, sy] = w2s(wx, wy);
     const rp = Math.max(1.6, dIn / 2 * k);
@@ -1357,29 +1386,34 @@ function drawField(){
     ctx.fillStyle = fill; ctx.fill();
     if (stroke){ ctx.strokeStyle = stroke; ctx.lineWidth = 1; ctx.stroke(); }
   };
-  for (const x of [2.5, 6, 9.5, 13])       ball(x, 1.8, 2.8, C.pollen, 'rgba(120,95,10,.7)');     // red garden
-  for (const x of [131, 134.5, 138, 141.5]) ball(x, 142.2, 2.8, C.pollen, 'rgba(120,95,10,.7)'); // blue garden
+  for (const [z, col, lx, ly] of [[FLDC.gardRed, C.tapeR, -60, -63.5], [FLDC.gardBlue, C.tapeB, 60, 63.5]]){
+    ctx.fillStyle = col; ctx.fillRect(...zr(...z));
+    if (k > 2.6){
+      ctx.fillStyle = col; ctx.font = '600 9.5px Segoe UI, sans-serif'; ctx.textAlign = 'center';
+      const [tx, ty] = w2s(lx, ly); ctx.fillText('GARDEN', tx, ty);
+    }
+  }
+  for (const [x, y] of FLDC.pollenRed.concat(FLDC.pollenBlue)) ball(x, y, 2.8, C.pollen, 'rgba(120,95,10,.7)');
 
-  // ---- HIVE Structure (dead center, §9.6) ----
+  // ---- HIVE structure (center, §9.6) ----
   const hv = FLDC.hive;
-  const fx0 = 72 - hv.fw / 2, fx1 = 72 + hv.fw / 2;      // frame base 49.46" wide
-  const fy0 = 72 - hv.fd / 2, fy1 = 72 + hv.fd / 2;      // 38.95" deep
-  const P = (x, y) => w2s(x, y);
+  const fx0 = -hv.fw / 2, fx1 = hv.fw / 2;      // frame base 49.46" wide
+  const fy0 = -hv.fd / 2, fy1 = hv.fd / 2;      // 38.95" deep
   ctx.lineJoin = 'round';
   // A-frame legs + base rails (two triangular trusses joined at the apex crossbar)
   ctx.strokeStyle = C.steelDk; ctx.lineWidth = Math.max(2, 2.6 * k / 4);
   for (const bx of [fx0, fx1]){
     ctx.beginPath();
-    ctx.moveTo(...P(bx, fy0)); ctx.lineTo(...P(72, 72)); ctx.lineTo(...P(bx, fy1));
+    ctx.moveTo(...P(bx, fy0)); ctx.lineTo(...P(0, 0)); ctx.lineTo(...P(bx, fy1));
     ctx.moveTo(...P(bx, fy0)); ctx.lineTo(...P(bx, fy1));
     ctx.stroke();
   }
-  // apex crossbar (pivots 43.95" up sit on it)
+  // apex crossbar (the hive pivots, 43.95" up, sit on it)
   ctx.strokeStyle = C.steel; ctx.lineWidth = Math.max(2.5, 1.1 * k / 4);
-  ctx.beginPath(); ctx.moveTo(...P(fx0, 72)); ctx.lineTo(...P(fx1, 72)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(...P(fx0, 0)); ctx.lineTo(...P(fx1, 0)); ctx.stroke();
   // BIOBUZZ banner between the two hives
   {
-    const [bx, by, bw, bh] = zr(60, 70.2, 84, 73.8);
+    const [bx, by, bw, bh] = zr(-12, -1.8, 12, 1.8);
     ctx.fillStyle = '#f0d264'; ctx.strokeStyle = '#8a6d1f'; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 2); ctx.fill(); ctx.stroke();
     if (k > 2.4){
@@ -1387,9 +1421,9 @@ function drawField(){
       ctx.textAlign = 'center'; ctx.fillText('BIOBUZZ', bx + bw / 2, by + bh / 2 + Math.min(4, .38 * k));
     }
   }
-  // the two HIVES: each = 2 CELLS on a pivot; at match start one CELL tilts up per alliance (§10.3)
-  const drawCell = (cx, cy, up, color, tagIds) => {
-    const [cx0, cy0, cw, ch] = zr(cx - hv.cellW / 2, cy - hv.cellD / 2, cx + hv.cellW / 2, cy + hv.cellD / 2);
+  // the two HIVES: each = 2 CELLS on a pivot; red audience and blue far start raised (FieldReference.md)
+  const drawCell = (cx, ya, yb, up, color, tagIds) => {
+    const [cx0, cy0, cw, ch] = zr(cx - hv.cellW / 2, Math.min(ya, yb), cx + hv.cellW / 2, Math.max(ya, yb));
     ctx.fillStyle = color; ctx.globalAlpha = up ? .16 : .09;
     ctx.beginPath(); ctx.roundRect(cx0, cy0, cw, ch, 3); ctx.fill();
     ctx.globalAlpha = up ? .95 : .55; ctx.strokeStyle = color; ctx.lineWidth = 2;
@@ -1399,8 +1433,9 @@ function drawField(){
     ctx.beginPath();
     ctx.moveTo(cx0 + 2, cy0 + ch / 2); ctx.lineTo(cx0 + cw / 2, cy0 + 2.5); ctx.lineTo(cx0 + cw - 2, cy0 + ch / 2);
     ctx.stroke(); ctx.globalAlpha = 1;
-    // AprilTag cluster sticker on the CELL bottom (4 × 3.25" tags, 36h11, §9.9)
-    const [tx0, ty0, tw, th] = zr(cx - 3.4, cy - 3.4, cx + 3.4, cy + 3.4);
+    // AprilTag cluster sticker on the CELL underside (4 × 3.25" tags, 36h11, §9.9), at the tag-row y
+    const ty = Math.sign(ya + yb) * hv.tagY;
+    const [tx0, ty0, tw, th] = zr(cx - 3.4, ty - 3.4, cx + 3.4, ty + 3.4);
     ctx.fillStyle = '#f4f6f8'; ctx.fillRect(tx0, ty0, tw, th);
     ctx.strokeStyle = '#20242b'; ctx.lineWidth = 1; ctx.strokeRect(tx0, ty0, tw, th);
     ctx.fillStyle = '#20242b';
@@ -1411,20 +1446,19 @@ function drawField(){
     ctx.fillRect(tx0 + q * 1.18, ty0 + q * 1.18, q * .64, q * .64);
     if (k > 2.8 && tagIds){
       ctx.fillStyle = 'rgba(28,34,42,.8)'; ctx.font = '8.5px ui-monospace, monospace'; ctx.textAlign = 'center';
-      ctx.fillText(tagIds, cx0 + cw / 2, cy0 + ch + 11);
+      ctx.fillText('tags ' + tagIds, cx0 + cw / 2, cy0 + ch + 11);
     }
   };
-  // red HIVE (x=58.5): audience CELL tilts UP at start (holds 3 red NECTAR), rear CELL down
-  drawCell(hv.redX, 72 - hv.pitch, true,  C.tapeR, '4-7');
-  drawCell(hv.redX, 72 + hv.pitch, false, C.tapeR, '0-3');
-  // blue HIVE (x=85.5): rear CELL tilts UP at start (3 blue NECTAR), audience CELL down
-  drawCell(hv.blueX, 72 + hv.pitch, true,  C.tapeB, '42-45');
-  drawCell(hv.blueX, 72 - hv.pitch, false, C.tapeB, '38-41');
-  // staged NECTAR: 3 in each upward-facing CELL, lined against the alliance-side wall (§10.3.1 B)
-  for (const y of [53.8, 58.5, 63.2]) ball(53, y, 3.6, C.nectarR, 'rgba(90,10,8,.75)');
-  for (const y of [80.8, 85.5, 90.2]) ball(91, y, 3.6, C.nectarB, 'rgba(8,16,90,.75)');
+  // tag IDs: TurretSubsystem RED_FAR 30-33, RED_AUDIENCE 34-37, BLUE_AUDIENCE 38-41, BLUE_FAR 42-45
+  drawCell(-hv.pivotX, -hv.inner, -hv.outer, true,  C.tapeR, '34-37');   // red audience (raised at start)
+  drawCell(-hv.pivotX,  hv.inner,  hv.outer, false, C.tapeR, '30-33');   // red far
+  drawCell( hv.pivotX,  hv.inner,  hv.outer, true,  C.tapeB, '42-45');   // blue far (raised at start)
+  drawCell( hv.pivotX, -hv.inner, -hv.outer, false, C.tapeB, '38-41');   // blue audience
+  // staged NECTAR: 3 in each raised CELL, lined against its alliance-side edge (illustrative, §10.3.1 B)
+  for (const y of [-18.2, -13.5, -8.8]) ball(-19, y, 3.6, C.nectarR, 'rgba(90,10,8,.75)');
+  for (const y of [8.8, 13.5, 18.2]) ball(19, y, 3.6, C.nectarB, 'rgba(8,16,90,.75)');
 
-  // ---- FLOWERS: 4, mounted on the perimeter walls (§9.7) ----
+  // ---- FLOWERS: 4, mounted on the perimeter walls (field file centers, §9.7) ----
   for (const [fx2, fy2] of FLDC.flowers){
     const [sx, sy] = P(fx2, fy2);
     const rp = d => Math.max(1.4, d / 2 * k);
@@ -1443,32 +1477,33 @@ function drawField(){
     ball(fx2, fy2, 2.8, C.pollen, 'rgba(120,95,10,.7)');
     if (k > 3){
       ctx.fillStyle = 'rgba(35,45,35,.75)'; ctx.font = '8.5px Segoe UI, sans-serif'; ctx.textAlign = 'center';
-      const off = fy2 > 72 ? -rp(8) - 4 : rp(8) + 11;
-      ctx.fillText('FLOWER', sx, sy + off);
+      const [lx, ly] = P(fx2 - Math.sign(fx2) * (Math.abs(fx2) > 60 ? 11 : 0), fy2 - Math.sign(fy2) * (Math.abs(fy2) > 60 ? 8 : 0));
+      ctx.fillText('FLOWER', lx, ly + 3);
     }
   }
 
-  // ---- staged NECTAR: 5 per ALLIANCE AREA (outside the wall, §10.3.1 B) ----
-  for (const [cx0, col, strk] of [[-4.2, C.nectarR, 'rgba(90,10,8,.75)'], [148.2, C.nectarB, 'rgba(8,16,90,.75)']]){
-    ball(cx0, 72, 3.6, col, strk);
-    ball(cx0 - 3.4, 68.4, 3.6, col, strk); ball(cx0 - 3.4, 75.6, 3.6, col, strk);
-    ball(cx0 - 6.8, 72, 3.6, col, strk);
-    ball(cx0, 79.2, 3.6, col, strk);
+  // ---- staged NECTAR: 5 per ALLIANCE AREA (outside the wall, illustrative, §10.3.1 B) ----
+  for (const [s, col, strk] of [[-1, C.nectarR, 'rgba(90,10,8,.75)'], [1, C.nectarB, 'rgba(8,16,90,.75)']]){
+    const b = s * 76.2;
+    ball(b, 0, 3.6, col, strk);
+    ball(b + s * 3.4, -3.6, 3.6, col, strk); ball(b + s * 3.4, 3.6, 3.6, col, strk);
+    ball(b + s * 6.8, 0, 3.6, col, strk);
+    ball(b, 7.2, 3.6, col, strk);
   }
 
   // ---- wall inner edge + audience marker ----
   ctx.strokeStyle = C.wall; ctx.lineWidth = 4;
   ctx.strokeRect(L, T, Ssz, Ssz);
   if (k > 1.4){
-    const [ax, ay] = P(72, 5.4);
+    const [ax, ay] = P(0, -h + 5.4);
     ctx.fillStyle = 'rgba(52,62,76,.7)'; ctx.font = '600 10px Segoe UI, sans-serif'; ctx.textAlign = 'center';
     ctx.fillText('AUDIENCE SIDE', ax, ay);
   }
 
-  // ---- axes + origin marker (Pedro: +x right, +y up) ----
-  const [oxs, oys] = w2s(0, 0);
-  const [xax, xay] = w2s(1, 0);           // screen direction of field +x (flip-aware)
-  const [yax, yay] = w2s(0, 1);           // screen direction of field +y
+  // ---- axes (drawn from the red/audience corner) + origin marker at the field center ----
+  const [oxs, oys] = w2s(-h, -h);
+  const [xax, xay] = w2s(-h + 1, -h);     // screen direction of field +x (flip-aware)
+  const [yax, yay] = w2s(-h, -h + 1);     // screen direction of field +y
   let xdx = xax - oxs, xdy = xay - oys; const xl = Math.hypot(xdx, xdy) || 1; xdx /= xl; xdy /= xl;
   let ydx = yax - oxs, ydy = yay - oys; const yl = Math.hypot(ydx, ydy) || 1; ydx /= yl; ydy /= yl;
   const ax2 = 46;
@@ -1480,25 +1515,29 @@ function drawField(){
   ctx.font = '700 12px ui-monospace, monospace'; ctx.textAlign = 'left';
   ctx.fillStyle = '#0e7490';  ctx.fillText('+x', oxs + xdx * (ax2 + 8), oys + xdy * (ax2 + 8) + 4);
   ctx.fillStyle = '#1d7a44'; ctx.fillText('+y', oxs + ydx * (ax2 + 8) + 4, oys + ydy * (ax2 + 8) - 4);
-  ctx.fillStyle = 'rgba(40,50,62,.8)'; ctx.fillText('(0,0)', oxs + 6, oys + 15);
+  if (k > 2.4){                           // origin = field center, under the BIOBUZZ banner
+    const [cx, cy] = w2s(0, 0);
+    ctx.fillStyle = 'rgba(40,50,62,.85)'; ctx.font = '9px ui-monospace, monospace'; ctx.textAlign = 'center';
+    ctx.fillText('(0,0)', cx, cy + 1.8 * k + 10);
+  }
 
-  // tick labels at every tile seam (24" pitch)
+  // tick labels at every tile seam (24" pitch), field-center inches
   ctx.font = '10px ui-monospace, monospace'; ctx.fillStyle = 'rgba(52,62,76,.8)'; ctx.textAlign = 'center';
   for (let i = 0; i <= TILES; i++){
-    const [txs] = w2s(S.origin === 'center' ? -f/2 + i*(f/TILES) : i*(f/TILES), 0);
-    const v = S.origin === 'center' ? i*(f/TILES) - f/2 : i*(f/TILES);
+    const v = -h + i * (f / TILES);
+    const [txs] = w2s(v, 0);
     ctx.fillText(fmtN(v, 0), txs, B + 16);
   }
   ctx.textAlign = 'right';
   for (let i = 0; i <= TILES; i++){
-    const [, tys] = w2s(0, S.origin === 'center' ? -f/2 + i*(f/TILES) : i*(f/TILES));
-    const v = S.origin === 'center' ? i*(f/TILES) - f/2 : i*(f/TILES);
+    const v = -h + i * (f / TILES);
+    const [, tys] = w2s(0, v);
     ctx.fillText(fmtN(v, 0), L - 8, tys + 3);
   }
 
   // watermark
   ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(70,82,98,.6)'; ctx.font = '600 10.5px Segoe UI, sans-serif';
-  ctx.fillText('BIOBUZZ presented by RTX · FTC 2026-27 · field per Competition Manual §9 ARENA (TU06) · stylized rendering', (L + R)/2, B + 34);
+  ctx.fillText('BIOBUZZ presented by RTX · FTC 2026-27 · field per biobuzz.field.json / Competition Manual §9 (TU06) · stylized rendering', (L + R)/2, B + 34);
 }
 // ---------- scene rendering ----------
 let drag = null;        // active pointer gesture
@@ -1773,6 +1812,16 @@ function drawRobotBox(c, col, fillA, strokeA, bold){
   ctx.globalAlpha = 1;
 }
 
+// biobuzz.field.json marks both loading zones "G304: no start here": true when the start box touches one
+function startZoneViolation(){
+  const s = S.start, c = Math.cos(s.h), sn = Math.sin(s.h), pts = [];
+  for (let i = 0; i <= 4; i++) for (let j = 0; j <= 2; j++){
+    const a = (i / 4 - .5) * ROBOT_L, b = (j / 2 - .5) * ROBOT_W;
+    pts.push([s.x + a * c - b * sn, s.y + a * sn + b * c]);
+  }
+  return [FLDC.loadRed, FLDC.loadBlue].some(z => pts.some(([px, py]) => px > z[0] && px < z[2] && py > z[1] && py < z[3]));
+}
+
 function drawStart(poses){
   const s = S.start, sel = S.sel === 'start';
   const [x, y] = w2s(s.x, s.y);
@@ -1782,7 +1831,12 @@ function drawStart(poses){
     drawRobotBox(poseToCenter(poses[S.sel + 1]), C.cyan, .06, .45, false);
   }
 
-  drawRobotBox(s, sel ? '#a7ffd8' : C.green, sel ? .28 : .18, .95, true);
+  const illegal = startZoneViolation();
+  drawRobotBox(s, illegal ? C.red : sel ? '#a7ffd8' : C.green, sel ? .28 : .18, .95, true);
+  if (illegal){
+    ctx.font = '700 10px ui-monospace, monospace'; ctx.textAlign = 'left'; ctx.fillStyle = C.red;
+    ctx.fillText('G304: no start in a loading zone', x + 14, y - ROBOT_W / 2 * view.k - 20);
+  }
 
   // rotate handle (drag to turn the robot)
   const hdl = rotHandle();
@@ -1987,8 +2041,7 @@ cv.addEventListener('wheel', e => {
   applyK();
   let pfx = sx, pfy = sy;
   if (S.flipped){ pfx = cw - sx; pfy = ch - sy; }
-  let fx = (S.origin === 'center') ? wx + F()/2 : wx;
-  let fy = (S.origin === 'center') ? wy + F()/2 : wy;
+  const fx = wx + F()/2, fy = wy + F()/2;               // field-center -> bottom-left-relative
   view.ox = pfx - fx * view.k;
   view.oy = pfy + fy * view.k;
 }, { passive:false });
@@ -2026,7 +2079,7 @@ function stepSummary(st){
     const cbTag = st.cbs && st.cbs.length ? ` \u00b7 fn\u00d7${st.cbs.length}` : '';
     return `${st.segs.length} segment${st.segs.length === 1 ? '' : 's'}, one continuous path \u00b7 ${fmtSpd(st.spd ?? S.dSpd)}\u00d7${cbTag}`;
   }
-  if (st.t === 'turn') return `${fmtN(st.deg, 0)}\u00b0 ${st.dir} \u00b7 ${fmtSpd(st.spd ?? S.dTurnSpd)}\u00d7`;
+  if (st.t === 'turn') return `${fmtN(st.deg, 0)}\u00b0 ${st.dir}` + (isV3() ? ' \u00b7 hold' : ` \u00b7 ${fmtSpd(st.spd ?? S.dTurnSpd)}\u00d7`);
   if (st.t === 'stop') return st.code ? st.code.split('\n').find(l => l.trim() && !l.trim().startsWith('//')) || 'code' : 'empty \u2014 click to add code';
   if (st.t === 'wait'){
     const parts = [];
@@ -2411,7 +2464,7 @@ function headingPicker(noneVal, noneLabel, get, set){
       wrap.appendChild(frow('Point X', numInput(h.px, 1, v => { h.px = v; softRefresh(); })));
       wrap.appendChild(frow('Point Y', numInput(h.py, 1, v => { h.py = v; softRefresh(); })));
     }
-    if (h.mode === 'custom') wrap.appendChild(taRow('.setConstantHeadingInterpolation(Math.toRadians(90))', h.code, v => { h.code = v; }, 2));
+    if (h.mode === 'custom') wrap.appendChild(taRow(isV3() ? '.constant(Math.toRadians(90))' : '.setConstantHeadingInterpolation(Math.toRadians(90))', h.code, v => { h.code = v; }, 2));
   }
   return wrap;
 }
@@ -2532,12 +2585,13 @@ function renderInspector(){
 
   if (i === 'start'){
     const h4 = document.createElement('div');
-    h4.innerHTML = '<div class="hint" style="margin:0 0 10px">Start \u2014 where the robot <b>box</b> (23\u2033 \u00d7 12\u2033) sits. Drag the green box on the field, or its round handle to rotate. The tracked pose (yellow cross) is the box center shifted by the pod offsets, and is what <b>follower.setStartingPose(...)</b> gets (mirroring applied there).</div>';
+    h4.innerHTML = '<div class="hint" style="margin:0 0 10px">Start \u2014 where the robot <b>box</b> (23\u2033 \u00d7 12\u2033) sits, in field-center inches. Drag the green box on the field, or its round handle to rotate. The tracked pose (yellow cross) is the box center shifted by the pod offsets (0 for V1), and is the start pose the OpMode sets (<code>drive.setStartPose</code> in Pedro&nbsp;3, mirroring applied there).</div>';
     insp.appendChild(h4);
     const ro = document.createElement('div'); ro.className = 'hint'; ro.style.margin = '0 0 10px';
     const updRo = () => {
       const p = startPose();
-      ro.innerHTML = `Tracked pose \u2192 <code style="font-family:var(--mono);color:var(--lime)">${fmtN(p.x, 2)}, ${fmtN(p.y, 2)}, ${fmtN(norm180(p.h * DEG), 1)}\u00b0</code><br>X pod ${fmtN(S.podX, 3)}\u2033 forward \u00b7 Y pod ${fmtN(S.podY, 3)}\u2033 reversed (right). Change in the Java code tab.`;
+      ro.innerHTML = `Tracked pose \u2192 <code style="font-family:var(--mono);color:var(--lime)">${fmtN(p.x, 2)}, ${fmtN(p.y, 2)}, ${fmtN(norm180(p.h * DEG), 1)}\u00b0</code><br>X pod ${fmtN(S.podX, 3)}\u2033 forward \u00b7 Y pod ${fmtN(S.podY, 3)}\u2033 reversed (right). Change in the Java code tab.`
+        + (startZoneViolation() ? '<br><b style="color:var(--red, #ff5d5d)">The box touches a loading zone: the field file\u2019s rule G304 says no start there.</b>' : '');
     };
     insp.appendChild(frow('Center X', numInput(S.start.x, 0.5, v => { S.start.x = v; updRo(); softRefresh(); })));
     insp.appendChild(frow('Center Y', numInput(S.start.y, 0.5, v => { S.start.y = v; updRo(); softRefresh(); })));
@@ -2628,7 +2682,7 @@ function renderInspector(){
     insp.appendChild(callbacksEditor(st));
     const h = document.createElement('div');
     h.className = 'hint';
-    h.innerHTML = `One continuous Pedro path \u2014 the robot does NOT stop between segments. Callback fractions spread evenly over the segments (like AutoDriver's progress counter). Drag on the field while this route is the selected last step to append straight segments.`;
+    h.innerHTML = `One continuous Pedro path \u2014 the robot does NOT stop between segments. Callback and loop-code fractions spread evenly over the segments (<code>progress()</code> = segment index + completion of the current one). Drag on the field while this route is the selected last step to append straight segments.`;
     insp.appendChild(h);
     insp.appendChild(delBtn());
   }
@@ -2638,10 +2692,13 @@ function renderInspector(){
   else if (st.t === 'turn'){
     insp.appendChild(frow('Degrees', numInput(st.deg, 5, v => { st.deg = Math.abs(v); softRefresh(); })));
     insp.appendChild(frow('Direction', seg([['LEFT','LEFT (CCW)'],['RIGHT','RIGHT (CW)']], st.dir, val => { st.dir = val; softRefresh(); })));
-    insp.appendChild(spdRow2(st, S.dTurnSpd, `use driver default (${fmtSpd(S.dTurnSpd)}\u00d7)`));
+    if (!isV3()) insp.appendChild(spdRow2(st, S.dTurnSpd, `use driver default (${fmtSpd(S.dTurnSpd)}\u00d7)`));
     const h = document.createElement('div');
     h.className = 'hint';
-    h.innerHTML = `\u2192 <code style="font-family:var(--mono);color:var(--lime)">follower.turn(Math.toRadians(${fmtN(st.deg, 0)}), ${st.dir === 'LEFT' ? 'left' : 'right'})</code><br>Relative to the robot's heading when the turn starts. Any angle works, even over 180\u00b0.`;
+    h.innerHTML = isV3()
+      ? `\u2192 <code style="font-family:var(--mono);color:var(--lime)">follower.hold(heading ${st.dir === 'LEFT' ? '+' : '\u2212'} ${fmtN(st.deg, 0)}\u00b0)</code><br>Relative to the robot's heading when the turn starts. Pedro&nbsp;3 has no turn(): it holds the new heading, the short way, until within <code>T.TURN_TOLERANCE_DEG</code>, so split turns over 180\u00b0. Turn speed comes from <code>PedroConfiguration</code> (there is no per-turn speed in Pedro&nbsp;3).`
+      : `\u2192 <code style="font-family:var(--mono);color:var(--lime)">follower.turn(Math.toRadians(${fmtN(st.deg, 0)}), ${st.dir === 'LEFT' ? 'left' : 'right'})</code><br>Relative to the robot's heading when the turn starts. Any angle works, even over 180\u00b0.`;
+    if (isV3() && st.deg > 180) h.innerHTML += '<br><b>This turn is over 180\u00b0: it will go the short way.</b>';
     insp.appendChild(h);
     insp.appendChild(delBtn());
   }
@@ -2744,6 +2801,10 @@ function reindentLines(code, ind){
   return lines.map(l => l.trim() ? ind + l.slice(strip) : '');
 }
 const jn = v => String(+(+v).toFixed(6));
+// Exported coordinates. Pedro 3 keeps the stored field-center frame (the repo's PedroDrive / Zenith /
+// TeleOpFieldReference frame); the self-contained Pedro 2 export shifts to Pedro's bottom-left origin.
+const expOff = () => isV3() ? 0 : F() / 2;
+const expX = (v, dp = 2) => fmtN(+v + expOff(), dp);
 
 // short human tag for a step, used in generated comments and span cards
 function stepTag(st){
@@ -2767,7 +2828,7 @@ function headCall(h, fromDeg, toDeg, t0, t1){
     case 'linear':      return `.setLinearHeadingInterpolation(H(${fmtN(lerp(fromDeg, toDeg, t0), 1)}), H(${fmtN(lerp(fromDeg, toDeg, t1), 1)}))`;
     case 'linearDeg':   return `.setLinearHeadingInterpolation(H(${fmtN(lerp(h.deg, h.deg2, t0), 1)}), H(${fmtN(lerp(h.deg, h.deg2, t1), 1)}))`;
     case 'tangent':     return '.setTangentHeadingInterpolation()';
-    case 'facing':      return `.setHeadingInterpolation(facing(${fmtN(h.px, 1)}, ${fmtN(h.py, 1)}))`;
+    case 'facing':      return `.setHeadingInterpolation(facing(${expX(h.px)}, ${expX(h.py)}))`;
     case 'custom':      return (h.code || '').trim() || `.setConstantHeadingInterpolation(H(${fmtN(toDeg, 1)}))`;
     default:            return `.setConstantHeadingInterpolation(H(${fmtN(toDeg, 1)}))`;
   }
@@ -2775,7 +2836,7 @@ function headCall(h, fromDeg, toDeg, t0, t1){
 
 // one planner segment -> list of Pedro curves (through = Catmull-Rom converted to cubic Beziers, same as the preview)
 function curvePieces(kind, from, to, pts){
-  const P3 = q => `P(${fmtN(q.x, 2)}, ${fmtN(q.y, 2)}, 0)`;
+  const P3 = q => `P(${expX(q.x)}, ${expX(q.y)}, 0)`;
   const a = { x: from.x, y: from.y }, b = { x: to.x, y: to.y };
   if (kind === 'curve' && pts.length) return [`new BezierCurve(${[a, ...pts, b].map(P3).join(', ')})`];
   if (kind === 'through' && pts.length){
@@ -2823,7 +2884,9 @@ function usesFacing(){
 // inspector hint
 function moveStmt(st){
   const k = st.kind === 'curve' ? 'Bezier curve' : st.kind === 'through' ? 'spline through points' : 'line';
-  return `follower.followPath(${k} to (${fmtN(st.x)}, ${fmtN(st.y)}) @ ${fmtN(st._hd ?? 0, 1)}°, power ${fmtSpd(st.spd ?? S.dSpd)})`;
+  return isV3()
+    ? `follower.follow(${k} to (${fmtN(st.x)}, ${fmtN(st.y)}) @ ${fmtN(st._hd ?? 0, 1)}°, speed ${fmtSpd(st.spd ?? S.dSpd)})`
+    : `follower.followPath(${k} to (${fmtN(st.x)}, ${fmtN(st.y)}) @ ${fmtN(st._hd ?? 0, 1)}°, power ${fmtSpd(st.spd ?? S.dSpd)})`;
 }
 
 const progressExpr = () => 'progress()';
@@ -2854,7 +2917,7 @@ function stepCase(st, i){
   const add = s => out.push(I + s);
   const user = (code, extra) => { if ((code || '').trim()) reindentLines(code, I + extra).forEach(l => out.push(l)); };
   const goalJ = () => {
-    if (st.goal === 'custom') return `P(${fmtN(st.gx, 1)}, ${fmtN(st.gy, 1)}, 0)`;
+    if (st.goal === 'custom') return `P(${expX(st.gx, 1)}, ${expX(st.gy, 1)}, 0)`;
     const n = ['1', '2', '3', '4'].includes(st.goal) ? st.goal : '1';
     return `P(T.GOAL${n}_X, T.GOAL${n}_Y, 0)`;
   };
@@ -2881,7 +2944,7 @@ function stepCase(st, i){
     let cond = '!follower.isBusy()';
     if (compl === 'LENIENT'){
       const end = st.t === 'route' ? st.segs[st.segs.length - 1] : st;
-      cond += ` || distTo(P(${fmtN(end.x, 2)}, ${fmtN(end.y, 2)}, 0)) <= ${fmtN(st.tol ?? S.dTol, 1)}`;
+      cond += ` || distTo(P(${expX(end.x)}, ${expX(end.y)}, 0)) <= ${fmtN(st.tol ?? S.dTol, 1)}`;
     }
     const tmo = (st.timeout != null && st.timeout > 0)
       ? ` || stepTimer.seconds() > ${fmtN(st.timeout, 1)}`
@@ -2894,7 +2957,7 @@ function stepCase(st, i){
     const left = st.dir === 'LEFT';
     add('if (first) {');
     add(`    follower.setMaxPower(${fmtSpd(st.spd ?? S.dTurnSpd)});`);
-    add(`    follower.turn(Math.toRadians(${fmtN(st.deg, 1)}), turnLeft(${left}));`);
+    add(`    follower.turn(Math.toRadians(${fmtN(st.deg, 1)}), ${left});   // the point mirror keeps turn directions`);
     add('}');
     add('return !first && !follower.isBusy();');
   }
@@ -2914,7 +2977,7 @@ function stepCase(st, i){
     // Pedro 3: robot.readSensors() runs before the step and robot.apply() after it in the same loop, so a
     // step never calls a mid-step update. Pedro 2 keeps its self-contained robot.update(pose).
     const V3 = S.codeTarget === 'v3';
-    const sync = () => { if (!V3) add('    robot.update(follower.pose());'); };
+    const sync = () => { if (!V3) add('    robot.update(follower.getPose());'); };
     // Pedro 3 applies new targets after the step returns, so a first-call check would see the old target.
     const settled = expr => V3 ? `!first && (${expr})` : expr;
     switch (st.act){
@@ -2984,7 +3047,7 @@ function stepCase(st, i){
           add('    boolean timedOut = stepTimer.seconds() > T.READY_TIMEOUT_S;');
           add('    boolean ready = !first && robot.ready();   // first call: new targets apply after this step');
           add('    if (ready || (timedOut && robot.turretHomed())) {');
-          add(`        robot.startShoot(${balls});`);
+          add('        robot.startShoot();   // continuous feed of every loaded ball for T.FEED_SECONDS');
           add('        if (!ready) robot.shotNote = "fed before READY (timeout)";');
           add('        phase = 1;');
           add('    } else if (timedOut) {');
@@ -2994,7 +3057,7 @@ function stepCase(st, i){
           add('    }');
         } else {
           add(wait ? '    if (robot.ready() || stepTimer.seconds() > T.READY_TIMEOUT_S) {' : '    {');
-          add(`        robot.startShoot(${balls});`);
+          add(V3 ? '        robot.startShoot();   // continuous feed of every loaded ball for T.FEED_SECONDS' : `        robot.startShoot(${balls});`);
           add('        phase = 1;');
           add('    }');
         }
@@ -3033,7 +3096,8 @@ function tuneJava(){
     const v = S.tune[q.k];
     if (q.t === 'bool') L.push(`        public static boolean ${q.k} = ${v ? 'true' : 'false'};`);
     else if (q.t === 'text') L.push(`        public static String ${q.k} = ${JSON.stringify(String(v))};`);
-    else L.push(`        public static double ${q.k} = ${jn(v)};`);
+    else if (isV3() && q.x && v === q.d) L.push(`        public static double ${q.k} = ${q.x};   // repo value`);
+    else L.push(`        public static double ${q.k} = ${jn(isCoordTune(q.k) ? v + expOff() : v)};`);
   });
   return L;
 }
@@ -3158,10 +3222,10 @@ const ROBOT_JAVA = `
 
             // ---- aim: same math as the TeleOp (servo 0..1 spans TURRET_RANGE_DEG) ----
             if (aimTarget != null) {
-                double dx = aimTarget.x() - pose.x(), dy = aimTarget.y() - pose.y();
+                double dx = aimTarget.getX() - pose.getX(), dy = aimTarget.getY() - pose.getY();
                 dist = Math.hypot(dx, dy);
                 if (tracking) {
-                    double a = wrap(Math.atan2(dy, dx) - pose.heading());
+                    double a = wrap(Math.atan2(dy, dx) - pose.getHeading());
                     commandTurret(T.TURRET_ZERO_POS - a / Math.toRadians(T.TURRET_RANGE_DEG));
                 }
             }
@@ -3215,78 +3279,59 @@ const ROBOT_JAVA = `
     }
 `;
 
-// Pedro 3 mechanisms: turret yaw, hood and flywheel through the repo's TurretSubsystem.
+// Pedro 3 mechanisms: the repo's subsystems and shared feed, driven like the competition and fallback autos.
 const ROBOT_JAVA_V3 = `
     // =====================================================================================
-    //  ROBOT SUBSYSTEMS - intake, gate, kicker + transfer here; turret yaw, hood and flywheel
-    //  through TurretSubsystem. Call readSensors() once per loop before the step and apply()
-    //  once per loop after it (the OpMode does both).
+    //  ROBOT - the repo's subsystems, driven the way the competition and fallback autos drive them:
+    //  IntakeSubsystem (TeleOp's direction), TransferSubsystem (full sensor, stage 1 stall guard),
+    //  GateSubsystem with the shared FiringCoordinator feed (CompetitionFeedController timing), and
+    //  TurretSubsystem for yaw, hood and flywheel. Call readSensors() once per loop before the step
+    //  and apply() once per loop after it (the OpMode does both).
     // =====================================================================================
     static class Robot {
-        static final double METERS_PER_INCH = .0254;
+        static final double METERS_PER_INCH = FieldGeometry.METERS_PER_INCH;
 
-        final DcMotorEx intake, transfer, kicker;
-        final Servo gate;
+        final IntakeSubsystem intake;
+        final TransferSubsystem transfer;
+        final GateSubsystem gate;
         final TurretSubsystem turret;
-        final ElapsedTime clock = new ElapsedTime();
+        final CompetitionFeedController feedControl = new CompetitionFeedController(); // continuous feed
+        final FiringCoordinator firing = CompetitionFeedController.firing();
 
-        int intakeMode = 0;                  // 1 in, -1 out, 0 off
+        double intakePower = 0;              // + in, - out, in IntakeSubsystem's (TeleOp's) direction
+        boolean gateHeldOpen = false;        // Gate step: hold the gate open outside a shot
+        double feedUntil = Double.NEGATIVE_INFINITY; // a shot's feed request runs until this time (s)
 
         boolean spinning = false;
         boolean rpmAuto = true;
         double rpmManual = 0;                // flywheel output RPM
         double rpmTarget = 0;
 
-        Pose aimTarget = null;               // point the turret tracks / distance is measured to (field in)
+        Pose aimTarget = null;               // point the turret tracks / range is measured to (field in)
         boolean tracking = false;
         double fixedHeadingDeg = Double.NaN; // fixed turret heading: front 0, right 90, back 180, left 270
         boolean poseFresh = false;
-        double dist = T.FALLBACK_DIST_IN;    // turret pivot to aim point, inches
+        double dist = Double.NaN;            // turret pivot to aim point, inches (NaN until an aim point is set)
 
         boolean hoodAuto = true;
         double hoodManualDeg = TurretSubsystem.PITCH_HOME_DEG; // hood travel down from home, 0..30 deg
         double hoodTargetDeg = TurretSubsystem.PITCH_HOME_DEG;
 
-        int shootState = 0;                  // 0 idle, 1 gate opening, 2 feeding, 3 closing
-        int shootBalls = 0;
-        double shootT = 0;
         String shotNote = "";
+        int homeRetries = 0;                 // turret homes restarted after a FAULT
 
         Robot(HardwareMap hw) {
-            intake = hw.get(DcMotorEx.class, T.INTAKE_NAME);
-            transfer = hw.get(DcMotorEx.class, T.TRANSFER_NAME);
-            kicker = hw.get(DcMotorEx.class, T.KICKER_NAME);
-            gate = hw.get(Servo.class, T.GATE_NAME);
-
-            // Directions come from the subsystems TeleOp uses. The intake can be flipped from TeleOp's
-            // direction with T.INTAKE_REVERSE_FROM_TELEOP (needed on the robot, 2026-11-18).
-            // intake_motor's encoder channel is the turret's through-bore encoder. Never reset it here.
-            setup(intake, T.INTAKE_REVERSE_FROM_TELEOP
-                    ? IntakeSubsystem.MOTOR_DIRECTION.inverted() : IntakeSubsystem.MOTOR_DIRECTION);
-            setup(transfer, TransferSubsystem.MOTOR_DIRECTION);
-            setup(kicker, TransferSubsystem.STAGE_2_MOTOR_DIRECTION);
-            gate.setPosition(T.GATE_CLOSED);
-
+            intake = new IntakeSubsystem(hw);        // never resets intake_motor's encoder (turret encoder channel)
+            transfer = new TransferSubsystem(hw);
+            gate = new GateSubsystem(hw, CompetitionFeedController.GATE_TO_FEED_DELAY_SECONDS);
             // Starts non-blocking turret homing and puts the hood at home; no camera in this auto.
             turret = new TurretSubsystem(hw, false);
             turret.setEncoderCorrectionEnabled(true);
         }
 
-        private static void setup(DcMotorEx m, DcMotorSimple.Direction direction) {
-            m.setDirection(direction);
-            m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            m.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
-
         // ---- commands (call these from code steps / loop code too) ----
-        /** Intake in (1) also runs transfer stage 1 to carry balls toward the turret; out (-1) / off (0) stop it. */
-        void setIntake(int mode) {
-            intakeMode = mode;
-            intake.setPower(mode * T.INTAKE_POWER);
-            if (shootState != 2) transfer.setPower(stage1IdlePower());
-        }
-        /** Stage 1 outside the feed window: runs only while intaking. */
-        private double stage1IdlePower() { return intakeMode == 1 ? T.TRANSFER_POWER : 0; }
+        /** Intake in (1), out (-1) or off (0) at T.INTAKE_POWER; forward collection stops once the transfer is full. */
+        void setIntake(int mode) { intakePower = mode * T.INTAKE_POWER; }
         void spin(boolean on) { spinning = on; }
         void setRpmAuto() { rpmAuto = true; }
         /** Flywheel output RPM, the same units as TeleOp and the shot table. */
@@ -3301,15 +3346,15 @@ const ROBOT_JAVA_V3 = `
         void setTracking(boolean on) { tracking = on; if (on) fixedHeadingDeg = Double.NaN; }
         /** Fixed turret heading in the Driver Hub frame: front 0, right (home) 90, back 180, left 270 deg. */
         void setTurretHeading(double headingDeg) { tracking = false; fixedHeadingDeg = headingDeg; }
-        void gateOpen(boolean open) { gate.setPosition(open ? T.GATE_OPEN : T.GATE_CLOSED); }
+        /** Hold the gate open (true) or let the feed control it again (false). */
+        void gateOpen(boolean open) { gateHeldOpen = open; }
 
-        void startShoot(int balls) {
-            shootBalls = Math.max(1, balls);
-            shootState = 1;
-            shootT = clock.seconds();
-            shotNote = "";
-        }
-        boolean isShooting() { return shootState != 0; }
+        /**
+         * Shot: the fallback auto's continuous feed (gate, then both transfer stages) for T.FEED_SECONDS. A
+         * continuous feed cannot count launched balls (FiringCoordinator), so it feeds every loaded ball.
+         */
+        void startShoot() { feedUntil = now() + T.FEED_SECONDS; shotNote = ""; }
+        boolean isShooting() { return now() < feedUntil; }
         boolean turretHomed() { return turret.isHomed(); }
 
         /** Encoder-verified turret on its target (homed, fresh pose while tracking). */
@@ -3326,34 +3371,35 @@ const ROBOT_JAVA_V3 = `
 
         /** Mid-auto stop: mechanisms off, the turret holds its last target and keeps its home. */
         void stopAll() {
-            shootState = 0;
-            setIntake(0);                    // also stops transfer stage 1
+            intakePower = 0;
             spinning = false;
             tracking = false;
             fixedHeadingDeg = Double.NaN;
-            kicker.setPower(0);
-            transfer.setPower(0);
-            turret.stopShooter();
-            gate.setPosition(T.GATE_CLOSED);
+            gateHeldOpen = false;
+            feedUntil = Double.NEGATIVE_INFINITY;
+            double t = now();
+            RobotShutdown.stopAll(() -> firing.stop(t), intake::stop, transfer::pause, gate::close, turret::stopShooter);
         }
 
-        /** End of OpMode: every output stops even if one device throws. */
-        void shutdown() { RobotShutdown.stopAll(this::stopAll, turret::stop); }
-
-        int homeRetries = 0;                 // estimated turret homes restarted after a FAULT
+        /** End of OpMode: every output stops even if one device throws (the fallback auto's set). */
+        void shutdown() { RobotShutdown.stopAll(this::stopAll, transfer::stop, gate::close, turret::stop); }
 
         /**
-         * Once per loop, before the step: turret encoder, homing and flywheel velocity reads. A home that
-         * faults (turret bumped or still moving in its settle window) restarts at once; otherwise the
-         * turret would stay unhomed and never aim for the rest of the auto.
+         * Once per loop, before the step: transfer full sensor and stage 1 speed, turret encoder, homing and
+         * flywheel velocity. A home that faults (turret bumped or still moving in its settle window) restarts
+         * at once; otherwise the turret would stay unhomed and never aim for the rest of the auto.
          */
         void readSensors(double now) {
+            transfer.readSensors(now);
             turret.update(now);
             if (turret.hasHomingFault()) { homeRetries++; turret.homeTurretAndZeroEncoder(now); }
         }
 
+        /** INIT loop: turret homing travel only; nothing aims, spins or feeds before START. */
+        void applyInit(double now) { turret.applyYawCommand(now); }
+
         /**
-         * Once per loop, after the step. pose: this loop's Pinpoint sample (meters, Pedro frame, CCW).
+         * Once per loop, after the step. pose: this loop's Pinpoint sample (meters, field-center frame, CCW).
          * Aim uses the competition auto-aim rules: pivot offset from ShootingConfiguration.MOUNT, the
          * TurretControl aim lead, and TurretSubsystem's reachable-yaw rule for the rear dead zone.
          */
@@ -3375,54 +3421,44 @@ const ROBOT_JAVA_V3 = `
             }
             turret.applyYawCommand(now); // Same-loop servo write; also drives homing travel.
 
-            // ---- hood + flywheel from the measured shot table (range from the turret pivot) ----
-            ShotProfile.Row row = ShootingConfiguration.PROFILE.sample(dist * METERS_PER_INCH);
-            hoodTargetDeg = hoodAuto && row != null ? row.hoodDeg : hoodManualDeg;
+            // ---- hood + flywheel: the measured shot table (range from the turret pivot). Before any aim
+            //      point, the fallback auto's preload settings (TeleOp's starting manual hood / RPM). ----
+            ShotProfile.Row row = Double.isFinite(dist) ? ShootingConfiguration.PROFILE.sample(dist * METERS_PER_INCH) : null;
+            hoodTargetDeg = !hoodAuto ? hoodManualDeg : row != null ? row.hoodDeg : FallbackAutonomous.PRELOAD_HOOD_DEG;
             turret.setPitchAngleDegrees(hoodTargetDeg);
-            rpmTarget = rpmAuto ? (row == null ? 0 : row.rpm) : ShooterSpeed.clampFlywheelRpm(rpmManual);
+            rpmTarget = !rpmAuto ? ShooterSpeed.clampFlywheelRpm(rpmManual)
+                    : row != null ? row.rpm : FallbackAutonomous.PRELOAD_FLYWHEEL_RPM;
             if (spinning && rpmTarget > 0) turret.setShooterRpm(rpmTarget);
             else turret.stopShooter();
 
-            // ---- shot sequence: open gate -> both transfer stages feed -> stop -> close gate ----
-            // Stage 1 also runs whenever the intake is in (setIntake); stage 2 (kicker) only feeds shots.
-            double t = clock.seconds();
-            switch (shootState) {
-                case 1:
-                    gate.setPosition(T.GATE_OPEN);
-                    if (t - shootT >= T.GATE_OPEN_DELAY_S) {   // gate is open: run both transfers
-                        kicker.setPower(T.KICKER_POWER);
-                        transfer.setPower(T.TRANSFER_POWER);
-                        shootState = 2;
-                        shootT = t;
-                    }
-                    break;
-                case 2:
-                    if (t - shootT >= T.FEED_PER_BALL_S * shootBalls) {
-                        kicker.setPower(0);
-                        transfer.setPower(stage1IdlePower()); // back to intake-only loading
-                        shootState = 3;
-                        shootT = t;
-                    }
-                    break;
-                case 3:
-                    if (t - shootT >= T.GATE_CLOSE_DELAY_S) {
-                        gate.setPosition(T.GATE_CLOSED);
-                        shootState = 0;
-                    }
-                    break;
-                default:
-                    break;
-            }
+            // ---- feed: the fallback auto's manual-feed path (TeleOp GP1 A): gate, then both stages ----
+            boolean feedRequested = now < feedUntil;
+            feedControl.updateSelection(now, false, firing);
+            firing.update(now, false, feedRequested, false, false, false, false, false, "Planner autonomous feed");
+            boolean feedStage1 = feedControl.feedStage1(now, firing);
+            gate.setOpen(firing.gateOpen() || gateHeldOpen);
+            boolean shootingBusy = feedRequested || firing.gateOpen()
+                    || firing.state() == FiringCoordinator.State.RECOVERY;
+            // Stage 1 loads (full sensor + run-on, stall guard) while intaking or spinning up for a shot.
+            boolean loading = intakePower > 0 || spinning;
+            transfer.updateCached(now, feedControl.feedTransfers(firing, gate.isOpenForFeeding()),
+                    shootingBusy || !loading, feedStage1, false);
+            // Forward collection stops on a confirmed full queue (competition auto rule); reverse still allowed.
+            intake.setIntakePower(transfer.isFull() && intakePower > 0
+                    ? IntakeQueueController.FULL_QUEUE_INTAKE_POWER : intakePower);
+            transfer.setIntakeRunning(intake.getCommandedPower() > 0); // Stage 1 stall guard only while intaking.
         }
 
         void addTelemetry(Telemetry t) {
             turret.addDriverTelemetry(t);
+            transfer.addDriverTelemetry(t);
             if (homeRetries > 0) t.addData("Turret home retries", homeRetries);
             t.addData("Turret target heading (deg CW)", "%.1f | %s", turret.getTargetRobotHeadingDegrees(),
                     !turret.isHomed() ? "NOT HOMED" : turretReady() ? "ON TARGET" : tracking && !poseFresh ? "POSE STALE" : "MOVING");
-            t.addData("Aim range (in)", "%.1f%s", dist, aimTarget == null ? " (fallback)" : "");
+            t.addData("Aim range (in)", Double.isFinite(dist)
+                    ? String.format(java.util.Locale.US, "%.1f", dist) : "no aim point (preload settings)");
             t.addData("Hood travel (deg) / flywheel target (RPM)", "%.1f / %.0f", hoodTargetDeg, rpmTarget);
-            t.addData("Shot", "ready %s | state %d%s", ready(), shootState, shotNote.isEmpty() ? "" : " | " + shotNote);
+            t.addData("Shot", "ready %s | feed %s%s", ready(), firing.state(), shotNote.isEmpty() ? "" : " | " + shotNote);
         }
     }
 `;
@@ -3434,7 +3470,8 @@ function buildJava(){
   const startH = norm180(sp0.h * DEG);
   const N = S.steps.length;
   const T = S.tune;
-  const mirrorOn = S.mirror.x != null || S.mirror.y != null;
+  const mirrorOn = !!S.mirror;
+  const C0 = fmtN(F() / 2, 1);            // field center in Pedro 2's bottom-left frame
 
   const uid2i = new Map();
   S.steps.forEach((st, i) => uid2i.set(stepUid(st), i));
@@ -3454,7 +3491,7 @@ function buildJava(){
   L.push('import com.pedropathing.follower.Follower;');
   L.push('import com.pedropathing.geometry.BezierCurve;');
   L.push('import com.pedropathing.geometry.BezierLine;');
-  L.push('import com.pedropathing.math.Pose;');
+  L.push('import com.pedropathing.geometry.Pose;');
   if (usesFacing()) L.push('import com.pedropathing.paths.HeadingInterpolator;');
   L.push('import com.qualcomm.robotcore.eventloop.opmode.Autonomous;');
   L.push('import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;');
@@ -3471,15 +3508,17 @@ function buildJava(){
   L.push('import java.util.Arrays;');
   L.push('');
   L.push('/*');
-  L.push(' * Generated with the BioBuzz Path Planner (FTC 2026-27 "BIOBUZZ" presented by RTX).');
+  L.push(' * Generated with the BioBuzz Path Planner (FTC 2026-27 "BIOBUZZ" presented by RTX) - Pedro Pathing 2.x target.');
   L.push(' *');
   L.push(' * SELF-CONTAINED: robot subsystems (intake, flywheel, hood, turret, gate, kicker, transfer) and');
   L.push(' * the step runner are all in this file. The only outside piece is the Pedro Follower factory');
   L.push(` * (${(T.followerInit || '').trim() || 'follower init'}), because that holds your drivetrain tuning.`);
+  L.push(' * This target does not use the V1 TeamCode classes or values; use the Pedro 3 target for this repo.');
   L.push(' *');
-  L.push(' * - Coordinates: Pedro field inches, bottom-left origin, +x right, +y up. Headings in degrees, CCW positive.');
-  L.push(` * - Robot placed as a ${ROBOT_L} x ${ROBOT_W} in box, center (${fmtN(S.start.x, 2)}, ${fmtN(S.start.y, 2)}), heading ${fmtN(startH, 1)} deg.`);
-  L.push(` * - Start pose (tracked point = box center + pod offsets X ${fmtN(S.podX, 3)} fwd, Y ${fmtN(S.podY, 3)} reversed): (${fmtN(sp0.x, 3)}, ${fmtN(sp0.y, 3)}).`);
+  L.push(` * - Coordinates: Pedro 2 field inches, bottom-left origin (the planner's field-center values + ${C0}), +x toward`);
+  L.push(' *   the blue wall, +y away from the audience. Headings in degrees, CCW positive.');
+  L.push(` * - Robot placed as a ${ROBOT_L} x ${ROBOT_W} in box, center (${expX(S.start.x, 2)}, ${expX(S.start.y, 2)}), heading ${fmtN(startH, 1)} deg.`);
+  L.push(` * - Start pose (tracked point = box center + pod offsets X ${fmtN(S.podX, 3)} fwd, Y ${fmtN(S.podY, 3)} reversed): (${expX(sp0.x, 3)}, ${expX(sp0.y, 3)}).`);
   L.push(' * - Every tunable number is in class T below (T.RPM_SLOPE, T.GATE_OPEN, ...).');
   L.push(' *');
   L.push(' * HOW IT RUNS: ONE while (opModeIsActive()) loop. Each planner step is a case of runStep(); the next');
@@ -3500,9 +3539,7 @@ function buildJava(){
   tuneJava().forEach(l => L.push(l));
   L.push('    }');
   L.push('');
-  L.push(`    private static final double MIRROR_X = ${S.mirror.x != null ? fmtN(S.mirror.x, 1) : 'Double.NaN'};   // NaN = off`);
-  L.push(`    private static final double MIRROR_Y = ${S.mirror.y != null ? fmtN(S.mirror.y, 1) : 'Double.NaN'};`);
-  L.push(`    private static final boolean FLIP_TURNS = ${(S.mirror.x != null) !== (S.mirror.y != null) ? 'true' : 'false'};   // one mirror axis swaps turn directions`);
+  L.push(`    private static final double FIELD_CENTER = ${C0};   // the other alliance is the point mirror about (FIELD_CENTER, FIELD_CENTER)`);
   L.push('');
   L.push('    private Follower follower;');
   L.push('    private Robot robot;');
@@ -3515,15 +3552,11 @@ function buildJava(){
   L.push('    // ---- helpers (alliance mirroring is applied here, so planner coordinates stay as drawn) ----');
   L.push('    private Pose P(double x, double y, double deg) {');
   L.push('        double h = Math.toRadians(deg);');
-  L.push('        if (mirrored) {');
-  L.push('            if (!Double.isNaN(MIRROR_X)) { x = 2 * MIRROR_X - x; h = Math.PI - h; }');
-  L.push('            if (!Double.isNaN(MIRROR_Y)) { y = 2 * MIRROR_Y - y; h = -h; }');
-  L.push('        }');
+  L.push('        if (mirrored) { x = 2 * FIELD_CENTER - x; y = 2 * FIELD_CENTER - y; h += Math.PI; }   // BIOBUZZ point symmetry');
   L.push('        return new Pose(x, y, wrap(h));');
   L.push('    }');
-  L.push('    private double H(double deg) { return P(0, 0, deg).heading(); }');
-  L.push('    private boolean turnLeft(boolean left) { return (mirrored && FLIP_TURNS) ? !left : left; }');
-  L.push('    private double distTo(Pose p) { Pose c = follower.pose(); return Math.hypot(c.x() - p.x(), c.y() - p.y()); }');
+  L.push('    private double H(double deg) { return P(0, 0, deg).getHeading(); }');
+  L.push('    private double distTo(Pose p) { Pose c = follower.getPose(); return Math.hypot(c.getX() - p.getX(), c.getY() - p.getY()); }');
   L.push('    /** 0..1 progress through the path chain that is currently being followed. */');
   L.push('    private double progress() {');
   L.push('        return Math.min(1.0, (follower.getChainIndex() + follower.getCurrentTValue()) / Math.max(1, pathSegs));');
@@ -3531,7 +3564,7 @@ function buildJava(){
   if (usesFacing()){
     L.push('    private HeadingInterpolator facing(double x, double y) {');
     L.push('        Pose p = P(x, y, 0);');
-    L.push('        return HeadingInterpolator.facingPoint(p.x(), p.y());');
+    L.push('        return HeadingInterpolator.facingPoint(p.getX(), p.getY());');
     L.push('    }');
   }
   L.push('    static double clamp(double v, double lo, double hi) { return Math.max(lo, Math.min(hi, v)); }');
@@ -3547,11 +3580,11 @@ function buildJava(){
   L.push('        robot = new Robot(hardwareMap);');
   L.push('');
   if (mirrorOn){
-    L.push('        // ---- alliance select in init: X = planned side, B = mirrored side ----');
+    L.push('        // ---- alliance select in init: X = planned alliance, B = the other alliance (point mirror) ----');
     L.push('        while (!isStarted() && !isStopRequested()) {');
     L.push('            if (gamepad1.x) mirrored = false;');
     L.push('            if (gamepad1.b) mirrored = true;');
-    L.push('            telemetry.addData("Side", mirrored ? "MIRRORED  (X = planned side)" : "PLANNED side  (B = mirrored)");');
+    L.push(`            telemetry.addData("Alliance", mirrored ? "${S.alliance === 'BLUE' ? 'RED' : 'BLUE'} (MIRRORED, X = planned)" : "${S.alliance === 'BLUE' ? 'BLUE' : 'RED'} (PLANNED, B = other alliance)");`);
     L.push('            telemetry.update();');
     L.push('        }');
   } else {
@@ -3561,8 +3594,8 @@ function buildJava(){
   }
   L.push('        if (isStopRequested()) return;');
   L.push('');
-  L.push(`        follower.setStartingPose(P(${fmtN(sp0.x, 3)}, ${fmtN(sp0.y, 3)}, ${fmtN(startH, 1)}));   // box center (${fmtN(S.start.x, 2)}, ${fmtN(S.start.y, 2)}) + pod offsets`);
-  L.push('        robot.update(follower.pose());');
+  L.push(`        follower.setStartingPose(P(${expX(sp0.x, 3)}, ${expX(sp0.y, 3)}, ${fmtN(startH, 1)}));   // box center (${expX(S.start.x, 2)}, ${expX(S.start.y, 2)}) + pod offsets`);
+  L.push('        robot.update(follower.getPose());');
   L.push('');
   if (!N){
     L.push('        // Path is empty - draw a path in the planner.');
@@ -3578,7 +3611,7 @@ function buildJava(){
   L.push('');
   L.push('        while (opModeIsActive() && (stage < STEPS || running)) {');
   L.push('            follower.update();');
-  L.push('            robot.update(follower.pose());');
+  L.push('            robot.update(follower.getPose());');
   L.push('');
   L.push('            if (!running && stage < STEPS) {');
   L.push('                stage++;');
@@ -3609,7 +3642,7 @@ function buildJava(){
     L.push('');
   }
   L.push('            telemetry.addData("step", "%d / %d", Math.min(stage, STEPS), STEPS);');
-  L.push('            telemetry.addData("pose", "%.1f, %.1f, %.0f deg", follower.pose().x(), follower.pose().y(), Math.toDegrees(follower.pose().heading()));');
+  L.push('            telemetry.addData("pose", "%.1f, %.1f, %.0f deg", follower.getPose().getX(), follower.getPose().getY(), Math.toDegrees(follower.getPose().getHeading()));');
   L.push('            robot.addTelemetry(telemetry);');
   L.push('            telemetry.update();');
   L.push('        }');
@@ -3653,14 +3686,14 @@ function headCallV3(h, fromDeg, toDeg, t0, t1){
     case 'linear':      return `.linear(H(${fmtN(lerp(fromDeg, toDeg, t0), 1)}), H(${fmtN(lerp(fromDeg, toDeg, t1), 1)}))`;
     case 'linearDeg':   return `.linear(H(${fmtN(lerp(h.deg, h.deg2, t0), 1)}), H(${fmtN(lerp(h.deg, h.deg2, t1), 1)}))`;
     case 'tangent':     return '.tangent()';
-    case 'facing':      return `.facingPoint(P(${fmtN(h.px, 1)}, ${fmtN(h.py, 1)}, 0))`;
+    case 'facing':      return `.facingPoint(P(${expX(h.px)}, ${expX(h.py)}, 0))`;
     case 'custom':      return (h.code || '').trim() || `.constant(H(${fmtN(toDeg, 1)}))`;
     default:            return `.constant(H(${fmtN(toDeg, 1)}))`;
   }
 }
 // same geometry as curvePieces() (through = Catmull-Rom -> cubic Beziers, matching the preview)
 function curvePiecesV3(kind, from, to, pts){
-  const P3 = q => `P(${fmtN(q.x, 2)}, ${fmtN(q.y, 2)}, 0)`;
+  const P3 = q => `P(${expX(q.x)}, ${expX(q.y)}, 0)`;
   const a = { x: from.x, y: from.y }, b = { x: to.x, y: to.y };
   if (kind === 'curve' && pts.length) return [`Paths.curve(${[a, ...pts, b].map(P3).join(', ')})`];
   if (kind === 'through' && pts.length){
@@ -3691,6 +3724,9 @@ function chainJavaV3(st){
   return parts;
 }
 const jLim = v => (v != null && v > 0) ? jn(v) : '0';
+// speed fraction: the repo constant while the step uses the driver default and that still matches it
+const speedJ = st => (st.spd == null && S.dSpd === REPO_DEFAULT_SPEED)
+  ? 'PedroConfiguration.DEFAULT_PATH_SPEED_FRACTION' : fmtSpd(st.spd ?? S.dSpd);
 
 function stepCaseV3(st, i){
   const I = '                ';
@@ -3699,12 +3735,12 @@ function stepCaseV3(st, i){
     const add = s => out.push(I + s);
     const user = (code, extra) => { if ((code || '').trim()) reindentLines(code, I + extra).forEach(l => out.push(l)); };
     const parts = chainJavaV3(st);
-    const speed = fmtSpd(st.spd ?? S.dSpd);
     const accel = st.accel != null ? jLim(st.accel) : 'T.MAX_ACCEL_IN_PER_S2';
     const decel = st.decel != null ? jLim(st.decel) : 'T.MAX_DECEL_IN_PER_S2';
     const vel = jLim(st.maxVel);
     add('if (first) {');
     user(st.onStart, '    ');
+    add(`    pathSegs = ${parts.length};`);
     add('    Arrays.fill(cbFired, false);');
     if (parts.length === 1){
       add(`    follower.follow(limits(${parts[0]},`);
@@ -3712,7 +3748,7 @@ function stepCaseV3(st, i){
       add('    follower.follow(limits(Paths.path(');
       parts.forEach((p, k) => add('            ' + p + (k < parts.length - 1 ? ',' : '),')));
     }
-    add(`            ${speed}, ${vel}, ${accel}, ${decel}));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit`);
+    add(`            ${speedJ(st)}, ${vel}, ${accel}, ${decel}));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit`);
     add('}');
     (st.cbs || []).forEach((cb, k) => {
       if (!(cb.code || '').trim()) return;
@@ -3725,7 +3761,7 @@ function stepCaseV3(st, i){
     let cond = compl === 'PARAMETRIC_END' ? '!follower.following() || follower.atParametricEnd()' : '!follower.following()';
     if (compl === 'LENIENT'){
       const end = st.t === 'route' ? st.segs[st.segs.length - 1] : st;
-      cond += ` || distTo(P(${fmtN(end.x, 2)}, ${fmtN(end.y, 2)}, 0)) <= ${fmtN(st.tol ?? S.dTol, 1)}`;
+      cond += ` || distTo(P(${expX(end.x)}, ${expX(end.y)}, 0)) <= ${fmtN(st.tol ?? S.dTol, 1)}`;
     }
     const tmo = (st.timeout != null && st.timeout > 0)
       ? ` || stepTimer.seconds() > ${fmtN(st.timeout, 1)}`
@@ -3740,16 +3776,23 @@ function stepCaseV3(st, i){
     const out = [];
     const add = s => out.push(I + s);
     add('if (first) {');
-    add('    Pose c = follower.pose();');
-    add(`    turnGoal = c.withHeading(wrap(c.heading() + (turnLeft(${left}) ? 1 : -1) * Math.toRadians(${fmtN(st.deg, 1)})));`);
+    add('    Pose c = follower.pose();   // the point mirror keeps turn directions');
+    add(`    turnGoal = c.withHeading(wrap(c.heading() ${left ? '+' : '-'} Math.toRadians(${fmtN(st.deg, 1)})));`);
     add('    follower.hold(turnGoal);   // Pedro 3 has no turn(): hold the new heading (turns the short way)');
     add('}');
     add('boolean done = !first && Math.abs(wrap(turnGoal.heading() - follower.pose().heading())) <= Math.toRadians(T.TURN_TOLERANCE_DEG);');
     add('return done || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S);');
     return out;
   }
-  return stepCase(st, i);   // code / wait / mechanism steps are identical for both targets
+  return stepCase(st, i);   // code / wait / mechanism steps are shared with the Pedro 2 target
 }
+
+// TeamCode classes the Pedro 3 export uses (imported when the OpMode is outside org.firstinspires.ftc.teamcode)
+const V3_REPO_CLASSES = ['AutoPoseHandoff', 'CompetitionFeedController', 'FallbackAutoController', 'FallbackAutonomous',
+  'FieldGeometry', 'FiringCoordinator', 'GateSubsystem', 'IntakeQueueController', 'IntakeSubsystem', 'MotionSample',
+  'PedroConfiguration', 'PedroDrive', 'RobotLoop', 'RobotShutdown', 'ShooterMount', 'ShooterSpeed',
+  'ShootingConfiguration', 'ShotPlanner', 'ShotProfile', 'TeleOpFieldReference', 'TransferSubsystem',
+  'TurretControl', 'TurretSubsystem'];
 
 function buildJavaV3(){
   chainPoses();
@@ -3758,8 +3801,10 @@ function buildJavaV3(){
   const startH = norm180(sp0.h * DEG);
   const N = S.steps.length;
   const T = S.tune;
-  const mirrorOn = S.mirror.x != null || S.mirror.y != null;
+  const mirrorOn = !!S.mirror;
   const pkg = S.pkg || 'org.firstinspires.ftc.teamcode';
+  const planned = S.alliance === 'BLUE' ? 'BLUE' : 'RED';
+  const startJ = `P(${expX(sp0.x, 3)}, ${expX(sp0.y, 3)}, ${fmtN(startH, 1)})`;
 
   const uid2i = new Map();
   S.steps.forEach((st, i) => uid2i.set(stepUid(st), i));
@@ -3785,19 +3830,11 @@ function buildJavaV3(){
   L.push('import com.pedropathing.paths.Path;');
   L.push('import com.qualcomm.robotcore.eventloop.opmode.Autonomous;');
   L.push('import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;');
-  L.push('import com.qualcomm.robotcore.hardware.DcMotor;');
-  L.push('import com.qualcomm.robotcore.hardware.DcMotorEx;');
-  L.push('import com.qualcomm.robotcore.hardware.DcMotorSimple;');
   L.push('import com.qualcomm.robotcore.hardware.HardwareMap;');
-  L.push('import com.qualcomm.robotcore.hardware.Servo;');
   L.push('import com.qualcomm.robotcore.util.ElapsedTime;');
   L.push('import org.firstinspires.ftc.robotcore.external.Telemetry;');
   if (T.useDashboard) L.push('import com.acmerobotics.dashboard.config.Config;');
-  if (pkg !== 'org.firstinspires.ftc.teamcode'){
-    ['PedroDrive', 'MotionSample', 'RobotLoop', 'RobotShutdown', 'ShooterMount', 'ShooterSpeed', 'ShootingConfiguration',
-     'ShotPlanner', 'ShotProfile', 'TeleOpFieldReference', 'TurretControl', 'TurretSubsystem']
-      .forEach(c => L.push(`import org.firstinspires.ftc.teamcode.${c};`));
-  }
+  if (pkg !== 'org.firstinspires.ftc.teamcode') V3_REPO_CLASSES.forEach(c => L.push(`import org.firstinspires.ftc.teamcode.${c};`));
   L.push('');
   L.push('import java.util.ArrayList;');
   L.push('import java.util.Arrays;');
@@ -3807,12 +3844,15 @@ function buildJavaV3(){
   L.push(' * Generated with the BioBuzz Path Planner (FTC 2026-27 "BIOBUZZ" presented by RTX) - Pedro Pathing 3 target.');
   L.push(' *');
   L.push(' * Built for com.pedropathing:core 3.0.0 (Paths API). The drivetrain, Pinpoint and Pedro follower come');
-  L.push(' * from the repo\'s PedroDrive, so its PedroConfiguration tuning applies. The turret yaw, hood and flywheel');
-  L.push(' * are the repo\'s TurretSubsystem (homing, rear dead zone, encoder-verified yaw, shooter PIDF), aimed with');
-  L.push(' * the same pivot geometry and aim lead as competition auto aim, and the hood / RPM come from the');
-  L.push(' * team-measured ShootingConfiguration.PROFILE. Intake, gate, kicker and transfer are the Robot class below.');
+  L.push(' * from the repo\'s PedroDrive, so its PedroConfiguration tuning applies. Every mechanism is a repo');
+  L.push(' * subsystem, driven like the competition and fallback autos: IntakeSubsystem (TeleOp\'s direction),');
+  L.push(' * TransferSubsystem (full sensor, stage 1 stall guard), GateSubsystem with the shared FiringCoordinator');
+  L.push(' * feed, and TurretSubsystem (homing, rear dead zone, encoder-verified yaw, shooter PIDF), aimed with the');
+  L.push(' * competition pivot geometry and aim lead; hood / RPM come from ShootingConfiguration.PROFILE.');
   L.push(' *');
-  L.push(' * - Coordinates: Pedro field inches, bottom-left origin, +x right, +y up. Headings in degrees, CCW positive.');
+  L.push(' * - Coordinates: the repo\'s field frame (PedroDrive, Zenith routes, TeleOpFieldReference): inches,');
+  L.push(' *   (0, 0) = field center, +x toward the blue wall, +y away from the audience. Headings in degrees, CCW positive.');
+  L.push(` * - Planned alliance ${planned}${mirrorOn ? '; INIT alliance select mirrors through the field center (BioBuzzRobot.mirror)' : ''}.`);
   L.push(` * - Robot placed as a ${ROBOT_L} x ${ROBOT_W} in box, center (${fmtN(S.start.x, 2)}, ${fmtN(S.start.y, 2)}), heading ${fmtN(startH, 1)} deg.`);
   L.push(` * - Start pose (tracked point = box center + pod offsets X ${fmtN(S.podX, 3)} fwd, Y ${fmtN(S.podY, 3)} reversed): (${fmtN(sp0.x, 3)}, ${fmtN(sp0.y, 3)}).`);
   L.push(' * - Path limits: speed is a fraction of PedroConfiguration.MAX_FORWARD_VELOCITY_IN_PER_SEC; max velocity,');
@@ -3820,9 +3860,12 @@ function buildJavaV3(){
   L.push(' *');
   L.push(' * HOW IT RUNS: ONE while (opModeIsActive()) loop: loop.begin() (bulk cache), drive.readSensors() (the single');
   L.push(' * Pinpoint read), robot.readSensors(), the current step, loop-code blocks, robot.apply() (same-loop');
-  L.push(' * turret/hood/flywheel writes), then drive.update(). Steps wait for a fresh, referenced Pinpoint pose.');
-  L.push(' * Keep the robot still during INIT: Pinpoint IMU calibration and turret homing both run then.');
-  L.push(' * In your own code use: follower, drive, robot, telemetry, stepTimer, P(x, y, deg), H(deg), progress().');
+  L.push(' * mechanism writes), then drive.update(). Steps wait for a fresh, referenced Pinpoint pose. Like the');
+  L.push(' * repo\'s autos it clears AutoPoseHandoff in INIT and saves the pose every loop for TeleOp, stops at');
+  L.push(' * PedroConfiguration.MAX_AUTONOMOUS_SECONDS, and stops if the pose stays stale for');
+  L.push(' * FallbackAutoController.POSE_LOSS_SECONDS. Keep the robot still during INIT (Pinpoint IMU calibration');
+  L.push(' * and turret homing). In your own code use: follower, drive, robot, telemetry, stepTimer, P(x, y, deg),');
+  L.push(' * H(deg), progress().');
   if (bigTurn) L.push(' * NOTE: a turn step is larger than 180 deg; hold() turns the short way, so split it into two turns.');
   L.push(' */');
   L.push('');
@@ -3838,12 +3881,11 @@ function buildJavaV3(){
   L.push('        // ---- Pedro 3 path limits (driver defaults; a step can override them) ----');
   L.push(`        public static double MAX_ACCEL_IN_PER_S2 = ${jLim(S.dAccel)};   // 0 = no limit`);
   L.push(`        public static double MAX_DECEL_IN_PER_S2 = ${jLim(S.dDecel)};   // 0 = no limit`);
-  L.push('        public static double TURN_TOLERANCE_DEG = 3.0;');
+  L.push('        public static double TURN_TOLERANCE_DEG = Math.toDegrees(PedroConfiguration.END_HEADING_TOLERANCE_RAD);   // repo value');
   L.push('    }');
   L.push('');
-  L.push(`    private static final double MIRROR_X = ${S.mirror.x != null ? fmtN(S.mirror.x, 1) : 'Double.NaN'};   // NaN = off`);
-  L.push(`    private static final double MIRROR_Y = ${S.mirror.y != null ? fmtN(S.mirror.y, 1) : 'Double.NaN'};`);
-  L.push(`    private static final boolean FLIP_TURNS = ${(S.mirror.x != null) !== (S.mirror.y != null) ? 'true' : 'false'};   // one mirror axis swaps turn directions`);
+  L.push(`    private static final boolean MIRROR = ${mirrorOn ? 'true' : 'false'};   // INIT alliance select (B = other alliance)`);
+  L.push(`    private static final TurretSubsystem.Alliance PLANNED_ALLIANCE = TurretSubsystem.Alliance.${planned};`);
   L.push('');
   L.push('    private PedroDrive drive;');
   L.push('    private Follower follower;');
@@ -3852,23 +3894,28 @@ function buildJavaV3(){
   L.push('    private final ElapsedTime stepTimer = new ElapsedTime();');
   L.push('    private boolean mirrored = false;');
   L.push('    private int phase = 0;');
+  L.push('    private int pathSegs = 1;');
   L.push('    private Pose turnGoal = Pose.zero();');
   L.push(`    private final boolean[] cbFired = new boolean[${cbMax}];`);
   L.push('');
   L.push('    // ---- helpers (alliance mirroring is applied here, so planner coordinates stay as drawn) ----');
+  L.push('    /** Planner pose (field-center inches, deg) -> Pedro pose; the other alliance is the point mirror. */');
   L.push('    private Pose P(double x, double y, double deg) {');
   L.push('        double h = Math.toRadians(deg);');
-  L.push('        if (mirrored) {');
-  L.push('            if (!Double.isNaN(MIRROR_X)) { x = 2 * MIRROR_X - x; h = Math.PI - h; }');
-  L.push('            if (!Double.isNaN(MIRROR_Y)) { y = 2 * MIRROR_Y - y; h = -h; }');
-  L.push('        }');
+  L.push('        if (mirrored) { x = -x; y = -y; h += Math.PI; }   // same as BioBuzzRobot.mirror()');
   L.push('        return new Pose(x, y, wrap(h));');
   L.push('    }');
   L.push('    private double H(double deg) { return P(0, 0, deg).heading(); }');
-  L.push('    private boolean turnLeft(boolean left) { return (mirrored && FLIP_TURNS) ? !left : left; }');
+  L.push('    private TurretSubsystem.Alliance alliance() {');
+  L.push('        if (!mirrored) return PLANNED_ALLIANCE;');
+  L.push('        return PLANNED_ALLIANCE == TurretSubsystem.Alliance.RED ? TurretSubsystem.Alliance.BLUE : TurretSubsystem.Alliance.RED;');
+  L.push('    }');
   L.push('    private double distTo(Pose p) { Pose c = follower.pose(); return Math.hypot(c.x() - p.x(), c.y() - p.y()); }');
-  L.push('    /** 0..1 progress through the path that is currently being followed. */');
-  L.push('    private double progress() { return clamp(follower.curveCompletion(), 0, 1); }');
+  L.push('    /** 0..1 progress through the path being followed, spread evenly over its segments (1 once it ended). */');
+  L.push('    private double progress() {');
+  L.push('        if (!follower.following()) return 1.0;');
+  L.push('        return clamp((follower.pathIndex() + follower.curveCompletion()) / Math.max(1, pathSegs), 0, 1);');
+  L.push('    }');
   L.push('    /** Per-path Foresight limits. speed = fraction of max forward velocity; the rest are 0 = no limit. */');
   L.push('    private Path limits(Path path, double speed, double maxVelInPerS, double accelInPerS2, double decelInPerS2) {');
   L.push('        List<Modifier> m = new ArrayList<>();');
@@ -3888,31 +3935,33 @@ function buildJavaV3(){
   L.push('    // =====================================================================================');
   L.push('    @Override');
   L.push('    public void runOpMode() throws InterruptedException {');
+  L.push('        AutoPoseHandoff.clear();   // like every repo auto: an older run\'s pose must never reach the next TeleOp');
   L.push('        RobotLoop loop = new RobotLoop(hardwareMap);   // bulk-cached hub reads, cleared once per loop');
   L.push('        drive = new PedroDrive(hardwareMap);   // drive motors + Pinpoint + Pedro 3 follower');
   L.push('        follower = drive.follower();');
   L.push('        cfg = drive.config();');
   L.push('        try {');
   L.push('            robot = new Robot(hardwareMap);    // starts turret homing');
-  L.push(`            drive.setStartPose(P(${fmtN(sp0.x, 3)}, ${fmtN(sp0.y, 3)}, ${fmtN(startH, 1)}));   // box center (${fmtN(S.start.x, 2)}, ${fmtN(S.start.y, 2)}) + pod offsets`);
+  L.push(`            drive.setStartPose(${startJ});   // box center (${fmtN(S.start.x, 2)}, ${fmtN(S.start.y, 2)}) + pod offsets`);
   L.push('            boolean lastMirrored = mirrored;');
   L.push('            while (opModeInInit()) {');
   L.push('                loop.begin();');
   L.push('                drive.readSensors();   // applies the start pose once Pinpoint reports READY');
   L.push('                double t = now();   // after the Pinpoint read: pose freshness needs t >= sample time');
   L.push('                robot.readSensors(t);');
-  L.push('                robot.apply(t, drive.sample());   // turret homing only; nothing aims or spins before START');
+  L.push('                robot.applyInit(t);   // turret homing only; nothing aims, spins or feeds before START');
   if (mirrorOn){
     L.push('                if (gamepad1.x) mirrored = false;');
     L.push('                if (gamepad1.b) mirrored = true;');
     L.push('                if (mirrored != lastMirrored) {');
-    L.push(`                    drive.setStartPose(P(${fmtN(sp0.x, 3)}, ${fmtN(sp0.y, 3)}, ${fmtN(startH, 1)}));`);
+    L.push(`                    drive.setStartPose(${startJ});`);
     L.push('                    lastMirrored = mirrored;');
     L.push('                }');
-    L.push('                telemetry.addData("Side", mirrored ? "MIRRORED  (X = planned side)" : "PLANNED side  (B = mirrored)");');
+    L.push('                telemetry.addData("Alliance", "%s %s", alliance(), mirrored ? "(MIRRORED, X = planned alliance)" : "(PLANNED, B = other alliance)");');
   } else {
-    L.push('                telemetry.addLine("BioBuzz auto ready - keep the robot still during INIT (Pinpoint + turret homing)");');
+    L.push('                telemetry.addData("Alliance", alliance());');
   }
+  L.push('                telemetry.addLine("BioBuzz auto ready - keep the robot still during INIT (Pinpoint + turret homing)");');
   L.push('                telemetry.addData("Pose ready", drive.ready(now()));');
   L.push('                drive.addTelemetry(telemetry);');
   L.push('                robot.addTelemetry(telemetry);');
@@ -3930,17 +3979,35 @@ function buildJavaV3(){
     return L.join('\n') + '\n';
   }
   L.push(`            final int STEPS = ${N};`);
+  L.push('            final double started = now();');
   L.push('            int stage = 0;               // steps started so far; running step index = stage - 1');
   L.push('            boolean running = false;');
   L.push('            boolean first = false;');
   L.push('            boolean poseSeen = false;');
+  L.push('            double poseLostSince = Double.NaN;');
+  L.push('            String endReason = "Auto complete";');
   L.push('');
   L.push('            while (opModeIsActive() && (stage < STEPS || running)) {');
   L.push('                loop.begin();');
   L.push('                drive.readSensors();');
   L.push('                double t = now();   // after the Pinpoint read: pose freshness needs t >= sample time');
   L.push('                robot.readSensors(t);');
-  L.push('                if (!poseSeen) poseSeen = drive.ready(now());');
+  L.push('                if (t - started >= PedroConfiguration.MAX_AUTONOMOUS_SECONDS) {');
+  L.push('                    endReason = "Stopped at the autonomous deadline";');
+  L.push('                    break;');
+  L.push('                }');
+  L.push('                if (drive.ready(t)) {');
+  L.push('                    poseSeen = true;');
+  L.push('                    poseLostSince = Double.NaN;');
+  L.push('                    AutoPoseHandoff.save(alliance(), drive.sample());   // TeleOp can start from the last good pose');
+  L.push('                } else if (poseSeen) {');
+  L.push('                    if (Double.isNaN(poseLostSince)) poseLostSince = t;');
+  L.push('                    if (t - poseLostSince >= FallbackAutoController.POSE_LOSS_SECONDS) {');
+  L.push('                        AutoPoseHandoff.clear();   // a pose from before a localization fault is not trustworthy');
+  L.push('                        endReason = "FAULT: Pinpoint pose unavailable / stale; stopped";');
+  L.push('                        break;');
+  L.push('                    }');
+  L.push('                }');
   L.push('');
   L.push('                if (poseSeen && !running && stage < STEPS) {');
   L.push('                    stage++;');
@@ -3972,13 +4039,15 @@ function buildJavaV3(){
   }
   L.push('                robot.apply(t, drive.sample());');
   L.push('                drive.update();');
-  L.push('                telemetry.addData("step", "%d / %d%s", Math.min(stage, STEPS), STEPS, poseSeen ? "" : " (waiting for Pinpoint pose)");');
+  L.push('                telemetry.addData("step", "%d / %d%s | %.1f s", Math.min(stage, STEPS), STEPS, poseSeen ? "" : " (waiting for Pinpoint pose)", t - started);');
+  L.push('                telemetry.addData("Alliance", alliance());');
   L.push('                drive.addTelemetry(telemetry);');
   L.push('                robot.addTelemetry(telemetry);');
   L.push('                loop.addRateTelemetry(telemetry);');
   L.push('                telemetry.update();');
   L.push('            }');
-  L.push('            telemetry.addLine("Auto complete");');
+  L.push('            RobotShutdown.stopAll(drive::stop, robot::stopAll);');
+  L.push('            telemetry.addLine(endReason);');
   L.push('            telemetry.update();');
   L.push('        } finally {');
   L.push('            RobotShutdown.stopAll(drive::stop, robot == null ? null : robot::shutdown);');
@@ -4025,8 +4094,8 @@ function highlightJava(src){
   return out;
 }
 const CODE_HINTS = {
-  classic: '<b>One file, one loop.</b> Robot subsystems, the Pedro path steps and your code all live in the generated OpMode. Each step is a <code>case</code> in <code>runStep()</code>; loop-code blocks run every cycle between two steps. Tuning numbers are in class <code>T</code> (edit them in the Tuning tab). The one outside dependency is the Pedro follower factory you set in Tuning. Uses the Pedro&nbsp;2.x <code>pathBuilder()</code> API (<code>BezierLine</code>, <code>getChainIndex</code>, <code>setStartingPose</code>), which <b>does not exist in Pedro&nbsp;3</b>: switch the target to Pedro&nbsp;3 for this repo.',
-  v3: '<b>Pedro 3 (com.pedropathing:core 3.0.0).</b> Same one-loop OpMode, but paths are built with <code>Paths.line / curve</code>, followed with <code>follower.follow(...)</code>, and driven by the repo&rsquo;s <code>PedroDrive</code> (drive motors + Pinpoint, one I2C read per loop). Speed, max velocity and the acceleration / deceleration limits become per-path Foresight modifiers. Turns hold the new heading (the short way) until within <code>T.TURN_TOLERANCE_DEG</code>. The turret, hood and flywheel use the repo&rsquo;s <code>TurretSubsystem</code> and measured shot table, aimed like competition auto aim (homing in INIT, rear dead zone, encoder-checked yaw). Needs <code>PedroDrive.config()</code> and those V1 classes.',
+  classic: '<b>One file, one loop.</b> Robot subsystems, the Pedro path steps and your code all live in the generated OpMode. Each step is a <code>case</code> in <code>runStep()</code>; loop-code blocks run every cycle between two steps. Tuning numbers are in class <code>T</code> (edit them in the Tuning tab). The one outside dependency is the Pedro follower factory you set in Tuning. Uses the Pedro&nbsp;2.x API (<code>pathBuilder()</code>, <code>com.pedropathing.geometry.Pose</code>, <code>getPose()</code>, <code>getChainIndex</code>, <code>setStartingPose</code>) and Pedro&rsquo;s bottom-left origin (the planner&rsquo;s field-center values + 72). It <b>does not compile with Pedro&nbsp;3</b> and does not use the V1 classes or values: switch the target to Pedro&nbsp;3 for this repo.',
+  v3: '<b>Pedro 3 (com.pedropathing:core 3.0.0).</b> Same one-loop OpMode, but paths are built with <code>Paths.line / curve</code>, followed with <code>follower.follow(...)</code>, and driven by the repo&rsquo;s <code>PedroDrive</code> (drive motors + Pinpoint, one I2C read per loop) in the repo&rsquo;s field-center frame. Speed, max velocity and the acceleration / deceleration limits become per-path Foresight modifiers. Turns hold the new heading (the short way) until within <code>T.TURN_TOLERANCE_DEG</code>. Mechanisms are the repo&rsquo;s subsystems, run like the competition and fallback autos: <code>IntakeSubsystem</code>, <code>TransferSubsystem</code>, <code>GateSubsystem</code> with the shared <code>FiringCoordinator</code> feed, and <code>TurretSubsystem</code> with the measured shot table, aimed like competition auto aim (homing in INIT, rear dead zone, encoder-checked yaw). It clears and saves <code>AutoPoseHandoff</code>, stops at the 29&nbsp;s deadline and stops on a stale Pinpoint pose.',
 };
 function renderCode(){
   RAW_JAVA = S.codeTarget === 'v3' ? buildJavaV3() : buildJava();
@@ -4078,20 +4147,21 @@ function doUndo(){
 $('btnUndo').addEventListener('click', doUndo);
 
 // ---------- persistence / import / export ----------
+const planData = () => ({
+  frame: PLAN_FRAME, flipped: S.flipped,
+  start: S.start, steps: S.steps, spans: S.spans,
+  opmodeName: S.opmodeName, pkg: S.pkg,
+  dSpd: S.dSpd, dTurnSpd: S.dTurnSpd, dHeading: S.dHeading,
+  dCompletion: S.dCompletion, dTol: S.dTol, alliance: S.alliance, mirror: S.mirror,
+  podX: S.podX, podY: S.podY, tune: S.tune,
+  pedroTarget: S.codeTarget, dAccel: S.dAccel, dDecel: S.dDecel,
+});
 let saveTimer = null;
 function save(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
     try {
-      localStorage.setItem(LS_KEY, JSON.stringify({
-        fieldSize: S.fieldSize, origin: S.origin, flipped: S.flipped,
-        start: S.start, steps: S.steps, spans: S.spans,
-        opmodeName: S.opmodeName, pkg: S.pkg,
-        dSpd: S.dSpd, dTurnSpd: S.dTurnSpd, dHeading: S.dHeading,
-        dCompletion: S.dCompletion, dTol: S.dTol, mirror: S.mirror,
-        podX: S.podX, podY: S.podY, tune: S.tune,
-        pedroTarget: S.codeTarget, dAccel: S.dAccel, dDecel: S.dDecel,
-      }));
+      localStorage.setItem(LS_KEY, JSON.stringify(planData()));
     } catch (e) { /* storage unavailable - ignore */ }
   }, 200);
 }
@@ -4101,41 +4171,104 @@ function loadLimits(d){
   S.dAccel = posOrNull(d.dAccel);
   S.dDecel = posOrNull(d.dDecel);
 }
+
+// Plans saved before the field-center switch have no `frame`: they hold Pedro bottom-left coordinates
+// (field-center ones when their old Origin setting was "center"), single-axis mirror lines, and the old
+// default aim points (60,52 / 60,92 / 84,52 / 84,92) and speed (1.0). Converts d in place; returns notes.
+const OLD_AIM = { 1: [60, 52], 2: [60, 92], 3: [84, 52], 4: [84, 92] };
+function migratePlan(d){
+  if (!d || typeof d !== 'object' || d.frame === PLAN_FRAME) return [];
+  const notes = [];
+  const off = d.origin === 'center' ? 0 : (+d.fieldSize || 144) / 2;
+  const r3 = v => +(+v).toFixed(3);
+  const sh = p => { if (p && Number.isFinite(+p.x) && Number.isFinite(+p.y)){ p.x = r3(p.x - off); p.y = r3(p.y - off); } };
+  const shH = h => { if (h && h.mode === 'facing'){ h.px = r3((+h.px || 0) - off); h.py = r3((+h.py || 0) - off); } };
+  const steps = Array.isArray(d.steps) ? d.steps.filter(st => st && typeof st === 'object') : [];
+  if (off){
+    sh(d.start);
+    steps.forEach(st => {
+      if (st.t === 'move'){ sh(st); (st.pts || []).forEach(sh); shH(st.heading); }
+      else if (st.t === 'route'){
+        (st.segs || []).forEach(sg => { sh(sg); (sg.pts || []).forEach(sh); shH(sg.heading); });
+        shH(st.headingBase); shH(st.headingOvr);
+      }
+      else if (st.t === 'act' && st.goal === 'custom'){ const g = { x: st.gx, y: st.gy }; sh(g); st.gx = g.x; st.gy = g.y; }
+    });
+    notes.push(`coordinates moved to the field-center frame (−${fmtN(off, 1)} in)`);
+  }
+  if (d.tune && typeof d.tune === 'object'){
+    let reset = 0;
+    for (const n of [1, 2, 3, 4]){
+      const kx = `GOAL${n}_X`, ky = `GOAL${n}_Y`, x = d.tune[kx], y = d.tune[ky];
+      if (x == null || y == null) continue;                    // missing -> the new defaults
+      if (+x === OLD_AIM[n][0] && +y === OLD_AIM[n][1]){ delete d.tune[kx]; delete d.tune[ky]; reset++; }
+      else if (off){ d.tune[kx] = r3(x - off); d.tune[ky] = r3(y - off); }
+    }
+    if (reset) notes.push('old default aim points replaced with the hive openings');
+    if (d.tune.INTAKE_REVERSE_FROM_TELEOP) notes.push('the Pedro 3 intake now runs in TeleOp’s direction');
+  }
+  if (+d.dSpd === 1){ d.dSpd = REPO_DEFAULT_SPEED; notes.push(`default speed 1.0 → ${REPO_DEFAULT_SPEED} (PedroConfiguration)`); }
+  if (d.mirror && typeof d.mirror === 'object'){
+    const on = d.mirror.x != null || d.mirror.y != null;
+    d.mirror = on;
+    if (on) notes.push('mirror lines replaced with the alliance point mirror');
+  }
+  if (off){
+    const codeHasP = s => typeof s === 'string' && /\bP\s*\(/.test(s);
+    const hcode = h => h && h.mode === 'custom' && codeHasP(h.code);
+    const used = steps.some(st => [st.code, st.cond, st.onStart, st.onComplete].some(codeHasP)
+        || (st.cbs || []).some(c => c && codeHasP(c.code)) || hcode(st.heading) || hcode(st.headingBase) || hcode(st.headingOvr)
+        || (st.segs || []).some(sg => sg && hcode(sg.heading)))
+      || (Array.isArray(d.spans) && d.spans.some(sp => sp && codeHasP(sp.code)));
+    if (used) notes.push('check the P(x, y, ...) coordinates inside your own code: they were not converted');
+  }
+  d.frame = PLAN_FRAME;
+  return notes;
+}
+
+// apply a (migrated) saved or imported plan to S
+function applyPlan(d){
+  if ('flipped' in d) S.flipped = !!d.flipped;
+  if (d.start && Number.isFinite(+d.start.x) && Number.isFinite(+d.start.y))
+    S.start = { x: +d.start.x, y: +d.start.y, h: Number.isFinite(+d.start.h) ? +d.start.h : 0 };
+  if (Array.isArray(d.steps)) S.steps = d.steps.map(normStep);
+  if (Array.isArray(d.spans)) S.spans = normSpans(d.spans);
+  bumpUidSeq();
+  if (d.opmodeName) S.opmodeName = d.opmodeName;
+  if (d.pkg) S.pkg = d.pkg;
+  if (d.dSpd != null && isFinite(+d.dSpd)) S.dSpd = +d.dSpd;
+  if (d.dTurnSpd != null && isFinite(+d.dTurnSpd)) S.dTurnSpd = +d.dTurnSpd;
+  if (['constant','linear','tangent'].includes(d.dHeading)) S.dHeading = d.dHeading;
+  if (['SETTLED','PARAMETRIC_END','LENIENT'].includes(d.dCompletion)) S.dCompletion = d.dCompletion;
+  if (d.dTol != null && isFinite(+d.dTol)) S.dTol = +d.dTol;
+  S.alliance = d.alliance === 'BLUE' ? 'BLUE' : 'RED';
+  S.mirror = d.mirror === true;
+  if (d.podX != null && isFinite(+d.podX)) S.podX = +d.podX;
+  if (d.podY != null && isFinite(+d.podY)) S.podY = +d.podY;
+  S.tune = normTune(d.tune);
+  loadLimits(d);
+}
+
+let loadNotes = [];                       // migration notes for the saved plan, shown once at boot
 function loadSaved(){
   try {
     const raw = localStorage.getItem(LS_KEY);
     if (!raw) return false;
     const d = JSON.parse(raw);
-    if (d.fieldSize) S.fieldSize = +d.fieldSize;
-    if (d.origin) S.origin = d.origin;
-    S.flipped = !!d.flipped;
-    if (d.start) S.start = d.start;
-    if (Array.isArray(d.steps)) S.steps = d.steps.map(normStep);
-    if (Array.isArray(d.spans)) S.spans = normSpans(d.spans);
-    bumpUidSeq();
-    if (d.opmodeName) S.opmodeName = d.opmodeName;
-    if (d.pkg) S.pkg = d.pkg;
-    if (d.dSpd != null) S.dSpd = +d.dSpd;
-    if (d.dTurnSpd != null) S.dTurnSpd = +d.dTurnSpd;
-    if (['constant','linear','tangent'].includes(d.dHeading)) S.dHeading = d.dHeading;
-    if (['SETTLED','PARAMETRIC_END','LENIENT'].includes(d.dCompletion)) S.dCompletion = d.dCompletion;
-    if (d.dTol != null) S.dTol = +d.dTol;
-    if (d.mirror && typeof d.mirror === 'object') S.mirror = { x: d.mirror.x ?? null, y: d.mirror.y ?? null };
-    if (d.podX != null && isFinite(+d.podX)) S.podX = +d.podX;
-    if (d.podY != null && isFinite(+d.podY)) S.podY = +d.podY;
-    S.tune = normTune(d.tune);
-    loadLimits(d);
+    const notes = migratePlan(d);
+    if (notes.length){
+      // keep the pre-migration plan in this browser (never overwrite an older backup)
+      const bk = LS_KEY + '-before-field-center';
+      try { if (!localStorage.getItem(bk)) localStorage.setItem(bk, raw); } catch (e) { /* ignore */ }
+      loadNotes = notes;
+    }
+    applyPlan(d);
     return true;
   } catch (e) { return false; }
 }
 $('btnExport').addEventListener('click', () => {
-  download(className() + '.plan.json', JSON.stringify({
-    start: S.start, steps: S.steps, spans: S.spans, opmodeName: S.opmodeName, pkg: S.pkg,
-    dSpd: S.dSpd, dTurnSpd: S.dTurnSpd, dHeading: S.dHeading,
-    dCompletion: S.dCompletion, dTol: S.dTol, mirror: S.mirror,
-    podX: S.podX, podY: S.podY, tune: S.tune,
-    pedroTarget: S.codeTarget, dAccel: S.dAccel, dDecel: S.dDecel,
-  }, null, 2), 'application/json');
+  const { flipped, ...plan } = planData();
+  download(className() + '.plan.json', JSON.stringify(plan, null, 2), 'application/json');
   toast('Plan exported');
 });
 $('btnImport').addEventListener('click', () => $('fileImport').click());
@@ -4148,25 +4281,11 @@ $('fileImport').addEventListener('change', e => {
       const d = JSON.parse(r.result);
       if (!Array.isArray(d.steps)) throw new Error('bad file');
       pushUndo();
-      if (d.start) S.start = d.start;
-      S.steps = d.steps.map(normStep);
-      S.spans = Array.isArray(d.spans) ? normSpans(d.spans) : [];
-      bumpUidSeq();
-      if (d.opmodeName) S.opmodeName = d.opmodeName;
-      if (d.pkg) S.pkg = d.pkg;
-      if (d.dSpd != null) S.dSpd = +d.dSpd;
-      if (d.dTurnSpd != null) S.dTurnSpd = +d.dTurnSpd;
-      if (['constant','linear','tangent'].includes(d.dHeading)) S.dHeading = d.dHeading;
-      if (['SETTLED','PARAMETRIC_END','LENIENT'].includes(d.dCompletion)) S.dCompletion = d.dCompletion;
-      if (d.dTol != null) S.dTol = +d.dTol;
-      if (d.mirror && typeof d.mirror === 'object') S.mirror = { x: d.mirror.x ?? null, y: d.mirror.y ?? null };
-      if (d.podX != null && isFinite(+d.podX)) S.podX = +d.podX;
-      if (d.podY != null && isFinite(+d.podY)) S.podY = +d.podY;
-    S.tune = normTune(d.tune);
-      loadLimits(d);
+      const notes = migratePlan(d);
+      applyPlan(d);
       syncSettings(); renderTuning();
       select(-1); save(); renderList(); markDirty();
-      toast('Plan imported: ' + S.steps.length + ' steps');
+      toast('Plan imported: ' + S.steps.length + ' steps' + (notes.length ? ' — ' + notes.join('; ') : ''), notes.length ? 9000 : 1800);
     } catch (err) { toast('Import failed - not a valid plan file'); }
   };
   r.readAsText(f);
@@ -4204,8 +4323,6 @@ $('tabCode').addEventListener('click', () => showTab('code'));
 
 $('setName').addEventListener('input', e => { S.opmodeName = e.target.value; markDirty(); });
 $('setPkg').addEventListener('input', e => { S.pkg = e.target.value; markDirty(); });
-$('setSize').addEventListener('change', e => { S.fieldSize = +e.target.value; fitView(); markDirty(); save(); });
-$('setOrigin').addEventListener('change', e => { S.origin = e.target.value; markDirty(); save(); });
 $('setDSpd').addEventListener('change', e => { const v = parseFloat(e.target.value); if (!isNaN(v)) S.dSpd = Math.max(0.05, Math.min(1, v)); e.target.value = S.dSpd; markDirty(); save(); renderInspector(); });
 $('setDTurn').addEventListener('change', e => { const v = parseFloat(e.target.value); if (!isNaN(v)) S.dTurnSpd = Math.max(0.05, Math.min(1, v)); e.target.value = S.dTurnSpd; markDirty(); save(); renderInspector(); });
 $('setDHead').addEventListener('change', e => { S.dHeading = e.target.value; markDirty(); save(); });
@@ -4213,20 +4330,18 @@ $('setDCompl').addEventListener('change', e => { S.dCompletion = e.target.value;
 $('setDTol').addEventListener('change', e => { const v = parseFloat(e.target.value); if (!isNaN(v)) S.dTol = Math.max(0.5, v); e.target.value = S.dTol; markDirty(); save(); });
 $('setPodX').addEventListener('input', e => { const v = parseFloat(e.target.value); S.podX = isNaN(v) ? 0 : v; markDirty(); save(); renderInspector(); });
 $('setPodY').addEventListener('input', e => { const v = parseFloat(e.target.value); S.podY = isNaN(v) ? 0 : v; markDirty(); save(); renderInspector(); });
-$('setMirX').addEventListener('input', e => { const v = parseFloat(e.target.value); S.mirror.x = isNaN(v) ? null : v; markDirty(); save(); });
+$('setAlliance').addEventListener('change', e => { S.alliance = e.target.value === 'BLUE' ? 'BLUE' : 'RED'; markDirty(); save(); });
+$('setMirror').addEventListener('change', e => { S.mirror = e.target.value === 'point'; markDirty(); save(); });
 $('setDAccel').addEventListener('change', e => { S.dAccel = posOrNull(e.target.value); e.target.value = S.dAccel ?? ''; markDirty(); save(); renderInspector(); });
 $('setDDecel').addEventListener('change', e => { S.dDecel = posOrNull(e.target.value); e.target.value = S.dDecel ?? ''; markDirty(); save(); renderInspector(); });
 $('setTarget').addEventListener('change', e => {
   S.codeTarget = CODE_TARGETS.includes(e.target.value) ? e.target.value : 'v3';
-  renderTuning(); renderInspector(); markDirty(); save();   // tuning rows and mechanism units depend on the target
+  renderTuning(); renderInspector(); renderList(); markDirty(); save();   // tuning rows and mechanism units depend on the target
 });
-$('setMirY').addEventListener('input', e => { const v = parseFloat(e.target.value); S.mirror.y = isNaN(v) ? null : v; markDirty(); save(); });
 
 function syncSettings(){
   $('setName').value = S.opmodeName;
   $('setPkg').value = S.pkg;
-  $('setSize').value = String(S.fieldSize);
-  $('setOrigin').value = S.origin;
   $('setDSpd').value = S.dSpd;
   $('setDTurn').value = S.dTurnSpd;
   $('setDHead').value = S.dHeading;
@@ -4234,8 +4349,8 @@ function syncSettings(){
   $('setDTol').value = S.dTol;
   $('setPodX').value = S.podX;
   $('setPodY').value = S.podY;
-  $('setMirX').value = S.mirror.x ?? '';
-  $('setMirY').value = S.mirror.y ?? '';
+  $('setAlliance').value = S.alliance;
+  $('setMirror').value = S.mirror ? 'point' : 'off';
   $('setDAccel').value = S.dAccel ?? '';
   $('setDDecel').value = S.dDecel ?? '';
   $('setTarget').value = S.codeTarget;
@@ -4249,12 +4364,12 @@ $('btnFit').addEventListener('click', () => { view.zoom = 1; fitView(); });
 $('btnFlip').addEventListener('click', () => { S.flipped = !S.flipped; save(); });
 
 let toastTimer = null;
-function toast(msg){
+function toast(msg, ms = 1800){
   const t = $('toast');
   t.textContent = msg;
   t.classList.add('on');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('on'), 1800);
+  toastTimer = setTimeout(() => t.classList.remove('on'), ms);
 }
 
 // ---------- resize / boot ----------
@@ -4281,6 +4396,10 @@ renderCode();
 $('btnUndo').disabled = true;
 if (!saved && !S.steps.length){
   showTab('build');
+}
+if (loadNotes.length){
+  save();   // one-time migration; the old plan stays under 'biobuzz-path-planner-v1-before-field-center'
+  toast('Saved plan updated for the repo field frame: ' + loadNotes.join('; ') + '. The old plan is backed up in this browser.', 12000);
 }
 
 (function loop(now){ drawScene(now || 0); requestAnimationFrame(loop); })();
