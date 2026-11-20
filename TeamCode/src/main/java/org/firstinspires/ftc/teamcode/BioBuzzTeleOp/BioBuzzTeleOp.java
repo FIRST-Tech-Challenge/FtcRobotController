@@ -21,8 +21,8 @@ public class    BioBuzzTeleOp extends OpMode
         double motorSpeed = gamepad1.left_stick_y;
        // byteBustersBee.setFrontRightMotorSpeed(motorSpeed);
 
-        byteBustersBee.setFrontRightMotorSpeed(motorspeed);
-        telemetry.add("Motor Speed:",motorSpeed);
+        byteBustersBee.setFrontRightMotorSpeed(motorSpeed);
+       // telemetry.add("Motor Speed:", motorSpeed);
         telemetry.addData("Motor Revs", byteBustersBee.getFrontMotorRevs());
 
         if(gamepad1.a)
