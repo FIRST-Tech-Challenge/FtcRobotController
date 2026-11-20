@@ -25,9 +25,9 @@ public class DriveOpMode extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         frontLeftDrive = hardwareMap.get(DcMotor.class, HardwareNames.fl); //0
-        backLeftDrive = hardwareMap.get(DcMotor.class, "bl"); //3
-        frontRightDrive = hardwareMap.get(DcMotor.class, "fr"); //1
-        backRightDrive = hardwareMap.get(DcMotor.class, "br"); //2
+        backLeftDrive = hardwareMap.get(DcMotor.class, HardwareNames.bl); //3
+        frontRightDrive = hardwareMap.get(DcMotor.class, HardwareNames.fr); //1
+        backRightDrive = hardwareMap.get(DcMotor.class, HardwareNames.br); //2
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
