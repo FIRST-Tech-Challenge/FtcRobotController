@@ -52,6 +52,7 @@ public class AutoDriveMain extends LinearOpMode2026 {
     public Turret turretAimer;
 
     boolean isBackAtStart = false;
+    boolean notBailed = true;
 
     // Autonomous routine
     public Command autoRoutine() {
@@ -92,6 +93,7 @@ public class AutoDriveMain extends LinearOpMode2026 {
         follower.update();
 
         waitForStart();
+        long start = System.currentTimeMillis();
         flywheel.setVelocity(2200 * TICKS_PER_REV / 60.0); // 2400 was really good
         hood.setPosition(0.2);
         intake.setPower(0);
@@ -118,6 +120,9 @@ public class AutoDriveMain extends LinearOpMode2026 {
             if (follower.currentPath() != null) {
                 telemetry.addData("Current path distance remaining", follower.distanceToEndpoint());
                 telemetry.addData("Path number", follower.pathIndex());
+            }
+            if(System.currentTimeMillis()-start > 25000 && notBailed) {
+                bail();
             }
 
             DoTurret();
@@ -195,6 +200,18 @@ public class AutoDriveMain extends LinearOpMode2026 {
             // Ensure the result is valid and tx is within ±0.5 degrees of center
             return result != null && result.isValid() && Math.abs(tx) < 0.5;
         });
+    }
+
+    public void bail() {
+        Scheduler.reset();
+        follower.stop();
+        Scheduler.schedule(
+                instant(() -> {
+                    MovementUtils.autoEndPose = follower.pose();
+                }),
+                follow(follower,park())
+                );
+        notBailed = false;
     }
 
     public Command goBackIfHiveIsNotDown() {

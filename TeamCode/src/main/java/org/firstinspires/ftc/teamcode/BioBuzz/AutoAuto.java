@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.NueralNetworks.Classes.BallsTargetingSyste
 import org.firstinspires.ftc.teamcode.NueralNetworks.Classes.NNFileReader;
 import org.firstinspires.ftc.teamcode.NueralNetworks.Classes.Network;
 import org.firstinspires.ftc.teamcode.Utils.LinearOpMode2026;
+import org.firstinspires.ftc.teamcode.Utils.MiscUtils;
 import org.firstinspires.ftc.teamcode.Utils.Threads.FollowerThread;
 
 import java.util.ArrayList;
@@ -17,11 +18,12 @@ public class AutoAuto {
     public static Telemetry tem;
     LinearOpMode2026 opMode;
     Status status = Status.SEARCHING;
-    Status oStatus = Status.SEARCHING;
+    Status oStatus = Status.COLLECTING;
     int tick = 0;
     boolean active = false;
     FollowerThread fT;
     ArrayList<BallsTargetingSystem.Ball> balls = new ArrayList<>();
+    long oTime = System.currentTimeMillis();
 
     public AutoAuto(LinearOpMode2026 op, String network) {
         opMode = op;
@@ -36,6 +38,8 @@ public class AutoAuto {
 
     public void tick() {
         if(!active) init();
+        tick += (int) (System.currentTimeMillis()-oTime);
+        oTime = System.currentTimeMillis();
         if(oStatus != status) {
             tick = 0;
             oStatus = status;
@@ -44,9 +48,10 @@ public class AutoAuto {
             case SEARCHING: {
                 if(tick == 0) {
                     opMode.lla.setPosition(0.5);
-                    opMode.turret.setTargetPosition(0);
+                    opMode.turret.setTargetPosition((int) MiscUtils.getMotorPositionFromDegrees(-20,opMode.TICKS_PER_REV));
+                } else {
+                    opMode.turret.setTargetPosition((int) MiscUtils.getMotorPositionFromDegrees(-20+(tick/300.0f),opMode.TICKS_PER_REV));
                 }
-                
                 break;
             }
             case COLLECTING: {
