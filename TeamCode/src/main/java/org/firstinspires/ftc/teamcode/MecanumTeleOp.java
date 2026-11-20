@@ -50,18 +50,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
  *     <li><b>Gamepad 2 Back (Press)</b>: Show / hide full diagnostics telemetry below the short driver view</li>
  *     <li><b>Gamepad 2 Left Stick Click (Press)</b>: Toggle linear slide fully down / fully up
  *         ({@link LinearSlideSubsystem}; slide must be down at INIT)</li>
-<<<<<<< Updated upstream
- *     <li><b>Gamepad 1 B (Press)</b>: Toggle slide claw open / closed ({@link SlideClawSubsystem};
- *         no effect with the shot-blocker end effector)</li>
- *     <li><b>Rumble</b> ({@link DriverRumble}): both gamepads blip twice at 20 s left and rumble 1 s at 5 s left
- *         (clock from TeleOp START); Gamepad 1 buzzes briefly when automatic shooting becomes READY
- *         and rumbles 0.4 s when the transfer confirms a full queue</li>
-=======
  *     <li><b>GP1 rumble</b> ({@link DriverRumble}): two pulses when the transfer queue becomes full; a steady
  *         rumble while RT is held until the shot is ready</li>
+ *     <li><b>Match clock rumble</b> ({@link MatchClockRumble}): both gamepads blip twice at 20 s left and rumble
+ *         1 s at 5 s left (clock from TeleOp START)</li>
  *     <li><b>Fault lights</b>: a new turret homing, slide, Pinpoint or firing fault blinks all three status
  *         lights red for {@link RobotStatusLights#FAULT_ALERT_SECONDS} s</li>
->>>>>>> Stashed changes
  * </ul>
  */
 public abstract class MecanumTeleOp extends LinearOpMode {
@@ -239,7 +233,7 @@ public abstract class MecanumTeleOp extends LinearOpMode {
             boolean previousSlideHome = gamepad2.left_stick_button;
 
             double previousLoopTime = System.nanoTime() * 1e-9;
-            DriverRumble rumbleCues = new DriverRumble();
+            MatchClockRumble rumbleCues = new MatchClockRumble();
             rumbleCues.start(previousLoopTime);
             while (opModeIsActive()) {
                 loop.begin();
@@ -367,21 +361,16 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                 MotionSample aimingPose = shots == null ? null : shots.pose();
                 lights.showReference(turret != null && !turret.hasHomingFault(), turret != null && turret.isHomed(),
                         aimingPose != null && aimingPose.fieldReferenced && aimingPose.fresh(now, ShotPlanner.MAX_SAMPLE_AGE_SECONDS));
-<<<<<<< Updated upstream
-                rumbleCues.update(now, autoShotReady, transfer.isFull());
+                rumble.update(now, transfer.isFull(), autoAimHeld, autoShotReady, gamepad1);
+                rumbleCues.update(now);
                 if (rumbleCues.endgameWarning()) {
-                    rumbleBlips(gamepad1, DriverRumble.ENDGAME_WARNING_BLIPS);
-                    rumbleBlips(gamepad2, DriverRumble.ENDGAME_WARNING_BLIPS);
+                    rumbleBlips(gamepad1, MatchClockRumble.ENDGAME_WARNING_BLIPS);
+                    rumbleBlips(gamepad2, MatchClockRumble.ENDGAME_WARNING_BLIPS);
                 }
                 if (rumbleCues.finalWarning()) {
-                    rumble(gamepad1, DriverRumble.FINAL_WARNING_RUMBLE_MS);
-                    rumble(gamepad2, DriverRumble.FINAL_WARNING_RUMBLE_MS);
+                    rumble(gamepad1, MatchClockRumble.FINAL_WARNING_RUMBLE_MS);
+                    rumble(gamepad2, MatchClockRumble.FINAL_WARNING_RUMBLE_MS);
                 }
-                if (rumbleCues.shotReady()) rumble(gamepad1, DriverRumble.SHOT_READY_RUMBLE_MS);
-                else if (rumbleCues.transferFull()) rumble(gamepad1, DriverRumble.TRANSFER_FULL_RUMBLE_MS);
-=======
-                rumble.update(now, transfer.isFull(), autoAimHeld, autoShotReady, gamepad1);
->>>>>>> Stashed changes
                 // 4. Driver view (most important first), optional diagnostics below, one flush per loop.
                 FiringCoordinator.State firingState = firing.state();
                 String shotStatus = inhibitFeedHeld ? "BLOCKED (GP2 LT)" : manualFeedHeld ? "MANUAL FEED"
