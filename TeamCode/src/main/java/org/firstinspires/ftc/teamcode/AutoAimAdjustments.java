@@ -14,6 +14,13 @@ public final class AutoAimAdjustments {
         hoodDeg = clip(hoodDeg + hoodSteps * HOOD_STEP_DEG, MAX_HOOD_DEG);
         rpm = clip(rpm + rpmSteps * RPM_STEP, MAX_RPM);
     }
+    /** Absolute trims (planner volley parameters), clipped to the same bounds as the operator buttons. */
+    public void set(double yawDeg, double hoodDeg, double rpm) {
+        this.yawDeg = clip(finite(yawDeg), MAX_YAW_DEG);
+        this.hoodDeg = clip(finite(hoodDeg), MAX_HOOD_DEG);
+        this.rpm = clip(finite(rpm), MAX_RPM);
+    }
+    private static double finite(double value) { return Double.isFinite(value) ? value : 0; }
     private static double clip(double value, double max) { return Math.max(-max, Math.min(max, value)); }
     public void reset() { yawDeg = hoodDeg = rpm = 0; }
     public double yawDeg() { return yawDeg; }

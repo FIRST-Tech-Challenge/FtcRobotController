@@ -33,7 +33,7 @@ public final class ShotCoordinator {
     private final FiringCoordinator firing;
     private GoalTarget target;
     private ShotPlanner.Solution solution = ShotPlanner.Solution.invalid("Not requested");
-    private boolean previousAutomatic, previousHomed;
+    private boolean previousAutomatic, previousHomed, followNearestCell;
     private boolean presetValid, automaticTrackingReady, automaticHoodRpmAvailable;
     private double yawOffsetDeg, hoodOffsetDeg, rpmOffset;
     private MotionSample pose;
@@ -128,7 +128,8 @@ public final class ShotCoordinator {
         }
         previousAutomatic = automatic;
         updatePose(now, sample);
-        if (mode == AimMode.TELEOP_ODOMETRY && pose != null && pose.fresh(now, ShotPlanner.MAX_SAMPLE_AGE_SECONDS) && pose.fieldReferenced) {
+        if ((mode == AimMode.TELEOP_ODOMETRY || followNearestCell) && pose != null
+                && pose.fresh(now, ShotPlanner.MAX_SAMPLE_AGE_SECONDS) && pose.fieldReferenced) {
             TurretSubsystem.HiveSide side = TeleOpFieldReference.nearestSide(pose.y, target.side);
             if (side != target.side) {
                 select(TeleOpFieldReference.target(target.alliance, side));
@@ -369,6 +370,13 @@ public final class ShotCoordinator {
         history.acceptRelative(observation.captureTime,uncertainty);
         visionDecision = "Accepted target-relative opening";
     }
+    /**
+     * Autonomous opt-in to TeleOp's cell rule: target the selected alliance's cell on the robot's half of the field
+     * (midline hysteresis), re-selected each update. TELEOP_ODOMETRY always follows it.
+     */
+    public void setFollowNearestCell(boolean follow) { followNearestCell = follow; }
+    public boolean followsNearestCell() { return mode == AimMode.TELEOP_ODOMETRY || followNearestCell; }
+    public GoalTarget target() { return target; }
     public FiringCoordinator firing() { return firing; }
     public TurretLagEstimator lag() { return lag; }
     public boolean validForFeeding() { return presetValid || solution.valid; }

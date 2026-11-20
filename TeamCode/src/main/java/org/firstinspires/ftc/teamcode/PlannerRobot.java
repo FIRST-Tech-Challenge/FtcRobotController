@@ -7,33 +7,50 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 /**
- * Every robot mechanism for OpModes exported by the BioBuzz Path Planner (tools/path-planner, Pedro 3
- * target). Plain class: no waitForStart(), loops or sleep(). The exported OpMode calls, once per loop:
- * {@link #readSensors(double)} after the Pinpoint read, the current planner step, then {@link #apply(double)};
- * during INIT {@link #initLoop(double)} replaces apply().
+ * Every robot function for OpModes exported by the BioBuzz Path Planner (tools/path-planner, Pedro 3 target). Plain
+ * class: no waitForStart(), loops or sleep(). The exported OpMode calls, once per loop: {@link #readSensors(double)}
+ * after the Pinpoint read, the current planner step, the drive update, then {@link #apply(double)}; during INIT
+ * {@link #initLoop(double)} replaces apply().
  *
- * <p>Mechanisms are driven the way the competition and fallback autos drive them: IntakeSubsystem (TeleOp's
- * direction, forward collection stops on a full queue), TransferSubsystem (full sensor + stage 1 run-on),
- * GateSubsystem with the shared FiringCoordinator continuous feed (CompetitionFeedController timing), and
- * TurretSubsystem (homing, rear dead zone, encoder-verified yaw, shooter PIDF), aimed with the competition
- * pivot geometry and aim lead; hood / RPM come from ShootingConfiguration.PROFILE.
+ * <p>Shooting, feeding, the transfer and the intake run through {@link CompetitionShotPipeline}, the same code as
+ * competition TeleOp: {@link ShotCoordinator} aims the turret and sets hood / RPM from
+ * {@code ShootingConfiguration.PROFILE} (TeleOp RT), with Limelight tag pose corrections when tag relocalization is
+ * on; the shared {@link FiringCoordinator} waits for TeleOp's readiness (turret on target, hood settled, flywheel at
+ * speed, stable for {@code READY_STABLE_SECONDS}) and feeds continuously (RT + LT); a forced feed bypasses
+ * readiness (GP1 A); {@link IntakeQueueController}'s full-queue rule stops collection. The flywheel uses TeleOp's
+ * controller ({@link CompetitionShotPipeline#FLYWHEEL_CONTROLLER}). {@link PlannerVolley} sequences one volley:
+ * aim, ready, feed, finish / timeout.
  *
- * <p>Like {@link BioBuzzRobot}, with tag relocalization on the Limelight refines the authored start pose in
- * INIT ({@link AutoStartRelocalization}) and ShotCoordinator's AUTONOMOUS_RELOCALIZING pose corrects the
- * aiming pose during the route; Pedro paths keep the Pinpoint pose. The depollinator, linear slide (with
- * its fixed shot blocker), status lights and pollen camera are optional: an unconfigured device is reported in telemetry and
- * its planner steps become no-ops, so a missing mechanism never stops the auto.
+ * <p>Like {@link BioBuzzRobot}, with tag relocalization on the Limelight refines the authored start pose in INIT
+ * ({@link AutoStartRelocalization}) and corrects the aiming pose during the route; a Relocalize step repeats the
+ * refinement mid-route with the robot stopped. The depollinator, linear slide (with its fixed shot blocker),
+ * status lights and pollen camera are optional: an unconfigured device is reported in telemetry and its planner
+ * steps become no-ops, so a missing mechanism never stops the auto.
  */
 public final class PlannerRobot {
     static final double METERS_PER_INCH = FieldGeometry.METERS_PER_INCH;
+    /** An aim point within this distance of a hive opening (in) aims with TeleOp's exact cell target. */
+    public static final double CELL_MATCH_INCHES = 1.0;
 
-    /** Intake power for {@link #setIntake(int)} mode 1 / -1 (the planner's T.INTAKE_POWER). */
+    /** OFF: collection paused. IN: TeleOp's automatic collection (stops on a full queue). FORCE: TeleOp RB. REVERSE: LB. */
+    public enum IntakeMode { OFF, IN, FORCE, REVERSE }
+    /** HOLD: keep the last yaw target. TRACK: auto aim yaw. FIXED: a fixed Driver Hub heading. */
+    public enum YawMode { HOLD, TRACK, FIXED }
+    /** OFF, TeleOp's idle RPM, a manual RPM, or the shot table (TeleOp RT). */
+    public enum Flywheel { OFF, IDLE, MANUAL, AUTO }
+    /** After a volley / shot: keep aiming and spinning, drop to TeleOp's idle RPM, or spin down. */
+    public enum After { KEEP, IDLE, OFF }
+
+    /** Intake power scale (the planner's T.INTAKE_POWER). */
     public double intakePowerScale = 1.0;
-    /** Continuous feed time for {@link #startShoot()} (the planner's T.FEED_SECONDS). */
+    /** Default feed time for legacy {@link #startShoot()} (the planner's T.FEED_SECONDS). */
     public double feedSeconds = FallbackAutoController.FEED_SECONDS;
+    /** Default ready timeout for legacy {@link #startShoot()} (the planner's T.READY_TIMEOUT_S). */
+    public double readyTimeoutSeconds = FallbackAutoController.SPIN_UP_TIMEOUT_SECONDS;
 
     public final PedroDrive drive;
     public final IntakeSubsystem intake;
@@ -45,38 +62,50 @@ public final class PlannerRobot {
     public final LinearSlideSubsystem slide;
     public final RobotStatusLights lights;
     public final PollenVision vision;
-    /** Tag relocalization (start-pose refinement + aim-pose correction); null when off or no Limelight. */
+    /** TeleOp's aiming / readiness / firing owner. Camera-corrected when tag relocalization is on. */
     public final ShotCoordinator shots;
 
-    final CompetitionFeedController feedControl = new CompetitionFeedController(); // continuous feed
-    final FiringCoordinator firing = CompetitionFeedController.firing();
+    final FiringCoordinator firing;
+    final CompetitionShotPipeline pipeline = new CompetitionShotPipeline();
+    final CompetitionShotPipeline.Request request = new CompetitionShotPipeline.Request();
+    final AutoAimAdjustments trims = new AutoAimAdjustments();
+    final PlannerVolley volley = new PlannerVolley();
+    private final boolean tagRelocalization;
+    private final DoubleSupplier clock;
     private AutoStartRelocalization relocalization = new AutoStartRelocalization();
     private TurretSubsystem.Alliance alliance;
     private final List<String> missing = new ArrayList<>();
 
-    double intakePower = 0;              // + in, - out, in IntakeSubsystem's (TeleOp's) direction
-    boolean gateHeldOpen = false;        // Gate step: hold the gate open outside a shot
-    double feedUntil = Double.NEGATIVE_INFINITY; // a shot's feed request runs until this time (s)
-
-    boolean spinning = false;
-    boolean rpmAuto = true;
-    double rpmManual = 0;                // flywheel output RPM
-    double rpmTarget = 0;
-
-    Pose aimTarget = null;               // point the turret tracks / range is measured to (field in)
-    boolean tracking = false;
-    double fixedHeadingDeg = Double.NaN; // fixed turret heading: front 0, right 90, back 180, left 270
-    boolean poseFresh = false;
-    double dist = Double.NaN;            // turret pivot to aim point, inches (NaN until an aim point is set)
-
-    boolean hoodAuto = true;
+    IntakeMode intakeMode = IntakeMode.OFF;
+    double intakeOffAt = Double.POSITIVE_INFINITY;   // timed intake ends here (s)
+    boolean intakeOffWhenFull = false;
+    YawMode yawMode = YawMode.HOLD;
+    double fixedHeadingDeg = Double.NaN;             // front 0, right 90, back 180, left 270
+    boolean hoodAuto = false;
     double hoodManualDeg = TurretSubsystem.PITCH_HOME_DEG; // hood travel down from home, 0..30 deg
-    double hoodTargetDeg = TurretSubsystem.PITCH_HOME_DEG;
+    Flywheel flywheel = Flywheel.OFF;
+    boolean rpmAuto = true;                          // legacy spin(): AUTO or MANUAL when spinning
+    double rpmManual = CompetitionShotPipeline.FLYWHEEL_IDLE_RPM;
+    boolean hasAimPoint = false;                     // an aim point or nearest-cell target was chosen
+    After after = After.KEEP;
+    boolean gateHeldOpen = false;
+    boolean holdLoading = false;
+    boolean poseFresh = false;
+
+    private RobotStatusLights.Color lightsColor = RobotStatusLights.Color.OFF;
+    private double lightsUntil = Double.NEGATIVE_INFINITY;
 
     /** Last shot / mechanism note shown in telemetry; steps may set it. */
     public String shotNote = "";
     int homeRetries = 0;                 // turret homes restarted after a FAULT
     private boolean started = false;
+
+    // ---- mid-route relocalization (same state machine as the INIT start-pose refinement) ----
+    private AutoStartRelocalization routeRelocalization;
+    private double routeRelocalizeUntil;
+    private MotionSample routeSeed;
+    private boolean routeRelocalized;
+    private String routeRelocalizeStatus = "Not requested";
 
     // ---- pollen collection (same navigator + follower as the Zenith collectPollen command) ----
     private PollenVision.Snapshot pollenSnapshot;
@@ -91,21 +120,31 @@ public final class PlannerRobot {
      */
     public PlannerRobot(HardwareMap hw, PedroDrive drive, TurretSubsystem.Alliance alliance,
                         boolean tagRelocalization, boolean pollenCamera) {
+        this(hw, drive, alliance, tagRelocalization, pollenCamera, () -> System.nanoTime() * 1e-9);
+    }
+    /** Explicit clock (seconds) for the robot and its timed subsystems; desktop tests use simulated time. */
+    PlannerRobot(HardwareMap hw, PedroDrive drive, TurretSubsystem.Alliance alliance,
+                 boolean tagRelocalization, boolean pollenCamera, DoubleSupplier clock) {
         this.drive = drive;
         this.alliance = alliance;
+        this.clock = clock;
         intake = new IntakeSubsystem(hw);        // never resets intake_motor's encoder (turret encoder channel)
         transfer = new TransferSubsystem(hw);
-        gate = new GateSubsystem(hw, CompetitionFeedController.GATE_TO_FEED_DELAY_SECONDS);
+        gate = new GateSubsystem(hw, clock, CompetitionFeedController.GATE_TO_FEED_DELAY_SECONDS);
         // Starts non-blocking turret homing and puts the hood at home.
-        turret = new TurretSubsystem(hw, tagRelocalization);
+        turret = new TurretSubsystem(hw, tagRelocalization, clock);
+        turret.setShooterController(CompetitionShotPipeline.FLYWHEEL_CONTROLLER);   // TeleOp's flywheel control
         turret.setEncoderCorrectionEnabled(true);
-        shots = tagRelocalization && turret.hasLimelight()
-                ? new ShotCoordinator(turret, TeleOpFieldReference.target(alliance, TurretSubsystem.HiveSide.AUDIENCE),
-                        ShotCoordinator.AimMode.AUTONOMOUS_RELOCALIZING)
-                : null;
-        if (tagRelocalization && shots == null) missing.add("limelight (tag relocalization off)");
-        depollinator = optional("depollinator", () -> new DepollinatorSubsystem(hw));  // homes at INIT
-        slide = optional("linear slide", () -> new LinearSlideSubsystem(hw));         // must be fully down at INIT
+        this.tagRelocalization = tagRelocalization && turret.hasLimelight();
+        if (tagRelocalization && !this.tagRelocalization) missing.add("limelight (tag relocalization off)");
+        // TeleOp's firing (continuous competition feed) with a fixed route target; camera corrections when relocalizing.
+        shots = new ShotCoordinator(turret, TeleOpFieldReference.target(alliance, TurretSubsystem.HiveSide.AUDIENCE),
+                ShootingConfiguration.MOUNT, ShootingConfiguration.PROFILE, CompetitionFeedController.firing(),
+                this.tagRelocalization ? ShotCoordinator.AimMode.AUTONOMOUS_RELOCALIZING
+                        : ShotCoordinator.AimMode.AUTONOMOUS_ODOMETRY);
+        firing = shots.firing();
+        depollinator = optional("depollinator", () -> new DepollinatorSubsystem(hw, clock));  // homes at INIT
+        slide = optional("linear slide", () -> new LinearSlideSubsystem(hw, clock));         // must be fully down at INIT
         lights = new RobotStatusLights(hw);                                           // reports its own missing lights
         PollenVision camera = null;
         if (pollenCamera) {
@@ -122,71 +161,187 @@ public final class PlannerRobot {
         catch (RuntimeException e) { missing.add(name); return null; }
     }
 
-    private static double now() { return System.nanoTime() * 1e-9; }
+    private double now() { return clock.getAsDouble(); }
     static double clamp(double v, double lo, double hi) { return Math.max(lo, Math.min(hi, v)); }
 
     /** INIT alliance select changed: target the new alliance and restart the start-pose refinement. */
     public void setAlliance(TurretSubsystem.Alliance next) {
         if (next == alliance) return;
         alliance = next;
-        if (shots != null) {
-            shots.cancelFieldRehomeRefinement("alliance changed");
-            shots.select(TeleOpFieldReference.target(next, TurretSubsystem.HiveSide.AUDIENCE));
-            shots.invalidateReference(now());
-        }
+        shots.cancelFieldRehomeRefinement("alliance changed");
+        shots.setFollowNearestCell(false);
+        shots.select(TeleOpFieldReference.target(next, TurretSubsystem.HiveSide.AUDIENCE));
+        shots.invalidateReference(now());
+        hasAimPoint = false;
         relocalization = new AutoStartRelocalization();
+    }
+
+    /**
+     * Hive cell for a cell named in the planned alliance's frame (AUDIENCE / FAR as drawn): under the INIT
+     * alliance point mirror the two cells swap, like Zenith's {@code aim(frame=AUTHORED)}.
+     */
+    public static TurretSubsystem.HiveSide authoredSide(TurretSubsystem.HiveSide side, boolean mirrored) {
+        return AutonomousCommands.transformSide(side, AutonomousCommands.TargetFrame.AUTHORED, mirrored ? Math.PI : 0);
+    }
+
+    /**
+     * Shot target for a field point (inches, after the alliance mirror). Within {@link #CELL_MATCH_INCHES} of a hive
+     * opening this is TeleOp's exact cell target; otherwise a custom point that keeps the nearest cell's tags.
+     */
+    public static GoalTarget targetFor(Pose fieldPointInches) {
+        double x = fieldPointInches.x() * METERS_PER_INCH, y = fieldPointInches.y() * METERS_PER_INCH;
+        TurretSubsystem.Alliance a = x < 0 ? TurretSubsystem.Alliance.RED : TurretSubsystem.Alliance.BLUE;
+        TurretSubsystem.HiveSide s = y < 0 ? TurretSubsystem.HiveSide.AUDIENCE : TurretSubsystem.HiveSide.FAR;
+        GoalTarget cell = TeleOpFieldReference.target(a, s);
+        if (Math.hypot(cell.x - x, cell.y - y) <= CELL_MATCH_INCHES * METERS_PER_INCH) return cell;
+        return new GoalTarget(a, s, GoalTarget.HiveState.RAISED, x, y, cell.height, true, cell.geometryId,
+                cell.tags.values().toArray(new GoalTarget.Tag[0]));
+    }
+
+    private void selectTarget(GoalTarget next) {
+        GoalTarget current = shots.target();
+        if (current != null && current.identity().equals(next.identity()) && current.x == next.x && current.y == next.y)
+            return;
+        shots.select(next);
+        firing.stop(now());   // TeleOp rule: a different cell must earn its own readiness interval
     }
 
     // =====================================================================================
     //  COMMANDS - call from planner steps, path callbacks and loop code
     // =====================================================================================
-    /** Intake in (1), out (-1) or off (0) at intakePowerScale; forward collection stops once the transfer is full. */
-    public void setIntake(int mode) { intakePower = mode * intakePowerScale; }
-    public void spin(boolean on) { spinning = on; }
-    public void setRpmAuto() { rpmAuto = true; }
+    /** Legacy: intake in (1, TeleOp automatic collection), out (-1) or off (0). */
+    public void setIntake(int mode) {
+        setIntake(mode > 0 ? IntakeMode.IN : mode < 0 ? IntakeMode.REVERSE : IntakeMode.OFF, 0, false);
+    }
+    /**
+     * @param seconds     > 0: switch the intake off after this long (works while driving)
+     * @param offWhenFull switch it off once the transfer confirms a full queue
+     */
+    public void setIntake(IntakeMode mode, double seconds, boolean offWhenFull) {
+        intakeMode = mode;
+        intakeOffAt = seconds > 0 ? now() + seconds : Double.POSITIVE_INFINITY;
+        intakeOffWhenFull = offWhenFull;
+        if (mode == IntakeMode.IN || mode == IntakeMode.FORCE) holdLoading = false;   // collecting loads stage 1
+    }
+    public IntakeMode intakeMode() { return intakeMode; }
+
+    /** Legacy flywheel on (shot table or manual RPM, see setRpmAuto / setRpmManual) / off. */
+    public void spin(boolean on) { flywheel = !on ? Flywheel.OFF : rpmAuto ? Flywheel.AUTO : Flywheel.MANUAL; }
+    public void setRpmAuto() { rpmAuto = true; if (flywheel != Flywheel.OFF) flywheel = Flywheel.AUTO; }
     /** Flywheel output RPM, the same units as TeleOp and the shot table. */
-    public void setRpmManual(double rpm) { rpmAuto = false; rpmManual = rpm; }
+    public void setRpmManual(double rpm) {
+        rpmAuto = false; rpmManual = ShooterSpeed.clampFlywheelRpm(rpm);
+        if (flywheel != Flywheel.OFF) flywheel = Flywheel.MANUAL;
+    }
+    /** TeleOp's idle flywheel speed ({@link CompetitionShotPipeline#FLYWHEEL_IDLE_RPM}). */
+    public void setFlywheelIdle() { flywheel = Flywheel.IDLE; }
+    public Flywheel flywheel() { return flywheel; }
+    /** Spin-up only: flywheel RPM and hood from the shot table for the current target; the turret does not move. */
+    public void spinUpAuto() { rpmAuto = true; flywheel = Flywheel.AUTO; hoodAuto = true; }
+
     public void setHoodAuto() { hoodAuto = true; }
     /** Hood travel down from home in degrees (0 = home / highest launch, 30 = lowest). */
     public void setHoodManual(double travelDeg) {
         hoodAuto = false;
         hoodManualDeg = clamp(travelDeg, TurretSubsystem.PITCH_MIN_DEG, TurretSubsystem.PITCH_MAX_DEG);
     }
-    public void aimAt(Pose target) { aimTarget = target; }
-    public void setTracking(boolean on) { tracking = on; if (on) fixedHeadingDeg = Double.NaN; }
+
+    /** Aim / range target: a field point in inches (after the alliance mirror; see {@link #targetFor}). */
+    public void aimAt(Pose fieldPointInches) {
+        shots.setFollowNearestCell(false);
+        selectTarget(targetFor(fieldPointInches));
+        hasAimPoint = true;
+    }
+    /** TeleOp's target rule: this alliance's cell on the robot's half of the field, re-selected as it drives. */
+    public void aimAtNearestCell() {
+        MotionSample p = drive.sample();
+        TurretSubsystem.HiveSide side = p == null ? null : TeleOpFieldReference.nearestSide(p.y, null);
+        selectTarget(TeleOpFieldReference.target(alliance, side == null ? TurretSubsystem.HiveSide.AUDIENCE : side));
+        shots.setFollowNearestCell(true);
+        hasAimPoint = true;
+    }
+    /** Auto-aim trims, as TeleOp's GP2 trims (yaw deg left+, hood deg, RPM), clipped to AutoAimAdjustments' bounds. */
+    public void setTrims(double yawDeg, double hoodDeg, double rpm) { trims.set(yawDeg, hoodDeg, rpm); }
+    /** Aim only: the turret tracks the target (TeleOp RT yaw); hood and flywheel keep their settings. */
+    public void setTracking(boolean on) { yawMode = on ? YawMode.TRACK : YawMode.HOLD; if (on) fixedHeadingDeg = Double.NaN; }
     /** Fixed turret heading in the Driver Hub frame: front 0, right (home) 90, back 180, left 270 deg. */
-    public void setTurretHeading(double headingDeg) { tracking = false; fixedHeadingDeg = headingDeg; }
+    public void setTurretHeading(double headingDeg) { yawMode = YawMode.FIXED; fixedHeadingDeg = headingDeg; }
     /** Hold the gate open (true) or let the feed control it again (false). */
     public void gateOpen(boolean open) { gateHeldOpen = open; }
+    /** Pause stage-1 loading (true) or load until full like TeleOp (false). */
+    public void holdTransfer(boolean hold) { holdLoading = hold; }
 
     /**
-     * Shot: the fallback auto's continuous feed (gate, then both transfer stages) for feedSeconds. A
-     * continuous feed cannot count launched balls (FiringCoordinator), so it feeds every loaded ball.
+     * Volley: TeleOp's full auto-shoot. Aim at the point (null: TeleOp's nearest own cell), set hood / RPM from the
+     * shot table, wait for readiness, feed for {@code feedSeconds}, then apply {@code after}.
      */
-    public void startShoot() { feedUntil = now() + feedSeconds; shotNote = ""; }
-    public boolean isShooting() { return now() < feedUntil; }
+    public void startVolley(Pose aimPointInches, double feedSeconds, double readyTimeoutSeconds,
+                            PlannerVolley.TimeoutAction onTimeout, After after) {
+        if (aimPointInches == null) aimAtNearestCell(); else aimAt(aimPointInches);
+        yawMode = YawMode.TRACK; fixedHeadingDeg = Double.NaN;
+        hoodAuto = true; rpmAuto = true; flywheel = Flywheel.AUTO;
+        startShot(true, feedSeconds, readyTimeoutSeconds, onTimeout, after);
+    }
+    /**
+     * Shoot with the current aim / hood / flywheel settings. waitForReady: TeleOp RT + LT (needs auto aim);
+     * false: TeleOp GP1 A, feed now with readiness bypassed.
+     */
+    public void startShot(boolean waitForReady, double feedSeconds, double readyTimeoutSeconds,
+                          PlannerVolley.TimeoutAction onTimeout, After after) {
+        this.after = after;
+        shotNote = "";
+        volley.start(now(), feedSeconds, readyTimeoutSeconds, onTimeout, waitForReady);
+    }
+    /** Legacy Shoot: the fallback auto's continuous feed for feedSeconds, readiness bypassed. */
+    public void startShoot() {
+        startShot(false, feedSeconds, readyTimeoutSeconds, PlannerVolley.TimeoutAction.FIRE, After.KEEP);
+    }
+    /** A volley / shot is aiming or feeding. */
+    public boolean isShooting() { return volley.active(); }
+    public boolean volleyDone() { return !volley.active(); }
+    public boolean volleySkipped() { return volley.phase() == PlannerVolley.Phase.SKIPPED; }
+    public PlannerVolley.Phase volleyPhase() { return volley.phase(); }
+
+    private void finishShot() {
+        shotNote = volley.note();
+        if (after == After.KEEP) return;
+        yawMode = YawMode.HOLD;
+        if (hoodAuto) hoodManualDeg = turret.getTargetPitchDegrees();
+        hoodAuto = false;
+        flywheel = after == After.IDLE ? Flywheel.IDLE : Flywheel.OFF;
+    }
+
     public boolean turretHomed() { return turret.isHomed(); }
     public boolean turretFault() { return turret.hasHomingFault(); }
+    /** Confirmed full queue (TransferSubsystem: sensor HIGH for FULL_CONFIRM_TIME_SECONDS). */
     public boolean transferFull() { return transfer.isFull(); }
+    public boolean queueFull() { return transfer.isFull(); }
 
     /** Restart turret homing (turret bumped, or before a precise shot). Feeding waits for the new home. */
     public void rehomeTurret() {
-        feedUntil = Double.NEGATIVE_INFINITY;
-        turret.homeTurretAndZeroEncoder(now());
-        if (shots != null) shots.invalidateReference(now());
+        volley.cancel("turret re-home");
+        double t = now();
+        turret.homeTurretAndZeroEncoder(t);
+        shots.invalidateReference(t);
     }
 
-    /** Encoder-verified turret on its target (homed, fresh pose while tracking). */
+    /** Turret on target: homed, and within TeleOp's yaw tolerance of the current bearing (or fixed heading). */
     public boolean turretReady() {
-        return turret.isHomed() && (!tracking || poseFresh)
-                && Math.abs(turret.getTargetYawDegrees() - turret.getEncoderAngleDegrees())
-                <= TurretSubsystem.SHOT_READY_YAW_TOLERANCE_DEG;
+        if (!turret.isHomed()) return false;
+        if (yawMode == YawMode.TRACK) {
+            ShotPlanner.Solution s = shots.solution();
+            return poseFresh && s.valid && ShotReadiness.angleReady(Math.toDegrees(s.yaw) - turret.getEncoderAngleDegrees());
+        }
+        return ShotReadiness.angleReady(turret.getTargetYawDegrees() - turret.getEncoderAngleDegrees());
     }
-
-    /** Same readiness as the fallback auto: flywheel at speed, hood settled and turret on target. */
-    public boolean ready() {
-        return spinning && rpmTarget > 0 && turret.isShooterAtSpeed() && turret.isHoodTracking() && turretReady();
-    }
+    public boolean turretOnTarget() { return turretReady(); }
+    /** TeleOp's shot-ready check (ready light / RT rumble): turret on target, hood settled, flywheel at speed. */
+    public boolean shotReady() { return pipeline.shotReady(); }
+    /** Legacy name of {@link #shotReady()}. */
+    public boolean ready() { return shotReady(); }
+    /** Flywheel at its target and hood settled (spin-up only). */
+    public boolean flywheelReady() { return turret.isShooterAtSpeed() && turret.isHoodTracking(); }
+    public ShotPlanner.Solution shotSolution() { return shots.solution(); }
 
     // ---- depollinator ----
     public void deployDepollinator() { if (depollinator != null) depollinator.deploy(); else note("depollinator"); }
@@ -206,11 +361,16 @@ public final class PlannerRobot {
     }
     public boolean slideFault() { return slide != null && slide.getState() == LinearSlideController.State.FAULT; }
 
+    // ---- status lights: TeleOp's colors, or one color on all three for a while ----
+    public void showLights(RobotStatusLights.Color color, double seconds) {
+        lightsColor = color; lightsUntil = now() + Math.max(0, seconds);
+    }
+
     // ---- pollen collection: PollenNavigator drives the follower and intake until it finishes ----
     /** Start a camera-guided pollen collection; the planner step must not command the follower meanwhile. */
     public void startCollect() {
         if (vision == null) { note("pollen camera"); collectionStatus = "SKIPPED: pollen camera not configured"; return; }
-        feedUntil = Double.NEGATIVE_INFINITY;
+        volley.cancel("pollen collection");
         navigation.stop();
         MotionSample p = drive.sample();
         navigator.start(System.nanoTime(), p.x * 1000, p.y * 1000);
@@ -223,27 +383,85 @@ public final class PlannerRobot {
         collecting = false;
         navigator.stop(System.nanoTime());
         navigation.stop();
-        intakePower = 0;
+        intakeMode = IntakeMode.OFF;
     }
     public boolean pollenVisible() {
         return pollenSnapshot != null && pollenSnapshot.autonomousReady && pollenSnapshot.target != null;
     }
 
-    // ---- tag relocalization ----
-    /** INIT start-pose refinement finished and was written into Pinpoint. */
-    public boolean relocalized() { return relocalization.state() == AutoStartRelocalization.State.REFINED; }
+    // ---- field pose correction ----
+    /** The INIT start-pose refinement or a Relocalize step wrote a tag-refined pose into Pinpoint. */
+    public boolean relocalized() {
+        return relocalization.state() == AutoStartRelocalization.State.REFINED || routeRelocalized;
+    }
+    /**
+     * Relocalize mid-route (robot stopped): the INIT refinement again (FieldRehomeRefinement: 5 consistent hive-tag
+     * frames, at most 0.15 m, translation only), written into Pinpoint on success; the pose stays otherwise.
+     */
+    public void startRelocalize(double timeoutSeconds) {
+        routeRelocalized = false;
+        if (!tagRelocalization) {
+            routeRelocalization = null;
+            routeRelocalizeStatus = "SKIPPED: tag relocalization off / no Limelight";
+            return;
+        }
+        volley.cancel("relocalize");
+        routeRelocalization = new AutoStartRelocalization();
+        routeRelocalizeUntil = now() + Math.max(.1, timeoutSeconds);
+        routeRelocalizeStatus = "WAITING";
+    }
+    public boolean relocalizeDone() { return routeRelocalization == null; }
+    /**
+     * TeleOp's corner rehome for autonomous: declare the robot is at a known field pose (squared against walls).
+     * Written only to a READY Pinpoint with a fresh pose; returns false (and notes it) otherwise.
+     */
+    public boolean setFieldPose(Pose fieldPoseInches) {
+        if (!drive.ready(now())) { shotNote = "SKIPPED field pose: Pinpoint not ready"; return false; }
+        drive.setFieldPose(fieldPoseInches);
+        return true;
+    }
+
+    private void updateRouteRelocalization(double now) {
+        if (routeRelocalization == null) return;
+        if (now > routeRelocalizeUntil) {
+            shots.cancelFieldRehomeRefinement("planner relocalize timed out");
+            routeRelocalizeStatus = "TIMEOUT (pose kept): " + routeRelocalization.status();
+            routeRelocalization = null;
+            return;
+        }
+        boolean poseReady = drive.ready(now);
+        switch (routeRelocalization.update(turret.isHomed(), poseReady, shots.fieldRehomePending(), shots.fieldRehomeStatus())) {
+            case REQUEST_REFINEMENT:
+                routeSeed = drive.sample();
+                shots.requestFieldRehomeRefinement(now, AutoStartRelocalization.landmarkFor(routeSeed.y));
+                break;
+            case APPLY_REFINED_POSE:
+                MotionSample refined = shots.pose();
+                drive.setFieldPose(BioBuzzRobot.pedroPose(refined));
+                routeRelocalization.applied(Math.hypot(refined.x - routeSeed.x, refined.y - routeSeed.y) / METERS_PER_INCH);
+                routeRelocalizeStatus = routeRelocalization.status();
+                routeRelocalized = true;
+                routeRelocalization = null;
+                break;
+            default:
+                routeRelocalizeStatus = routeRelocalization.status();
+                break;
+        }
+    }
 
     private void note(String device) { shotNote = "SKIPPED: " + device + " not configured"; }
 
-    /** Mid-auto stop: mechanisms off, the turret holds its last target and keeps its home; slide holds. */
+    /** Mid-auto stop: intake, transfer, feed and flywheel off; the turret holds its last target and keeps its home. */
     public void stopAll() {
         stopCollect();
-        intakePower = 0;
-        spinning = false;
-        tracking = false;
+        volley.cancel("stop all");
+        if (routeRelocalization != null) { shots.cancelFieldRehomeRefinement("stop all"); routeRelocalization = null; }
+        intakeMode = IntakeMode.OFF; intakeOffAt = Double.POSITIVE_INFINITY; intakeOffWhenFull = false;
+        flywheel = Flywheel.OFF;
+        yawMode = YawMode.HOLD;
         fixedHeadingDeg = Double.NaN;
         gateHeldOpen = false;
-        feedUntil = Double.NEGATIVE_INFINITY;
+        holdLoading = true;   // stage 1 stays off until an intake / transfer step resumes loading
         double t = now();
         RobotShutdown.stopAll(() -> firing.stop(t), intake::stop, transfer::pause, gate::close, turret::stopShooter);
     }
@@ -259,15 +477,17 @@ public final class PlannerRobot {
     // =====================================================================================
     /**
      * Once per loop, after drive.readSensors() and before the step: transfer full sensor and stage 1 speed,
-     * turret encoder, homing and flywheel velocity, the Limelight aim-pose correction and the pollen camera
-     * frame. A home that faults (turret bumped or still moving in its settle window) restarts at once;
-     * otherwise the turret would stay unhomed and never aim for the rest of the auto.
+     * turret encoder, homing and flywheel velocity, the shot coordinator's pose (with Limelight corrections) and
+     * the pollen camera frame. A home that faults (turret bumped or still moving in its settle window) restarts at
+     * once; otherwise the turret would stay unhomed and never aim for the rest of the auto.
      */
-    public void readSensors(double now) {
+    public void readSensors(double now) { readSensors(now, drive.ready(now) ? drive.sample() : null); }
+    /** {@code sample}: this loop's fresh, field-referenced Pinpoint sample, or null. */
+    void readSensors(double now, MotionSample sample) {
         transfer.readSensors(now);
         turret.update(now);
         if (turret.hasHomingFault()) { homeRetries++; turret.homeTurretAndZeroEncoder(now); }
-        if (shots != null) shots.updatePose(now, drive.ready(now) ? drive.sample() : null);
+        shots.updatePose(now, sample);
         pollenSnapshot = vision == null ? null : vision.snapshot(System.nanoTime());
     }
 
@@ -276,7 +496,7 @@ public final class PlannerRobot {
      * (BioBuzzRobot.relocalizeStart). Nothing spins or feeds before START; the slide stays unpowered.
      */
     public void initLoop(double now) {
-        if (shots != null) {
+        if (tagRelocalization) {
             boolean poseReady = drive.ready(now);
             MotionSample seeded = poseReady ? drive.sample() : null;
             switch (relocalization.update(turret.isHomed(), poseReady, shots.fieldRehomePending(), shots.fieldRehomeStatus())) {
@@ -301,80 +521,83 @@ public final class PlannerRobot {
     /** At START: a refinement still collecting frames ends; the start pose stays. */
     public void onStart() {
         started = true;
-        if (shots != null) shots.cancelFieldRehomeRefinement("START before the refinement finished");
+        shots.cancelFieldRehomeRefinement("START before the refinement finished");
     }
 
     /**
-     * Once per loop, after the step. Aim uses the competition auto-aim rules: pivot offset from
-     * ShootingConfiguration.MOUNT, the TurretControl aim lead, and TurretSubsystem's reachable-yaw rule for the
-     * rear dead zone. With tag relocalization the aim uses the camera-corrected pose.
+     * Once per loop, after the step and the drive update: the volley sequence, then TeleOp's shot pipeline (aim,
+     * readiness, firing; gate, transfer and intake), then the slide and the status lights.
      */
-    public void apply(double now) {
-        MotionSample raw = drive.sample();
-        MotionSample corrected = shots == null ? null : shots.pose();
-        MotionSample pose = corrected != null && corrected.fresh(now, ShotPlanner.MAX_SAMPLE_AGE_SECONDS) ? corrected : raw;
-        poseFresh = pose != null && pose.fresh(now, ShotPlanner.MAX_SAMPLE_AGE_SECONDS);
-        ShooterMount mount = ShootingConfiguration.MOUNT;
-        if (aimTarget != null && poseFresh) {
-            double gx = aimTarget.x() * METERS_PER_INCH, gy = aimTarget.y() * METERS_PER_INCH;
-            dist = TeleOpFieldReference.pivotRangeMeters(pose, gx, gy, mount) / METERS_PER_INCH;
-            if (tracking && turret.isHomed()) {
-                double yawDeg = Math.toDegrees(TeleOpFieldReference.yawRadians(
-                        pose.led(TurretControl.AIM_LEAD_SECONDS), gx, gy, mount));
-                turret.setTargetYawDegrees(turret.reachableYawTarget(yawDeg));
-            }
+    public void apply(double now) { apply(now, drive.ready(now) ? drive.sample() : null); }
+    /** {@code sample}: this loop's fresh, field-referenced Pinpoint sample, or null. */
+    void apply(double now, MotionSample sample) {
+        if (now >= intakeOffAt || (intakeOffWhenFull && transfer.isFull())) {
+            intakeMode = IntakeMode.OFF; intakeOffAt = Double.POSITIVE_INFINITY; intakeOffWhenFull = false;
         }
-        if (!tracking && Double.isFinite(fixedHeadingDeg) && turret.isHomed()) {
-            turret.setTargetYawDegrees(turret.reachableYawTarget(
-                    TurretControl.robotHeadingToYawDegrees(fixedHeadingDeg)));
-        }
-        turret.applyYawCommand(now); // Same-loop servo write; also drives homing travel.
+        updateRouteRelocalization(now);
 
-        // ---- hood + flywheel: the measured shot table (range from the turret pivot). Before any aim
-        //      point, the fallback auto's preload settings (TeleOp's starting manual hood / RPM). ----
-        ShotProfile.Row row = Double.isFinite(dist) ? ShootingConfiguration.PROFILE.sample(dist * METERS_PER_INCH) : null;
-        hoodTargetDeg = !hoodAuto ? hoodManualDeg : row != null ? row.hoodDeg : FallbackAutonomous.PRELOAD_HOOD_DEG;
-        turret.setPitchAngleDegrees(hoodTargetDeg);
-        rpmTarget = !rpmAuto ? ShooterSpeed.clampFlywheelRpm(rpmManual)
-                : row != null ? row.rpm : FallbackAutonomous.PRELOAD_FLYWHEEL_RPM;
-        if (spinning && rpmTarget > 0) turret.setShooterRpm(rpmTarget);
-        else turret.stopShooter();
+        // Volley sequencing reads the firing state from its last update (previous loop).
+        boolean wasActive = volley.active();
+        volley.update(now, firing.feeding(), turret.isHomed());
+        if (wasActive && volley.finished()) finishShot();
 
-        // ---- pollen collection owns the follower and intake power while it runs ----
+        // Fixed heading (TeleOp manual yaw, then hold) unless the camera refinement owns the turret.
+        if (yawMode == YawMode.FIXED && Double.isFinite(fixedHeadingDeg) && turret.isHomed() && !shots.fieldRehomePending())
+            turret.setTargetYawDegrees(turret.reachableYawTarget(TurretControl.robotHeadingToYawDegrees(fixedHeadingDeg)));
+        boolean autoHood = hoodAuto && hasAimPoint;
+        if (!autoHood) turret.setPitchAngleDegrees(hoodManualDeg);
+
+        // ---- pollen collection owns the follower and intake while it runs ----
+        double collectIntake = Double.NaN;
         if (collecting) {
             long nanos = System.nanoTime();
             MotionSample p = drive.sample();
             navigator.update(nanos, pollenSnapshot == null ? null : pollenSnapshot.target,
                     p.x * 1000, p.y * 1000, Math.toDegrees(p.heading),
                     drive.ready(now) && pollenSnapshot != null && pollenSnapshot.autonomousReady, transfer.isFull());
-            intakePower = navigator.getIntakePower();
+            collectIntake = navigator.getIntakePower();
             collectionStatus = navigator.getState() + ": " + navigator.getStatus();
             navigation.update(navigator, nanos);
         }
+        IntakeMode intakeNow = Double.isNaN(collectIntake) ? intakeMode
+                : collectIntake > 0 ? IntakeMode.IN : collectIntake < 0 ? IntakeMode.REVERSE : IntakeMode.OFF;
 
-        // ---- feed: the fallback auto's manual-feed path (TeleOp GP1 A): gate, then the transfer ----
-        boolean feedRequested = now < feedUntil;
-        feedControl.updateSelection(now, firing);   // continuous feed only (CompetitionFeedController)
-        firing.update(now, false, feedRequested, false, false, false, false, false, "Planner autonomous feed");
-        boolean feedStage1 = feedControl.feedStage1(now, firing);
-        gate.setOpen(firing.gateOpen() || gateHeldOpen);
-        boolean shootingBusy = feedRequested || firing.gateOpen()
-                || firing.state() == FiringCoordinator.State.RECOVERY;
-        // Stage 1 loads (full sensor + run-on) while intaking or spinning up for a shot.
-        boolean loading = intakePower > 0 || spinning;
-        transfer.updateCached(now, feedControl.feedTransfers(firing, gate.isOpenForFeeding()),
-                shootingBusy || !loading, feedStage1, false);
-        // Forward collection stops on a confirmed full queue (competition auto rule); reverse still allowed.
-        intake.setIntakePower(transfer.isFull() && intakePower > 0
-                ? IntakeQueueController.FULL_QUEUE_INTAKE_POWER : intakePower);
+        // ---- TeleOp's shot pipeline ----
+        boolean autoYaw = yawMode == YawMode.TRACK && hasAimPoint;
+        boolean autoRpm = flywheel == Flywheel.AUTO && hasAimPoint;
+        request.aim = autoYaw || autoHood || autoRpm;
+        request.controlYaw = autoYaw;
+        request.controlHood = autoHood;
+        request.controlRpm = autoRpm;
+        request.automaticFeed = volley.automaticFeed();
+        request.manualFeed = volley.manualFeed();
+        request.inhibit = false;
+        request.manualRpm = flywheel == Flywheel.OFF ? 0 : flywheel == Flywheel.MANUAL ? rpmManual
+                : CompetitionShotPipeline.FLYWHEEL_IDLE_RPM;
+        request.intakeForward = intakeNow == IntakeMode.FORCE;
+        request.intakeReverse = intakeNow == IntakeMode.REVERSE;
+        request.intakeAutomatic = intakeNow == IntakeMode.IN;
+        request.intakePowerScale = intakePowerScale;
+        request.holdLoading = holdLoading;
+        request.gateHeldOpen = gateHeldOpen;
+        pipeline.beginLoop(now, firing);
+        pipeline.aim(now, turret, shots, sample, trims, request);
+        turret.applyYawCommand(now); // Same-loop servo write; also drives homing travel.
+        pipeline.feed(now, firing, gate, transfer, intake, request, false);
+        MotionSample aimPose = shots.pose();
+        poseFresh = aimPose != null && aimPose.fresh(now, ShotPlanner.MAX_SAMPLE_AGE_SECONDS);
 
         if (slide != null) { if (started) slide.update(); else slide.trackWithoutDriving(); }
 
-        // ---- status lights: TeleOp's colors; a new fault blinks all three red first ----
+        // ---- status lights: TeleOp's colors (or a Lights step color); a new fault blinks all three red first ----
         showFaultAlert(now);
-        lights.showIntake(transfer.isFull(), false, false, intake.getCommandedPower());
-        lights.showShooter(now, firing.state(), feedRequested, ready(), turret.getTargetShooterRpm() > 0);
-        showReference(now);
+        if (now < lightsUntil) {
+            if (!lights.isFaultAlerting()) for (int i = 0; i < 3; i++) lights.set(i, lightsColor);
+        } else {
+            lights.showIntake(transfer.isFull(), request.intakeForward, request.intakeReverse, intake.getCommandedPower());
+            lights.showShooter(now, firing.state(), request.manualFeed, pipeline.shotReady(), turret.getTargetShooterRpm() > 0);
+            showReference(now);
+        }
     }
 
     private void showFaultAlert(double now) {
@@ -383,7 +606,7 @@ public final class PlannerRobot {
     }
 
     private void showReference(double now) {
-        MotionSample p = shots != null && shots.pose() != null ? shots.pose() : drive.sample();
+        MotionSample p = shots.pose() != null ? shots.pose() : drive.sample();
         lights.showReference(!turret.hasHomingFault(), turret.isHomed(),
                 p != null && p.fieldReferenced && p.fresh(now, ShotPlanner.MAX_SAMPLE_AGE_SECONDS));
     }
@@ -392,14 +615,22 @@ public final class PlannerRobot {
         turret.addDriverTelemetry(t);
         transfer.addDriverTelemetry(t);
         if (homeRetries > 0) t.addData("Turret home retries", homeRetries);
-        t.addData("Turret target heading (deg CW)", "%.1f | %s", turret.getTargetRobotHeadingDegrees(),
-                !turret.isHomed() ? "NOT HOMED" : turretReady() ? "ON TARGET" : tracking && !poseFresh ? "POSE STALE" : "MOVING");
-        t.addData("Aim range (in)", Double.isFinite(dist)
-                ? String.format(Locale.US, "%.1f", dist) : "no aim point (preload settings)");
-        t.addData("Hood travel (deg) / flywheel target (RPM)", "%.1f / %.0f", hoodTargetDeg, rpmTarget);
-        t.addData("Shot", "ready %s | feed %s%s", ready(), firing.state(), shotNote.isEmpty() ? "" : " | " + shotNote);
-        if (shots != null) t.addData("Tag relocalization", "%s | %s", relocalization.status(), shots.visionDecision());
-        if (shots != null && relocalization.checkPlacement()) t.addData("CHECK PLACEMENT",
+        t.addData("Turret target heading (deg CW)", "%.1f | %s | %s", turret.getTargetRobotHeadingDegrees(), yawMode,
+                !turret.isHomed() ? "NOT HOMED" : turretReady() ? "ON TARGET" : yawMode == YawMode.TRACK && !poseFresh
+                        ? "POSE STALE" : "MOVING");
+        ShotPlanner.Solution s = shots.solution();
+        t.addData("Shot target", "%s | %s", hasAimPoint ? shots.target().alliance + " " + shots.target().side
+                + (shots.followsNearestCell() ? " (nearest)" : "") : "none (TeleOp idle settings)", s.reason);
+        t.addData("Aim range (in) / hood (deg) / RPM", s.valid ? String.format(Locale.US, "%.1f / %.1f / %.0f",
+                s.effectiveRange / METERS_PER_INCH, s.hoodDeg, s.rpm) : "no solution");
+        t.addData("Flywheel / hood", "%s %.0f RPM target | hood %s %.1f deg", flywheel, turret.getTargetShooterRpm(),
+                hoodAuto && hasAimPoint ? "AUTO" : "MANUAL", turret.getTargetPitchDegrees());
+        t.addData("Shot", "%s | ready %s | feed %s: %s%s", volley.phase(), shotReady(), firing.state(), firing.reason(),
+                shotNote.isEmpty() ? "" : " | " + shotNote);
+        t.addData("Intake / transfer", "%s | %s%s", intakeMode, holdLoading ? "HOLD" : "LOAD", gateHeldOpen ? " | gate held open" : "");
+        if (tagRelocalization) t.addData("Tag relocalization", "%s | %s", relocalization.status(), shots.visionDecision());
+        if (!"Not requested".equals(routeRelocalizeStatus)) t.addData("Route relocalize", routeRelocalizeStatus);
+        if (tagRelocalization && relocalization.checkPlacement()) t.addData("CHECK PLACEMENT",
                 "hive tags disagree with the authored start pose by more than %.0f in",
                 FieldRehomeRefinement.MAX_CORRECTION_METERS * PedroConfiguration.INCHES_PER_METER);
         if (depollinator != null) depollinator.addTelemetry(t);

@@ -19,6 +19,7 @@ public final class PedroDrive {
     private Pose pendingStart;
     private boolean referencePending;
     private boolean localReference, poseInitialized;
+    private double updatePoseAgeSeconds = Double.NaN;
 
     public PedroDrive(HardwareMap map) {
         this(map, true);
@@ -71,7 +72,20 @@ public final class PedroDrive {
                 && now >= s.time && now - s.time <= MAX_POSE_AGE_SECONDS
                 && RobotMath.finite(s.x, s.y, s.heading, s.vx, s.vy, s.omega);
     }
-    public void update() { follower.update(); }
+    /** Pedro follow / hold step. Uses the Pinpoint sample from this loop's {@link #readSensors()} (no I2C). */
+    public void update() {
+        updatePoseAgeSeconds = System.nanoTime() * 1e-9 - sample().time;
+        follower.update();
+    }
+    /**
+     * The last path ended and Pedro's end-of-path hold converged (within the PedroConfiguration end tolerances) or
+     * its timeout ran out: {@code Follower.isBusy()} is false. Also true while the follower is idle (stopped, zero
+     * power). This is the completion rule master's AutoDriver used; {@code !following()} alone is the parametric
+     * path end, where the robot may still be moving.
+     */
+    public boolean settled() { return follower.idle() || (!follower.following() && !follower.isBusy()); }
+    /** Age of the Pinpoint sample when Pedro last used it (s): the drive's sensor-to-command latency. */
+    public double updatePoseAgeSeconds() { return updatePoseAgeSeconds; }
     public MotionSample sample() { return odometry.getSample(); }
     public Follower follower() { return follower; }
     public Path atSpeed(Path path, double fraction) { return path.with(config.setPathSpeed(fraction)); }
@@ -85,5 +99,6 @@ public final class PedroDrive {
         telemetry.addData("Pedro velocity (in/s, rad/s)", "%.1f, %.1f | %.2f", follower.velocity().vx, follower.velocity().vy, follower.velocity().omega);
         telemetry.addData("Pose reference / age (s)", "%d | %s | %.3f", sample().referenceId,
                 sample().fieldReferenced, System.nanoTime() * 1e-9 - sample().time);
+        telemetry.addData("Pose age at Pedro update (ms)", "%.1f", updatePoseAgeSeconds * 1000);
     }
 }

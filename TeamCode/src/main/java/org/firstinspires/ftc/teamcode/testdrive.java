@@ -19,24 +19,28 @@ import java.util.List;
  *
  * Built for com.pedropathing:core 3.0.0 (Paths API). The drivetrain, Pinpoint and Pedro follower come
  * from the repo's PedroDrive, so its PedroConfiguration tuning applies. Every mechanism comes from the
- * repo's PlannerRobot, driven like the competition and fallback autos: intake, transfer (full sensor +
- * stage 1 run-on), gate + shared FiringCoordinator feed, turret (homing, rear dead zone, encoder-
- * verified yaw, shooter PIDF; hood / RPM from ShootingConfiguration.PROFILE), Limelight tag relocalization
- * (T.TAG_RELOCALIZATION: INIT start-pose refinement + aim-pose correction, like BioBuzzRobot), and the
- * optional depollinator, linear slide (shot blocker), status lights and pollen camera (an unconfigured device is
+ * repo's PlannerRobot, which runs competition TeleOp's own shared code (CompetitionShotPipeline): ShotCoordinator
+ * aim (RT) with hood / RPM from ShootingConfiguration.PROFILE, FiringCoordinator readiness and continuous feed
+ * (RT + LT, GP1 A), IntakeQueueController collection, TransferSubsystem loading, GateSubsystem, the bang-bang
+ * flywheel; turret homing; Limelight tag relocalization (T.TAG_RELOCALIZATION: INIT start-pose refinement +
+ * aim-pose correction, like BioBuzzRobot; a Relocalize step repeats it mid-route); and the optional
+ * depollinator, linear slide (shot blocker), status lights and pollen camera (an unconfigured device is
  * reported in telemetry and its steps are skipped).
  *
  * - Coordinates: the repo's field frame (PedroDrive, Zenith routes, TeleOpFieldReference): inches,
  *   (0, 0) = field center, +x toward the blue wall, +y away from the audience. Headings in degrees, CCW positive.
  * - Planned alliance RED.
- * - Robot placed as a 23 x 12 in box, center (-12.42, -65.39), heading 179.8 deg.
+ * - Robot placed as a 23 x 12 in box, center (-12.41, -65.39), heading 179.8 deg.
  * - Start pose (tracked point = box center + pod offsets X 0 fwd, Y 0 reversed): (-12.415, -65.386).
  * - Path limits: speed is a fraction of PedroConfiguration.MAX_FORWARD_VELOCITY_IN_PER_SEC; max velocity,
  *   acceleration and deceleration are Foresight constraints for that one path (0 = no limit).
  *
  * HOW IT RUNS: ONE while (opModeIsActive()) loop: loop.begin() (bulk cache), drive.readSensors() (the single
- * Pinpoint read), robot.readSensors(), the current step, loop-code blocks, robot.apply() (same-loop
- * mechanism writes), then drive.update(). Steps wait for a fresh, referenced Pinpoint pose. Like the
+ * Pinpoint read), robot.readSensors(), the current step, loop-code blocks, drive.update() (Pedro, right after
+ * the step so the pose it uses is as fresh as possible), then robot.apply() (same-loop mechanism writes).
+ * A drive step ends SETTLED (drive.settled(): Pedro's end hold converged) unless set otherwise; with
+ * T.PATHS_FROM_ROBOT_POSE a path starts where the robot is. T.MECHANISMS_ENABLED = false is a drive-only
+ * A/B test. Steps wait for a fresh, referenced Pinpoint pose. Like the
  * repo's autos it clears AutoPoseHandoff in INIT and saves the pose every loop for TeleOp, stops at
  * PedroConfiguration.MAX_AUTONOMOUS_SECONDS, and stops if the pose stays stale for
  * FallbackAutoController.POSE_LOSS_SECONDS. Keep the robot still during INIT (Pinpoint IMU calibration,
@@ -71,6 +75,9 @@ public class testdrive extends LinearOpMode {
         // ---- Driving & generator ----
         public static double STEP_TIMEOUT_S = 0;
         public static boolean BRAKE_WHILE_SHOOTING = true;
+        public static double SETTLE_TIMEOUT_S = 0.5;
+        public static boolean PATHS_FROM_ROBOT_POSE = true;
+        public static boolean MECHANISMS_ENABLED = true;
         public static double MAX_WHEEL_POWER = PedroConfiguration.MAX_WHEEL_POWER;   // repo value
         // ---- Pedro 3 path limits (driver defaults; a step can override them) ----
         public static double MAX_ACCEL_IN_PER_S2 = 0;   // 0 = no limit
@@ -105,6 +112,10 @@ public class testdrive extends LinearOpMode {
         return PLANNED_ALLIANCE == TurretSubsystem.Alliance.RED ? TurretSubsystem.Alliance.BLUE : TurretSubsystem.Alliance.RED;
     }
     private double distTo(Pose p) { Pose c = follower.pose(); return Math.hypot(c.x() - p.x(), c.y() - p.y()); }
+    /** First point of a path: where the robot is now (T.PATHS_FROM_ROBOT_POSE), else the drawn point. */
+    private Pose start(Pose drawn) { return T.PATHS_FROM_ROBOT_POSE ? follower.pose().withHeading(0) : drawn; }
+    /** Start heading of a linear-heading path: the robot's heading now (T.PATHS_FROM_ROBOT_POSE), else the drawn one. */
+    private double startH(double drawn) { return T.PATHS_FROM_ROBOT_POSE ? follower.pose().heading() : drawn; }
     /** 0..1 progress through the path being followed, spread evenly over its segments (1 once it ended). */
     private double progress() {
         if (!follower.following()) return 1.0;
@@ -141,14 +152,17 @@ public class testdrive extends LinearOpMode {
             robot = new PlannerRobot(hardwareMap, drive, alliance(), T.TAG_RELOCALIZATION, false);   // starts turret homing
             robot.intakePowerScale = T.INTAKE_POWER;
             robot.feedSeconds = T.FEED_SECONDS;
-            drive.setStartPose(P(-12.415, -65.386, 179.8));   // box center (-12.42, -65.39) + pod offsets
+            robot.readyTimeoutSeconds = T.READY_TIMEOUT_S;
+            drive.setStartPose(P(-12.415, -65.386, 179.8));   // box center (-12.41, -65.39) + pod offsets
             boolean lastMirrored = mirrored;
             while (opModeInInit()) {
                 loop.begin();
                 drive.readSensors();   // applies the start pose once Pinpoint reports READY
                 double t = now();   // after the Pinpoint read: pose freshness needs t >= sample time
-                robot.readSensors(t);
-                robot.initLoop(t);   // turret homing + tag relocalization; nothing spins or feeds before START
+                if (T.MECHANISMS_ENABLED) {
+                    robot.readSensors(t);
+                    robot.initLoop(t);   // turret homing + tag relocalization; nothing spins or feeds before START
+                }
                 telemetry.addData("Alliance", alliance());
                 telemetry.addLine("BioBuzz auto ready - keep the robot still during INIT (Pinpoint, turret homing, tags)");
                 telemetry.addData("Pose ready", drive.ready(now()));
@@ -172,7 +186,7 @@ public class testdrive extends LinearOpMode {
                 loop.begin();
                 drive.readSensors();
                 double t = now();   // after the Pinpoint read: pose freshness needs t >= sample time
-                robot.readSensors(t);
+                if (T.MECHANISMS_ENABLED) robot.readSensors(t);
                 if (t - started >= PedroConfiguration.MAX_AUTONOMOUS_SECONDS) {
                     endReason = "Stopped at the autonomous deadline";
                     break;
@@ -203,13 +217,13 @@ public class testdrive extends LinearOpMode {
                     if (done) running = false;
                 }
 
-                robot.apply(t);
-                drive.update();
+                drive.update();   // Pedro uses this loop's Pinpoint sample
+                if (T.MECHANISMS_ENABLED) robot.apply(t);   // TeleOp's shot pipeline, intake, transfer, lights
                 telemetry.addData("step", "%d / %d%s | %.1f s", Math.min(stage, STEPS), STEPS, poseSeen ? "" : " (waiting for Pinpoint pose)", t - started);
                 telemetry.addData("Alliance", alliance());
                 drive.addTelemetry(telemetry);
                 robot.addTelemetry(telemetry);
-                loop.addRateTelemetry(telemetry);
+                loop.addTelemetry(telemetry);   // loop period / Hz and work time
                 telemetry.update();
             }
             RobotShutdown.stopAll(drive::stop, robot::stopAll);
@@ -226,31 +240,13 @@ public class testdrive extends LinearOpMode {
 
             // step 1 - ACTION VOLLEY (AIM + SPIN + SHOOT): feed 2.5s at aim point 1 (red audience)
             case 0: {
+                if (!T.MECHANISMS_ENABLED) return true;   // A/B drive test: robot-function steps off
                 if (first) {
-                    if (T.BRAKE_WHILE_SHOOTING) drive.stop();   // zero drive power + BRAKE while shooting (no Pedro hold)
-                    robot.aimAt(P(T.GOAL1_X, T.GOAL1_Y, 0));
-                    robot.setTracking(true);
-                    robot.spin(true);
-                    robot.setRpmAuto();
-                    robot.setHoodAuto();
+                    robot.setTrims(0, 0, 0);   // auto-aim trims: yaw deg (left +), hood deg, RPM
+                    robot.startVolley(P(T.GOAL1_X, T.GOAL1_Y, 0), T.FEED_SECONDS, T.READY_TIMEOUT_S, PlannerVolley.TimeoutAction.FIRE, PlannerRobot.After.KEEP);   // TeleOp RT aim, RT + LT fire
                 }
-                if (phase == 0) {
-                    boolean timedOut = stepTimer.seconds() > T.READY_TIMEOUT_S;
-                    boolean ready = !first && robot.ready();   // first call: new targets apply after this step
-                    if (ready || (timedOut && robot.turretHomed())) {
-                        robot.startShoot();   // continuous feed of every loaded ball for T.FEED_SECONDS
-                        if (!ready) robot.shotNote = "fed before READY (timeout)";
-                        phase = 1;
-                    } else if (timedOut) {
-                        robot.shotNote = "SKIPPED: turret not homed";
-                        return true;
-                    }
-                    return false;
-                }
-                if (!robot.isShooting()) {
-                    return true;
-                }
-                return false;
+                if (T.BRAKE_WHILE_SHOOTING && !follower.idle() && (drive.settled() || stepTimer.seconds() > T.SETTLE_TIMEOUT_S)) drive.stop();
+                return !first && robot.volleyDone();
             }
 
             // step 2 - DRIVE to (-47.7, -24.4) @ 179.8 deg
@@ -258,15 +254,16 @@ public class testdrive extends LinearOpMode {
                 if (first) {
                     pathSegs = 1;
                     Arrays.fill(cbFired, false);
-                    follower.follow(limits(Paths.line(P(-12.42, -65.39, 0), P(-47.67, -24.42, 0)).linear(H(179.8), H(179.8)),
+                    follower.follow(limits(Paths.line(start(P(-12.41, -65.39, 0)), P(-47.67, -24.42, 0)).linear(startH(H(179.8)), H(179.8)),
                             1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
                 }
-                boolean done = !first && (!follower.following() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
+                boolean done = !first && (drive.settled() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
                 return done;
             }
 
             // step 3 - ACTION DEPOLLINATOR: deploy · wait settle
             case 2: {
+                if (!T.MECHANISMS_ENABLED) return true;   // A/B drive test: robot-function steps off
                 if (first) robot.deployDepollinator();
                 return !first && (robot.depollinatorSettled() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
             }
@@ -276,16 +273,17 @@ public class testdrive extends LinearOpMode {
                 if (first) {
                     pathSegs = 1;
                     Arrays.fill(cbFired, false);
-                    follower.follow(limits(Paths.line(P(-47.67, -24.42, 0), P(-52.04, -24.42, 0)).linear(H(179.8), H(179.8)),
+                    follower.follow(limits(Paths.line(start(P(-47.67, -24.42, 0)), P(-52.04, -24.42, 0)).linear(startH(H(179.8)), H(179.8)),
                             1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
                 }
-                boolean done = !first && (!follower.following() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
+                boolean done = !first && (drive.settled() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
                 return done;
             }
 
             // step 5 - ACTION INTAKE: in
             case 4: {
-                if (first) robot.setIntake(1);
+                if (!T.MECHANISMS_ENABLED) return true;   // A/B drive test: robot-function steps off
+                if (first) robot.setIntake(PlannerRobot.IntakeMode.IN, 0, false);   // off after (s, 0 = stays on), off once full
                 return true;
             }
 
@@ -294,40 +292,22 @@ public class testdrive extends LinearOpMode {
                 if (first) {
                     pathSegs = 1;
                     Arrays.fill(cbFired, false);
-                    follower.follow(limits(Paths.line(P(-52.04, -24.42, 0), P(-11.93, -58.93, 0)).linear(H(179.8), H(90)),
+                    follower.follow(limits(Paths.line(start(P(-52.04, -24.42, 0)), P(-11.93, -58.93, 0)).linear(startH(H(179.8)), H(90)),
                             1, 0, T.MAX_ACCEL_IN_PER_S2, T.MAX_DECEL_IN_PER_S2));   // speed fraction, max vel (in/s), accel, decel (in/s^2); 0 = no limit
                 }
-                boolean done = !first && (!follower.following() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
+                boolean done = !first && (drive.settled() || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S));
                 return done;
             }
 
             // step 7 - ACTION VOLLEY (AIM + SPIN + SHOOT): feed 2.5s at aim point 1 (red audience)
             case 6: {
+                if (!T.MECHANISMS_ENABLED) return true;   // A/B drive test: robot-function steps off
                 if (first) {
-                    if (T.BRAKE_WHILE_SHOOTING) drive.stop();   // zero drive power + BRAKE while shooting (no Pedro hold)
-                    robot.aimAt(P(T.GOAL1_X, T.GOAL1_Y, 0));
-                    robot.setTracking(true);
-                    robot.spin(true);
-                    robot.setRpmAuto();
-                    robot.setHoodAuto();
+                    robot.setTrims(0, 0, 0);   // auto-aim trims: yaw deg (left +), hood deg, RPM
+                    robot.startVolley(P(T.GOAL1_X, T.GOAL1_Y, 0), T.FEED_SECONDS, T.READY_TIMEOUT_S, PlannerVolley.TimeoutAction.FIRE, PlannerRobot.After.KEEP);   // TeleOp RT aim, RT + LT fire
                 }
-                if (phase == 0) {
-                    boolean timedOut = stepTimer.seconds() > T.READY_TIMEOUT_S;
-                    boolean ready = !first && robot.ready();   // first call: new targets apply after this step
-                    if (ready || (timedOut && robot.turretHomed())) {
-                        robot.startShoot();   // continuous feed of every loaded ball for T.FEED_SECONDS
-                        if (!ready) robot.shotNote = "fed before READY (timeout)";
-                        phase = 1;
-                    } else if (timedOut) {
-                        robot.shotNote = "SKIPPED: turret not homed";
-                        return true;
-                    }
-                    return false;
-                }
-                if (!robot.isShooting()) {
-                    return true;
-                }
-                return false;
+                if (T.BRAKE_WHILE_SHOOTING && !follower.idle() && (drive.settled() || stepTimer.seconds() > T.SETTLE_TIMEOUT_S)) drive.stop();
+                return !first && robot.volleyDone();
             }
 
             default:

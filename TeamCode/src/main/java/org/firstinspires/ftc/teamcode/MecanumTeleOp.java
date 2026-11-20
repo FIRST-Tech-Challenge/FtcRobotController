@@ -76,10 +76,10 @@ public abstract class MecanumTeleOp extends LinearOpMode {
     private static final double SHOOTER_RPM_STEP = 50.0;
     private static final double TRIGGER_DEADBAND = 0.1;
     /** Manual/idle flywheel speed from START (3000 since 2026-11-19, was 3500); GP2 Y/A adjusts it. */
-    public static final double FLYWHEEL_IDLE_RPM = 3000.0;
+    public static final double FLYWHEEL_IDLE_RPM = CompetitionShotPipeline.FLYWHEEL_IDLE_RPM;
     /** Both competition TeleOps regulate the flywheel with bang-bang + feedforward fusion (untuned gains). */
     public static final TurretSubsystem.ShooterController FLYWHEEL_CONTROLLER =
-            TurretSubsystem.ShooterController.BANG_BANG_FUSION;
+            CompetitionShotPipeline.FLYWHEEL_CONTROLLER;
 
     private void rehomeField(PinpointOdometry odometry, ShotCoordinator shots, Pose2D cornerPose) {
         odometry.setPose(cornerPose);
@@ -217,7 +217,10 @@ public abstract class MecanumTeleOp extends LinearOpMode {
 
             FiringCoordinator fallbackFiring = CompetitionFeedController.firing();
             FiringCoordinator firing = shots == null ? fallbackFiring : shots.firing();
-            CompetitionFeedController feedControl = new CompetitionFeedController();
+            // RT / LT / A / GP2 LT / bumpers: the shared shot, feed, transfer and intake pipeline (planner autos use
+            // the same class), filled from the gamepads every loop.
+            CompetitionShotPipeline shotPipeline = new CompetitionShotPipeline();
+            CompetitionShotPipeline.Request shot = new CompetitionShotPipeline.Request();
             boolean previousDpadUp = false;
             boolean previousDpadDown = false;
             boolean previousRpmUp = false;
@@ -225,7 +228,6 @@ public abstract class MecanumTeleOp extends LinearOpMode {
             boolean previousTrimReset = gamepad2.dpad_right;
             AutoAimAdjustments aimAdjustments = new AutoAimAdjustments();
             double manualShooterRpm = FLYWHEEL_IDLE_RPM;
-            IntakeQueueController intakeControl = new IntakeQueueController();
             boolean previousDepollinatorDeploy = false;
             boolean previousDepollinatorHome = false;
             // Held through START must not toggle on the first loop.
@@ -282,7 +284,13 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                 boolean intakeForwardHeld = gamepad1.right_bumper || gamepad2.right_bumper;
                 boolean intakeReverseHeld = gamepad1.left_bumper || gamepad2.left_bumper;
                 boolean autoShotReady = false;
-                feedControl.updateSelection(now, firing);
+                shot.aim = autoAimHeld;
+                shot.automaticFeed = automaticFeedHeld;
+                shot.manualFeed = manualFeedHeld;
+                shot.inhibit = inhibitFeedHeld;
+                shot.intakeForward = intakeForwardHeld;
+                shot.intakeReverse = intakeReverseHeld;
+                shotPipeline.beginLoop(now, firing);
 
                 // 3. Turret & Limelight 3A Control (supports both Gamepad 1 and Gamepad 2)
                 if (turret != null) {
@@ -321,38 +329,17 @@ public abstract class MecanumTeleOp extends LinearOpMode {
                     turret.update();
                     turret.updateCompetitionManualYaw(gamepad2.right_stick_x, dt, autoAimHeld || shots.fieldRehomePending());
 
-                    if (!autoAimHeld) {
-                        turret.setShooterRpm(manualShooterRpm);
-                    }
                     now = System.nanoTime() * 1e-9;
-                    shots.setAutoAimAdjustments(now, aimAdjustments);
-                    shots.update(now, odometry.getSample(), autoAimHeld, automaticFeedHeld,
-                            manualFeedHeld, inhibitFeedHeld, false);
-                    if (autoAimHeld && !shots.solution().aimable) turret.setShooterRpm(manualShooterRpm);
+                    shot.manualRpm = manualShooterRpm;
+                    shotPipeline.aim(now, turret, shots, odometry.getSample(), aimAdjustments, shot);
                     // Write this loop's yaw target now, not on the next loop's update().
                     turret.applyYawCommand();
-                    autoShotReady = shots.automaticTrackingReady();
+                    autoShotReady = shotPipeline.shotReady();
                 }
 
-                boolean openGate = shots != null && shots.firing().gateOpen();
                 // Manual feed also works when turret hardware is unavailable.
-                if (shots == null) {
-                    fallbackFiring.update(now, false, manualFeedHeld, inhibitFeedHeld, false, false, false, false, "Turret unavailable");
-                    openGate = fallbackFiring.gateOpen();
-                }
-                boolean feedStage1 = feedControl.feedStage1(now, firing);
-                // Never true in continuous mode; kept so the transfer logic matches the shared coordinator.
-                boolean closedGateStage1 = feedControl.closedGateStage1(firing)
-                        && !inhibitFeedHeld && !intakeReverseHeld;
-                gate.setOpen(openGate);
-                boolean shootingBusy = automaticFeedHeld || manualFeedHeld || openGate
-                        || firing.state() == FiringCoordinator.State.RECOVERY;
-                transfer.update(now, feedControl.feedTransfers(firing, gate.isOpenForFeeding()),
-                        !closedGateStage1 && (inhibitFeedHeld || shootingBusy || intakeReverseHeld),
-                        feedStage1, closedGateStage1 || (intakeForwardHeld && !intakeReverseHeld));
-                double intakePower = intakeControl.update(transfer.isFull(),
-                        intakeForwardHeld, intakeReverseHeld, inhibitFeedHeld || shootingBusy);
-                intake.setIntakePower(intakePower);
+                if (shots == null) shotPipeline.aimUnavailable(now, fallbackFiring, shot);
+                shotPipeline.feed(now, firing, gate, transfer, intake, shot, true);
                 showFaultAlert(lights, now, turret, slide, odometry, firing);
                 lights.showIntake(transfer.isFull(), intakeForwardHeld, intakeReverseHeld,
                         intake.getCommandedPower());

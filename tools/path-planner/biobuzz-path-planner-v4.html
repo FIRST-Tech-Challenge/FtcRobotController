@@ -316,9 +316,9 @@
         </div>
         <div class="isub">Robot actions</div>
         <div class="addRow">
-          <button class="addBtn a-act" id="btnActVolley" style="grid-column:1 / -1"><span class="ic">V</span><span><b>Volley</b><small>aim + spin up + shoot N balls (one step)</small></span></button>
+          <button class="addBtn a-act" id="btnActVolley" style="grid-column:1 / -1"><span class="ic">V</span><span><b>Volley</b><small>TeleOp auto-shoot: aim + spin up + wait ready + feed</small></span></button>
           <button class="addBtn a-act" id="btnActIntake"><span class="ic">I</span><span><b>Intake</b><small>pick up balls</small></span></button>
-          <button class="addBtn a-act" id="btnActShoot"><span class="ic">F</span><span><b>Shoot</b><small>feed N balls</small></span></button>
+          <button class="addBtn a-act" id="btnActShoot"><span class="ic">F</span><span><b>Shoot</b><small>feed (wait ready / manual)</small></span></button>
           <button class="addBtn a-act" id="btnActAim"><span class="ic">A</span><span><b>Aim</b><small>turret tracks a point</small></span></button>
           <button class="addBtn a-act" id="btnActSpin"><span class="ic">P</span><span><b>Flywheel</b><small>spin up / down</small></span></button>
           <button class="addBtn a-act" id="btnActHood"><span class="ic">H</span><span><b>Hood</b><small>auto or manual</small></span></button>
@@ -327,7 +327,10 @@
           <button class="addBtn a-act" id="btnActPollen"><span class="ic">N</span><span><b>Collect pollen</b><small>camera-guided pickup</small></span></button>
           <button class="addBtn a-act" id="btnActDepoll"><span class="ic">D</span><span><b>Depollinator</b><small>deploy / home</small></span></button>
           <button class="addBtn a-act" id="btnActSlide"><span class="ic">L</span><span><b>Slide</b><small>raise / lower</small></span></button>
-          <button class="addBtn a-act" id="btnActStop" style="grid-column:1 / -1"><span class="ic">X</span><span><b>Stop all</b><small>intake, flywheel, feed off</small></span></button>
+          <button class="addBtn a-act" id="btnActTransfer"><span class="ic">K</span><span><b>Transfer</b><small>load / hold stage 1</small></span></button>
+          <button class="addBtn a-act" id="btnActReloc"><span class="ic">Q</span><span><b>Relocalize</b><small>hive tags / known pose</small></span></button>
+          <button class="addBtn a-act" id="btnActLights"><span class="ic">*</span><span><b>Lights</b><small>show a color</small></span></button>
+          <button class="addBtn a-act" id="btnActStop" style="grid-column:2 / -1"><span class="ic">X</span><span><b>Stop all</b><small>intake, flywheel, feed off</small></span></button>
         </div>
         <div class="hint">Fastest way: <b>drag on the field</b> to draw an arrow (drag from a selected route's end to extend it). Keyboard: <kbd>M</kbd> move &nbsp;<kbd>C</kbd> curve &nbsp;<kbd>G</kbd> through &nbsp;<kbd>R</kbd> route &nbsp;<kbd>T</kbd> turn &nbsp;<kbd>S</kbd> code &nbsp;<kbd>W</kbd> wait &nbsp;<kbd>L</kbd> loop code &nbsp;<kbd>V</kbd> volley &nbsp;<kbd>I</kbd> intake &nbsp;<kbd>F</kbd> shoot &nbsp;<kbd>A</kbd> aim &nbsp;<kbd>P</kbd> flywheel</div>
       </div>
@@ -365,8 +368,8 @@
           </div>
           <div class="frow"><label>Completion</label>
             <select id="setDCompl">
-              <option value="SETTLED">SETTLED</option>
-              <option value="PARAMETRIC_END">PARAMETRIC_END</option>
+              <option value="SETTLED">SETTLED — path ended + Pedro hold settled</option>
+              <option value="PARAMETRIC_END">PARAMETRIC_END — move on at the path end</option>
               <option value="LENIENT">LENIENT</option>
             </select>
           </div>
@@ -451,10 +454,10 @@
     </ul>
     <h4>4 · Robot actions &amp; tuning</h4>
     <ul>
-      <li><b>Volley</b> (<kbd>V</kbd>) = aim the turret at an aim point, spin the flywheel and set the hood from the team-measured shot table (<code>ShootingConfiguration</code>), wait until ready, then feed. One step.</li>
-      <li><b>Intake</b> (<kbd>I</kbd>), <b>Shoot</b> (<kbd>F</kbd>), <b>Aim</b> (<kbd>A</kbd>), <b>Flywheel</b> (<kbd>P</kbd>), <b>Hood</b>, <b>Gate</b>, <b>Stop all</b> are the same pieces on their own. Aim keeps tracking the point while the robot drives.</li>
-      <li>Pedro&nbsp;3 drives every mechanism through the repo's subsystems, like the competition and fallback autos: <code>IntakeSubsystem</code> (TeleOp direction), <code>TransferSubsystem</code> (full sensor, no stall limit), <code>GateSubsystem</code>, the shared <code>FiringCoordinator</code> feed and <code>TurretSubsystem</code>. A shot is the fallback auto's continuous feed for <code>T.FEED_SECONDS</code>; the robot cannot count launched balls.</li>
-      <li>The four aim points default to the competition hive openings (<code>TurretSubsystem</code> / <code>FieldGeometry</code>). Before any aim point is set, a shot uses the fallback auto's preload settings (TeleOp's starting 3500 RPM, hood home).</li>
+      <li><b>Volley</b> (<kbd>V</kbd>) = TeleOp's full auto-shoot in one step: RT aim with <code>ShotCoordinator</code> (Limelight-corrected with tag relocalization), hood / RPM from the measured shot table (<code>ShootingConfiguration</code>), then RT + LT: feed once ready and stable, for the feed time. Ready timeout, fire-or-skip, after (keep / idle / off) and auto-aim trims are per step.</li>
+      <li><b>Intake</b> (<kbd>I</kbd>), <b>Shoot</b> (<kbd>F</kbd>, wait ready or manual GP1 A feed), <b>Aim</b> (<kbd>A</kbd>, aim only), <b>Flywheel</b> (<kbd>P</kbd>, spin-up only / idle / off), <b>Hood</b>, <b>Gate</b>, <b>Transfer</b>, <b>Re-home turret</b>, <b>Depollinator</b>, <b>Slide</b>, <b>Relocalize</b> (hive tags or a known pose), <b>Collect pollen</b>, <b>Lights</b> and <b>Stop all</b> are the other TeleOp functions. Tick <i>While driving</i> to start one and go straight on.</li>
+      <li>Pedro&nbsp;3 runs every function through TeamCode's <code>PlannerRobot</code>, which calls the same shared code as competition TeleOp (<code>CompetitionShotPipeline</code>: <code>ShotCoordinator</code>, <code>FiringCoordinator</code> continuous feed, <code>IntakeQueueController</code>, <code>TransferSubsystem</code>, <code>GateSubsystem</code>, the bang-bang flywheel). The robot cannot count launched balls, so a feed ends on time.</li>
+      <li>The four aim points default to the competition hive openings (<code>TurretSubsystem</code> / <code>FieldGeometry</code>); <i>own audience / own far</i> pick the planned alliance's cells and swap under the alliance mirror. Before any target is set the flywheel idles at TeleOp's 3000 RPM.</li>
       <li>The <b>Tuning</b> tab writes the remaining numbers to class <code>T</code>; values still at their repo default are written as references to the repo constant. The <b>shot calculator</b> shows RPM and hood for a range.</li>
     </ul>
     <h4>5 · Generated OpMode — one file, one loop</h4>
@@ -634,6 +637,13 @@ const TUNE_DEFS = [].concat(
     // auto, instead of leaving Pedro's end-of-path hold running. That hold keeps driving on the Pinpoint
     // pose, velocity and brake model (unverified on V1), so flywheel / feed vibration made the robot creep.
     ['BRAKE_WHILE_SHOOTING', 'Brake drive while shooting', 'bool', true, 0, V3],
+    // Pedro 3: longest wait for Pedro's end-of-path hold to settle before a volley / relocalize stops the drive.
+    ['SETTLE_TIMEOUT_S', 'Settle before brake, max (s)', 'num', 0.5, 0.05, V3],
+    // Pedro 3: a path starts where the robot is (master's AutoDriver), not at the drawn start, so a robot that ended
+    // a step off its drawn point (braked volley, pollen pickup, relocalization) does not swerve back onto the line.
+    ['PATHS_FROM_ROBOT_POSE', 'Paths start at the robot pose', 'bool', true, 0, V3],
+    // Pedro 3: false = A/B drive test. Paths run exactly as planned; every robot function is skipped.
+    ['MECHANISMS_ENABLED', 'Robot functions on (off = drive-only A/B test)', 'bool', true, 0, V3],
     // Pedro 3: per-wheel power cap handed to PedroDrive. Default PedroConfiguration.MAX_WHEEL_POWER (1 = no cap since
     // 2026-11-19). V1's tuner measured braking at full power and Foresight plans each stop from it; a cap below 1 also
     // caps braking, so the robot overshoots path ends and drives back.
@@ -662,17 +672,17 @@ function normTune(o){
 // ---- Pedro 3 export: copies of the V1 TeamCode values its preview uses (keep in sync with the repo) ----
 // ShootingConfiguration.MEASURED_SHOT_TABLE_IN_RPM_HOOD_DEG: range from the turret pivot (in), flywheel
 // output RPM, hood travel down from home (deg). repoShot() follows ShotProfile.sample() (extrapolated ends).
-const REPO_SHOT_TABLE = [[12, 2950, 7], [24, 3050, 5], [36, 3100, 2], [48, 3200, 0], [60, 3400, 0]];
+const REPO_SHOT_TABLE = [[12, 2800, 13], [24, 2900, 8], [36, 2950, 6], [48, 3200, 6], [60, 3200, 4]];
 const REPO_MIN_AUTO_RPM = 2133.3333333333335;     // TurretSubsystem.SHOOTER_MIN_AUTO_RPM
 const REPO_MAX_RPM = 6000;                        // ShooterSpeed.FLYWHEEL_MAX_TARGET_RPM
 const REPO_HOOD_MAX_DEG = 30;                     // TurretSubsystem.PITCH_MAX_DEG
 const REPO_PIVOT_FWD_IN = 50.68184865 / 25.4;     // ShootingConfiguration.TURRET_PIVOT_FORWARD_MM
 const REPO_MAX_YAW_DEG = 175;                     // TurretSubsystem.ROTATION_MAX_ANGLE_DEG (rear +/-5 deg dead zone)
 const REPO_HOME_HEADING_DEG = 90;                 // TurretSubsystem.ROTATION_HOME_ROBOT_HEADING_DEG
-const REPO_PRELOAD_RPM = 3500;                    // FallbackAutonomous.PRELOAD_FLYWHEEL_RPM = MecanumTeleOp.STARTING_FLYWHEEL_RPM
-const REPO_PRELOAD_HOOD_DEG = 0;                  // FallbackAutonomous.PRELOAD_HOOD_DEG = TurretSubsystem.PITCH_HOME_DEG
+const REPO_IDLE_RPM = 3000;                       // CompetitionShotPipeline.FLYWHEEL_IDLE_RPM (TeleOp idle; no target yet)
+const REPO_HOME_HOOD_DEG = 0;                     // TurretSubsystem.PITCH_HOME_DEG (manual hood before any target)
 const DEFAULT_SPEED = 1.0;                        // full tuned speed, no cap (= PedroConfiguration.DEFAULT_PATH_SPEED_FRACTION)
-const PLAN_VERSION = 5;                           // 2: speed 1.0 / full power (2026-11-19); 3: 0.35 / 0.35; 4: 1.0 / no cap (V1 second tuner run); 5: default heading linear
+const PLAN_VERSION = 6;                           // 2: speed 1.0 / full power (2026-11-19); 3: 0.35 / 0.35; 4: 1.0 / no cap (V1 second tuner run); 5: default heading linear; 6: TeleOp robot-function steps (new fields default in normStep)
 const isV3 = () => S.codeTarget === 'v3';
 function repoShot(d){
   const R = REPO_SHOT_TABLE, n = R.length;
@@ -692,9 +702,9 @@ function repoShot(d){
 function shotInfo(dist){
   if (isV3()){
     const r = Number.isFinite(dist) ? repoShot(dist) : null;
-    const v = r || { rpm: REPO_PRELOAD_RPM, hood: REPO_PRELOAD_HOOD_DEG };
+    const v = r || { rpm: REPO_IDLE_RPM, hood: REPO_HOME_HOOD_DEG };
     const out = dist > 60 || dist < 12 ? ' (outside the measured 12\u201360\u2033 rows)' : '';
-    return { rpm: v.rpm, hood: v.hood, txt: `${fmtN(v.rpm, 0)} rpm \u00b7 hood ${fmtN(v.hood, 1)}\u00b0 travel${r ? out : ' (preload settings)'}` };
+    return { rpm: v.rpm, hood: v.hood, txt: `${fmtN(v.rpm, 0)} rpm \u00b7 hood ${fmtN(v.hood, 1)}\u00b0 travel${r ? out : ' (TeleOp idle, no target)'}` };
   }
   const T = S.tune;
   const rpm = Math.min(T.RPM_MAX, Math.max(T.RPM_MIN, T.RPM_SLOPE * dist + T.RPM_INTERCEPT));
@@ -830,93 +840,137 @@ const mkTurn = (deg, dir, spd) => ({ uid: nextUid(), t:'turn', deg:Math.abs(deg)
 const mkStop = (code)          => ({ uid: nextUid(), t:'stop', code:code||'' });
 const mkWait = (secs, cond)    => ({ uid: nextUid(), t:'wait', secs:secs??1.5, cond:cond||'' });
 
-// ---------- robot action steps (intake / flywheel / aim / hood / gate / shoot / volley) ----------
+// ---------- robot action steps (TeleOp robot functions as planner steps) ----------
+// Pedro 3: every step calls TeamCode PlannerRobot, which runs TeleOp's own CompetitionShotPipeline / ShotCoordinator /
+// FiringCoordinator / IntakeQueueController code. Pedro 2 (classic) keeps its self-contained robot class.
 const ACT_KEYS = ['intake', 'spin', 'aim', 'hood', 'gate', 'shoot', 'volley',
-                  'turretHome', 'pollen', 'depoll', 'slide', 'stopAll'];
+                  'turretHome', 'pollen', 'depoll', 'slide', 'transfer', 'relocalize', 'lights', 'stopAll'];
 const ACT_NAMES = { intake:'Intake', spin:'Flywheel', aim:'Aim turret', hood:'Hood', gate:'Gate',
                     shoot:'Shoot', volley:'Volley (aim + spin + shoot)', turretHome:'Re-home turret',
                     pollen:'Collect pollen', depoll:'Depollinator', slide:'Linear slide (shot blocker)',
+                    transfer:'Transfer', relocalize:'Relocalize (field pose)', lights:'Status lights',
                     stopAll:'Stop all' };
-// Pedro 3 only: these drive PlannerRobot mechanisms the Pedro 2 (classic) robot class does not have.
-const V3_ONLY_ACTS = ['turretHome', 'pollen', 'depoll', 'slide'];
+// Pedro 3 only: these drive PlannerRobot functions the Pedro 2 (classic) robot class does not have.
+const V3_ONLY_ACTS = ['turretHome', 'pollen', 'depoll', 'slide', 'transfer', 'relocalize', 'lights'];
+// Steps that can start and let the next step run at once ("while driving").
+const PAR_ACTS = ['volley', 'shoot', 'spin', 'aim', 'intake', 'turretHome', 'depoll', 'slide'];
+const LIGHT_COLORS = ['GREEN', 'BLUE', 'VIOLET', 'YELLOW', 'ORANGE', 'RED', 'WHITE', 'OFF'];
 const actName = st => ACT_NAMES[st.act] || 'Action';
+const canPar = st => isV3() && PAR_ACTS.includes(st.act) && !(st.act === 'intake' && st.mode === 'off');
 
 function actDefaults(act){
   return {
     act,
     mode: act === 'intake' ? 'on' : act === 'spin' ? 'on' : act === 'aim' ? 'track'
         : act === 'hood' ? 'auto' : act === 'gate' ? 'open' : act === 'depoll' ? 'deploy'
-        : act === 'slide' ? 'up' : '',
-    goal: '1', gx: 0, gy: 0,        // aim point: '1'..'4' from the tuning panel, or 'custom' (field-center in)
-    balls: 3,
-    rpm: null,                      // null = from distance model
+        : act === 'slide' ? 'up' : act === 'transfer' ? 'load' : act === 'relocalize' ? 'tags' : '',
+    goal: '1', gx: 0, gy: 0,        // aim point: '1'..'4', 'own-aud' / 'own-far' (planned alliance), 'nearest', 'custom'
+    balls: 3,                       // Pedro 2 only
+    rpm: null,                      // null = from the shot table
     pos: 0.5,                       // Pedro 2: manual servo position (turret / hood)
     head: 90,                       // Pedro 3: manual turret heading, deg (front 0, right/home 90, back 180, left 270)
     hoodDeg: 0,                     // Pedro 3: manual hood travel down from home, deg (0..30)
-    secs: act === 'pollen' ? 8 : act === 'turretHome' ? 3 : 0, // intake: run N s (until full: timeout); pollen / home: timeout
-    offAfter: false,                // intake: turn off after secs
+    secs: act === 'pollen' ? 8 : act === 'turretHome' ? 3 : act === 'relocalize' ? 2.5 : act === 'lights' ? 1 : 0,
+    offAfter: false,                // intake: turn off after secs / once full
     wait: act === 'shoot' || act === 'volley' || act === 'spin' || act === 'aim'
        || act === 'turretHome' || act === 'depoll' || act === 'slide' ? true : false,
-    after: 'keep',                  // shoot/volley: keep flywheel spinning or turn it off
+    after: 'keep',                  // shoot/volley: keep aiming + spinning, TeleOp idle RPM, or spin down
+    feed: null,                     // shoot/volley feed seconds (null = T.FEED_SECONDS)
+    tmo: null,                      // shoot/volley/spin/aim ready timeout (null = T.READY_TIMEOUT_S)
+    onTmo: 'fire',                  // shoot/volley: not ready in time -> fire anyway (TeleOp A) | skip
+    tYaw: 0, tHood: 0, tRpm: 0,     // volley auto-aim trims (AutoAimAdjustments)
+    par: false,                     // start it and go on (runs while the next steps drive)
+    px: 0, py: 0, ph: 0,            // relocalize 'pose': the field pose the robot is at (planned side)
+    refine: true,                   // relocalize 'pose': then refine from hive tags
+    color: 'GREEN',                 // lights
   };
 }
 const mkAct = act => ({ uid: nextUid(), t: 'act', ...actDefaults(act) });
 
 function actChip(st){
+  const p = st.par && canPar(st) ? ' ∥' : '';
   switch (st.act){
-    case 'intake': return st.mode === 'off' ? 'INTAKE OFF' : st.mode === 'rev' ? 'INTAKE REV' : st.mode === 'full' ? 'LOAD FULL' : 'INTAKE';
-    case 'turretHome': return 'RE-HOME';
+    case 'intake': return (st.mode === 'off' ? 'INTAKE OFF' : st.mode === 'rev' ? 'INTAKE REV' : st.mode === 'full' ? 'LOAD FULL' : st.mode === 'force' ? 'INTAKE FORCE' : 'INTAKE') + p;
+    case 'turretHome': return 'RE-HOME' + p;
     case 'pollen': return 'POLLEN';
-    case 'depoll': return st.mode === 'home' ? 'DEPOLL ↑' : 'DEPOLL ↓';
-    case 'slide':  return st.mode === 'down' ? 'SLIDE ↓' : 'SLIDE ↑';
-    case 'spin':   return st.mode === 'off' ? 'SPIN OFF' : 'SPIN';
-    case 'aim':    return st.mode === 'track' ? 'AIM ' + (st.goal === 'custom' ? 'C' : st.goal) : st.mode === 'manual' ? 'TURRET' : 'AIM OFF';
+    case 'depoll': return (st.mode === 'home' ? 'DEPOLL ↑' : 'DEPOLL ↓') + p;
+    case 'slide':  return (st.mode === 'down' ? 'SLIDE ↓' : 'SLIDE ↑') + p;
+    case 'spin':   return (st.mode === 'off' ? 'SPIN OFF' : st.mode === 'idle' ? 'SPIN IDLE' : 'SPIN') + p;
+    case 'aim':    return (st.mode === 'track' ? 'AIM ' + goalShort(st) : st.mode === 'manual' ? 'TURRET' : 'AIM OFF') + p;
     case 'hood':   return 'HOOD';
     case 'gate':   return st.mode === 'close' ? 'GATE ↓' : 'GATE ↑';
-    case 'shoot':  return isV3() ? 'SHOOT' : 'SHOOT ×' + st.balls;
-    case 'volley': return isV3() ? 'VOLLEY' : 'VOLLEY ×' + st.balls;
+    case 'transfer': return st.mode === 'hold' ? 'XFER HOLD' : 'XFER LOAD';
+    case 'relocalize': return st.mode === 'pose' ? 'SET POSE' : 'RELOC';
+    case 'lights': return 'LIGHTS';
+    case 'shoot':  return (isV3() ? (st.wait ? 'SHOOT' : 'FEED') : 'SHOOT ×' + st.balls) + p;
+    case 'volley': return (isV3() ? 'VOLLEY ' + goalShort(st) : 'VOLLEY ×' + st.balls) + p;
     default:       return 'STOP ALL';
   }
 }
-function actGoalTxt(st){ return st.goal === 'custom' ? `(${fmtN(st.gx, 0)}, ${fmtN(st.gy, 0)})` : `aim point ${st.goal} (${GOAL_NAMES[st.goal] || '?'})`; }
-const ballsTxt = st => isV3() ? `feed ${fmtN(S.tune.FEED_SECONDS, 1)}s` : `${st.balls} ball(s)`;
+const goalShort = st => st.goal === 'custom' ? 'C' : st.goal === 'nearest' ? 'N' : st.goal === 'own-aud' ? 'A' : st.goal === 'own-far' ? 'F' : st.goal;
+// 'own-aud' / 'own-far': the planned alliance's own cell; the alliance mirror swaps them like Zenith aim(frame=AUTHORED).
+function goalNum(st){
+  const blue = S.alliance === 'BLUE';
+  if (st.goal === 'own-aud') return blue ? '3' : '1';
+  if (st.goal === 'own-far') return blue ? '4' : '2';
+  return ['1', '2', '3', '4'].includes(st.goal) ? st.goal : '1';
+}
+function actGoalTxt(st){
+  if (st.goal === 'custom') return `(${fmtN(st.gx, 0)}, ${fmtN(st.gy, 0)})`;
+  if (st.goal === 'nearest') return 'nearest own cell (TeleOp rule)';
+  const n = goalNum(st);
+  return `aim point ${n} (${GOAL_NAMES[n] || '?'})`;
+}
+const feedTxt = st => isV3() ? `feed ${fmtN(st.feed ?? S.tune.FEED_SECONDS, 1)}s` : `${st.balls} ball(s)`;
+const afterTxt = st => st.after === 'off' ? ' · spin down' : st.after === 'idle' ? ' · idle RPM' : '';
+const parTxt = st => st.par && canPar(st) ? ' · while driving' : '';
 function actSummary(st){
   switch (st.act){
-    case 'intake': if (st.mode === 'full') return `in until transfer full${st.secs > 0 ? ` · max ${fmtN(st.secs, 1)}s` : ''}${st.offAfter ? ' then off' : ''}`;
-                   return (st.mode === 'rev' ? 'reverse' : st.mode === 'off' ? 'off' : 'in') + (st.secs > 0 ? ` · ${fmtN(st.secs, 1)}s${st.offAfter ? ' then off' : ''}` : '');
-    case 'turretHome': return `restart turret homing${st.wait ? ` · wait (max ${fmtN(st.secs, 1)}s)` : ''}`;
+    case 'intake': if (st.mode === 'full') return `in until transfer full${st.secs > 0 ? ` · max ${fmtN(st.secs, 1)}s` : ''}${st.offAfter ? ' then off' : ''}${parTxt(st)}`;
+                   return (st.mode === 'rev' ? 'reverse' : st.mode === 'off' ? 'off' : st.mode === 'force' ? 'forced in (past full)' : 'in')
+                     + (st.secs > 0 && st.mode !== 'off' ? ` · ${fmtN(st.secs, 1)}s${st.offAfter ? ' then off' : ''}` : '') + parTxt(st);
+    case 'turretHome': return `restart turret homing${st.wait && !st.par ? ` · wait (max ${fmtN(st.secs, 1)}s)` : ''}${parTxt(st)}`;
     case 'pollen': return `camera-guided pickup · max ${fmtN(st.secs, 1)}s`;
-    case 'depoll': return (st.mode === 'home' ? 'home (up)' : 'deploy') + (st.wait ? ' · wait settle' : '');
-    case 'slide':  return (st.mode === 'down' ? 'lower' : 'raise') + (st.wait ? ' · wait until there' : '');
-    case 'spin':   return st.mode === 'off' ? 'flywheel off' : `spin ${st.rpm == null ? 'auto rpm' : fmtN(st.rpm, 0) + ' rpm'}${st.wait ? ' · wait ready' : ''}`;
-    case 'aim':    return st.mode === 'track' ? `track ${actGoalTxt(st)}${st.wait ? ' · wait settle' : ''}`
-                        : st.mode === 'manual' ? (isV3() ? `heading ${fmtN(st.head, 0)} deg` : `servo ${fmtN(st.pos, 3)}`) : 'tracking off';
+    case 'depoll': return (st.mode === 'home' ? 'home (up)' : 'deploy') + (st.wait && !st.par ? ' · wait settle' : '') + parTxt(st);
+    case 'slide':  return (st.mode === 'down' ? 'lower' : 'raise') + (st.wait && !st.par ? ' · wait until there' : '') + parTxt(st);
+    case 'spin':   return (st.mode === 'off' ? 'flywheel off' : st.mode === 'idle' ? 'TeleOp idle RPM'
+                        : `spin ${st.rpm == null ? 'auto RPM + hood (shot table)' : fmtN(st.rpm, 0) + ' rpm'}${st.wait && !st.par ? ' · wait at speed' : ''}`) + parTxt(st);
+    case 'aim':    return (st.mode === 'track' ? `track ${actGoalTxt(st)}${st.wait && !st.par ? ' · wait on target' : ''}`
+                        : st.mode === 'manual' ? (isV3() ? `heading ${fmtN(st.head, 0)} deg` : `servo ${fmtN(st.pos, 3)}`) : 'tracking off') + parTxt(st);
     case 'hood':   return st.mode === 'manual' ? (isV3() ? `hood ${fmtN(st.hoodDeg, 1)} deg travel` : `hood ${fmtN(st.pos, 3)}`)
                         : isV3() ? 'hood auto (shot table)' : 'hood auto (distance)';
-    case 'gate':   return st.mode === 'close' ? 'gate closed' : 'gate open';
-    case 'shoot':  return `${ballsTxt(st)}${st.wait ? ' · wait ready' : ''}${st.after === 'off' ? ' · spin down' : ''}`;
-    case 'volley': return `${ballsTxt(st)} at ${actGoalTxt(st)}${st.after === 'off' ? ' · spin down' : ''}`;
-    default:       return 'intake, flywheel, feed off';
+    case 'gate':   return st.mode === 'close' ? 'gate closed (feed controls it)' : 'gate held open';
+    case 'transfer': return st.mode === 'hold' ? 'hold stage 1 (no loading)' : 'load until full (TeleOp)';
+    case 'relocalize': return st.mode === 'pose' ? `robot is at (${fmtN(st.px, 1)}, ${fmtN(st.py, 1)}) @ ${fmtN(st.ph, 0)}°${st.refine ? ' + tag refine' : ''}`
+                        : `hive-tag refine · max ${fmtN(st.secs, 1)}s`;
+    case 'lights': return `${st.color} for ${fmtN(st.secs, 1)}s`;
+    case 'shoot':  return `${isV3() && !st.wait ? 'manual feed (readiness bypassed) · ' : ''}${feedTxt(st)}${st.wait ? ' · wait ready' : ''}${afterTxt(st)}${parTxt(st)}`;
+    case 'volley': return `${feedTxt(st)} at ${actGoalTxt(st)}${afterTxt(st)}${parTxt(st)}`;
+    default:       return 'intake, transfer, flywheel, feed off';
   }
 }
-function goalXY(st){
+// aim point on the field (planned side). 'nearest' needs the robot pose at the step.
+function goalXY(st, pose){
   if (st.goal === 'custom') return { x: +st.gx, y: +st.gy };
-  const n = ['1', '2', '3', '4'].includes(st.goal) ? st.goal : '1';
+  let n = goalNum(st);
+  if (st.goal === 'nearest'){
+    const blue = S.alliance === 'BLUE', aud = !pose || pose.y < 0;
+    n = blue ? (aud ? '3' : '4') : (aud ? '1' : '2');
+  }
   return { x: S.tune['GOAL' + n + '_X'], y: S.tune['GOAL' + n + '_Y'] };
 }
 
 function goalPicker(st){
   const wrap = document.createElement('div');
   const sel = document.createElement('select');
-  ['1', '2', '3', '4'].forEach(n => {
-    const o = document.createElement('option'); o.value = n;
-    o.textContent = `Aim ${n} ${GOAL_NAMES[n]} (${fmtN(S.tune['GOAL' + n + '_X'], 1)}, ${fmtN(S.tune['GOAL' + n + '_Y'], 1)})`;
-    if (st.goal === n) o.selected = true;
-    sel.appendChild(o);
-  });
-  const oc = document.createElement('option'); oc.value = 'custom'; oc.textContent = 'Custom point…';
-  if (st.goal === 'custom') oc.selected = true;
-  sel.appendChild(oc);
+  const opt = (v, txt) => { const o = document.createElement('option'); o.value = v; o.textContent = txt; if (st.goal === v) o.selected = true; sel.appendChild(o); };
+  if (isV3()){
+    opt('own-aud', `Own audience cell (${S.alliance === 'BLUE' ? 'blue' : 'red'}; mirrors)`);
+    opt('own-far', `Own far cell (${S.alliance === 'BLUE' ? 'blue' : 'red'}; mirrors)`);
+    opt('nearest', 'Nearest own cell (TeleOp rule)');
+  }
+  ['1', '2', '3', '4'].forEach(n => opt(n, `Aim ${n} ${GOAL_NAMES[n]} (${fmtN(S.tune['GOAL' + n + '_X'], 1)}, ${fmtN(S.tune['GOAL' + n + '_Y'], 1)})`));
+  opt('custom', 'Custom point…');
   sel.addEventListener('change', () => { pushUndo(); st.goal = sel.value; renderInspector(); softRefresh(); });
   wrap.appendChild(frow('Aim at', sel));
   if (st.goal === 'custom'){
@@ -930,62 +984,91 @@ function renderActInspector(st){
   const A = insp;
   const modeSeg = (label, items) => A.appendChild(frow(label, seg(items, st.mode, v => { st.mode = v; renderInspector(); softRefresh(); })));
   const chk = (label, key) => A.appendChild(chkRow(label, !!st[key], on => { st[key] = on; renderInspector(); softRefresh(); }));
-  const v3Hint = html => {
-    const h = document.createElement('div'); h.className = 'hint';
-    h.innerHTML = isV3() ? html : '<b>Pedro 3 export only.</b> The Pedro 2 robot class has no such mechanism; this step exports as a comment.';
-    A.appendChild(h);
+  const hint = html => { const h = document.createElement('div'); h.className = 'hint'; h.innerHTML = html; A.appendChild(h); };
+  const v3Hint = html => hint(isV3() ? html : '<b>Pedro 3 export only.</b> The Pedro 2 robot class has no such function; this step exports as a comment.');
+  const opt = (label, key, step, ph) => { const i = optNum(st[key], step, v => { st[key] = v; softRefresh(); }); i.placeholder = ph; A.appendChild(frow(label, i)); };
+  const shotTiming = () => {
+    if (!isV3()) return;
+    opt('Feed (s)', 'feed', 0.1, `T ${fmtN(S.tune.FEED_SECONDS, 1)}`);
+    if (st.act === 'volley' || st.wait){
+      opt('Ready timeout (s)', 'tmo', 0.1, `T ${fmtN(S.tune.READY_TIMEOUT_S, 1)}`);
+      A.appendChild(frow('If not ready', seg([['fire', 'FIRE ANYWAY'], ['skip', 'SKIP SHOT']], st.onTmo, v => { st.onTmo = v; renderInspector(); softRefresh(); })));
+    }
   };
   const head = document.createElement('div'); head.className = 'hint'; head.style.margin = '0 0 9px';
-  head.innerHTML = `<b>${actName(st)}</b> — runs in order with the drive steps; the robot holds still while it runs.`;
+  head.innerHTML = `<b>${actName(st)}</b> — runs in order with the drive steps${canPar(st) ? '; tick <i>While driving</i> to start it and go straight on' : ''}.`;
   A.appendChild(head);
 
   switch (st.act){
     case 'intake':
-      modeSeg('Mode', isV3() ? [['on', 'IN'], ['full', 'UNTIL FULL'], ['rev', 'REVERSE'], ['off', 'OFF']]
+      modeSeg('Mode', isV3() ? [['on', 'IN'], ['full', 'UNTIL FULL'], ['force', 'FORCE'], ['rev', 'REVERSE'], ['off', 'OFF']]
                              : [['on', 'IN'], ['rev', 'REVERSE'], ['off', 'OFF']]);
-      A.appendChild(frow(st.mode === 'full' ? 'Timeout (s, 0 = none)' : 'Run for (s)', numInput(st.secs, 0.5, v => { st.secs = Math.max(0, v); renderInspector(); softRefresh(); })));
-      if (st.secs > 0 || st.mode === 'full') chk('Turn intake off afterwards', 'offAfter');
-      if (st.mode === 'full'){
-        const h = document.createElement('div'); h.className = 'hint';
-        h.innerHTML = 'Runs the intake until the transfer full sensor confirms a full queue (<code>robot.transferFull()</code>), like the Zenith <code>loadUntilFull</code> command.';
-        A.appendChild(h);
-      }
+      if (st.mode !== 'off') A.appendChild(frow(st.mode === 'full' ? 'Timeout (s, 0 = none)' : 'Run for (s)', numInput(st.secs, 0.5, v => { st.secs = Math.max(0, v); renderInspector(); softRefresh(); })));
+      if (st.mode !== 'off' && (st.secs > 0 || st.mode === 'full')) chk('Turn intake off afterwards', 'offAfter');
+      if (isV3()) hint('TeleOp&rsquo;s collection (<code>IntakeQueueController</code>): <b>IN</b> runs forward while the queue has space and stops on a confirmed full queue (<code>robot.queueFull()</code>, like Zenith <code>loadUntilFull</code>); it pauses while shooting. <b>FORCE</b> = TeleOp RB (past full), <b>REVERSE</b> = LB.');
       break;
     case 'turretHome':
-      chk('Wait until homed', 'wait');
-      if (st.wait) A.appendChild(frow('Timeout (s)', numInput(st.secs, 0.5, v => { st.secs = Math.max(0.1, v); softRefresh(); })));
-      v3Hint('Restarts <code>TurretSubsystem</code> homing (turret bumped, or before a precise shot). Shots wait for the new home; with tag relocalization the aim pose is re-referenced.');
+      if (!st.par) chk('Wait until homed', 'wait');
+      if (st.wait && !st.par) A.appendChild(frow('Timeout (s)', numInput(st.secs, 0.5, v => { st.secs = Math.max(0.1, v); softRefresh(); })));
+      v3Hint('Restarts <code>TurretSubsystem</code> homing (TeleOp GP2 X). Shots wait for the new home; the aim pose is re-referenced.');
       break;
     case 'pollen':
       A.appendChild(frow('Timeout (s)', numInput(st.secs, 0.5, v => { st.secs = Math.max(0.5, Math.min(28, v)); softRefresh(); })));
-      v3Hint('The C270 pollen camera and <code>PollenNavigator</code> drive the robot and intake until the pickup completes, times out or faults (the Zenith <code>collectPollen</code> command). The robot ends wherever the pickup ended; the next drive step starts from there. Skipped if the camera is not configured.');
+      v3Hint('The C270 pollen camera and <code>PollenNavigator</code> drive the robot and intake until the pickup completes, times out or faults (the Zenith <code>collectPollen</code> command). The next drive step starts from wherever it ended. Skipped if the camera is not configured.');
       break;
     case 'depoll':
       modeSeg('Position', [['deploy', 'DEPLOY'], ['home', 'HOME']]);
-      chk('Wait for the settle estimate', 'wait');
-      v3Hint('<code>DepollinatorSubsystem</code> (Axon MAX+). Settling is a 1 s estimate; there is no position feedback. Skipped if not configured.');
+      if (!st.par) chk('Wait for the settle estimate', 'wait');
+      v3Hint('<code>DepollinatorSubsystem</code> (TeleOp GP1 stick clicks). Settling is a 1 s estimate; there is no position feedback. Skipped if not configured.');
       break;
     case 'slide':
-      modeSeg('Slide', [['up', 'RAISE'], ['down', 'LOWER']]);
-      chk('Wait until it gets there', 'wait');
-      v3Hint('<code>LinearSlideSubsystem</code> with its fixed shot blocker. The slide must be fully down at INIT. A fault ends the wait. Skipped if not configured.');
+      modeSeg('Slide', [['up', 'EXTEND'], ['down', 'HOME']]);
+      if (!st.par) chk('Wait until there (or a fault)', 'wait');
+      v3Hint('<code>LinearSlideSubsystem</code> with its fixed shot blocker (TeleOp GP2 stick clicks). The slide must be fully down at INIT. A fault ends the wait. Skipped if not configured.');
       break;
+    case 'transfer':
+      modeSeg('Stage 1', [['load', 'LOAD'], ['hold', 'HOLD']]);
+      v3Hint('<b>LOAD</b> = TeleOp: stage 1 loads until the queue is full (sensor + 0.5 s run-on), and every shot feeds it. <b>HOLD</b> pauses loading between shots (shots still feed). An Intake IN step resumes loading.');
+      break;
+    case 'relocalize':
+      modeSeg('Mode', [['tags', 'HIVE TAGS'], ['pose', 'SET POSE']]);
+      if (st.mode === 'pose'){
+        A.appendChild(frow('X (in)', numInput(st.px, 0.5, v => { st.px = v; softRefresh(); })));
+        A.appendChild(frow('Y (in)', numInput(st.py, 0.5, v => { st.py = v; softRefresh(); })));
+        A.appendChild(angleRow('Heading°', st.ph, -180, 180, v => { st.ph = v; softRefresh(); }));
+        chk('Then refine from hive tags', 'refine');
+      }
+      if (st.mode === 'tags' || st.refine) A.appendChild(frow('Timeout (s)', numInput(st.secs, 0.5, v => { st.secs = Math.max(0.5, v); softRefresh(); })));
+      v3Hint('Waits for Pedro to settle, then stops the drive. <b>SET POSE</b> = TeleOp&rsquo;s corner rehome: declare the robot is at this pose (squared on walls; planned side, mirrored). <b>HIVE TAGS</b> = the INIT start-pose refinement again (<code>AutoStartRelocalization</code> + <code>FieldRehomeRefinement</code>: 5 consistent frames, at most 6 in, translation only), written into Pinpoint on success. Needs <code>T.TAG_RELOCALIZATION</code> and a Limelight; otherwise skipped.');
+      break;
+    case 'lights': {
+      const sel = document.createElement('select');
+      LIGHT_COLORS.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; if (st.color === c) o.selected = true; sel.appendChild(o); });
+      sel.addEventListener('change', () => { pushUndo(); st.color = sel.value; softRefresh(); });
+      A.appendChild(frow('Color', sel));
+      A.appendChild(frow('For (s)', numInput(st.secs, 0.5, v => { st.secs = Math.max(0, v); softRefresh(); })));
+      v3Hint('All three status lights show this color, then go back to TeleOp&rsquo;s colors (intake / shooter / field reference). A new fault still blinks them red.');
+      break;
+    }
     case 'spin':
-      modeSeg('Mode', [['on', 'SPIN UP'], ['off', 'OFF']]);
+      modeSeg('Mode', isV3() ? [['on', 'SPIN UP'], ['idle', 'IDLE'], ['off', 'OFF']] : [['on', 'SPIN UP'], ['off', 'OFF']]);
       if (st.mode === 'on'){
         A.appendChild(frow('RPM', optNum(st.rpm, 50, v => { st.rpm = v; softRefresh(); })));
-        chk('Wait until at speed', 'wait');
+        if (!st.par) chk('Wait until at speed', 'wait');
+        if (st.wait && !st.par && isV3()) opt('Timeout (s)', 'tmo', 0.1, `T ${fmtN(S.tune.READY_TIMEOUT_S, 1)}`);
+        if (isV3()) hint('Spin-up only: blank RPM = flywheel <i>and</i> hood from the shot table for the current target (TeleOp RT without moving the turret). <b>IDLE</b> = TeleOp&rsquo;s idle speed (3000 RPM).');
       }
       break;
     case 'aim':
-      modeSeg('Mode', [['track', 'TRACK POINT'], ['manual', 'MANUAL'], ['off', 'OFF']]);
-      if (st.mode === 'track'){ A.appendChild(goalPicker(st)); chk('Wait for turret to settle', 'wait'); }
+      modeSeg('Mode', [['track', 'TRACK POINT'], ['manual', 'FIXED HEADING'], ['off', 'OFF']]);
+      if (st.mode === 'track') A.appendChild(goalPicker(st));
       if (st.mode === 'manual' && isV3()){
         A.appendChild(frow('Heading (deg)', numInput(st.head, 5, v => { st.head = ((v % 360) + 360) % 360; softRefresh(); })));
-        const h = document.createElement('div'); h.className = 'hint';
-        h.innerHTML = 'Driver Hub turret heading: front 0, right 90 (home), back 180, left 270. Within 5&deg; of 270 is the rear dead zone; the turret stops at the nearest limit.';
-        A.appendChild(h);
+        hint('Driver Hub turret heading: front 0, right 90 (home), back 180, left 270. Within 5&deg; of 270 is the rear dead zone; the turret stops at the nearest limit.');
       } else if (st.mode === 'manual') A.appendChild(frow('Servo pos', numInput(st.pos, 0.01, v => { st.pos = v; softRefresh(); })));
+      if (st.mode !== 'off' && !st.par) chk('Wait until on target', 'wait');
+      if (st.mode !== 'off' && st.wait && !st.par && isV3()) opt('Timeout (s)', 'tmo', 0.1, `T ${fmtN(S.tune.READY_TIMEOUT_S, 1)}`);
+      if (st.mode === 'track' && isV3()) hint('Aim only: TeleOp RT&rsquo;s turret yaw from <code>ShotCoordinator</code> (Limelight-corrected pose with tag relocalization). Hood and flywheel keep their settings; it keeps tracking while the robot drives.');
       break;
     case 'hood':
       modeSeg('Mode', [['auto', isV3() ? 'AUTO (shot table)' : 'AUTO (distance)'], ['manual', 'MANUAL']]);
@@ -994,43 +1077,51 @@ function renderActInspector(st){
       else if (st.mode === 'manual') A.appendChild(frow('Servo pos', numInput(st.pos, 0.01, v => { st.pos = v; softRefresh(); })));
       break;
     case 'gate':
-      modeSeg('Gate', [['open', 'OPEN'], ['close', 'CLOSED']]);
+      modeSeg('Gate', [['open', 'HOLD OPEN'], ['close', 'FEED CONTROLS IT']]);
+      if (isV3()) hint('The firing coordinator opens the gate for every shot. HOLD OPEN keeps it open outside a shot too (e.g. to clear a jam with a Shoot / manual feed).');
       break;
     case 'shoot':
     case 'volley':
       if (st.act === 'volley') A.appendChild(goalPicker(st));
       if (isV3()){
-        const h = document.createElement('div'); h.className = 'hint';
-        h.innerHTML = `Pedro 3 feeds every loaded ball: the fallback auto's continuous feed (gate + transfer) for <code>T.FEED_SECONDS</code> (${fmtN(S.tune.FEED_SECONDS, 1)} s, Tuning tab). The robot cannot count launched balls, so there is no ball count. While it shoots the drive is stopped with the motors on brake (<code>T.BRAKE_WHILE_SHOOTING</code>, like the fallback auto) instead of Pedro holding the last path's end point; the next drive step starts it again.`;
-        A.appendChild(h);
+        if (st.act === 'shoot') A.appendChild(frow('Feed', seg([[true, 'WAIT READY (RT+LT)'], [false, 'MANUAL (GP1 A)']], !!st.wait, v => { st.wait = v; renderInspector(); softRefresh(); })));
+        shotTiming();
+        if (st.act === 'volley'){
+          A.appendChild(isub('Auto-aim trims (TeleOp GP2)'));
+          A.appendChild(frow('Yaw (deg, left +)', numInput(st.tYaw, 0.5, v => { st.tYaw = Math.max(-10, Math.min(10, v)); softRefresh(); })));
+          A.appendChild(frow('Hood (deg)', numInput(st.tHood, 0.5, v => { st.tHood = Math.max(-5, Math.min(5, v)); softRefresh(); })));
+          A.appendChild(frow('RPM', numInput(st.tRpm, 50, v => { st.tRpm = Math.max(-500, Math.min(500, v)); softRefresh(); })));
+        }
+        hint(st.act === 'volley'
+          ? 'TeleOp&rsquo;s full auto-shoot (<code>CompetitionShotPipeline</code>): RT aim with <code>ShotCoordinator</code> (Limelight-corrected with tag relocalization), hood / RPM from the measured shot table for the range to the cell, then RT + LT: feed once the turret is on target, the hood settled and the flywheel at speed for <code>READY_STABLE_SECONDS</code>. The feed is continuous for the feed time (the robot cannot count balls, so it cannot stop on an empty queue). Unless <i>while driving</i>, Pedro&rsquo;s end hold settles the robot, then the drive stops on brake (<code>T.BRAKE_WHILE_SHOOTING</code>).'
+          : 'Shoots with the current aim / hood / flywheel settings. <b>WAIT READY</b> needs an Aim / Volley / spin-up first (TeleOp RT + LT). <b>MANUAL</b> = TeleOp GP1 A: feed now, readiness bypassed.');
       } else A.appendChild(frow('Balls', numInput(st.balls, 1, v => { st.balls = Math.max(1, Math.round(v)); softRefresh(); })));
-      if (st.act === 'shoot') chk('Wait until flywheel ready', 'wait');
-      A.appendChild(frow('After', seg([['keep', 'KEEP SPINNING'], ['off', 'SPIN DOWN']], st.after, v => { st.after = v; softRefresh(); })));
+      if (st.act === 'shoot' && !isV3()) chk('Wait until flywheel ready', 'wait');
+      A.appendChild(frow('After', seg(isV3() ? [['keep', 'KEEP AIMING'], ['idle', 'IDLE RPM'], ['off', 'SPIN DOWN']] : [['keep', 'KEEP SPINNING'], ['off', 'SPIN DOWN']], st.after, v => { st.after = v; softRefresh(); })));
       break;
-    default: break;
+    default:
+      if (isV3()) hint('Intake, transfer loading, feed and flywheel off; the turret holds its last target. An Intake IN / Transfer LOAD step resumes loading.');
+      break;
   }
+  if (canPar(st)) A.appendChild(chkRow('While driving (start it and go on)', !!st.par, on => { st.par = on; renderInspector(); softRefresh(); }));
 
-  // live numbers from the tuning panel for aim / volley
+  // live numbers from the shot table for aim / volley / spin
+  const poses = chainPoses();
+  const p = poses[Math.min(S.sel, poses.length - 1)];
   if (st.act === 'volley' || (st.act === 'aim' && st.mode === 'track')){
-    const poses = chainPoses();
-    const p = poses[Math.min(S.sel, poses.length - 1)];
-    const g = goalXY(st);
+    const g = goalXY(st, p);
     const d = aimRange(p, g.x, g.y);
     const s = shotInfo(d);
-    const h = document.createElement('div'); h.className = 'hint';
-    h.innerHTML = `From where the robot is at this step: <b>${fmtN(d, 1)}&Prime;</b> to the point → <code style="font-family:var(--mono);color:var(--lime)">${s.txt} · ${turretTxt(p, g.x, g.y)}</code><br>${isV3() ? 'RPM and hood come from the measured shot table in ShootingConfiguration.' : 'Numbers come from the Tuning tab.'} The robot keeps tracking the point while it drives until another Aim step changes it.`;
-    A.appendChild(h);
+    hint(`From where the robot is at this step: <b>${fmtN(d, 1)}&Prime;</b> to the point → <code style="font-family:var(--mono);color:var(--lime)">${s.txt} · ${turretTxt(p, g.x, g.y)}</code><br>${isV3() ? 'RPM and hood come from the measured shot table in ShootingConfiguration (same rows as TeamCode). Trims add on top.' : 'Numbers come from the Tuning tab.'} The robot keeps tracking the point while it drives until another Aim step changes it.`);
   } else if (st.act === 'shoot' || st.act === 'spin'){
-    const h = document.createElement('div'); h.className = 'hint';
-    h.innerHTML = isV3()
-      ? `Uses the point from the most recent Aim / Volley step for the RPM and hood. Before any aim point, it uses the fallback auto's preload settings (<code>FallbackAutonomous.PRELOAD_FLYWHEEL_RPM</code> ${REPO_PRELOAD_RPM} RPM, hood home).`
-      : 'Uses the point from the most recent Aim / Volley step (or the fallback distance in Tuning) for the rpm and hood.';
-    A.appendChild(h);
+    hint(isV3()
+      ? `Uses the target from the most recent Aim / Volley step for the RPM and hood. Before any target the flywheel runs at TeleOp&rsquo;s idle ${REPO_IDLE_RPM} RPM with the hood at its manual setting.`
+      : 'Uses the point from the most recent Aim / Volley step (or the fallback distance in Tuning) for the rpm and hood.');
   }
   A.appendChild(delBtn());
 }
 
-// aim points + dashed lines to them (drawn on the field)
+// aim points + dashed lines to them, with range / RPM / hood (drawn on the field)
 function drawAimOverlay(poses){
   const T = S.tune;
   ctx.save();
@@ -1045,11 +1136,11 @@ function drawAimOverlay(poses){
   }
   S.steps.forEach((st, i) => {
     if (st.t !== 'act' || !(st.act === 'volley' || (st.act === 'aim' && st.mode === 'track'))) return;
-    const g = goalXY(st), p = poses[i];
+    const p = poses[i], g = goalXY(st, p);
     const [ax, ay] = w2s(p.x, p.y), [bx, by] = w2s(g.x, g.y);
     const sel = S.sel === i;
-    ctx.globalAlpha = sel ? .95 : .4; ctx.strokeStyle = C.amber; ctx.lineWidth = sel ? 2 : 1.2;
-    ctx.setLineDash([5, 4]);
+    ctx.globalAlpha = sel ? .95 : .4; ctx.strokeStyle = st.act === 'volley' ? C.amber : C.cyan; ctx.lineWidth = sel ? 2 : 1.2;
+    ctx.setLineDash(st.par ? [2, 4] : [5, 4]);
     ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
     ctx.setLineDash([]);
     if (st.goal === 'custom'){
@@ -1058,7 +1149,8 @@ function drawAimOverlay(poses){
     if (sel){
       const d = aimRange(p, g.x, g.y), s = shotInfo(d);
       ctx.globalAlpha = 1; ctx.fillStyle = C.amber; ctx.font = '10px ui-monospace, monospace'; ctx.textAlign = 'center';
-      ctx.fillText(`${fmtN(d, 0)}″ · ${fmtN(s.rpm, 0)}rpm`, (ax + bx) / 2, (ay + by) / 2 - 6);
+      ctx.fillText(isV3() ? `${fmtN(d, 0)}″ · ${fmtN(s.rpm, 0)}rpm · hood ${fmtN(s.hood, 1)}°` : `${fmtN(d, 0)}″ · ${fmtN(s.rpm, 0)}rpm`,
+        (ax + bx) / 2, (ay + by) / 2 - 6);
     }
   });
   ctx.restore();
@@ -2382,7 +2474,8 @@ $('btnAddTurn').addEventListener('click', () => addStep(mkTurn(45, 'LEFT')));
 $('btnAddStop').addEventListener('click', () => addStep(mkStop('')));
 $('btnAddWait').addEventListener('click', () => addStep(mkWait(1.5, '')));
 [['btnActVolley','volley'],['btnActIntake','intake'],['btnActShoot','shoot'],['btnActAim','aim'],['btnActSpin','spin'],['btnActHood','hood'],['btnActGate','gate'],
- ['btnActHome','turretHome'],['btnActPollen','pollen'],['btnActDepoll','depoll'],['btnActSlide','slide'],['btnActStop','stopAll']]
+ ['btnActHome','turretHome'],['btnActPollen','pollen'],['btnActDepoll','depoll'],['btnActSlide','slide'],['btnActTransfer','transfer'],
+ ['btnActReloc','relocalize'],['btnActLights','lights'],['btnActStop','stopAll']]
   .forEach(([id, a]) => $(id).addEventListener('click', () => addStep(mkAct(a))));
 $('btnAddMoveQuick').addEventListener('click', () => {
   const a = fwd(12);
@@ -2627,7 +2720,7 @@ function driveOptionsEditor(st){
   lim('Max decel (in/s\u00b2)', 'decel', 5, S.dDecel != null ? 'def ' + fmtN(S.dDecel, 0) : 'none');
   lim('Max vel (in/s)', 'maxVel', 1, 'from speed');
   const h = document.createElement('div'); h.className = 'hint'; h.style.margin = '2px 0 0';
-  h.innerHTML = 'SETTLED = wait for Pedro to finish the path. LENIENT = move on once within the tolerance of the end point. Timeout moves on if the step takes too long (blank = Tuning default). <b>Max accel / decel / vel</b> limit this path only (blank = driver default); generated for the Pedro&nbsp;3 target.';
+  h.innerHTML = 'SETTLED = wait for Pedro to finish the path and its end hold to settle (<code>drive.settled()</code>: within PedroConfiguration\'s 0.5 in / 3&deg; / 1 in/s, or 0.1 s; Pedro&nbsp;3). LENIENT = move on once within the tolerance of the end point. Timeout moves on if the step takes too long (blank = Tuning default). <b>Max accel / decel / vel</b> limit this path only (blank = driver default); generated for the Pedro&nbsp;3 target.';
   wrap.appendChild(h);
   return wrap;
 }
@@ -2815,11 +2908,14 @@ function renderInspector(){
     if (isV3()){
       // PlannerRobot conditions (the Zenith route conditions' equivalents); any boolean expression still works.
       const dl = document.createElement('datalist'); dl.id = 'waitConds';
-      ['robot.transferFull()', 'robot.ready()', 'robot.turretReady()', 'robot.turretHomed()', '!robot.isShooting()',
-       'robot.pollenVisible()', 'robot.relocalized()', 'robot.depollinatorSettled()', 'robot.slideSettled()',
-       'drive.idle()'].forEach(c => { const o = document.createElement('option'); o.value = c; dl.appendChild(o); });
-      ci.setAttribute('list', 'waitConds'); ci.placeholder = 'e.g.  robot.transferFull()';
+      WAIT_CONDS.forEach(([c]) => { const o = document.createElement('option'); o.value = c; dl.appendChild(o); });
+      ci.setAttribute('list', 'waitConds'); ci.placeholder = 'e.g.  robot.queueFull()';
       insp.appendChild(dl);
+      const pick = document.createElement('select');
+      const o0 = document.createElement('option'); o0.value = ''; o0.textContent = 'Pick a condition\u2026'; pick.appendChild(o0);
+      WAIT_CONDS.forEach(([c, label]) => { const o = document.createElement('option'); o.value = c; o.textContent = label; if (st.cond === c) o.selected = true; pick.appendChild(o); });
+      pick.addEventListener('change', () => { if (!pick.value) return; pushUndo(); st.cond = pick.value; ci.value = st.cond; softRefresh(); });
+      insp.appendChild(frow('Wait until', pick));
     }
     insp.appendChild(frow('Or until', ci));
     const h = document.createElement('div');
@@ -2829,6 +2925,22 @@ function renderInspector(){
     insp.appendChild(delBtn());
   }
 }
+
+// Pedro 3 wait-until conditions (PlannerRobot / PedroDrive); any boolean expression still works.
+const WAIT_CONDS = [
+  ['robot.queueFull()', 'Queue full (transfer sensor confirmed)'],
+  ['robot.shotReady()', 'Shot ready (TeleOp: turret on target, hood, RPM)'],
+  ['robot.flywheelReady()', 'Flywheel at speed + hood settled'],
+  ['robot.turretOnTarget()', 'Turret on target'],
+  ['robot.turretHomed()', 'Turret homed'],
+  ['robot.volleyDone()', 'Volley / shot finished'],
+  ['robot.depollinatorSettled()', 'Depollinator settled'],
+  ['robot.slideSettled()', 'Slide there (or faulted)'],
+  ['robot.relocalized()', 'Relocalized from hive tags'],
+  ['robot.relocalizeDone()', 'Relocalize step finished'],
+  ['robot.pollenVisible()', 'Pollen visible'],
+  ['drive.settled()', "Drive settled (Pedro's end hold)"],
+];
 
 // list/code refresh helpers
 let lastListTs = 0;
@@ -3010,7 +3122,7 @@ function stepCase(st, i){
   const user = (code, extra) => { if ((code || '').trim()) reindentLines(code, I + extra).forEach(l => out.push(l)); };
   const goalJ = () => {
     if (st.goal === 'custom') return `P(${expX(st.gx, 1)}, ${expX(st.gy, 1)}, 0)`;
-    const n = ['1', '2', '3', '4'].includes(st.goal) ? st.goal : '1';
+    const n = goalNum(st);   // Pedro 2 has no nearest-cell rule: 'nearest' aims at the own audience cell
     return `P(T.GOAL${n}_X, T.GOAL${n}_Y, 0)`;
   };
 
@@ -3630,11 +3742,12 @@ function usesLimits(){
   return S.dAccel != null || S.dDecel != null
     || S.steps.some(st => (st.t === 'move' || st.t === 'route') && (st.accel != null || st.decel != null || st.maxVel != null));
 }
-function headCallV3(h, fromDeg, toDeg, t0, t1){
+function headCallV3(h, fromDeg, toDeg, t0, t1, fromRobot){
   const lerp = (a, b, t) => a + norm180(b - a) * t;
+  const h0 = `H(${fmtN(lerp(fromDeg, toDeg, t0), 1)})`;
   switch (h.mode){
     case 'constantDeg': return `.constant(H(${fmtN(h.deg, 1)}))`;
-    case 'linear':      return `.linear(H(${fmtN(lerp(fromDeg, toDeg, t0), 1)}), H(${fmtN(lerp(fromDeg, toDeg, t1), 1)}))`;
+    case 'linear':      return `.linear(${fromRobot ? `startH(${h0})` : h0}, H(${fmtN(lerp(fromDeg, toDeg, t1), 1)}))`;
     case 'linearDeg':   return `.linear(H(${fmtN(lerp(h.deg, h.deg2, t0), 1)}), H(${fmtN(lerp(h.deg, h.deg2, t1), 1)}))`;
     case 'tangent':     return '.tangent()';
     case 'facing':      return `.facingPoint(P(${expX(h.px)}, ${expX(h.py)}, 0))`;
@@ -3643,9 +3756,11 @@ function headCallV3(h, fromDeg, toDeg, t0, t1){
   }
 }
 // same geometry as curvePieces() (through = Catmull-Rom -> cubic Beziers, matching the preview)
-function curvePiecesV3(kind, from, to, pts){
-  const P3 = q => `P(${expX(q.x)}, ${expX(q.y)}, 0)`;
+// fromRobot: the first point is start(...) = the robot's pose when the path starts (T.PATHS_FROM_ROBOT_POSE)
+function curvePiecesV3(kind, from, to, pts, fromRobot){
+  const P0 = q => `P(${expX(q.x)}, ${expX(q.y)}, 0)`;
   const a = { x: from.x, y: from.y }, b = { x: to.x, y: to.y };
+  const P3 = q => q === a && fromRobot ? `start(${P0(q)})` : P0(q);
   if (kind === 'curve' && pts.length) return [`Paths.curve(${[a, ...pts, b].map(P3).join(', ')})`];
   if (kind === 'through' && pts.length){
     const W = [a, ...pts.map(q => ({ x: q.x, y: q.y })), b];
@@ -3666,11 +3781,11 @@ function chainJavaV3(st){
     ? (st._segs || []).map(s => ({ from: s.from, to: s.to, sg: s.sg }))
     : [{ from: st._from, to: { x: st.x, y: st.y, h: (st._hd || 0) * RAD }, sg: st }];
   const parts = [];
-  segs.forEach(({ from, to, sg }) => {
+  segs.forEach(({ from, to, sg }, si) => {
     const h = (st.t === 'route' ? (st.headingOvr || sg.heading || st.headingBase) : sg.heading) || { mode: S.dHeading };
     const fromDeg = norm180(from.h * DEG), toDeg = norm180(to.h * DEG);
-    const pcs = curvePiecesV3(sg.kind, from, to, sg.pts || []);
-    pcs.forEach((c, k) => parts.push(c + headCallV3(h, fromDeg, toDeg, k / pcs.length, (k + 1) / pcs.length)));
+    const pcs = curvePiecesV3(sg.kind, from, to, sg.pts || [], si === 0);
+    pcs.forEach((c, k) => parts.push(c + headCallV3(h, fromDeg, toDeg, k / pcs.length, (k + 1) / pcs.length, si === 0 && k === 0)));
   });
   return parts;
 }
@@ -3708,7 +3823,10 @@ function stepCaseV3(st, i){
       add('}');
     });
     const compl = (st.compl && st.compl !== 'default') ? st.compl : S.dCompletion;
-    let cond = compl === 'PARAMETRIC_END' ? '!follower.following() || follower.atParametricEnd()' : '!follower.following()';
+    // SETTLED: the path ended and Pedro's end hold converged (drive.settled(), master's AutoDriver rule). The
+    // parametric end alone (!following()) can come while the robot is still moving.
+    let cond = compl === 'PARAMETRIC_END' ? '!follower.following() || follower.atParametricEnd()'
+      : compl === 'LENIENT' ? '!follower.following()' : 'drive.settled()';
     if (compl === 'LENIENT'){
       const end = st.t === 'route' ? st.segs[st.segs.length - 1] : st;
       cond += ` || distTo(P(${expX(end.x)}, ${expX(end.y)}, 0)) <= ${fmtN(st.tol ?? S.dTol, 1)}`;
@@ -3734,12 +3852,137 @@ function stepCaseV3(st, i){
     add('return done || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S);');
     return out;
   }
-  return stepCase(st, i);   // code / wait / mechanism steps are shared with the Pedro 2 target
+  if (st.t === 'act') return actCaseV3(st);
+  return stepCase(st, i);   // code / wait steps are shared with the Pedro 2 target
 }
+// ---- Pedro 3 robot-function steps: one case of runStep() calling TeamCode PlannerRobot (TeleOp's code) ----
+function goalJV3(st){
+  if (st.goal === 'custom') return `P(${fmtN(st.gx, 1)}, ${fmtN(st.gy, 1)}, 0)`;
+  if (st.goal === 'nearest') return 'null';   // PlannerRobot: TeleOp's nearest own cell
+  const n = goalNum(st);
+  return `P(T.GOAL${n}_X, T.GOAL${n}_Y, 0)`;
+}
+const AFTER_J = { keep: 'KEEP', idle: 'IDLE', off: 'OFF' };
+function actCaseV3(st){
+  const I = '                ';
+  const out = [];
+  const add = s => out.push(I + s);
+  const par = !!st.par && canPar(st);
+  const tmoJ = ' || (T.STEP_TIMEOUT_S > 0 && stepTimer.seconds() > T.STEP_TIMEOUT_S)';
+  const readyTmo = st.tmo != null ? jn(st.tmo) : 'T.READY_TIMEOUT_S';
+  const feed = st.feed != null ? jn(st.feed) : 'T.FEED_SECONDS';
+  const onTmo = `PlannerVolley.TimeoutAction.${st.onTmo === 'skip' ? 'SKIP' : 'FIRE'}`;
+  const after = `PlannerRobot.After.${AFTER_J[st.after] || 'KEEP'}`;
+  // Pedro's end-of-path hold settles the robot first (or T.SETTLE_TIMEOUT_S runs out), then zero drive power + BRAKE.
+  const brake = 'if (T.BRAKE_WHILE_SHOOTING && !follower.idle() && (drive.settled() || stepTimer.seconds() > T.SETTLE_TIMEOUT_S)) drive.stop();';
+  if (st.act !== 'stopAll') add('if (!T.MECHANISMS_ENABLED) return true;   // A/B drive test: robot-function steps off');
+  switch (st.act){
+    case 'volley':
+      add('if (first) {');
+      add(`    robot.setTrims(${jn(st.tYaw || 0)}, ${jn(st.tHood || 0)}, ${jn(st.tRpm || 0)});   // auto-aim trims: yaw deg (left +), hood deg, RPM`);
+      add(`    robot.startVolley(${goalJV3(st)}, ${feed}, ${readyTmo}, ${onTmo}, ${after});   // TeleOp RT aim, RT + LT fire`);
+      add('}');
+      if (par){ add('return true;   // while driving: PlannerRobot keeps the volley running'); break; }
+      add(brake);
+      add('return !first && robot.volleyDone();');
+      break;
+    case 'shoot':
+      add(`if (first) robot.startShot(${st.wait ? 'true' : 'false'}, ${feed}, ${readyTmo}, ${onTmo}, ${after});   // ${st.wait ? 'TeleOp RT + LT: feed once ready' : 'TeleOp GP1 A: readiness bypassed'}`);
+      if (par){ add('return true;   // while driving: PlannerRobot keeps feeding'); break; }
+      add(brake);
+      add('return !first && robot.volleyDone();');
+      break;
+    case 'spin':
+      if (st.mode === 'off'){ add('robot.spin(false);'); add('return true;'); break; }
+      if (st.mode === 'idle'){ add('robot.setFlywheelIdle();   // TeleOp idle RPM'); add('return true;'); break; }
+      add('if (first) {');
+      if (st.rpm == null) add('    robot.spinUpAuto();   // flywheel RPM + hood from the shot table; the turret does not move');
+      else { add('    robot.spin(true);'); add(`    robot.setRpmManual(${fmtN(st.rpm, 0)});`); }
+      add('}');
+      add(st.wait && !par ? `return !first && (robot.flywheelReady() || stepTimer.seconds() > ${readyTmo});` : 'return true;');
+      break;
+    case 'aim':
+      if (st.mode === 'track'){
+        add('if (first) {');
+        add(st.goal === 'nearest' ? "    robot.aimAtNearestCell();   // TeleOp rule: own cell on the robot's half" : `    robot.aimAt(${goalJV3(st)});`);
+        add('    robot.setTracking(true);   // turret yaw only; hood and flywheel keep their settings');
+        add('}');
+        add(st.wait && !par ? `return !first && (robot.turretOnTarget() || stepTimer.seconds() > ${readyTmo});` : 'return true;');
+      } else if (st.mode === 'manual'){
+        add(`if (first) robot.setTurretHeading(${fmtN(st.head, 1)});   // front 0, right 90, back 180, left 270`);
+        add(st.wait && !par ? `return !first && (robot.turretOnTarget() || stepTimer.seconds() > ${readyTmo});` : 'return true;');
+      } else { add('robot.setTracking(false);   // hold the last yaw'); add('return true;'); }
+      break;
+    case 'hood':
+      add(st.mode !== 'manual' ? 'robot.setHoodAuto();' : `robot.setHoodManual(${fmtN(st.hoodDeg, 1)});   // deg of travel down from home`);
+      add('return true;');
+      break;
+    case 'gate':
+      add(`robot.gateOpen(${st.mode === 'close' ? 'false' : 'true'});`);
+      add('return true;');
+      break;
+    case 'transfer':
+      add(`robot.holdTransfer(${st.mode === 'hold' ? 'true' : 'false'});   // ${st.mode === 'hold' ? 'pause stage-1 loading' : 'TeleOp: load until full'}`);
+      add('return true;');
+      break;
+    case 'intake': {
+      if (st.mode === 'off'){ add('robot.setIntake(PlannerRobot.IntakeMode.OFF, 0, false);'); add('return true;'); break; }
+      const M = { on: 'IN', full: 'IN', force: 'FORCE', rev: 'REVERSE' }[st.mode] || 'IN';
+      const timed = st.secs > 0;
+      const offSecs = st.offAfter && timed ? jn(st.secs) : '0';
+      const offFull = st.mode === 'full' && !!st.offAfter;
+      add(`if (first) robot.setIntake(PlannerRobot.IntakeMode.${M}, ${offSecs}, ${offFull});   // off after (s, 0 = stays on), off once full`);
+      if (par){ add('return true;   // while driving'); break; }
+      if (st.mode === 'full') add(`return !first && (robot.queueFull()${timed ? ` || stepTimer.seconds() >= ${fmtN(st.secs, 1)}` : tmoJ});`);
+      else if (timed) add(`return stepTimer.seconds() >= ${fmtN(st.secs, 1)};`);
+      else add('return true;');
+      break;
+    }
+    case 'turretHome':
+      add('if (first) robot.rehomeTurret();');
+      add(st.wait && !par ? `return !first && (robot.turretHomed() || robot.turretFault() || stepTimer.seconds() > ${fmtN(st.secs, 1)});`
+                          : 'return true;');
+      break;
+    case 'pollen':
+      add('if (first) robot.startCollect();   // PollenNavigator drives the follower and intake meanwhile');
+      add(`boolean done = !first && (robot.collectDone() || stepTimer.seconds() >= ${fmtN(st.secs, 1)});`);
+      add('if (done) robot.stopCollect();');
+      add('return done;');
+      break;
+    case 'depoll':
+      add(`if (first) robot.${st.mode === 'home' ? 'homeDepollinator' : 'deployDepollinator'}();`);
+      add(st.wait && !par ? `return !first && (robot.depollinatorSettled()${tmoJ});` : 'return true;');
+      break;
+    case 'slide':
+      add(`if (first) robot.${st.mode === 'down' ? 'lowerSlide' : 'raiseSlide'}();`);
+      add(st.wait && !par ? `return !first && (robot.slideSettled()${tmoJ});` : 'return true;');
+      break;
+    case 'relocalize':
+      add('if (phase == 0) {');
+      add("    if (!follower.idle() && !drive.settled() && stepTimer.seconds() <= T.SETTLE_TIMEOUT_S) return false;   // Pedro's end hold settles first");
+      add('    drive.stop();   // the robot must be still while its field pose is set / refined');
+      if (st.mode === 'pose') add(`    robot.setFieldPose(P(${fmtN(st.px, 2)}, ${fmtN(st.py, 2)}, ${fmtN(st.ph, 1)}));   // TeleOp corner rehome: the robot is here`);
+      if (st.mode === 'tags' || st.refine) add(`    robot.startRelocalize(${fmtN(st.secs, 1)});   // hive-tag refinement, written into Pinpoint on success`);
+      add('    phase = 1;');
+      add('    return false;');
+      add('}');
+      add('return robot.relocalizeDone();');
+      break;
+    case 'lights':
+      add(`robot.showLights(RobotStatusLights.Color.${LIGHT_COLORS.includes(st.color) ? st.color : 'GREEN'}, ${jn(st.secs)});   // then TeleOp's colors again`);
+      add('return true;');
+      break;
+    default:
+      add('robot.stopAll();');
+      add('return true;');
+  }
+  return out;
+}
+
 
 // TeamCode classes the Pedro 3 export uses (imported when the OpMode is outside org.firstinspires.ftc.teamcode)
 const V3_REPO_CLASSES = ['AutoPoseHandoff', 'BioBuzzRobot', 'FallbackAutoController', 'PedroConfiguration', 'PedroDrive',
-  'PlannerRobot', 'RobotLoop', 'RobotShutdown', 'TurretSubsystem'];
+  'PlannerRobot', 'PlannerVolley', 'RobotLoop', 'RobotShutdown', 'RobotStatusLights', 'TurretSubsystem'];
 
 function buildJavaV3(){
   chainPoses();
@@ -3791,11 +4034,12 @@ function buildJavaV3(){
   L.push(' *');
   L.push(' * Built for com.pedropathing:core 3.0.0 (Paths API). The drivetrain, Pinpoint and Pedro follower come');
   L.push(' * from the repo\'s PedroDrive, so its PedroConfiguration tuning applies. Every mechanism comes from the');
-  L.push(' * repo\'s PlannerRobot, driven like the competition and fallback autos: intake, transfer (full sensor +');
-  L.push(' * stage 1 run-on), gate + shared FiringCoordinator feed, turret (homing, rear dead zone, encoder-');
-  L.push(' * verified yaw, shooter PIDF; hood / RPM from ShootingConfiguration.PROFILE), Limelight tag relocalization');
-  L.push(' * (T.TAG_RELOCALIZATION: INIT start-pose refinement + aim-pose correction, like BioBuzzRobot), and the');
-  L.push(' * optional depollinator, linear slide (shot blocker), status lights and pollen camera (an unconfigured device is');
+  L.push(' * repo\'s PlannerRobot, which runs competition TeleOp\'s own shared code (CompetitionShotPipeline): ShotCoordinator');
+  L.push(' * aim (RT) with hood / RPM from ShootingConfiguration.PROFILE, FiringCoordinator readiness and continuous feed');
+  L.push(' * (RT + LT, GP1 A), IntakeQueueController collection, TransferSubsystem loading, GateSubsystem, the bang-bang');
+  L.push(' * flywheel; turret homing; Limelight tag relocalization (T.TAG_RELOCALIZATION: INIT start-pose refinement +');
+  L.push(' * aim-pose correction, like BioBuzzRobot; a Relocalize step repeats it mid-route); and the optional');
+  L.push(' * depollinator, linear slide (shot blocker), status lights and pollen camera (an unconfigured device is');
   L.push(' * reported in telemetry and its steps are skipped).');
   L.push(' *');
   L.push(' * - Coordinates: the repo\'s field frame (PedroDrive, Zenith routes, TeleOpFieldReference): inches,');
@@ -3807,8 +4051,11 @@ function buildJavaV3(){
   L.push(' *   acceleration and deceleration are Foresight constraints for that one path (0 = no limit).');
   L.push(' *');
   L.push(' * HOW IT RUNS: ONE while (opModeIsActive()) loop: loop.begin() (bulk cache), drive.readSensors() (the single');
-  L.push(' * Pinpoint read), robot.readSensors(), the current step, loop-code blocks, robot.apply() (same-loop');
-  L.push(' * mechanism writes), then drive.update(). Steps wait for a fresh, referenced Pinpoint pose. Like the');
+  L.push(' * Pinpoint read), robot.readSensors(), the current step, loop-code blocks, drive.update() (Pedro, right after');
+  L.push(' * the step so the pose it uses is as fresh as possible), then robot.apply() (same-loop mechanism writes).');
+  L.push(' * A drive step ends SETTLED (drive.settled(): Pedro\'s end hold converged) unless set otherwise; with');
+  L.push(' * T.PATHS_FROM_ROBOT_POSE a path starts where the robot is. T.MECHANISMS_ENABLED = false is a drive-only');
+  L.push(' * A/B test. Steps wait for a fresh, referenced Pinpoint pose. Like the');
   L.push(' * repo\'s autos it clears AutoPoseHandoff in INIT and saves the pose every loop for TeleOp, stops at');
   L.push(' * PedroConfiguration.MAX_AUTONOMOUS_SECONDS, and stops if the pose stays stale for');
   L.push(' * FallbackAutoController.POSE_LOSS_SECONDS. Keep the robot still during INIT (Pinpoint IMU calibration,');
@@ -3859,6 +4106,10 @@ function buildJavaV3(){
   L.push('        return PLANNED_ALLIANCE == TurretSubsystem.Alliance.RED ? TurretSubsystem.Alliance.BLUE : TurretSubsystem.Alliance.RED;');
   L.push('    }');
   L.push('    private double distTo(Pose p) { Pose c = follower.pose(); return Math.hypot(c.x() - p.x(), c.y() - p.y()); }');
+  L.push('    /** First point of a path: where the robot is now (T.PATHS_FROM_ROBOT_POSE), else the drawn point. */');
+  L.push('    private Pose start(Pose drawn) { return T.PATHS_FROM_ROBOT_POSE ? follower.pose().withHeading(0) : drawn; }');
+  L.push('    /** Start heading of a linear-heading path: the robot\'s heading now (T.PATHS_FROM_ROBOT_POSE), else the drawn one. */');
+  L.push('    private double startH(double drawn) { return T.PATHS_FROM_ROBOT_POSE ? follower.pose().heading() : drawn; }');
   L.push('    /** 0..1 progress through the path being followed, spread evenly over its segments (1 once it ended). */');
   L.push('    private double progress() {');
   L.push('        if (!follower.following()) return 1.0;');
@@ -3895,14 +4146,17 @@ function buildJavaV3(){
   L.push(`            robot = new PlannerRobot(hardwareMap, drive, alliance(), T.TAG_RELOCALIZATION, ${usesPollen ? 'true' : 'false'});   // starts turret homing`);
   L.push('            robot.intakePowerScale = T.INTAKE_POWER;');
   L.push('            robot.feedSeconds = T.FEED_SECONDS;');
+  L.push('            robot.readyTimeoutSeconds = T.READY_TIMEOUT_S;');
   L.push(`            drive.setStartPose(${startJ});   // box center (${fmtN(S.start.x, 2)}, ${fmtN(S.start.y, 2)}) + pod offsets`);
   L.push('            boolean lastMirrored = mirrored;');
   L.push('            while (opModeInInit()) {');
   L.push('                loop.begin();');
   L.push('                drive.readSensors();   // applies the start pose once Pinpoint reports READY');
   L.push('                double t = now();   // after the Pinpoint read: pose freshness needs t >= sample time');
-  L.push('                robot.readSensors(t);');
-  L.push('                robot.initLoop(t);   // turret homing + tag relocalization; nothing spins or feeds before START');
+  L.push('                if (T.MECHANISMS_ENABLED) {');
+  L.push('                    robot.readSensors(t);');
+  L.push('                    robot.initLoop(t);   // turret homing + tag relocalization; nothing spins or feeds before START');
+  L.push('                }');
   if (mirrorOn){
     L.push('                if (gamepad1.x) mirrored = false;');
     L.push('                if (gamepad1.b) mirrored = true;');
@@ -3946,7 +4200,7 @@ function buildJavaV3(){
   L.push('                loop.begin();');
   L.push('                drive.readSensors();');
   L.push('                double t = now();   // after the Pinpoint read: pose freshness needs t >= sample time');
-  L.push('                robot.readSensors(t);');
+  L.push('                if (T.MECHANISMS_ENABLED) robot.readSensors(t);');
   if (T.useDashboard){
     L.push('                robot.intakePowerScale = T.INTAKE_POWER;   // live FTC Dashboard values');
     L.push('                robot.feedSeconds = T.FEED_SECONDS;');
@@ -3996,13 +4250,13 @@ function buildJavaV3(){
     });
     L.push('');
   }
-  L.push('                robot.apply(t);');
-  L.push('                drive.update();');
+  L.push('                drive.update();   // Pedro uses this loop\'s Pinpoint sample');
+  L.push('                if (T.MECHANISMS_ENABLED) robot.apply(t);   // TeleOp\'s shot pipeline, intake, transfer, lights');
   L.push('                telemetry.addData("step", "%d / %d%s | %.1f s", Math.min(stage, STEPS), STEPS, poseSeen ? "" : " (waiting for Pinpoint pose)", t - started);');
   L.push('                telemetry.addData("Alliance", alliance());');
   L.push('                drive.addTelemetry(telemetry);');
   L.push('                robot.addTelemetry(telemetry);');
-  L.push('                loop.addRateTelemetry(telemetry);');
+  L.push('                loop.addTelemetry(telemetry);   // loop period / Hz and work time');
   L.push('                telemetry.update();');
   L.push('            }');
   L.push('            RobotShutdown.stopAll(drive::stop, robot::stopAll);');
