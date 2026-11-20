@@ -1,0 +1,145 @@
+//
+// Everything SimLoop needs from your build, in one file you do not edit.
+//
+// You do not copy any of this into your own build.gradle. You copy the FOLDER this file is in into the
+// root of your FTC project, and then add ONE line to the BOTTOM of TeamCode/build.gradle:
+//
+//     apply from: "$rootDir/simloop-starter/simloop.gradle"
+//
+// At the bottom, after the `android { }` block, and not at the top. This script configures the Android
+// Gradle Plugin, so the plugin has to have been applied before it runs - which in an FTC project happens
+// inside `apply from: '../build.common.gradle'` near the top of TeamCode/build.gradle.
+//
+// What this file does, in the order it does it: declares the two repositories SimLoop resolves from,
+// declares SimLoop, JUnit 5 and org.json as TEST-ONLY dependencies, switches the module's unit tests to the
+// JUnit 5 runner, makes Android calls return defaults in unit tests (the IMU fake needs it), turns off
+// the release unit-test variant (that one is not a preference - see below), and adds the example robot's
+// two source folders so the example compiles and runs the moment you have copied it.
+//
+// Deleting the example is deleting two directories and two lines at the bottom of this file. Nothing else
+// in here depends on them.
+//
+
+// The SimLoop release this project builds against. ONE place, so a bump is one edit.
+//
+// JitPack's version IS the git tag, letter for letter, including the leading `v`. There is no translation
+// step: ask for `0.2.0-alpha.2` when the tag is `v0.2.0-alpha.2` and resolution fails with "Could not
+// find", which reads like the library is missing rather than like a typo.
+ext.simloopVersion = 'v0.2.0-alpha.2'
+
+// The coordinate is `com.github.<owner>:<repository>`, all of it derived by JitPack from the repository
+// address and none of it from what this project calls itself. SimLoop's own build declares the group
+// `org.horizon36596` and the artifact `SimLoop`; JitPack ignores both. That is JitPack's single-module
+// form, and it applies because the build publishes exactly one module. A build that published two would
+// get the other form, `com.github.<owner>.<repository>:<module>` - so adding a second published module
+// here would silently rename this one out from under everybody who depends on it.
+//
+// Checked against the real thing on 2026-09-19 rather than reasoned about: the first JitPack build of
+// v0.1.0-beta1 served com/github/Horizon-36596/simloop/v0.1.0-beta1/simloop-v0.1.0-beta1.aar, and the
+// two-dot spelling this file used to carry 404s.
+
+repositories {
+    // JitPack builds the SimLoop tag on demand and serves the result. No account, no credentials.
+    maven { url = 'https://jitpack.io' }
+
+    // Dairy, where PsiKit is published. NOT optional, and not something SimLoop can do for you: a POM
+    // says WHAT a dependency is, never WHERE to find it - that is always the consumer's repository list.
+    // Leave this out and the build fails with "Could not find org.psilynx.psikit:core", which looks like
+    // SimLoop is broken and is not.
+    maven { url = 'https://repo.dairy.foundation/releases' }
+}
+
+dependencies {
+    // `testImplementation`, never `implementation`. SimLoop is for the tests that run on your laptop;
+    // none of it belongs in the APK that goes to the Control Hub, and this scope is what keeps it out.
+    testImplementation "com.github.Horizon-36596:simloop:${simloopVersion}"
+
+    // The keyboard window, for driving the sim live from your laptop's keyboard. Same coordinate, with the
+    // `desktop` classifier: a separate jar because it uses the desktop JDK's window toolkit, which Android
+    // code cannot see. Nothing opens a window unless a test you write asks for one, so CI is unaffected.
+    testImplementation "com.github.Horizon-36596:simloop:${simloopVersion}:desktop"
+
+    // JUnit 5. SimLoop's assertions and the example are written in it.
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.3'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.3'
+
+    // The vintage engine, which runs JUnit 4 tests on the JUnit 5 platform. THIS LINE IS NOT OPTIONAL
+    // and it is not padding, for a reason worth spelling out.
+    //
+    // `useJUnitPlatform()` below switches this module's test task to the JUnit 5 runner. Without the
+    // vintage engine on the classpath, that runner cannot discover an `org.junit.Test` - so every JUnit
+    // 4 test your project already had simply stops being collected. It does not error, it does not warn,
+    // and the build stays green: the tests are gone and the report says everything passed. That is the
+    // worst failure mode a test setup can have, and it would be caused by adopting SimLoop.
+    //
+    // Measured, in a throwaway FTC project with one ordinary JUnit 4 test plus this folder: with the line
+    // below, three test classes run. With the line deleted, two run, BUILD SUCCESSFUL, and nothing
+    // anywhere mentions the third.
+    //
+    // With this line, JUnit 4 tests keep running exactly as they did and JUnit 5 tests run beside them.
+    // If your project has no JUnit 4 tests it costs one jar on the test runtime classpath and nothing
+    // else - cheap enough that finding out is not worth the risk of being wrong.
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.11.3'
+
+    // The JUnit Platform launcher, declared because Gradle 9 stopped adding it for you and Gradle 8 did.
+    // Without it on Gradle 9 every test in the module fails BEFORE any test runs, with "Failed to load
+    // JUnit Platform", which reads like a broken module rather than a build-tool change.
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.3'
+
+    // The real org.json, for tests only. FakeLimelight3A hands the JSON a Limelight serves to the SDK's own
+    // LLResult parser, which is written against org.json. On the robot Android provides it, so nothing
+    // ships; in a JVM test Android's copy is a stub, and every Limelight result would come back empty.
+    testRuntimeOnly 'org.json:json:20250517'
+}
+
+android {
+    testOptions {
+        unitTests.all {
+            useJUnitPlatform()
+        }
+        // Android calls return 0, null or false in unit tests instead of throwing "not mocked". FakeImu
+        // needs it: `new RevHubOrientationOnRobot(logo, usb)` builds an OpenGLMatrix, whose constructor
+        // calls an Android method. The SDK fills the rotation itself, so the IMU's numbers stay exact.
+        //
+        // What this hides: any OTHER Android call in your tests now returns a default silently. If a test
+        // of yours behaves oddly around logging or anything else Android-shaped, suspect this line.
+        unitTests.returnDefaultValues = true
+    }
+
+    // The example robot's code and the example's tests, added as source folders rather than copied into
+    // your own packages. Keeping them separate is what makes deleting the example a clean operation.
+    //
+    // `robot/` goes in the MAIN sourceset on purpose. The whole claim SimLoop makes is that your robot
+    // code runs unchanged, so the example's subsystems have to be ordinary main-sourceset robot classes,
+    // compiled the same way yours are - not test helpers wearing a subsystem's name. They carry no
+    // @TeleOp or @Autonomous annotation, so they never appear on the Driver Station.
+    sourceSets {
+        main.java.srcDirs += "$rootDir/simloop-starter/robot"
+        test.java.srcDirs += "$rootDir/simloop-starter/tests"
+    }
+}
+
+// Run the JVM unit tests for the DEBUG variant only.
+//
+// This is a correctness fix, not a speed one, and it is the single least obvious thing in this file.
+//
+// By default Android gives every build type its own unit-test task, so `./gradlew test` runs
+// `testDebugUnitTest` AND `testReleaseUnitTest` in two separate JVMs. Those two JVMs share one working
+// directory, so any test that writes a log file - which is every SimLoop scenario, into `build/sim/` -
+// has two processes opening the SAME file. PsiKit's RLOG writer deletes its file and reopens it in
+// append mode, so on Windows the second delete fails while the first JVM holds the handle and both
+// append, and on Linux the delete succeeds and one JVM asserts on a truncated file.
+//
+// The symptom is a determinism test failing with garbage that looks exactly like a determinism bug and
+// is not one. It is intermittent at first and then constant once enough log-writing tests exist, and
+// `:TeamCode:testDebugUnitTest` on its own stays green the whole time - so the two commands disagree and
+// the one CI runs is the one that fails.
+//
+// Turning the release unit tests off is safe because unit tests are variant-independent: both variants
+// compile the same `src/test/java` against the same dependencies, and no minification is applied to unit
+// tests. There is nothing a release unit test can catch that the debug one cannot.
+androidComponents {
+    beforeVariants(selector().withBuildType('release')) { variantBuilder ->
+        variantBuilder.enableUnitTest = false
+    }
+}

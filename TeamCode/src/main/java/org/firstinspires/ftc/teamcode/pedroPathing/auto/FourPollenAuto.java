@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.auto;
 
+import static com.pedropathing.api.Paths.line;
+
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.paths.PathChain;
-import com.pedropathing.util.Timer;
+import com.pedropathing.paths.Path;
+import com.pedropathing.utils.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -26,7 +27,7 @@ public class FourPollenAuto extends OpMode {
 
     // Poses used to calculate paths
 
-    private PathChain startToScorePath, scoreToEndPath;
+    private Path startToScorePath, scoreToEndPath;
 
 
 
@@ -39,15 +40,11 @@ public class FourPollenAuto extends OpMode {
     public void buildPaths() {
 
 
-        startToScorePath = follower.pathBuilder()
-                .addPath(new BezierLine(robotVars.startPose, robotVars.scorePose))
-                .setLinearHeadingInterpolation(robotVars.startPose.getHeading(), robotVars.scorePose.getHeading())
-                .build();
+        startToScorePath = line(robotVars.startPose, robotVars.scorePose)
+                .linear(robotVars.startPose, robotVars.scorePose);
 
-        scoreToEndPath = follower.pathBuilder()
-                .addPath(new BezierLine(robotVars.scorePose, robotVars.endPose))
-                .setLinearHeadingInterpolation(robotVars.scorePose.getHeading(), robotVars.endPose.getHeading())
-                .build();
+        scoreToEndPath = line(robotVars.scorePose, robotVars.endPose)
+                .linear(robotVars.scorePose, robotVars.endPose);
 
     }
 
@@ -77,7 +74,7 @@ public class FourPollenAuto extends OpMode {
                 if (!follower.isBusy()) {
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    follower.followPath(startToScorePath, true);
+                    follower.follow(startToScorePath);
                     setPathStateA(1);
                 }
                 break;
@@ -98,7 +95,7 @@ public class FourPollenAuto extends OpMode {
 
                 robotVars.isStopperDown = false;
 
-                if (pathTimer.getElapsedTimeSeconds() >= shootingDelay) {
+                if (pathTimer.seconds() >= shootingDelay) {
                     setPathStateA(3);
                 }
 
@@ -120,7 +117,7 @@ public class FourPollenAuto extends OpMode {
                 if (!follower.isBusy()) {
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    follower.followPath(scoreToEndPath, true);
+                    follower.follow(scoreToEndPath);
                     setPathStateA(-1);
                 }
                 break;
@@ -140,7 +137,7 @@ public class FourPollenAuto extends OpMode {
      **/
     public void setPathStateA(int pState) {
         pathStateA = pState;
-        pathTimer.resetTimer();
+        pathTimer.reset();
     }
 
 
@@ -161,13 +158,13 @@ public class FourPollenAuto extends OpMode {
 
         //run smth intake. run smth outtake. run smth transfer. run smth stopper
 
-        telemetry.addData("x", follower.getPose().getX());
-        telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("x", follower.pose().x());
+        telemetry.addData("y", follower.pose().y());
+        telemetry.addData("heading", follower.pose().heading());
         telemetry.addData(" ", " ");
 
         telemetry.addData("pathStateA: ", pathStateA);
-        telemetry.addData("Timer: ", pathTimer.getElapsedTimeSeconds());
+        telemetry.addData("Timer: ", pathTimer.seconds());
         telemetry.update();
     }
 
@@ -184,12 +181,12 @@ public class FourPollenAuto extends OpMode {
     public void init() {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
-        opmodeTimer.resetTimer();
+        opmodeTimer.reset();
 
 
-        follower = Constants.createFollower(hardwareMap);
+        follower = Constants.create(hardwareMap);
         buildPaths();
-        follower.setStartingPose(robotVars.startPose);
+        follower.setPose(robotVars.startPose);
 
         robotStateHandler.Init();
 
@@ -213,7 +210,7 @@ public class FourPollenAuto extends OpMode {
         // Effects of changing poses
         if (gamepadController.setTeamToBlue() || gamepadController.setTeamToRed() || gamepadController.setStartPoseToWall() || gamepadController.setStartPoseToCorner()) {
             buildPaths();
-            follower.setStartingPose(robotVars.startPose);
+            follower.setPose(robotVars.startPose);
         }
 
         telemetry.addData("TeleOp: ", (robotVars.allianceColor == AllianceColor.Red ? "Red " : "Blue ") + (robotVars.startsInCorner ? "Corner" : "Wall"));
@@ -230,7 +227,7 @@ public class FourPollenAuto extends OpMode {
      **/
     @Override
     public void start() {
-        opmodeTimer.resetTimer();
+        opmodeTimer.reset();
         setPathStateA(0);
     }
 

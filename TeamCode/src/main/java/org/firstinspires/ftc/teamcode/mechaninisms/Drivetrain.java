@@ -40,7 +40,7 @@ public class Drivetrain {
 
 
         follower = Constants.create(hardwareMap);
-        follower.setStartingPose(robotVars.startPose);
+        follower.setPose(robotVars.startPose);
 
     }
 
@@ -106,7 +106,7 @@ public class Drivetrain {
         follower.update();
 
         // Figure out the follower
-        double yaw = follower.getPose().getHeading();
+        double yaw = follower.pose().heading();
 
         // Get user values
         double x = left_stick_x;

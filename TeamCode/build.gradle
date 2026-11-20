@@ -27,3 +27,7 @@ android {
 dependencies {
     implementation project(':FtcRobotController')
 }
+
+// SimLoop: JVM-based simulation for deterministic robot testing.
+// See simloop-starter/README.md for details.
+apply from: "$rootDir/simloop-starter/simloop.gradle"

@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.auto; // make sure this aligns with class location
 
+import static com.pedropathing.api.Paths.line;
+
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
-import com.pedropathing.paths.PathChain;
-import com.pedropathing.util.Timer;
+import com.pedropathing.utils.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -19,7 +19,7 @@ public class ExampleAuto extends OpMode {
 
     private int pathState;
     private Path scorePreload;
-    private PathChain pathA, pathB;
+    private Path pathA, pathB;
 
 
 
@@ -75,20 +75,17 @@ public class ExampleAuto extends OpMode {
 
 
 
-    public void runToPath(PathChain inputPath) {
+    public void runToPath(Path inputPath) {
         if (!follower.isBusy()) {
-            follower.followPath(inputPath, true);
+            follower.follow(inputPath);
 
             pathState++;
-            pathTimer.resetTimer();
+            pathTimer.reset();
         }
     }
 
-    public PathChain newPath(Pose start, Pose end) {
-        return follower.pathBuilder()
-                .addPath(new BezierLine(start, end))
-                .setLinearHeadingInterpolation(start.getHeading(), end.getHeading())
-                .build();
+    public Path newPath(Pose start, Pose end) {
+        return line(start, end).linear(start, end);
     }
 
 
@@ -97,7 +94,7 @@ public class ExampleAuto extends OpMode {
      **/
     public void setPathState(int pState) {
         pathState = pState;
-        pathTimer.resetTimer();
+        pathTimer.reset();
     }
 
 
@@ -117,9 +114,9 @@ public class ExampleAuto extends OpMode {
 
         // Feedback to Driver Hub for debugging
         telemetry.addData("path state", pathState);
-        telemetry.addData("x", follower.getPose().getX());
-        telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("x", follower.pose().x());
+        telemetry.addData("y", follower.pose().y());
+        telemetry.addData("heading", follower.pose().heading());
         telemetry.update();
     }
 
@@ -137,12 +134,12 @@ public class ExampleAuto extends OpMode {
     public void init() {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
-        opmodeTimer.resetTimer();
+        opmodeTimer.reset();
 
 
-        follower = Constants.createFollower(hardwareMap);
+        follower = Constants.create(hardwareMap);
         buildPaths();
-        follower.setStartingPose(startPose);
+        follower.setPose(startPose);
 
     }
 
@@ -168,7 +165,7 @@ public class ExampleAuto extends OpMode {
      **/
     @Override
     public void start() {
-        opmodeTimer.resetTimer();
+        opmodeTimer.reset();
         setPathState(0);
     }
 
