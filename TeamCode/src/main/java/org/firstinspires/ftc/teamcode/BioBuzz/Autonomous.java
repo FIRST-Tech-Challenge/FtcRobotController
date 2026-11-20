@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.BioBuzz;
 
 import org.firstinspires.ftc.teamcode.Utils.LinearOpMode2026;
 import org.firstinspires.ftc.teamcode.Utils.MiscUtils;
-import org.firstinspires.ftc.teamcode.Utils.Shooting.AprilTagsTurretTarget;
+import org.firstinspires.ftc.teamcode.Utils.Shooting.Turret;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous
 public class Autonomous extends LinearOpMode2026 {
@@ -12,7 +12,7 @@ public class Autonomous extends LinearOpMode2026 {
 
     static final double TICKS_PER_REV = 28;
 
-    AprilTagsTurretTarget aprilTagsTurretTarget;
+    Turret turretAimer;
 
     boolean isIntakeOn = false;
     boolean isLiftOn = false;
@@ -23,7 +23,7 @@ public class Autonomous extends LinearOpMode2026 {
     public void runOpMode() throws InterruptedException {
         config();
 
-        aprilTagsTurretTarget = new AprilTagsTurretTarget(turret, posGet, MiscUtils.getPositionFromDegrees(90, 537.7));
+        turretAimer = new Turret(turret, posGet, MiscUtils.getMotorPositionFromDegrees(90, 537.7));
 
         waitForStart();
 
@@ -61,15 +61,15 @@ public class Autonomous extends LinearOpMode2026 {
     public void DoTurret(){
         // This will turn the turret to the april tags (if it sees it)
 
-        double tx = aprilTagsTurretTarget.UpdateTxValue(limelight);
+        double tx = turretAimer.UpdateTxValue(limelight);
 
-        aprilTagsTurretTarget.ChangeAngleSetPosition(tx, posGet.getVr());
+        turretAimer.ChangeAngleSetPosition(tx, posGet.getVr());
 
-        double positionChange = MiscUtils.getPositionFromDegrees(tx, 537.7);
+        double positionChange = MiscUtils.getMotorPositionFromDegrees(tx, 537.7);
 
         telemetry.addLine("tx: " + tx);
         telemetry.addLine("Amount of Position changes: " + positionChange);
 
-        aprilTagsTurretTarget.CheckPositionAndSetPower(telemetry);
+        turretAimer.CheckPositionAndSetPower(telemetry);
     }
 }

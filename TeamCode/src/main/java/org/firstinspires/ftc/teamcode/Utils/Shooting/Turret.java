@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Utils.Positioning.DistanceToHive;
  * - Change Angle set position
  * - Check position and set power
  **/
-public class AprilTagsTurretTarget {
+public class Turret {
     // Limelight Pipelines
     // 3 Blue
     // 4 Red
@@ -30,8 +30,8 @@ public class AprilTagsTurretTarget {
     int limelightPipeline;
     private long lastPipelineSwitchMs = 0;
 
-    public double maxPosition = MiscUtils.getPositionFromDegrees(185, 537.7); //185
-    public double minPosition = MiscUtils.getPositionFromDegrees(-185,537.7);
+    public double maxPosition = MiscUtils.getMotorPositionFromDegrees(185, 537.7); //185
+    public double minPosition = MiscUtils.getMotorPositionFromDegrees(-185,537.7);
     public boolean waitTillNotSee = false;
     public boolean canSee = false;
 
@@ -50,7 +50,7 @@ public class AprilTagsTurretTarget {
 
     DistanceToHive distanceToHive;
 
-    public AprilTagsTurretTarget(DcMotorEx turretMotor, PositionGetter positionGetter, double offset){
+    public Turret(DcMotorEx turretMotor, PositionGetter positionGetter, double offset){
         dcMotorEx = turretMotor;
 
         limelightPipeline = LinearOpMode2026.isCurrentAllienceRed ? 4 : 3;
@@ -98,7 +98,7 @@ public class AprilTagsTurretTarget {
 //    }
 
     public void ChangeAngleSetPosition(double tx, double rotationV){
-        SetTargetPosition (GetTurretCurrentPosition(dcMotorEx) - MiscUtils.getPositionFromDegrees(tx * 1.04 - rotationV * 0.05, 537.7));
+        SetTargetPosition (GetTurretCurrentPosition(dcMotorEx) - MiscUtils.getMotorPositionFromDegrees(tx * 1.04 - rotationV * 0.05, 537.7));
     }
 
 
@@ -203,7 +203,7 @@ public class AprilTagsTurretTarget {
 
                 double headingDiff = currentHeading - previousHeading;
 
-                double positionDiff = MiscUtils.getPositionFromDegrees(headingDiff, 537.7);
+                double positionDiff = MiscUtils.getMotorPositionFromDegrees(headingDiff, 537.7);
 
                 double yPosition = positionGetter.y();
 
@@ -212,11 +212,11 @@ public class AprilTagsTurretTarget {
                 if (rightSide && yPosition > 64){
                     rightSide = false;
 
-                    targetPosition += MiscUtils.getPositionFromDegrees(180, 537.7);
+                    targetPosition += MiscUtils.getMotorPositionFromDegrees(180, 537.7);
                 } else if (!rightSide && yPosition < 64) {
                     rightSide = true;
 
-                    targetPosition += MiscUtils.getPositionFromDegrees(180, 537.7);
+                    targetPosition += MiscUtils.getMotorPositionFromDegrees(180, 537.7);
                 }
 
 
@@ -267,7 +267,7 @@ public class AprilTagsTurretTarget {
 
         ChangeAngleSetPosition(tx, positionGetter.getVr());
 
-        double positionChange = MiscUtils.getPositionFromDegrees(tx, 537.7);
+        double positionChange = MiscUtils.getMotorPositionFromDegrees(tx, 537.7);
 
         telemetry.addLine("tx: " + tx);
         telemetry.addLine("Amount of Position changes: " + positionChange);
@@ -285,7 +285,7 @@ public class AprilTagsTurretTarget {
 
         ChangeAngleSetPosition(tx, positionGetter.getVr());
 
-        double positionChange = MiscUtils.getPositionFromDegrees(tx, 537.7);
+        double positionChange = MiscUtils.getMotorPositionFromDegrees(tx, 537.7);
 
         CheckPositionAndSetPower(null);
     }

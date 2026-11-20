@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Utils.Controls.GamepadButton;
 import org.firstinspires.ftc.teamcode.Utils.LinearOpMode2026;
 import org.firstinspires.ftc.teamcode.Utils.MiscUtils;
 import org.firstinspires.ftc.teamcode.Utils.Movement.TeleopMovementUtil;
-import org.firstinspires.ftc.teamcode.Utils.Shooting.AprilTagsTurretTarget;
+import org.firstinspires.ftc.teamcode.Utils.Shooting.Turret;
 
 @TeleOp
 @Disabled
@@ -30,14 +30,14 @@ public class TurretTest extends LinearOpMode2026 {
     public void runOpMode(){
         config();
 
-        AprilTagsTurretTarget aprilTagsTurretTarget = new AprilTagsTurretTarget(turret, posGet, 0);
+        Turret turret = new Turret(this.turret, posGet, 0);
 
         triggerDrivingTracking = new ControlsTrigger(new GamepadButton(gamepad1, GamepadButton.GButton.a));
 
         TeleopMovementUtil teleopMovementUtil = new TeleopMovementUtil(gamepad1, mot);
 
         waitForStart();
-        aprilTagsTurretTarget.Reset(); // This isn't really needed any more unless if we do PID tuning for this
+        turret.Reset(); // This isn't really needed any more unless if we do PID tuning for this
 
         while (opModeIsActive()){
             boolean trig = triggerDrivingTracking.IsTriggered();
@@ -49,12 +49,12 @@ public class TurretTest extends LinearOpMode2026 {
             }
 
             if (isDrivingTracking){
-                double tx = aprilTagsTurretTarget.UpdateTxValue(limelight);
+                double tx = turret.UpdateTxValue(limelight);
 
-                aprilTagsTurretTarget.ChangeAngleSetPosition(tx, posGet.getVr());
-                aprilTagsTurretTarget.CheckPositionAndSetPower(telemetry);
+                turret.ChangeAngleSetPosition(tx, posGet.getVr());
+                turret.CheckPositionAndSetPower(telemetry);
 
-                double positionChange = MiscUtils.getPositionFromDegrees(tx, 537.7);
+                double positionChange = MiscUtils.getMotorPositionFromDegrees(tx, 537.7);
 
                 telemetry.addLine("tx: " + tx);
                 telemetry.addLine("Amount of Position changes: " + positionChange);
@@ -62,42 +62,42 @@ public class TurretTest extends LinearOpMode2026 {
                 //teleopMovementUtil.DeadDrive();
             }
 
-            if (turret.getTargetPosition() > aprilTagsTurretTarget.maxPosition || turret.getTargetPosition() < aprilTagsTurretTarget.minPosition){
-                turret.setPower(0);
+            if (this.turret.getTargetPosition() > turret.maxPosition || this.turret.getTargetPosition() < turret.minPosition){
+                this.turret.setPower(0);
                 telemetry.addLine("WENT OVER!");
             }else {
-                turret.setPower(0.7);  // LLA max .69  min .43
+                this.turret.setPower(0.7);  // LLA max .69  min .43
             }
 
             if (gamepad1.dpad_up){
                 targetPosition += 10;
-                aprilTagsTurretTarget.SetTargetPosition(targetPosition);
+                turret.SetTargetPosition(targetPosition);
                 sleep(100);
             }
 
             if (gamepad1.dpad_down){
                 targetPosition -= 10;
-                aprilTagsTurretTarget.SetTargetPosition(targetPosition);
+                turret.SetTargetPosition(targetPosition);
                 sleep(100);
             }
 
             if (gamepad1.x){
-                aprilTagsTurretTarget.Reset();
+                turret.Reset();
 
-                turret.setPower(0.05);
+                this.turret.setPower(0.05);
 
-                aprilTagsTurretTarget.ChangeAngleSetPosition(targetPosition, posGet.getVr());
+                turret.ChangeAngleSetPosition(targetPosition, posGet.getVr());
             }else {
-                targetPosition = turret.getTargetPosition();
+                targetPosition = this.turret.getTargetPosition();
             }
 
             telemetry.addLine("CURRENTLY DOING: " + (isDrivingTracking ? "Driving Tracking" : "NONE"));
             telemetry.addData("Rotation V", posGet.getVr());
-            telemetry.addData("Current Position", turret.getCurrentPosition());
+            telemetry.addData("Current Position", this.turret.getCurrentPosition());
             telemetry.addData("Text TX", num);
             telemetry.addData("Target Position", targetPosition);
-            telemetry.addData("Max", aprilTagsTurretTarget.maxPosition);
-            telemetry.addData("Min", aprilTagsTurretTarget.minPosition);
+            telemetry.addData("Max", turret.maxPosition);
+            telemetry.addData("Min", turret.minPosition);
             telemetry.addLine("Controls: \nA: Run test\nDPad up and down: Changes test rotation amount\nB: Run april tag");
             telemetry.update();
         }
