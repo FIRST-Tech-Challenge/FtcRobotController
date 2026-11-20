@@ -38,5 +38,5 @@ public class LauncherConfig {
     public static double SCAN_TIME = 8.0;
     public static double PARK_TIME = 8.0;
 
-    public static double INTAKE_POWER = 0.8;
+    public static double INTAKE_POWER = 0.35;
 }
