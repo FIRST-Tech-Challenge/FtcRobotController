@@ -27,8 +27,9 @@ public class LauncherTest extends LinearOpMode {
     private DcMotor intake;
 
     public static PIDFCoefficients LAUNCHER_PIDF = new PIDFCoefficients(15,1,0,13);
-    public static double LAUNCHER_TARGET_VEL = -1007;
+    public static double LAUNCHER_TARGET_VEL = -1900;
     public static double LIMELIGHT_SERVO = 0.15;
+    public static double INTAKE_SPEED = 0.4;
 
     private static boolean intakeActive = false;
 
@@ -55,7 +56,7 @@ public class LauncherTest extends LinearOpMode {
                 intakeActive = !intakeActive;
             }
             if (intakeActive) {
-                intake.setPower(0.8);
+                intake.setPower(INTAKE_SPEED);
             } else {
                 intake.setPower(0);
             }
