@@ -66,15 +66,15 @@ public abstract class PythonAimBase extends LinearOpMode {
     // ==========================================
 
     public static PIDFCoefficients Pidf =
-            new PIDFCoefficients(120, 0.67, 12, 150);
+            new PIDFCoefficients(28, 1, 0, 13);
 
-    public static double vel = 1150;
-    public static double position = 0.3;
+    public static double vel = 1920;
+    public static double position = 0.15;
 
     // ==========================================
     // AUTOMATIC DRIVE SETTINGS
     // ==========================================
-    public static double axialAdjust = 2.15;
+    public static double axialAdjust = -0.7;
     public static double axialForwardGain = 0.03;
     public static double maxAutoAxial = 0.5;
 
@@ -147,7 +147,7 @@ public abstract class PythonAimBase extends LinearOpMode {
     double aimYaw = 0;
     double aimAxial = 0;
 
-    double targetLauncherVelocity = 1150;
+    double targetLauncherVelocity = -1920;
 
     double autoYaw = 0;
     double yawError = 0;
@@ -295,7 +295,7 @@ public abstract class PythonAimBase extends LinearOpMode {
                 intakeActive = !intakeActive;
             }
 
-            intake.setPower(intakeActive ? 0.8 : 0);
+            intake.setPower(intakeActive ? (gamepad1.right_trigger >= 0.5) ? 0.35 : 0.8 : 0);
 
             // ==========================================
             // PINPOINT VELOCITY
@@ -465,9 +465,7 @@ public abstract class PythonAimBase extends LinearOpMode {
 
                     axial = (-axialError + axialAdjust) * axialForwardGain;
 
-                    axial = Math.max(
-                            -maxAutoAxial,
-                            Math.min(maxAutoAxial, axial)
+                    axial = Math.max(-maxAutoAxial, Math.min(maxAutoAxial, axial)
                     );
 
                     yaw = -autoYaw;
