@@ -6,13 +6,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.common.HardwareNames;
 import org.firstinspires.ftc.teamcode.common.Subsystem;
 
 public class Pinpoint extends Subsystem {
     public GoBildaPinpointDriver pinpoint;
 
     public Pinpoint(HardwareMap hardwareMap){
-        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pin");
+        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, HardwareNames.pin);
         if (pinpoint == null) {
             return;
         }
