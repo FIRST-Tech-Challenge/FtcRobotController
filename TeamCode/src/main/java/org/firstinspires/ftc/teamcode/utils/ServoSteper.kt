@@ -31,19 +31,19 @@ class ServoSteper: LinearOpMode() {
             wasa = gamepad1.a
             wasb = gamepad1.b
 //
-//            if (gamepad1.x && pos2 < 1) {
-//                pos2 += 0.01
-//            }
-//            if (gamepad1.y && pos2 > 0) {
-//                pos2 -= 0.01
-//            }
-//            hw.rightRamp.position = pos1
-//            hw.leftRamp.position = 1.03 - pos1
+            if (gamepad1.x && pos2 < 1) {
+                pos2 += 0.01
+            }
+            if (gamepad1.y && pos2 > 0) {
+                pos2 -= 0.01
+            }
 
-            hw.pollenTurret.position = pos1
+
+            hw.rightRamp.position = pos1
+            hw.leftRamp.position = pos2
 
             telemetry.addData("position1", pos1)
-//            telemetry.addData("position2", pos2)
+            telemetry.addData("position2", pos2)
 
             telemetry.update()
 
