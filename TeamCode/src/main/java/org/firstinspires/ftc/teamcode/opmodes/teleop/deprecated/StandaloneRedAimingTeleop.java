@@ -1,51 +1,34 @@
-package org.firstinspires.ftc.teamcode.opmodes.python;
 
+package org.firstinspires.ftc.teamcode.opmodes.teleop.deprecated;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
-/**
- * Shared Limelight Python-SnapScript aiming code.
- * Not an OpMode by itself: run LimelightAimRed or LimelightAimBlue.
- * Dashboard tuning values live here, so both OpModes share them.
- */
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+@Disabled
+@TeleOp(name = "!!Standalone Red Aiming TeleOp", group = "Competition")
 @Config
-public abstract class PythonAimBase extends LinearOpMode {
-
-    // Alliance codes sent to the SnapScript (llrobot[7])
-    protected static final int ALLIANCE_RED = 1;
-    protected static final int ALLIANCE_BLUE = 2;
-
-    /** Which alliance's clusters this OpMode is allowed to target. */
-    protected abstract int getAlliance();
-
-    private boolean clusterAllowed(int cluster) {
-        if (getAlliance() == ALLIANCE_RED) {
-            return cluster == 0 || cluster == 1;   // Red Scoring, Red Audience
-        }
-        if (getAlliance() == ALLIANCE_BLUE) {
-            return cluster == 2 || cluster == 3;   // Blue Scoring, Blue Audience
-        }
-        return true;
-    }
-
-    private String allianceName() {
-        return getAlliance() == ALLIANCE_RED ? "RED" : "BLUE";
-    }
+public class StandaloneRedAimingTeleop extends LinearOpMode {
 
     private DcMotorEx launcher;
     private DcMotor intake;
@@ -66,15 +49,15 @@ public abstract class PythonAimBase extends LinearOpMode {
     // ==========================================
 
     public static PIDFCoefficients Pidf =
-            new PIDFCoefficients(28, 1, 0, 13);
+            new PIDFCoefficients(120, 0.67, 12, 150);
 
-    public static double vel = 1920;
-    public static double position = 0.15;
+    public static double vel = 1150;
+    public static double position = 0.3;
 
     // ==========================================
     // AUTOMATIC DRIVE SETTINGS
     // ==========================================
-    public static double axialAdjust = -0.7;
+    public static double axialAdjust = 2.15;
     public static double axialForwardGain = 0.03;
     public static double maxAutoAxial = 0.5;
 
@@ -88,17 +71,6 @@ public abstract class PythonAimBase extends LinearOpMode {
     public static final int SMOOTHING_WINDOW = 10;
     public static double SMOOTHING_ALPHA = 0.2;
     public static double yawOffsetDegrees = -9.0;
-
-    // Limelight pipeline slot that holds the Python SnapScript
-    public static int pythonPipeline = 3;
-    // Ignore Limelight results older than this (ms)
-    public static double maxStalenessMs = 150;
-
-    // "TARGET LOCKED" when the smoothed aim is inside these windows
-    // Yaw: |tx| < lockYawTolerance
-    // Axial: |ty - axialAdjust| < lockAxialTolerance (axialAdjust is where axial drive stops)
-    public static double lockYawTolerance = 0.7;
-    public static double lockAxialTolerance = 1.5;
 
     private double[] aimYawHistory = new double[SMOOTHING_WINDOW];
     private double[] aimAxialHistory = new double[SMOOTHING_WINDOW];
@@ -147,7 +119,7 @@ public abstract class PythonAimBase extends LinearOpMode {
     double aimYaw = 0;
     double aimAxial = 0;
 
-    double targetLauncherVelocity = -1920;
+    double targetLauncherVelocity = 1150;
 
     double autoYaw = 0;
     double yawError = 0;
@@ -155,12 +127,6 @@ public abstract class PythonAimBase extends LinearOpMode {
     boolean targetFound = false;
 
     int selectedCluster = -1;
-
-    int clusterTagCount = 0;
-    int totalTags = 0;
-    double targetRangeIn = 0;
-    double headingDeg = 0;
-    boolean aimLocked = false;
 
     // ==========================================
     // MAIN OP MODE
@@ -236,12 +202,12 @@ public abstract class PythonAimBase extends LinearOpMode {
 
         feeder.setPosition(0.04);
 
-        limelight.pipelineSwitch(pythonPipeline);
+        limelight.pipelineSwitch(0);
         limelight.start();
 
         dashboard.startCameraStream(limelight, 10);
 
-        telemetry.addLine("Limelight Aim " + allianceName() + " Ready");
+        telemetry.addLine("AimTestOdom Ready");
         telemetry.update();
 
         waitForStart();
@@ -295,7 +261,7 @@ public abstract class PythonAimBase extends LinearOpMode {
                 intakeActive = !intakeActive;
             }
 
-            intake.setPower(intakeActive ? (gamepad1.right_trigger >= 0.5) ? 0.35 : 0.8 : 0);
+            intake.setPower(intakeActive ? 0.8 : 0);
 
             // ==========================================
             // PINPOINT VELOCITY
@@ -324,52 +290,153 @@ public abstract class PythonAimBase extends LinearOpMode {
 
             targetFound = false;
             selectedCluster = -1;
-            aimLocked = false;
 
             // ==========================================
-            // LIMELIGHT PYTHON SNAPSCRIPT OUTPUT
-            // [valid, tx, ty, cluster, tagCount, rangeM, totalTags, frame]
+            // LIMELIGHT TARGET DETECTION
             // ==========================================
 
             LLResult result = limelight.getLatestResult();
 
-            double[] py = null;
-            boolean fresh = false;
+            int[] clusterCount = new int[4];
+            double[] clusterYaw = new double[4];
 
-            clusterTagCount = 0;
-            totalTags = 0;
-            targetRangeIn = 0;
+            List<LLResultTypes.FiducialResult> fiducials =
+                    new ArrayList<>();
+
+            StringBuilder detectedIDs = new StringBuilder();
 
             if (result != null) {
-                py = result.getPythonOutput();
-                fresh = result.getStaleness() < maxStalenessMs;
-            }
+                List<LLResultTypes.FiducialResult> detected =
+                        result.getFiducialResults();
 
-            if (py != null && py.length >= 7) {
-                totalTags = (int) py[6];
-            }
-
-            if (fresh && py != null && py.length >= 6 && py[0] >= 0.5) {
-
-                int cluster = (int) Math.round(py[3]);
-
-                // Double-check the alliance here too, in case the
-                // SnapScript on the Limelight is an older version
-                if (cluster >= 0 && cluster < clusters.length
-                        && clusterAllowed(cluster)) {
-                    selectedCluster = cluster;
-
-                    // Script reconstructs the cluster CENTER from the known
-                    // tag layout, so this is valid even with 1 tag visible
-                    aimYaw = py[1];
-                    aimAxial = py[2];
-
-                    clusterTagCount = (int) py[4];
-                    targetRangeIn = py[5] * 39.37;
+                if (detected != null) {
+                    fiducials = detected;
                 }
             }
 
+            // ==========================================
+            // GROUP APRILTAGS
+            // ==========================================
+
+            for (LLResultTypes.FiducialResult fr : fiducials) {
+
+                int id = fr.getFiducialId();
+
+                detectedIDs.append(id).append(" ");
+
+                int cluster = -1;
+
+                if (id >= 30 && id <= 33) {
+                    cluster = 0;
+                } else if (id >= 34 && id <= 37) {
+                    cluster = 1;
+                }//removed blue tags
+
+                if (cluster != -1) {
+                    clusterCount[cluster]++;
+                    clusterYaw[cluster] += fr.getTargetXDegrees();
+                }
+            }
+
+// ==========================================
+// SELECT CLUSTER
+// ==========================================
+
+            int highest = 0;
+            double closestToZero = Double.MAX_VALUE;
+
+            for (int i = 0; i < 4; i++) {
+
+                if (clusterCount[i] == 0) {
+                    continue;
+                }
+
+                double averageYaw =
+                        clusterYaw[i] / clusterCount[i];
+
+                double distanceFromCenter = Math.abs(averageYaw);
+
+                // Most tags wins.
+                // Ties go to the cluster closest to center.
+
+                if (clusterCount[i] > highest ||
+                        (clusterCount[i] == highest &&
+                                distanceFromCenter < closestToZero)) {
+
+                    highest = clusterCount[i];
+                    closestToZero = distanceFromCenter;
+                    selectedCluster = i;
+                }
+            }
+
+            // ==========================================
+            // SELECTED CLUSTER AIMING
+            // ==========================================
+
             if (selectedCluster != -1) {
+
+                List<Double> yawValues = new ArrayList<>();
+                List<Double> axialValues = new ArrayList<>();
+
+                // Collect ONLY selected cluster tags.
+
+                for (LLResultTypes.FiducialResult fr : fiducials) {
+
+                    int id = fr.getFiducialId();
+
+                    boolean belongsToSelectedCluster =
+                            (selectedCluster == 0 && id >= 30 && id <= 33) ||
+                                    (selectedCluster == 1 && id >= 34 && id <= 37) ||
+                                    (selectedCluster == 2 && id >= 38 && id <= 41) ||
+                                    (selectedCluster == 3 && id >= 42 && id <= 45);
+
+                    if (belongsToSelectedCluster) {
+                        yawValues.add(fr.getTargetXDegrees());
+                        axialValues.add(fr.getTargetYDegrees());
+                    }
+                }
+
+                // ==========================================
+                // MEDIAN YAW
+                // ==========================================
+
+                Collections.sort(yawValues);
+
+                int yawCount = yawValues.size();
+
+                if (yawCount > 0) {
+
+                    if (yawCount % 2 == 0) {
+                        aimYaw = (
+                                yawValues.get(yawCount / 2 - 1) +
+                                        yawValues.get(yawCount / 2)
+                        ) / 2.0;
+
+                    } else {
+                        aimYaw = yawValues.get(yawCount / 2);
+                    }
+                }
+
+                // ==========================================
+                // MEDIAN AXIAL
+                // ==========================================
+
+                Collections.sort(axialValues);
+
+                int axialCount = axialValues.size();
+
+                if (axialCount > 0) {
+
+                    if (axialCount % 2 == 0) {
+                        aimAxial = (
+                                axialValues.get(axialCount / 2 - 1) +
+                                        axialValues.get(axialCount / 2)
+                        ) / 2.0;
+
+                    } else {
+                        aimAxial = axialValues.get(axialCount / 2);
+                    }
+                }
 
                 //Fix yaw mistakes
 
@@ -431,14 +498,6 @@ public abstract class PythonAimBase extends LinearOpMode {
                 smoothedAimYaw = yawSum / totalWeight;
                 smoothedAimAxial = axialSum / totalWeight;
 
-                // ==========================================
-                // LOCK CHECK (drives the TARGET LOCKED HUD banner)
-                // ==========================================
-
-                aimLocked =
-                        Math.abs(smoothedAimYaw) < lockYawTolerance &&
-                                Math.abs(smoothedAimAxial - axialAdjust) < lockAxialTolerance;
-
 
                 // ==========================================
                 // AUTOMATIC AIMING
@@ -465,7 +524,9 @@ public abstract class PythonAimBase extends LinearOpMode {
 
                     axial = (-axialError + axialAdjust) * axialForwardGain;
 
-                    axial = Math.max(-maxAutoAxial, Math.min(maxAutoAxial, axial)
+                    axial = Math.max(
+                            -maxAutoAxial,
+                            Math.min(maxAutoAxial, axial)
                     );
 
                     yaw = -autoYaw;
@@ -476,7 +537,7 @@ public abstract class PythonAimBase extends LinearOpMode {
                     }
                 }
             } else {
-                // Reset smoothing when no target is found
+            // Reset smoothing when no target is found
                 smoothingIndex = 0;
                 smoothingCount = 0;
 
@@ -544,51 +605,31 @@ public abstract class PythonAimBase extends LinearOpMode {
             BR.setPower(backRightPower);
 
             // ==========================================
-            // SEND DATA TO SNAPSCRIPT HUD
-            // [heading, autoAim, launcherVel, launcherTarget, yawRateDeg,
-            //  aimLocked, robotConnected, alliance]
-            // ==========================================
-
-            headingDeg = pinpoint.getHeading(AngleUnit.DEGREES);
-
-            limelight.updatePythonInputs(new double[]{
-                    headingDeg,
-                    gamepad1.right_trigger >= 0.5 ? 1 : 0,
-                    launcher.getVelocity(),
-                    targetLauncherVelocity,
-                    Math.toDegrees(angularVelocity),
-                    aimLocked ? 1 : 0,
-                    1,
-                    getAlliance()
-            });
-
-            // ==========================================
             // COLLAPSED TELEMETRY
             // ==========================================
 
-            // Limelight / SnapScript
+            // AprilTag detection
 
             telemetry.addData(
                     "Limelight",
-                    "Result: %s | Fresh: %s | Tags: %d | Cluster tags: %d",
+                    "Result: %s | Tags: %d | IDs: %s",
                     result != null,
-                    fresh,
-                    totalTags,
-                    clusterTagCount
+                    fiducials.size(),
+                    detectedIDs.toString()
             );
 
+            // Cluster counts
+
             telemetry.addData(
-                    "Range",
-                    "%.1f in",
-                    targetRangeIn
+                    "Cluster Counts",
+                    "RS: %d | RA: %d | BS: %d | BA: %d",
+                    clusterCount[0],
+                    clusterCount[1],
+                    clusterCount[2],
+                    clusterCount[3]
             );
 
             // Selected cluster
-
-            telemetry.addData(
-                    "Alliance",
-                    allianceName() + " only"
-            );
 
             telemetry.addData(
                     "Selected Cluster",
@@ -598,10 +639,8 @@ public abstract class PythonAimBase extends LinearOpMode {
             );
 
             telemetry.addData(
-                    "Target",
-                    "Found: %s | LOCKED: %s",
-                    targetFound,
-                    aimLocked
+                    "Target Found",
+                    targetFound
             );
 
             // Aiming values

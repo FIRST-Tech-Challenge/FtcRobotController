@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.LauncherConfig;
 import org.firstinspires.ftc.teamcode.RobotConstants;
 import org.firstinspires.ftc.teamcode.subsystems.Launcher;
 
-@Autonomous(name = "BlueAudience", group = "Comptitaion")
+@Autonomous(name = "BlueAudience", group = "Competition")
 public class BlueAudience extends AutoBase {
 
     @Override
@@ -17,11 +17,7 @@ public class BlueAudience extends AutoBase {
 
         // only shoot if the hive is tipped
         if (scanForTip(RobotConstants.TAG_BLUE_AUDIENCE_MIN, RobotConstants.TAG_BLUE_AUDIENCE_MAX)) {
-            if (!robot.launcher.isReady()) {
-                robot.update(); // updates hardware & avoids blocking
-                sleep(10);
-            }
-            shoot(3);
+            shoot();
         }
 
         leaveAndPark();

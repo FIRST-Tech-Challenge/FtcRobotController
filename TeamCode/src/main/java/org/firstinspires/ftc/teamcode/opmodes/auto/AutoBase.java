@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.RobotConstants;
  * To write an auto: extend this class and fill in runRoutine() with steps like
  *     driveInches(24, RobotConstants.AUTO_POWER);
  *     turnToDegrees(90, RobotConstants.AUTO_POWER);
- *     shoot(4);
+ *     shoot();
  *
  * Hive tipped check: robot.vision.isHiveTipped(minId, maxId), using one of the
  * RobotConstants.TAG_*_SCORING/AUDIENCE_MIN/MAX ranges for your alliance, then pick a plan.
@@ -135,32 +135,30 @@ public abstract class AutoBase extends LinearOpMode {
     }
 
     /**
-     * Shoot `count` pieces. Turns the intake on, and before each piece waits for the flywheel
-     * to get back to speed (or READY_TIMEOUT), then opens the gate so the intake pushes a ball in.
-     * Stops early if it's time to park. Turns the flywheel and intake off at the end.
+     * Shoot all the balls. Spins up, waits once for the flywheel to be ready (or READY_TIMEOUT),
+     * opens the gate with feed() and turns the intake on at the same time, then keeps going
+     * for SHOOT_TIME so the balls launch.
+     * Skipped if it's time to park. Turns the flywheel and intake off at the end.
      */
-    protected void shoot(int count) {
+    protected void shoot() {
+        if (timeToPark()) return;
         robot.launcher.spinUp(); // safe if already spinning
-        robot.intake.on();
 
-        for (int i = 0; i <= count && !shouldStop() && !timeToPark(); i++) {
-            ElapsedTime readyTimer = new ElapsedTime();
-            while (!shouldStop() && !timeToPark() && !robot.launcher.isReady()
-                    && readyTimer.seconds() < LauncherConfig.READY_TIMEOUT) {
-                tick();
-            }
-            if (timeToPark()) break;
-            lastShot = String.format("Shot %d: %s at %.0f, waited %.1fs", i + 1,
-                    robot.launcher.isReady() ? "READY" : "TIMEOUT",
-                    robot.launcher.getVelocity(), readyTimer.seconds());
-
-            robot.launcher.feed();
-            waitSeconds(LauncherConfig.FEED_HOLD_TIME);
-            robot.launcher.retractFeeder();
-            waitSeconds(LauncherConfig.FEED_PAUSE_TIME);
+        ElapsedTime readyTimer = new ElapsedTime();
+        while (!shouldStop() && !robot.launcher.isReady()
+                && readyTimer.seconds() < LauncherConfig.READY_TIMEOUT) {
+            tick();
         }
+        lastShot = String.format("%s at %.0f, waited %.1fs",
+                robot.launcher.isReady() ? "READY" : "TIMEOUT",
+                robot.launcher.getVelocity(), readyTimer.seconds());
+
+        robot.launcher.feed(); // opens the gate
+        robot.intake.on();     // balls launch right away
+        waitSeconds(LauncherConfig.SHOOT_TIME);
 
         robot.launcher.stopFlywheel();
+        robot.launcher.retractFeeder();
         robot.intake.off();
     }
 

@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.RobotConstants;
 
 /* Bench test: drive forward 3 inches, then back 3 inches. */
+@Disabled
 @Autonomous(name = "Test Forward Back", group = "Test")
 public class AutoTestForwardBack extends AutoBase {
 

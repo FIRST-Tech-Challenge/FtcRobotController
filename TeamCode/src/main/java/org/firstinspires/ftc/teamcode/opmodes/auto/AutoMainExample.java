@@ -5,10 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /* Blank template. Copy this file to start a new auto. */
 @Disabled // TODO: remove when ready
-@Autonomous(name = "Auto Main", group = "Main")
+@Autonomous(name = "Auto Main Example", group = "Main")
 // Main autonomous routine for the robot.
 // Milestone 1 is in separate autonomous routines in separate JAVA files.
-public class AutoMain extends AutoBase {
+public class AutoMainExample extends AutoBase {
 
     @Override
     protected void runRoutine() {

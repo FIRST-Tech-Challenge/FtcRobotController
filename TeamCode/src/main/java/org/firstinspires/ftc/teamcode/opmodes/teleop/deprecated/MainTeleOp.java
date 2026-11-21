@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.opmodes.teleop;
+package org.firstinspires.ftc.teamcode.opmodes.teleop.deprecated;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -17,6 +18,7 @@ import com.qualcomm.robotcore.util.RobotLog;
  * Launcher spins continuously at LauncherConfig.TARGET_VELOCITY so it's always ready to feed.
  * TODO: aiming controls (button mapping not decided yet)
  */
+@Disabled
 @TeleOp(name = "Main TeleOp", group = "Main")
 public class MainTeleOp extends OpMode {
 

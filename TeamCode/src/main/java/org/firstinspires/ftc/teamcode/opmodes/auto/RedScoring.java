@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.RobotConstants;
 
-@Autonomous(name = "RedScoring", group = "Comptitaion")
+@Autonomous(name = "RedScoring", group = "Competition")
 public class RedScoring extends AutoBase {
 
     @Override
@@ -13,11 +13,7 @@ public class RedScoring extends AutoBase {
         robot.launcher.spinUp();
 
         if (scanForTip(RobotConstants.TAG_RED_SCORING_MIN, RobotConstants.TAG_RED_SCORING_MAX)) {
-            if (!robot.launcher.isReady()) {
-                robot.update(); // updates hardware & avoids blocking
-                sleep(10);
-            }
-            shoot(3);
+            shoot();
         }
 
         leaveAndPark();

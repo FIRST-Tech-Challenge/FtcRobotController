@@ -1,6 +1,7 @@
 
-package org.firstinspires.ftc.teamcode.opmodes.teleop;
+package org.firstinspires.ftc.teamcode.opmodes.teleop.deprecated;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -24,9 +25,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@TeleOp(name = "!!Standalone Red Aiming TeleOp", group = "Competition")
+@Disabled
+@TeleOp(name = "!!Standalone Blue Aiming TeleOp", group = "Competition")
 @Config
-public class StandaloneRedAimingTeleop extends LinearOpMode {
+public class StandaloneBlueAimingTeleop extends LinearOpMode {
 
     private DcMotorEx launcher;
     private DcMotor intake;
@@ -324,11 +326,12 @@ public class StandaloneRedAimingTeleop extends LinearOpMode {
 
                 int cluster = -1;
 
-                if (id >= 30 && id <= 33) {
-                    cluster = 0;
-                } else if (id >= 34 && id <= 37) {
-                    cluster = 1;
-                }//removed blue tags
+                //removed red tags
+                if (id >= 38 && id <= 41) {
+                    cluster = 2;
+                } else if (id >= 42 && id <= 45) {
+                    cluster = 3;
+                }
 
                 if (cluster != -1) {
                     clusterCount[cluster]++;

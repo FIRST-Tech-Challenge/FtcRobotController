@@ -1,7 +1,8 @@
 
 
-package org.firstinspires.ftc.teamcode.opmodes.teleop;
+package org.firstinspires.ftc.teamcode.opmodes.teleop.deprecated;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
+@Disabled
 @TeleOp(name = "Standalone TeleOp", group = "CompetitionBackup")
 @Config
 public class StandaloneTeleOp extends LinearOpMode {

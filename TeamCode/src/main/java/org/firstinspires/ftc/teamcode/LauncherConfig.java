@@ -19,11 +19,11 @@ public class LauncherConfig {
 
 
 
-    public static double AUTO_KP = 28.0;
+    public static double AUTO_KP = 34.0;
     public static double AUTO_KI = 1.0;
-    public static double AUTO_KD = 0.0;
+    public static double AUTO_KD = 1.0;
     public static double AUTO_KF = 13.0;
-    public static double AUTO_TARGET_VELOCITY = 1920;
+    public static double AUTO_TARGET_VELOCITY = 1727;
 
     public static double VELOCITY_TOLERANCE = 50;
     public static double REVERSE_POWER = 0.5;
@@ -33,6 +33,7 @@ public class LauncherConfig {
 
     // seconds
     public static double READY_TIMEOUT = 2.0;
+    public static double SHOOT_TIME = 3.0;       // intake pushes balls into the flywheel
     public static double FEED_HOLD_TIME = 0.3;
     public static double FEED_PAUSE_TIME = 0.5;
     public static double SCAN_TIME = 8.0;

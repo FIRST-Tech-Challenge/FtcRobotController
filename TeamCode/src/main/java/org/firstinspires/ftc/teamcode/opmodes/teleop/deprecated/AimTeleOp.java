@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.opmodes.teleop;
+package org.firstinspires.ftc.teamcode.opmodes.teleop.deprecated;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.control.AimController;
  * Right trigger (hold): auto-aim at the closest tag cluster. Once lined up, intake and feeder start.
  *   With no tag in view the robot stops (the sticks are ignored while the trigger is held).
  */
+@Disabled
 @TeleOp(name = "Aim TeleOp", group = "CompetitionBackup")
 public class AimTeleOp extends OpMode {
 
