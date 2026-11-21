@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.common.HardwareNames;
 import org.firstinspires.ftc.teamcode.common.Subsystem;
 
 public class MecanumDrive extends Subsystem {
@@ -25,10 +26,10 @@ public class MecanumDrive extends Subsystem {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "fl"); //0
-        backLeftDrive = hardwareMap.get(DcMotor.class, "bl"); //3
-        frontRightDrive = hardwareMap.get(DcMotor.class, "fr"); //1
-        backRightDrive = hardwareMap.get(DcMotor.class, "br"); //2
+        frontLeftDrive = hardwareMap.get(DcMotor.class, HardwareNames.fl); //0
+        backLeftDrive = hardwareMap.get(DcMotor.class, HardwareNames.bl); //3
+        frontRightDrive = hardwareMap.get(DcMotor.class, HardwareNames.fr); //1
+        backRightDrive = hardwareMap.get(DcMotor.class, HardwareNames.br); //2
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
