@@ -13,29 +13,29 @@ public class ShotCalibrationTest {
         double in = ShotCalibration.METERS_PER_INCH;
         assertTrue(p.calibrated);
         assertEquals(ShootingConfiguration.CALIBRATION_GEOMETRY_ID, p.geometryId);
-        double[][] measured = {{12, 2770, 13}, {24, 2890, 8}, {36, 2965, 6}, {48, 3150, 6}, {60, 3190, 0}};
+        double[][] measured = {{12, 2800, 13}, {24, 2900, 8}, {36, 2950, 6}, {48, 3200, 6}, {60, 3200, 4}};
         for (double[] r : measured) {
             assertEquals(r[1], p.sample(r[0] * in).rpm, 1e-9);
             assertEquals(r[2], p.sample(r[0] * in).hoodDeg, 1e-9);
         }
-        assertEquals(2830, p.sample(18 * in).rpm, 1e-9);   // halfway 12-24 in
+        assertEquals(2850, p.sample(18 * in).rpm, 1e-9);   // halfway 12-24 in
         assertEquals(10.5, p.sample(18 * in).hoodDeg, 1e-9);
-        assertEquals(2927.5, p.sample(30 * in).rpm, 1e-9); // halfway 24-36 in
+        assertEquals(2925, p.sample(30 * in).rpm, 1e-9);   // halfway 24-36 in
         assertEquals(7, p.sample(30 * in).hoodDeg, 1e-9);
-        assertEquals(3057.5, p.sample(42 * in).rpm, 1e-9);
+        assertEquals(3075, p.sample(42 * in).rpm, 1e-9);
         assertEquals(6, p.sample(42 * in).hoodDeg, 1e-9);
-        assertEquals(3170, p.sample(54 * in).rpm, 1e-9);
-        assertEquals(3, p.sample(54 * in).hoodDeg, 1e-9);
+        assertEquals(3200, p.sample(54 * in).rpm, 1e-9);
+        assertEquals(5, p.sample(54 * in).hoodDeg, 1e-9);
         // Beyond the measured ends the nearest end segment's line continues.
-        assertEquals(2710, p.sample(6 * in).rpm, 1e-9);    // 12-24 in line: +120 RPM / -5 deg per 12 in
+        assertEquals(2750, p.sample(6 * in).rpm, 1e-9);    // 12-24 in line: +100 RPM / -5 deg per 12 in
         assertEquals(15.5, p.sample(6 * in).hoodDeg, 1e-9);
-        assertEquals(2650, p.sample(0).rpm, 1e-9);
+        assertEquals(2700, p.sample(0).rpm, 1e-9);
         assertEquals(18, p.sample(0).hoodDeg, 1e-9);
-        assertEquals(3230, p.sample(72 * in).rpm, 1e-9);   // 48-60 in line: +40 RPM / -6 deg per 12 in
-        assertEquals(0, p.sample(72 * in).hoodDeg, 1e-9);   // clamped at hood home
-        assertEquals(3270, p.sample(84 * in).rpm, 1e-9);
-        assertEquals(0, p.sample(96 * in).hoodDeg, 1e-9);
-        assertEquals(ShooterSpeed.FLYWHEEL_MAX_TARGET_RPM, p.sample(1000 * in).rpm, 1e-9); // RPM ceiling
+        assertEquals(3200, p.sample(72 * in).rpm, 1e-9);   // 48-60 in line: RPM flat, -2 deg per 12 in
+        assertEquals(2, p.sample(72 * in).hoodDeg, 1e-9);
+        assertEquals(0, p.sample(84 * in).hoodDeg, 1e-9);
+        assertEquals(0, p.sample(96 * in).hoodDeg, 1e-9);   // clamped at hood home
+        assertEquals(3200, p.sample(1000 * in).rpm, 1e-9);
         assertNull(p.sample(-1));
         assertNull(p.sample(Double.NaN));
     }

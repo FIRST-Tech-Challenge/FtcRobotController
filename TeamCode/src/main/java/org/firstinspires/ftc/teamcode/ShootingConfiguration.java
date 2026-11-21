@@ -39,17 +39,17 @@ public final class ShootingConfiguration {
     public static final boolean GOAL_OBSERVATION_VALIDATED = false; // Camera settings / pose quality / tolerances await validation.
     public static final boolean FIELD_RELOCALIZATION_ENABLED = true; // Team-authorized TU06 nominal map + documented camera mount.
     public static final boolean LEVEL_CHASSIS_ASSUMED = true; // No chassis pitch/roll sensor is supplied.
-    // Team-measured shot table (2026-11-20; replaces the 2026-11-19 table). Horizontal
+    // Team-measured shot table (2026-11-19, final; replaces the 2026-11-15 table). Horizontal
     // muzzle-to-opening range in inches, flywheel output RPM, and hood command as downward travel from
     // home in degrees. ShotProfile.sample() interpolates RPM and hood linearly between rows. Outside
     // 12-60 in it continues the nearest end segment's line (48-60 in above, 12-24 in below), with hood
     // clamped to its 0-30 deg travel and RPM to the flywheel target ceiling.
     public static final double[][] MEASURED_SHOT_TABLE_IN_RPM_HOOD_DEG = {
-            {12, 2770, 13},
-            {24, 2890, 8},
-            {36, 2965, 6},
-            {48, 3150, 6},
-            {60, 3190, 0},
+            {12, 2800, 13},
+            {24, 2900, 8},
+            {36, 2950, 6},
+            {48, 3200, 6},
+            {60, 3200, 4},
     };
     public static final ShotProfile PROFILE = measuredProfile();
     private static ShotProfile measuredProfile() {
