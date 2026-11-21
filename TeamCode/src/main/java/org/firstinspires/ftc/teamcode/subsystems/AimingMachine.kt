@@ -54,6 +54,14 @@ class AimingMachine(private val hw: GerthaHardwareMap, private val poseSet: Pose
         if (abs(bottom) < 0.001){
             velShooter = 800.0
         }
+        val diffOff20 = velShooter % 20
+
+        if (diffOff20 <= 10){
+            velShooter -= diffOff20
+        }
+        else {
+            velShooter += (20 - diffOff20)
+        }
         Log.i("distance", horizontalDistance.toString())
         Log.i("top", top.toString())
         Log.i("bottom", bottom.toString())
