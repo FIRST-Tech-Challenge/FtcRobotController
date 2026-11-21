@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap
 import kotlin.math.abs
 import kotlin.reflect.KProperty
+import kotlin.toString
 
 class ShooterImpl (private val hw: GerthaHardwareMap) {
 
@@ -16,11 +17,10 @@ class ShooterImpl (private val hw: GerthaHardwareMap) {
 //
 //        private const val maxVelocity = 1820.0
 
-        private const val KF = 0.0075
-        var KP = 0.002
-        var KD = 0.001
+        private const val KF = 0.0071
+        var KP = 0.004
+        var KD = 0.002
         var KI = 0.0
-
     }
 
     var target: Double = 0.0
@@ -42,7 +42,7 @@ class ShooterImpl (private val hw: GerthaHardwareMap) {
         hw.pollenShooter.mode = DcMotor.RunMode.RUN_USING_ENCODER
     }
 
-    fun tickShooter(){
+    fun tickShooterOld(){
         val targetMode = (target - hw.pollenShooter.velocity) <= pushThreshold
         if (targetMode != mode) if (targetMode) hw.setPollenVelocity(target)
         mode = targetMode
@@ -52,12 +52,14 @@ class ShooterImpl (private val hw: GerthaHardwareMap) {
         return
     }
 
-    fun tickShooternew() {
+    fun tickShooter() {
         val currentVoltage = hw.voltageSensor.voltage
         val targetVoltage = KF * target
         val currentTime = System.nanoTime() / 1_000_000
         val currentVel = hw.pollenShooter.velocity
         val error = target - currentVel
+        Log.i("Error", (-(error)).toString())
+
 
         val p = error * KP
 
@@ -78,7 +80,7 @@ class ShooterImpl (private val hw: GerthaHardwareMap) {
 //            hw.pollenShooter.power = 1.0
 //        }
 
-        if (error > 400) {
+        if (error > hw.PUSH_THRESHOLD) {
             hw.pollenShooter.power = 1.0
         }
         else {

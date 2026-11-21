@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.GerthaHardwareMap
 import org.firstinspires.ftc.teamcode.GerthaHardwareMap.*
 import org.firstinspires.ftc.teamcode.ShooterImpl
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.hardware.PoseSet
+import kotlin.math.abs
 import kotlin.math.tan
 
 class AimingMachine(private val hw: GerthaHardwareMap, private val poseSet: PoseSet) {
@@ -12,6 +13,8 @@ class AimingMachine(private val hw: GerthaHardwareMap, private val poseSet: Pose
     enum class State {
         FULL,
         NO_TURRET,
+
+        NO_NOTHING,
         AUTO
     }
 
@@ -47,11 +50,14 @@ class AimingMachine(private val hw: GerthaHardwareMap, private val poseSet: Pose
         val velMps = Math.sqrt(top / bottom)
         // 126.25m 474.5b
 //        val velShooter = (126.25 * velMps) + 474.5
-        val velShooter = (82.3 * velMps) + 291.4
+        var velShooter = (92.23 * velMps) + 283.4
+        if (abs(bottom) < 0.001){
+            velShooter = 800.0
+        }
         Log.i("distance", horizontalDistance.toString())
         Log.i("top", top.toString())
         Log.i("bottom", bottom.toString())
-        Log.i("ShooterImpl", velShooter.toString())
+        Log.i("Target", velShooter.toString())
 
         when (state) {
             State.FULL -> {
@@ -69,6 +75,17 @@ class AimingMachine(private val hw: GerthaHardwareMap, private val poseSet: Pose
                     turretImpl.setToZero()
                 }
                 shooterImpl.setTarget(velShooter)
+                shooterImpl.tickShooter()
+
+                if (input.start2) {
+                    state = State.NO_NOTHING
+                }
+            }
+            State.NO_NOTHING -> {
+                if (justTransitioned) {
+                    turretImpl.setToZero()
+                }
+                shooterImpl.setTarget(AUTO_SHOOT_SPEED)
                 shooterImpl.tickShooter()
 
                 if (input.start2) {

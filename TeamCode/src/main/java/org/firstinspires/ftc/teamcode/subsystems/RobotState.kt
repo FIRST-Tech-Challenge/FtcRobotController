@@ -13,7 +13,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 import kotlin.math.abs
 import kotlin.math.hypot
 
-class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true) {
+class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true, val liveUpdate: Boolean = true) {
 
     var ppX: Double = 0.0
     var ppY: Double = 0.0
@@ -83,7 +83,7 @@ class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true) {
 
         isNotEmpty = currentDetections.isNotEmpty()
 
-        if (isNotEmpty && abs(ppRobotPose.x) > 36){
+        if (isNotEmpty && abs(ppRobotPose.x) > 36 && liveUpdate){
             var count = 0
             for (detection in currentDetections) {
                 if (detection is AprilTagClusterDetection && detection.ftcPose != null) {

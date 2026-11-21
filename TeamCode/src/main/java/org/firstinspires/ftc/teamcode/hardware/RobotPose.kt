@@ -8,15 +8,15 @@ data class RobotPose(
     /**
      * inches
      */
-    @JvmField val x: Double,
+    @JvmField var x: Double,
     /**
      * inches
      */
-    @JvmField val y: Double,
+    @JvmField var y: Double,
     /**
      * radians
      */
-    @JvmField val a: Double,
+    @JvmField var a: Double,
     /**
      * degrees
      */

@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.drivers.GoBildaPinpoint2Driver;
 import org.firstinspires.ftc.teamcode.hardware.HardwareMapper;
 import org.firstinspires.ftc.teamcode.hardware.HardwareName;
 import org.firstinspires.ftc.teamcode.hardware.Reversed;
+import org.firstinspires.ftc.teamcode.hardware.RobotPose;
 import org.firstinspires.ftc.teamcode.hardware.ZeroPower;
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.hardware.PoseSet;
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.RobotState;
@@ -29,10 +30,13 @@ public class GerthaHardwareMap extends HardwareMapper {
     public static final double DISTANCE_THRESHOLD = 4.0;
     public static final double POLLEN_GO = 0.58;
     public static final double POLLEN_STOP = 0.34;
-    public static final double AUTO_SHOOT_SPEED = 680.0;
-    public static final double ANGLE_OF_SHOT = 1.222;
+    public static final double AUTO_SHOOT_SPEED = 820.0;
+    public static final double ANGLE_OF_SHOT = 1.22;
+    //0.995
     //1.188
     public static final double DISTANCE_TO_TOP = (64.0 - 13.5) * 0.0254;
+
+    public double PUSH_THRESHOLD = 60.0;
 
     @HardwareName("frontRight")
     @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
@@ -125,6 +129,7 @@ public class GerthaHardwareMap extends HardwareMapper {
             return Math.hypot((poseSet.getRIGHT_HIVE_AT().x  - robotState.getPpX()), (poseSet.getRIGHT_HIVE_AT().y - robotState.getPpY()));
         }
     }
+
 
     public void setIntakePower(double power){
         leftIntake.setPower(power);

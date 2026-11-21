@@ -119,9 +119,11 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
             State.SHOOT -> {
                 if (justTransitioned){
                     hw.setIntakePower(SHOOT_POWER)
+                    hw.PUSH_THRESHOLD = 0.0
                 }
                 if (getElapsedSec(stateStartTimeNs) > 2.0){
                     state = State.OFF
+                    hw.PUSH_THRESHOLD = 60.0
                 }
             }
 

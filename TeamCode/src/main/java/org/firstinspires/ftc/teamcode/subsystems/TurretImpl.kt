@@ -11,9 +11,9 @@ import kotlin.math.atan2
 class TurretImpl(private val hw: GerthaHardwareMap, private val poseSet: PoseSet) {
 
 
-    val max = 0.93
+    val max = 1.0
 
-    val zeroPosition = 0.54
+    val zeroPosition = 0.47
 
     var targetPose = poseSet.RIGHT_HIVE_AT
 
@@ -27,7 +27,7 @@ class TurretImpl(private val hw: GerthaHardwareMap, private val poseSet: PoseSet
     }
 
     fun setDegrees(degrees :Double) {
-        var targetTicks = (degrees + 81.0) / 150.0
+        var targetTicks = (degrees + 76.5) / 150.0
         if (targetTicks > 0.93) {
             targetTicks = 0.93
         }
@@ -41,17 +41,23 @@ class TurretImpl(private val hw: GerthaHardwareMap, private val poseSet: PoseSet
     fun update (robotState: RobotState) {
         Log.i("turret", targetPose.toString())
         if (robotState.rightHive) {
-            targetPose = poseSet.RIGHT_HIVE_AT
+            targetPose = poseSet.RIGHT_HIVE_AT.copy()
         }
         else {
-            targetPose = poseSet.LEFT_HIVE_AT
+            targetPose = poseSet.LEFT_HIVE_AT.copy()
+        }
+        if (robotState.ppY > 36) {
+            targetPose.y += 10.0
+        }
+        else if (robotState.ppY < -36) {
+            targetPose.y -= 3.0
         }
         val currentPose = robotState.ppRobotPose
         val targetDegrees = getTargetFromPinpoint(currentPose)
-        var targetTicks = (targetDegrees + 81.0) / 150.0
+        var targetTicks = (targetDegrees + (zeroPosition * 1.5 * 100)) / 150.0
 
-        if (targetTicks > 0.93) {
-            targetTicks = 0.93
+        if (targetTicks > max) {
+            targetTicks = max
         }
         else if (targetTicks < 0.0) {
             targetTicks = 0.0

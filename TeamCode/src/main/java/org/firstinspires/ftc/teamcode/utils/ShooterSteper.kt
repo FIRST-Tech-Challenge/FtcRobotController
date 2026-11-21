@@ -37,9 +37,9 @@ class ShooterSteper : LinearOpMode() {
             robotState.update()
             intakeShootMachine.update(robotState, gamepadState)
 
-            if (gamepad1.a && !wasa){
+            if (gamepad1.right_trigger > 0.5 && !wasa){
                 targetVel += 20
-            } else if (gamepad1.b && !wasb){
+            } else if (gamepad1.left_trigger > 0.5 && !wasb){
                 targetVel -= 20
             }
 
@@ -50,8 +50,8 @@ class ShooterSteper : LinearOpMode() {
                 hw.pollenBallStop.position = POLLEN_STOP
             }
 
-            wasa = gamepad1.a
-            wasb = gamepad1.b
+            wasa = gamepad1.right_trigger > 0.5
+            wasb = gamepad1.left_trigger > 0.5
 
 //            hw.setPollenVelocity(targetVel)
 //            hw.pollenShooter.power = 1.0
