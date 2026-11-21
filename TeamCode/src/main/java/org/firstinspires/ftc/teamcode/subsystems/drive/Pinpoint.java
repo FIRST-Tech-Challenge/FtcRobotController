@@ -71,8 +71,8 @@ public class Pinpoint extends Subsystem {
 
     @Override
     public void writeTelemetry(Telemetry telemetry) {
-        telemetry.addLine("Push your robot around to see it track");
-        telemetry.addLine("Press B to reset the position");
+        //telemetry.addLine("Push your robot around to see it track");
+        //telemetry.addLine("Press B to reset the position");
         Pose2D pose2D = pinpoint.getPosition();
         telemetry.addData("X coordinate (IN)", pose2D.getX(DistanceUnit.INCH));
         telemetry.addData("Y coordinate (IN)", pose2D.getY(DistanceUnit.INCH));

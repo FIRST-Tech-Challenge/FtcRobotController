@@ -39,6 +39,9 @@ proguard/
 # Android Studio captures folder
 captures/
 
+# Local hive vision images and logs
+/hive-captures/
+
 # IntelliJ
 *.iml
 .idea/

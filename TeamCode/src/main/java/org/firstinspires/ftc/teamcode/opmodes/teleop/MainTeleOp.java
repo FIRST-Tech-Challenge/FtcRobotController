@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.common.Robot;
 
-@TeleOp(name="TestDriveOpMode", group="Linear OpMode")
+@TeleOp(name="MainTeleOp", group="Linear OpMode")
 public class MainTeleOp extends LinearOpMode {
 
     public Robot robot;
@@ -42,6 +42,7 @@ public class MainTeleOp extends LinearOpMode {
 
             robot.periodic();
             robot.writeTelemetry(telemetry);
+            telemetry.update();
         }
 
     }
