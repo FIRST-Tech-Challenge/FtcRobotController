@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.GerthaHardwareMap.*
 import org.firstinspires.ftc.teamcode.ShooterImpl
 import kotlin.math.abs
 
-class IntakeShootMachine(private val hw: GerthaHardwareMap) {
+class IntakeShootMachine(private val hw: GerthaHardwareMap, private var isAuto: Boolean = false) {
 
     //TODO first loop justTransitioned, switch to continuous??
 
@@ -49,18 +49,22 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
 
         justTransitioned = (state != prevState)
         if (justTransitioned){
+            Log.i("lastStateTime", getElapsedSec(stateStartTimeNs).toString())
             clearTimers()
         }
         prevState = state
 
-        if (robotState.blue - robotState.green > 100 && robotState.blue - robotState.red > 100) {
-            Log.i("color", "blue")
-            state = State.OUTTAKE
-        }
-        else if (robotState.red - robotState.blue > 100 && robotState.red - robotState.green > 100) {
-            Log.i("color", "red")
-            state = State.OUTTAKE
-        }
+//        if (state != State.SHOOT || state != State.PRE_SHOOT){
+//
+//            if (robotState.blue - robotState.green > 100 && robotState.blue - robotState.red > 100) {
+//                Log.i("color", "blue")
+//                state = State.OUTTAKE
+//            }
+//            else if (robotState.red - robotState.blue > 100 && robotState.red - robotState.green > 100) {
+//                Log.i("color", "red")
+//                state = State.OUTTAKE
+//            }
+//        }
 
         when (state) {
             State.OFF -> {
@@ -84,7 +88,7 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
                 if(distance < DISTANCE_THRESHOLD) {
                    if (conditionContiniousStartTimeNs == 0L){
                        conditionContiniousStartTimeNs = System.nanoTime()
-                   } else if (getElapsedSec(conditionContiniousStartTimeNs) > 0.5){
+                   } else if (getElapsedSec(conditionContiniousStartTimeNs) > 1.0){
                        state = State.OFF
                    }
                 } else {
@@ -103,7 +107,7 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
                 if (justTransitioned) {
                     hw.setIntakePower(OUTTAKE_POWER)
                 }
-                if (getElapsedSec(stateStartTimeNs) > 0.25){
+                if (getElapsedSec(stateStartTimeNs) > 0.15){
                     state = State.OFF
                 }
             }
@@ -113,14 +117,32 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap) {
                         hw.pollenBallStop.position = POLLEN_GO
                     }
                 }
-                if (getElapsedSec(stateStartTimeNs) > 0.0)
+                if(abs(hw.pollenShooter.velocity - AUTO_SHOOT_SPEED) < 40.0 && isAuto) {
+                    if (conditionContiniousStartTimeNs == 0L){
+                        conditionContiniousStartTimeNs = System.nanoTime()
+                    } else if (getElapsedSec(conditionContiniousStartTimeNs) > 0.4){
+                        Log.i("shoot", "continuous done was continuous")
+                        isAuto = false
+                        state = State.SHOOT
+                    }
+                } else {
+                    conditionContiniousStartTimeNs = 0L
+                }
+                if (getElapsedSec(stateStartTimeNs) > 1.5 || !isAuto){
+                    Log.i("shoot", "timed out or wasn't first shot")
                     state = State.SHOOT
+                }
+
+
             }
             State.SHOOT -> {
                 if (justTransitioned){
                     hw.setIntakePower(SHOOT_POWER)
                     hw.PUSH_THRESHOLD = 0.0
+                    clearTimers()
+                    Log.i("intake", getElapsedSec(stateStartTimeNs).toString())
                 }
+                Log.i("powerI", hw.rightIntake.power.toString())
                 if (getElapsedSec(stateStartTimeNs) > 2.0){
                     state = State.OFF
                     hw.PUSH_THRESHOLD = 60.0

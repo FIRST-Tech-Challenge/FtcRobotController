@@ -40,10 +40,10 @@ class ServoSteper: LinearOpMode() {
 
 
             hw.rightRamp.position = pos1
-            hw.leftRamp.position = pos2
+            hw.leftRamp.position = 1.02 - pos1
 
             telemetry.addData("position1", pos1)
-            telemetry.addData("position2", pos2)
+            telemetry.addData("position2", 1.02 - pos1)
 
             telemetry.update()
 

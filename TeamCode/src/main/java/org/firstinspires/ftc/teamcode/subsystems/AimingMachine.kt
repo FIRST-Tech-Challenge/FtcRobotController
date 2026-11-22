@@ -104,6 +104,7 @@ class AimingMachine(private val hw: GerthaHardwareMap, private val poseSet: Pose
                 if (justTransitioned) {
                     turretImpl.setToZero()
                 }
+//                turretImpl.update(robotState)
                 shooterImpl.setTarget(constantVel)
                 shooterImpl.tickShooter()
 //                if (robotState.ppX > 0) {

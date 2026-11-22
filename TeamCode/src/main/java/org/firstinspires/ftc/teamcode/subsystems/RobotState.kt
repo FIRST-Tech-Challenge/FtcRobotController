@@ -13,7 +13,9 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 import kotlin.math.abs
 import kotlin.math.hypot
 
-class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true, val liveUpdate: Boolean = true) {
+class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true) {
+
+    var liveUpdate = false
 
     var ppX: Double = 0.0
     var ppY: Double = 0.0
@@ -83,7 +85,7 @@ class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true, v
 
         isNotEmpty = currentDetections.isNotEmpty()
 
-        if (isNotEmpty && abs(ppRobotPose.x) > 36 && liveUpdate){
+        if (isNotEmpty && abs(ppRobotPose.x) > 36 && liveUpdate) {
             var count = 0
             for (detection in currentDetections) {
                 if (detection is AprilTagClusterDetection && detection.ftcPose != null) {
@@ -97,7 +99,7 @@ class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true, v
                     Log.i("name", clusterName)
 
                     val inverted = abs(roll) > 90
-                    if (inverted){
+                    if (inverted) {
                         pitch = -pitch
                     }
 
@@ -116,47 +118,47 @@ class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true, v
                     }
 
                     count++
-                    if (clusterName.lowercase().contains("audience")){
+                    if (clusterName.lowercase().contains("audience")) {
                         if (pitch > 0 && isRed) {
                             Log.i("hive", "a")
                             rightHive = true
-                        } else if (pitch > 0 && !isRed){
+                        } else if (pitch > 0 && !isRed) {
                             Log.i("hive", "b")
                             rightHive = false
-                        } else if (pitch < 0 && isRed){
-                            Log.i("hive", "c")
-                            rightHive = false
-                        } else if (pitch < 0 && !isRed){
-                            Log.i("hive", "d")
-                            rightHive = true
                         }
-                    } else if (clusterName.lowercase().contains("scoring")){
+//                        } else if (pitch < 0 && isRed){
+//                            Log.i("hive", "c")
+//                            rightHive = false
+//                        } else if (pitch < 0 && !isRed){
+//                            Log.i("hive", "d")
+//                            rightHive = true
+//                        }
+                    } else if (clusterName.lowercase().contains("scoring")) {
                         if (pitch > 0 && isRed) {
                             Log.i("hive", "d")
                             rightHive = false
-                        } else if (pitch > 0 && !isRed){
+                        } else if (pitch > 0 && !isRed) {
                             Log.i("hive", "e")
                             rightHive = true
-                        } else if (pitch < 0 && isRed){
-                            Log.i("hive", "f")
-                            rightHive = true
-                        } else if (pitch < 0 && !isRed){
-                            Log.i("hive", "g")
-                            rightHive = false
+//                        } else if (pitch < 0 && isRed){
+//                            Log.i("hive", "f")
+//                            rightHive = true
+//                        } else if (pitch < 0 && !isRed){
+//                            Log.i("hive", "g")
+//                            rightHive = false
+//                        }
                         }
                     }
                 }
-        }
-            if (count > 0) {
-                onlySeesOtherColor = false
+                if (count > 0) {
+                    onlySeesOtherColor = false
+                } else {
+                    onlySeesOtherColor = true
+                }
+
             }
-            else {
-                onlySeesOtherColor = true
-            }
+
 
         }
 
-
-    }
-
-}
+    }}

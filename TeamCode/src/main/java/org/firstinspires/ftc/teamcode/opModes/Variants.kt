@@ -15,3 +15,14 @@ class RedAuto : LinearAuto(true)
 
 @Autonomous
 class BlueAuto : LinearAuto(false)
+
+@Autonomous
+class RedGardenAuto: GardenAuto(true)
+
+@Autonomous
+class BlueGardenAuto: GardenAuto(false)
+@Autonomous
+class RedDumbAuto: DumbAuto(true)
+
+@Autonomous
+class BlueDumbAuto: DumbAuto(false)

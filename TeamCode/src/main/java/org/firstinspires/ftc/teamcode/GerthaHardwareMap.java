@@ -24,13 +24,13 @@ import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.
 
 public class GerthaHardwareMap extends HardwareMapper {
 
-    public static final double POLLEN_UP = 0.15;
-    public static final double POLLEN_ONLY = 0.53;
-    public static final double POLLEN_EXTRACT = 0.57;
+    public static final double POLLEN_UP = 0.07;
+    public static final double POLLEN_ONLY = 0.42;
+    public static final double POLLEN_EXTRACT = 0.5;
     public static final double DISTANCE_THRESHOLD = 4.0;
     public static final double POLLEN_GO = 0.58;
     public static final double POLLEN_STOP = 0.34;
-    public static final double AUTO_SHOOT_SPEED = 820.0;
+    public static final double AUTO_SHOOT_SPEED = 760.0;
     public static final double ANGLE_OF_SHOT = 1.22;
     //0.995
     //1.188
@@ -138,7 +138,7 @@ public class GerthaHardwareMap extends HardwareMapper {
 
     public void setPollenExtractor(double pos) {
         rightRamp.setPosition(pos);
-        leftRamp.setPosition(1.05 - pos);
+        leftRamp.setPosition(1.02 - pos);
     }
 
     public void setPollenVelocity(double target){

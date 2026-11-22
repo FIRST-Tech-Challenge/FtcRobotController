@@ -24,7 +24,7 @@ abstract class TeleOperation(val isRed: Boolean): LinearOpMode() {
         hw = GerthaHardwareMap(hardwareMap)
         val poseSet = PoseSet(isRed)
         val driveMachine = DriveMachine(hw)
-        val robotState = RobotState(hw, isRed, false)
+        val robotState = RobotState(hw, isRed)
         val gamepadState = GamepadState(gamepad1, gamepad2)
         val aimingMachine = AimingMachine(hw, poseSet)
         val intakeShootMachine = IntakeShootMachine(hw)

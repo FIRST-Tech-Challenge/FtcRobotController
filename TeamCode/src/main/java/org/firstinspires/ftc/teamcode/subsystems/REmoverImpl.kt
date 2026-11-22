@@ -20,14 +20,14 @@ class REmoverImpl {
     var finished = false
 
     companion object{
-        var FKP: Double = 0.1 //0.35
-        var FKD: Double = 0.01 //0.02
-        var FKI: Double = 0.0 // 0.0005
+        var FKP: Double = 0.1 //0.1
+        var FKD: Double = 0.01 //0.01
+        var FKI: Double = 0.0 // 0.0
 
         //0.4, 0.07, 0.00001
-        var SKP: Double = 0.075// 0.5
-        var SKD: Double = 0.005 // 0.06
-        var SKI: Double = 0.0 // 0.0001
+        var SKP: Double = 0.1// 0.075
+        var SKD: Double = 0.01// 0.005
+        var SKI: Double = 0.0 // 0.0
 
         var WKP: Double = 0.08 // 0.4
         var WKD: Double = 0.007 //0.005
@@ -337,6 +337,22 @@ enum class StopConditions(internal val evaluate: StopCondition, val stopAtEnd: B
                     && abs(deltaA) < Math.PI / 96
                     && speed < 5
                     && abs(angVelocity) < Math.PI / 8)
+        },
+        stopAtEnd = true
+    ),
+    Roughly(
+        evaluate = object : StopCondition {
+            override fun check(
+                deltaX: Double,
+                deltaY: Double,
+                deltaA: Double,
+                speed: Double,
+                angVelocity: Double
+            ) = (abs(deltaX) < 1.5
+                    && abs(deltaY) < 1.5
+                    && abs(deltaA) < Math.PI / 48
+                    && speed < 10
+                    && abs(angVelocity) < Math.PI / 4)
         },
         stopAtEnd = true
     ),
