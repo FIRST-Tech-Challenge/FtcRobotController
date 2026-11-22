@@ -13,7 +13,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 import kotlin.math.abs
 import kotlin.math.hypot
 
-class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true) {
+class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true, val isAuto: Boolean = false) {
 
     var liveUpdate = false
 
@@ -58,6 +58,12 @@ class RobotState(private val hw: GerthaHardwareMap, val isRed: Boolean = true) {
     }
 
     fun update() {
+
+        if (!isAuto) {
+            visionPortal.close()
+//            visionPortal.stopStreaming()
+        }
+
         hw.pinpoint.update()
 
         val ppPose = hw.pinpoint.position

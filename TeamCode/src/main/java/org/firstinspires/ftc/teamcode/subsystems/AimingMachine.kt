@@ -15,7 +15,8 @@ class AimingMachine(private val hw: GerthaHardwareMap, private val poseSet: Pose
         NO_TURRET,
 
         NO_NOTHING,
-        AUTO
+        AUTO,
+        TURRET_NO_SHOOTER
     }
 
     lateinit var state: State
@@ -97,7 +98,7 @@ class AimingMachine(private val hw: GerthaHardwareMap, private val poseSet: Pose
                 shooterImpl.tickShooter()
 
                 if (input.start2) {
-                    state = State.FULL
+                    state = State.TURRET_NO_SHOOTER
                 }
             }
             State.AUTO -> {
@@ -113,6 +114,19 @@ class AimingMachine(private val hw: GerthaHardwareMap, private val poseSet: Pose
 //                else {
 //                    turretImpl.setDegrees(-15.0)
 //                }
+            }
+            State.TURRET_NO_SHOOTER -> {
+                if (justTransitioned){
+
+                }
+                turretImpl.update(robotState)
+                shooterImpl.setTarget(AUTO_SHOOT_SPEED)
+                shooterImpl.tickShooter()
+
+
+                if (input.start2) {
+                    state = State.FULL
+                }
             }
         }
     }

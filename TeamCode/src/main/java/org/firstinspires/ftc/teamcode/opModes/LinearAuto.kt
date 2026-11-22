@@ -93,7 +93,7 @@ abstract class LinearAuto(private val isRed: Boolean) : LinearOpMode() {
 
         hw = GerthaHardwareMap(hardwareMap)
 
-        robotState = RobotState(hw, isRed)
+        robotState = RobotState(hw, isRed, true)
         robotState.init(startPose)
 
         val gamepadState = GamepadState(gamepad1, gamepad2)
@@ -458,6 +458,7 @@ abstract class LinearAuto(private val isRed: Boolean) : LinearOpMode() {
             Log.i("removerImpl", driveMachine.removerImpl.finished.toString())
 
         }
+        StaticStore.mark()
     }
     fun nextState(){
         currentIndex++

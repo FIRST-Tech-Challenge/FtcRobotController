@@ -46,12 +46,12 @@ class TurretImpl(private val hw: GerthaHardwareMap, private val poseSet: PoseSet
         else {
             targetPose = poseSet.LEFT_HIVE_AT.copy()
         }
-        if (robotState.ppY > 36) {
-            targetPose.y += 10.0
-        }
-        else if (robotState.ppY < -36) {
-            targetPose.y -= 3.0
-        }
+//        if (robotState.ppY > 36) {
+//            targetPose.y += 3.0
+//        }
+//        else if (robotState.ppY < -36) {
+//            targetPose.y -= 3.0
+//        }
         val currentPose = robotState.ppRobotPose
         val targetDegrees = getTargetFromPinpoint(currentPose)
         var targetTicks = (targetDegrees + (zeroPosition * 1.5 * 100)) / 150.0
