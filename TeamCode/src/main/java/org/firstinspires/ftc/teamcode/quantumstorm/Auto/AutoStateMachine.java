@@ -146,6 +146,8 @@ public final class AutoStateMachine implements AutoCloseable {
             one.allowAnyFreshAprilTag=Constants.PRACTICE_ALLOW_ANY_FRESH_APRILTAG;
             one.aimForShooting=true;
             one.colorPickupEnabled=true;
+            one.gardenYellowWindowEnabled=!teamOneBackup;
+            one.translationPowerMultiplier=teamOneBackup?1:1.25;
             one.useTeamTwoFollowUpShot=teamOneBackup;
             one.gardenPassLimit=teamOneBackup?2:0;
             // The contingency route crosses to the opposite wall after Garden.
@@ -260,6 +262,11 @@ public final class AutoStateMachine implements AutoCloseable {
         opMode.telemetry.addData("Flower intake","%s %.0f deg",flowerIntake.isDown()?"DOWN":"UP",flowerIntake.getAngle());
         opMode.telemetry.addData("Measured pieces",debugSensors==null||debugSensors.ballCount<0?"UNKNOWN":debugSensors.ballCount+" / 4");
         opMode.telemetry.addData("Measured pollen",debugSensors==null||debugSensors.pollenCount<0?"UNKNOWN":debugSensors.pollenCount+" / 4");
+        if(routine instanceof TeamOnePollenAuto&&!teamOneBackup){
+            opMode.telemetry.addData("Leave authorized",((TeamOnePollenAuto)routine).leaveAuthorized());
+            opMode.telemetry.addData("Garden vision",((TeamOnePollenAuto)routine).status());
+        }
+        if(camera!=null)opMode.telemetry.addData("Camera status",camera.cachedStatus());
         if(!debugReadError.isEmpty())opMode.telemetry.addData("Sensor read error",debugReadError);
         odometry.addTelemetry(opMode.telemetry);
     }
@@ -291,6 +298,7 @@ public final class AutoStateMachine implements AutoCloseable {
         if(routine instanceof TeamOnePollenAuto){
             TeamOnePollenAuto one=(TeamOnePollenAuto)routine;
             if(one.getState()==TeamOnePollenAuto.State.PARK){camera.select(1);return;}
+            if(one.gardenYellowWindowEnabled&&one.colorPickupActive()){camera.select(1);return;}
             camera.select(outputs.pipeline,idleCameraScan(),one.colorPickupActive());
         }else if(routine instanceof TeamTwoHiveAuto){
             TeamTwoHiveAuto two=(TeamTwoHiveAuto)routine;

@@ -42,6 +42,8 @@ public interface RobotIO {
     }
     final class Vision {
         public final boolean valid;
+        /** A received frame can report no targets; unavailable frames cannot prove absence. */
+        public final boolean frameAvailable;
         public final int pipeline;
         public final double capturedAt;
         public final double tx;
@@ -55,8 +57,11 @@ public interface RobotIO {
             this(valid,pipeline,capturedAt,targets,tx,-1);
         }
         public Vision(boolean valid,int pipeline,double capturedAt,Target[] targets,double tx,int aimTagCount) {
+            this(valid,pipeline,capturedAt,targets,tx,aimTagCount,valid);
+        }
+        public Vision(boolean valid,int pipeline,double capturedAt,Target[] targets,double tx,int aimTagCount,boolean frameAvailable) {
             this.valid=valid; this.pipeline=pipeline; this.capturedAt=capturedAt; this.targets=targets.clone();
-            this.tx=tx;this.aimTagCount=aimTagCount;
+            this.tx=tx;this.aimTagCount=aimTagCount;this.frameAvailable=frameAvailable;
         }
         private static double closestAngle(Target[] targets) {
             double angle=Double.NaN;

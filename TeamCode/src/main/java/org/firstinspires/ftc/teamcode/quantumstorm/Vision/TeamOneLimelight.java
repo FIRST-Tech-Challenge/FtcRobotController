@@ -45,7 +45,7 @@ public final class TeamOneLimelight implements AutoCloseable {
         servo=new LimeServo(camera,tilt,clock);
         if(camera!=null){try{camera.start();reset();}catch(RuntimeException e){problem=e.getMessage();}}
     }
-    public void reset(){pipeline=-1;idleScan=false;select(0);}
+    public void reset(){pipeline=-1;idleScan=false;select(0);servo.resetTiming();frameTimestamp=Double.NaN;}
     public void select(int mode){
         select(mode,false);
     }
@@ -70,10 +70,10 @@ public final class TeamOneLimelight implements AutoCloseable {
         }
         if(mode==pipeline&&!idleScan&&!pickupScan)return;
         idleScan=false;pickupScan=false;
-        pipeline=mode;changedAt=clock.getAsDouble();frameTimestamp=Double.NaN;
         try{
             servo.selectPipeline(mode==0?LimeServo.Pipeline.APRIL_TAG:LimeServo.Pipeline.YELLOW);
-        }catch(RuntimeException e){problem=e.getMessage();}
+            pipeline=mode;changedAt=clock.getAsDouble();frameTimestamp=Double.NaN;
+        }catch(RuntimeException e){pipeline=-1;problem="Camera selection failed: "+e.getMessage();}
     }
     public boolean mapped(){return camera!=null;}
     public String hardwareName(){return hardwareName;}
@@ -97,7 +97,7 @@ public final class TeamOneLimelight implements AutoCloseable {
             LLResult result=servo.getLatestResult();
             lastResult=result;
             int expected=selectedPipeline();
-            if(now-changedAt<.20||!servo.isFreshResult(result)||result.getPipelineIndex()!=expected)return empty;
+            if(now-changedAt<.20||!servo.isFreshFrame(result)||result.getPipelineIndex()!=expected)return empty;
             double age=(result.getStaleness()+result.getCaptureLatency()+result.getTargetingLatency())/1000;
             double stamp=result.getTimestamp();
             // Match RobotIO.Vision freshness: this accepts a live frame that
@@ -117,7 +117,7 @@ public final class TeamOneLimelight implements AutoCloseable {
                 if(target!=null)targets.add(new Target(-1,target.getTargetXDegrees(),target.getTargetYDegrees(),Double.NaN,target.getTargetArea(),color));
             }
             problem="";
-            lastVision=new Vision(result.isValid()&&!targets.isEmpty(),idleScan?2:pipeline,capturedAt,targets.toArray(new Target[0]),result.getTx());
+            lastVision=new Vision(result.isValid()&&!targets.isEmpty(),idleScan?2:pipeline,capturedAt,targets.toArray(new Target[0]),result.getTx(),-1,true);
             return lastVision;
         }catch(java.util.concurrent.CancellationException e){throw e;}
         catch(RuntimeException e){problem="Camera read failed: "+e.getMessage();return empty;}

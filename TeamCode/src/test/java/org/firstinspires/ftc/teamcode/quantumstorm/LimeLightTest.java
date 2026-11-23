@@ -57,6 +57,16 @@ public class LimeLightTest {
         now[0] = 22.999;
         servo.update(false);
         check(servo.getActivePipeline() == LimeServo.Pipeline.RED, "scan restarts with a full dwell");
+        now[0] = 0;
+        servo.resetTiming();
+        now[0] = 2.999;
+        servo.update(false);
+        check(servo.getActivePipeline() == LimeServo.Pipeline.RED,
+                "clock reset preserves the new three-second dwell");
+        now[0] = 3;
+        servo.update(false);
+        check(servo.getActivePipeline() == LimeServo.Pipeline.BLUE,
+                "post-START timing does not wait for the pre-START clock to catch up");
         System.out.println("Neutral, shooting, parking tilt and idle/pickup scan timing passed");
     }
 

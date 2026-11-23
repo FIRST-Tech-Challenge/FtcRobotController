@@ -76,11 +76,11 @@ public class LimeServo {
         scanning = false;
         pickupScanning = false;
         boolean pipelineChanged = pipeline != activePipeline;
-        activePipeline = pipeline;
-        setTiltForActivePipeline();
         if (pipelineChanged && limelight != null) {
             limelight.pipelineSwitch(pipeline.index);
         }
+        activePipeline = pipeline;
+        setTiltForActivePipeline();
         if (pipelineChanged) {
             switchedAt = clock.getAsDouble();
         }
@@ -132,8 +132,16 @@ public class LimeServo {
     }
 
     public boolean isFreshResult(LLResult result) {
+        return isFreshFrame(result) && result.isValid();
+    }
+
+    public void resetTiming() {
+        switchedAt = clock.getAsDouble();
+    }
+
+    public boolean isFreshFrame(LLResult result) {
         return clock.getAsDouble() - switchedAt >= 0.20
-                && result != null && result.isValid() && result.getPipelineIndex() == activePipeline.index
+                && result != null && result.getPipelineIndex() == activePipeline.index
                 && result.getStaleness() >= 0 && result.getStaleness() <= 250;
     }
 

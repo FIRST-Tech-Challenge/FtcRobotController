@@ -4,10 +4,11 @@ import org.firstinspires.ftc.teamcode.biobuzz.RobotIO.*;
 /** Injected observations verify decisions, not physical intake travel or odometry calibration. */
 public final class GardenAndWaitChecks {
     static final class IO implements RobotIO {
-        double time;int count=0,pipeline;Pose pose;Target[] targets={};Outputs out=new Outputs();boolean stop;
+        double time,frameAge;int count=0,pipeline;Pose pose;Target[] targets={};Outputs out=new Outputs();boolean stop;
+        boolean connected=true,frameAvailable=true;
         public double nowSeconds(){return time;}
         public boolean stopRequested(){return stop;}
-        public Sensors readSensors(){return new Sensors(pose,time,true,true,count,count,new Vision(true,pipeline,time,targets));}
+        public Sensors readSensors(){return new Sensors(pose,time,true,connected,count,count,new Vision(targets.length>0,pipeline,time-frameAge,targets,0,-1,frameAvailable));}
         public void apply(Outputs o){out=o.copy();pipeline=o.pipeline;}
     }
     static void check(boolean ok,String why){if(!ok)throw new AssertionError(why);}
@@ -22,6 +23,7 @@ public final class GardenAndWaitChecks {
         io.pose=auto.destination();tick(io,auto);check(auto.getState()==TeamOnePollenAuto.State.INTAKE_GARDEN,"Reach Garden approach");io.targets=new Target[0];return auto;
     }
     public static void main(String[] args){
+        if(args.length==1&&args[0].equals("yellow-window")){yellowWindowChecks();return;}
         for(int a=0;a<2;a++){
             FieldLayout f=new FieldLayout();IO io=new IO();TeamOnePollenAuto one=garden(io,f,a,5);
             tick(io,one);check(io.out.forward==one.gardenAdvancePower&&io.out.turnClockwise==0&&io.out.intakePower==1,"Advance into real intake even after pollen falls below camera");
@@ -50,5 +52,55 @@ public final class GardenAndWaitChecks {
             io.time=26;two.tick();check(two.getState()==TeamTwoHiveAuto.State.PARK&&io.out.intakePower==0,"Parking overrides collection motor");
         }
         System.out.println("Both alliances: bounded Garden forward stroke, intake/full/timeout/park stops, camera deadbands and stationary 26-second waits passed.");
+    }
+    private static TeamOnePollenAuto windowGarden(IO io,FieldLayout f,int alliance){
+        io.pose=f.hive[alliance];io.targets=tags(f,alliance,false);
+        TeamOnePollenAuto auto=new TeamOnePollenAuto(io,f);
+        auto.gardenYellowWindowEnabled=true;auto.translationPowerMultiplier=1.25;
+        auto.spinUpSeconds=0;auto.feedSeconds=.08;auto.start(alliance,.5);
+        for(int i=0;i<30&&auto.getState()!=TeamOnePollenAuto.State.INTAKE_GARDEN;i++){
+            if(auto.destination()!=null)io.pose=auto.destination();
+            tick(io,auto);
+        }
+        check(auto.getState()==TeamOnePollenAuto.State.INTAKE_GARDEN,"Reach actual Garden intake sequence");
+        io.targets=new Target[]{new Target(-1,0,0,Double.NaN,5,"yellow")};return auto;
+    }
+    private static void yellowWindowChecks(){
+        for(int alliance=0;alliance<2;alliance++){
+            FieldLayout f=new FieldLayout();IO io=new IO();TeamOnePollenAuto auto=windowGarden(io,f,alliance);
+            io.time=9.999;io.targets=new Target[0];auto.tick();
+            check(!auto.leaveAuthorized(),"No absence authorization before second 10");
+            io.time=10;auto.tick();
+            check(auto.leaveAuthorized()&&auto.getState()==TeamOnePollenAuto.State.WAITING,"Fresh no-target frame authorizes leaving at second 10");
+            wheelsOff(io);check(io.out.intakePower==0,"Empty Garden stops intake without inventing counts");
+            io.time=25.9;auto.tick();check(auto.getState()==TeamOnePollenAuto.State.WAITING,"Preserve regular routine's parking schedule");
+            io.time=26;auto.tick();check(auto.getState()==TeamOnePollenAuto.State.PARK,"Regular parking still starts at 26 seconds");
+
+            io=new IO();auto=windowGarden(io,f,alliance);
+            for(double time:new double[]{10,14,18}){
+                io.time=time;auto.tick();
+                check(!auto.leaveAuthorized()&&auto.getState()==TeamOnePollenAuto.State.INTAKE_GARDEN,"Yellow keeps forward collection through window boundaries");
+                check(Math.abs(io.out.forward-auto.gardenAdvancePower*1.25)<1e-9&&io.out.intakePower==1,"Translation is 1.25x with unchanged intake");
+            }
+            io.time=18.001;io.targets=new Target[0];auto.tick();
+            check(!auto.leaveAuthorized(),"No new absence authorization after second 18");
+
+            io=new IO();auto=windowGarden(io,f,alliance);io.time=12;io.targets=new Target[0];
+            io.connected=false;auto.tick();check(!auto.leaveAuthorized(),"Disconnected camera cannot prove empty Garden");wheelsOff(io);
+            io.connected=true;io.frameAvailable=false;auto.tick();check(!auto.leaveAuthorized(),"Missing frame cannot authorize leaving");
+            io.frameAvailable=true;io.frameAge=.251;auto.tick();check(!auto.leaveAuthorized(),"Stale frame cannot authorize leaving");
+            io.frameAge=Double.NaN;auto.tick();check(!auto.leaveAuthorized(),"Invalid timestamp cannot authorize leaving");
+            io.frameAge=0;io.targets=new Target[]{new Target(-1,0,0,Double.NaN,5,"yellow")};auto.tick();
+            check(io.out.forward>0&&!auto.leaveAuthorized(),"Fresh yellow resumes collection after camera recovery");
+            io.targets=new Target[0];io.time=12.1;auto.tick();check(auto.leaveAuthorized(),"Yellow disappearance authorizes leaving immediately");
+
+            io=new IO();auto=windowGarden(io,f,alliance);auto.useTeamTwoFollowUpShot=true;
+            io.time=12;io.targets=new Target[0];auto.tick();check(!auto.leaveAuthorized(),"Backup is excluded from yellow-window departure");
+            io=new IO();auto=windowGarden(io,f,alliance);io.time=12;io.count=4;auto.tick();
+            check(auto.getState()==TeamOnePollenAuto.State.PARK&&io.out.intakePower==0,"Measured full inventory preserves existing exit");
+            io=new IO();auto=windowGarden(io,f,alliance);io.time=30;auto.tick();
+            check(!auto.isRunning(),"Hard stop remains at 30 seconds");wheelsOff(io);
+        }
+        System.out.println("Team One yellow window: boundaries, absence, fresh recovery, backup exclusion, 1.25x translation and parking/stop checks passed.");
     }
 }

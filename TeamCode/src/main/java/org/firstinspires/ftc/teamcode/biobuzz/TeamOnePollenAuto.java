@@ -48,6 +48,10 @@ public final class TeamOnePollenAuto implements RobotController {
     public boolean requireAprilTagForPreload=false;
     public boolean aimForShooting=false;
     public boolean colorPickupEnabled=false,collectBlue=true,collectRed=false;
+    /** Normal robot mode: fresh yellow absence during match seconds 10-18 ends Garden pickup. */
+    public boolean gardenYellowWindowEnabled=false;
+    public double translationPowerMultiplier=1;
+    private boolean leaveAuthorized;
     /** Backup mode: after two Garden passes, use Team Two's taped wall shot and fire only on a live tag. */
     public boolean useTeamTwoFollowUpShot=false;
     public int gardenPassLimit=0;
@@ -72,12 +76,14 @@ public final class TeamOnePollenAuto implements RobotController {
                 ||!Double.isFinite(gardenFirstPassSeconds)||gardenFirstPassSeconds<=0||gardenFirstPassSeconds>5
                 ||!Double.isFinite(gardenRepositionSeconds)||gardenRepositionSeconds<=0||gardenRepositionSeconds>2
                 ||!Double.isFinite(gardenStagingOffsetInches)||gardenStagingOffsetInches<0||gardenStagingOffsetInches>24
-                ||!Double.isFinite(gardenIntakeHeadingRadians)||gardenPassLimit<0||gardenPassLimit>8)
+                ||!Double.isFinite(gardenIntakeHeadingRadians)||gardenPassLimit<0||gardenPassLimit>8
+                ||!Double.isFinite(translationPowerMultiplier)||translationPowerMultiplier<=0||translationPowerMultiplier>1.25)
             throw new IllegalArgumentException("Invalid Team One configuration");
         this.alliance=alliance;this.power=power;startAt=lastNow=io.nowSeconds();spinAt=Double.NaN;
         shootingAlignment.reset();
         running=true;tiltConfirmed=survey=false;avoidUntil=0;current=destination=gardenEntry=parkVia=teamTwoShotExit=teamTwoShotVia=teamTwoShotLane=gardenLegStart=null;gardenBackDistance=gardenRightDistance=0;gardenIntakeHeading=Double.NaN;message=error="";
         collecting=lastFeeding=false;feedElapsed=0;lastCommandAt=startAt;
+        leaveAuthorized=false;
         shotGate=new HiveShotGate(field,alliance,false);
         hive=new HiveVision(field,alliance);nav.useScriptedRoute(true,alliance);enter(State.SHOOTING);io.apply(new Outputs());
     }
@@ -104,6 +110,10 @@ public final class TeamOnePollenAuto implements RobotController {
     public boolean colorPickupActive(){return running&&colorPickupEnabled
             &&(state==State.INTAKE_GARDEN||state==State.GARDEN_FORWARD_RETRY);}
     public String lastError(){return error;}
+    public boolean leaveAuthorized(){return leaveAuthorized;}
+    private boolean gardenYellowWindowActive(double elapsed){return gardenYellowWindowEnabled&&!useTeamTwoFollowUpShot
+            &&elapsed>=10&&elapsed<=18&&(state==State.INTAKE_GARDEN||state==State.GARDEN_BACK_UP
+            ||state==State.GARDEN_RIGHT_SHIFT||state==State.GARDEN_RESTORE_HEADING||state==State.GARDEN_FORWARD_RETRY);}
     public String status(){return state+String.format(java.util.Locale.ROOT," · %.1f / 30 s · ",io.nowSeconds()-startAt)+message
             +(recoverPollenAfterTilt?(tiltConfirmed?" · Hive tilt confirmed":" · Tilt not yet confirmed"):" · Garden collection mode")+" · park by 26 s; stop at 30 s";}
     public Pose destination(){return running&&(state==State.PARK||moving())?destination:null;}
@@ -309,6 +319,18 @@ public final class TeamOnePollenAuto implements RobotController {
                 message="Camera disconnected; recovery outputs OFF";out.pipeline=pipeline();io.apply(out);return;
             }
             if(pipeline()==0)hive.update(s.vision,now);
+            boolean yellowWindow=gardenYellowWindowActive(elapsed);
+            if(yellowWindow&&s.ballCount<4){
+                Vision v=s.vision;
+                if(!s.cameraConnected||!v.frameAvailable||v.pipeline!=1||!Double.isFinite(v.capturedAt)||now-v.capturedAt<0||now-v.capturedAt>.25){
+                    message="Garden yellow observation unavailable; hold until a fresh frame";
+                    out.pipeline=1;io.apply(out);return;
+                }
+                if(pollen(v,now)==null){
+                    leaveAuthorized=true;collecting=false;enter(State.WAITING);
+                    message="Leave authorized: no yellow pollen; continue normal 26-second parking schedule";
+                }else if(state!=State.INTAKE_GARDEN){enter(State.INTAKE_GARDEN);}
+            }
             State before=state;
             double age=now-stateAt;
             switch(state){
@@ -373,7 +395,7 @@ public final class TeamOnePollenAuto implements RobotController {
                     // physical strokes.  A noisy/full inventory reading must
                     // not cancel its second forward-and-intake pass.
                     if(s.ballCount>=4&&!useTeamTwoFollowUpShot){followUpShotOrPark();break;}
-                    if(gardenPassDone(age)){
+                    if(!yellowWindow&&gardenPassDone(age)){
                         if(useTeamTwoFollowUpShot&&gardenPassLimit<=1){followUpShotOrPark();break;}
                         enter(State.GARDEN_BACK_UP);
                         message="Garden intake pass complete; back up slightly before the next pass";
@@ -384,13 +406,11 @@ public final class TeamOnePollenAuto implements RobotController {
                     if(gardenBall!=null){
                         out.strafeRight=Math.abs(gardenBall.tx)>6?FieldLayout.clip(gardenBall.tx*.012,.12):0;
                     }
-                    // On the real robot, keep driving the intake forward until it has
-                    // actually measured four pieces or the 26-second park command
-                    // takes over. Do not use camera, simulated-clearance, distance,
-                    // or timer cutoffs for this straight, no-turn collection phase.
+                    // Preserve arrival heading while collecting; the yellow window
+                    // above can end pickup without inventing an inventory count.
                     double headingError=Double.isFinite(gardenIntakeHeading)?Pose.angle(gardenIntakeHeading-current.heading):0;
                     out.turnClockwise=-FieldLayout.clip(Math.toDegrees(headingError)*.05,.22);
-                    message="Garden intake: hold first-pass heading; drive until four pieces or 26-second parking";
+                    message=yellowWindow?"Leave authorized: false; yellow visible, continue forward Garden collection":"Garden intake: hold first-pass heading; drive until four pieces or 26-second parking";
                     break;
                 case GARDEN_BACK_UP:
                     out.forward=-gardenRepositionPower;out.intakePower=1;
@@ -516,7 +536,9 @@ public final class TeamOnePollenAuto implements RobotController {
             if(state!=before||!running)out=new Outputs();
             boolean backupGardenStroke=useTeamTwoFollowUpShot&&(state==State.INTAKE_GARDEN||state==State.GARDEN_BACK_UP||state==State.GARDEN_RIGHT_SHIFT||state==State.GARDEN_RESTORE_HEADING||state==State.GARDEN_FORWARD_RETRY);
             out.intakePower=running&&state!=State.PARK&&(backupGardenStroke||(collecting&&s.ballCount<4))?1:0;
-            if(state==before&&colorPickupActive())ColorPickup.steer(s,now,out,collectBlue,collectRed);
+            if(state==before&&colorPickupActive()&&!yellowWindow)ColorPickup.steer(s,now,out,collectBlue,collectRed);
+            out.forward=FieldLayout.clip(out.forward*translationPowerMultiplier,1);
+            out.strafeRight=FieldLayout.clip(out.strafeRight*translationPowerMultiplier,1);
             lastFeeding=out.feederPower>0;
             out.pipeline=pipeline();
             if(io.stopRequested()){stop();return;}
