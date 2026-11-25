@@ -29,8 +29,8 @@ class PoseSet(val red: Boolean) {
         private val SCORE_RIGHT_B = RobotPose(-58.5, 19.22, PI)
         private val DRIVER_FLOWER_PRESCORE = RobotPose(-21.4, 54.3, PI/2)
         private val DRIVER_FLOWER_INTAKE = RobotPose(-21.4, 63.7, PI/2)
-        private val PARK_RIGHT = RobotPose(22.7,64.1,PI/2)
-        private val PARK_LEFT = RobotPose(49.3, 63.6, PI/2)
+        private val PARK_RIGHT = RobotPose(22.7,60.1,PI/2)
+        private val PARK_LEFT = RobotPose(49.3, 60.6, PI/2)
         private val PREGARDEN = RobotPose(-53.3, 65.5, PI)
         private val GARDEN = RobotPose(-62.0, 65.5, PI)
         private val HIVE_WAYPOINT_LEFT = RobotPose(24.0, 45.0, PI / 6)
@@ -38,6 +38,9 @@ class PoseSet(val red: Boolean) {
 
         private val RIGHT_HIVE_AT = RobotPose(-20.0, 12.0, 0.0)
         private val LEFT_HIVE_AT = RobotPose(20.0, 12.0, 0.0)
+
+        private val UNDER_HIVE = RobotPose(24.0, 12.0, 0.0)
+        private val PARK_WAYPOINT = RobotPose(33.0, 48.0, PI/2)
 
         @JvmField
         val RED = PoseSet(false)
@@ -84,6 +87,10 @@ class PoseSet(val red: Boolean) {
     val RIGHT_HIVE_AT = Companion.RIGHT_HIVE_AT.bind
     @JvmField
     val LEFT_HIVE_AT = Companion.LEFT_HIVE_AT.bind
+    @JvmField
+    val UNDER_HIVE = Companion.UNDER_HIVE.bind
+    @JvmField
+    val PARK_WAYPOINT = Companion.PARK_WAYPOINT.bind
 
     fun getLEFT_HIVE_AT(): RobotPose {
         return LEFT_HIVE_AT

@@ -26,3 +26,9 @@ class RedDumbAuto: DumbAuto(true)
 
 @Autonomous
 class BlueDumbAuto: DumbAuto(false)
+
+@Autonomous
+class RedFusionAuto: FusionAuto(true)
+
+@Autonomous
+class BlueFusionAuto: FusionAuto(false)

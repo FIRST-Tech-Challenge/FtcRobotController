@@ -30,8 +30,8 @@ public class GerthaHardwareMap extends HardwareMapper {
     public static final double DISTANCE_THRESHOLD = 4.0;
     public static final double POLLEN_GO = 0.58;
     public static final double POLLEN_STOP = 0.34;
-    public static final double AUTO_SHOOT_SPEED = 760.0;
-    public static final double ANGLE_OF_SHOT = 1.22;
+    public static final double AUTO_SHOOT_SPEED = 780.0;
+    public static final double ANGLE_OF_SHOT = 1.222;
     //0.995
     //1.188
     public static final double DISTANCE_TO_TOP = (64.0 - 13.5) * 0.0254;

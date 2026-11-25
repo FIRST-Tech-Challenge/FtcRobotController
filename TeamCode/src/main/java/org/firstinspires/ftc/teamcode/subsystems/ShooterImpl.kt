@@ -17,7 +17,7 @@ class ShooterImpl (private val hw: GerthaHardwareMap) {
 //
 //        private const val maxVelocity = 1820.0
 
-        private const val KF = 0.0071
+        private const val KF = 0.0072
         var KP = 0.004
         var KD = 0.002
         var KI = 0.0
@@ -39,7 +39,7 @@ class ShooterImpl (private val hw: GerthaHardwareMap) {
 
     fun init(){
 
-        hw.pollenShooter.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        hw.pollenShooter.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
     }
 
     fun tickShooterOld(){

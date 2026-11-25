@@ -27,7 +27,7 @@ class TuneShooter: LinearOpMode() {
         var wasA = false
         var wasY = false
 
-        shooterImpl.setTarget(1100.0)
+        shooterImpl.setTarget(800.0)
 
         val gamepadState = GamepadState(gamepad1, gamepad2)
 

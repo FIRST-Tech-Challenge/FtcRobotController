@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.IntakeShootMachine
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.RampMachine
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.RobotState
+import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.StopCondition
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.subsystems.StopConditions
 import org.firstinspires.ftc.teamcode.org.firstinspires.ftc.teamcode.utils.StaticStore
 import kotlin.math.hypot
@@ -24,13 +25,13 @@ abstract class LinearAuto(private val isRed: Boolean) : LinearOpMode() {
 
     enum class State{
         DRIVE_TO_SCORE,
+        DRIVE_TO_LEFT_SCORE,
         SCAN_HIVE,
         SHOOT,
         DRIVE_TO_DRIVER_FLOWER,
         PICKUP_DRIVER_FLOWER,
         DRIVE_TO_OTHER_FLOWER,
         PICKUP_OTHER_FLOWER,
-
         WAYPOINT_OUT_OTHER_FLOWER,
         DRIVE_TO_GARDEN,
         PICKUP_GARDEN,
@@ -40,8 +41,9 @@ abstract class LinearAuto(private val isRed: Boolean) : LinearOpMode() {
         PARK_LEFT,
         WAIT_FOR_RIGHT_TIP,
         WAIT_FOR_LEFT_TIP,
-
         WAIT_FOR_TIME,
+        WAIT_UNDER_HIVE,
+        PREPARK,
         DONE
     }
 
@@ -64,7 +66,8 @@ abstract class LinearAuto(private val isRed: Boolean) : LinearOpMode() {
         State.DRIVE_TO_SCORE,
         State.SCAN_HIVE,
         State.SHOOT,
-        State.PARK_RIGHT,
+        State.PREPARK,
+        State.PARK_LEFT
     )
 
     private var currentIndex = 0
@@ -143,7 +146,7 @@ abstract class LinearAuto(private val isRed: Boolean) : LinearOpMode() {
         while (opModeIsActive()) {
 
             if (getElapsedSec(autoStartTimeNs) >= 27.0){
-                state = State.PARK_RIGHT
+                state = State.PREPARK
             }
 
             for (module in lynxModules) {
@@ -434,10 +437,44 @@ abstract class LinearAuto(private val isRed: Boolean) : LinearOpMode() {
                     }
                 }
                 State.WAIT_FOR_TIME -> {
-                    if (getElapsedSec(stateStartTimeNs) > 10.0){
+                    if (getElapsedSec(stateStartTimeNs) >= 15.0){
                         nextState()
                     }
 
+                }
+                State.DRIVE_TO_LEFT_SCORE -> {
+                    if (justTransitioned){
+                        driveMachine.removerImpl.init(
+                            robotState.ppRobotPose,
+                            poseSet.SCORE_LEFT_B
+                        )
+                    }
+                    if (driveMachine.removerImpl.finished){
+                        nextState()
+                    }
+                }
+                State.WAIT_UNDER_HIVE -> {
+                    if (justTransitioned){
+                        driveMachine.removerImpl.init(
+                            robotState.ppRobotPose,
+                            poseSet.UNDER_HIVE
+                        )
+                    }
+                    if (driveMachine.removerImpl.finished){
+                        nextState()
+                    }
+                }
+                State.PREPARK -> {
+                    if (justTransitioned){
+                        driveMachine.removerImpl.init(
+                            robotState.ppRobotPose,
+                            poseSet.PARK_WAYPOINT,
+                            stopCond = StopConditions.Waypoint
+                        )
+                    }
+                    if (driveMachine.removerImpl.finished){
+                        state = autoSequence[autoSequence.size -1]
+                    }
                 }
 
             }

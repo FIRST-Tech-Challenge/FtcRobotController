@@ -143,8 +143,9 @@ class IntakeShootMachine(private val hw: GerthaHardwareMap, private var isAuto: 
                     Log.i("intake", getElapsedSec(stateStartTimeNs).toString())
                 }
                 Log.i("powerI", hw.rightIntake.power.toString())
-                if (getElapsedSec(stateStartTimeNs) > 2.0){
+                if (getElapsedSec(stateStartTimeNs) > 1.5){
                     state = State.OFF
+                    hw.pollenBallStop.position = POLLEN_STOP
                     hw.PUSH_THRESHOLD = 60.0
                 }
             }
