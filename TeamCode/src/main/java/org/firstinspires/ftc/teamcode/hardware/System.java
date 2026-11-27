@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.configuration.Settings.Hardware.INT
 import static org.firstinspires.ftc.teamcode.configuration.Settings.Hardware.LAUNCHER_LEFT;
 import static org.firstinspires.ftc.teamcode.configuration.Settings.Hardware.LAUNCHER_RIGHT;
 import static org.firstinspires.ftc.teamcode.configuration.Settings.Hardware.MIDDLE;
+import static org.firstinspires.ftc.teamcode.configuration.Settings.Hardware.THIRD_INTAKE_FINAL_ASSIST;
 import static org.firstinspires.ftc.teamcode.configuration.Settings.Hardware.TURRET;
 
 import android.graphics.Color;
@@ -41,7 +42,8 @@ public class System {
 		rollers = new Rollers(
 				hwMap.tryGet(DcMotor.class, INTAKE),
 				hwMap.tryGet(DcMotor.class, MIDDLE),
-				hwMap.tryGet(DcMotor.class, END));
+				hwMap.tryGet(DcMotor.class, END),
+				hwMap.tryGet(DcMotor.class, THIRD_INTAKE_FINAL_ASSIST));
 
 		turret = new Turret(hwMap.tryGet(DcMotorEx.class, TURRET));
 
@@ -53,6 +55,7 @@ public class System {
 		return "Launcher " + (launcher.isInstalled() ? "yes" : "no")
 				+ " | Middle " + (rollers.hasMiddle() ? "yes" : "no")
 				+ " | End " + (rollers.hasEnd() ? "yes" : "no")
+				+ " | Assist " + (rollers.hasAssist() ? "yes" : "no")
 				+ " | Turret " + (turret.isInstalled() ? "yes" : "no");
 	}
 

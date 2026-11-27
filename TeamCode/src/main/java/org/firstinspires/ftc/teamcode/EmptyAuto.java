@@ -149,10 +149,11 @@ public class EmptyAuto extends OpMode {
 
 			case 2: // Wait until launcher is at speed
 				if (system.launcher.isAtSpeed()) {
-					// Start all three rollers spinning
+					// Start all rollers spinning
 					system.rollers.intakeIn();
 					system.rollers.middleIn();
 					system.rollers.endIn();
+					system.rollers.assistIn();
 					rollStartTime = getRuntime();
 					launchSubState = 3;
 				}
@@ -164,6 +165,7 @@ public class EmptyAuto extends OpMode {
 					system.rollers.intakeStop();
 					system.rollers.middleStop();
 					system.rollers.endStop();
+					system.rollers.assistStop();
 					launchSubState = 0; // Reset for next launch
 					return true; // Launch complete
 				}

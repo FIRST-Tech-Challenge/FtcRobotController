@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import static org.firstinspires.ftc.teamcode.configuration.Settings.Rollers.ASSIST_SPEED;
+import static org.firstinspires.ftc.teamcode.configuration.Settings.Rollers.ASSIST_STOP;
 import static org.firstinspires.ftc.teamcode.configuration.Settings.Rollers.END_IN;
 import static org.firstinspires.ftc.teamcode.configuration.Settings.Rollers.END_OUT;
 import static org.firstinspires.ftc.teamcode.configuration.Settings.Rollers.END_STOP;
@@ -13,9 +15,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 /**
- * Feed rollers: intake (front roller), middle, end.
+ * Feed rollers: intake (front roller), middle, end, and assist (third intake roller,
+ * helps the final stage of the transfer).
  *
- * PHASE 1: intake, middle, and end are handled safely. If any motor is null
+ * PHASE 1: intake, middle, end, and assist are handled safely. If any motor is null
  * (missing from robot configuration), its methods do nothing so it never crashes.
  */
 public class Rollers {
@@ -23,11 +26,13 @@ public class Rollers {
 	public final DcMotor intake;
 	public final DcMotor middle;
 	public final DcMotor end;
+	public final DcMotor assist;
 
-	public Rollers(DcMotor intake, DcMotor middle, DcMotor end) {
+	public Rollers(DcMotor intake, DcMotor middle, DcMotor end, DcMotor assist) {
 		this.intake = intake;
 		this.middle = middle;
 		this.end = end;
+		this.assist = assist;
 
 		if (intake != null) {
 			intake.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -41,6 +46,11 @@ public class Rollers {
 		if (end != null) {
 			end.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 			end.setPower(END_STOP);
+		}
+
+		if (assist != null) {
+			assist.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+			assist.setPower(ASSIST_STOP);
 		}
 	}
 
@@ -56,6 +66,10 @@ public class Rollers {
 		return end != null;
 	}
 
+	public boolean hasAssist() {
+		return assist != null;
+	}
+
 	// ---------- Intake ----------
 
 	/**
@@ -65,10 +79,6 @@ public class Rollers {
 		if (intake != null) {
 			intake.setPower(INTAKE_SPEED * power);
 		}
-	}
-
-	public void setintakePower(double power) {
-		setIntakePower(power);
 	}
 
 	public void intakeIn() {
@@ -129,5 +139,32 @@ public class Rollers {
 
 	public double getEndPower() {
 		return end != null ? end.getPower() : 0;
+	}
+
+	// ---------- Assist (third intake roller) ----------
+
+	/**
+	 * @param power 1 = full in, -1 = full out, 0 = stop. Scaled by ASSIST_SPEED.
+	 */
+	public void setAssistPower(double power) {
+		if (assist != null) {
+			assist.setPower(ASSIST_SPEED * power);
+		}
+	}
+
+	public void assistIn() {
+		setAssistPower(1);
+	}
+
+	public void assistStop() {
+		setAssistPower(0);
+	}
+
+	public void assistOut() {
+		setAssistPower(-1);
+	}
+
+	public double getAssistPower() {
+		return assist != null ? assist.getPower() : 0;
 	}
 }

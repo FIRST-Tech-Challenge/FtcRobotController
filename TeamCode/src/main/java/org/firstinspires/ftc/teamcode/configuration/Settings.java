@@ -14,6 +14,17 @@ public class Settings {
 		public static double END_IN = 0.8;
 		public static double END_STOP = 0;
 		public static double END_OUT = -0.8;
+
+		public static double ASSIST_SPEED = 1;
+		public static double ASSIST_STOP = 0;
+	}
+
+	public static class Controls {
+		// Which gamepad's triggers drive the assist roller (RT in, LT out).
+		// Note: gamepad 2 triggers already run the intake, so keep this on 1 unless that changes.
+		public static int ASSIST_GAMEPAD = 1;
+		public static double ASSIST_DEADBAND = 0.05;
+		public static boolean ASSIST_INVERT = false;
 	}
 
 	public static class Hardware {
@@ -24,6 +35,7 @@ public class Settings {
 		public static String INTAKE = "intake";
 		public static String MIDDLE = "middleWheels";
 		public static String END = "finalWheels";
+		public static String THIRD_INTAKE_FINAL_ASSIST = "thirdIntakeFinalAssist";
 	}
 
 	public static class Launcher {

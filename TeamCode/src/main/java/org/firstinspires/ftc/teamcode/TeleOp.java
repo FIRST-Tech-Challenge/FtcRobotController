@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.configuration.Settings.Positions.STORED_POSE;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.configuration.Settings;
@@ -98,6 +99,14 @@ public class TeleOp extends LinearOpMode {
 				system.rollers.endStop();
 			}
 
+			// Assist roller (third intake roller): configured gamepad, right trigger in, left trigger out
+			Gamepad assistPad = Settings.Controls.ASSIST_GAMEPAD == 2 ? gamepad2 : gamepad1;
+			double assistInput = assistPad.right_trigger - assistPad.left_trigger;
+			if (Math.abs(assistInput) < Settings.Controls.ASSIST_DEADBAND) {
+				assistInput = 0;
+			}
+			system.rollers.setAssistPower(Settings.Controls.ASSIST_INVERT ? -assistInput : assistInput);
+
 			// Telemetry diagnostics
 			telemetry.addData("Pose", system.follower.getPose());
 
@@ -112,6 +121,11 @@ public class TeleOp extends LinearOpMode {
 			}
 			if (system.rollers.hasEnd()) {
 				telemetry.addData("End Wheels Power", system.rollers.getEndPower());
+			}
+			if (system.rollers.hasAssist()) {
+				telemetry.addData("Assist Power", system.rollers.getAssistPower());
+			} else {
+				telemetry.addData("Assist", "NOT FOUND");
 			}
 			if (system.launcher.isInstalled()) {
 				telemetry.addData("Outtake Target", Launcher.ticksPerSecToRPM(system.launcher.targetTPS));
